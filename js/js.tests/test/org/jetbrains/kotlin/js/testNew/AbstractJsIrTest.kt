@@ -63,7 +63,6 @@ abstract class AbstractJsIrTest(
 
             configureJsArtifactsHandlersStep {
                 useHandlers(
-                    ::JsIrArtifactsDumpHandler,
                     ::JsAstHandler,
                     ::JsBoxRunner,
                     ::NodeJsGeneratorHandler,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.testNew.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
@@ -36,10 +38,9 @@ import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
 class JsIrBackendFacade(
@@ -97,7 +98,9 @@ class JsIrBackendFacade(
                 File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
             }
             val compiledModule = generateJsFromAst(inputArtifact.outputFile.absolutePath, testServices.jsIrIncrementalDataProvider.getCaches())
-            return BinaryArtifacts.Js.JsIrArtifact(outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module))
+            return BinaryArtifacts.Js.JsIrArtifact(
+                outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
+            ).dump(module)
         }
 
         val loweredIr = compileIr(
@@ -149,7 +152,7 @@ class JsIrBackendFacade(
                 multiModule = granularity == JsGenerationGranularity.PER_MODULE,
                 relativeRequirePath = false
             )
-            return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules))
+            return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules)).dump(module)
         }
 
         val options = JsGenerationOptions(generatePackageJson = true, generateTypeScriptDefinitions = generateDts)
@@ -158,14 +161,14 @@ class JsIrBackendFacade(
             if (runIrDce) {
                 eliminateDeadDeclarations(loweredIr.allModules, loweredIr.context)
                 generateEsModules(loweredIr, jsOutputSink(dceOutputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
-                return BinaryArtifacts.Js.JsEsArtifact(outputFile, dceOutputFile)
+                return BinaryArtifacts.Js.JsEsArtifact(outputFile, dceOutputFile).dump(module)
             }
-            return BinaryArtifacts.Js.JsEsArtifact(outputFile, null)
+            return BinaryArtifacts.Js.JsEsArtifact(outputFile, null).dump(module)
         }
 
         if (runIrPir && dontSkipDceDriven) {
             generateEsModules(loweredIr, jsOutputSink(pirOutputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
-            return BinaryArtifacts.Js.JsEsArtifact(pirOutputFile, null)
+            return BinaryArtifacts.Js.JsEsArtifact(pirOutputFile, null).dump(module)
         }
         return null
     }
@@ -251,6 +254,80 @@ class JsIrBackendFacade(
                 file.writeText(content)
             }
         }
+    }
+
+    private fun BinaryArtifacts.Js.JsIrArtifact.dump(module: TestModule): BinaryArtifacts.Js.JsIrArtifact {
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val moduleId = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
+        val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        val outputDceFile = File(JsEnvironmentConfigurator.getDceJsArtifactPath(testServices, module.name) + ".js")
+        val outputPirFile = File(JsEnvironmentConfigurator.getPirJsArtifactPath(testServices, module.name) + ".js")
+
+        val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
+        val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in module.directives
+        val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in module.directives
+        val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
+
+        if (dontSkipRegularMode) {
+            compilerResult.outputs!!.writeTo(outputFile, moduleId, moduleKind)
+            compilerResult.outputsAfterDce?.writeTo(outputDceFile, moduleId, moduleKind)
+        } else if (runIrPir && dontSkipDceDriven) {
+            compilerResult.outputs!!.writeTo(outputPirFile, moduleId, moduleKind)
+        } else {
+            TODO("unreachable")
+        }
+
+        if (generateDts) {
+            outputFile
+                .withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
+                .write(compilerResult.tsDefinitions ?: error("No ts definitions"))
+        }
+
+        return this
+    }
+
+    private fun BinaryArtifacts.Js.JsEsArtifact.dump(module: TestModule): BinaryArtifacts.Js.JsEsArtifact {
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
+        val esmTestFile = outputFile.parentFile.esModulesSubDir.resolve("test.mjs")
+        createEsTestFile(esmTestFile, moduleName)
+
+        val dceEsmTestFile = outputDceFile?.parentFile?.esModulesSubDir?.resolve("test.mjs") ?: return this
+        createEsTestFile(dceEsmTestFile, moduleName)
+        return this
+    }
+
+    private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
+        val wrappedCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, moduleId = moduleId, moduleKind = moduleKind)
+        outputFile.write(wrappedCode)
+
+        dependencies.forEach { (moduleId, outputs) ->
+            val moduleWrappedCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(outputs.jsCode, moduleKind, moduleId)
+            val dependencyPath = outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
+            File(dependencyPath).write(moduleWrappedCode)
+        }
+    }
+
+    private fun File.write(text: String) {
+        parentFile.mkdirs()
+        writeText(text)
+    }
+
+    private fun createEsTestFile(file: File, moduleName: String) {
+        val customTestModule = testServices.moduleStructure.modules
+            .flatMap { it.files }
+            .singleOrNull { JsEnvironmentConfigurationDirectives.ENTRY_ES_MODULE in it.directives }
+        val customTestModuleText = customTestModule?.let { testServices.sourceFileProvider.getContentOfSourceFile(it) }
+
+        val defaultTestModule =
+            """                     
+                                    import { box } from './${moduleName}/index.js';
+                                    let res = box();
+                                    if (res !== "OK") {
+                                        throw "Wrong result: " + String(res);
+                                    }
+                                    """.trimIndent()
+        file.writeText(customTestModuleText ?: defaultTestModule)
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
