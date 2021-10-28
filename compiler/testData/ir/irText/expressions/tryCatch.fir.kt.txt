@@ -1,6 +1,10 @@
 fun test1() {
-  try println()
-  catch (e: Throwable)println()
+  try { // BLOCK
+    println()
+  }
+  catch (e: Throwable){ // BLOCK
+    println()
+  }
   finally { // BLOCK
     println()
   }

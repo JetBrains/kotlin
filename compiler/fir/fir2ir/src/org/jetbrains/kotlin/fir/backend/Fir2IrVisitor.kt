@@ -948,13 +948,14 @@ class Fir2IrVisitor(
     }
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: Any?): IrElement {
+        // Always generate a block for try, catch and finally blocks. When leaving the finally block in the debugger
+        // for both Java and Kotlin there is a step on the end brace. For that to happen we need the block with
+        // that line number for the finally block.
         return tryExpression.convertWithOffsets { startOffset, endOffset ->
             IrTryImpl(
                 startOffset, endOffset, tryExpression.typeRef.toIrType(),
-                tryExpression.tryBlock.convertToIrExpressionOrBlock(),
+                tryExpression.tryBlock.convertToIrBlock(),
                 tryExpression.catches.map { it.accept(this, data) as IrCatch },
-                // Always generate a block for the finally block. When leaving the finally block in the debugger for both
-                // Java and Kotlin there is a step on the end brace. For that to happen we need the block with that line number.
                 tryExpression.finallyBlock?.convertToIrBlock()
             )
         }
@@ -963,7 +964,7 @@ class Fir2IrVisitor(
     override fun visitCatch(catch: FirCatch, data: Any?): IrElement {
         return catch.convertWithOffsets { startOffset, endOffset ->
             val catchParameter = declarationStorage.createIrVariable(catch.parameter, conversionScope.parentFromStack())
-            IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrExpressionOrBlock())
+            IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock())
         }
     }
 

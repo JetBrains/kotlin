@@ -2,10 +2,12 @@ FILE fqName:<root> fileName:/tryCatch.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TRY type=kotlin.Unit
-        try: CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+        try: BLOCK type=kotlin.Unit origin=null
+          CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
         CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.test1
           VAR name:e type:kotlin.Throwable [val]
-          CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+          BLOCK type=kotlin.Unit origin=null
+            CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
         finally: BLOCK type=kotlin.Unit origin=null
           CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Int

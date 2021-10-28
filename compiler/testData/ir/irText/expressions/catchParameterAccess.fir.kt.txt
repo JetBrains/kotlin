@@ -1,5 +1,10 @@
 fun test(f: Function0<Unit>) {
-  return try f.invoke()
-  catch (e: Exception)throw e
+  return try { // BLOCK
+    f.invoke()
+  }
+  catch (e: Exception){ // BLOCK
+    throw e
+  }
 
 }
+
