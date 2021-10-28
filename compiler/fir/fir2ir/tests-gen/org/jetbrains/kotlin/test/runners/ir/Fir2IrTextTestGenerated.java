@@ -2463,6 +2463,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("lambdaReturningUnit.kt")
+        public void testLambdaReturningUnit() throws Exception {
+            runTest("compiler/testData/ir/irText/lambdas/lambdaReturningUnit.kt");
+        }
+
+        @Test
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             runTest("compiler/testData/ir/irText/lambdas/localFunction.kt");

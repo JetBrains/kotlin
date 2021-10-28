@@ -1831,6 +1831,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/lambdas/justLambda.kt");
         }
 
+        @TestMetadata("lambdaReturningUnit.kt")
+        public void testLambdaReturningUnit() throws Exception {
+            runTest("compiler/testData/ir/irText/lambdas/lambdaReturningUnit.kt");
+        }
+
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             runTest("compiler/testData/ir/irText/lambdas/localFunction.kt");
