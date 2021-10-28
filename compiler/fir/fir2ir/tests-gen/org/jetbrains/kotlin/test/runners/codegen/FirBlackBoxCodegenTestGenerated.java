@@ -16343,6 +16343,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("CustomHashSetSize.kt")
+        public void testCustomHashSetSize() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");
+        }
+
+        @Test
         @TestMetadata("CustomThrowableMessage.kt")
         public void testCustomThrowableMessage() throws Exception {
             runTest("compiler/testData/codegen/box/fir/CustomThrowableMessage.kt");

@@ -1191,13 +1191,15 @@ class Fir2IrDeclarationStorage(
         if (fir.isLocal) {
             return localStorage.getDelegatedProperty(fir)?.symbol ?: getIrVariableSymbol(fir)
         }
-        val unmatchedReceiver = dispatchReceiverLookupTag != firPropertySymbol.containingClass()
+        val containingClassLookupTag = firPropertySymbol.containingClass()
+        val unmatchedReceiver = dispatchReceiverLookupTag != containingClassLookupTag
         if (unmatchedReceiver) {
             generateLazyFakeOverrides(fir.name, dispatchReceiverLookupTag)
         }
-        val originalSymbol = getIrCallableSymbol(
+
+        fun ConeClassLikeLookupTag?.getIrCallableSymbol() = getIrCallableSymbol(
             firPropertySymbol,
-            dispatchReceiverLookupTag,
+            dispatchReceiverLookupTag = this,
             getCachedIrDeclaration = ::getCachedIrProperty,
             createIrDeclaration = { parent, origin -> createIrProperty(fir, parent, predefinedOrigin = origin) },
             createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
@@ -1219,13 +1221,34 @@ class Fir2IrDeclarationStorage(
                 return symbol
             }
         )
+
+        val originalSymbol = dispatchReceiverLookupTag.getIrCallableSymbol()
+        val originalProperty = originalSymbol.owner as IrProperty
+
+        fun IrProperty.isIllegalFakeOverride(): Boolean {
+            if (!isFakeOverride) return false
+            val overriddenSymbols = overriddenSymbols
+            if (overriddenSymbols.isEmpty() || overriddenSymbols.any { it.owner.isIllegalFakeOverride() }) {
+                return true
+            }
+            return false
+        }
+
+        if (dispatchReceiverLookupTag != null &&
+            firPropertySymbol is FirSyntheticPropertySymbol &&
+            originalProperty.isIllegalFakeOverride()
+        ) {
+            // Fallback for a synthetic property complex case
+            return containingClassLookupTag.getIrCallableSymbol()
+        }
+
         return if (dispatchReceiverLookupTag is ConeClassLookupTagWithFixedSymbol &&
-            dispatchReceiverLookupTag != firPropertySymbol.containingClass()
+            dispatchReceiverLookupTag != containingClassLookupTag
         ) {
             val dispatchReceiverIrClass =
                 classifierStorage.getIrClassSymbol(dispatchReceiverLookupTag.toSymbol(session) as FirClassSymbol).owner
             dispatchReceiverIrClass.declarations.find {
-                it is IrProperty && it.isFakeOverride && it.name == fir.name && it.overrides(originalSymbol.owner as IrProperty)
+                it is IrProperty && it.isFakeOverride && it.name == fir.name && it.overrides(originalProperty)
             }?.symbol as IrPropertySymbol
         } else {
             originalSymbol
