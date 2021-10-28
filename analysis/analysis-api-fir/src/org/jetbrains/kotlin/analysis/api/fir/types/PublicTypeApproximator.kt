@@ -14,17 +14,19 @@ internal object PublicTypeApproximator {
     fun approximateTypeToPublicDenotable(
         type: ConeKotlinType,
         session: FirSession,
+        approximateLocalTypes: Boolean
     ): ConeKotlinType? {
         val approximator = session.typeApproximator
-        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration)
+        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration(approximateLocalTypes))
     }
 
-    private object PublicApproximatorConfiguration : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+    private class PublicApproximatorConfiguration(
+        override val localTypes: Boolean
+    ) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
         override val allFlexible: Boolean get() = false
         override val errorType: Boolean get() = true
         override val definitelyNotNullType: Boolean get() = false
         override val integerLiteralType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
-        override val localTypes: Boolean get() = true
     }
 }

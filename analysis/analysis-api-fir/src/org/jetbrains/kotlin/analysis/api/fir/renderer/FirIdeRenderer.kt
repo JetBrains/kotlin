@@ -50,7 +50,7 @@ internal class FirIdeRenderer private constructor(
         require(firRef is FirResolvedTypeRef)
 
         val approximatedIfNeeded = approximate.ifTrue {
-            PublicTypeApproximator.approximateTypeToPublicDenotable(firRef.coneType, session)
+            PublicTypeApproximator.approximateTypeToPublicDenotable(firRef.coneType, session, approximateLocalTypes = true)
         } ?: firRef.coneType
         val annotations = if (RendererModifier.ANNOTATIONS in options.modifiers) {
             firRef.annotations

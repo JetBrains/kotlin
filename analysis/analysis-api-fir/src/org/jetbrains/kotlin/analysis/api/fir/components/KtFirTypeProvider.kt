@@ -59,7 +59,8 @@ internal class KtFirTypeProvider(
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
             coneType,
-            rootModuleSession
+            rootModuleSession,
+            approximateLocalTypes = true,
         )
 
         return approximatedConeType?.asKtType()

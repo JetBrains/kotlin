@@ -73,24 +73,32 @@ private fun ConeKotlinType.simplifyType(
         currentType = currentType.fullyExpandedType(session)
         currentType = currentType.upperBoundIfFlexible()
         currentType = substitutor.substituteOrSelf(currentType)
-        if (shouldHideLocalType(visibilityForApproximation, isInlineFunction)) {
-            val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
-                typeArguments.mapNotNull {
-                    if (it is ConeKotlinTypeProjection && it.type.isLocal(session)) {
-                        it.type
-                    } else null
-                }
-            }
-            val unavailableLocalTypes = localTypes.filterNot { it.isLocalButAvailableAtPosition(session, useSitePosition) }
-            // Need to approximate if there are local types that are not available in this scope
-            val needsApproximation = localTypes.isNotEmpty() && unavailableLocalTypes.isNotEmpty()
-            if (needsApproximation) {
-                // TODO: can we approximate local types in type arguments *selectively* ?
-                currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session) ?: currentType
-            }
-        }
+        val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
+        // TODO: can we approximate local types in type arguments *selectively* ?
+        currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
+            ?: currentType
+
     } while (oldType !== currentType)
     return currentType
+}
+
+private fun ConeKotlinType.needLocalTypeApproximation(
+    visibilityForApproximation: Visibility,
+    isInlineFunction: Boolean,
+    session: FirSession,
+    useSitePosition: PsiElement
+): Boolean {
+    if (!shouldHideLocalType(visibilityForApproximation, isInlineFunction)) return false
+    val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
+        typeArguments.mapNotNull {
+            if (it is ConeKotlinTypeProjection && it.type.isLocal(session)) {
+                it.type
+            } else null
+        }
+    }
+    val unavailableLocalTypes = localTypes.filterNot { it.isLocalButAvailableAtPosition(session, useSitePosition) }
+    // Need to approximate if there are local types that are not available in this scope
+    return localTypes.isNotEmpty() && unavailableLocalTypes.isNotEmpty()
 }
 
 // Mimic FirDeclaration.visibilityForApproximation
