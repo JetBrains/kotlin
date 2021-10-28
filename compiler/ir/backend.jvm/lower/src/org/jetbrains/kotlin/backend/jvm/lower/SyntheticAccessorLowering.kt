@@ -58,6 +58,7 @@ private class SyntheticAccessorTransformer(
     val inlineScopeResolver: IrInlineScopeResolver,
     val pendingAccessorsToAdd: MutableList<IrFunction>
 ) : IrElementTransformerVoidWithContext() {
+
     private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
     private data class FunctionKey(
@@ -245,21 +246,30 @@ private class SyntheticAccessorTransformer(
     }
 
     override fun visitSetField(expression: IrSetField): IrExpression {
+        // FE accepts code that assigns to a val of this or other class if it happens in unreachable code (KT-35565).
+        // Sometimes this can cause internal error in the BE (see KT-49316).
+        // Assume that 'val' property with a backing field can never be initialized from a context that requires synthetic accessor.
+        val correspondingProperty = expression.symbol.owner.correspondingPropertySymbol?.owner
+        if (correspondingProperty != null && !correspondingProperty.isVar) {
+            return super.visitExpression(expression)
+        }
+
         val dispatchReceiverType = expression.receiver?.type
         val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
+        if (expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
+            return super.visitExpression(expression)
+        }
+
+        val symbol = expression.symbol
+        val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent) as IrClass
+
         return super.visitExpression(
-            if (!expression.symbol.isAccessible(false, dispatchReceiverClassSymbol)) {
-                val symbol = expression.symbol
-                val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent) as IrClass
-                modifySetterExpression(
-                    expression,
-                    setterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
-                        makeSetterAccessorSymbol(symbol, parent, expression.superQualifierSymbol)
-                    }
-                )
-            } else {
-                expression
-            }
+            modifySetterExpression(
+                expression,
+                setterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
+                    makeSetterAccessorSymbol(symbol, parent, expression.superQualifierSymbol)
+                }
+            )
         )
     }
 
