@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -47,6 +49,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
 
         val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         defaultDirectives {
+            +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
             JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
             JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
             JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
@@ -54,6 +57,16 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             if (skipMinification) +JsEnvironmentConfigurationDirectives.SKIP_MINIFICATION
             if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
+        }
+
+        forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
+            defaultDirectives {
+                DIAGNOSTICS with "-warnings"
+            }
+        }
+
+        forTestsNotMatching("compiler/testData/codegen/boxError/*") {
+            enableMetaInfoHandler()
         }
 
         useConfigurators(
