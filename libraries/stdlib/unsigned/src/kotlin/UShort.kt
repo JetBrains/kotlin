@@ -13,7 +13,7 @@ import kotlin.jvm.*
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
 @JvmInline
-public value class UShort @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
+public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
 
     companion object {
         /**

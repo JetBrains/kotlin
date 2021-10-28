@@ -19,5 +19,6 @@ public expect interface KCallable<out R> {
      * - property accessors: the getter for a property named "foo" will have the name "<get-foo>",
      *   the setter, similarly, will have the name "<set-foo>".
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public val name: String
 }

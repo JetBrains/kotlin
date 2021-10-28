@@ -46,4 +46,5 @@ public expect fun Char(code: UShort): Char
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("DEPRECATION")
+@kotlin.internal.IntrinsicConstEvaluation
 public inline val Char.code: Int get() = this.toInt()

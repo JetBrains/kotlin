@@ -28,14 +28,18 @@ public class Char private constructor() : Comparable<Char> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: Char): Int
 
     /** Adds the other Int value to this value resulting a Char. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun plus(other: Int): Char
 
     /** Subtracts the other Char value from this value resulting an Int. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Char): Int
     /** Subtracts the other Int value from this value resulting a Char. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Int): Char
 
     /**
@@ -58,29 +62,42 @@ public class Char private constructor() : Comparable<Char> {
     /** Returns the value of this character as a `Byte`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toByte(): Byte
     /** Returns the value of this character as a `Char`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toChar(): Char
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toShort(): Short
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toInt(): Int
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toLong(): Long
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toDouble(): Double
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun toString(): String
 
     companion object {
         /**

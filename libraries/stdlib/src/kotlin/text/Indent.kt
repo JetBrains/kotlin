@@ -22,6 +22,7 @@ package kotlin.text
  * @see trimIndent
  * @see kotlin.text.isWhitespace
  */
+@kotlin.internal.IntrinsicConstEvaluation
 public fun String.trimMargin(marginPrefix: String = "|"): String =
     replaceIndentByMargin("", marginPrefix)
 
@@ -60,6 +61,7 @@ public fun String.replaceIndentByMargin(newIndent: String = "", marginPrefix: St
  * @see trimMargin
  * @see kotlin.text.isBlank
  */
+@kotlin.internal.IntrinsicConstEvaluation
 public fun String.trimIndent(): String = replaceIndent("")
 
 /**

@@ -67,7 +67,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("@SinceKotlin(\"1.5\")")
         out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
         out.println("@JvmInline")
-        out.println("public value class $className @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
+        out.println("public value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    companion object {
         /**

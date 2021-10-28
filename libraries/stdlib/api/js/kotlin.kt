@@ -1,6 +1,7 @@
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public val kotlin.Char.code: kotlin.Int { get; }
 
 @kotlin.SinceKotlin(version = "1.2")
@@ -277,66 +278,82 @@ public inline fun kotlin.UShort.countTrailingZeroBits(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.floorDiv(other: kotlin.Byte): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.floorDiv(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.floorDiv(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.floorDiv(other: kotlin.Short): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.floorDiv(other: kotlin.Byte): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.floorDiv(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.floorDiv(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.floorDiv(other: kotlin.Short): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.floorDiv(other: kotlin.Byte): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.floorDiv(other: kotlin.Int): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.floorDiv(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.floorDiv(other: kotlin.Short): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.floorDiv(other: kotlin.Byte): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.floorDiv(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.floorDiv(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.floorDiv(other: kotlin.Short): kotlin.Int
 
 @kotlin.internal.InlineOnly
@@ -407,82 +424,102 @@ public inline fun <R, T> kotlin.Result<T>.mapCatching(transform: (value: T) -> R
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.mod(other: kotlin.Byte): kotlin.Byte
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.mod(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.mod(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Byte.mod(other: kotlin.Short): kotlin.Short
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Double.mod(other: kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Double.mod(other: kotlin.Float): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Float.mod(other: kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Float.mod(other: kotlin.Float): kotlin.Float
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.mod(other: kotlin.Byte): kotlin.Byte
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.mod(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.mod(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Int.mod(other: kotlin.Short): kotlin.Short
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.mod(other: kotlin.Byte): kotlin.Byte
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.mod(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.mod(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Long.mod(other: kotlin.Short): kotlin.Short
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.mod(other: kotlin.Byte): kotlin.Byte
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.mod(other: kotlin.Int): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.mod(other: kotlin.Long): kotlin.Long
 
 @kotlin.SinceKotlin(version = "1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun kotlin.Short.mod(other: kotlin.Short): kotlin.Short
 
 @kotlin.internal.InlineOnly
@@ -849,16 +886,16 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
 
     public open override operator fun compareTo(other: kotlin.Boolean): kotlin.Int
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun not(): kotlin.Boolean
 
     public final infix fun or(other: kotlin.Boolean): kotlin.Boolean
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final infix fun xor(other: kotlin.Boolean): kotlin.Boolean
 
     @kotlin.SinceKotlin(version = "1.3")
@@ -915,8 +952,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
     public final operator fun div(other: kotlin.Short): kotlin.Int
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Byte
@@ -999,8 +1036,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final operator fun unaryMinus(): kotlin.Int
 
     public final operator fun unaryPlus(): kotlin.Int
@@ -1041,8 +1078,8 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
     public final operator fun dec(): kotlin.Char
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Char
@@ -1082,8 +1119,8 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     public final fun toShort(): kotlin.Short
 
 /*∆*/     @kotlin.js.JsName(name = "toString")
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public companion object of Char {
         public const final val MAX_HIGH_SURROGATE: kotlin.Char = \uDBFF ('?') { get; }
 
@@ -1246,8 +1283,8 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
 
     public final operator fun div(other: kotlin.Short): kotlin.Double
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Double
@@ -1326,8 +1363,8 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final operator fun unaryMinus(): kotlin.Double
 
     public final operator fun unaryPlus(): kotlin.Double
@@ -1487,8 +1524,8 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 
     public final operator fun div(other: kotlin.Short): kotlin.Float
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Float
@@ -1567,8 +1604,8 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final operator fun unaryMinus(): kotlin.Float
 
     public final operator fun unaryPlus(): kotlin.Float
@@ -1664,8 +1701,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 
     public final operator fun div(other: kotlin.Short): kotlin.Int
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Int
@@ -1754,8 +1791,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final operator fun unaryMinus(): kotlin.Int
 
     public final operator fun unaryPlus(): kotlin.Int
@@ -1865,8 +1902,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
 /*∆*/     public final inline operator fun div(other: kotlin.Short): kotlin.Long
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Long
@@ -1957,8 +1994,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final operator fun unaryMinus(): kotlin.Long
 
 /*∆*/     public final inline operator fun unaryPlus(): kotlin.Long
@@ -2202,8 +2239,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
     public final operator fun div(other: kotlin.Short): kotlin.Int
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
 /*∆*/     public open override fun hashCode(): kotlin.Int
 /*∆*/ 
     public final operator fun inc(): kotlin.Short
@@ -2285,8 +2322,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public final operator fun unaryMinus(): kotlin.Int
 
     public final operator fun unaryPlus(): kotlin.Int
@@ -2334,8 +2371,8 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 
     public open override operator fun compareTo(other: kotlin.String): kotlin.Int
 
-/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-/*∆*/ 
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
     public open override operator fun get(index: kotlin.Int): kotlin.Char
 
 /*∆*/     public open override fun hashCode(): kotlin.Int
@@ -2344,8 +2381,8 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 
     public open override fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
 
-/*∆*/     public open override fun toString(): kotlin.String
-/*∆*/ 
+    public open override fun toString(): kotlin.String
+
     public companion object of String {
     }
 }

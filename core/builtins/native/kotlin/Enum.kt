@@ -16,6 +16,7 @@ public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<
     /**
      * Returns the name of this enum constant, exactly as declared in its enum declaration.
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public final val name: String
 
     /**

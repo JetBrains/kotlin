@@ -104,6 +104,9 @@ public class DataFlowAnalyzer {
     }
 
     private boolean typeHasOverriddenEquals(@NotNull KotlinType type, @NotNull KtElement lookupElement) {
+        // `equals` from `String` is not fake override because it is marked as `IntrinsicConstEvaluation`
+        if (KotlinBuiltIns.isString(type)) return false;
+
         Collection<? extends SimpleFunctionDescriptor> members = type.getMemberScope().getContributedFunctions(
                 OperatorNameConventions.EQUALS, new KotlinLookupLocation(lookupElement)
         );

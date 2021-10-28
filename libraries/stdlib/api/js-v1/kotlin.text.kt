@@ -1182,8 +1182,10 @@ public inline fun kotlin.String.trimEnd(predicate: (kotlin.Char) -> kotlin.Boole
 
 public fun kotlin.String.trimEnd(vararg chars: kotlin.Char): kotlin.String
 
+@kotlin.internal.IntrinsicConstEvaluation
 public fun kotlin.String.trimIndent(): kotlin.String
 
+@kotlin.internal.IntrinsicConstEvaluation
 public fun kotlin.String.trimMargin(marginPrefix: kotlin.String = ...): kotlin.String
 
 public fun kotlin.CharSequence.trimStart(): kotlin.CharSequence

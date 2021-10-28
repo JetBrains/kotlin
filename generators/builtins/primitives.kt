@@ -187,6 +187,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             generateConversions(kind)
+            generateEquals()
+            generateToString()
 
             out.println("}\n")
         }
@@ -207,6 +209,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */""")
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
             out.println("operator fun compareTo(other: ${otherKind.capitalized}): Int")
@@ -229,6 +232,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 "rem" ->
                     out.println("    @SinceKotlin(\"1.1\")")
             }
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.println("    public operator fun $name(other: ${otherKind.capitalized}): ${returnType.capitalized}")
         }
         out.println()
@@ -258,6 +262,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for ((name, doc) in unaryPlusMinusOperators) {
             val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR)) "Int" else kind.capitalized
             out.println("    /** $doc */")
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.println("    public operator fun $name(): $returnType")
         }
         out.println()
@@ -272,6 +277,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println("     *")
             out.println(detail.replaceIndent("     "))
             out.println("     */")
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.println("    public infix fun $name(bitCount: Int): $className")
             out.println()
         }
@@ -280,10 +286,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for ((name, doc) in bitwiseOperators) {
             out.println("    /** $doc */")
             since?.let { out.println("    @SinceKotlin(\"$it\")") }
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.println("    public infix fun $name(other: $className): $className")
         }
         out.println("    /** Inverts the bits in this value. */")
         since?.let { out.println("    @SinceKotlin(\"$it\")") }
+        out.println("    @kotlin.internal.IntrinsicConstEvaluation")
         out.println("    public fun inv(): $className")
         out.println()
     }
@@ -450,8 +458,21 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 out.println("    @DeprecatedSinceKotlin(warningSince = \"1.5\")")
             }
 
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.println("    public override fun to$otherName(): $otherName")
         }
+        out.println()
+    }
+
+    private fun generateEquals() {
+        out.println("    @kotlin.internal.IntrinsicConstEvaluation")
+        out.println("    public override fun equals(other: Any?): Boolean")
+        out.println()
+    }
+
+    private fun generateToString() {
+        out.println("    @kotlin.internal.IntrinsicConstEvaluation")
+        out.println("    public override fun toString(): String")
     }
 }
 
@@ -486,6 +507,7 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.printDoc(GeneratePrimitives.binaryOperatorDoc("floorDiv", thisKind, otherKind), "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
+        out.println("@kotlin.internal.IntrinsicConstEvaluation")
         val declaration = "public inline fun ${thisKind.capitalized}.floorDiv(other: ${otherKind.capitalized}): $returnTypeName"
         if (thisKind == otherKind && thisKind >= PrimitiveType.INT) {
             out.println(
@@ -511,6 +533,7 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.printDoc(GeneratePrimitives.binaryOperatorDoc("mod", thisKind, otherKind),"")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
+        out.println("@kotlin.internal.IntrinsicConstEvaluation")
         val declaration = "public inline fun ${thisKind.capitalized}.mod(other: ${otherKind.capitalized}): ${returnType.capitalized}"
         if (thisKind == otherKind && thisKind >= PrimitiveType.INT) {
             out.println(
@@ -536,6 +559,7 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.printDoc(GeneratePrimitives.binaryOperatorDoc("mod", thisKind, otherKind), "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
+        out.println("@kotlin.internal.IntrinsicConstEvaluation")
         val declaration = "public inline fun ${thisKind.capitalized}.mod(other: ${otherKind.capitalized}): ${operationType.capitalized}"
         if (thisKind == otherKind && thisKind >= PrimitiveType.INT) {
             out.println(
