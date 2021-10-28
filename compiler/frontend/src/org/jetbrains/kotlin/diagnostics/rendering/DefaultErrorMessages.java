@@ -346,6 +346,7 @@ public class DefaultErrorMessages {
         MAP.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", NAME);
         MAP.put(UNINITIALIZED_ENUM_ENTRY, "Enum entry ''{0}'' is uninitialized here", NAME);
         MAP.put(UNINITIALIZED_ENUM_COMPANION, "Companion object of enum class ''{0}'' is uninitialized here", NAME);
+        MAP.put(UNINITIALIZED_ENUM_COMPANION_WARNING, "Companion object of enum class ''{0}'' is uninitialized here. This warning will became error in future releases", NAME);
         MAP.put(UNUSED_VARIABLE, "Variable ''{0}'' is never used", NAME);
         MAP.put(UNUSED_PARAMETER, "Parameter ''{0}'' is never used", NAME);
         MAP.put(UNUSED_ANONYMOUS_PARAMETER, "Parameter ''{0}'' is never used, could be renamed to _", NAME);

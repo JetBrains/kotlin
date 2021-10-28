@@ -407,7 +407,15 @@ class ControlFlowInformationProviderImpl private constructor(
                             report(Errors.UNINITIALIZED_ENUM_ENTRY.on(element, classDescriptor), ctxt)
                         ClassKind.OBJECT -> if (classDescriptor.isCompanionObject) {
                             val container = classDescriptor.containingDeclaration
-                            if (container is ClassDescriptor && container.kind == ClassKind.ENUM_CLASS) {
+                            /*
+                             * ProhibitAccessToEnumCompanionMembersInEnumConstructorCall feature enabled then UNINITIALIZED_ENUM_COMPANION
+                             *   will be reported from EnumCompanionInEnumConstructorCallChecker
+                             */
+                            if (
+                                container is ClassDescriptor &&
+                                container.kind == ClassKind.ENUM_CLASS &&
+                                !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAccessToEnumCompanionMembersInEnumConstructorCall)
+                            ) {
                                 report(Errors.UNINITIALIZED_ENUM_COMPANION.on(element, container), ctxt)
                             }
                         }

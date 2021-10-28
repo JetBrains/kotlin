@@ -237,6 +237,7 @@ enum class LanguageFeature(
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitNonExhaustiveIfInRhsOfElvis(KOTLIN_1_7, kind = BUG_FIX), // KT-44705
     ForbidExposingTypesInPrimaryConstructorProperties(KOTLIN_1_7, kind = BUG_FIX),
+    ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_7, kind = BUG_FIX),
 
     // 1.8
 
