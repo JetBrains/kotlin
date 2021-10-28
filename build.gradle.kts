@@ -986,6 +986,38 @@ tasks {
             )
         }
     }
+
+    register("installIdeArtifacts") {
+        idePluginDependency {
+            dependsOn(
+                ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide:install",
+                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide:install",
+                ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:install",
+                ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:install",
+                ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:install",
+                ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide:install",
+                ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide:install",
+                ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:install",
+                ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:install",
+                ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:install",
+                ":prepare:ide-plugin-dependencies:compiler-components-for-jps:install",
+                ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:install",
+                ":kotlin-script-runtime:install",
+                ":kotlin-script-util:install",
+                ":kotlin-scripting-common:install",
+                ":kotlin-scripting-jvm:install",
+                ":kotlin-scripting-compiler:install",
+                ":kotlin-scripting-compiler-impl:install",
+                ":kotlin-android-extensions-runtime:install",
+                ":kotlin-stdlib-common:install",
+                ":kotlin-stdlib:install",
+                ":kotlin-stdlib-jdk7:install",
+                ":kotlin-stdlib-jdk8:install",
+                ":kotlin-reflect:install",
+                ":kotlin-main-kts:install"
+            )
+        }
+    }
 }
 
 fun CopySpec.setExecutablePermissions() {
