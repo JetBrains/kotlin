@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.testbase.*
+import java.nio.file.Files
 import kotlin.test.assertTrue
 
 private const val RESOLVE_ALL_CONFIGURATIONS_TASK_NAME = "resolveAllConfigurations"
@@ -34,6 +36,30 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
 
     build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, options = options) {
         assertSuccessful()
+        assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
+        val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
+        withUnresolvedConfigurationNames(unresolvedConfigurations)
+    }
+}
+
+fun TestProject.testResolveAllConfigurations(
+    subproject: String? = null,
+    skipSetup: Boolean = false,
+    excludeConfigurations: List<String> = listOf(),
+    options: BuildOptions = buildOptions,
+    withUnresolvedConfigurationNames: TestProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
+) {
+    if (!skipSetup) {
+        when {
+            Files.exists(buildGradle) -> buildGradle
+                .append("\n${generateResolveAllConfigurationsTask(excludeConfigurations)}")
+            Files.exists(buildGradleKts) -> buildGradleKts
+                .append("\n${generateResolveAllConfigurationsTaskKts(excludeConfigurations)}")
+            else -> error("Build script does not exists under $projectPath")
+        }
+    }
+
+    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, buildOptions = options) {
         assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
         val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
         withUnresolvedConfigurationNames(unresolvedConfigurations)
