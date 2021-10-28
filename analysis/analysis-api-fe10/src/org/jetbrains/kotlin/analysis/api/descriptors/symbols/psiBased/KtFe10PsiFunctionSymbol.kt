@@ -73,7 +73,7 @@ internal class KtFe10PsiFunctionSymbol(
         get() = withValidityAssertion { true }
 
     override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { psi.callableId }
+        get() = withValidityAssertion { psi.callableIdIfNonLocal }
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion { descriptor?.returnType?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations() }

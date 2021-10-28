@@ -235,31 +235,39 @@ internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
     }
 }
 
-internal val CallableMemberDescriptor.callableId: CallableId?
-    get() {
-        var current: DeclarationDescriptor = containingDeclaration
+internal val CallableMemberDescriptor.callableIdIfNotLocal: CallableId?
+    get() = calculateCallableId(allowLocal = false)
 
-        val localName = mutableListOf<String>()
-        val className = mutableListOf<String>()
+internal fun CallableMemberDescriptor.calculateCallableId(allowLocal: Boolean): CallableId? {
+    var current: DeclarationDescriptor = containingDeclaration
 
-        while (true) {
-            when (current) {
-                is PackageFragmentDescriptor -> {
-                    return CallableId(
-                        packageName = current.fqName,
-                        className = if (className.isNotEmpty()) FqName.fromSegments(className.asReversed()) else null,
-                        callableName = name,
-                        pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
-                    )
-                }
-                is ClassDescriptor -> className += current.name.asString()
-                is PropertyAccessorDescriptor -> {} // Filter out property accessors
-                is CallableDescriptor -> localName += current.name.asString()
+    val localName = mutableListOf<String>()
+    val className = mutableListOf<String>()
+
+    while (true) {
+        when (current) {
+            is PackageFragmentDescriptor -> {
+                return CallableId(
+                    packageName = current.fqName,
+                    className = if (className.isNotEmpty()) FqName.fromSegments(className.asReversed()) else null,
+                    callableName = name,
+                    pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
+                )
             }
+            is ClassDescriptor -> className += current.name.asString()
+            is PropertyAccessorDescriptor -> {} // Filter out property accessors
+            is CallableDescriptor -> {
+                if (!allowLocal) {
+                    return null
+                }
 
-            current = current.containingDeclaration ?: return null
+                localName += current.name.asString()
+            }
         }
+
+        current = current.containingDeclaration ?: return null
     }
+}
 
 internal fun getSymbolDescriptor(symbol: KtSymbol): DeclarationDescriptor? {
     return when (symbol) {

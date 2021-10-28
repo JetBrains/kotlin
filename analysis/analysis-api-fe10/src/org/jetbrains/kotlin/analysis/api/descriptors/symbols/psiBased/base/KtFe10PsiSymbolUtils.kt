@@ -68,33 +68,44 @@ internal val KtElement.ktSymbolKind: KtSymbolKind
         else -> KtSymbolKind.LOCAL
     }
 
-internal val KtDeclaration.callableId: CallableId?
-    get() {
-        val selfName = this.name ?: return null
-        val containingFile = this.containingKtFile
+internal val KtDeclaration.callableIdIfNonLocal: CallableId?
+    get() = calculateCallableId(allowLocal = false)
 
-        var current = this.getElementParentDeclaration()
+internal fun KtDeclaration.calculateCallableId(allowLocal: Boolean): CallableId? {
+    val selfName = this.name ?: return null
+    val containingFile = this.containingKtFile
 
-        val localName = mutableListOf<String>()
-        val className = mutableListOf<String>()
+    var current = this.getElementParentDeclaration()
 
-        while (current != null) {
-            when (current) {
-                is KtClassOrObject -> className += current.name ?: return null
-                is KtPropertyAccessor -> {} // Filter out property accessors
-                is KtCallableDeclaration -> localName += current.name ?: return null
+    val localName = mutableListOf<String>()
+    val className = mutableListOf<String>()
+
+    while (current != null) {
+        when (current) {
+            is KtClassOrObject -> {
+                className += current.name ?: return null
             }
-
-            current = current.getElementParentDeclaration()
+            is KtPropertyAccessor -> {
+                // Filter out property accessors
+            }
+            is KtCallableDeclaration -> {
+                if (!allowLocal) {
+                    return null
+                }
+                localName += current.name ?: return null
+            }
         }
 
-        return CallableId(
-            packageName = containingFile.packageFqName,
-            className = if (className.isNotEmpty()) FqName.fromSegments(className.asReversed()) else null,
-            callableName = Name.identifier(selfName),
-            pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
-        )
+        current = current.getElementParentDeclaration()
     }
+
+    return CallableId(
+        packageName = containingFile.packageFqName,
+        className = if (className.isNotEmpty()) FqName.fromSegments(className.asReversed()) else null,
+        callableName = Name.identifier(selfName),
+        pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
+    )
+}
 
 internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): LexicalScope? {
     for (parent in parentsWithSelf) {

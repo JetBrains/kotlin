@@ -50,7 +50,7 @@ internal class KtFe10DescPropertySetterSymbol(
         get() = withValidityAssertion {
             val propertyDescriptor = descriptor.correspondingProperty
             return if (propertyDescriptor is SyntheticPropertyDescriptor) {
-                propertyDescriptor.getMethod.callableId
+                propertyDescriptor.getMethod.callableIdIfNotLocal
             } else {
                 null
             }

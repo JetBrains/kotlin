@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.callableId
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.calculateCallableId
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.callableIdIfNotLocal
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
@@ -141,7 +142,7 @@ internal class KtFe10CallResolver(
             val variableSymbol = variableDescriptor.toKtCallableSymbol(analysisContext) as? KtVariableLikeSymbol ?: return null
 
             val substitutor = KtSubstitutor.Empty(token)
-            return if (resolvedCall.functionCall.resultingDescriptor.callableId in kotlinFunctionInvokeCallableIds) {
+            return if (resolvedCall.functionCall.resultingDescriptor.callableIdIfNotLocal in kotlinFunctionInvokeCallableIds) {
                 KtFunctionalTypeVariableCall(variableSymbol, argumentMapping, getTarget(callableSymbol), substitutor, token)
             } else {
                 KtVariableWithInvokeFunctionCall(variableSymbol, argumentMapping, getTarget(callableSymbol), substitutor, token)

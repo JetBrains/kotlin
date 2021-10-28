@@ -64,7 +64,7 @@ internal class KtFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.setter != null }
 
     override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { descriptor.callableId }
+        get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val initializer: KtConstantValue?
         get() = withValidityAssertion { descriptor.compileTimeInitializer?.toKtConstantValue() }

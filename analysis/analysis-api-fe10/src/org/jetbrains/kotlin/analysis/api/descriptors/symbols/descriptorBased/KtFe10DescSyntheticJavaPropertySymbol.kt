@@ -78,7 +78,7 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
         get() = withValidityAssertion { descriptor.compileTimeInitializer?.toKtConstantValue() }
 
     override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { descriptor.callableId }
+        get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion { descriptor.type.toKtTypeAndAnnotations(analysisContext) }
