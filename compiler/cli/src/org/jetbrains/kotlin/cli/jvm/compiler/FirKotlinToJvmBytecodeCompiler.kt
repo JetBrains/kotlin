@@ -88,13 +88,13 @@ object FirKotlinToJvmBytecodeCompiler {
         val isMultiModuleChunk = chunk.size > 1
 
         // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
-        val project = (projectEnvironment as? PsiBasedProjectEnvironment)?.project
+        val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
         for (module in chunk) {
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
             val context = CompilationContext(
                 module,
                 module.getSourceFiles(
-                    allSources, (projectEnvironment as? PsiBasedProjectEnvironment)?.localFileSystem, isMultiModuleChunk, buildFile
+                    allSources, (projectEnvironment as? VfsBasedProjectEnvironment)?.localFileSystem, isMultiModuleChunk, buildFile
                 ),
                 projectEnvironment,
                 messageCollector,
@@ -112,7 +112,7 @@ object FirKotlinToJvmBytecodeCompiler {
         }
 
         val mainClassFqName: FqName? = runIf(chunk.size == 1 && projectConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-            findMainClass(outputs.single().first)
+            findMainClass(outputs.single().first.fir)
         }
 
         return writeOutputs(
@@ -179,7 +179,7 @@ object FirKotlinToJvmBytecodeCompiler {
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
         }
 
-        var sourceScope = (projectEnvironment as PsiBasedProjectEnvironment).getSearchScopeByPsiFiles(ktFiles) +
+        var sourceScope = (projectEnvironment as VfsBasedProjectEnvironment).getSearchScopeByPsiFiles(ktFiles) +
                 projectEnvironment.getSearchScopeForProjectJavaSources()
 
         var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -307,7 +307,7 @@ object FirKotlinToJvmBytecodeCompiler {
         )
 
         val generationState = GenerationState.Builder(
-            (projectEnvironment as PsiBasedProjectEnvironment).project, ClassBuilderFactories.BINARIES,
+            (projectEnvironment as VfsBasedProjectEnvironment).project, ClassBuilderFactories.BINARIES,
             moduleFragment.descriptor, dummyBindingContext, ktFiles,
             moduleConfiguration
         ).codegenFactory(
@@ -366,38 +366,38 @@ object FirKotlinToJvmBytecodeCompiler {
         val firExtensionRegistrars: List<FirExtensionRegistrar>,
         val irGenerationExtensions: Collection<IrGenerationExtension>
     )
+}
 
-    private fun findMainClass(firResult: FirResult): FqName? {
-        // TODO: replace with proper main function detector, KT-44557
-        val compatibleClasses = mutableListOf<FqName>()
-        val visitor = object : FirVisitorVoid() {
-            lateinit var file: FirFile
+internal fun findMainClass(fir: List<FirFile>): FqName? {
+    // TODO: replace with proper main function detector, KT-44557
+    val compatibleClasses = mutableListOf<FqName>()
+    val visitor = object : FirVisitorVoid() {
+        lateinit var file: FirFile
 
-            override fun visitElement(element: FirElement) {}
+        override fun visitElement(element: FirElement) {}
 
-            override fun visitFile(file: FirFile) {
-                this.file = file
-                file.acceptChildren(this)
-            }
-
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-                if (simpleFunction.name.asString() != "main") return
-                if (simpleFunction.typeParameters.isNotEmpty()) return
-                when (simpleFunction.valueParameters.size) {
-                    0 -> {}
-                    1 -> {
-                        val parameterType = simpleFunction.valueParameters.single().returnTypeRef.coneType
-                        if (!parameterType.isArrayType || parameterType.arrayElementType()?.isString != true) return
-                    }
-                    else -> return
-                }
-
-                compatibleClasses += FqName.fromSegments(
-                    file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt").capitalize()}Kt"
-                )
-            }
+        override fun visitFile(file: FirFile) {
+            this.file = file
+            file.acceptChildren(this)
         }
-        firResult.fir.forEach { it.accept(visitor) }
-        return compatibleClasses.singleOrNull()
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+            if (simpleFunction.name.asString() != "main") return
+            if (simpleFunction.typeParameters.isNotEmpty()) return
+            when (simpleFunction.valueParameters.size) {
+                0 -> {}
+                1 -> {
+                    val parameterType = simpleFunction.valueParameters.single().returnTypeRef.coneType
+                    if (!parameterType.isArrayType || parameterType.arrayElementType()?.isString != true) return
+                }
+                else -> return
+            }
+
+            compatibleClasses += FqName.fromSegments(
+                file.packageFqName.pathSegments().map { it.asString() } + "${file.name.removeSuffix(".kt").capitalize()}Kt"
+            )
+        }
     }
+    fir.forEach { it.accept(visitor) }
+    return compatibleClasses.singleOrNull()
 }

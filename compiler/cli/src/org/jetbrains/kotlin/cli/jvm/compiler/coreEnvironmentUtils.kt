@@ -30,22 +30,20 @@ fun CompilerConfiguration.report(severity: CompilerMessageSeverity, message: Str
     get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.report(severity, message, location)
 }
 
-fun createSourceFilesFromSourceRoots(
+inline fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
     project: Project,
-    sourceRoots: List<KotlinSourceRoot>,
-    reportLocation: CompilerMessageLocation? = null
-): MutableList<KtFile> {
+    reportLocation: CompilerMessageLocation? = null,
+    body: (VirtualFile, Boolean) -> Unit
+) {
     val localFileSystem = VirtualFileManager.getInstance()
         .getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-    val psiManager = PsiManager.getInstance(project)
 
     val processedFiles = hashSetOf<VirtualFile>()
-    val result = mutableListOf<KtFile>()
 
     val virtualFileCreator = PreprocessedFileCreator(project)
 
-    for ((sourceRootPath, isCommon) in sourceRoots) {
+    for ((sourceRootPath, isCommon) in this) {
         val vFile = localFileSystem.findFileByPath(sourceRootPath)
         if (vFile == null) {
             val message = "Source file or directory not found: $sourceRootPath"
@@ -70,17 +68,28 @@ fun createSourceFilesFromSourceRoots(
 
             val virtualFile = localFileSystem.findFileByPath(file.absolutePath)?.let(virtualFileCreator::create)
             if (virtualFile != null && processedFiles.add(virtualFile)) {
-                val psiFile = psiManager.findFile(virtualFile)
-                if (psiFile is KtFile) {
-                    result.add(psiFile)
-                    if (isCommon) {
-                        psiFile.isCommonSource = true
-                    }
-                }
+                body(virtualFile, isCommon)
             }
         }
     }
+}
 
+fun createSourceFilesFromSourceRoots(
+    configuration: CompilerConfiguration,
+    project: Project,
+    sourceRoots: List<KotlinSourceRoot>,
+    reportLocation: CompilerMessageLocation? = null
+): MutableList<KtFile> {
+    val psiManager = PsiManager.getInstance(project)
+    val result = mutableListOf<KtFile>()
+    sourceRoots.forAllFiles(configuration, project, reportLocation) { virtualFile, isCommon ->
+        psiManager.findFile(virtualFile)?.let {
+            if (it is KtFile) {
+                it.isCommonSource = isCommon
+                result.add(it)
+            }
+        }
+    }
     return result
 }
 

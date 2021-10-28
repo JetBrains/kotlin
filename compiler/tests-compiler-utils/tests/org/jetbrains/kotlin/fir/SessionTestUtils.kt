@@ -10,8 +10,8 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
@@ -63,7 +63,11 @@ fun createSessionForTests(
         JvmPlatforms.unspecifiedJvmPlatform,
         JvmPlatformAnalyzerServices,
         externalSessionProvider = null,
-        PsiBasedProjectEnvironment(project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL), getPackagePartProvider),
+        VfsBasedProjectEnvironment(
+            project,
+            VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+            getPackagePartProvider
+        ),
         languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         PsiBasedProjectFileSearchScope(sourceScope),
         PsiBasedProjectFileSearchScope(librariesScope),
