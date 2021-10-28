@@ -52,20 +52,24 @@ internal class KtFe10PsiKotlinPropertySymbol(
         get() = withValidityAssertion { psi.hasModifier(KtTokens.CONST_KEYWORD) }
 
     override val hasGetter: Boolean
-        get() = withValidityAssertion { psi.getter != null }
+        get() = withValidityAssertion { true }
 
     override val hasSetter: Boolean
-        get() = withValidityAssertion { psi.setter != null }
+        get() = withValidityAssertion { psi.isVar }
 
-    override val getter: KtPropertyGetterSymbol?
+    override val getter: KtPropertyGetterSymbol
         get() = withValidityAssertion {
-            val getter = psi.getter ?: return null
+            val getter = psi.getter ?: return KtFe10PsiDefaultPropertyGetterSymbol(psi, analysisContext)
             return KtFe10PsiPropertyGetterSymbol(getter, analysisContext)
         }
 
     override val setter: KtPropertySetterSymbol?
         get() = withValidityAssertion {
-            val setter = psi.setter ?: return null
+            if (!psi.isVar) {
+                return null
+            }
+
+            val setter = psi.setter ?: return KtFe10PsiDefaultPropertySetterSymbol(psi, analysisContext)
             return KtFe10PsiPropertySetterSymbol(setter, analysisContext)
         }
 
@@ -121,11 +125,11 @@ internal class KtFe10PsiKotlinPropertySymbol(
 
     override val dispatchType: KtType?
         get() = withValidityAssertion {
-            return if (!isStatic) {
-                descriptor?.dispatchReceiverParameter?.type?.toKtType(analysisContext) ?: createErrorType()
-            } else {
-                null
+            if (psi.isTopLevel) {
+                return null
             }
+
+            return descriptor?.dispatchReceiverParameter?.type?.toKtType(analysisContext) ?: createErrorType()
         }
 
     override val modality: Modality
