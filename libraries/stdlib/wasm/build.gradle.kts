@@ -53,10 +53,32 @@ val commonMainSources by task<Sync> {
     into("$buildDir/commonMainSources")
 }
 
+val commonTestSources by task<Sync> {
+    val sources = listOf(
+        "libraries/stdlib/test/",
+        "libraries/stdlib/common/test/"
+    )
+
+    sources.forEach { path ->
+        from("$rootDir/$path") {
+            into(path.dropLastWhile { it != '/' })
+        }
+    }
+
+    into("$buildDir/commonTestSources")
+}
+
 kotlin {
     wasm {
-        nodejs()
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
     }
+
     sourceSets {
         val wasmMain by getting {
             kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
@@ -66,6 +88,20 @@ kotlin {
 
         val commonMain by getting {
             kotlin.srcDirs(files(commonMainSources.map { it.destinationDir }))
+        }
+
+        val commonTest by getting {
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-wasm"))
+            }
+            kotlin.srcDir(files(commonTestSources.map { it.destinationDir }))
+        }
+
+        val wasmTest by getting {
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-wasm"))
+            }
+            kotlin.srcDir("$rootDir/libraries/stdlib/wasm/test/")
         }
     }
 }
@@ -88,6 +124,15 @@ tasks.named("compileKotlinWasm") {
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
     dependsOn(commonMainSources)
     dependsOn(builtInsSources)
+}
+
+val compileTestKotlinWasm by tasks.existing(KotlinCompile::class) {
+    val sources: FileCollection = kotlin.sourceSets["commonTest"].kotlin
+    doFirst {
+        // Note: common test sources are copied to the actual source directory by commonMainSources task,
+        // so can't do this at configuration time:
+        kotlinOptions.freeCompilerArgs += listOf("-Xcommon-sources=${sources.joinToString(",")}")
+    }
 }
 
 val runtimeElements by configurations.creating {}
