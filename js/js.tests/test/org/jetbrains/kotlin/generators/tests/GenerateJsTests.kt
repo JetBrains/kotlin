@@ -96,6 +96,10 @@ fun main(args: Array<String>) {
                 )
             }
 
+            testClass<AbstractIrCodegenWasmJsInteropJsTest> {
+                model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.JS_IR)
+            }
+
             testClass<AbstractIrCodegenWasmJsInteropWasmTest> {
                 model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.WASM)
             }
