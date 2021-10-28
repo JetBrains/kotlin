@@ -42,11 +42,12 @@ class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : Ab
         PsiBasedProjectFileSearchScope(GlobalSearchScope.notScope(psiSearchScope))
 }
 
-class PsiBasedProjectEnvironment(
+open class VfsBasedProjectEnvironment(
     val project: Project,
     val localFileSystem: VirtualFileSystem,
-    val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
+    private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
 ) : AbstractProjectEnvironment {
+
     override fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder =
         VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope())
 
@@ -105,7 +106,7 @@ private fun AbstractProjectFileSearchScope.asPsiSearchScope() =
     }
 
 fun KotlinCoreEnvironment.toAbstractProjectEnvironment(): AbstractProjectEnvironment =
-    PsiBasedProjectEnvironment(
+    VfsBasedProjectEnvironment(
         project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
         { createPackagePartProvider(it) }
     )
