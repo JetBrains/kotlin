@@ -16,15 +16,20 @@ import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
-    private val javaTypeParameterStack: JavaTypeParameterStack
+    private val javaTypeParameterStack: JavaTypeParameterStack,
+    private val baseScope: FirTypeScope?,
+    private val considerReturnTypeKinds: Boolean,
 ) : FirAbstractOverrideChecker() {
     private val context: ConeTypeContext = session.typeContext
 
@@ -74,7 +79,7 @@ class JavaOverrideChecker internal constructor(
         val candidateType = candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
         val baseType = baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
 
-        if (candidateType.isPrimitiveInJava() != baseType.isPrimitiveInJava()) return false
+        if (candidateType.isPrimitiveInJava(isReturnType = false) != baseType.isPrimitiveInJava(isReturnType = false)) return false
 
         return isEqualTypes(
             candidateType,
@@ -83,8 +88,50 @@ class JavaOverrideChecker internal constructor(
         )
     }
 
-    private fun ConeKotlinType.isPrimitiveInJava(): Boolean = with(context) {
-        !isNullableType() && CompilerConeAttributes.EnhancedNullability !in attributes && isPrimitiveOrNullablePrimitive
+    // In most cases checking erasure of value parameters should be enough, but in some cases there might be semi-valid Java hierarchies
+    // with same value parameters, but different return type kinds, so it's worth distinguishing them as different non-overridable members
+    private fun doesReturnTypesHaveSameKind(
+        candidate: FirSimpleFunction,
+        base: FirSimpleFunction,
+    ): Boolean {
+        val candidateTypeRef = candidate.returnTypeRef
+        val baseTypeRef = base.returnTypeRef
+
+        val candidateType = candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+        val baseType = baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+
+        val candidateHasPrimitiveReturnType = candidate.hasPrimitiveReturnTypeInJvm(candidateType)
+        if (candidateHasPrimitiveReturnType != base.hasPrimitiveReturnTypeInJvm(baseType)) return false
+
+        // Both candidate and base are not primitive
+        if (!candidateHasPrimitiveReturnType) return true
+
+        return (candidateType as? ConeClassLikeType)?.lookupTag == (baseType as? ConeClassLikeType)?.lookupTag
+    }
+
+    private fun ConeKotlinType.isPrimitiveInJava(isReturnType: Boolean): Boolean = with(context) {
+        if (isNullableType() || CompilerConeAttributes.EnhancedNullability in attributes) return false
+
+        val isVoid = isReturnType && isUnit
+        return isPrimitiveOrNullablePrimitive || isVoid
+    }
+
+    private fun FirSimpleFunction.hasPrimitiveReturnTypeInJvm(returnType: ConeKotlinType): Boolean {
+        if (!returnType.isPrimitiveInJava(isReturnType = true)) return false
+
+        var foundNonPrimitiveOverridden = false
+
+        baseScope?.processOverriddenFunctions(symbol) {
+            val type = it.fir.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+            if (!type.isPrimitiveInJava(isReturnType = true)) {
+                foundNonPrimitiveOverridden = true
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
+        }
+
+        return !foundNonPrimitiveOverridden
     }
 
     private fun isEqualArrayElementTypeProjections(
@@ -176,9 +223,16 @@ class JavaOverrideChecker internal constructor(
 
         if (overrideCandidate.valueParameters.size != baseParameterTypes.size) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration)
-        return overrideCandidate.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
-            isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor)
+
+        if (!overrideCandidate.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
+                isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor)
+            }) {
+            return false
         }
+
+        if (considerReturnTypeKinds && !doesReturnTypesHaveSameKind(overrideCandidate, baseDeclaration)) return false
+
+        return true
     }
 
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {

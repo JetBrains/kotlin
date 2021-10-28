@@ -23,7 +23,7 @@ class JavaClassStaticUseSiteScope internal constructor(
 ) : FirContainingNamesAwareScope() {
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
-    private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack)
+    private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack, baseScope = null, considerReturnTypeKinds = false)
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         functions.getOrPut(name) {

@@ -45,7 +45,7 @@ class JavaClassUseSiteMemberScope(
     declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
     session,
-    JavaOverrideChecker(session, klass.javaTypeParameterStack),
+    JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypesScope, considerReturnTypeKinds = true),
     superTypesScope,
     declaredMemberScope
 ) {

@@ -102,7 +102,9 @@ object JavaScopeProvider : FirScopeProvider() {
                     useSiteSession,
                     JavaOverrideChecker(
                         useSiteSession,
-                        regularClass.javaTypeParameterStack
+                        regularClass.javaTypeParameterStack,
+                        baseScope = null,
+                        considerReturnTypeKinds = false,
                     ),
                     superTypeScopes,
                     regularClass.defaultType(),
