@@ -47,7 +47,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
     var manifestFile: String? = null
 
-    @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict', 'relaxed' and 'experimental' are currently supported")
+    @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict' and 'experimental' are currently supported")
     var memoryModel: String? = "strict"
 
     @Argument(value="-module-name", deprecatedName = "-module_name", valueDescription = "<name>", description = "Specify a name for the compilation module")

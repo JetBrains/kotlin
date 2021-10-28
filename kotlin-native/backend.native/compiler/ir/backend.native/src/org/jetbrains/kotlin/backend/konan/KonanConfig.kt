@@ -59,7 +59,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val memoryModel: MemoryModel by lazy {
         when (configuration.get(BinaryOptions.memoryModel)!!) {
             MemoryModel.STRICT -> MemoryModel.STRICT
-            MemoryModel.RELAXED -> MemoryModel.RELAXED
+            MemoryModel.RELAXED -> {
+                configuration.report(CompilerMessageSeverity.ERROR,
+                        "Relaxed memory model is deprecated and isn't expected to work right way with current Kotlin version." +
+                                " Use strict as default. ")
+                MemoryModel.STRICT
+            }
             MemoryModel.EXPERIMENTAL -> {
                 if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,

@@ -233,10 +233,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
                 val memoryModelFromArgument = when (arguments.memoryModel) {
-                    "relaxed" -> {
-                        configuration.report(STRONG_WARNING, "Relaxed memory model is not yet fully functional")
-                        MemoryModel.RELAXED
-                    }
+                    "relaxed" -> MemoryModel.RELAXED
                     "strict" -> MemoryModel.STRICT
                     "experimental" -> MemoryModel.EXPERIMENTAL
                     else -> {
