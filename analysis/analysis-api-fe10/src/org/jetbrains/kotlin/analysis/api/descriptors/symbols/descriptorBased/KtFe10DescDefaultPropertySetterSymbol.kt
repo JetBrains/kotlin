@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class KtFe10DescDefaultPropertySetterSymbol(
     private val propertyDescriptor: PropertyDescriptor,
@@ -57,7 +56,7 @@ class KtFe10DescDefaultPropertySetterSymbol(
         get() = withValidityAssertion { null }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { propertyDescriptor.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { propertyDescriptor.getSymbolOrigin(analysisContext) }

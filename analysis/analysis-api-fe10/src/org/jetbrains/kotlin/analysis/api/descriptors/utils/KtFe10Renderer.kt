@@ -68,7 +68,7 @@ internal class KtFe10Renderer(
     private val typeRenderer = KtFe10TypeRenderer(options.typeRendererOptions, isDebugText)
 
     private val typeApproximator = TypeApproximator(
-        analysisContext.resolveSession.moduleDescriptor.builtIns,
+        analysisContext.builtIns,
         analysisContext.resolveSession.languageVersionSettings
     )
 
@@ -96,7 +96,7 @@ internal class KtFe10Renderer(
         if (shouldApproximate) {
             val approximatedType = typeApproximator.approximateToSuperType(type.unwrap(), PublicApproximatorConfiguration)
                 ?: type.takeIf { it.constructor.declarationDescriptor?.name != SpecialNames.NO_NAME_PROVIDED }
-                ?: analysisContext.resolveSession.moduleDescriptor.builtIns.anyType
+                ?: analysisContext.builtIns.anyType
 
             renderType(approximatedType, shouldApproximate = false)
             return

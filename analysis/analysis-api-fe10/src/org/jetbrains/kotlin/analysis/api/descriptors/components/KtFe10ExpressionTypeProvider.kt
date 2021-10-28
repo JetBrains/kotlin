@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,9 +50,6 @@ class KtFe10ExpressionTypeProvider(
     override val token: ValidityToken
         get() = analysisSession.token
 
-    private val builtIns: KotlinBuiltIns
-        get() = analysisContext.resolveSession.moduleDescriptor.builtIns
-
     override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
         // Not sure if it's safe enough. In theory, some annotations on expressions might change its type
         val unwrapped = expression.unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return null
@@ -62,7 +58,7 @@ class KtFe10ExpressionTypeProvider(
         }
 
         val bindingContext = analysisContext.analyze(unwrapped, AnalysisMode.PARTIAL)
-        val kotlinType = expression.getType(bindingContext) ?: builtIns.unitType
+        val kotlinType = expression.getType(bindingContext) ?: analysisContext.builtIns.unitType
         return kotlinType.toKtType(analysisContext)
     }
 
@@ -104,7 +100,7 @@ class KtFe10ExpressionTypeProvider(
             return kotlinType.toKtType(analysisContext)
         }
 
-        return builtIns.unitType.toKtType(analysisContext)
+        return analysisContext.builtIns.unitType.toKtType(analysisContext)
     }
 
     override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType = withValidityAssertion {
@@ -119,8 +115,8 @@ class KtFe10ExpressionTypeProvider(
         val parameterCount = declaration.valueParameters.size + (if (declaration.isExtensionDeclaration()) 1 else 0)
 
         val function = when {
-            declaration.hasModifier(KtTokens.SUSPEND_KEYWORD) -> builtIns.getSuspendFunction(parameterCount)
-            else -> builtIns.getFunction(parameterCount)
+            declaration.hasModifier(KtTokens.SUSPEND_KEYWORD) -> analysisContext.builtIns.getSuspendFunction(parameterCount)
+            else -> analysisContext.builtIns.getFunction(parameterCount)
         }
 
         val errorMessage = "Descriptor not found for function \"${declaration.name}\""

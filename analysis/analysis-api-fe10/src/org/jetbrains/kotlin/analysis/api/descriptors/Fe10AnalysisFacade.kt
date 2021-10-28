@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -43,4 +44,7 @@ class Fe10AnalysisContext(
 ) : Fe10AnalysisFacade by facade {
     val resolveSession: ResolveSession = getResolveSession(contextElement)
     val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
+
+    val builtIns: KotlinBuiltIns
+        get() = resolveSession.moduleDescriptor.builtIns
 }

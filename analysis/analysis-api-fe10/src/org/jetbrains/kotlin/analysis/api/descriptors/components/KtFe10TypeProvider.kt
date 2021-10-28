@@ -48,7 +48,7 @@ internal class KtFe10TypeProvider(
     @Suppress("SpellCheckingInspection")
     private val typeApproximator by lazy {
         TypeApproximator(
-            analysisContext.resolveSession.moduleDescriptor.builtIns,
+            analysisContext.builtIns,
             analysisContext.resolveSession.languageVersionSettings
         )
     }
@@ -405,51 +405,49 @@ private class KtFe10BuiltinTypes(private val analysisContext: Fe10AnalysisContex
     override val token: ValidityToken
         get() = analysisContext.token
 
-    private val builtIns = analysisContext.resolveSession.moduleDescriptor.builtIns
-
     override val INT: KtType
-        get() = withValidityAssertion { builtIns.intType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.intType.toKtType(analysisContext) }
 
     override val LONG: KtType
-        get() = withValidityAssertion { builtIns.longType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.longType.toKtType(analysisContext) }
 
     override val SHORT: KtType
-        get() = withValidityAssertion { builtIns.shortType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.shortType.toKtType(analysisContext) }
 
     override val BYTE: KtType
-        get() = withValidityAssertion { builtIns.byteType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.byteType.toKtType(analysisContext) }
 
     override val FLOAT: KtType
-        get() = withValidityAssertion { builtIns.floatType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.floatType.toKtType(analysisContext) }
 
     override val DOUBLE: KtType
-        get() = withValidityAssertion { builtIns.doubleType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.doubleType.toKtType(analysisContext) }
 
     override val BOOLEAN: KtType
-        get() = withValidityAssertion { builtIns.booleanType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.booleanType.toKtType(analysisContext) }
 
     override val CHAR: KtType
-        get() = withValidityAssertion { builtIns.charType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.charType.toKtType(analysisContext) }
 
     override val STRING: KtType
-        get() = withValidityAssertion { builtIns.stringType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.stringType.toKtType(analysisContext) }
 
     override val UNIT: KtType
-        get() = withValidityAssertion { builtIns.unitType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
     override val NOTHING: KtType
-        get() = withValidityAssertion { builtIns.nothingType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.nothingType.toKtType(analysisContext) }
 
     override val ANY: KtType
-        get() = withValidityAssertion { builtIns.anyType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.anyType.toKtType(analysisContext) }
 
     override val THROWABLE: KtType
-        get() = withValidityAssertion { builtIns.throwable.defaultType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.throwable.defaultType.toKtType(analysisContext) }
 
     override val NULLABLE_ANY: KtType
-        get() = withValidityAssertion { builtIns.nullableAnyType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.nullableAnyType.toKtType(analysisContext) }
 
     override val NULLABLE_NOTHING: KtType
-        get() = withValidityAssertion { builtIns.nullableNothingType.toKtType(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.nullableNothingType.toKtType(analysisContext) }
 
 }

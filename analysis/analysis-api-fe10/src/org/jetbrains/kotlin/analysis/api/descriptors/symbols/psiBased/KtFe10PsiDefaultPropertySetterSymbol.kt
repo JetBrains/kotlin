@@ -81,8 +81,7 @@ class KtFe10PsiDefaultPropertySetterSymbol(
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion {
-            val builtIns = analysisContext.resolveSession.moduleDescriptor.builtIns
-            return builtIns.unitType.toKtTypeAndAnnotations(analysisContext)
+            return analysisContext.builtIns.unitType.toKtTypeAndAnnotations(analysisContext)
         }
 
     override val receiverType: KtTypeAndAnnotations?

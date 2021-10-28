@@ -19,14 +19,13 @@ import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.SyntheticPropertyDescriptor
 import org.jetbrains.kotlin.descriptors.hasBody
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 internal class KtFe10DescPropertySetterSymbol(
     override val descriptor: PropertySetterDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertySetterSymbol(), KtFe10DescMemberSymbol<PropertySetterDescriptor> {
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }
+        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }
 
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
