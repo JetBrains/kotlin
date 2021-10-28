@@ -14,9 +14,10 @@ class A {
 
   init {
     a().apply<String>(block = local fun String.<anonymous>() {
-      <this>.#b = <this>
+      <this>.#b = $this$apply
     }
 ) /*~> Unit */
   }
 
 }
+

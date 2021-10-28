@@ -11,6 +11,8 @@ import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -27,12 +29,15 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
         const val JVM_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM"
         const val JVM_IR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM_IR"
+        const val CLASSIC_FRONTEND_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER CLASSIC_FRONTEND"
+        const val FIR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER FIR"
 
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
     }
 
     private var wholeFile = File("")
     private var backend = TargetBackend.JVM
+    private var frontend: FrontendKind<*> = FrontendKinds.ClassicFrontend
 
     abstract fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event)
 
@@ -42,8 +47,9 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         classPath: List<URL>,
         mainClassAndArguments: List<String>
     ): Process {
-        // Extract target backend and the full test file used to extract test expectations.
+        // Extract target backend, frontend, and the full test file used to extract test expectations.
         backend = module.targetBackend ?: backend
+        frontend = module.frontendKind
         wholeFile = module.files.single { it.name == "test.kt" }.originalFile
 
         // Setup the java process to suspend waiting for debugging connection on a free port.
@@ -187,6 +193,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         }
 
         var currentBackend = TargetBackend.ANY
+        var currentFrontend = frontend
         for (line in lineIterator) {
             if (line.isEmpty()) {
                 actual.add(line)
@@ -198,11 +205,22 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                     EXPECTATIONS_MARKER -> TargetBackend.ANY
                     JVM_EXPECTATIONS_MARKER -> TargetBackend.JVM
                     JVM_IR_EXPECTATIONS_MARKER -> TargetBackend.JVM_IR
+                    CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> currentBackend
+                    FIR_EXPECTATIONS_MARKER -> currentBackend
+                    else -> error("Expected JVM backend: $line")
+                }
+                currentFrontend = when (line) {
+                    EXPECTATIONS_MARKER -> frontend
+                    JVM_EXPECTATIONS_MARKER -> currentFrontend
+                    JVM_IR_EXPECTATIONS_MARKER -> currentFrontend
+                    CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> FrontendKinds.ClassicFrontend
+                    FIR_EXPECTATIONS_MARKER -> FrontendKinds.FIR
                     else -> error("Expected JVM backend: $line")
                 }
                 continue
             }
-            if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
+            if ((currentBackend == TargetBackend.ANY || currentBackend == backend) &&
+                currentFrontend == frontend) {
                 if (actualLineNumbersIterator.hasNext()) {
                     actual.add(actualLineNumbersIterator.next())
                 }

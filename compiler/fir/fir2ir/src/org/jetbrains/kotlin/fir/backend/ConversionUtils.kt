@@ -55,12 +55,15 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -488,16 +491,18 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     thisType: IrType,
     thisOrigin: IrDeclarationOrigin,
     startOffset: Int = this.startOffset,
-    endOffset: Int = this.endOffset
-): IrValueParameter =
-    symbolTable.irFactory.createValueParameter(
+    endOffset: Int = this.endOffset,
+    name: Name = SpecialNames.THIS
+): IrValueParameter {
+    return symbolTable.irFactory.createValueParameter(
         startOffset, endOffset, thisOrigin, IrValueParameterSymbolImpl(),
-        SpecialNames.THIS, UNDEFINED_PARAMETER_INDEX, thisType,
+        name, UNDEFINED_PARAMETER_INDEX, thisType,
         varargElementType = null, isCrossinline = false, isNoinline = false,
         isHidden = false, isAssignable = false
     ).apply {
         this.parent = this@declareThisReceiverParameter
     }
+}
 
 fun FirClass.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
@@ -615,6 +620,15 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
 fun FirDeclaration?.computeIrOrigin(predefinedOrigin: IrDeclarationOrigin? = null): IrDeclarationOrigin {
     return predefinedOrigin
         ?: (this?.origin as? FirDeclarationOrigin.Plugin)?.let { IrPluginDeclarationOrigin(it.key) }
+        ?: ((this as? FirValueParameter)?.source.psi as? KtParameter)?.let {
+            if (it.isSingleUnderscore) {
+                IrDeclarationOrigin.UNDERSCORE_PARAMETER
+            } else if (it.destructuringDeclaration != null) {
+                IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
+            } else {
+                null
+            }
+        }
         ?: IrDeclarationOrigin.DEFINED
 }
 

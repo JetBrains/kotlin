@@ -338,12 +338,17 @@ class Fir2IrDeclarationStorage(
                     else parentPropertyReceiverType
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
+                        val name = (function as? FirAnonymousFunction)?.label?.name?.let {
+                            val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
+                            Name.identifier("\$this\$$suffix")
+                        } ?: SpecialNames.THIS
                         declareThisReceiverParameter(
                             symbolTable,
                             thisType = receiverTypeRef.toIrType(typeContext),
                             thisOrigin = thisOrigin,
                             startOffset = startOffset,
-                            endOffset = endOffset
+                            endOffset = endOffset,
+                            name = name
                         )
                     }
                 }
