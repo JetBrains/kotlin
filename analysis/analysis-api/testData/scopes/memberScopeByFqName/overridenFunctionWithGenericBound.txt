@@ -1,0 +1,157 @@
+KtFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: test/MyClass.funWithOuterAndOwnGenericsAndBounds
+  dispatchType: test/MyClass
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: funWithOuterAndOwnGenericsAndBounds
+  origin: SOURCE
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: [
+    KtTypeParameterSymbol(TT1)
+    KtTypeParameterSymbol(TT2)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol(tT1)
+    KtValueParameterSymbol(tT2)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotatedType: [] test/Foo?
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: test/MyClass.propWithOuterAndOwnGenericsAndBounds
+  dispatchType: test/MyClass
+  getter: null
+  hasBackingField: false
+  hasGetter: false
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: true
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: OPEN
+  name: propWithOuterAndOwnGenericsAndBounds
+  origin: SOURCE
+  receiverType: [] test/TwoParams<TT1, TT2>
+  setter: null
+  symbolKind: CLASS_MEMBER
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getPropWithOuterAndOwnGenericsAndBounds
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtFunctionSymbol:
+  annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: kotlin/Any.equals
+  dispatchType: kotlin/Any
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(other)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: kotlin/Any.hashCode
+  dispatchType: kotlin/Any
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotatedType: [] kotlin/String
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: kotlin/Any.toString
+  dispatchType: kotlin/Any
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtConstructorSymbol:
+  annotatedType: [] test/MyClass
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: test/MyClass
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isPrimary: true
+  origin: SOURCE_MEMBER_GENERATED
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null

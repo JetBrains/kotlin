@@ -255,6 +255,7 @@ class FirClassSubstitutionScope(
     )
 
     private fun createSubstitutedData(member: FirCallableDeclaration): SubstitutedData {
+        member.ensureResolved(FirResolvePhase.TYPES)
         val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
             session,
             member as FirTypeParameterRefsOwner,
@@ -267,7 +268,7 @@ class FirClassSubstitutionScope(
 
         val newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers.substitute(substitutor)
 
-        member.symbol.ensureResolved(FirResolvePhase.STATUS)
+        member.ensureResolved(FirResolvePhase.STATUS)
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val fakeOverrideSubstitution = runIf(returnType == null) { FakeOverrideSubstitution(substitutor, member.symbol) }
         val newReturnType = returnType?.substitute(substitutor)
