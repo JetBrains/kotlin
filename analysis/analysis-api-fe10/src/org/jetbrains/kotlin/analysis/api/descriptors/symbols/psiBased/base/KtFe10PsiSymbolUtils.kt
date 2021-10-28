@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10ClassErrorType
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
@@ -70,6 +71,15 @@ internal val KtElement.ktSymbolKind: KtSymbolKind
 
 internal val KtDeclaration.callableIdIfNonLocal: CallableId?
     get() = calculateCallableId(allowLocal = false)
+
+internal val KtElement.ktSymbolOrigin: KtSymbolOrigin
+    get() {
+        return if (containingKtFile.isCompiled) {
+            KtSymbolOrigin.LIBRARY
+        } else {
+            KtSymbolOrigin.SOURCE
+        }
+    }
 
 internal fun KtDeclaration.calculateCallableId(allowLocal: Boolean): CallableId? {
     val selfName = this.name ?: return null

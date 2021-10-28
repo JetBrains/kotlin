@@ -21,11 +21,5 @@ internal interface KtFe10PsiSymbol<P : KtElement, D : DeclarationDescriptor> : K
         get() = descriptor?.annotations ?: Annotations.EMPTY
 
     override val origin: KtSymbolOrigin
-        get() = withValidityAssertion {
-            return if (psi.containingKtFile.isCompiled) {
-                KtSymbolOrigin.LIBRARY
-            } else {
-                KtSymbolOrigin.SOURCE
-            }
-        }
+        get() = withValidityAssertion { psi.ktSymbolOrigin }
 }

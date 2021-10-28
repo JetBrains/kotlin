@@ -48,7 +48,7 @@ internal class KtFe10DescSamConstructorSymbol(
         get() = withValidityAssertion { descriptor.isExtension }
 
     override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { KtSymbolOrigin.SAM_CONSTRUCTOR }
+        get() = withValidityAssertion { descriptor.getSymbolOrigin(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> = withValidityAssertion {
         val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
