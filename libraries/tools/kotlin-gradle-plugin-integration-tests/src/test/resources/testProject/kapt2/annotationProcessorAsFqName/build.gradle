@@ -1,16 +1,8 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id "java"
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
 }
-
-apply plugin: "java"
-apply plugin: "kotlin"
-apply plugin: "kotlin-kapt"
 
 repositories {
     mavenLocal()
@@ -24,5 +16,6 @@ kapt {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     kapt "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
 }
