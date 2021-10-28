@@ -107,6 +107,8 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
+    abstract fun addLinkOptions(compilation: KotlinJsIrCompilation)
+
     private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {
         fun KotlinJsPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
             lowerCamelCaseName(
@@ -114,6 +116,8 @@ abstract class KotlinJsIrSubTarget(
                 AbstractKotlinTargetConfigurator.testTaskNameSuffix
             )
         )
+
+        addLinkOptions(compilation)
 
         val testJs = project.registerTask<KotlinJsTest>(
             testRun.subtargetTestTaskName(),
