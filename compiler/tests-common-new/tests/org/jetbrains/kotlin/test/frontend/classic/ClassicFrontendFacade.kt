@@ -316,12 +316,8 @@ class ClassicFrontendFacade(
     ): AnalysisResult {
         val runtimeKlibsNames = JsEnvironmentConfigurator.getStdlibPathsForModule(module)
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
-        val transitiveLibraries = configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map {
-            testServices.jsLibraryProvider.getDescriptorByPath(File(it).absolutePath.replace("_v5.meta.js", "").replace("outputDir", "outputKlibDir"))
-        }
-        val friendLibraries = configuration[JSConfigurationKeys.FRIEND_PATHS]!!.map {
-            testServices.jsLibraryProvider.getDescriptorByPath(File(it).absolutePath.replace("_v5.meta.js", "").replace("outputDir", "outputKlibDir"))
-        }
+        val transitiveLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.RegularDependency)
+        val friendLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
         val allDependencies = runtimeKlibs + dependentDescriptors + transitiveLibraries
 
         val analyzer = AnalyzerWithCompilerReport(configuration)

@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.AbstractTestFacade
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
@@ -181,14 +178,8 @@ class JsIrBackendFacade(
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val mainModuleLib = testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
-        val friendLibraries = configuration[JSConfigurationKeys.FRIEND_PATHS]!!.map {
-            val descriptor = testServices.jsLibraryProvider.getDescriptorByPath(
-                File(it).absolutePath
-                    .replace("_v5.meta.js", "")
-                    .replace("outputDir", "outputKlibDir")
-            )
-            testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(descriptor)
-        }
+        val friendLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
         val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
         return getIrModuleInfoForKlib(
