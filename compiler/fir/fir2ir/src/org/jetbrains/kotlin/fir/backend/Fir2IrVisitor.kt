@@ -313,8 +313,10 @@ class Fir2IrVisitor(
         val irTarget = conversionScope.returnTarget(returnExpression, declarationStorage)
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
             val result = returnExpression.result
+            // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
+            val returnStartOffset = if (returnExpression.source?.kind == KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
             IrReturnImpl(
-                startOffset, endOffset, irBuiltIns.nothingType,
+                returnStartOffset, endOffset, irBuiltIns.nothingType,
                 when (irTarget) {
                     is IrConstructor -> irTarget.symbol
                     is IrSimpleFunction -> irTarget.symbol
@@ -499,9 +501,9 @@ class Fir2IrVisitor(
             is FirBlock -> expression.convertToIrExpressionOrBlock(
                 if (expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop) IrStatementOrigin.FOR_LOOP else null
             )
-            is FirUnitExpression -> expression.convertWithOffsets { startOffset, endOffset ->
+            is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->
                 IrGetObjectValueImpl(
-                    startOffset, endOffset, irBuiltIns.unitType, this.irBuiltIns.unitClass
+                    endOffset, endOffset, irBuiltIns.unitType, this.irBuiltIns.unitClass
                 )
             }
             else -> {
@@ -625,6 +627,10 @@ class Fir2IrVisitor(
         return statements.convertToIrExpressionOrBlock(source, origin)
     }
 
+    private fun FirBlock.convertToIrBlock(origin: IrStatementOrigin? = null): IrExpression {
+        return statements.convertToIrBlock(source, origin)
+    }
+
     private fun List<FirStatement>.convertToIrExpressionOrBlock(
         source: KtSourceElement?,
         origin: IrStatementOrigin? = null
@@ -637,6 +643,13 @@ class Fir2IrVisitor(
                 return convertToIrExpression(firStatement)
             }
         }
+        return convertToIrBlock(source, origin)
+    }
+
+    private fun List<FirStatement>.convertToIrBlock(
+        source: KtSourceElement?,
+        origin: IrStatementOrigin? = null
+    ): IrExpression {
         val type = if (origin?.isLoop == true)
             irBuiltIns.unitType
         else
@@ -940,7 +953,9 @@ class Fir2IrVisitor(
                 startOffset, endOffset, tryExpression.typeRef.toIrType(),
                 tryExpression.tryBlock.convertToIrExpressionOrBlock(),
                 tryExpression.catches.map { it.accept(this, data) as IrCatch },
-                tryExpression.finallyBlock?.convertToIrExpressionOrBlock()
+                // Always generate a block for the finally block. When leaving the finally block in the debugger for both
+                // Java and Kotlin there is a step on the end brace. For that to happen we need the block with that line number.
+                tryExpression.finallyBlock?.convertToIrBlock()
             )
         }
     }
