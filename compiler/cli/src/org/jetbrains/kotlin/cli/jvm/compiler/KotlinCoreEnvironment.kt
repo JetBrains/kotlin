@@ -198,45 +198,19 @@ class KotlinCoreEnvironment private constructor(
     val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
     init {
-        PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
-            .apply { isAccessible = true }
-            .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
-
+        projectEnvironment.configureProjectEnvironment(configuration, configFiles)
         val project = projectEnvironment.project
-
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        if (configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)) {
-            messageCollector?.report(
-                STRONG_WARNING,
-                "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
-            )
-        }
-
-        (projectEnvironment as? ProjectEnvironment)?.registerExtensionsFromPlugins(configuration)
-        // otherwise consider that project environment is properly configured before passing to the environment
-        // TODO: consider some asserts to check important extension points
-
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
 
-        val isJvm = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
-        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(isJvm))
-
-        registerProjectServicesForCLI(projectEnvironment)
-
-        registerProjectServices(projectEnvironment.project)
-
-        for (extension in CompilerConfigurationExtension.getInstances(project)) {
-            extension.updateConfiguration(configuration)
-        }
-
-        sourceFiles += createKtFiles(project)
+        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, getSourceRootsCheckingForDuplicates())
 
         collectAdditionalSources(project)
 
         sourceFiles.sortBy { it.virtualFile.path }
 
         val javaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
         val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
@@ -449,9 +423,6 @@ class KotlinCoreEnvironment private constructor(
 
     fun getSourceFiles(): List<KtFile> = sourceFiles
 
-    private fun createKtFiles(project: Project): List<KtFile> =
-        createSourceFilesFromSourceRoots(configuration, project, getSourceRootsCheckingForDuplicates())
-
     internal fun report(severity: CompilerMessageSeverity, message: String) = configuration.report(severity, message)
 
     companion object {
@@ -582,6 +553,38 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
                 ZipHandler.clearFileAccessorCache()
+            }
+        }
+
+        @JvmStatic
+        fun ProjectEnvironment.configureProjectEnvironment(
+            configuration: CompilerConfiguration,
+            configFiles: EnvironmentConfigFiles
+        ) {
+            PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
+                .apply { isAccessible = true }
+                .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
+
+            if (configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)) {
+                configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.report(
+                    STRONG_WARNING,
+                    "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
+                )
+            }
+
+            registerExtensionsFromPlugins(configuration)
+            // otherwise consider that project environment is properly configured before passing to the environment
+            // TODO: consider some asserts to check important extension points
+
+            val isJvm = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
+            project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(isJvm))
+
+            registerProjectServicesForCLI(this)
+
+            registerProjectServices(project)
+
+            for (extension in CompilerConfigurationExtension.getInstances(project)) {
+                extension.updateConfiguration(configuration)
             }
         }
 
@@ -723,7 +726,7 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
+        fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
             /**
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
              * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.

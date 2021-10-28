@@ -166,7 +166,8 @@ class Fir2IrConverter(
 
     private fun registerFileAndClasses(file: FirFile, moduleFragment: IrModuleFragment) {
         val fileEntry = when (file.origin) {
-            FirDeclarationOrigin.Source -> PsiIrFileEntry(file.psi as KtFile)
+            FirDeclarationOrigin.Source ->
+                file.psi?.let { PsiIrFileEntry(it as KtFile) } ?: NaiveSourceBasedFileEntryImpl(file.path ?: file.name)
             FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
             else -> error("Unsupported file origin: ${file.origin}")
         }

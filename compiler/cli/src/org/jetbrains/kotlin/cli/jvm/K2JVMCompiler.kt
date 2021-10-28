@@ -32,16 +32,15 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileModulesUsingFrontendIrAndLightTree
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -156,25 +155,35 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
 
             val chunk = moduleChunk.modules
-            KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, chunk, buildFile)
-            val environment = createCoreEnvironment(
-                rootDisposable, configuration, messageCollector,
-                chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
-                    names.singleOrNull() ?: names.joinToString()
+            configuration.configureSourceRoots(chunk, buildFile)
+
+            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+                val projectEnvironment =
+                    createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+
+                compileModulesUsingFrontendIrAndLightTree(
+                    projectEnvironment, configuration, messageCollector, buildFile, chunk
+                )
+            } else {
+                val environment = createCoreEnvironment(
+                    rootDisposable, configuration, messageCollector,
+                    chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
+                        names.singleOrNull() ?: names.joinToString()
+                    }
+                ) ?: return COMPILATION_ERROR
+                environment.registerJavacIfNeeded(arguments).let {
+                    if (!it) return COMPILATION_ERROR
                 }
-            ) ?: return COMPILATION_ERROR
-            environment.registerJavacIfNeeded(arguments).let {
-                if (!it) return COMPILATION_ERROR
+
+                if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
+                    if (arguments.version) return OK
+
+                    messageCollector.report(ERROR, "No source files")
+                    return COMPILATION_ERROR
+                }
+
+                KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
             }
-
-            if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
-                if (arguments.version) return OK
-
-                messageCollector.report(ERROR, "No source files")
-                return COMPILATION_ERROR
-            }
-
-            KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
             return OK
         } catch (e: CompilationException) {
             messageCollector.report(
