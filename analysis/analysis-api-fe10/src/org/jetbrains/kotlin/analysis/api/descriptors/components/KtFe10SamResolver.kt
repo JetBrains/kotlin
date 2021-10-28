@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtSamResolver
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 
-internal class KtFe10SamResolver(override val analysisSession: KtFe10AnalysisSession) : KtSamResolver() {
+internal class KtFe10SamResolver(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtSamResolver(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
@@ -28,11 +31,11 @@ internal class KtFe10SamResolver(override val analysisSession: KtFe10AnalysisSes
             val constructorDescriptor = createSamConstructorFunction(
                 descriptor.containingDeclaration,
                 descriptor,
-                analysisSession.resolveSession.samConversionResolver,
-                JvmSamConversionOracle(analysisSession.resolveSession.languageVersionSettings)
+                analysisContext.resolveSession.samConversionResolver,
+                JvmSamConversionOracle(analysisContext.resolveSession.languageVersionSettings)
             )
 
-            return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisSession)
+            return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
         }
 
         return null

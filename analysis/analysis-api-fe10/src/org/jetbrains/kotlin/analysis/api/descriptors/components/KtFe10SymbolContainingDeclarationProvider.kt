@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 
 internal class KtFe10SymbolContainingDeclarationProvider(
     override val analysisSession: KtFe10AnalysisSession
-) : KtSymbolContainingDeclarationProvider() {
+) : KtSymbolContainingDeclarationProvider(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
@@ -32,7 +33,7 @@ internal class KtFe10SymbolContainingDeclarationProvider(
         return when (symbol) {
             is KtPackageSymbol -> null
             is KtBackingFieldSymbol -> symbol.owningProperty
-            is KtFe10DescSymbol<*> -> symbol.descriptor.containingDeclaration?.toKtSymbol(analysisSession) as? KtSymbolWithKind
+            is KtFe10DescSymbol<*> -> symbol.descriptor.containingDeclaration?.toKtSymbol(analysisContext) as? KtSymbolWithKind
             is KtFe10PsiSymbol<*, *> -> {
                 val parentDeclaration = symbol.psi.getElementParentDeclaration()
                 if (parentDeclaration != null) {

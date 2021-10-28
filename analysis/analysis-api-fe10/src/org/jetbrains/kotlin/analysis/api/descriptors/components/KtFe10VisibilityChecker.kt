@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
@@ -25,7 +26,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
-internal class KtFe10VisibilityChecker(override val analysisSession: KtFe10AnalysisSession) : KtVisibilityChecker() {
+internal class KtFe10VisibilityChecker(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtVisibilityChecker(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
@@ -42,16 +45,16 @@ internal class KtFe10VisibilityChecker(override val analysisSession: KtFe10Analy
         val targetDescriptor = getSymbolDescriptor(candidateSymbol) as? DeclarationDescriptorWithVisibility ?: return false
 
         val useSiteDeclaration = findContainingNonLocalDeclaration(position) ?: return false
-        val bindingContextForUseSite = analysisSession.analyze(useSiteDeclaration)
+        val bindingContextForUseSite = analysisContext.analyze(useSiteDeclaration)
         val useSiteDescriptor = bindingContextForUseSite[BindingContext.DECLARATION_TO_DESCRIPTOR, useSiteDeclaration] ?: return false
 
         if (receiverExpression != null && !targetDescriptor.isExtension) {
-            val bindingContext = analysisSession.analyze(receiverExpression, AnalysisMode.PARTIAL)
+            val bindingContext = analysisContext.analyze(receiverExpression, AnalysisMode.PARTIAL)
             val receiverType = bindingContext.getType(receiverExpression) ?: return false
             val explicitReceiver = ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
             return DescriptorVisibilities.isVisible(explicitReceiver, targetDescriptor, useSiteDescriptor)
         } else {
-            val bindingContext = analysisSession.analyze(useSiteDeclaration, AnalysisMode.FULL)
+            val bindingContext = analysisContext.analyze(useSiteDeclaration, AnalysisMode.FULL)
 
             val lexicalScope = position.getResolutionScope(bindingContext)
             if (lexicalScope != null) {

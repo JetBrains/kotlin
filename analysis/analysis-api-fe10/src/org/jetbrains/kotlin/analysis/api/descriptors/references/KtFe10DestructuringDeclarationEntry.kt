@@ -22,9 +22,9 @@ abstract class KtFe10DestructuringDeclarationEntry(
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFe10AnalysisSession)
 
-        val bindingContext = analyze(element, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(element, AnalysisMode.PARTIAL)
         val descriptor = bindingContext[BindingContext.COMPONENT_RESOLVED_CALL, element]?.resultingDescriptor
-        return listOfNotNull(descriptor?.toKtCallableSymbol(this))
+        return listOfNotNull(descriptor?.toKtCallableSymbol(analysisContext))
     }
 }
 

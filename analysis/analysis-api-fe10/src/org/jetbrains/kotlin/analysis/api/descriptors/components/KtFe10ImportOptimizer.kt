@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 
-internal class KtFe10ImportOptimizer(private val analysisSession: KtFe10AnalysisSession) : KtImportOptimizer() {
+internal class KtFe10ImportOptimizer(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtImportOptimizer(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 

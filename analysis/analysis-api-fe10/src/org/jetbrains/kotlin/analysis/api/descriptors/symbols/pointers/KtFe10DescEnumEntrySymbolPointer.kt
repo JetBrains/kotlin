@@ -21,12 +21,14 @@ class KtFe10DescEnumEntrySymbolPointer(private val classId: ClassId, private val
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtEnumEntrySymbol? {
         check(analysisSession is KtFe10AnalysisSession)
-        val entryDescriptor = analysisSession.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId)
+        val analysisContext = analysisSession.analysisContext
+
+        val entryDescriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId)
             ?.unsubstitutedMemberScope
             ?.getContributedClassifier(entryName, NoLookupLocation.FROM_IDE)
 
         if (entryDescriptor is ClassDescriptor && entryDescriptor.kind == ClassKind.ENUM_ENTRY) {
-            return KtFe10DescEnumEntrySymbol(entryDescriptor, analysisSession)
+            return KtFe10DescEnumEntrySymbol(entryDescriptor, analysisContext)
         }
 
         return null

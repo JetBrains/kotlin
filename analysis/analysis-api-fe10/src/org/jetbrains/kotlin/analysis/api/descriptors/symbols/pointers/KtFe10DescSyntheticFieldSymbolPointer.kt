@@ -22,12 +22,13 @@ class KtFe10DescSyntheticFieldSymbolPointer(
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtBackingFieldSymbol? {
         check(analysisSession is KtFe10AnalysisSession)
+        val analysisContext = analysisSession.analysisContext
 
         @Suppress("DEPRECATION")
         val accessorSymbol = psiPointer.restoreSymbol(analysisSession) ?: return null
 
         val accessorDescriptor = getSymbolDescriptor(accessorSymbol) as? PropertyAccessorDescriptor ?: return null
         val syntheticFieldDescriptor = SyntheticFieldDescriptor(accessorDescriptor, accessorDescriptor.correspondingProperty.source)
-        return KtFe10DescSyntheticFieldSymbol(syntheticFieldDescriptor, analysisSession)
+        return KtFe10DescSyntheticFieldSymbol(syntheticFieldDescriptor, analysisContext)
     }
 }

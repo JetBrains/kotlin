@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 
 internal class KtFe10CapturedType(
     override val type: CapturedType,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtCapturedType(), KtFe10Type {
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
 

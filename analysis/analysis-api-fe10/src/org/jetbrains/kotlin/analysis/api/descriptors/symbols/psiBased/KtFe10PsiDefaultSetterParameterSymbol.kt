@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
@@ -27,10 +28,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiDefaultSetterParameterSymbol(
     private val accessorPsi: KtPropertyAccessor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtValueParameterSymbol(), KtFe10Symbol {
     private val descriptor: VariableDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(accessorPsi, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(accessorPsi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.PROPERTY_ACCESSOR, accessorPsi]?.valueParameters?.single()
     }
 
@@ -44,7 +45,7 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
         get() = withValidityAssertion { false }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor?.type?.toKtTypeAndAnnotations(analysisSession) ?: createErrorTypeAndAnnotations() }
+        get() = withValidityAssertion { descriptor?.type?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations() }
 
     override val psi: PsiElement?
         get() = withValidityAssertion { null }

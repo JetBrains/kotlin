@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 internal class KtFe10IntersectionType(
     override val type: SimpleType,
     private val supertypes: Collection<KotlinType>,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtIntersectionType(), KtFe10Type {
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
 
@@ -31,7 +32,7 @@ internal class KtFe10IntersectionType(
         val isNullable = type.isMarkedNullable
         for (supertype in supertypes) {
             val mappedSupertype = if (isNullable) supertype.makeNullable() else supertype
-            result += mappedSupertype.toKtType(analysisSession)
+            result += mappedSupertype.toKtType(analysisContext)
         }
         return@cached result
     }

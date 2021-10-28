@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescNamedClassOrObjectSymbolSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal class KtFe10DescNamedClassOrObjectSymbol(
     override val descriptor: ClassDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtNamedClassOrObjectSymbol(), KtFe10DescMemberSymbol<ClassDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
@@ -49,7 +49,7 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
         get() {
             withValidityAssertion {
                 val companionObject = descriptor.companionObjectDescriptor ?: return null
-                return KtFe10DescNamedClassOrObjectSymbol(companionObject, analysisSession)
+                return KtFe10DescNamedClassOrObjectSymbol(companionObject, analysisContext)
             }
         }
 
@@ -73,7 +73,7 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
 
     override val superTypes: List<KtTypeAndAnnotations>
         get() = withValidityAssertion {
-            descriptor.getSupertypesWithAny().map { it.toKtTypeAndAnnotations(analysisSession) }
+            descriptor.getSupertypesWithAny().map { it.toKtTypeAndAnnotations(analysisContext) }
         }
 
     override val classIdIfNonLocal: ClassId?
@@ -83,7 +83,7 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
         get() = withValidityAssertion { descriptor.ktSymbolKind }
 
     override val typeParameters: List<KtTypeParameterSymbol>
-        get() = withValidityAssertion { descriptor.declaredTypeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisSession) } }
+        get() = withValidityAssertion { descriptor.declaredTypeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisContext) } }
 
     override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
         val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)

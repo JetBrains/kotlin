@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescMemberSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.callableId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal class KtFe10DescJavaFieldSymbol(
     override val descriptor: JavaPropertyDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtJavaFieldSymbol(), KtFe10DescMemberSymbol<JavaPropertyDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
@@ -37,7 +37,7 @@ internal class KtFe10DescJavaFieldSymbol(
         get() = withValidityAssertion { descriptor.callableId }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.returnType.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { descriptor.returnType.toKtTypeAndAnnotations(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()

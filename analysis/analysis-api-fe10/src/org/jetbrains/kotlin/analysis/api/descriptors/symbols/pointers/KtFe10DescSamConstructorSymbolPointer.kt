@@ -20,7 +20,9 @@ class KtFe10DescSamConstructorSymbolPointer(private val classId: ClassId) : KtSy
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtSamConstructorSymbol? {
         check(analysisSession is KtFe10AnalysisSession)
-        val samInterface = analysisSession.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId)
+        val analysisContext = analysisSession.analysisContext
+
+        val samInterface = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId)
         if (samInterface == null || getSingleAbstractMethodOrNull(samInterface) == null) {
             return null
         }
@@ -28,10 +30,10 @@ class KtFe10DescSamConstructorSymbolPointer(private val classId: ClassId) : KtSy
         val constructorDescriptor = createSamConstructorFunction(
             samInterface.containingDeclaration,
             samInterface,
-            analysisSession.resolveSession.samConversionResolver,
-            JvmSamConversionOracle(analysisSession.resolveSession.languageVersionSettings)
+            analysisContext.resolveSession.samConversionResolver,
+            JvmSamConversionOracle(analysisContext.resolveSession.languageVersionSettings)
         )
 
-        return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisSession)
+        return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
     }
 }

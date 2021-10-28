@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types.base
 
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.types.KotlinType
@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.types.UnwrappedType
 interface KtFe10Type : ValidityTokenOwner {
     val type: UnwrappedType
 
-    val analysisSession: KtFe10AnalysisSession
+    val analysisContext: Fe10AnalysisContext
 
     override val token: ValidityToken
-        get() = analysisSession.token
+        get() = analysisContext.token
 }
 
 internal fun KotlinType.asStringForDebugging(): String {

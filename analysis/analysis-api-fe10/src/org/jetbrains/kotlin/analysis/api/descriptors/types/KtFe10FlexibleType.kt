@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -18,15 +19,15 @@ import org.jetbrains.kotlin.types.FlexibleType
 
 internal class KtFe10FlexibleType(
     override val type: FlexibleType,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtFlexibleType(), KtFe10Type {
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
 
     override val lowerBound: KtType
-        get() = withValidityAssertion { type.lowerBound.toKtType(analysisSession) }
+        get() = withValidityAssertion { type.lowerBound.toKtType(analysisContext) }
 
     override val upperBound: KtType
-        get() = withValidityAssertion { type.upperBound.toKtType(analysisSession) }
+        get() = withValidityAssertion { type.upperBound.toKtType(analysisContext) }
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { type.ktNullability }

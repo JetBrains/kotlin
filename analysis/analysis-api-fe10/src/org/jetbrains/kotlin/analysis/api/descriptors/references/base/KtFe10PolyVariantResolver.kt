@@ -33,8 +33,8 @@ object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference>
         return runInPossiblyEdtThread {
             val expression = reference.expression
             analyse(reference.expression) {
-                val session = this as KtFe10AnalysisSession
-                val bindingContext = session.analyze(expression, AnalysisMode.PARTIAL)
+                val analysisSession = this as KtFe10AnalysisSession
+                val bindingContext = analysisSession.analysisContext.analyze(expression, AnalysisMode.PARTIAL)
                 val descriptor = when (expression) {
                     is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, expression]
                     else -> expression.getResolvedCall(bindingContext)?.resultingDescriptor

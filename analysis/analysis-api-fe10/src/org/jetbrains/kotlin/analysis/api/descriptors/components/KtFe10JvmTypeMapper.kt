@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtJvmTypeMapper
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -15,11 +16,13 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
 
-internal class KtFe10JvmTypeMapper(override val analysisSession: KtFe10AnalysisSession) : KtJvmTypeMapper() {
+internal class KtFe10JvmTypeMapper(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtJvmTypeMapper(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
-    private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisSession.resolveSession) }
+    private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
     override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type = withValidityAssertion {
         val kotlinType = (type as KtFe10Type).type

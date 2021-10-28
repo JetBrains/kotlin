@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class KtFe10ReferenceShortener(override val analysisSession: KtFe10AnalysisSession) : KtReferenceShortener() {
+internal class KtFe10ReferenceShortener(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtReferenceShortener(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 

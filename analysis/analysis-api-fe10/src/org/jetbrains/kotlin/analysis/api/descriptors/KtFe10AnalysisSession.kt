@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
@@ -13,13 +12,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 @Suppress("LeakingThis")
-class KtFe10AnalysisSession(
-    private val contextElement: KtElement, token: ValidityToken
-) : KtAnalysisSession(token), Fe10AnalysisFacade by ServiceManager.getService(contextElement.project, Fe10AnalysisFacade::class.java) {
+class KtFe10AnalysisSession(val analysisContext: Fe10AnalysisContext) : KtAnalysisSession(analysisContext.token) {
+    constructor(contextElement: KtElement, token: ValidityToken) :
+            this(Fe10AnalysisContext(Fe10AnalysisFacade.getInstance(contextElement.project), contextElement, token))
+
     override val smartCastProviderImpl: KtSmartCastProvider = KtFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KtDiagnosticProvider = KtFe10DiagnosticProvider(this)
     override val scopeProviderImpl: KtScopeProvider = KtFe10ScopeProvider(this)
@@ -45,9 +43,6 @@ class KtFe10AnalysisSession(
     override val importOptimizerImpl: KtImportOptimizer = KtFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KtJvmTypeMapper = KtFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFe10SymbolInfoProvider(this)
-
-    val resolveSession: ResolveSession = getResolveSession(contextElement)
-    val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         return KtFe10AnalysisSession(elementToReanalyze, token)

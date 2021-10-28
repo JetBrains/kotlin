@@ -20,13 +20,13 @@ abstract class KtFe10ForLoopInReference(expression: KtForExpression) : KtForLoop
         check(this is KtFe10AnalysisSession)
 
         val loopRange = element.loopRange ?: return emptyList()
-        val bindingContext = analyze(loopRange)
+        val bindingContext = analysisContext.analyze(loopRange)
 
         return listOf(
             BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL,
             BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL,
             BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL
-        ).mapNotNull { slice -> bindingContext[slice, loopRange]?.resultingDescriptor?.toKtCallableSymbol(this) }
+        ).mapNotNull { slice -> bindingContext[slice, loopRange]?.resultingDescriptor?.toKtCallableSymbol(analysisContext) }
     }
 }
 

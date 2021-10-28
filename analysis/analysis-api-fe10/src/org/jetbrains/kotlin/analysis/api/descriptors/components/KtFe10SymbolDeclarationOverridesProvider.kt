@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -21,18 +22,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 
 internal class KtFe10SymbolDeclarationOverridesProvider(
     override val analysisSession: KtFe10AnalysisSession
-) : KtSymbolDeclarationOverridesProvider() {
+) : KtSymbolDeclarationOverridesProvider(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
     override fun <T : KtSymbol> getAllOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> {
         val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return emptyList()
-        return getOverriddenDescriptors(descriptor, true).mapNotNull { it.toKtCallableSymbol(analysisSession) }
+        return getOverriddenDescriptors(descriptor, true).mapNotNull { it.toKtCallableSymbol(analysisContext) }
     }
 
     override fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> {
         val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return emptyList()
-        return getOverriddenDescriptors(descriptor, false).mapNotNull { it.toKtCallableSymbol(analysisSession) }
+        return getOverriddenDescriptors(descriptor, false).mapNotNull { it.toKtCallableSymbol(analysisContext) }
     }
 
     private fun getOverriddenDescriptors(

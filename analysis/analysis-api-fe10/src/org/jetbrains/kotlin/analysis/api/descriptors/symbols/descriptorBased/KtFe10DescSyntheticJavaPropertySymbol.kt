@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 internal class KtFe10DescSyntheticJavaPropertySymbol(
     override val descriptor: SyntheticJavaPropertyDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtSyntheticJavaPropertySymbol(), KtFe10DescMemberSymbol<SyntheticJavaPropertyDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
@@ -52,16 +53,16 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
 
     override val getter: KtPropertyGetterSymbol
         get() = withValidityAssertion {
-            val getter = descriptor.getter ?: return EmptyGetterSymbol(descriptor, analysisSession)
-            return KtFe10DescPropertyGetterSymbol(getter, analysisSession)
+            val getter = descriptor.getter ?: return EmptyGetterSymbol(descriptor, analysisContext)
+            return KtFe10DescPropertyGetterSymbol(getter, analysisContext)
         }
     override val javaGetterSymbol: KtFunctionSymbol
-        get() = withValidityAssertion { KtFe10DescFunctionSymbol(descriptor.getMethod, analysisSession) }
+        get() = withValidityAssertion { KtFe10DescFunctionSymbol(descriptor.getMethod, analysisContext) }
 
     override val javaSetterSymbol: KtFunctionSymbol?
         get() = withValidityAssertion {
             val setMethod = descriptor.setMethod ?: return null
-            return KtFe10DescFunctionSymbol(setMethod, analysisSession)
+            return KtFe10DescFunctionSymbol(setMethod, analysisContext)
         }
 
     override val hasSetter: Boolean
@@ -70,7 +71,7 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
     override val setter: KtPropertySetterSymbol?
         get() = withValidityAssertion {
             val setter = descriptor.setter ?: return null
-            KtFe10DescPropertySetterSymbol(setter, analysisSession)
+            KtFe10DescPropertySetterSymbol(setter, analysisContext)
         }
 
     override val initializer: KtConstantValue?
@@ -80,13 +81,13 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
         get() = withValidityAssertion { descriptor.callableId }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.type.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { descriptor.type.toKtTypeAndAnnotations(analysisContext) }
 
     override val receiverType: KtTypeAndAnnotations?
-        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
 
     override val dispatchType: KtType?
-        get() = withValidityAssertion { descriptor.dispatchReceiverParameter?.type?.toKtType(analysisSession) }
+        get() = withValidityAssertion { descriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext) }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
@@ -97,7 +98,7 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
 
     private class EmptyGetterSymbol(
         private val descriptor: SyntheticJavaPropertyDescriptor,
-        override val analysisSession: KtFe10AnalysisSession
+        override val analysisContext: Fe10AnalysisContext
     ) : KtPropertyGetterSymbol(), KtFe10Symbol {
         override val isDefault: Boolean
             get() = withValidityAssertion { false }
@@ -121,7 +122,7 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
             get() = withValidityAssertion { null }
 
         override val annotatedType: KtTypeAndAnnotations
-            get() = withValidityAssertion { descriptor.type.toKtTypeAndAnnotations(analysisSession) }
+            get() = withValidityAssertion { descriptor.type.toKtTypeAndAnnotations(analysisContext) }
 
         override val origin: KtSymbolOrigin
             get() = withValidityAssertion { KtSymbolOrigin.JAVA }
@@ -130,10 +131,10 @@ internal class KtFe10DescSyntheticJavaPropertySymbol(
             get() = withValidityAssertion { null }
 
         override val receiverType: KtTypeAndAnnotations?
-            get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisSession) }
+            get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
 
         override val dispatchType: KtType?
-            get() = withValidityAssertion { descriptor.dispatchReceiverParameter?.type?.toKtType(analysisSession) }
+            get() = withValidityAssertion { descriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext) }
 
         override val modality: Modality
             get() = withValidityAssertion { Modality.FINAL }

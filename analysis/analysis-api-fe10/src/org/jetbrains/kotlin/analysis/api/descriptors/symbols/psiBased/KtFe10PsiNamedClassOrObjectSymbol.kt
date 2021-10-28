@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSupertypesWithAny
@@ -39,10 +40,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiNamedClassOrObjectSymbol(
     override val psi: KtClassOrObject,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtNamedClassOrObjectSymbol(), KtFe10PsiSymbol<KtClassOrObject, ClassDescriptor> {
     override val descriptor: ClassDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
     }
 
@@ -64,7 +65,7 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
     override val companionObject: KtNamedClassOrObjectSymbol?
         get() = withValidityAssertion {
             val companionObject = psi.companionObjects.firstOrNull() ?: return null
-            KtFe10PsiNamedClassOrObjectSymbol(companionObject, analysisSession)
+            KtFe10PsiNamedClassOrObjectSymbol(companionObject, analysisContext)
         }
 
     override val classKind: KtClassKind
@@ -88,7 +89,7 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
 
     override val superTypes: List<KtTypeAndAnnotations>
         get() = withValidityAssertion {
-            descriptor?.getSupertypesWithAny()?.map { it.toKtTypeAndAnnotations(analysisSession) } ?: emptyList()
+            descriptor?.getSupertypesWithAny()?.map { it.toKtTypeAndAnnotations(analysisContext) } ?: emptyList()
         }
 
     override val classIdIfNonLocal: ClassId?
@@ -101,7 +102,7 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
         get() = withValidityAssertion { psi.ktSymbolKind }
 
     override val typeParameters: List<KtTypeParameterSymbol>
-        get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisSession) } }
+        get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisContext) } }
 
     override val modality: Modality
         get() = withValidityAssertion { psi.ktModality ?: descriptor?.modality ?: Modality.FINAL }

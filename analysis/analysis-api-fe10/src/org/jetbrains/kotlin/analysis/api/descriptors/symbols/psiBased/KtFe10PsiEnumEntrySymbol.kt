@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
@@ -28,10 +29,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiEnumEntrySymbol(
     override val psi: KtEnumEntry,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtEnumEntrySymbol(), KtFe10PsiSymbol<KtEnumEntry, ClassDescriptor> {
     override val descriptor: ClassDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
     }
 
@@ -46,7 +47,7 @@ internal class KtFe10PsiEnumEntrySymbol(
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion {
-            descriptor?.defaultType?.toKtTypeAndAnnotations(analysisSession) ?: createErrorTypeAndAnnotations()
+            descriptor?.defaultType?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations()
         }
 
     override val name: Name

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -22,13 +23,15 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.reflect.KClass
 
-internal class KtFe10DiagnosticProvider(override val analysisSession: KtFe10AnalysisSession) : KtDiagnosticProvider() {
+internal class KtFe10DiagnosticProvider(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtDiagnosticProvider(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
     override fun getDiagnosticsForElement(element: KtElement, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> {
         withValidityAssertion {
-            val bindingContext = analysisSession.analyze(element, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+            val bindingContext = analysisContext.analyze(element, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
             val diagnostics = bindingContext.diagnostics.forElement(element)
             return diagnostics.map { KtFe10Diagnostic(it, token) }
         }
@@ -36,7 +39,7 @@ internal class KtFe10DiagnosticProvider(override val analysisSession: KtFe10Anal
 
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> {
         withValidityAssertion {
-            val bindingContext = analysisSession.analyze(ktFile)
+            val bindingContext = analysisContext.analyze(ktFile)
             val result = mutableListOf<KtDiagnosticWithPsi<*>>()
             for (diagnostic in bindingContext.diagnostics) {
                 if (diagnostic.psiFile == ktFile) {

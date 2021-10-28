@@ -25,22 +25,23 @@ class KtFe10DescFunctionLikeSymbolPointer<T : KtFunctionLikeSymbol>(
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): T? {
         check(analysisSession is KtFe10AnalysisSession)
+        val analysisContext = analysisSession.analysisContext
 
         val className = callableId.className
         val memberScope = if (className != null) {
             val outerClassId = ClassId(callableId.packageName, className, false)
-            analysisSession.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(outerClassId)
+            analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(outerClassId)
                 ?.unsubstitutedMemberScope
                 ?: MemberScope.Empty
         } else {
-            analysisSession.resolveSession.moduleDescriptor.getPackage(callableId.packageName).memberScope
+            analysisContext.resolveSession.moduleDescriptor.getPackage(callableId.packageName).memberScope
         }
 
         @Suppress("UNCHECKED_CAST")
         return memberScope
             .getContributedDescriptors(DescriptorKindFilter.CALLABLES) { it == callableId.callableName }
             .filterIsInstance<CallableMemberDescriptor>()
-            .firstOrNull { it.getSymbolPointerSignature(analysisSession) == signature }
-            ?.toKtCallableSymbol(analysisSession) as? T
+            .firstOrNull { it.getSymbolPointerSignature(analysisContext) == signature }
+            ?.toKtCallableSymbol(analysisContext) as? T
     }
 }

@@ -5,14 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 interface Fe10AnalysisFacade {
+    companion object {
+        fun getInstance(project: Project): Fe10AnalysisFacade {
+            return ServiceManager.getService(project, Fe10AnalysisFacade::class.java)
+        }
+    }
+
     fun getResolveSession(element: KtElement): ResolveSession
     fun getDeprecationResolver(element: KtElement): DeprecationResolver
 
@@ -25,4 +34,13 @@ interface Fe10AnalysisFacade {
         PARTIAL_WITH_DIAGNOSTICS,
         PARTIAL
     }
+}
+
+class Fe10AnalysisContext(
+    facade: Fe10AnalysisFacade,
+    contextElement: KtElement,
+    val token: ValidityToken
+) : Fe10AnalysisFacade by facade {
+    val resolveSession: ResolveSession = getResolveSession(contextElement)
+    val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
 }

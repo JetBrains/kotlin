@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PackageSymbolPointer
@@ -20,13 +21,13 @@ import org.jetbrains.kotlin.name.FqName
 
 internal class KtFe10PackageSymbol(
     private val packageName: FqName,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtPackageSymbol(), KtFe10Symbol {
     override val fqName: FqName
         get() = withValidityAssertion { packageName }
 
     override val psi: PsiElement? by cached {
-        val project = analysisSession.resolveSession.project
+        val project = analysisContext.resolveSession.project
         JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
     }
 
@@ -38,7 +39,7 @@ internal class KtFe10PackageSymbol(
         get() = withValidityAssertion {
             val virtualFile = PsiUtilCore.getVirtualFile(psi)
             return if (virtualFile != null) {
-                analysisSession.getOrigin(virtualFile)
+                analysisContext.getOrigin(virtualFile)
             } else {
                 KtSymbolOrigin.LIBRARY
             }

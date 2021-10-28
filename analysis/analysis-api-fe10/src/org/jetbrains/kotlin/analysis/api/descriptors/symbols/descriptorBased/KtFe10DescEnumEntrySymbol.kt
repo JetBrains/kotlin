@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescMemberSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFe10DescEnumEntrySymbol(
     override val descriptor: ClassDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtEnumEntrySymbol(), KtFe10DescMemberSymbol<ClassDescriptor> {
     private val enumDescriptor: ClassDescriptor
         get() = descriptor.containingDeclaration as ClassDescriptor
@@ -42,7 +42,7 @@ internal class KtFe10DescEnumEntrySymbol(
         }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { enumDescriptor.defaultType.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { enumDescriptor.defaultType.toKtTypeAndAnnotations(analysisContext) }
 
     override val name: Name
         get() = withValidityAssertion { descriptor.name }

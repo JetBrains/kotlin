@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -37,10 +38,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiKotlinPropertySymbol(
     override val psi: KtProperty,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtKotlinPropertySymbol(), KtFe10PsiSymbol<KtProperty, PropertyDescriptor> {
     override val descriptor: PropertyDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.VARIABLE, psi] as? PropertyDescriptor
     }
 
@@ -59,18 +60,18 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val getter: KtPropertyGetterSymbol?
         get() = withValidityAssertion {
             val getter = psi.getter ?: return null
-            return KtFe10PsiPropertyGetterSymbol(getter, analysisSession)
+            return KtFe10PsiPropertyGetterSymbol(getter, analysisContext)
         }
 
     override val setter: KtPropertySetterSymbol?
         get() = withValidityAssertion {
             val setter = psi.setter ?: return null
-            return KtFe10PsiPropertySetterSymbol(setter, analysisSession)
+            return KtFe10PsiPropertySetterSymbol(setter, analysisContext)
         }
 
     override val hasBackingField: Boolean
         get() = withValidityAssertion {
-            val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
+            val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
             bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
         }
 
@@ -98,12 +99,12 @@ internal class KtFe10PsiKotlinPropertySymbol(
         get() = withValidityAssertion { psi.callableId }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor?.type?.toKtTypeAndAnnotations(analysisSession) ?: createErrorTypeAndAnnotations() }
+        get() = withValidityAssertion { descriptor?.type?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations() }
 
     override val receiverType: KtTypeAndAnnotations?
         get() = withValidityAssertion {
             return if (psi.isExtensionDeclaration()) {
-                descriptor?.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisSession) ?: createErrorTypeAndAnnotations()
+                descriptor?.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations()
             } else {
                 null
             }
@@ -121,7 +122,7 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val dispatchType: KtType?
         get() = withValidityAssertion {
             return if (!isStatic) {
-                descriptor?.dispatchReceiverParameter?.type?.toKtType(analysisSession) ?: createErrorType()
+                descriptor?.dispatchReceiverParameter?.type?.toKtType(analysisContext) ?: createErrorType()
             } else {
                 null
             }

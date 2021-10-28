@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescFunctionLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 internal class KtFe10DescFunctionSymbol(
     override val descriptor: FunctionDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtFunctionSymbol(), KtFe10DescMemberSymbol<FunctionDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
@@ -58,7 +58,7 @@ internal class KtFe10DescFunctionSymbol(
         get() = withValidityAssertion { descriptor is JavaCallableMemberDescriptor && DescriptorUtils.isStaticDeclaration(descriptor) }
 
     override val valueParameters: List<KtValueParameterSymbol>
-        get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisSession) } }
+        get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
@@ -67,19 +67,19 @@ internal class KtFe10DescFunctionSymbol(
         get() = withValidityAssertion { descriptor.callableId }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtTypeAndAnnotations(analysisContext) }
 
     override val receiverType: KtTypeAndAnnotations?
-        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }
 
     override val dispatchType: KtType?
-        get() = withValidityAssertion { descriptor.dispatchReceiverParameter?.type?.toKtType(analysisSession) }
+        get() = withValidityAssertion { descriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext) }
 
     override val typeParameters: List<KtTypeParameterSymbol>
-        get() = withValidityAssertion { descriptor.typeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisSession) } }
+        get() = withValidityAssertion { descriptor.typeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisContext) } }
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> = withValidityAssertion {
         val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
@@ -89,7 +89,7 @@ internal class KtFe10DescFunctionSymbol(
 
         val callableId = descriptor.callableId
         if (callableId != null && !callableId.isLocal) {
-            val signature = descriptor.getSymbolPointerSignature(analysisSession)
+            val signature = descriptor.getSymbolPointerSignature(analysisContext)
             return KtFe10DescFunctionLikeSymbolPointer(callableId, signature)
         }
 

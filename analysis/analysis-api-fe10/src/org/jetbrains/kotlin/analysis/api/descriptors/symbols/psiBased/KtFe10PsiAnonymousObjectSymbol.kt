@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
@@ -22,16 +23,16 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiAnonymousObjectSymbol(
     override val psi: KtObjectDeclaration,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtAnonymousObjectSymbol(), KtFe10PsiSymbol<KtObjectDeclaration, ClassDescriptor> {
     override val descriptor: ClassDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
     }
 
     override val superTypes: List<KtTypeAndAnnotations>
         get() = withValidityAssertion {
-            descriptor?.typeConstructor?.supertypes?.map { it.toKtTypeAndAnnotations(analysisSession) } ?: emptyList()
+            descriptor?.typeConstructor?.supertypes?.map { it.toKtTypeAndAnnotations(analysisContext) } ?: emptyList()
         }
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 
 internal class KtFe10DescValueParameterSymbol(
     override val descriptor: ValueParameterDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtValueParameterSymbol(), KtFe10DescSymbol<ValueParameterDescriptor> {
     override val name: Name
         get() = withValidityAssertion {
@@ -40,7 +41,7 @@ internal class KtFe10DescValueParameterSymbol(
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion {
-            return (descriptor.varargElementType ?: descriptor.type).toKtTypeAndAnnotations(analysisSession)
+            return (descriptor.varargElementType ?: descriptor.type).toKtTypeAndAnnotations(analysisContext)
         }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {

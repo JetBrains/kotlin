@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtOverrideInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.util.ImplementationStatus
 
-internal class KtFe10OverrideInfoProvider(override val analysisSession: KtFe10AnalysisSession) : KtOverrideInfoProvider() {
+internal class KtFe10OverrideInfoProvider(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtOverrideInfoProvider(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
@@ -41,13 +44,13 @@ internal class KtFe10OverrideInfoProvider(override val analysisSession: KtFe10An
     override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol? = withValidityAssertion {
         val callableDescriptor = getSymbolDescriptor(symbol) as? CallableMemberDescriptor ?: return null
         val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return null
-        return originalCallableDescriptor.toKtCallableSymbol(analysisSession)
+        return originalCallableDescriptor.toKtCallableSymbol(analysisContext)
     }
 
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? = withValidityAssertion {
         val callableDescriptor = getSymbolDescriptor(symbol) as? CallableMemberDescriptor ?: return null
         val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return null
         val containingClassDescriptor = originalCallableDescriptor.containingDeclaration as? ClassDescriptor ?: return null
-        return containingClassDescriptor.toKtClassifierSymbol(analysisSession) as? KtClassOrObjectSymbol
+        return containingClassDescriptor.toKtClassifierSymbol(analysisContext) as? KtClassOrObjectSymbol
     }
 }

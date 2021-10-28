@@ -133,5 +133,5 @@ internal fun KtFe10Symbol.createErrorTypeAndAnnotations(): KtTypeAndAnnotations 
 
 internal fun KtFe10Symbol.createErrorType(): KtType {
     val type = ErrorUtils.createErrorType("Type is unavailable for declaration $psi") as ErrorType
-    return KtFe10ClassErrorType(type, analysisSession)
+    return KtFe10ClassErrorType(type, analysisContext)
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -20,13 +21,13 @@ import org.jetbrains.kotlin.types.Variance
 
 internal class KtFe10DescTypeParameterSymbol(
     override val descriptor: TypeParameterDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtTypeParameterSymbol(), KtFe10DescSymbol<TypeParameterDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
     override val upperBounds: List<KtType>
-        get() = withValidityAssertion { descriptor.upperBounds.map { it.toKtType(analysisSession) } }
+        get() = withValidityAssertion { descriptor.upperBounds.map { it.toKtType(analysisContext) } }
 
     override val variance: Variance
         get() = withValidityAssertion { descriptor.variance }

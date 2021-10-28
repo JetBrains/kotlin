@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -24,10 +25,10 @@ import org.jetbrains.kotlin.types.Variance
 
 internal class KtFe10PsiTypeParameterSymbol(
     override val psi: KtTypeParameter,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtTypeParameterSymbol(), KtFe10PsiSymbol<KtTypeParameter, TypeParameterDescriptor> {
     override val descriptor: TypeParameterDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi)
+        val bindingContext = analysisContext.analyze(psi)
         bindingContext[BindingContext.TYPE_PARAMETER, psi]
     }
 
@@ -35,7 +36,7 @@ internal class KtFe10PsiTypeParameterSymbol(
         get() = withValidityAssertion { psi.variance }
 
     override val upperBounds: List<KtType>
-        get() = withValidityAssertion { descriptor?.upperBounds?.map { it.toKtType(analysisSession) } ?: emptyList() }
+        get() = withValidityAssertion { descriptor?.upperBounds?.map { it.toKtType(analysisContext) } ?: emptyList() }
 
     override val isReified: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.REIFIED_KEYWORD) }

@@ -22,9 +22,9 @@ abstract class KtFe10ConstructorDelegationReference(
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         require(this is KtFe10AnalysisSession)
 
-        val bindingContext = analyze(expression, AnalysisMode.PARTIAL)
+        val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
         val descriptor = expression.getResolvedCall(bindingContext)?.resultingDescriptor
-        return listOfNotNull(descriptor?.toKtCallableSymbol(this))
+        return listOfNotNull(descriptor?.toKtCallableSymbol(analysisContext))
     }
 }
 

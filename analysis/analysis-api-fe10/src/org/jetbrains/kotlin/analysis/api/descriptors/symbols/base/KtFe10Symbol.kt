@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.base
 
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 
 interface KtFe10Symbol : KtSymbol {
-    val analysisSession: KtFe10AnalysisSession
+    val analysisContext: Fe10AnalysisContext
 
     override val token: ValidityToken
-        get() = analysisSession.token
+        get() = analysisContext.token
 }

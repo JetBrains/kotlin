@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.types.SimpleType
 internal class KtFe10UsualClassType(
     override val type: SimpleType,
     private val descriptor: ClassDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtUsualClassType(), KtFe10Type {
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
 
@@ -32,10 +33,10 @@ internal class KtFe10UsualClassType(
         get() = withValidityAssertion { descriptor.maybeLocalClassId }
 
     override val classSymbol: KtClassLikeSymbol
-        get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisSession) }
+        get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
     override val typeArguments: List<KtTypeArgument>
-        get() = withValidityAssertion { type.arguments.map { it.toKtTypeArgument(analysisSession) } }
+        get() = withValidityAssertion { type.arguments.map { it.toKtTypeArgument(analysisContext) } }
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { type.ktNullability }

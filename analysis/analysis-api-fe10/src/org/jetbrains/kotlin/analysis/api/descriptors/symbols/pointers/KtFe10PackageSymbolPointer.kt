@@ -16,6 +16,6 @@ internal class KtFe10PackageSymbolPointer(private val packageName: FqName) : KtS
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtPackageSymbol {
         check(analysisSession is KtFe10AnalysisSession)
-        return KtFe10PackageSymbol(packageName, analysisSession)
+        return KtFe10PackageSymbol(packageName, analysisSession.analysisContext)
     }
 }

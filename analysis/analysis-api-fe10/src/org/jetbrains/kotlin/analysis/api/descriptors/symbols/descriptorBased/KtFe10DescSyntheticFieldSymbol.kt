@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescSyntheticFieldSymbolPointer
@@ -27,16 +27,16 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class KtFe10DescSyntheticFieldSymbol(
     private val descriptor: SyntheticFieldDescriptor,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtBackingFieldSymbol(), KtFe10Symbol {
     override val owningProperty: KtKotlinPropertySymbol
         get() = withValidityAssertion {
             val kotlinProperty = descriptor.propertyDescriptor as PropertyDescriptorImpl
-            KtFe10DescKotlinPropertySymbol(kotlinProperty, analysisSession)
+            KtFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
         }
 
     override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtTypeAndAnnotations(analysisSession) }
+        get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtTypeAndAnnotations(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol> = withValidityAssertion {
         val accessorPsi = descriptor.containingDeclaration.toSourceElement.getPsi()

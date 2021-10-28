@@ -13,6 +13,7 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -27,11 +28,13 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
 import java.text.StringCharacterIterator
 
-internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10AnalysisSession) : KtPsiTypeProvider() {
+internal class KtFe10PsiTypeProvider(
+    override val analysisSession: KtFe10AnalysisSession
+) : KtPsiTypeProvider(), Fe10KtAnalysisSessionComponent {
     override val token: ValidityToken
         get() = analysisSession.token
 
-    private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisSession.resolveSession) }
+    private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
     override fun asPsiType(
         type: KtType,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -29,10 +30,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiTypeAliasSymbol(
     override val psi: KtTypeAlias,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtTypeAliasSymbol(), KtFe10PsiSymbol<KtTypeAlias, TypeAliasDescriptor> {
     override val descriptor: TypeAliasDescriptor? by cached {
-        val bindingContext = analysisSession.analyze(psi)
+        val bindingContext = analysisContext.analyze(psi)
         bindingContext[BindingContext.TYPE_ALIAS, psi]
     }
 
@@ -40,13 +41,13 @@ internal class KtFe10PsiTypeAliasSymbol(
         get() = withValidityAssertion { psi.nameAsSafeName }
 
     override val typeParameters: List<KtTypeParameterSymbol>
-        get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisSession) } }
+        get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisContext) } }
 
     override val visibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
     override val expandedType: KtType
-        get() = withValidityAssertion { descriptor?.expandedType?.toKtType(analysisSession) ?: createErrorType() }
+        get() = withValidityAssertion { descriptor?.expandedType?.toKtType(analysisContext) ?: createErrorType() }
 
     override val classIdIfNonLocal: ClassId?
         get() = withValidityAssertion { psi.getClassId() }

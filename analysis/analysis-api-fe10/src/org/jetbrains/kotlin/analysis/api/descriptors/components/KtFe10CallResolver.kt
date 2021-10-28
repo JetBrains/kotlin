@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertySetterSymbol
@@ -33,7 +34,9 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSession) : AbstractKtCallResolver() {
+internal class KtFe10CallResolver(
+    override val analysisSession: KtFe10AnalysisSession
+) : AbstractKtCallResolver(), Fe10KtAnalysisSessionComponent {
     private companion object {
         private const val UNRESOLVED_CALL_MESSAGE = "Unresolved call"
     }
@@ -42,7 +45,7 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
         get() = analysisSession.token
 
     override fun resolveAccessorCall(call: KtSimpleNameExpression): KtCall? {
-        val bindingContext = analysisSession.analyze(call, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val bindingContext = analysisContext.analyze(call, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = call.getResolvedCall(bindingContext) ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
 
@@ -56,15 +59,15 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
             val accessorSymbol = when (resultingDescriptor) {
                 is SyntheticJavaPropertyDescriptor -> {
                     when {
-                        access.isWrite -> resultingDescriptor.setMethod?.let { KtFe10DescFunctionSymbol(it, analysisSession) }
-                        access.isRead -> KtFe10DescFunctionSymbol(resultingDescriptor.getMethod, analysisSession)
+                        access.isWrite -> resultingDescriptor.setMethod?.let { KtFe10DescFunctionSymbol(it, analysisContext) }
+                        access.isRead -> KtFe10DescFunctionSymbol(resultingDescriptor.getMethod, analysisContext)
                         else -> null
                     }
                 }
                 else -> {
                     when {
-                        access.isWrite -> resultingDescriptor.setter?.let { KtFe10DescPropertySetterSymbol(it, analysisSession) }
-                        access.isRead -> resultingDescriptor.getter?.let { KtFe10DescPropertyGetterSymbol(it, analysisSession) }
+                        access.isWrite -> resultingDescriptor.setter?.let { KtFe10DescPropertySetterSymbol(it, analysisContext) }
+                        access.isRead -> resultingDescriptor.getter?.let { KtFe10DescPropertyGetterSymbol(it, analysisContext) }
                         else -> null
                     }
                 }
@@ -115,7 +118,7 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
      * @param isUsualCall `true` if the call is a usual function call (`foo()` or `foo {}`).
      */
     private fun resolveCall(call: KtElement, isUsualCall: Boolean): KtCall? {
-        val bindingContext = analysisSession.analyze(call, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val bindingContext = analysisContext.analyze(call, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = call.getResolvedCall(bindingContext) ?: return getUnresolvedCall(call)
 
         val argumentMapping = createArgumentMapping(resolvedCall)
@@ -131,11 +134,11 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
 
         val targetDescriptor = resolvedCall.resultingDescriptor
 
-        val callableSymbol = targetDescriptor.toKtCallableSymbol(analysisSession) as? KtFunctionLikeSymbol ?: return null
+        val callableSymbol = targetDescriptor.toKtCallableSymbol(analysisContext) as? KtFunctionLikeSymbol ?: return null
 
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             val variableDescriptor = resolvedCall.variableCall.resultingDescriptor
-            val variableSymbol = variableDescriptor.toKtCallableSymbol(analysisSession) as? KtVariableLikeSymbol ?: return null
+            val variableSymbol = variableDescriptor.toKtCallableSymbol(analysisContext) as? KtVariableLikeSymbol ?: return null
 
             val substitutor = KtSubstitutor.Empty(token)
             return if (resolvedCall.functionCall.resultingDescriptor.callableId in kotlinFunctionInvokeCallableIds) {
@@ -183,7 +186,7 @@ internal class KtFe10CallResolver(override val analysisSession: KtFe10AnalysisSe
     private fun createArgumentMapping(resolvedCall: ResolvedCall<*>): LinkedHashMap<KtExpression, KtValueParameterSymbol> {
         val result = LinkedHashMap<KtExpression, KtValueParameterSymbol>()
         for ((parameter, arguments) in resolvedCall.valueArguments) {
-            val parameterSymbol = KtFe10DescValueParameterSymbol(parameter, analysisSession)
+            val parameterSymbol = KtFe10DescValueParameterSymbol(parameter, analysisContext)
 
             for (argument in arguments.arguments) {
                 val expression = argument.getArgumentExpression() ?: continue

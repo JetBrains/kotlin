@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtClassInitializer
 
 class KtFe10PsiClassInitializerSymbol(
     override val psi: KtClassInitializer,
-    override val analysisSession: KtFe10AnalysisSession
+    override val analysisContext: Fe10AnalysisContext
 ) : KtClassInitializerSymbol(), KtFe10Symbol {
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion {
