@@ -10,4 +10,6 @@ fun box() {
 // VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=2
 // VARIABLE : NAME=y TYPE=I INDEX=3
 // VARIABLE : NAME=this TYPE=LDestructuringInLambdasKt$box$1; INDEX=0
+
+// JVM_TEMPLATES
 // VARIABLE : NAME=$dstr$x$y TYPE=LA; INDEX=1

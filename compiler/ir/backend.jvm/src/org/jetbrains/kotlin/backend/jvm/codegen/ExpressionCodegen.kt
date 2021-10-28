@@ -347,6 +347,8 @@ class ExpressionCodegen(
     }
 
     private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label, endLabel: Label, isReceiver: Boolean) {
+        if (!param.isVisibleInLVT) return
+
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
@@ -389,9 +391,13 @@ class ExpressionCodegen(
         return value
     }
 
-    private val IrVariable.isVisibleInLVT: Boolean
+    // Temporary variables, unnamed (underscore) parameters, and the object for destruction
+    // in a destructuring assignment for lambda parameters do not go in the local variable table.
+    private val IrValueDeclaration.isVisibleInLVT: Boolean
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
-                origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR
+                origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
+                origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
+                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
 
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {

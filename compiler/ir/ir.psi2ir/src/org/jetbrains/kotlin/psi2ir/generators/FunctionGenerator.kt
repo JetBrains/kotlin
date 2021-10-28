@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -376,15 +377,24 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktElement: KtPureElement?,
         irOwnerElement: IrElement,
         name: Name? = null
-    ) =
-        context.symbolTable.declareValueParameter(
+    ): IrValueParameter {
+        var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        if (ktElement is KtParameter) {
+            if (ktElement.isSingleUnderscore) {
+                origin = IrDeclarationOrigin.UNDERSCORE_PARAMETER
+            } else if (ktElement.destructuringDeclaration != null) {
+                origin = IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
+            }
+        }
+        return context.symbolTable.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
-            IrDeclarationOrigin.DEFINED,
+            origin,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name
         )
+    }
 
     private fun generateDefaultAnnotationParameterValue(
         valueExpression: KtExpression,

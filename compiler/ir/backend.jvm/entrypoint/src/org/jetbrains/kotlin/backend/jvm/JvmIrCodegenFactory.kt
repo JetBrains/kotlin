@@ -65,7 +65,7 @@ open class JvmIrCodegenFactory(
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(input.bindingContext, input.languageVersionSettings))
-                val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider)
+                val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
                 mangler to symbolTable
             }
         val psi2ir = Psi2IrTranslator(input.languageVersionSettings, Psi2IrConfiguration(input.ignoreErrors))

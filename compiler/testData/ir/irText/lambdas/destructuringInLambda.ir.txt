@@ -139,13 +139,13 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
     FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:private [static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($dstr$_u24__u24$y:<root>.A) returnType:kotlin.Int
-            VALUE_PARAMETER name:$dstr$_u24__u24$y index:0 type:<root>.A
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<name for destructuring parameter 0>:<root>.A) returnType:kotlin.Int
+            VALUE_PARAMETER DESTRUCTURED_OBJECT_PARAMETER name:<name for destructuring parameter 0> index:0 type:<root>.A
             BLOCK_BODY
               VAR name:y type:kotlin.Int [val]
                 CALL 'public final fun component2 (): kotlin.Int [operator] declared in <root>.A' type=kotlin.Int origin=COMPONENT_N(index=2)
-                  $this: GET_VAR '$dstr$_u24__u24$y: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=DESTRUCTURING_DECLARATION
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> ($dstr$_u24__u24$y: <root>.A): kotlin.Int declared in <root>.fn'
+                  $this: GET_VAR '<name for destructuring parameter 0>: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=DESTRUCTURING_DECLARATION
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (<name for destructuring parameter 0>: <root>.A): kotlin.Int declared in <root>.fn'
                 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
                   $this: CONST Int type=kotlin.Int value=42
                   other: GET_VAR 'val y: kotlin.Int [val] declared in <root>.fn.<anonymous>' type=kotlin.Int origin=null
