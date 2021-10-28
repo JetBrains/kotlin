@@ -170,6 +170,10 @@ open class GradleProject(
         sourceSet: String = "main"
     ): Path = classesDir(sourceSet, language = "kotlin")
 
+    fun javaClassesDir(
+        sourceSet: String = "main"
+    ): Path = classesDir(sourceSet, language = "java")
+
     fun kotlinSourcesDir(
         sourceSet: String = "main"
     ): Path = projectPath.resolve("src/$sourceSet/kotlin")
@@ -177,6 +181,10 @@ open class GradleProject(
     fun javaSourcesDir(
         sourceSet: String = "main"
     ): Path = projectPath.resolve("src/$sourceSet/java")
+
+    fun relativeToProject(
+        files: List<Path>
+    ): List<Path> = files.map { projectPath.relativize(it) }
 }
 
 class TestProject(
@@ -190,6 +198,21 @@ class TestProject(
     val enableBuildScan: Boolean
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
+
+    fun includeOtherProjectAsSubmodule(
+        otherProjectName: String,
+        pathPrefix: String
+    ) {
+        val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
+        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+
+        settingsGradle.append(
+            """
+            
+            include ':$otherProjectName'
+            """.trimIndent()
+        )
+    }
 }
 
 private fun commonBuildSetup(
@@ -242,7 +265,7 @@ private fun setupProjectFromTestResources(
     tempDir: Path,
     optionalSubDir: String
 ): Path {
-    val testProjectPath = Paths.get("src", "test", "resources", "testProject", projectName)
+    val testProjectPath = projectName.testProjectPath
     assertTrue("Test project exists") { Files.exists(testProjectPath) }
     assertTrue("Test project path is a directory") { Files.isDirectory(testProjectPath) }
 
@@ -255,6 +278,8 @@ private fun setupProjectFromTestResources(
             testProjectPath.copyRecursively(it)
         }
 }
+
+private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
 
 private fun Path.addDefaultBuildFiles() {
     addPluginManagementToSettings()
