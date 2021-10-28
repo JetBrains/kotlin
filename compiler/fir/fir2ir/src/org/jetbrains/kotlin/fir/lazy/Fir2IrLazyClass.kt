@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class Fir2IrLazyClass(
     components: Fir2IrComponents,
@@ -214,9 +215,9 @@ class Fir2IrLazyClass(
     private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
         val fir = fir
         if (fir.modality != Modality.ABSTRACT) return false
-        return when (fir.name.asString()) {
-            "equals" -> fir.valueParameters.singleOrNull()?.returnTypeRef?.isNullableAny == true
-            "hashCode", "toString" -> fir.valueParameters.isEmpty()
+        return when (fir.name) {
+            OperatorNameConventions.EQUALS -> fir.valueParameters.singleOrNull()?.returnTypeRef?.isNullableAny == true
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
             else -> false
         }
     }

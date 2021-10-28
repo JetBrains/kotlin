@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -142,7 +140,10 @@ abstract class IrBuiltIns {
     abstract val intXorSymbol: IrSimpleFunctionSymbol
 
     abstract val extensionToString: IrSimpleFunctionSymbol
-    abstract val stringPlus: IrSimpleFunctionSymbol
+    abstract val memberToString: IrSimpleFunctionSymbol
+
+    abstract val extensionStringPlus: IrSimpleFunctionSymbol
+    abstract val memberStringPlus: IrSimpleFunctionSymbol
 
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol

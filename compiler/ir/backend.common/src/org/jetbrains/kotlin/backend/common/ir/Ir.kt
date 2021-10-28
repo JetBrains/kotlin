@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -187,7 +185,20 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     fun kmutableproperty2(): IrClassSymbol = irBuiltIns.kMutableProperty2Class
 
     val extensionToString: IrSimpleFunctionSymbol get() = irBuiltIns.extensionToString
-    val stringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.stringPlus
+    val memberToString: IrSimpleFunctionSymbol get() = irBuiltIns.memberToString
+    val extensionStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.extensionStringPlus
+    val memberStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.memberStringPlus
+
+    fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
+        val plusSymbol = if (functionSymbol.owner.dispatchReceiverParameter?.type?.isString() == true)
+            memberStringPlus
+        else if (functionSymbol.owner.extensionReceiverParameter?.type?.isNullableString() == true)
+            extensionStringPlus
+        else
+            return false
+
+        return functionSymbol == plusSymbol
+    }
 }
 
 // Some symbols below are used in kotlin-native, so they can't be private

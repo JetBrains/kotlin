@@ -55,10 +55,6 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
         it.valueParameters.isEmpty()
     }
 
-    private val toStringFunction = stringBuilder.functions.single {
-        it.valueParameters.isEmpty() && it.name == OperatorNameConventions.TO_STRING
-    }
-
     private val defaultAppendFunction = stringBuilder.functions.single {
         it.name == nameAppend &&
                 it.valueParameters.size == 1 &&
@@ -90,22 +86,19 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
                     builder.irCall(symbols.extensionToString).apply {
                         extensionReceiver = argument
                     }
-                else builder.irCall(
-                    irBuiltIns.anyClass.functions
-                        .single { it.owner.name == OperatorNameConventions.TO_STRING }).apply {
+                else builder.irCall(symbols.memberToString).apply {
                     dispatchReceiver = argument
                 }
             }
 
             arguments.size == 2 && arguments[0].type.isStringClassType() ->
                 if (arguments[0].type.isNullable())
-                    builder.irCall(symbols.stringPlus).apply {
+                    builder.irCall(symbols.extensionStringPlus).apply {
                         extensionReceiver = arguments[0]
                         putValueArgument(0, arguments[1])
                     }
                 else
-                    builder.irCall(symbols.string.functions
-                                       .single { it.owner.name == OperatorNameConventions.PLUS }).apply {
+                    builder.irCall(symbols.memberStringPlus).apply {
                         dispatchReceiver = arguments[0]
                         putValueArgument(0, arguments[1])
                     }
@@ -119,7 +112,7 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
                         putValueArgument(0, arg)
                     }
                 }
-                +irCall(toStringFunction).apply {
+                +irCall(symbols.memberToString).apply {
                     dispatchReceiver = irGet(stringBuilderImpl)
                 }
             }

@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FunctionsFromAny {
     val EQUALS_METHOD_NAME = OperatorNameConventions.EQUALS
-    val HASH_CODE_METHOD_NAME = Name.identifier("hashCode")
-    val TO_STRING_METHOD_NAME = Name.identifier("toString")
+    val HASH_CODE_METHOD_NAME = OperatorNameConventions.HASH_CODE
+    val TO_STRING_METHOD_NAME = OperatorNameConventions.TO_STRING
 
     fun addFunctionFromAnyIfNeeded(
         thisDescriptor: ClassDescriptor,

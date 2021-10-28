@@ -24,6 +24,7 @@ object OperatorNameConventions {
     @JvmField val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 
     @JvmField val EQUALS = Name.identifier("equals")
+    @JvmField val HASH_CODE = Name.identifier("hashCode")
     @JvmField val COMPARE_TO = Name.identifier("compareTo")
     @JvmField val CONTAINS = Name.identifier("contains")
     @JvmField val INVOKE = Name.identifier("invoke")
