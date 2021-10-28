@@ -77,10 +77,11 @@ open class DelegatedPropertyConstraintPosition<T>(val topLevelCall: T) : Constra
 }
 
 data class IncorporationConstraintPosition(
-    val from: ConstraintPosition,
     val initialConstraint: InitialConstraint,
     var isFromDeclaredUpperBound: Boolean = false
 ) : ConstraintPosition() {
+    val from: ConstraintPosition get() = initialConstraint.position
+
     override fun toString(): String = "Incorporate $initialConstraint from position $from"
 }
 
