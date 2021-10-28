@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.export.isEnumFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -108,7 +109,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (!property.visibility.isPublicAPI)
                     continue
 
-                if (property.isFakeOverride)
+                if (property.isFakeOverride && !property.isEnumFakeOverriddenDeclaration(context.staticContext.backendContext))
                     continue
 
                 fun IrSimpleFunction.propertyAccessorForwarder(
@@ -140,15 +141,16 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 // so we need regenerate `defineProperty` with setter.
                 val noOverriddenGetter = property.getter?.overriddenSymbols?.isEmpty() == true
 
-                val overriddenExportedGetter = property.getter?.overriddenSymbols?.isNotEmpty() == true &&
-                        property.getter?.isOverriddenExported(context.staticContext.backendContext) == true
+                val overriddenExportedGetter = (property.getter?.overriddenSymbols?.isNotEmpty() == true &&
+                        property.getter?.isOverriddenExported(context.staticContext.backendContext) == true)
 
                 val noOverriddenExportedSetter = property.setter?.isOverriddenExported(context.staticContext.backendContext) == false
 
-                val needOverrideBySetter = overriddenExportedGetter && noOverriddenExportedSetter
+                val needsOverride = (overriddenExportedGetter && noOverriddenExportedSetter) ||
+                        property.isEnumFakeOverriddenDeclaration(context.staticContext.backendContext)
 
                 if (irClass.isExported(context.staticContext.backendContext) &&
-                    (noOverriddenGetter || needOverrideBySetter) ||
+                    (noOverriddenGetter || needsOverride) ||
                     property.getter?.overridesExternal() == true ||
                     property.getJsName() != null
                 ) {

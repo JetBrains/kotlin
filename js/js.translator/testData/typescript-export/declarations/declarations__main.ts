@@ -126,6 +126,11 @@ function box(): string {
     assert(TestEnumClass.values().indexOf(TestEnumClass.A) != -1)
     assert(TestEnumClass.values().indexOf(TestEnumClass.B) != -1)
 
+    assert(TestEnumClass.A.name === "A")
+    assert(TestEnumClass.B.name === "B")
+    assert(TestEnumClass.A.ordinal === 0)
+    assert(TestEnumClass.B.ordinal === 1)
+
     assert(new TestEnumClass.Nested().prop == "hello2")
 
     return "OK";

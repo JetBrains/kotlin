@@ -74,5 +74,11 @@ function box() {
     if (this["export_enum_class"].Foo.values().indexOf(this["export_enum_class"].Foo.A) === -1) return "fail20"
     if (this["export_enum_class"].Foo.values().indexOf(this["export_enum_class"].Foo.B) === -1) return "fail21"
 
+    if (this["export_enum_class"].Foo.A.name !== "A") return "fail22"
+    if (this["export_enum_class"].Foo.B.name !== "B") return "fail23"
+
+    if (this["export_enum_class"].Foo.A.ordinal !== 0) return "fail24"
+    if (this["export_enum_class"].Foo.B.ordinal !== 1) return "fail23"
+
     return "OK"
 }

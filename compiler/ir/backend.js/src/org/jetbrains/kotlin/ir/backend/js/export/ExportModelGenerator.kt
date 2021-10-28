@@ -108,7 +108,7 @@ class ExportModelGenerator(
             // TODO: Report a frontend error
             if (accessor.extensionReceiverParameter != null)
                 return null
-            if (accessor.isFakeOverride) {
+            if (accessor.isFakeOverride && !accessor.isEnumFakeOverriddenDeclaration(context)) {
                 return null
             }
         }
@@ -446,14 +446,15 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     if (context?.additionalExportedDeclarations?.contains(declaration) == true)
         return true
 
-    if (declaration is IrSimpleFunction) {
+    if (declaration is IrOverridableDeclaration<*>) {
         val overriddenNonEmpty = declaration
             .overriddenSymbols
             .isNotEmpty()
 
         if (overriddenNonEmpty) {
             return declaration.isOverriddenExported(context) ||
-                    declaration.isMethodOfAny() // Handle names for special functions
+                    (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+                    || declaration.isEnumFakeOverriddenDeclaration(context)
         }
     }
 
@@ -467,9 +468,21 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     }
 }
 
-fun IrSimpleFunction.isOverriddenExported(context: JsIrBackendContext?): Boolean =
+fun IrOverridableDeclaration<*>.isEnumFakeOverriddenDeclaration(context: JsIrBackendContext?): Boolean {
+    return context?.irBuiltIns?.enumClass?.let { enumClass ->
+        overriddenSymbols
+            .asSequence()
+            .map { it.owner }
+            .filterIsInstance<IrDeclaration>()
+            .mapNotNull { it.parentClassOrNull }
+            .map { it.symbol }
+            .any { it == enumClass }
+    } == true
+}
+
+fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext?): Boolean =
     overriddenSymbols
-        .any { shouldDeclarationBeExported(it.owner, context) }
+        .any { shouldDeclarationBeExported(it.owner as IrDeclarationWithName, context) }
 
 fun IrDeclaration.isExported(context: JsIrBackendContext?): Boolean {
     val candidate = getExportCandidate(this) ?: return false

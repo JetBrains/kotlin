@@ -108,6 +108,8 @@ declare namespace JS_TESTS {
             bay(): string;
             static values(): Array<foo.TestEnumClass>;
             static valueOf(value: string): foo.TestEnumClass;
+            readonly name: string;
+            readonly ordinal: number;
         }
         namespace TestEnumClass {
             class Nested {
