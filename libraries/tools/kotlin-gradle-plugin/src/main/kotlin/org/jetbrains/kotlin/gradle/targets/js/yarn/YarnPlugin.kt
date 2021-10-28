@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -45,6 +44,19 @@ open class YarnPlugin : Plugin<Project> {
             task.description = "Create root package.json"
 
             task.mustRunAfter(rootClean)
+
+            // Yes, we need to break Task Configuration Avoidance here
+            // In case when we need to create package.json's files and execute kotlinNpmInstall,
+            // We need to configure all RequiresNpmDependencies tasks to install them,
+            // Because we need to persist yarn.lock
+            // We execute this block in configure phase of rootPackageJson to be sure,
+            // That Task Configuration Avoidance will not be broken for tasks not related with NPM installing
+            // https://youtrack.jetbrains.com/issue/KT-48241
+            project.allprojects
+                .forEach {
+                    it.tasks.implementing(RequiresNpmDependencies::class)
+                        .forEach {}
+                }
         }
 
         val kotlinNpmInstall = tasks.named(KotlinNpmInstallTask.NAME)
@@ -65,19 +77,19 @@ open class YarnPlugin : Plugin<Project> {
             it.dependsOn(packageJsonUmbrella)
         }
 
-        project.allprojects
-            .forEach {
-                val fn: (Project) -> Unit = {
-                    it.tasks.implementing(RequiresNpmDependencies::class).all {}
-                }
-                if (it.state.executed) {
-                    fn(it)
-                } else {
-                    it.afterEvaluate {
-                        fn(it)
-                    }
-                }
-            }
+//        project.allprojects
+//            .forEach {
+//                val fn: (Project) -> Unit = {
+//                    it.tasks.implementing(RequiresNpmDependencies::class).all {}
+//                }
+//                if (it.state.executed) {
+//                    fn(it)
+//                } else {
+//                    it.afterEvaluate {
+//                        fn(it)
+//                    }
+//                }
+//            }
 
         val storeYarnLock = tasks.register("kotlinStoreYarnLock", YarnLockCopyTask::class.java) {
             it.dependsOn(kotlinNpmInstall)
