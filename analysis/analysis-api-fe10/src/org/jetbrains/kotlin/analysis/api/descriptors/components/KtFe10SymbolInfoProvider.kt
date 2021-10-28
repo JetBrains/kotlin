@@ -81,7 +81,7 @@ internal class KtFe10SymbolInfoProvider(
             }
 
             val setter = descriptor.setter ?: return SpecialNames.NO_NAME_PROVIDED
-            return Name.identifier(DescriptorUtils.getJvmName(setter) ?: JvmAbi.getterName(descriptor.name.asString()))
+            return Name.identifier(DescriptorUtils.getJvmName(setter) ?: JvmAbi.setterName(descriptor.name.asString()))
         }
 
         val ktPropertyName = (symbol.psi as? KtProperty)?.takeIf { it.isVar }?.name ?: return SpecialNames.NO_NAME_PROVIDED
