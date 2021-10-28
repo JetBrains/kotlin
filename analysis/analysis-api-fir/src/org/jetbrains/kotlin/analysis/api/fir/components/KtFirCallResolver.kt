@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -83,6 +84,9 @@ internal class KtFirCallResolver(
                     ktArgumentMapping[setterValue] = setterParameterSymbol
                 }
                 return KtFunctionCall(ktArgumentMapping, target, KtSubstitutor.Empty(token), token)
+            }
+            is FirPropertyAccessExpression -> {
+                KtFunctionCall(LinkedHashMap(), fir.calleeReference.createCallTarget() ?: return null, KtSubstitutor.Empty(token), token)
             }
             else -> return null
         }
@@ -255,7 +259,7 @@ internal class KtFirCallResolver(
     private fun FirReference.createCallTarget(): KtCallTarget? {
         return when (this) {
             is FirSuperReference -> createCallTarget(source)
-            is FirResolvedNamedReference -> getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it, token) }
+            is FirResolvedNamedReference -> getKtFunctionLikeSymbol()?.let { KtSuccessCallTarget(it, token) }
             is FirErrorNamedReference -> createErrorCallTarget(source)
             is FirErrorReferenceWithCandidate -> createErrorCallTarget(source)
             is FirSimpleNamedReference ->
@@ -334,8 +338,11 @@ internal class KtFirCallResolver(
             source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource, diagnosticCache) }
                 ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token), token)
 
-    private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =
-        resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol
+    private fun FirResolvedNamedReference.getKtFunctionLikeSymbol(): KtFunctionLikeSymbol? {
+        val fir = resolvedSymbol.fir
+        val targetFir = if (fir is FirProperty) fir.getter else fir
+        return targetFir?.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol
+    }
 
     private fun FirSuperReference.createCallTarget(qualifiedAccessSource: KtSourceElement?): KtCallTarget? =
         when (val type = superTypeRef.coneType) {

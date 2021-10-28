@@ -325,6 +325,12 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     }
 
     @Test
+    @TestMetadata("javaPropertyGetter_unqualified.kt")
+    public void testJavaPropertyGetter_unqualified() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/javaPropertyGetter_unqualified.kt");
+    }
+
+    @Test
     @TestMetadata("javaPropertyNestedGetter.kt")
     public void testJavaPropertyNestedGetter() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/javaPropertyNestedGetter.kt");
@@ -343,9 +349,21 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     }
 
     @Test
+    @TestMetadata("javaPropertySetter_unqualified.kt")
+    public void testJavaPropertySetter_unqualified() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/javaPropertySetter_unqualified.kt");
+    }
+
+    @Test
     @TestMetadata("kotlinPropertyGetter.kt")
     public void testKotlinPropertyGetter() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/kotlinPropertyGetter.kt");
+    }
+
+    @Test
+    @TestMetadata("kotlinPropertyGetter_unqualified.kt")
+    public void testKotlinPropertyGetter_unqualified() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/kotlinPropertyGetter_unqualified.kt");
     }
 
     @Test
@@ -358,6 +376,12 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     @TestMetadata("kotlinPropertySetter.kt")
     public void testKotlinPropertySetter() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/kotlinPropertySetter.kt");
+    }
+
+    @Test
+    @TestMetadata("kotlinPropertySetter_unqualified.kt")
+    public void testKotlinPropertySetter_unqualified() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/kotlinPropertySetter_unqualified.kt");
     }
 
     @Test
