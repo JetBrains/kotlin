@@ -35411,6 +35411,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("invokeExtension.kt")
+                public void testInvokeExtension() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/invokeExtension.kt");
+                }
+
+                @Test
                 @TestMetadata("memberExtension.kt")
                 public void testMemberExtension() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/memberExtension.kt");

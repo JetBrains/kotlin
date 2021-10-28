@@ -23,16 +23,12 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
@@ -144,11 +140,14 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         context: CheckerContext
     ): Boolean {
         val session = context.session
+
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
             (enclosingSuspendFunction.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClassSymbol(session)
         val enclosingSuspendFunctionExtensionReceiverOwnerSymbol = enclosingSuspendFunction.takeIf { it.receiverTypeRef != null }?.symbol
-        val dispatchReceiverExpression = expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }
-        val extensionReceiverExpression = expression.extensionReceiver.takeIf { it !is FirNoReceiverExpression }
+
+        val (dispatchReceiverExpression, extensionReceiverExpression, extensionReceiverParameterType) =
+            expression.computeReceiversInfo(session, calledDeclarationSymbol)
+
         for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
             if (!receiverExpression.typeRef.coneType.isRestrictSuspensionReceiver(session)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
@@ -156,14 +155,17 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
 
             return false
         }
+
         if (enclosingSuspendFunctionExtensionReceiverOwnerSymbol?.resolvedReceiverTypeRef?.coneType?.isRestrictSuspensionReceiver(session) != true) {
             return true
         }
+
         if (sameInstanceOfReceiver(dispatchReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) {
             return true
         }
+
         if (sameInstanceOfReceiver(extensionReceiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) {
-            if (calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType?.isRestrictSuspensionReceiver(session) == true) {
+            if (extensionReceiverParameterType?.isRestrictSuspensionReceiver(session) == true) {
                 return true
             }
         }
@@ -195,5 +197,33 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             return useSiteReceiverExpression.calleeReference.boundSymbol == declarationSiteReceiverOwnerSymbol
         }
         return false
+    }
+
+    // Triple<DispatchReceiverValue, ExtensionReceiverValue, ExtensionReceiverParameterType>
+    private fun FirQualifiedAccessExpression.computeReceiversInfo(
+        session: FirSession,
+        calledDeclarationSymbol: FirCallableSymbol<*>
+    ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
+        if (this is FirImplicitInvokeCall &&
+            dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
+        ) {
+            val variableForInvoke = dispatchReceiver
+            val variableForInvokeType = variableForInvoke.typeRef.coneType
+            if (!variableForInvokeType.isExtensionFunctionType) return Triple(null, null, null)
+
+            // `a.foo()` is resolved to invokeExtension, so it's been desugared to `foo.invoke(a)`
+            // And we use the first argument (`a`) as an extension receiver
+            return Triple(
+                null,
+                argumentList.arguments.getOrNull(0),
+                variableForInvokeType.typeArguments.getOrNull(0) as? ConeKotlinType
+            )
+        }
+
+        return Triple(
+            dispatchReceiver.takeIf { it !is FirNoReceiverExpression },
+            extensionReceiver.takeIf { it !is FirNoReceiverExpression },
+            calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType,
+        )
     }
 }
