@@ -31,6 +31,19 @@ open class KotlinNpmInstallTask : DefaultTask() {
     @Input
     val args: MutableList<String> = mutableListOf()
 
+    @get:Internal
+    val nodeModulesDir: File by lazy {
+        (nodeJs ?: unavailableValueError("nodeJs"))
+            .rootPackageDir
+            .resolve("node_modules")
+    }
+
+    init {
+        outputs.upToDateWhen {
+            nodeModulesDir.isDirectory
+        }
+    }
+
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
