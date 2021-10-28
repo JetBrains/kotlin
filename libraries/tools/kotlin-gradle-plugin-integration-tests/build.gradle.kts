@@ -274,6 +274,7 @@ tasks.withType<Test> {
         systemProperty("installCocoapods", installCocoapods)
     }
 
+    val jdk8Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11).map { it.metadata.installationPath.asFile.absolutePath }
@@ -282,6 +283,7 @@ tasks.withType<Test> {
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
     doFirst {
+        systemProperty("jdk8Home", jdk8Provider.get())
         systemProperty("jdk9Home", jdk9Provider.get())
         systemProperty("jdk10Home", jdk10Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())
