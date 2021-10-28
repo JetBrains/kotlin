@@ -73,7 +73,8 @@ class MutableVariableWithConstraints private constructor(
                         Constraint(
                             ConstraintKind.EQUALITY,
                             constraint.type,
-                            constraint.position,
+                            constraint.position.takeIf { it.from !is DeclaredUpperBoundConstraintPosition<*> }
+                                ?: previousConstraint.position,
                             constraint.typeHashCode,
                             derivedFrom = constraint.derivedFrom,
                             isNullabilityConstraint = false
