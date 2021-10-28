@@ -67,7 +67,7 @@ infix operator fun <T : Any?> T.compareTo(<this>: Comparator<T>, other: T): Int 
 val <T : Any?> Pair<T, T>.min: T
   get(<this>: Comparator<T>): T {
     return when {
-      less(arg0 = <this>.<get-first>().compareTo<T>(<this> = <this> /*as T */, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
+      less(arg0 = <this>.<get-first>().compareTo<T>(<this> = <this>, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
       else -> <this>.<get-second>()
     }
   }

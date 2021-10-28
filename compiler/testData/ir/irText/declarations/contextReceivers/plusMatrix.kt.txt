@@ -17,6 +17,6 @@ fun Matrix.plus(<this>: NumberOperations, other: Matrix): Matrix {
 }
 
 fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix) {
-  m1.plus(<this> = <this> /*as Matrix */, other = m2) /*~> Unit */
-  m2.plus(<this> = <this> /*as Matrix */, other = m1) /*~> Unit */
+  m1.plus(<this> = <this>, other = m2) /*~> Unit */
+  m2.plus(<this> = <this>, other = m1) /*~> Unit */
 }

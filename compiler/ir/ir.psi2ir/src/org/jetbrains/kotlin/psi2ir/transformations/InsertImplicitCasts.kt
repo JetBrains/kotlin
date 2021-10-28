@@ -156,7 +156,8 @@ internal class InsertImplicitCasts(
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)
             for (index in substitutedDescriptor.valueParameters.indices) {
-                val argument = getValueArgument(index) ?: continue
+                val irIndex = index + substitutedDescriptor.contextReceiverParameters.size
+                val argument = getValueArgument(irIndex) ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
                 val originalParameterType = substitutedDescriptor.original.valueParameters[index].type
 
@@ -168,7 +169,7 @@ internal class InsertImplicitCasts(
                     else
                         parameterType
 
-                putValueArgument(index, argument.cast(expectedType, originalExpectedType = originalParameterType))
+                putValueArgument(irIndex, argument.cast(expectedType, originalExpectedType = originalParameterType))
             }
         }
     }
