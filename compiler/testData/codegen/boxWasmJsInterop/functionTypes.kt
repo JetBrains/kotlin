@@ -1,3 +1,7 @@
+
+// Char issues
+// IGNORE_BACKEND: JS_IR
+
 // FILE: externals.js
 
 function apply7(f) {

@@ -40,6 +40,11 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
         runTest("compiler/testData/codegen/boxWasmJsInterop/externals.kt");
     }
 
+    @TestMetadata("functionTypes.kt")
+    public void testFunctionTypes() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
+    }
+
     @TestMetadata("jsExport.kt")
     public void testJsExport() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
