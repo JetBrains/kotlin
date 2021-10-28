@@ -77,7 +77,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             )
 
             build("build") {
-                assertFileNotExists("build/js/packages/kotlin-js-nodejs/kotlin/")
+                assertFileInProjectNotExists("build/js/packages/kotlin-js-nodejs/kotlin/")
             }
         }
     }

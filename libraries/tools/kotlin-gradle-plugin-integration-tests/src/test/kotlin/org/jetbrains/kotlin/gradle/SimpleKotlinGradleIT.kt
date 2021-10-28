@@ -89,7 +89,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project("moduleName", gradleVersion) {
             build("build") {
                 assertFileInProjectExists("build/classes/kotlin/main/META-INF/FLAG.kotlin_module")
-                assertFileNotExists("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
+                assertFileInProjectNotExists("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
                 assertOutputDoesNotContain("Argument -module-name is passed multiple times")
             }
         }
@@ -128,7 +128,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
             build("build") {
                 assertDirectoryInProjectExists("$customBuildDirName/classes")
-                assertFileNotExists("build")
+                assertFileInProjectNotExists("build")
             }
         }
     }

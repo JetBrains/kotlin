@@ -36,16 +36,59 @@ fun GradleProject.assertFileInProjectExists(
     assertFileExists(projectPath.resolve(pathToFile))
 }
 
+fun GradleProject.assertFileExistsInTree(
+    pathToTreeRoot: Path,
+    fileName: String
+) {
+    val foundFile = pathToTreeRoot
+        .toFile()
+        .walk()
+        .find {
+            it.isFile && it.name == fileName
+        }
+
+    assert(foundFile != null) {
+        "File $fileName does not exists in $pathToTreeRoot!"
+    }
+}
 /**
  * Asserts file under [pathToFile] relative to the test project does not exist.
  */
-fun GradleProject.assertFileNotExists(
+fun GradleProject.assertFileInProjectNotExists(
     pathToFile: String
 ) {
-    val filePath = projectPath.resolve(pathToFile)
-    assert(!Files.exists(filePath)) {
-        "File '${filePath}' exists!"
+    assertFileNotExists(projectPath.resolve(pathToFile))
+}
+
+fun GradleProject.assertFileNotExists(
+    pathToFile: Path
+) {
+    assert(!Files.exists(pathToFile)) {
+        "File '${pathToFile}' exists!"
     }
+}
+
+fun GradleProject.assertFileNotExistsInTree(
+    pathToTreeRoot: Path,
+    fileName: String
+) {
+    val foundFile = pathToTreeRoot
+        .toFile()
+        .walk()
+        .find {
+            it.isFile && it.name == fileName
+        }
+
+    assert(foundFile == null) {
+        "File exists: ${foundFile!!.absolutePath}"
+    }
+}
+
+fun GradleProject.assertFileNotExistsInTree(
+    pathToTreeRoot: String,
+    fileName: String
+) {
+    assertFileNotExistsInTree(projectPath.resolve(pathToTreeRoot), fileName)
 }
 
 /**
