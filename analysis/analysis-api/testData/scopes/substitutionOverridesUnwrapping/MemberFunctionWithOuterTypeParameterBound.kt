@@ -1,6 +1,4 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE
 package test
-
 
 interface OtherInterface
 
@@ -14,6 +12,4 @@ interface MyInterface<T> {
 
 class Foo
 
-abstract class MyClass : MyInterface<Foo>
-
-// class: test/MyClass
+abstract class <caret>MyClass : MyInterface<Foo>

@@ -31,7 +31,7 @@ internal class KtFirBackingFieldSymbol(
     }
 
     override val owningProperty: KtKotlinPropertySymbol by propertyFirRef.withFirAndCache { fir ->
-        builder.variableLikeBuilder.buildPropertySymbol(fir)
+        builder.buildSymbol(fir) as KtKotlinPropertySymbol
     }
 
     override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> {

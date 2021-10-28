@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -115,7 +116,10 @@ internal class KtFirKotlinPropertySymbol(
     override val hasSetter: Boolean get() = firRef.withFir { it.setter != null }
 
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        if (firRef.withFir { it.origin != FirDeclarationOrigin.SubstitutionOverride }) {
+            KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        }
+
         return when (symbolKind) {
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level properties is not supported yet")
             KtSymbolKind.CLASS_MEMBER -> firRef.withFir { fir ->

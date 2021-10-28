@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -92,7 +93,10 @@ internal class KtFirFunctionSymbol(
     override val visibility: Visibility get() = getVisibility()
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        if (firRef.withFir { it.origin != FirDeclarationOrigin.SubstitutionOverride }) {
+            KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        }
+
         return when (symbolKind) {
             KtSymbolKind.TOP_LEVEL -> firRef.withFir { fir ->
                 KtFirTopLevelFunctionSymbolPointer(fir.symbol.callableId, fir.createSignature())

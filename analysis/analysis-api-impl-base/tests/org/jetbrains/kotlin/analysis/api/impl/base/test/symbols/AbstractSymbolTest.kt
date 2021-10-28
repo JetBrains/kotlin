@@ -35,7 +35,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
             collectSymbols(ktFile, testServices).map { symbol ->
                 PointerWithRenderedSymbol(
                     if (createPointers) symbol.createPointer() else null,
-                    with(DebugSymbolRenderer) { renderExtra(symbol) }
+                    renderSymbolForComparison(symbol)
                 )
             }
         }
@@ -66,11 +66,16 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
             pointersWithRendered.map { (pointer, expectedRender) ->
                 val restored = pointer!!.restoreSymbol()
                     ?: error("Symbol $expectedRender was not restored")
-                with(DebugSymbolRenderer) { renderExtra(restored) }
+
+                renderSymbolForComparison(restored)
             }
         }
         val actual = restored.joinToString(separator = "\n\n")
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    protected open fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol): String {
+        return with(DebugSymbolRenderer) { renderExtra(symbol) }
     }
 }
 

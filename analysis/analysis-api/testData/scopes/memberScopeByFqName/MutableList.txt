@@ -442,7 +442,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
+  callableIdIfNonLocal: kotlin/collections/List.isEmpty
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -461,7 +461,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -516,10 +516,10 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.size
-  getter: null
+  callableIdIfNonLocal: kotlin/collections/List.size
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
-  hasGetter: false
+  hasGetter: true
   hasSetter: false
   initializer: null
   isConst: false
@@ -539,7 +539,7 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): kotlin/collections/MutableList<E>
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getSize

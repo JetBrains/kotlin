@@ -37,6 +37,18 @@ public class KtFe10SymbolByReferenceTestGenerated extends AbstractKtFe10SymbolBy
     }
 
     @Test
+    @TestMetadata("genericFromFunctionInLocalClass.kt")
+    public void testGenericFromFunctionInLocalClass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromFunctionInLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("genericFromOuterClassInInnerClass.kt")
+    public void testGenericFromOuterClassInInnerClass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromOuterClassInInnerClass.kt");
+    }
+
+    @Test
     @TestMetadata("samConstructor.kt")
     public void testSamConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/samConstructor.kt");

@@ -53,6 +53,26 @@ public object DebugSymbolRenderer {
         }
     }.toString()
 
+    public fun KtAnalysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KtSymbol): String = Block().apply {
+        if (symbol !is KtCallableSymbol) return@apply
+
+        renderSymbolHeader(symbol)
+
+        withIndent {
+            renderProperty(KtCallableSymbol::callableIdIfNonLocal, symbol)
+            if (symbol is KtNamedSymbol) {
+                renderProperty(KtNamedSymbol::name, symbol)
+            }
+            renderProperty(KtCallableSymbol::origin, symbol)
+
+            @Suppress("DEPRECATION")
+            (symbol as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
+                appendLine().append("getDispatchReceiver()").append(": ")
+                renderType(dispatchType)
+            }
+        }
+    }.toString()
+
     private fun Block.renderProperty(property: KProperty<*>, vararg args: Any) {
         try {
             appendLine().append(property.name).append(": ")
@@ -63,9 +83,9 @@ public object DebugSymbolRenderer {
     }
 
     private fun Block.renderSymbol(symbol: KtSymbol) {
-        val apiClass = getSymbolApiClass(symbol)
-        append(apiClass.simpleName).append(':')
+        renderSymbolHeader(symbol)
 
+        val apiClass = getSymbolApiClass(symbol)
         withIndent {
             apiClass.members
                 .asSequence()
@@ -74,6 +94,11 @@ public object DebugSymbolRenderer {
                 .sortedBy { it.name }
                 .forEach { renderProperty(it, symbol) }
         }
+    }
+
+    private fun Block.renderSymbolHeader(symbol: KtSymbol) {
+        val apiClass = getSymbolApiClass(symbol)
+        append(apiClass.simpleName).append(':')
     }
 
     private fun Block.renderList(values: List<*>) {

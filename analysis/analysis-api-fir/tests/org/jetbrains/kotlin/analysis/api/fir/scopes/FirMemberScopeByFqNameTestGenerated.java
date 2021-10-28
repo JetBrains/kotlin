@@ -47,10 +47,4 @@ public class FirMemberScopeByFqNameTestGenerated extends AbstractFirMemberScopeB
     public void testMutableList() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/MutableList.kt");
     }
-
-    @Test
-    @TestMetadata("overridenFunctionWithGenericBound.kt")
-    public void testOverridenFunctionWithGenericBound() throws Exception {
-        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/overridenFunctionWithGenericBound.kt");
-    }
 }
