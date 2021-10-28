@@ -165,8 +165,12 @@ private fun FirClass.scopeForClassImpl(
         this, key
     ) {
         FirClassSubstitutionScope(
-            useSiteSession, basicScope, key, substitutor, classFirDispatchReceiver.defaultType(),
-            skipPrivateMembers, makeExpect = isFromExpectClass
+            useSiteSession,
+            basicScope,
+            key, substitutor,
+            substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()) as ConeClassLikeType,
+            skipPrivateMembers,
+            makeExpect = isFromExpectClass
         )
     }
 }
