@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 // TODO: Support module kinds other than plain
@@ -73,10 +76,16 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
 
         "${prefix}$visibility$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType;"
     }
+
     is ExportedConstructor -> {
         val visibility = if (isProtected) "protected " else ""
         val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
         "${visibility}constructor($renderedParameters);"
+    }
+
+    is ExportedConstructSignature -> {
+        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
+        "new($renderedParameters): ${returnType.toTypeScript(indent)};"
     }
 
     is ExportedProperty -> {
@@ -98,7 +107,18 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
             " $superInterfacesKeyword " + superInterfaces.joinToString(", ") { it.toTypeScript(indent) }
         } else ""
 
-        val membersString = members.joinToString("") { it.toTypeScript("$indent    ") + "\n" }
+        val members = members.map {
+            if (!ir.isInner || it !is ExportedFunction || !it.isStatic) {
+                it
+            } else {
+                // Remove $outer argument from secondary constructors of inner classes
+                it.copy(parameters = it.parameters.drop(1))
+            }
+        }
+
+        val (innerClasses, nonInnerClasses) = nestedClasses.partition { it.ir.isInner }
+        val innerClassesProperties = innerClasses.map { it.toReadonlyProperty() }
+        val membersString = (members + innerClassesProperties).joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
         // If there are no exported constructors, add a private constructor to disable default one
         val privateCtorString =
@@ -117,10 +137,58 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
 
         val bodyString = privateCtorString + membersString + indent
 
+        val nestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
         val klassExport = "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
         val staticsExport = if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent, prefix) else ""
         klassExport + staticsExport
     }
+}
+
+fun IrClass.asNestedClassAccess(): String {
+    val name = getJsNameOrKotlinName().identifier
+    if (parent !is IrClass) return name
+    return "${parentAsClass.asNestedClassAccess()}.$name"
+}
+
+fun ExportedClass.withProtectedConstructors(): ExportedClass {
+    return copy(members = members.map {
+        if (it !is ExportedConstructor || it.isProtected) {
+            it
+        } else {
+            it.copy(isProtected = true)
+        }
+    })
+}
+
+fun ExportedClass.toReadonlyProperty(): ExportedProperty {
+    val innerClassReference = ir.asNestedClassAccess()
+    val allPublicConstructors = members.asSequence()
+        .filterIsInstance<ExportedConstructor>()
+        .filterNot { it.isProtected }
+        .map {
+            ExportedConstructSignature(
+                parameters = it.parameters.drop(1),
+                returnType = ExportedType.TypeParameter(innerClassReference),
+            )
+        }
+        .toList()
+
+    val type = ExportedType.IntersectionType(
+        ExportedType.InlineInterfaceType(allPublicConstructors),
+        ExportedType.TypeOf(innerClassReference)
+    )
+
+    return ExportedProperty(
+        name = name,
+        type = type,
+        mutable = false,
+        isMember = true,
+        isStatic = false,
+        isAbstract = false,
+        isProtected = false,
+        irGetter = null,
+        irSetter = null
+    )
 }
 
 fun ExportedParameter.toTypeScript(indent: String): String =

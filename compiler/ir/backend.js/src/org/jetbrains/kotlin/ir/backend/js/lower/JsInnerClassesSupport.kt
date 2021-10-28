@@ -75,6 +75,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
             returnType = oldConstructor.returnType
         }.also {
             it.parent = oldConstructor.parent
+            it.annotations = oldConstructor.annotations
         }
 
         newConstructor.copyTypeParametersFrom(oldConstructor)
