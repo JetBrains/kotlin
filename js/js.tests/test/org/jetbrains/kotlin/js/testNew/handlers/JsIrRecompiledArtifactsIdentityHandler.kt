@@ -37,6 +37,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
 
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun compareIrArtifacts(originalArtifact: Js.JsIrArtifact, incrementalArtifact: Js.JsIrArtifact) {
         // TODO: enable asserts when binary stability is achieved
 //        val oldBinaryAsts = originalArtifact.icCache!!
