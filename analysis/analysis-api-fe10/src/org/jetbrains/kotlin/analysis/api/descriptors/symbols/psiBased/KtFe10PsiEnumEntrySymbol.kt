@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -47,7 +48,12 @@ internal class KtFe10PsiEnumEntrySymbol(
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion {
-            descriptor?.defaultType?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations()
+            val containingDescriptor = descriptor?.containingDeclaration
+            if (containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.ENUM_CLASS) {
+                return containingDescriptor.defaultType.toKtTypeAndAnnotations(analysisContext)
+            } else {
+                createErrorTypeAndAnnotations()
+            }
         }
 
     override val name: Name
