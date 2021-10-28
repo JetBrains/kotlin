@@ -16343,6 +16343,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("CustomThrowableMessage.kt")
+        public void testCustomThrowableMessage() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/CustomThrowableMessage.kt");
+        }
+
+        @Test
         @TestMetadata("ExtensionAlias.kt")
         public void testExtensionAlias() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ExtensionAlias.kt");

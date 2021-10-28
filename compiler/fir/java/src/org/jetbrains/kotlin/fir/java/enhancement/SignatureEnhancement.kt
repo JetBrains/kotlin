@@ -152,6 +152,7 @@ class FirSignatureEnhancement(
                 } else {
                     setterDelegate?.symbol
                 }
+                if (getterDelegate !is FirJavaMethod && setterDelegate !is FirJavaMethod) return original
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
