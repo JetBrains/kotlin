@@ -234,7 +234,7 @@ abstract class DeclarationStubGenerator(
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
+    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
                              type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false, this@DeclarationStubGenerator, typeTranslator)
         .also { irValueParameter ->
