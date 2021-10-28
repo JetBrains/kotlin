@@ -53,7 +53,7 @@ class KtFe10DescDefaultPropertySetterSymbol(
         get() = withValidityAssertion { true }
 
     override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { null }
+        get() = withValidityAssertion { propertyDescriptor.setterCallableIdIfNotLocal }
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }

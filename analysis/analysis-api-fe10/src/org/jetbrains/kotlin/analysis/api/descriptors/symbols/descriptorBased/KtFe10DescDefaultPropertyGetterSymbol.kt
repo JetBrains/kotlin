@@ -56,7 +56,7 @@ class KtFe10DescDefaultPropertyGetterSymbol(
         get() = withValidityAssertion { true }
 
     override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { null }
+        get() = withValidityAssertion { propertyDescriptor.getterCallableIdIfNotLocal }
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion { propertyDescriptor.type.toKtTypeAndAnnotations(analysisContext) }

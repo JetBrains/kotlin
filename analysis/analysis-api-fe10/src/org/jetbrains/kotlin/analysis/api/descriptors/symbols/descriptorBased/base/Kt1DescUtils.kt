@@ -304,6 +304,27 @@ internal fun CallableMemberDescriptor.calculateCallableId(allowLocal: Boolean): 
     }
 }
 
+internal val PropertyDescriptor.getterCallableIdIfNotLocal: CallableId?
+    get() {
+        if (this is SyntheticPropertyDescriptor) {
+            return getMethod.callableIdIfNotLocal
+        }
+
+        return null
+    }
+
+internal val PropertyDescriptor.setterCallableIdIfNotLocal: CallableId?
+    get() {
+        if (this is SyntheticPropertyDescriptor) {
+            val setMethod = this.setMethod
+            if (setMethod != null) {
+                return setMethod.callableIdIfNotLocal
+            }
+        }
+
+        return null
+    }
+
 internal fun getSymbolDescriptor(symbol: KtSymbol): DeclarationDescriptor? {
     return when (symbol) {
         is KtFe10DescSymbol<*> -> symbol.descriptor
