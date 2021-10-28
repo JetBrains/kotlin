@@ -524,8 +524,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         environment: JpsCompilerEnvironment,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>
     ): OutputItemsCollector? {
-        loadPlugins(representativeTarget, commonArguments, context)
-
         kotlinChunk.targets.forEach {
             it.nextRound(context)
         }
@@ -560,30 +558,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val isDoneSomething = representativeTarget.compileModuleChunk(commonArguments, dirtyFilesHolder, environment)
 
         return if (isDoneSomething) environment.outputItemsCollector else null
-    }
-
-    private fun loadPlugins(
-        representativeTarget: KotlinModuleBuildTarget<*>,
-        commonArguments: CommonCompilerArguments,
-        context: CompileContext
-    ) {
-        fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*strings.orEmpty(), *cp.toTypedArray())
-
-        for (argumentProvider in ServiceLoader.load(KotlinJpsCompilerArgumentsProvider::class.java)) {
-            val jpsModuleBuildTarget = representativeTarget.jpsModuleBuildTarget
-            // appending to pluginOptions
-            commonArguments.pluginOptions = concatenate(
-                commonArguments.pluginOptions,
-                argumentProvider.getExtraArguments(jpsModuleBuildTarget, context)
-            )
-            // appending to classpath
-            commonArguments.pluginClasspaths = concatenate(
-                commonArguments.pluginClasspaths,
-                argumentProvider.getClasspath(jpsModuleBuildTarget, context)
-            )
-
-            LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
-        }
     }
 
     private fun createCompileEnvironment(
