@@ -15975,6 +15975,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/simple.kt");
         }
+
+        @Test
+        @TestMetadata("useFromAnotherModule.kt")
+        public void testUseFromAnotherModule() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/useFromAnotherModule.kt");
+        }
     }
 
     @Nested
@@ -16215,6 +16221,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("this.kt")
             public void testThis() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/this.kt");
+            }
+
+            @Test
+            @TestMetadata("useFromAnotherModule.kt")
+            public void testUseFromAnotherModule() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModule.kt");
             }
 
             @Nested

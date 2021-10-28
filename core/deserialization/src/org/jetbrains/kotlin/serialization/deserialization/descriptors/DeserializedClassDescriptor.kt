@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
@@ -139,6 +141,15 @@ class DeserializedClassDescriptor(
         }
 
     override fun getConstructors() = constructors()
+
+    override fun getContextReceivers(): List<ReceiverParameterDescriptor> = classProto.contextReceiverTypeList.map {
+        val contextReceiverType = c.typeDeserializer.type(it)
+        ReceiverParameterDescriptorImpl(
+            thisAsReceiverParameter,
+            ContextClassReceiver(this, contextReceiverType, null),
+            Annotations.EMPTY
+        );
+    }
 
     private fun computeCompanionObjectDescriptor(): ClassDescriptor? {
         if (!classProto.hasCompanionObjectName()) return null

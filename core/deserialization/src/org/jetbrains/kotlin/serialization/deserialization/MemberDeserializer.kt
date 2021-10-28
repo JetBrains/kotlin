@@ -60,7 +60,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
                 DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
             },
-            emptyList()
+            proto.contextReceiverTypeList.map { it.toContextReceiver(local, property) }
         )
 
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
@@ -152,6 +152,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
     private fun DeserializedSimpleFunctionDescriptor.initializeWithCoroutinesExperimentalityStatus(
         extensionReceiverParameter: ReceiverParameterDescriptor?,
         dispatchReceiverParameter: ReceiverParameterDescriptor?,
+        contextReceiverParameters: List<ReceiverParameterDescriptor>,
         typeParameters: List<TypeParameterDescriptor>,
         unsubstitutedValueParameters: List<ValueParameterDescriptor>,
         unsubstitutedReturnType: KotlinType?,
@@ -162,7 +163,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         initialize(
             extensionReceiverParameter,
             dispatchReceiverParameter,
-            emptyList(), // TODO
+            contextReceiverParameters,
             typeParameters,
             unsubstitutedValueParameters,
             unsubstitutedReturnType,
@@ -202,6 +203,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
             },
             getDispatchReceiverParameter(),
+            proto.contextReceiverTypeList.mapNotNull { it.toContextReceiver(local, function) },
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
@@ -340,5 +342,13 @@ class MemberDeserializer(private val c: DeserializationContext) {
         is PackageFragmentDescriptor -> ProtoContainer.Package(fqName, c.nameResolver, c.typeTable, c.containerSource)
         is DeserializedClassDescriptor -> thisAsProtoContainer
         else -> null // TODO: support annotations on lambdas and their parameters
+    }
+
+    private fun ProtoBuf.Type.toContextReceiver(
+        deserializationContext: DeserializationContext,
+        callableDescriptor: CallableDescriptor
+    ): ReceiverParameterDescriptor? {
+        val contextReceiverType = deserializationContext.typeDeserializer.type(this)
+        return DescriptorFactory.createContextReceiverParameterForCallable(callableDescriptor, contextReceiverType, Annotations.EMPTY)
     }
 }
