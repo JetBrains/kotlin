@@ -227,6 +227,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirSteppingTest> {
                 model("debug/stepping")
             }
+
+            testClass<AbstractFirLocalVariableTest> {
+                model("debug/localVariables")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {
