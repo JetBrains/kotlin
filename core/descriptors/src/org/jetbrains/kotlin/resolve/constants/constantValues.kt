@@ -132,7 +132,7 @@ abstract class ErrorValue : ConstantValue<Unit>(Unit) {
         Unit
     }
 
-    @Deprecated("Should not be called, for this is not a real value, but a indication of an error")
+    @Deprecated("Should not be called, for this is not a real value, but an indication of an error")
     override val value: Unit
         get() = throw UnsupportedOperationException()
 

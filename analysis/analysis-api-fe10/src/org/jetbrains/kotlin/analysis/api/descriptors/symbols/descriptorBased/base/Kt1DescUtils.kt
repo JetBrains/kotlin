@@ -229,6 +229,7 @@ internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
             val arguments = value.allValueArguments.map { (name, v) -> KtNamedConstantValue(name.asString(), v.toKtConstantValue()) }
             KtAnnotationConstantValue(value.annotationClass?.classId, arguments, null)
         }
+        is ErrorValue -> KtErrorValue(this.toString())
         else -> KtUnsupportedConstantValue
     }
 }

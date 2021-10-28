@@ -26,8 +26,12 @@ internal class KtFirCompileTimeConstantProvider(
     override fun evaluate(expression: KtExpression): KtConstantValue? = withValidityAssertion {
         when (val fir = expression.getOrBuildFir(firResolveState)) {
             is FirExpression -> {
-                FirCompileTimeConstantEvaluator.evaluate(fir)?.let { KtFirConstantValueConverter.toConstantValue(it) }
-                    ?: KtFirConstantValueConverter.toConstantValue(fir, firResolveState.rootModuleSession)
+                try {
+                    FirCompileTimeConstantEvaluator.evaluate(fir)?.let { KtFirConstantValueConverter.toConstantValue(it) }
+                        ?: KtFirConstantValueConverter.toConstantValue(fir, firResolveState.rootModuleSession)
+                } catch (e: ArithmeticException) {
+                    KtErrorValue(e.localizedMessage)
+                }
             }
             // For invalid code like the following,
             // ```

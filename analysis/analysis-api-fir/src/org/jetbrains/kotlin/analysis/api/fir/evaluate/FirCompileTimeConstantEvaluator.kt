@@ -98,7 +98,7 @@ internal object FirCompileTimeConstantEvaluator {
         return evalUnaryOp(
             function.name.asString(),
             kind.toCompileTimeType(),
-            value!!
+            kind.convertToNumber(value as? Number)!!
         )?.let {
             it.toConstantValueKind()?.toConstExpression(source, it)
         }
@@ -113,9 +113,9 @@ internal object FirCompileTimeConstantEvaluator {
         return evalBinaryOp(
             function.name.asString(),
             kind.toCompileTimeType(),
-            value!!,
+            kind.convertToNumber(value as? Number)!!,
             other.kind.toCompileTimeType(),
-            other.value!!
+            other.kind.convertToNumber(other.value as? Number)!!
         )?.let {
             it.toConstantValueKind()?.toConstExpression(source, it)
         }

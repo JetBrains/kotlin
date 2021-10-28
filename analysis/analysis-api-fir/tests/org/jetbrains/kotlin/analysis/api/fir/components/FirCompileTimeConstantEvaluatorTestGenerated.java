@@ -79,6 +79,12 @@ public class FirCompileTimeConstantEvaluatorTestGenerated extends AbstractFirCom
     }
 
     @Test
+    @TestMetadata("propertyInit_DivByZero.kt")
+    public void testPropertyInit_DivByZero() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/propertyInit_DivByZero.kt");
+    }
+
+    @Test
     @TestMetadata("propertyInit_Double.kt")
     public void testPropertyInit_Double() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantEvaluator/propertyInit_Double.kt");

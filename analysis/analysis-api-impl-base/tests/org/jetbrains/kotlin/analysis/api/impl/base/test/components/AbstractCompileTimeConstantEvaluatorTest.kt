@@ -66,6 +66,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
                 append(", ")
                 append("value=${value})")
             }
+            is KtErrorValue -> "KtErrorValue($message)"
             is KtUnsupportedConstantValue -> "KtUnsupportedConstantValue"
         }
     }

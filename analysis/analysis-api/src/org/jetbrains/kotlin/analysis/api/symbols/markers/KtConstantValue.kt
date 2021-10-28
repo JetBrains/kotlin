@@ -29,6 +29,17 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 public sealed class KtConstantValue(
     public open val sourcePsi: KtElement? = null
 )
+
+/**
+ * This represents an error during expression evaluation or constant conversion.
+ */
+public class KtErrorValue(
+    public val message: String
+) : KtConstantValue()
+
+/**
+ * This represents an unsupported expression used as an annotation value.
+ */
 public object KtUnsupportedConstantValue : KtConstantValue()
 
 public class KtArrayConstantValue(
