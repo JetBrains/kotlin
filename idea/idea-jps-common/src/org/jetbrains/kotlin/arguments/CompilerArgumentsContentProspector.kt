@@ -24,10 +24,10 @@ object CompilerArgumentsContentProspector {
         mutableMapOf()
 
     private fun getCompilerArguments(kClass: KClass<out CommonToolArguments>) = argumentPropertiesCache.getOrPut(kClass) {
-        kClass.memberProperties.filter { prop -> prop.annotations.singleOrNull { it is Argument } != null }
+        kClass.memberProperties.filter { prop -> prop.annotations.any { it is Argument } }
     }
 
-    private inline fun <reified R : Any> List<KProperty1<out CommonToolArguments, *>>.filterByReturnType(predicate: (KType?) -> Boolean) =
+    private inline fun <reified R : Any?> List<KProperty1<out CommonToolArguments, *>>.filterByReturnType(predicate: (KType?) -> Boolean) =
         filter { predicate(it.returnType) }.mapNotNull { it.safeAs<KProperty1<CommonToolArguments, R>>() }
 
     fun getFlagCompilerArgumentProperties(kClass: KClass<out CommonToolArguments>): List<KProperty1<out CommonToolArguments, Boolean>> =
@@ -37,7 +37,7 @@ object CompilerArgumentsContentProspector {
         stringArgumentPropertiesCache.getOrPut(kClass) { getCompilerArguments(kClass).filterByReturnType { it?.classifier == String::class } }
 
     fun <T : CommonToolArguments> getArrayCompilerArgumentProperties(kClass: KClass<T>): List<KProperty1<out CommonToolArguments, Array<String>?>> =
-        arrayArgumentPropertiesCache.getOrPut(kClass) { getCompilerArguments(kClass).filterByReturnType { it?.classifier?.javaClass?.isArray == true } }
+        arrayArgumentPropertiesCache.getOrPut(kClass) { getCompilerArguments(kClass).filterByReturnType { (it?.classifier as? KClass<*>)?.java?.isArray == true } }
 
     val freeArgsProperty: KProperty1<in CommonToolArguments, List<String>>
         get() = CommonToolArguments::freeArgs
