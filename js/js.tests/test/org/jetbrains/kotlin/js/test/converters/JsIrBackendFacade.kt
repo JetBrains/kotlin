@@ -133,19 +133,34 @@ class JsIrBackendFacade(
             .run { if (shouldBeGenerated()) arguments() else null }
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
         val esModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives
+        val runNewIr2Js = JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS in module.directives
 
         val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + ".js")
         val dceOutputFile = File(JsEnvironmentConfigurator.getDceJsArtifactPath(testServices, module.name) + ".js")
         if (!esModules) {
-            val transformer = IrModuleToJsTransformerTmp(
-                loweredIr.context,
-                mainArguments,
-                fullJs = true,
-                dceJs = runIrDce,
-                multiModule = granularity == JsGenerationGranularity.PER_MODULE,
-                relativeRequirePath = false
-            )
-            return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules)).dump(module)
+            if (runNewIr2Js) {
+                val transformer = IrModuleToJsTransformerTmp(
+                    loweredIr.context,
+                    mainArguments,
+                    fullJs = true,
+                    dceJs = runIrDce,
+                    multiModule = granularity == JsGenerationGranularity.PER_MODULE,
+                    relativeRequirePath = false
+                )
+
+                return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules)).dump(module)
+            } else {
+                val transformer = IrModuleToJsTransformer(
+                    loweredIr.context,
+                    mainArguments,
+                    fullJs = true,
+                    dceJs = runIrDce,
+                    multiModule = granularity == JsGenerationGranularity.PER_MODULE,
+                    relativeRequirePath = false
+                )
+
+                return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules)).dump(module)
+            }
         }
 
         val options = JsGenerationOptions(generatePackageJson = true, generateTypeScriptDefinitions = generateDts)

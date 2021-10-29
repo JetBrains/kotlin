@@ -234,4 +234,9 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "",
         applicability = DirectiveApplicability.Global
     )
+
+    val RUN_NEW_IR_2_JS by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
 }

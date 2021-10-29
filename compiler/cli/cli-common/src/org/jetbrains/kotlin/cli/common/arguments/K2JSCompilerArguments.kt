@@ -176,6 +176,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-per-file", description = "Splits generated .js per-file")
     var irPerFile: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-new-ir2js", description = "New fragment-based ir2js")
+    var irNewIr2Js: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
