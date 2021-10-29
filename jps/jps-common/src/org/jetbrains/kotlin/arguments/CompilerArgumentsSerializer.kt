@@ -41,8 +41,7 @@ class CompilerArgumentsSerializerV5<T : CommonToolArguments>(override val argume
                     ?.takeIf { it.get(arguments)?.contentEquals(it.get(newInstance)) != true }
                     ?.get(arguments)
                     ?.let { prop.name to it }
-            }.filterNot { it.second.isEmpty() }
-            .toMap()
+            }.toMap()
         saveArrayArguments(this, arrayArgumentsByName)
         val freeArgs = CompilerArgumentsContentProspector.freeArgsProperty.get(arguments)
         saveElementsList(this, FREE_ARGS_ROOT_ELEMENTS_NAME, FREE_ARGS_ELEMENT_NAME, freeArgs)
