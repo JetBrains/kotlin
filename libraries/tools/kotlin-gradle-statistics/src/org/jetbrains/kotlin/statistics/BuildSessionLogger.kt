@@ -24,7 +24,7 @@ class BuildSessionLogger(
 
     companion object {
         const val STATISTICS_FOLDER_NAME = "kotlin-profile"
-        const val STATISTICS_FILE_NAME_PATTERN = "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{3}.profile"
+        const val STATISTICS_FILE_NAME_PATTERN = "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{3}(.\\d+)?.profile"
 
         private const val DEFAULT_MAX_PROFILE_FILES = 1_000
         private const val DEFAULT_MAX_PROFILE_FILE_SIZE = 100_000L
@@ -35,7 +35,9 @@ class BuildSessionLogger(
         }
     }
 
-    private val profileFileNameFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss-SSS'.profile'")
+    private val profileFileNameFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss-SSS")
+    private val profileFileNameSuffix = ".profile"
+
     private val statisticsFolder: File = File(
         rootPath,
         STATISTICS_FOLDER_NAME
@@ -80,7 +82,7 @@ class BuildSessionLogger(
         closeTrackingFile()
 
         // Get list of existing files. Try to create folder if possible, return from function if failed to create folder
-        val fileCandidates = listProfileFiles(statisticsFolder) ?: if (statisticsFolder.mkdirs()) emptyList<File>() else return
+        val fileCandidates = listProfileFiles(statisticsFolder) ?: if (statisticsFolder.mkdirs()) emptyList() else return
 
         for ((index, file) in fileCandidates.withIndex()) {
             val toDelete = if (index < fileCandidates.size - maxProfileFiles)
@@ -95,12 +97,21 @@ class BuildSessionLogger(
         }
 
         // emergency check. What if a lot of files are locked due to some reason
-        if (listProfileFiles(statisticsFolder)?.size ?: 0 > maxProfileFiles * 2) {
+        if ((listProfileFiles(statisticsFolder)?.size ?: 0) > maxProfileFiles * 2) {
             trackingFile = NullRecordLogger()
             return
         }
 
-        fun newFile(): File = File(statisticsFolder, profileFileNameFormatter.format(LocalDateTime.now()))
+        fun newFile(): File {
+            val timestamp = profileFileNameFormatter.format(LocalDateTime.now())
+            var result = File(statisticsFolder, timestamp + profileFileNameSuffix)
+            var suffixIndex = 0
+            while (result.exists()) {
+                result = File(statisticsFolder, "${timestamp}.${suffixIndex++}$profileFileNameSuffix")
+            }
+            return result
+        }
+
         val lastFile = fileCandidates.lastOrNull() ?: newFile()
 
         trackingFile = try {
