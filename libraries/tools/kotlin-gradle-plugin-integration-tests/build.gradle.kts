@@ -176,6 +176,8 @@ val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
         excludeTags("DaemonsKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val simpleTestsTask = tasks.register<Test>("kgpSimpleTests") {
@@ -187,6 +189,8 @@ val simpleTestsTask = tasks.register<Test>("kgpSimpleTests") {
         includeTags("SimpleKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
@@ -197,6 +201,8 @@ val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
         includeTags("JvmKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val jsTestsTask = tasks.register<Test>("kgpJsTests") {
@@ -207,6 +213,8 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
         includeTags("JsKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
@@ -221,6 +229,8 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
         includeTags("DaemonsKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
@@ -231,6 +241,8 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
         includeTags("OtherKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 tasks.named<Task>("check") {
