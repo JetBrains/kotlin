@@ -8089,6 +8089,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("externalPropertyOverride.kt")
+        public void testExternalPropertyOverride() throws Exception {
+            runTest("js/js.translator/testData/box/propertyOverride/externalPropertyOverride.kt");
+        }
+
+        @Test
         @TestMetadata("initOverrideInConstructor.kt")
         public void testInitOverrideInConstructor() throws Exception {
             runTest("js/js.translator/testData/box/propertyOverride/initOverrideInConstructor.kt");

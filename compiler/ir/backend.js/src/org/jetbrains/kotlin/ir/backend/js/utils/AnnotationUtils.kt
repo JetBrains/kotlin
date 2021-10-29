@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -56,8 +57,19 @@ fun IrAnnotationContainer.isJsNativeSetter(): Boolean = hasAnnotation(JsAnnotati
 
 fun IrAnnotationContainer.isJsNativeInvoke(): Boolean = hasAnnotation(JsAnnotations.jsNativeInvoke)
 
+fun IrDeclarationWithName.getJsNameForOverriddenDeclaration(): String? {
+    val jsName = getJsName()
+
+    return when {
+        jsName != null -> jsName
+        this is IrOverridableDeclaration<*> ->
+            overriddenSymbols.firstNotNullOfOrNull { (it.owner as? IrAnnotationContainer)?.getJsName() }
+        else -> null
+    }
+}
+
 fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
-    when (val jsName = getJsName()) {
+    when (val jsName = getJsNameForOverriddenDeclaration()) {
         null -> name
         else -> Name.identifier(jsName)
     }
