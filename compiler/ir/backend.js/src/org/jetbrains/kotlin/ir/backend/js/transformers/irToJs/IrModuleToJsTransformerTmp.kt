@@ -62,7 +62,8 @@ class IrModuleToJsTransformerTmp(
             mainModuleName,
             moduleKind,
             generateProgramFragments(modules, exportData),
-            relativeRequirePath
+            relativeRequirePath,
+            generateScriptModule,
         ) else null
 
         val dceJsCode = if (dceJs) {
@@ -73,7 +74,8 @@ class IrModuleToJsTransformerTmp(
                 mainModuleName,
                 moduleKind,
                 generateProgramFragments(modules, exportData),
-                relativeRequirePath
+                relativeRequirePath,
+                generateScriptModule,
             )
         } else null
 
@@ -261,6 +263,7 @@ private fun generateWrappedModuleBody(
     moduleKind: ModuleKind,
     program: JsIrProgram,
     relativeRequirePath: Boolean,
+    generateScriptModule: Boolean,
 ): CompilationOutputs {
     if (multiModule) {
 
@@ -273,8 +276,9 @@ private fun generateWrappedModuleBody(
             mainModuleName,
             moduleKind,
             main.fragments,
-            moduleToRef[main]!!,
+            generateScriptModule,
             generateCallToMain = true,
+            moduleToRef[main]!!,
         )
 
         val dependencies = others.map { module ->
@@ -284,8 +288,9 @@ private fun generateWrappedModuleBody(
                 moduleName,
                 moduleKind,
                 module.fragments,
-                moduleToRef[module]!!,
+                generateScriptModule,
                 generateCallToMain = false,
+                moduleToRef[module]!!,
             )
         }
 
@@ -295,6 +300,7 @@ private fun generateWrappedModuleBody(
             mainModuleName,
             moduleKind,
             program.modules.flatMap { it.fragments },
+            generateScriptModule,
             generateCallToMain = true,
         )
     }
@@ -304,15 +310,16 @@ fun generateSingleWrappedModuleBody(
     moduleName: String,
     moduleKind: ModuleKind,
     fragments: List<JsIrProgramFragment>,
-    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
+    generateScriptModule: Boolean,
     generateCallToMain: Boolean,
+    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
 ): CompilationOutputs {
     val program = Merger(
         moduleName,
         moduleKind,
         fragments,
         crossModuleReferences,
-        generateScriptModule = false,
+        generateScriptModule,
         generateRegionComments = true,
         generateCallToMain,
     ).merge()
