@@ -348,13 +348,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 body.buildConstI32Symbol(context.referenceInterfaceId(irInterface.symbol))
             }
 
-            wasmSymbols.wasmTypeId -> {
-                val type = call.getTypeArgument(0)!!.getClass()
-                    ?: error("No class given for wasmClassId intrinsic")
-                val id = if (type.isInterface) context.referenceInterfaceId(type.symbol) else context.referenceClassId(type.symbol)
-                body.buildConstI32Symbol(id)
-            }
-
             wasmSymbols.wasmRefCast -> {
                 val toType = call.getTypeArgument(0)!!
                 generateTypeRTT(toType)

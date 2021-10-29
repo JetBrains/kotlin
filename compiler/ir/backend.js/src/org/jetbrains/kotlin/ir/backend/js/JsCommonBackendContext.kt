@@ -30,15 +30,11 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 interface JsCommonBackendContext : CommonBackendContext {
     override val mapping: JsMapping
 
-    val intrinsics: Intrinsics
-
-    val dynamicType: IrDynamicType
+    val reflectionSymbols: ReflectionSymbols
 
     val inlineClassesUtils: InlineClassesUtils
 
     val coroutineSymbols: JsCommonCoroutineSymbols
-
-    val primitiveClassesObject: IrClassSymbol
 
     val catchAllThrowableType: IrType
         get() = irBuiltIns.throwableType

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 
 class K2JSCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -241,6 +244,15 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             description = "Picks flavor for the wasm launcher. Default is ESM."
     )
     var wasmLauncher: String? by NullableStringFreezableVar("esm")
+
+    @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for FQ names in KClass")
+    var wasmKClassFqn: Boolean by FreezableVar(false)
+
+    override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
+        return super.configureAnalysisFlags(collector, languageVersion).also {
+            it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
+        }
+    }
 
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
         return super.configureLanguageFeatures(collector).apply {

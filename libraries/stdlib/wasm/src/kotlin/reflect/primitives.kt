@@ -14,6 +14,7 @@ internal object PrimitiveClasses {
 
     val anyClass = wasmGetKClass<Any>()
     val numberClass = wasmGetKClass<Number>()
+    val longClass = wasmGetKClass<Long>()
     val booleanClass = wasmGetKClass<Boolean>()
     val byteClass = wasmGetKClass<Byte>()
     val shortClass = wasmGetKClass<Short>()

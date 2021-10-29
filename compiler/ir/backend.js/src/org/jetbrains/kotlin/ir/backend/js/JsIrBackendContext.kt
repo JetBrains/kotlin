@@ -157,8 +157,9 @@ class JsIrBackendContext(
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
 
-    override val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
-    override val intrinsics = JsIntrinsics(irBuiltIns, this)
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
+    override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
     override val catchAllThrowableType: IrType
         get() = dynamicType
@@ -284,15 +285,11 @@ class JsIrBackendContext(
     val errorCodeSymbol: IrSimpleFunctionSymbol? =
         if (errorPolicy.allowErrors) symbolTable.referenceSimpleFunction(getJsInternalFunction("errorCode")) else null
 
-    override val primitiveClassesObject = getIrClass(FqName("kotlin.reflect.js.internal.PrimitiveClasses"))
-
     val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
     val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
         getIrClass(JS_INTERNAL_PACKAGE_FQNAME.child(Name.identifier("${it.identifier}CompanionObject")))
     }
-
-
 
     // Top-level functions forced to be loaded
 
@@ -355,7 +352,7 @@ class JsIrBackendContext(
     internal fun getProperty(fqName: FqName): PropertyDescriptor =
         findProperty(module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
-    private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
+    internal fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")

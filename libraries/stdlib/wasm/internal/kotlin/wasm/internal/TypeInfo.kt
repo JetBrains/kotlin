@@ -18,7 +18,7 @@ internal const val TYPE_INFO_ITABLE_PTR_OFFSET = TYPE_INFO_SUPER_TYPE_OFFSET + T
 internal const val TYPE_INFO_VTABLE_LENGTH_OFFSET = TYPE_INFO_ITABLE_PTR_OFFSET + TYPE_INFO_ELEMENT_SIZE
 internal const val TYPE_INFO_VTABLE_OFFSET = TYPE_INFO_VTABLE_LENGTH_OFFSET + TYPE_INFO_ELEMENT_SIZE
 
-internal class TypeInfoData(val typeId: Int, val packageName: String, val typeName: String)
+internal class TypeInfoData(val typeId: Int, val isInterface: Boolean, val packageName: String, val typeName: String)
 
 internal fun getTypeInfoTypeDataByPtr(typeInfoPtr: Int): TypeInfoData {
     val fqNameLength = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_PACKAGE_NAME_LENGTH_OFFSET)
@@ -27,7 +27,7 @@ internal fun getTypeInfoTypeDataByPtr(typeInfoPtr: Int): TypeInfoData {
     val simpleNamePtr = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET)
     val packageName = stringLiteral(fqNameLengthPtr, fqNameLength)
     val simpleName = stringLiteral(simpleNamePtr, simpleNameLength)
-    return TypeInfoData(typeInfoPtr, packageName, simpleName)
+    return TypeInfoData(typeInfoPtr, isInterface = false, packageName, simpleName)
 }
 
 internal fun getSuperTypeId(typeInfoPtr: Int): Int =
@@ -83,8 +83,4 @@ internal fun <T> wasmInterfaceId(): Int =
 
 @ExcludedFromCodegen
 internal fun <T> wasmGetTypeInfoData(): TypeInfoData =
-    implementedAsIntrinsic
-
-@ExcludedFromCodegen
-internal fun <T> wasmTypeId(): Int =
     implementedAsIntrinsic

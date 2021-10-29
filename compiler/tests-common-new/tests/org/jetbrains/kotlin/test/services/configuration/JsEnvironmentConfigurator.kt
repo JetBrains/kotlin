@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -201,6 +205,15 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val modules = testServices.moduleStructure.modules
         return regularDependencies.toSet() +
                 regularDependencies.flatMap { modules.single { module -> module.name == it.moduleName }.allTransitiveDependencies() }
+    }
+
+    override fun provideAdditionalAnalysisFlags(
+        directives: RegisteredDirectives,
+        languageVersion: LanguageVersion
+    ): Map<AnalysisFlag<*>, Any?> {
+        return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
+            it[allowFullyQualifiedNameInKClass] = false
+        }
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

@@ -24,36 +24,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-
-class WasmIntrinsics(private val context: WasmBackendContext) : Intrinsics {
-
-    override val jsGetKClass: IrSimpleFunctionSymbol get() = context.wasmSymbols.jsGetKClass
-    override val jsGetKClassFromExpression: IrSimpleFunctionSymbol get() = context.wasmSymbols.jsGetKClassFromExpression
-    override val jsClass: IrSimpleFunctionSymbol get() = context.wasmSymbols.jsClass
-
-    override val createKType: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val createDynamicKType: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val createKTypeParameter: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val getStarKTypeProjection: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val createCovariantKTypeProjection: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val createInvariantKTypeProjection: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val createContravariantKTypeProjection: IrSimpleFunctionSymbol?
-        get() = TODO("Not yet implemented")
-    override val arrayLiteral: IrSimpleFunctionSymbol
-        get() = TODO("Not yet implemented")
-}
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -67,11 +42,6 @@ class WasmBackendContext(
     override var inVerbosePhase: Boolean = false
     override val scriptMode = false
     override val irFactory: IrFactory = symbolTable.irFactory
-
-    //TODO
-    override val dynamicType: IrDynamicType get() = TODO()
-    override val primitiveClassesObject get() = wasmSymbols.primitiveClassesObject
-    //TODO!!!
 
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
@@ -132,6 +102,8 @@ class WasmBackendContext(
         WasmSharedVariablesManager(this, irBuiltIns, internalPackageFragment)
 
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
+    override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
+
     override val ir = object : Ir<WasmBackendContext>(this, irModuleFragment) {
         override val symbols: Symbols<WasmBackendContext> = wasmSymbols
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
@@ -199,6 +171,4 @@ class WasmBackendContext(
             }
         }
     }
-
-    override val intrinsics: Intrinsics = WasmIntrinsics(this)
 }

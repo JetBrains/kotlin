@@ -39,8 +39,12 @@ class JsReflectionAPICallChecker(
     override val isWholeReflectionApiAvailable: Boolean
         get() = false
 
-    override fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean {
-        return super.isAllowedReflectionApi(descriptor, containingClass) ||
+    override fun isAllowedReflectionApi(
+        descriptor: CallableDescriptor,
+        containingClass: ClassDescriptor,
+        context: CallCheckerContext
+    ): Boolean {
+        return super.isAllowedReflectionApi(descriptor, containingClass, context) ||
                 containingClass.fqNameSafe in ADDITIONAL_ALLOWED_CLASSES ||
                 descriptor.name.asString() == "findAssociatedObject"
     }

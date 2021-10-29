@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irCallConstructor
@@ -128,22 +130,27 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
                 return irCall(call, newSymbol, argumentsAsReceivers = true)
             }
-            symbols.jsClass -> {
-                val infoDataCtor = symbols.wasmTypeInfoData.constructors.first()
+            symbols.reflectionSymbols.getClassData -> {
+                val infoDataCtor = symbols.reflectionSymbols.wasmTypeInfoData.constructors.first()
                 val type = call.getTypeArgument(0)!!
+                val isInterface = type.isInterface()
                 val fqName = type.classFqName!!
-                val packageName = fqName.parentOrNull()?.asString() ?: ""
+                val fqnShouldBeEmitted =
+                    context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
+                val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
                 val typeName = fqName.shortName().asString()
 
                 return with(builder) {
-                    val typeId = irCall(symbols.wasmTypeId).also {
+                    val wasmIdGetter = if (type.isInterface()) symbols.wasmInterfaceId else symbols.wasmClassId
+                    val typeId = irCall(wasmIdGetter).also {
                         it.putTypeArgument(0, type)
                     }
 
                     irCallConstructor(infoDataCtor, emptyList()).also {
                         it.putValueArgument(0, typeId)
-                        it.putValueArgument(1, packageName.toIrConst(context.irBuiltIns.stringType))
-                        it.putValueArgument(2, typeName.toIrConst(context.irBuiltIns.stringType))
+                        it.putValueArgument(1, isInterface.toIrConst(context.irBuiltIns.booleanType))
+                        it.putValueArgument(2, packageName.toIrConst(context.irBuiltIns.stringType))
+                        it.putValueArgument(3, typeName.toIrConst(context.irBuiltIns.stringType))
                     }
                 }
             }
