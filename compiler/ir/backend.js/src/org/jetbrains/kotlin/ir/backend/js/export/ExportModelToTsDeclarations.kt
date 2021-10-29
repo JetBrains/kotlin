@@ -230,4 +230,9 @@ fun ExportedType.toTypeScript(indent: String): String = when (this) {
     is ExportedType.IntersectionType -> {
         lhs.toTypeScript(indent) + " & " + rhs.toTypeScript(indent)
     }
+    is ExportedType.UnionType -> {
+        lhs.toTypeScript(indent) + " | " + rhs.toTypeScript(indent)
+    }
+    is ExportedType.LiteralType.StringLiteralType -> "\"$value\""
+    is ExportedType.LiteralType.NumberLiteralType -> value.toString()
 }

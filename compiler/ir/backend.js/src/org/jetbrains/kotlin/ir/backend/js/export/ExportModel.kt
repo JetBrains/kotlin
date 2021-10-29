@@ -94,6 +94,11 @@ sealed class ExportedType {
         object Nothing : Primitive("never")
     }
 
+    sealed class LiteralType<T : Any>(val value: T) : ExportedType() {
+        class StringLiteralType(value: String) : LiteralType<String>(value)
+        class NumberLiteralType(value: Number) : LiteralType<Number>(value)
+    }
+
     class Array(val elementType: ExportedType) : ExportedType()
     class Function(
         val parameterTypes: List<ExportedType>,
@@ -109,6 +114,8 @@ sealed class ExportedType {
     class InlineInterfaceType(
         val members: List<ExportedDeclaration>
     ) : ExportedType()
+
+    class UnionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
 
     class IntersectionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
 

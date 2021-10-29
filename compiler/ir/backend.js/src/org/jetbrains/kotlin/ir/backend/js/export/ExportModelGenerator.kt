@@ -113,11 +113,18 @@ class ExportModelGenerator(
             }
         }
 
+        return exportPropertyUnsafely(property)
+    }
+
+    private fun exportPropertyUnsafely(
+        property: IrProperty,
+        specializeType: ExportedType? = null
+    ): ExportedDeclaration {
         val parentClass = property.parent as? IrClass
 
         return ExportedProperty(
             property.getExportedIdentifier(),
-            exportType(property.getter!!.returnType),
+            specializeType ?: exportType(property.getter!!.returnType),
             mutable = property.isVar,
             isMember = parentClass != null,
             isStatic = false,
@@ -128,17 +135,44 @@ class ExportModelGenerator(
         )
     }
 
-    private fun exportEnumEntry(field: IrField): ExportedProperty? {
-        if (field.origin != IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) return null
-
+    private fun exportEnumEntry(field: IrField, enumEntries: List<IrEnumEntry>): ExportedProperty {
         val irEnumEntry = context.mapping.fieldToEnumEntry[field]
             ?: error("Unable to find enum entry for ${field.fqNameWhenAvailable}")
 
         val parentClass = field.parent as IrClass
 
+        val name = irEnumEntry.getExportedIdentifier()
+        val ordinal = enumEntries.indexOf(irEnumEntry)
+
+        val nameProperty = ExportedProperty(
+            name = "name",
+            type = ExportedType.LiteralType.StringLiteralType(name),
+            mutable = false,
+            isMember = true,
+            isStatic = false,
+            isAbstract = false,
+            isProtected = false,
+            irGetter = null,
+            irSetter = null,
+        )
+        val ordinalProperty = ExportedProperty(
+            name = "ordinal",
+            type = ExportedType.LiteralType.NumberLiteralType(ordinal),
+            mutable = false,
+            isMember = true,
+            isStatic = false,
+            isAbstract = false,
+            isProtected = false,
+            irGetter = null,
+            irSetter = null,
+        )
+        val type = ExportedType.InlineInterfaceType(
+            listOf(nameProperty, ordinalProperty)
+        )
+
         return ExportedProperty(
-            name = irEnumEntry.getExportedIdentifier(),
-            type = exportType(parentClass.defaultType),
+            name = name,
+            type = ExportedType.IntersectionType(exportType(parentClass.defaultType), type),
             mutable = false,
             isMember = true,
             isStatic = true,
@@ -181,10 +215,24 @@ class ExportModelGenerator(
 
         val members = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
+        val enumEntries = if (klass.isEnumClass) {
+            klass
+                .declarations
+                .filterIsInstance<IrField>()
+                .mapNotNull { context.mapping.fieldToEnumEntry[it] }
+        } else null
 
         for (declaration in klass.declarations) {
             val candidate = getExportCandidate(declaration) ?: continue
             if (!shouldDeclarationBeExported(candidate, context)) continue
+
+            if (enumEntries != null) {
+                val enumExportedMember = exportAsEnumMember(candidate, enumEntries)
+                if (enumExportedMember != null) {
+                    members.add(enumExportedMember)
+                    continue
+                }
+            }
 
             when (candidate) {
                 is IrSimpleFunction ->
@@ -208,13 +256,11 @@ class ExportModelGenerator(
                 is IrField -> {
                     assert(
                         candidate.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
-                                candidate.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
-                                || candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
+                                candidate.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
                                 || candidate.correspondingPropertySymbol != null
                     ) {
                         "Unexpected field without property ${candidate.fqNameWhenAvailable}"
                     }
-                    members.addIfNotNull(exportEnumEntry(candidate))
                 }
 
                 else -> error("Can't export member declaration $declaration")
@@ -269,6 +315,40 @@ class ExportModelGenerator(
             nestedClasses = nestedClasses,
             ir = klass
         )
+    }
+
+    private fun exportAsEnumMember(candidate: IrDeclarationWithName, enumEntries: List<IrEnumEntry>): ExportedDeclaration? {
+        return when (candidate) {
+            is IrProperty -> {
+                if (candidate.isEnumFakeOverriddenDeclaration(context)) {
+                    val type: ExportedType? = when (candidate.getExportedIdentifier()) {
+                        "name" -> enumEntries
+                            .map { it.getExportedIdentifier() }
+                            .map { ExportedType.LiteralType.StringLiteralType(it) }
+                            .reduce { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
+                        "ordinal" -> enumEntries
+                            .map { enumEntries.indexOf(it) }
+                            .map { ExportedType.LiteralType.NumberLiteralType(it) }
+                            .reduce { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
+                        else -> null
+                    }
+                    exportPropertyUnsafely(
+                        candidate,
+                        type
+                    )
+                } else null
+            }
+
+            is IrField -> {
+                if (candidate.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+                    exportEnumEntry(candidate, enumEntries)
+                } else {
+                    null
+                }
+            }
+
+            else -> null
+        }
     }
 
     private fun IrType.canBeUsedAsSuperTypeOfExportedClasses(): Boolean =

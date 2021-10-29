@@ -101,15 +101,21 @@ declare namespace JS_TESTS {
         class TestEnumClass {
             private constructor();
             readonly constructorParameter: string;
-            static readonly A: foo.TestEnumClass;
-            static readonly B: foo.TestEnumClass;
+            static readonly A: foo.TestEnumClass & {
+                readonly name: "A";
+                readonly ordinal: 0;
+            };
+            static readonly B: foo.TestEnumClass & {
+                readonly name: "B";
+                readonly ordinal: 1;
+            };
             readonly foo: number;
             bar(value: string): string;
             bay(): string;
             static values(): Array<foo.TestEnumClass>;
             static valueOf(value: string): foo.TestEnumClass;
-            readonly name: string;
-            readonly ordinal: number;
+            readonly name: "A" | "B";
+            readonly ordinal: 0 | 1;
         }
         namespace TestEnumClass {
             class Nested {
