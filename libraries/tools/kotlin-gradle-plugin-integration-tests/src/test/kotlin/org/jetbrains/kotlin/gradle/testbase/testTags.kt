@@ -38,3 +38,8 @@ annotation class JvmGradlePluginTests
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("JsKGP")
 annotation class JsGradlePluginTests
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("OtherKGP")
+annotation class OtherGradlePluginTests

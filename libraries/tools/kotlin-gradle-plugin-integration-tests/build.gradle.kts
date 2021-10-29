@@ -223,9 +223,19 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
     }
 }
 
+val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for all support plugins, such as kapt, allopen, etc"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("OtherKGP")
+        includeEngines("junit-jupiter")
+    }
+}
+
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask)
+    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
@@ -274,7 +284,8 @@ tasks.withType<Test> {
         simpleTestsTask.name,
         jvmTestsTask.name,
         jsTestsTask.name,
-        daemonsTestsTask.name
+        daemonsTestsTask.name,
+        otherPluginsTestTask.name
     )
     if (shouldApplyJunitPlatform) {
         maxHeapSize = "512m"
