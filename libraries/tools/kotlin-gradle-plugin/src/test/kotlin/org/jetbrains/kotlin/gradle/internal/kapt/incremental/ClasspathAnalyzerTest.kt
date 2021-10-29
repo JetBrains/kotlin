@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import org.gradle.api.artifacts.transform.TransformOutputs
-import org.gradle.api.artifacts.transform.TransformParameters
-import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.provider.Provider
-import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.*
@@ -39,7 +35,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputs = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(classesDir, tmp.newFolder("project")).transform(outputs)
+        transform(classesDir, outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
@@ -75,7 +71,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputs = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(inputJar, tmp.newFolder("project")).transform(outputs)
+        transform(inputJar, outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
@@ -101,7 +97,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputsA = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(jarA, tmp.newFolder("projectA")).transform(outputsA)
+        transform(jarA, outputsA)
 
         val jarB = tmp.newFile("inputB.jar").also { jar ->
             ZipOutputStream(jar.outputStream()).use {
@@ -115,17 +111,15 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputsB = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(jarB, tmp.newFolder("projectB")).transform(outputsB)
+        transform(jarB, outputsB)
 
         assertArrayEquals(outputsA.createdOutputs.single().readBytes(), outputsB.createdOutputs.single().readBytes())
     }
 
     @Test
     fun emptyInput() {
-        val transformAction = StructureTransformTestAction(tmp.newFolder("input"), tmp.newFolder("project"))
         val outputs = TransformOutputsMock(tmp.newFolder())
-
-        transformAction.transform(outputs)
+        transform(tmp.newFolder("input"), outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertTrue(data.classAbiHash.isEmpty())
@@ -149,10 +143,8 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val transformAction = StructureTransformTestAction(inputJar, tmp.newFolder("project"))
         val outputs = TransformOutputsMock(tmp.newFolder())
-
-        transformAction.transform(outputs)
+        transform(inputJar, outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B", "test/C"), data.classAbiHash.keys)
@@ -163,16 +155,6 @@ class ClasspathAnalyzerTest {
         val writer = ClassWriter(Opcodes.API_VERSION)
         writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, superClass, emptyArray())
         return writer.toByteArray()
-    }
-}
-
-class StructureTransformTestAction(val input: File, val projectDir: File) : StructureTransformAction() {
-    private val project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-
-    override val inputArtifact: Provider<FileSystemLocation> = project.provider { project.objects.fileProperty().fileValue(input).get() }
-
-    override fun getParameters(): TransformParameters.None {
-        error("Should not be called")
     }
 }
 

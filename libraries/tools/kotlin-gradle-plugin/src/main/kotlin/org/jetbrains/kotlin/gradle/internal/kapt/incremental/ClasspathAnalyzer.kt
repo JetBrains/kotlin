@@ -54,7 +54,7 @@ abstract class StructureTransformLegacyAction : TransformAction<TransformParamet
     }
 }
 
-private fun transform(input: File, outputs: TransformOutputs) {
+internal fun transform(input: File, outputs: TransformOutputs) {
     val data = if (input.isDirectory) {
         visitDirectory(input)
     } else {
