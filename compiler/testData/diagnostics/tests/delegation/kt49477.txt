@@ -1,0 +1,56 @@
+package
+
+public fun </*0*/ Self : DatabaseEntity, /*1*/ Target : DatabaseEntity> Self.child_many(/*0*/ clazz: java.lang.Class<Target>, /*1*/ property: kotlin.reflect.KProperty1<Target, Self?>, /*2*/ name: kotlin.String = ...): Delegate<Self, kotlin.collections.MutableCollection<Target>>
+public inline fun </*0*/ reified Self : DatabaseEntity, /*1*/ reified Target : DatabaseEntity> Self.parent(/*0*/ property: kotlin.reflect.KProperty1<Target, kotlin.collections.MutableCollection<Self>>): Delegate<Self, Target?>
+
+public interface DatabaseEntity : Entity {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Delegate</*0*/ R : Entity, /*1*/ T> : kotlin.properties.ReadWriteProperty<R, T>, ValueFilter<R> {
+    public abstract infix fun by(/*0*/ name: kotlin.String): Delegate<R, T>
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract infix fun filter(/*0*/ filter: (R, kotlin.Any?) -> kotlin.Boolean): Delegate<R, T>
+    public abstract override /*1*/ /*fake_override*/ fun getValue(/*0*/ thisRef: R, /*1*/ property: kotlin.reflect.KProperty<*>): T
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract infix fun name(/*0*/ desc: kotlin.reflect.KProperty<*>): kotlin.String
+    public abstract infix fun resource(/*0*/ factory: ResourceFactory<R, T>): Delegate<R, T>
+    public abstract override /*1*/ /*fake_override*/ fun setValue(/*0*/ thisRef: R, /*1*/ property: kotlin.reflect.KProperty<*>, /*2*/ value: T): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Entity {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class GitLabBuildProcessor : DatabaseEntity {
+    public constructor GitLabBuildProcessor()
+    public final var processor: GitLabChangesProcessor?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class GitLabChangesProcessor : DatabaseEntity {
+    public constructor GitLabChangesProcessor()
+    public final var buildProcessors: kotlin.collections.MutableCollection<GitLabBuildProcessor>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ResourceFactory</*0*/ T, /*1*/ R> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ValueFilter</*0*/ K> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

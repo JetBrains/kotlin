@@ -6,7 +6,7 @@ object Outer {
                 get() = 0
 
             override fun get(index: Int): Char {
-                checkSubtype<CharSequence>(<!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!>)
+                checkSubtype<CharSequence>(<!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>x<!>)
                 return ' '
             }
 

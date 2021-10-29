@@ -1,13 +1,13 @@
 // WITH_STDLIB
 
 // FILE: test.kt
-val bar2 by <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!><!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!>()<!>
+val bar2 by <!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!>()
 
 // FILE: lt/neworld/compiler/Foo.kt
 package lt.neworld.compiler
 
 class Foo {
-    val bar by <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!><!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()<!>
+    val bar by <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_WARNING, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_WARNING!><!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()<!>
 }
 
 // FILE: lt/neworld/compiler/bar/Bar.kt
