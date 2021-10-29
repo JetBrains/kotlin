@@ -303,7 +303,17 @@ internal fun CallableMemberDescriptor.calculateCallableId(allowLocal: Boolean): 
                     pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
                 )
             }
-            is ClassDescriptor -> className += current.name.asString()
+            is ClassDescriptor -> {
+                if (current.kind == ClassKind.ENUM_ENTRY) {
+                    if (!allowLocal) {
+                        return null
+                    }
+
+                    localName += current.name.asString()
+                } else {
+                    className += current.name.asString()
+                }
+            }
             is PropertyAccessorDescriptor -> {} // Filter out property accessors
             is CallableDescriptor -> {
                 if (!allowLocal) {

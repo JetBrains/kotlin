@@ -92,17 +92,17 @@ internal fun KtDeclaration.calculateCallableId(allowLocal: Boolean): CallableId?
 
     while (current != null) {
         when (current) {
-            is KtClassOrObject -> {
-                className += current.name ?: return null
-            }
             is KtPropertyAccessor -> {
                 // Filter out property accessors
             }
-            is KtCallableDeclaration -> {
+            is KtCallableDeclaration, is KtEnumEntry -> {
                 if (!allowLocal) {
                     return null
                 }
                 localName += current.name ?: return null
+            }
+            is KtClassOrObject -> {
+                className += current.name ?: return null
             }
         }
 
