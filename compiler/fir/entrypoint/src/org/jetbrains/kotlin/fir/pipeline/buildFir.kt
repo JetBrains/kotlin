@@ -12,15 +12,18 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 fun FirSession.buildFirViaLightTree(files: Collection<File>): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
+    val sourcesToPathsMapper = sourcesToPathsMapper
     val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider)
     return files.map {
         builder.buildFirFile(it).also { firFile ->
             firProvider.recordFile(firFile)
+            sourcesToPathsMapper.registerFileSource(firFile.source!!, it.path)
         }
     }
 }

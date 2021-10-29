@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
@@ -95,10 +97,10 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null) {
     register(CheckersComponent::class, CheckersComponent())
     register(FirNameConflictsTrackerComponent::class, FirNameConflictsTracker())
     register(FirModuleVisibilityChecker::class, FirModuleVisibilityChecker.Standard(this))
+    register(SourcesToPathsMapper::class, SourcesToPathsMapper())
     if (lookupTracker != null) {
-        val firFileToPath: (KtSourceElement) -> String = {
-            val psiSource = (it as? KtPsiSourceElement) ?: TODO("Not implemented for non-FirPsiSourceElement")
-            ((psiSource.psi as? PsiFile) ?: psiSource.psi.containingFile).virtualFile.path
+        val firFileToPath: (KtSourceElement) -> String? = {
+            sourcesToPathsMapper.getSourceFilePath(it)
         }
         register(
             FirLookupTrackerComponent::class,
