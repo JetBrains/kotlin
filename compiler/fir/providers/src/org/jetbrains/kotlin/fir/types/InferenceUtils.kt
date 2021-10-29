@@ -39,6 +39,12 @@ private fun ConeKotlinType.classId(session: FirSession): ClassId? {
     return fullyExpandedType(session).lookupTag.classId
 }
 
+fun ConeKotlinType.isKProperty(session: FirSession): Boolean {
+    val classId = classId(session) ?: return false
+    return classId.packageFqName == StandardClassIds.BASE_REFLECT_PACKAGE &&
+            classId.shortClassName.identifier.startsWith("KProperty")
+}
+
 fun ConeKotlinType.isKMutableProperty(session: FirSession): Boolean {
     val classId = classId(session) ?: return false
     return classId.packageFqName == StandardClassIds.BASE_REFLECT_PACKAGE &&

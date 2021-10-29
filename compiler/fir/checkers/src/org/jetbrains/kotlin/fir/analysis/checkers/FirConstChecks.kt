@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -18,11 +20,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.util.OperatorNameConventions
-
-private val compileTimeExtensionFunctions = setOf(Name.identifier("floorDiv"), Name.identifier("mod"))
 
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
 
@@ -31,13 +30,25 @@ internal fun checkConstantArguments(
     session: FirSession,
 ): ConstantArgumentKind? {
     val expressionSymbol = expression.toResolvedCallableSymbol()
-    val classKindOfParent = (expressionSymbol
-        ?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)
+    val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)
         ?.classKind
 
     when {
-        expression is FirTypeOperatorCall -> {
-            if (expression.operation == FirOperation.AS) return ConstantArgumentKind.NOT_CONST
+        expression is FirTypeOperatorCall -> if (expression.operation == FirOperation.AS) return ConstantArgumentKind.NOT_CONST
+        expression is FirWhenExpression -> {
+            if (!expression.isProperlyExhaustive) {
+                return ConstantArgumentKind.NOT_CONST
+            }
+
+            expression.subject?.let { subject -> checkConstantArguments(subject, session)?.let { return it } }
+            for (branch in expression.branches) {
+                checkConstantArguments(branch.condition, session)?.let { return it }
+                branch.result.statements.forEach { stmt ->
+                    if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
+                    checkConstantArguments(stmt, session)?.let { return it }
+                }
+            }
+            return null
         }
         expression is FirConstExpression<*>
                 || expressionSymbol is FirEnumEntrySymbol
@@ -55,11 +66,8 @@ internal fun checkConstantArguments(
             for (exp in (expression as FirCall).arguments)
                 checkConstantArguments(exp, session).let { return it }
         }
-        (expression is FirGetClassCall) -> {
-            var coneType = (expression as? FirCall)
-                ?.argument
-                ?.typeRef
-                ?.coneType
+        expression is FirGetClassCall -> {
+            var coneType = (expression as? FirCall)?.argument?.typeRef?.coneType
 
             if (coneType is ConeErrorType)
                 return ConstantArgumentKind.NOT_CONST
@@ -68,12 +76,9 @@ internal fun checkConstantArguments(
                 coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
 
             return when {
-                coneType is ConeTypeParameterType ->
-                    ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-                (expression as FirCall).argument !is FirResolvedQualifier ->
-                    ConstantArgumentKind.NOT_KCLASS_LITERAL
-                else ->
-                    null
+                coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
+                (expression as FirCall).argument !is FirResolvedQualifier -> ConstantArgumentKind.NOT_KCLASS_LITERAL
+                else -> null
             }
         }
         expressionSymbol == null -> {
@@ -81,13 +86,12 @@ internal fun checkConstantArguments(
         }
         expressionSymbol is FirFieldSymbol -> {
             //TODO: fix checking of Java fields initializer
-            if (
-                !expressionSymbol.isStatic
-                || expressionSymbol.modality != Modality.FINAL
-            )
+            if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL) {
                 return ConstantArgumentKind.NOT_CONST
+            }
         }
         expressionSymbol is FirConstructorSymbol -> {
+            if (expression is FirCallableReferenceAccess) return null
             if (expression.typeRef.coneType.isUnsignedType) {
                 (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
                     checkConstantArguments(argumentExpression, session)?.let { return it }
@@ -110,98 +114,55 @@ internal fun checkConstantArguments(
                 return null
             }
 
+            if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
+            val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            when (calleeReference.name) {
-                in OperatorNameConventions.BINARY_OPERATION_NAMES, in OperatorNameConventions.UNARY_OPERATION_NAMES,
-                OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR,
-                OperatorNameConventions.OR, OperatorNameConventions.AND -> {
-                    val coneType =
-                        expression.dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>() ?: return ConstantArgumentKind.NOT_CONST
-                    val receiverClassId = coneType.lowerBoundIfFlexible().classId
+            @OptIn(SymbolInternals::class)
+            if (symbol.fir.getAnnotationByClassId(INTRINSIC_CONST_EVALUATION_ANNOTATION) == null) return ConstantArgumentKind.NOT_CONST
 
-
-                    if ((calleeReference.name == OperatorNameConventions.DIV || calleeReference.name == OperatorNameConventions.REM)
-                        && expression.typeRef.coneType.classId == StandardClassIds.Int
-                    ) {
-                        val value = expression.arguments.first() as? FirConstExpression<*>
-                        if (value?.value == 0L) {
-                            return ConstantArgumentKind.NOT_CONST
-                        }
-                    }
-
-                    for (exp in (expression as FirCall).arguments.plus(expression.dispatchReceiver)) {
-                        val expClassId = exp.typeRef.coneType.lowerBoundIfFlexible().classId
-
-                        if (calleeReference.name == OperatorNameConventions.PLUS
-                            && expClassId != receiverClassId
-                            && (expClassId !in StandardClassIds.constantAllowedTypes || receiverClassId !in StandardClassIds.constantAllowedTypes)
-                        ) {
-                            return ConstantArgumentKind.NOT_CONST
-                        }
-                        checkConstantArguments(exp, session)?.let { return it }
-                    }
-                }
-                in compileTimeExtensionFunctions -> {
-                    if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
-                    val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
-                    if (symbol?.callableId?.packageName?.asString() != "kotlin") return ConstantArgumentKind.NOT_CONST
-
-                    for (exp in (expression as FirCall).arguments.plus(expression.extensionReceiver)) {
-                        checkConstantArguments(exp, session)?.let { return it }
-                    }
-                }
-                else -> {
-                    if (expression.arguments.isNotEmpty() || calleeReference !is FirResolvedNamedReference) {
-                        return ConstantArgumentKind.NOT_CONST
-                    }
-                    val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
-                    if (calleeReference.name == OperatorNameConventions.TO_STRING ||
-                        calleeReference.name in CONVERSION_NAMES && symbol?.callableId?.packageName?.asString() == "kotlin"
-                    ) {
-                        return checkConstantArguments(expression.dispatchReceiver, session)
-                    }
+            for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
+                if (exp is FirNoReceiverExpression) continue
+                val expClassId = exp.typeRef.coneType.lowerBoundIfFlexible().classId
+                // TODO: add annotation for allowed constant types
+                if (expClassId !in StandardClassIds.constantAllowedTypes) {
                     return ConstantArgumentKind.NOT_CONST
                 }
+
+                checkConstantArguments(exp, session)?.let { return it }
             }
+
+            return null
         }
         expression is FirQualifiedAccessExpression -> {
+            val expressionType = expression.typeRef.coneType
+            if (expressionType.isKFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
+                return checkConstantArguments(expression.dispatchReceiver, session)
+            }
+
             val propertySymbol = expressionSymbol as? FirPropertySymbol ?: return ConstantArgumentKind.NOT_CONST
 
             @OptIn(SymbolInternals::class)
             val property = propertySymbol.fir
             when {
-                property.name.asString() == "length" -> {
-                    val coneType =
-                        expression.dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>() ?: return ConstantArgumentKind.NOT_CONST
-                    val receiverClassId = coneType.lowerBoundIfFlexible().classId
-                    if (receiverClassId == StandardClassIds.String) {
-                        return checkConstantArguments(expression.dispatchReceiver, session)
-                    }
+                property.unwrapFakeOverrides().getAnnotationByClassId(INTRINSIC_CONST_EVALUATION_ANNOTATION) != null -> {
+                    return checkConstantArguments(expression.dispatchReceiver, session)
                 }
-                propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false ->
-                    return ConstantArgumentKind.NOT_CONST
-                expression.typeRef.coneType.classId == StandardClassIds.KClass ->
-                    return ConstantArgumentKind.NOT_KCLASS_LITERAL
+                propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
+                expressionType.classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
 
                 //TODO: UNRESOLVED REFERENCE
-                expression.dispatchReceiver is FirThisReceiverExpression ->
-                    return null
+                expression.dispatchReceiver is FirThisReceiverExpression -> return null
             }
             return when (property.initializer) {
-                is FirConstExpression<*> -> {
-                    if (property.isVal)
-                        ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
-                    else
-                        ConstantArgumentKind.NOT_CONST
+                is FirConstExpression<*> -> when {
+                    property.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
+                    else -> ConstantArgumentKind.NOT_CONST
                 }
-                is FirGetClassCall ->
-                    ConstantArgumentKind.NOT_KCLASS_LITERAL
-                else ->
-                    ConstantArgumentKind.NOT_CONST
+                is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
+                else -> ConstantArgumentKind.NOT_CONST
             }
         }
-        else ->
-            return ConstantArgumentKind.NOT_CONST
+        else -> return ConstantArgumentKind.NOT_CONST
     }
     return null
 }
@@ -211,10 +172,6 @@ private fun FirCallableSymbol<*>?.getReferencedClassSymbol(session: FirSession):
         ?.coneTypeSafe<ConeLookupTagBasedType>()
         ?.lookupTag
         ?.toSymbol(session)
-
-private val CONVERSION_NAMES = listOf(
-    "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"
-).mapTo(hashSetOf()) { Name.identifier(it) }
 
 internal enum class ConstantArgumentKind {
     NOT_CONST,
