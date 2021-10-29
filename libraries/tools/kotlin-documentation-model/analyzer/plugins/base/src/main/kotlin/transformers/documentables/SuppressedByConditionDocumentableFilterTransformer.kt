@@ -22,6 +22,8 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
     }
 
     private fun processPackage(dPackage: DPackage): DocumentableWithChanges<DPackage> {
+        if (shouldBeSuppressed(dPackage)) return DocumentableWithChanges.filteredDocumentable()
+
         val classlikes = dPackage.classlikes.map { processClassLike(it) }
         val typeAliases = dPackage.typealiases.map { processMember(it) }
         val functions = dPackage.functions.map { processMember(it) }
