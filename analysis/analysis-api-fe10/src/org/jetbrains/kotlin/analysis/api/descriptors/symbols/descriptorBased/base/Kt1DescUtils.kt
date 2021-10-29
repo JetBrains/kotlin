@@ -243,6 +243,20 @@ internal val DeclarationDescriptorWithVisibility.ktVisibility: Visibility
         else -> Visibilities.Unknown
     }
 
+internal val MemberDescriptor.ktModality: Modality
+    get() {
+        val selfModality = this.modality
+
+        if (selfModality == Modality.OPEN) {
+            val containingDeclaration = this.containingDeclaration
+            if (containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL) {
+                return Modality.FINAL
+            }
+        }
+
+        return this.modality
+    }
+
 internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
     return when (this) {
         is BooleanValue -> KtLiteralConstantValue(ConstantValueKind.Boolean, value, null)

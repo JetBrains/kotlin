@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.RendererModifier
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.isExplicitOverride
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -597,9 +598,11 @@ internal class KtFe10Renderer(
             return
         }
 
+        val modality = descriptor.ktModality
+
         renderModifier(
-            descriptor.modality.name.toLowerCaseAsciiOnly(),
-            descriptor.modality != getDefaultModality(descriptor),
+            modality.name.toLowerCaseAsciiOnly(),
+            modality != getDefaultModality(descriptor),
             RendererModifier.MODALITY
         )
     }
@@ -612,10 +615,10 @@ internal class KtFe10Renderer(
                 if (containingDeclaration !is ClassDescriptor) {
                     return Modality.FINAL
                 }
-                if (descriptor.isExplicitOverride && containingDeclaration.modality != Modality.FINAL) {
+                if (descriptor.isExplicitOverride && containingDeclaration.ktModality != Modality.FINAL) {
                     return Modality.OPEN
                 } else if (containingDeclaration.kind == ClassKind.INTERFACE && descriptor.visibility != DescriptorVisibilities.PRIVATE) {
-                    return if (descriptor.modality == Modality.ABSTRACT) Modality.ABSTRACT else Modality.OPEN
+                    return if (descriptor.ktModality == Modality.ABSTRACT) Modality.ABSTRACT else Modality.OPEN
                 }
 
                 return Modality.FINAL

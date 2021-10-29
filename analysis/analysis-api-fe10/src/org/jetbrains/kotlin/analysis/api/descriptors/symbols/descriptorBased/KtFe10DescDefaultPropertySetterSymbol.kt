@@ -71,7 +71,7 @@ class KtFe10DescDefaultPropertySetterSymbol(
         get() = withValidityAssertion { propertyDescriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext) }
 
     override val modality: Modality
-        get() = withValidityAssertion { propertyDescriptor.modality }
+        get() = withValidityAssertion { propertyDescriptor.ktModality }
 
     override val visibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
