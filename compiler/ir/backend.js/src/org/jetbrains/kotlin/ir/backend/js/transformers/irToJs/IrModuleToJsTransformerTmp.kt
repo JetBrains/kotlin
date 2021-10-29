@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -19,11 +20,17 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
+import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
+import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 class IrModuleToJsTransformerTmp(
     private val backendContext: JsIrBackendContext,
@@ -62,6 +69,7 @@ class IrModuleToJsTransformerTmp(
             mainModuleName,
             moduleKind,
             generateProgramFragments(modules, exportData),
+            SourceMapsInfo.from(backendContext.configuration),
             relativeRequirePath,
             generateScriptModule,
         ) else null
@@ -74,6 +82,7 @@ class IrModuleToJsTransformerTmp(
                 mainModuleName,
                 moduleKind,
                 generateProgramFragments(modules, exportData),
+                SourceMapsInfo.from(backendContext.configuration),
                 relativeRequirePath,
                 generateScriptModule,
             )
@@ -262,8 +271,9 @@ private fun generateWrappedModuleBody(
     mainModuleName: String,
     moduleKind: ModuleKind,
     program: JsIrProgram,
+    sourceMapsInfo: SourceMapsInfo?,
     relativeRequirePath: Boolean,
-    generateScriptModule: Boolean,
+    generateScriptModule: Boolean
 ): CompilationOutputs {
     if (multiModule) {
 
@@ -276,6 +286,7 @@ private fun generateWrappedModuleBody(
             mainModuleName,
             moduleKind,
             main.fragments,
+            sourceMapsInfo,
             generateScriptModule,
             generateCallToMain = true,
             moduleToRef[main]!!,
@@ -288,6 +299,7 @@ private fun generateWrappedModuleBody(
                 moduleName,
                 moduleKind,
                 module.fragments,
+                sourceMapsInfo,
                 generateScriptModule,
                 generateCallToMain = false,
                 moduleToRef[module]!!,
@@ -300,6 +312,7 @@ private fun generateWrappedModuleBody(
             mainModuleName,
             moduleKind,
             program.modules.flatMap { it.fragments },
+            sourceMapsInfo,
             generateScriptModule,
             generateCallToMain = true,
         )
@@ -310,9 +323,10 @@ fun generateSingleWrappedModuleBody(
     moduleName: String,
     moduleKind: ModuleKind,
     fragments: List<JsIrProgramFragment>,
+    sourceMapsInfo: SourceMapsInfo?,
     generateScriptModule: Boolean,
     generateCallToMain: Boolean,
-    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
+    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty
 ): CompilationOutputs {
     val program = Merger(
         moduleName,
@@ -328,10 +342,56 @@ fun generateSingleWrappedModuleBody(
 
     val jsCode = TextOutputImpl()
 
-    program.accept(JsToStringGenerationVisitor(jsCode, NoOpSourceLocationConsumer))
+    val sourceMapBuilder: SourceMap3Builder?
+    val sourceMapBuilderConsumer: SourceLocationConsumer
+    if (sourceMapsInfo != null) {
+        val sourceMapPrefix = sourceMapsInfo.sourceMapPrefix
+        sourceMapBuilder = SourceMap3Builder(null, jsCode, sourceMapPrefix)
+
+        val sourceRoots = sourceMapsInfo.sourceRoots.map(::File)
+        val generateRelativePathsInSourceMap = sourceMapPrefix.isEmpty() && sourceRoots.isEmpty()
+        val outputDir = if (generateRelativePathsInSourceMap) sourceMapsInfo.outputDir else null
+
+        val pathResolver = SourceFilePathResolver(sourceRoots, outputDir)
+
+        val sourceMapContentEmbedding =
+            sourceMapsInfo.sourceMapContentEmbedding
+
+        sourceMapBuilderConsumer = SourceMapBuilderConsumer(
+            File("."),
+            sourceMapBuilder,
+            pathResolver,
+            sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
+            sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER
+        )
+    } else {
+        sourceMapBuilder = null
+        sourceMapBuilderConsumer = NoOpSourceLocationConsumer
+    }
+
+    program.accept(JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer))
 
     return CompilationOutputs(
         jsCode.toString(),
-        null
+        program,
+        sourceMapBuilder?.build()
     )
+}
+
+class SourceMapsInfo(
+    val sourceMapPrefix: String,
+    val sourceRoots: List<String>,
+    val outputDir: File?,
+    val sourceMapContentEmbedding: SourceMapSourceEmbedding,
+) {
+    companion object {
+        fun from(configuration: CompilerConfiguration) : SourceMapsInfo {
+            return SourceMapsInfo(
+                configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, ""),
+                configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList<String>()),
+                configuration.get(JSConfigurationKeys.OUTPUT_DIR),
+                configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
+            )
+        }
+    }
 }

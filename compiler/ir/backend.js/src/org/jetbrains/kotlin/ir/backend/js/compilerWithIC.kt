@@ -119,6 +119,8 @@ fun generateJsFromAst(
             "main",
             ModuleKind.PLAIN,
             fragments.modules.flatMap { it.fragments },
+            sourceMapsInfo = null,
+            generateScriptModule = false,
             generateCallToMain = true,
         ), null
     )
