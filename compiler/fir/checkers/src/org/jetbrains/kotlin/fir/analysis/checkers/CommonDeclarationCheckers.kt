@@ -156,4 +156,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirAnonymousInitializerInInterfaceChecker
         )
+
+    override val enumEntryCheckers: Set<FirEnumEntryChecker>
+        get() = setOf(
+            FirEnumCompanionInEnumConstructorCallChecker,
+        )
 }

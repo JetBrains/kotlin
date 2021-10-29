@@ -1023,7 +1023,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNINITIALIZED_ENUM_ENTRY by error<KtSimpleNameExpression> {
             parameter<FirEnumEntrySymbol>("enumEntry")
         }
-        val UNINITIALIZED_ENUM_COMPANION by error<KtSimpleNameExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val UNINITIALIZED_ENUM_COMPANION by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirRegularClassSymbol>("enumClass")
         }
         val VAL_REASSIGNMENT by error<KtExpression> {

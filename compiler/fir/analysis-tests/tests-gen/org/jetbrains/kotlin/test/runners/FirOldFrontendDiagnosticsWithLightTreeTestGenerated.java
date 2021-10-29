@@ -5752,6 +5752,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("uninitializedCompanionOfEnum_after.kt")
+            public void testUninitializedCompanionOfEnum_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedCompanionOfEnum_after.kt");
+            }
+
+            @Test
+            @TestMetadata("uninitializedCompanionOfEnum_before.kt")
+            public void testUninitializedCompanionOfEnum_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedCompanionOfEnum_before.kt");
+            }
+
+            @Test
             @TestMetadata("UninitializedEnumCompanionVals.kt")
             public void testUninitializedEnumCompanionVals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/UninitializedEnumCompanionVals.kt");

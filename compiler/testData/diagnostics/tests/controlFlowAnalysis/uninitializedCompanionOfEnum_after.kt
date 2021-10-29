@@ -1,5 +1,4 @@
 // LANGUAGE: +ProhibitAccessToEnumCompanionMembersInEnumConstructorCall
-// FIR_IDENTICAL
 // ISSUE: KT-49110
 
 enum class SomeEnum(val x: Int) {

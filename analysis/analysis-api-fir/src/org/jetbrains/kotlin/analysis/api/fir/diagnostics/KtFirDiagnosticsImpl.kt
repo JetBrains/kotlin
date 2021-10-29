@@ -2446,7 +2446,7 @@ internal class UninitializedEnumCompanionImpl(
     override val enumClass: KtClassLikeSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UninitializedEnumCompanion(), KtAbstractFirDiagnostic<KtSimpleNameExpression>
+) : KtFirDiagnostic.UninitializedEnumCompanion(), KtAbstractFirDiagnostic<KtExpression>
 
 internal class ValReassignmentImpl(
     override val variable: KtVariableLikeSymbol,
