@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
@@ -77,11 +78,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
 
                     if (es6mode) {
-                        val (_, function) = generateMemberFunction(declaration)
+                        val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { jsClass.members += it }
+                        declaration.generateAssignmentIfMangled(memberRef)
                     } else {
                         val (memberRef, function) = generateMemberFunction(declaration)
                         function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
+                        declaration.generateAssignmentIfMangled(memberRef)
                     }
                 }
                 is IrClass -> {
@@ -204,6 +207,24 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return classBlock
     }
 
+    private fun IrSimpleFunction.generateAssignmentIfMangled(memberRef: JsExpression) {
+        if (
+            irClass.isExported(context.staticContext.backendContext) &&
+            visibility.isPublicAPI && hasMangledName() &&
+            correspondingPropertySymbol == null
+        ) {
+            classBlock.statements += jsAssignment(prototypeAccessRef(), memberRef).makeStmt()
+        }
+    }
+
+    private fun IrSimpleFunction.hasMangledName(): Boolean {
+        return getJsName() == null && !name.asString().isValidES5Identifier()
+    }
+
+    private fun IrSimpleFunction.prototypeAccessRef(): JsExpression {
+        return jsElementAccess(name.asString(), classPrototypeRef)
+    }
+
     private fun IrSimpleFunction.overridesExternal(): Boolean {
         if (this.isEffectivelyExternal()) return true
 
@@ -214,9 +235,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return isInterface && !isEffectivelyExternal()
     }
 
-    private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsNameRef, JsFunction?> {
+    private fun generateMemberFunction(declaration: IrSimpleFunction): Pair<JsExpression, JsFunction?> {
         val memberName = context.getNameForMemberFunction(declaration.realOverrideTarget)
-        val memberRef = JsNameRef(memberName, classPrototypeRef)
+        val memberRef = jsElementAccess(memberName.ident, classPrototypeRef)
 
         if (declaration.isReal && declaration.body != null) {
             val translatedFunction: JsFunction = declaration.accept(IrFunctionToJsTransformer(), context)

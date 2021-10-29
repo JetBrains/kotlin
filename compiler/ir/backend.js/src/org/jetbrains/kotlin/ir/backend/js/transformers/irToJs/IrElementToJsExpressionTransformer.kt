@@ -102,7 +102,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
         if (expression.symbol.owner.isThisReceiver()) return JsThisRef().withSource(expression, context)
-        return context.getNameForValueDeclaration(expression.symbol.owner).makeRef().withSource(expression, context)
+        val possibleGlobalVarRef = context.getNameForValueDeclaration(expression.symbol.owner).makeRef().withSource(expression, context)
+        return jsGlobalVarRef(possibleGlobalVarRef)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
@@ -110,18 +111,20 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
 
-        return context.getRefForExternalClass(obj).withSource(expression, context)
+        val possibleGlobalVarRef = context.getRefForExternalClass(obj).withSource(expression, context)
+        return jsGlobalVarRef(possibleGlobalVarRef)
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
         val fieldName = context.getNameForField(expression.symbol.owner)
-        val dest = JsNameRef(fieldName, expression.receiver?.accept(this, context))
+        val dest = jsElementAccess(fieldName.ident, expression.receiver?.accept(this, context))
         val source = expression.value.accept(this, context)
         return jsAssignment(dest, source).withSource(expression, context)
     }
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
-        val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
+        val possibleGlobalRef = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
+        val ref = jsGlobalVarRef(possibleGlobalRef)
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value).withSource(expression, context)
     }
@@ -243,7 +246,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: JsGenerationContext): JsExpression =
-        JsNameRef(expression.memberName, expression.receiver.accept(this, data)).withSource(expression, data)
+        jsElementAccess(expression.memberName, expression.receiver.accept(this, data)).withSource(expression, data)
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: JsGenerationContext): JsExpression =
         when (expression.operator) {

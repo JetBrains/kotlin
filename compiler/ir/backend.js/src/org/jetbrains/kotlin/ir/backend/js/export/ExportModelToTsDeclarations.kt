@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 // TODO: Support module kinds other than plain
@@ -22,7 +23,7 @@ fun wrapTypeScript(name: String, moduleKind: ModuleKind, dts: String): String {
 
     val declarationsDts = types + dts
 
-    val namespaceName = sanitizeName(name)
+    val namespaceName = sanitizeName(name, withHash = false)
 
     return when (moduleKind) {
         ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
@@ -73,8 +74,14 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
                 ""
 
         val renderedReturnType = returnType.toTypeScript(indent)
+        val containsUnresolvedChar = !name.isValidES5Identifier()
 
-        "${prefix}$visibility$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType;"
+        val escapedName = when {
+            isMember && containsUnresolvedChar -> "\"$name\""
+            else -> name
+        }
+
+        if (!isMember && containsUnresolvedChar) "" else "${prefix}$visibility$keyword$escapedName$renderedTypeParameters($renderedParameters): $renderedReturnType;"
     }
 
     is ExportedConstructor -> {
@@ -95,7 +102,12 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
             else -> if (mutable) "let " else "const "
         }
         val possibleStatic = if (isMember && isStatic) "static " else ""
-        "$prefix$visibility$possibleStatic$keyword$name: ${type.toTypeScript(indent)};"
+        val containsUnresolvedChar = !name.isValidES5Identifier()
+        val memberName = when {
+            isMember && containsUnresolvedChar -> "\"$name\""
+            else -> name
+        }
+        if (!isMember && containsUnresolvedChar) "" else "$prefix$visibility$possibleStatic$keyword$memberName: ${type.toTypeScript(indent)};"
     }
 
     is ExportedClass -> {
@@ -140,7 +152,8 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
         val nestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
         val klassExport = "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
         val staticsExport = if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent, prefix) else ""
-        klassExport + staticsExport
+
+        if (name.isValidES5Identifier()) klassExport + staticsExport else ""
     }
 }
 
@@ -192,7 +205,7 @@ fun ExportedClass.toReadonlyProperty(): ExportedProperty {
 }
 
 fun ExportedParameter.toTypeScript(indent: String): String =
-    "$name: ${type.toTypeScript(indent)}"
+    "${sanitizeName(name, withHash = false)}: ${type.toTypeScript(indent)}"
 
 fun ExportedType.toTypeScript(indent: String): String = when (this) {
     is ExportedType.Primitive -> typescript
@@ -208,8 +221,8 @@ fun ExportedType.toTypeScript(indent: String): String = when (this) {
     is ExportedType.TypeOf ->
         "typeof $name"
 
-    is ExportedType.ErrorType -> "any /*$comment*/"
     is ExportedType.TypeParameter -> name
+    is ExportedType.ErrorType -> "any /*$comment*/"
     is ExportedType.Nullable -> "Nullable<" + baseType.toTypeScript(indent) + ">"
     is ExportedType.InlineInterfaceType -> {
         members.joinToString(prefix = "{\n", postfix = "$indent}", separator = "") { it.toTypeScript("$indent    ") + "\n" }

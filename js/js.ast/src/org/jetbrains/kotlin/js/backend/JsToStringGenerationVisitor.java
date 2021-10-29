@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
+import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -895,7 +896,19 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 p.print(((JsNameRef) labelExpr).getIdent());
             }
             else if (labelExpr instanceof JsStringLiteral) {
-                p.print(((JsStringLiteral) labelExpr).getValue());
+                JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
+                String value = stringLiteral.getValue();
+                boolean isValidIdentifier = IdentifierPolicyKt.isValidES5Identifier(value);
+
+                if (!isValidIdentifier)  {
+                    p.print('\'');
+                }
+
+                p.print(value);
+
+                if (!isValidIdentifier)  {
+                    p.print('\'');
+                }
             }
             else {
                 accept(labelExpr);

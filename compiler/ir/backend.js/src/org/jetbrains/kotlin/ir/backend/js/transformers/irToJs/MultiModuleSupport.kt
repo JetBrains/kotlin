@@ -123,5 +123,5 @@ val IrModuleFragment.safeName: String
         if (result.startsWith('<')) result = result.substring(1)
         if (result.endsWith('>')) result = result.substring(0, result.length - 1)
 
-        return sanitizeName("kotlin-$result")
+        return sanitizeName("kotlin_$result")
     }

@@ -98,7 +98,7 @@ class ExportModelGenerator(
 
     private fun exportParameter(parameter: IrValueParameter): ExportedParameter {
         // Parameter names do not matter in d.ts files. They can be renamed as we like
-        var parameterName = sanitizeName(parameter.name.asString())
+        var parameterName = sanitizeName(parameter.name.asString(), withHash = false)
         if (parameterName in allReservedWords)
             parameterName = "_$parameterName"
 

@@ -153,6 +153,7 @@ class IrModuleToJsTransformer(
         val moduleBody = generateModuleBody(modules, staticContext)
 
         val internalModuleName = JsName("_", false)
+        val globalThisDeclaration = jsGlobalThisPolyfill();
         val globalNames = NameTable<String>(namer.globalNames)
         val exportStatements = ExportModelToJsStatements(nameGenerator) { globalNames.declareFreshName(it, it) }
             .generateModuleExport(exportedModule, internalModuleName)
@@ -163,6 +164,7 @@ class IrModuleToJsTransformer(
         val program = JsProgram()
         if (generateScriptModule) {
             with(program.globalBlock) {
+                statements += globalThisDeclaration
                 statements.addWithComment("block: imports", importStatements + crossModuleImports)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements + crossModuleExports)
@@ -172,6 +174,7 @@ class IrModuleToJsTransformer(
                 parameters += JsParameter(internalModuleName)
                 parameters += (importedJsModules + importedKotlinModules).map { JsParameter(it.internalName) }
                 with(body) {
+                    statements += globalThisDeclaration
                     statements.addWithComment("block: imports", importStatements + crossModuleImports)
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements + crossModuleExports)
@@ -411,7 +414,7 @@ class IrModuleToJsTransformer(
 
             assert(jsModule != null || jsQualifier != null)
 
-            val qualifiedReference: JsNameRef
+            val qualifiedReference: JsExpression
 
             if (jsModule != null) {
                 val internalName = declareFreshGlobal("\$module\$$jsModule")
@@ -433,7 +436,7 @@ class IrModuleToJsTransformer(
                 .forEach { declaration ->
                     val declName = getNameForExternalDeclaration(declaration)
                     importStatements.add(
-                        JsVars(JsVars.JsVar(declName, JsNameRef(declaration.getJsNameOrKotlinName().identifier, qualifiedReference)))
+                        JsVars(JsVars.JsVar(declName, jsElementAccess(declaration.getJsNameOrKotlinName().identifier, qualifiedReference)))
                     )
                 }
         }

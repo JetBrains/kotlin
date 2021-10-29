@@ -240,6 +240,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             if (extensionFunctionsInExternals) {
                 this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
             }
+            if (!isIrBackendEnabled()) {
+                this[LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping] = LanguageFeature.State.DISABLED
+            }
         }
     }
 }

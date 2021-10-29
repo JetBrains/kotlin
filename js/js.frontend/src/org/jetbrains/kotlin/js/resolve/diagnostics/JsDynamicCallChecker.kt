@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -82,7 +83,9 @@ object JsDynamicCallChecker : CallChecker {
     }
 
     private fun checkIdentifier(name: String?, reportOn: PsiElement, context: CallCheckerContext) {
-        if (name == null) return
+        if (name == null || context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
+            return
+        }
         if (NameSuggestion.sanitizeName(name) != name) {
             context.trace.report(ErrorsJs.NAME_CONTAINS_ILLEGAL_CHARS.on(reportOn))
         }

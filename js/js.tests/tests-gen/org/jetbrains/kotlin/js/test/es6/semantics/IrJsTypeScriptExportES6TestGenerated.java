@@ -84,6 +84,24 @@ public class IrJsTypeScriptExportES6TestGenerated extends AbstractIrJsTypeScript
         }
     }
 
+    @TestMetadata("js/js.translator/testData/typescript-export/escapedDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EscapedDeclarations extends AbstractIrJsTypeScriptExportES6Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEscapedDeclarations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/escapedDeclarations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @TestMetadata("escapedDeclarations.kt")
+        public void testEscapedDeclarations() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/escapedDeclarations/escapedDeclarations.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/typescript-export/inheritance")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
