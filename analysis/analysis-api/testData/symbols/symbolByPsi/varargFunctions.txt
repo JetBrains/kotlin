@@ -122,7 +122,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] ERROR CLASS: Symbol not found for Unresolved
+  annotatedType: [] ERROR_TYPE
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null

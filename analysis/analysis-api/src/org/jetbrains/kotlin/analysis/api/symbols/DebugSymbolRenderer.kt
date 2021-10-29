@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -84,6 +85,7 @@ public object DebugSymbolRenderer {
             }
             append("]")
         }
+        is KtClassErrorType -> "ERROR_TYPE"
         is KtType -> value.asStringForDebugging()
         is KtSymbol -> {
             val symbolTag = when (value) {
