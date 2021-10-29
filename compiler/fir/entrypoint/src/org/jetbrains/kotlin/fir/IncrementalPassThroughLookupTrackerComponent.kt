@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 class IncrementalPassThroughLookupTrackerComponent(
     private val lookupTracker: LookupTracker,
-    private val sourceToFilePath: (KtSourceElement) -> String
+    private val sourceToFilePath: (KtSourceElement) -> String?
 ) : FirLookupTrackerComponent() {
 
     private val requiresPosition = lookupTracker.requiresPosition
@@ -26,7 +26,8 @@ class IncrementalPassThroughLookupTrackerComponent(
     override fun recordLookup(name: Name, inScopes: List<String>, source: KtSourceElement?, fileSource: KtSourceElement?) {
         val definedSource = fileSource ?: source ?: throw AssertionError("Cannot record lookup for \"$name\" without a source")
         val path = sourceToFilePathsCache.getOrPut(definedSource) {
-            sourceToFilePath(definedSource)
+            sourceToFilePath(definedSource) ?:
+            return
         }
         val position = if (requiresPosition && source != null && source is KtPsiSourceElement) {
             getLineAndColumnInPsiFile(source.psi.containingFile, source.psi.textRange).let { Position(it.line, it.column) }
