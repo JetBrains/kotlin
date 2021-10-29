@@ -196,7 +196,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                     context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, result);
                 }
                 catch (ReenteringLazyValueComputationException e) {
-                    context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
+                    context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.onError(expression));
                     result = TypeInfoFactoryKt.noTypeInfo(context);
                 }
 
@@ -211,7 +211,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                     recordTypeInfo(expression, result);
                 }
                 catch (ReenteringLazyValueComputationException e) {
-                    context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
+                    context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.onError(expression));
                     return TypeInfoFactoryKt.noTypeInfo(context);
                 }
                 return result;

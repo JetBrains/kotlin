@@ -245,6 +245,7 @@ enum class LanguageFeature(
     YieldIsNoMoreReserved(KOTLIN_1_7),
     NoDeprecationOnDeprecatedEnumEntries(KOTLIN_1_7), // KT-37975
     ProhibitQualifiedAccessToUninitializedEnumEntry(KOTLIN_1_7, kind = BUG_FIX), // KT-41124
+    ForbidRecursiveDelegateExpressions(KOTLIN_1_7, kind = BUG_FIX),
 
     // 1.8
 
