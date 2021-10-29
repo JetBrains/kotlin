@@ -2,33 +2,124 @@
 
 Cleaning output files:
   out/production/module/BaseClass.class
-  out/production/module/META-INF/module.kotlin_module
 End of files
-Compiling files:
-  src/BaseClass.kt
-End of files
-Marked as dirty by Kotlin:
-  src/usage1.kt
-  src/usage2.kt
-  src/usage3.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: NOTHING_DONE
 ------------------------------------------
+Compiling files:
+  src/BaseClass.java
+End of files
 Cleaning output files:
   out/production/module/DerivedClass1.class
-  out/production/module/DerivedClass2.class
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/Usage1Kt.class
-  out/production/module/Usage2Kt.class
-  out/production/module/Usage3Kt.class
 End of files
 Compiling files:
-  src/DerivedClass2.kt
-  src/usage1.kt
-  src/usage2.kt
-  src/usage3.kt
+  src/DerivedClass1.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Class 'DerivedClass1' is not abstract and does not implement abstract base class member public/*package*/ abstract fun myAbs(): Unit defined in BaseClass
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/BaseClass.class
+End of files
+Compiling files:
+  src/DerivedClass1.kt
 End of files
 Exit code: OK
 ------------------------------------------
 Compiling files:
-  src/DerivedClass1.java
+  src/BaseClass.java
 End of files
+
+================ Step #3 =================
+
+Cleaning output files:
+  out/production/module/BaseClass.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/BaseClass.java
+End of files
+
+================ Step #4 =================
+
+Cleaning output files:
+  out/production/module/BaseClass.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/BaseClass.java
+End of files
+Cleaning output files:
+  out/production/module/DerivedClass1.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DerivedClass1.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'doSmth' hides member of supertype 'BaseClass' and needs 'override' modifier
+
+================ Step #5 =================
+
+Cleaning output files:
+  out/production/module/BaseClass.class
+End of files
+Compiling files:
+  src/DerivedClass1.kt
+End of files
+Exit code: OK
+------------------------------------------
+Compiling files:
+  src/BaseClass.java
+End of files
+Cleaning output files:
+  out/production/module/DerivedClass1.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DerivedClass1.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #6 =================
+
+Cleaning output files:
+  out/production/module/DerivedClass1.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DerivedClass1.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #7 =================
+
+Cleaning output files:
+  out/production/module/BaseClass.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/BaseClass.java
+End of files
+Cleaning output files:
+  out/production/module/DerivedClass1.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DerivedClass1.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Return type of 'doSmthAnother' is not a subtype of the return type of the overridden member 'public/*package*/ open fun doSmthAnother(): String! defined in BaseClass'
