@@ -234,6 +234,7 @@ enum class LanguageFeature(
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_7, kind = BUG_FIX),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_7, kind = BUG_FIX),
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_7, kind = BUG_FIX),
+    ForbidRecursiveDelegateExpressions(KOTLIN_1_7, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

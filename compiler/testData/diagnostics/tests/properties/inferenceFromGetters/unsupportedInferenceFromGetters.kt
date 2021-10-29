@@ -42,7 +42,7 @@ fun <E> l(x: E): List<E> = null!!
     }<!>
 
 // recursive
-<!UNSUPPORTED_FEATURE!>val x4 get() = <!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x4<!><!>
+<!UNSUPPORTED_FEATURE!>val x4 get() = <!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>x4<!><!>
 
 // null as nothing
 <!UNSUPPORTED_FEATURE!>val x5 get() = null<!>

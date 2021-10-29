@@ -541,6 +541,21 @@ class DelegatedPropertyResolver(
         return delegateType
     }
 
+    private fun completeNotComputedDelegateType(trace: BindingTrace, traceToResolveDelegatedProperty: TemporaryBindingTrace) {
+        val ranIntoRecursionDiagnostic = traceToResolveDelegatedProperty.bindingContext.diagnostics.find {
+            it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.errorFactory
+                    || it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.warningFactory
+        }
+        if (ranIntoRecursionDiagnostic != null) {
+            trace.report(
+                TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(
+                    languageVersionSettings,
+                    ranIntoRecursionDiagnostic.psiElement as KtExpression
+                )
+            )
+        }
+    }
+
     private fun resolveWithNewInference(
         delegateExpression: KtExpression,
         variableDescriptor: VariableDescriptorWithAccessors,
@@ -561,7 +576,7 @@ class DelegatedPropertyResolver(
         )
 
         var delegateType = delegateTypeInfo.type ?: run {
-            traceToResolveDelegatedProperty.commit()
+            completeNotComputedDelegateType(trace, traceToResolveDelegatedProperty)
             return null
         }
 
