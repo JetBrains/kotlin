@@ -20,27 +20,29 @@ class JsPropertyAccessorInlineLowering(
             return false
 
         // TODO: teach the deserializer to load constant property initializers
-        val accessFile = accessContainer.fileOrNull ?: return false
-        val file = fileOrNull ?: return false
+        if (context.icCompatibleIr2Js) {
+            val accessFile = accessContainer.fileOrNull ?: return false
+            val file = fileOrNull ?: return false
 
-        return accessFile == file
+            return accessFile == file
+        }
 
-//        if (isConst)
-//            return true
-//
-//        return when (context.granularity) {
-//            JsGenerationGranularity.WHOLE_PROGRAM ->
-//                true
-//            JsGenerationGranularity.PER_MODULE -> {
-//                val accessModule = accessContainer.fileOrNull?.module ?: return false
-//                val module = fileOrNull?.module ?: return false
-//                accessModule == module
-//            }
-//            JsGenerationGranularity.PER_FILE ->
-//                // Not inlining because
-//                //   1. we need a way to distinguish per-file generation units
-//                //   2. per-file mode intended for debug builds only at the moment
-//                false
-//        }
+        if (isConst)
+            return true
+
+        return when (context.granularity) {
+            JsGenerationGranularity.WHOLE_PROGRAM ->
+                true
+            JsGenerationGranularity.PER_MODULE -> {
+                val accessModule = accessContainer.fileOrNull?.module ?: return false
+                val module = fileOrNull?.module ?: return false
+                accessModule == module
+            }
+            JsGenerationGranularity.PER_FILE ->
+                // Not inlining because
+                //   1. we need a way to distinguish per-file generation units
+                //   2. per-file mode intended for debug builds only at the moment
+                false
+        }
     }
 }

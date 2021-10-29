@@ -70,7 +70,8 @@ fun compileWithIC(
         propertyLazyInitialization = propertyLazyInitialization,
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
-        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+        icCompatibleIr2Js = true,
     )
 
     // Load declarations referenced during `context` initialization

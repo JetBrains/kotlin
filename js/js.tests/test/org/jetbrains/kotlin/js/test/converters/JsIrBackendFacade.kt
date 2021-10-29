@@ -72,6 +72,7 @@ class JsIrBackendFacade(
         val splitPerModule = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
+        val runNewIr2Js = JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS in module.directives
 
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM
@@ -117,7 +118,8 @@ class JsIrBackendFacade(
             lowerPerModule = lowerPerModule,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,
             safeExternalBooleanDiagnostic = module.directives[JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC].singleOrNull(),
-            granularity = granularity
+            granularity = granularity,
+            icCompatibleIr2Js = runNewIr2Js,
         )
 
         return loweredIr2JsArtifact(module, loweredIr, granularity)

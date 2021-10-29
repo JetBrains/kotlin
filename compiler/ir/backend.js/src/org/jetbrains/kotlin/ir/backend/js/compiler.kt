@@ -63,6 +63,7 @@ fun compile(
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
+    icCompatibleIr2Js: Boolean = false,
 ): LoweredIr {
 
     if (lowerPerModule) {
@@ -99,7 +100,8 @@ fun compile(
         lowerPerModule,
         safeExternalBoolean,
         safeExternalBooleanDiagnostic,
-        granularity
+        granularity,
+        icCompatibleIr2Js,
     )
 }
 
@@ -122,6 +124,7 @@ fun compileIr(
     safeExternalBoolean: Boolean,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
+    icCompatibleIr2Js: Boolean,
 ): LoweredIr {
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
@@ -144,7 +147,8 @@ fun compileIr(
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
-        granularity = granularity
+        granularity = granularity,
+        icCompatibleIr2Js = icCompatibleIr2Js,
     )
 
     // Load declarations referenced during `context` initialization

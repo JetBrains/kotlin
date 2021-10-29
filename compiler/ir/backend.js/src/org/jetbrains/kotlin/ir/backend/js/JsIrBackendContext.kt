@@ -60,6 +60,7 @@ class JsIrBackendContext(
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     override val mapping: JsMapping = JsMapping(symbolTable.irFactory),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
+    val icCompatibleIr2Js: Boolean = false,
 ) : JsCommonBackendContext {
     val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
