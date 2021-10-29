@@ -24,23 +24,20 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeAliasSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class Fir2IrClassifierStorage(
+    private val converter: Fir2IrConverter,
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
     private val firProvider = session.firProvider
@@ -168,16 +165,17 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun createLocalIrClass(klass: FirClass, parent: IrDeclarationParent? = null): IrClass {
+    // This function is called when we refer local class earlier than we reach its declaration
+    // This can happen e.g. when implicit return type has a local class constructor
+    private fun createLocalIrClassOnTheFly(klass: FirClass): IrClass {
         // NB: klass can be either FirRegularClass or FirAnonymousObject
-        if (klass is FirAnonymousObject) {
-            return createIrAnonymousObject(klass, irParent = parent)
+        val result = when (klass) {
+            is FirAnonymousObject -> createIrAnonymousObject(klass, irParent = temporaryParent).apply {
+                converter.processAnonymousObjectMembers(klass, this)
+            }
+            is FirRegularClass -> converter.processLocalClassAndNestedClasses(klass, temporaryParent)
         }
-        val regularClass = klass as FirRegularClass
-        val origin = regularClass.irOrigin(firProvider)
-        val irClass = registerIrClass(regularClass, parent, origin)
-        processClassHeader(regularClass, irClass)
-        return irClass
+        return result
     }
 
     fun processClassHeader(regularClass: FirRegularClass, irClass: IrClass = getCachedIrClass(regularClass)!!): IrClass {
@@ -434,7 +432,7 @@ class Fir2IrClassifierStorage(
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return it.symbol }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
-            return createLocalIrClass(firClass).symbol
+            return createLocalIrClassOnTheFly(firClass).symbol
         }
         val signature = signatureComposer.composeSignature(firClass)!!
         symbolTable.referenceClassIfAny(signature)?.let { irClassSymbol ->
@@ -499,5 +497,17 @@ class Fir2IrClassifierStorage(
         // We can try to use default cache because setter can use parent type parameters
             ?: typeParameterCache[firTypeParameter]?.symbol
             ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
+    }
+
+    private val temporaryParent by lazy {
+        irFactory.createFunction(
+            startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET,
+            IrDeclarationOrigin.DEFINED, IrSimpleFunctionSymbolImpl(),
+            Name.special("<stub>"), DescriptorVisibilities.PRIVATE, Modality.FINAL, irBuiltIns.unitType,
+            isInline = false, isExternal = false, isTailrec = false,
+            isSuspend = false, isOperator = false, isInfix = false, isExpect = false
+        ).apply {
+            parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT)
+        }
     }
 }
