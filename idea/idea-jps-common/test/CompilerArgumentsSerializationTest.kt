@@ -6,8 +6,10 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.junit.Assert
 import org.junit.Test
 import kotlin.random.Random
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
@@ -120,9 +122,25 @@ class CompilerArgumentsSerializationTest {
         val deserializer = CompilerArgumentsDeserializerV5(newInstance)
         deserializer.deserializeFrom(element)
         T::class.memberProperties.mapNotNull { it.safeAs<KProperty1<T, *>>() }.forEach {
-            assert(it.get(oldInstance) == it.get(newInstance)) {
-                "Property ${it.name} has different values before (${it.get(oldInstance)}) and after (${it.get(newInstance)}) serialization"
-            }
+            val oldValue = it.get(oldInstance)
+            val newValue = it.get(newInstance)
+            if (oldValue == null && newValue == null) return@forEach
+            Assert.assertNotNull("Old value of property \"${it.name}\" is null but new is not", oldValue)
+            Assert.assertNotNull("New value of property \"${it.name}\" is null but old is not", newValue)
+
+            if ((it.returnType.classifier as? KClass<*>)?.java?.isArray == true)
+                Assert.assertArrayEquals(
+                    "Property ${it.name} has different values before (${it.get(oldInstance).toString()}) and after (${
+                        it.get(newInstance).toString()
+                    }) serialization",
+                    oldValue as Array<*>, newValue as Array<*>
+                )
+            else
+                assert(it.get(oldInstance) == it.get(newInstance)) {
+                    "Property ${it.name} has different values before (${it.get(oldInstance).toString()}) and after (${
+                        it.get(newInstance).toString()
+                    }) serialization"
+                }
         }
     }
 
