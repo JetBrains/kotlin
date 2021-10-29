@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -118,6 +119,17 @@ open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() 
                 defaultDirectives {
                     LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
                 }
+            }
+        }
+    }
+}
+
+open class AbstractLightTreeFir2IrTextTest : AbstractFir2IrTextTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with (builder) {
+            defaultDirectives {
+                +FirDiagnosticsDirectives.USE_LIGHT_TREE
             }
         }
     }
