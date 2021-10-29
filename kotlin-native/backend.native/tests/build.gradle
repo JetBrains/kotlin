@@ -5135,7 +5135,6 @@ dynamicTest("interop_exceptions_throwThroughBridge") {
 interopTest("interop_exceptions_cCallback") {
     disabled = (project.testTarget == 'wasm32') // Uses exceptions
     source = "interop/exceptions/cCallback.kt"
-    expectedExitStatusChecker = { it == 0 }
     outputChecker = { s -> s.contains("CATCH IN C++") }
     interop = "exceptions_cCallback"
 }

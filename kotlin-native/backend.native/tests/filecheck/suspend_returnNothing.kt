@@ -18,7 +18,7 @@ suspend fun suspendForever(): Int = suspendCoroutineUninterceptedOrReturn {
 }
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:$fooCOROUTINE
 
-// CHECK-NOT: ; Function Attrs: noreturn
+// CHECK-NOT: ; Function Attrs: {{.*}}noreturn
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#foo(){}kotlin.Nothing"
 suspend fun foo(): Nothing {
     suspendForever()

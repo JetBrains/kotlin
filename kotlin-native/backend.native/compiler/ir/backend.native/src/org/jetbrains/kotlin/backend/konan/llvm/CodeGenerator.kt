@@ -1058,7 +1058,8 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        call(context.llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
+        if (!context.shouldOptimize())
+            call(context.llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
     inline fun ifThenElse(
