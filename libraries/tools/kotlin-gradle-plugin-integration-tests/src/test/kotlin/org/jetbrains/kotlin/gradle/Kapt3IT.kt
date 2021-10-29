@@ -73,27 +73,6 @@ open class Kapt3WorkersIT : Kapt3IT() {
     override fun kaptOptions(): BuildOptions.KaptOptions =
         super.kaptOptions().copy(useWorkers = true)
 
-    @DisplayName("Javac should be loaded only once")
-    @GradleTest
-    fun testJavacIsLoadedOnce(gradleVersion: GradleVersion) {
-        project("javacIsLoadedOnce".withPrefix, gradleVersion) {
-            build("assemble") {
-                val loadsCount = "Loaded com.sun.tools.javac.util.Context from"
-                    .toRegex(RegexOption.LITERAL)
-                    .findAll(output)
-                    .count()
-
-                assert(loadsCount == 1) {
-                    """
-                    |${printBuildOutput()}
-                    |
-                    | 'javac' is loaded more than once
-                    """.trimMargin()
-                }
-            }
-        }
-    }
-
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
@@ -133,8 +112,16 @@ class Kapt3ClassLoadersCacheIT : Kapt3WorkersIT() {
     )
 
     @Disabled("classloaders cache is incompatible with AP discovery in classpath")
-    override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
-    }
+    override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {}
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {}
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {}
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {}
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
         project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
@@ -152,32 +139,6 @@ class Kapt3ClassLoadersCacheIT : Kapt3WorkersIT() {
                 assertFileInProjectExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
                 assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
                 assertFileExists(javaClassesDir().resolve("example/TestClassGenerated.class"))
-            }
-        }
-    }
-
-    @DisplayName("Annotation processor class should be loaded only once")
-    @GradleTest
-    fun testAnnotationProcessorClassIsLoadedOnce(gradleVersion: GradleVersion) {
-        project("javacIsLoadedOnce".withPrefix, gradleVersion) {
-            val loadPattern = Pattern.quote("Loaded example.ExampleAnnotationProcessor from").toRegex()
-            fun BuildResult.classLoadingCount() = loadPattern.findAll(output).count()
-
-            build("build") {
-                assertTasksExecuted(":module1:kaptKotlin", ":module2:kaptKotlin")
-                assertTrue(classLoadingCount() == 1, "AP class is loaded more than once")
-            }
-
-            listOf(
-                subProject("module1").kotlinSourcesDir().resolve("module1/Module1Class.kt"),
-                subProject("module2").kotlinSourcesDir().resolve("module2/Module2Class.kt")
-            ).forEach {
-                it.append("\n fun touch() = null")
-            }
-
-            build("build") {
-                assertTasksExecuted(":module1:kaptKotlin", ":module2:kaptKotlin")
-                assertTrue(classLoadingCount() == 0, "AP class shouldn't be loaded on the second build")
             }
         }
     }
@@ -554,7 +515,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Should re-run kapt on changes in local annotation processor")
     @GradleTest
-    fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
+    open fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
         project("localAnnotationProcessor".withPrefix, gradleVersion) {
             build("build")
 
@@ -701,7 +662,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT19179 and KT37241: kapt is not skipped and does not generate stubs for non-existent entries")
     @GradleTest
-    fun testKt19179andKt37241(gradleVersion: GradleVersion) {
+    open fun testKt19179andKt37241(gradleVersion: GradleVersion) {
         project("kt19179".withPrefix, gradleVersion) {
 
             build("build") {
@@ -901,7 +862,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT-47347: kapt processors should not be an input files for stub generation")
     @GradleTest
-    fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
+    open fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
         project("localAnnotationProcessor".withPrefix, gradleVersion) {
             build("assemble")
 
