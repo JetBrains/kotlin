@@ -21,8 +21,8 @@ public abstract @interface Ann /* Ann*/ {
 }
 
 public abstract interface Base /* Base*/ {
-  @Ann(x = 1, y = "134", z = String::class, e = {Int::class, Double::class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "243"), @SimpleAnn(value = "4324")})
-  public abstract void foo(@Ann(x = 2, y = "324", z = Ann::class, e = {Byte::class, Base::class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "687"), @SimpleAnn(value = "78")}) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
+  @Ann(x = 1, y = "134", z = kotlin.String.class, e = {kotlin.Int.class, kotlin.Double.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "243"), @SimpleAnn(value = "4324")})
+  public abstract void foo(@Ann(x = 2, y = "324", z = Ann.class, e = {kotlin.Byte.class, Base.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "687"), @SimpleAnn(value = "78")}) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
 
 }
 
