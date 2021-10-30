@@ -24592,6 +24592,40 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            public class NonDefaultInheritance {
+                @Test
+                public void testAllFilesPresentInNonDefaultInheritance() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @Test
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/simple.kt");
+                }
+
+                @Test
+                @TestMetadata("simple2.kt")
+                public void testSimple2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/simple2.kt");
+                }
+
+                @Test
+                @TestMetadata("specialization.kt")
+                public void testSpecialization() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/specialization.kt");
+                }
+
+                @Test
+                @TestMetadata("superCall.kt")
+                public void testSuperCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/superCall.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/reflection")
             @TestDataPath("$PROJECT_ROOT")
             public class Reflection {

@@ -547,6 +547,16 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all-compatibility"))
     }
 
+    fun testJvmDefaultNonDefaultInheritanceSuperCall() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=all"))
+        compileKotlin(
+            "source.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=disable", "-Xjvm-default-allow-non-default-inheritance")
+        )
+    }
+
     fun testJvmDefaultCompatibilityAgainstJava() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
         compileKotlin(

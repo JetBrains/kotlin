@@ -33,6 +33,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        val allowNonDefaultInheritance = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultAllowNonDefaultInheritance)
 
         val jvmDefaultAnnotation = descriptor.annotations.findAnnotation(JVM_DEFAULT_FQ_NAME)
         jvmDefaultAnnotation?.let { annotationDescriptor ->
@@ -60,13 +61,15 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
             }
         }
 
-        if (descriptor is ClassDescriptor) {
-            val hasDeclaredJvmDefaults =
-                descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().any {
-                    it.kind.isReal && it.isCompiledToJvmDefault(jvmDefaultMode)
+        if (!allowNonDefaultInheritance) {
+            if (descriptor is ClassDescriptor) {
+                val hasDeclaredJvmDefaults =
+                    descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().any {
+                        it.kind.isReal && it.isCompiledToJvmDefault(jvmDefaultMode)
+                    }
+                if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, jvmDefaultMode)) {
+                    context.trace.report(ErrorsJvm.JVM_DEFAULT_THROUGH_INHERITANCE.on(declaration))
                 }
-            if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, jvmDefaultMode)) {
-                context.trace.report(ErrorsJvm.JVM_DEFAULT_THROUGH_INHERITANCE.on(declaration))
             }
         }
 
