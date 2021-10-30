@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 
 fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
 
@@ -146,12 +147,19 @@ class PsiClassRenderer private constructor(
             it.name!! + bounds
         } + "> "
 
-    private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String =
-        (value as? Pair<*, *>)?.let {
-            val classId = it.first as? ClassId
-            val name = it.second as? Name
-            if (classId != null && name != null) "${classId.asSingleFqName()}.${name.asString()}" else null
-        } ?: text
+    private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String {
+        val value = value
+        if (value is Pair<*, *>) {
+            val classId = value.first as? ClassId
+            val name = value.second as? Name
+            if (classId != null && name != null)
+                return "${classId.asSingleFqName()}.${name.asString()}"
+        }
+        if (value is KClassValue.Value.NormalClass && value.arrayDimensions == 0) {
+            return "${value.classId.asSingleFqName()}.class"
+        }
+        return text
+    }
 
     private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
         is KtLightPsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
