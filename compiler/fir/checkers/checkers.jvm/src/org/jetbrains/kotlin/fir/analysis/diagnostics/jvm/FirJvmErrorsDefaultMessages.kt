@@ -225,7 +225,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
-            "Interfaces can call default methods via super only within @JvmDefault members. Please annotate the containing interface member with @JvmDefault"
+            "Interfaces can call JVM-default members via super only within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls"
         )
         map.put(
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,
