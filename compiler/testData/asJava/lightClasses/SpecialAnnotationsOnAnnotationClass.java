@@ -15,7 +15,7 @@ public abstract @interface Anno /* Anno*/ {
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.TYPE})
 @kotlin.jvm.internal.RepeatableContainer()
-public @interface Container /* Anno.Container*/ {
+public static abstract @interface Container /* Anno.Container*/ {
   public abstract Anno[] value();//  value()
 
 }}
