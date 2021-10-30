@@ -232,11 +232,17 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
             }
     }
 
-    private fun CallableMemberDescriptor.isCompiledToJvmDefaultWithProperMode(compilationDefaultMode: JvmDefaultMode): Boolean {
-        val jvmDefault =
-            if (this is DeserializedDescriptor) compilationDefaultMode/*doesn't matter*/ else ideService?.getModuleLanguageVersionSettings(module)
-                ?.getFlag(JvmAnalysisFlags.jvmDefaultMode) ?: compilationDefaultMode
-        return isCompiledToJvmDefault(jvmDefault)
-    }
+    private fun CallableMemberDescriptor.isCompiledToJvmDefaultWithProperMode(compilationDefaultMode: JvmDefaultMode) =
+        isCompiledToJvmDefaultWithProperMode(ideService, compilationDefaultMode)
 
+}
+
+internal fun CallableMemberDescriptor.isCompiledToJvmDefaultWithProperMode(
+    ideService: LanguageVersionSettingsProvider?,
+    compilationDefaultMode: JvmDefaultMode
+): Boolean {
+    val jvmDefault =
+        if (this is DeserializedDescriptor) compilationDefaultMode/*doesn't matter*/ else ideService?.getModuleLanguageVersionSettings(module)
+            ?.getFlag(JvmAnalysisFlags.jvmDefaultMode) ?: compilationDefaultMode
+    return isCompiledToJvmDefault(jvmDefault)
 }
