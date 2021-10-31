@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -466,7 +467,7 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         get() = GradleVersionRequired.AtLeast("7.0")
 
     override fun defaultBuildOptions(): BuildOptions {
-        val javaHome = File("/opt/openjdk-bin-11")
+        val javaHome = File(System.getProperty("jdk11Home") ?: error("jdk11Home not specified"))
         Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
         return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
     }
@@ -1040,6 +1041,52 @@ fun getSomething() = 10
                 assertFailed()
                 assertContains("'kotlin-android' plugin requires one of the Android Gradle plugins.")
             }
+        }
+    }
+
+    @Test
+    fun testLintDependencyResolutionKt49483() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        gradleBuildScript().modify {
+            """
+                plugins {
+                    id("com.android.lint")
+                }
+                
+            """.trimIndent() + it
+        }
+
+        gradleBuildScript("Lib").appendText("\n" + """
+            android { 
+                lintOptions.checkDependencies = true
+            }
+            dependencies {
+                implementation(project(":java-lib"))
+            }
+        """.trimIndent())
+
+        gradleSettingsScript().appendText(
+            "\n" + """
+            include("java-lib")
+        """.trimIndent()
+        )
+
+        with(projectDir.resolve("java-lib/build.gradle.kts")) {
+            ensureParentDirsCreated()
+            writeText(
+                """
+                plugins {
+                    id("java-library")
+                    id("com.android.lint")
+                }
+            """.trimIndent()
+            )
+        }
+
+        build(":Lib:lintFlavor1Debug") {
+            assertSuccessful()
+            assertNotContains("as an external dependency and not analyze it.")
         }
     }
 
