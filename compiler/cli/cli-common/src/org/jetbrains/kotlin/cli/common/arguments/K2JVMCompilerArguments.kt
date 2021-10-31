@@ -325,27 +325,32 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable|enable|compatibility}",
         description = """Emit JVM default methods for interface declarations with bodies.
--Xjvm-default=all-compatibility  Generate both a default method in the interface, and a compatibility accessor
-                                 in the DefaultImpls class.
-                                 In case of inheritance from a Kotlin interface compiled in the old scheme
-                                 (DefaultImpls, no default methods), the compatibility accessor in DefaultImpls
-                                 will delegate to the DefaultImpls method of the superinterface. Otherwise the
-                                 compatibility accessor will invoke the default method on the interface, with
-                                 standard JVM runtime resolution semantics.
-                                 Note that if interface delegation is used, all interface methods are delegated.
-                                 The only exception are methods annotated with the deprecated @JvmDefault annotation.
--Xjvm-default=all                Generate default methods for all interface declarations with bodies.
-                                 Do not generate DefaultImpls classes at all.
+-Xjvm-default=all                Generate JVM default methods for all interface declarations with bodies in module.
+                                 Do not generate DefaultImpls stubs for such declarations (that is default behaviour of compiler in 'disable' mode).
+                                 If interface inherits such methods from interface compiled in 'disable' scheme 
+                                 then implicit DefaultImpls stubs would be generated as there are no default method for it. 
                                  BREAKS BINARY COMPATIBILITY if some client code relies on the presence of
                                  DefaultImpls classes. Also prohibits the produced binaries to be read by Kotlin
                                  compilers earlier than 1.4.
                                  Note that if interface delegation is used, all interface methods are delegated.
                                  The only exception are methods annotated with the deprecated @JvmDefault annotation.
--Xjvm-default=disable            Do not generate JVM default methods and prohibit @JvmDefault annotation usage.
--Xjvm-default=enable             Allow usages of @JvmDefault; only generate the default method
+-Xjvm-default=all-compatibility  In addition to `all` mode generate compatibility stubs in the DefaultImpls classes. 
+                                 Compatibility stubs could be useful for library and runtime authors
+                                 to keep backward binary compatibility for existing client compiled against previous library versions.
+                                 New 'all' and 'all-compatibility' modes are changing library ABI surface that will be used by client after their recompilation.
+                                 In that sense client might be incompatible with previous library versions that REQUIRE PROPER LIBRARY VERSIONING.
+                                 In case of inheritance from a Kotlin interface compiled in the old scheme
+                                 (DefaultImpls, no default methods), the implicit stubs in DefaultImpls
+                                 will delegate to the DefaultImpls method of the superinterface. 
+                                 Otherwise the compatibility stubs in DefaultImpls would invoke the default method on the interface via special accessor in it,
+                                 with standard JVM runtime resolution semantics. 
+                                 Perform additional compatibility checks for classes in case of implicit specialized override 
+                                 presence in 'disable' scheme (See KT-39603 for more details) 
+-Xjvm-default=disable            Default behaviour. Do not generate JVM default methods and prohibit @JvmDefault annotation usage.
+-Xjvm-default=enable             Deprecated. Allow usages of @JvmDefault; only generate the default method
                                  for annotated method in the interface
                                  (annotating an existing method can break binary compatibility)
--Xjvm-default=compatibility      Allow usages of @JvmDefault; generate a compatibility accessor
+-Xjvm-default=compatibility      Deprecated. Allow usages of @JvmDefault; generate a compatibility accessor
                                  in the 'DefaultImpls' class in addition to the default interface method"""
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
