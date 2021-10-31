@@ -329,7 +329,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 isVisible = false
                 isCanBeConsumed = false
                 attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                if (compilation.platformType != KotlinPlatformType.androidJvm) {
+                    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                }
                 description = "Compile classpath for $compilation."
             }
 
@@ -359,7 +361,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     isCanBeConsumed = false
                     isCanBeResolved = true
                     attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(compilation.target))
-                    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                    if (compilation.platformType != KotlinPlatformType.androidJvm) {
+                        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                    }
                     description = "Runtime classpath of $compilation."
                 }
             }
