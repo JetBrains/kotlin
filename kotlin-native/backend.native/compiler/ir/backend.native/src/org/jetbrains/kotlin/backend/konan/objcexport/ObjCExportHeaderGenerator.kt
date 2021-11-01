@@ -54,7 +54,8 @@ internal class ObjCExportTranslatorImpl(
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
-        val objcGenerics: Boolean
+        val objcGenerics: Boolean,
+        val unitSuspendFunctionExport: UnitSuspendFunctionExport
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -659,7 +660,7 @@ internal class ObjCExportTranslatorImpl(
                     MethodBridgeValueParameter.SuspendCompletion -> {
                         val resultType = when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
                             is ObjCNonNullReferenceType -> {
-                                if (baseMethod.returnType!!.isUnit()) {
+                                if ((unitSuspendFunctionExport == UnitSuspendFunctionExport.PROPER) && baseMethod.returnType!!.isUnit()) {
                                     null
                                 } else {
                                     ObjCNullableReferenceType(it, isNullableResult = false)
@@ -1008,6 +1009,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
+        unitSuspendFunctionExport: UnitSuspendFunctionExport,
         problemCollector: ObjCExportProblemCollector
 ) {
     private val stubs = mutableListOf<Stub<*>>()
@@ -1016,7 +1018,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
+    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics, unitSuspendFunctionExport)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()

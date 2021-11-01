@@ -59,6 +59,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver)
             val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
             val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+            val unitSuspendFunctionExport = context.config.unitSuspendFunctionExport
             val namer = ObjCExportNamerImpl(
                     moduleDescriptors.toSet(),
                     context.moduleDescriptor.builtIns,
@@ -67,7 +68,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                     local = false,
                     objcGenerics = objcGenerics
             )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics, unitSuspendFunctionExport)
             headerGenerator.translateModule()
             headerGenerator.buildInterface()
         } else {

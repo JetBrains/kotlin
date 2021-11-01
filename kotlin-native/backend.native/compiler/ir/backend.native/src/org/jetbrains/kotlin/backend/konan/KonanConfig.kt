@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionExport
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -298,6 +299,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
         "Konan_main"
     }
+
+    internal val unitSuspendFunctionExport: UnitSuspendFunctionExport
+        get() = configuration.get(BinaryOptions.unitSuspendFunctionExport) ?: UnitSuspendFunctionExport.LEGACY
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

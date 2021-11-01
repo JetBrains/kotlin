@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
@@ -38,6 +39,9 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 
             override val objcGenerics: Boolean
                 get() = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+
+            override val unitSuspendFunctionExport: UnitSuspendFunctionExport
+                get() = config.unitSuspendFunctionExport
         })
     }
 }

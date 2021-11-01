@@ -975,6 +975,8 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     var errorOutPtr: LLVMValueRef? = null
     var continuation: LLVMValueRef? = null
 
+    val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionExport == UnitSuspendFunctionExport.PROPER
+
     val kotlinArgs = methodBridge.paramBridges.mapIndexedNotNull { index, paramBridge ->
         val parameter = param(index)
         when (paramBridge) {
@@ -993,14 +995,14 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             }
 
             MethodBridgeValueParameter.SuspendCompletion -> {
-                val function = if (baseMethod!!.returnType.isUnit()) {
+                val createContinuationArgument = if (properlyExportUnitSuspendFunctions && baseMethod!!.returnType.isUnit()) {
                     context.llvm.Kotlin_ObjCExport_createUnitContinuationArgument
                 } else {
                     context.llvm.Kotlin_ObjCExport_createContinuationArgument
                 }
                 callFromBridge(
-                        function,
-                        listOf(parameter, generateExceptionTypeInfoArray(baseMethod)),
+                        createContinuationArgument,
+                        listOf(parameter, generateExceptionTypeInfoArray(baseMethod!!)),
                         Lifetime.ARGUMENT
                 ).also {
                     continuation = it
@@ -1174,6 +1176,8 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             parameterDescriptor to param(index)
         }.toMap()
 
+        val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionExport == UnitSuspendFunctionExport.PROPER
+
         val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
             when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> {
@@ -1214,7 +1218,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             Lifetime.ARGUMENT
                     )
 
-                    val converter = if (baseIrFunction.returnType.isUnit()) {
+                    val converter = if (properlyExportUnitSuspendFunctions && baseIrFunction.returnType.isUnit()) {
                         unitContinuationToRetainedCompletionConverter
                     } else {
                         continuationToRetainedCompletionConverter

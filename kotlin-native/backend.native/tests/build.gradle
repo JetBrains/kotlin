@@ -5276,7 +5276,7 @@ if (isAppleTarget(project)) {
         framework(frameworkName) {
             sources = ['objcexport']
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbundle-id=foo.bar"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbundle-id=foo.bar", "-Xbinary=unitSuspendFunctionExport=proper"]
         }
         swiftSources = ['objcexport']
         if (isNoopGC) {
@@ -5330,7 +5330,7 @@ if (isAppleTarget(project)) {
             sources = ['objcexport']
             artifact = frameworkArtifactName
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics", "-Xbinary=unitSuspendFunctionExport=proper"]
         }
         swiftSources = ['objcexport']
         swiftExtraOpts = [ '-D', 'NO_GENERICS' ]

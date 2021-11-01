@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionExport
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -12,8 +13,9 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         namer: ObjCExportNamer,
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
+        unitSuspendFunctionExport: UnitSuspendFunctionExport,
         private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, unitSuspendFunctionExport, problemCollector) {
 
     companion object {
         fun createInstance(
@@ -34,6 +36,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 namer,
                 problemCollector,
                 configuration.objcGenerics,
+                configuration.unitSuspendFunctionExport,
                 restrictToLocalModules
             )
         }
