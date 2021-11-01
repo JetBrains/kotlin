@@ -54,7 +54,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
                 }
             }
 
-            calculateChunkDependencies()
+            KotlinChunk.calculateChunkDependencies(chunks, byJpsModuleBuildTarget)
         }
 
         KotlinBuilder.LOG.info("KotlinTargetsIndex created in $time ms")
@@ -64,43 +64,6 @@ internal class KotlinTargetsIndexBuilder internal constructor(
             chunks,
             chunks.associateBy { it.representativeTarget.jpsModuleBuildTarget }
         )
-    }
-
-    private fun calculateChunkDependencies() {
-        chunks.forEach { chunk ->
-            val dependencies = mutableSetOf<KotlinModuleBuildTarget.Dependency>()
-
-            chunk.targets.forEach {
-                dependencies.addAll(calculateTargetDependencies(it))
-            }
-
-            chunk.dependencies = dependencies.toList()
-            chunk.dependencies.forEach { dependency ->
-                dependency.target.chunk._dependent!!.add(dependency)
-            }
-        }
-
-        chunks.forEach {
-            it.dependent = it._dependent!!.toList()
-            it._dependent = null
-        }
-    }
-
-    private fun calculateTargetDependencies(srcTarget: KotlinModuleBuildTarget<*>): List<KotlinModuleBuildTarget.Dependency> {
-        val compileClasspathKind = JpsJavaClasspathKind.compile(srcTarget.isTests)
-
-        val jpsJavaExtensionService = JpsJavaExtensionService.getInstance()
-        return srcTarget.module.dependenciesList.dependencies.asSequence()
-            .filterIsInstance<JpsModuleDependency>()
-            .mapNotNull { dep ->
-                val extension = jpsJavaExtensionService.getDependencyExtension(dep)
-                    ?.takeIf { it.scope.isIncludedIn(compileClasspathKind) }
-                    ?: return@mapNotNull null
-                dep.module
-                    ?.let { byJpsModuleBuildTarget[ModuleBuildTarget(it, srcTarget.isTests)] }
-                    ?.let { KotlinModuleBuildTarget.Dependency(srcTarget, it, extension.isExported) }
-            }
-            .toList()
     }
 
     private fun ensureLoaded(target: ModuleBuildTarget): KotlinModuleBuildTarget<*> {
