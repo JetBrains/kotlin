@@ -177,7 +177,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testProjectWithFacetWithRuntime11WithLanguageLevel10() {
         assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
         assertEquals(
-                VersionView.Companion.getRELEASED_VERSION(),
+                LanguageVersion.LATEST_STABLE,
                 PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion()
         );
     }
