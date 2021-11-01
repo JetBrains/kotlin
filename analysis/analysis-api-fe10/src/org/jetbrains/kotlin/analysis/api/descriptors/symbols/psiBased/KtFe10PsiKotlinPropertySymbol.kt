@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtUnsupportedConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -97,7 +98,18 @@ internal class KtFe10PsiKotlinPropertySymbol(
         get() = withValidityAssertion { false }
 
     override val initializer: KtConstantValue?
-        get() = withValidityAssertion { descriptor?.compileTimeInitializer?.toKtConstantValue() }
+        get() = withValidityAssertion {
+            if (psi.initializer == null) {
+                return null
+            }
+
+            val compileTimeInitializer = descriptor?.compileTimeInitializer
+            if (compileTimeInitializer != null) {
+                return compileTimeInitializer.toKtConstantValue()
+            }
+
+            return KtUnsupportedConstantValue
+        }
 
     override val isVal: Boolean
         get() = withValidityAssertion { !psi.isVar }
