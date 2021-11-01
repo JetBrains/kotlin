@@ -33,7 +33,7 @@ open class YarnRootExtension(
     var installationDir by Property(gradleHome.resolve("yarn"))
 
     var downloadBaseUrl by Property("https://github.com/yarnpkg/yarn/releases/download")
-    var version by Property("1.22.10")
+    var version by Property("1.22.17")
 
     var command by Property("yarn")
 
