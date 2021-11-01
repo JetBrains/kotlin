@@ -43,7 +43,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
 
     val haveSameCompiler = targets.all { it.javaClass == representativeTarget.javaClass }
 
-    private val defaultLanguageVersion = VersionView.RELEASED_VERSION
+    private val defaultLanguageVersion = LanguageVersion.LATEST_STABLE
 
     val compilerArguments by lazy {
         representativeTarget.jpsModuleBuildTarget.module.kotlinCompilerArguments.also {
