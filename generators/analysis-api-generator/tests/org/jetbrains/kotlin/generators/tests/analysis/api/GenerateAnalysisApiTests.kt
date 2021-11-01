@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.AbstractFirReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.fir.components.*
@@ -135,9 +136,9 @@ fun main(args: Array<String>) {
 //                model("scopes/fileScopeTest", extension = "kt")
 //            }
 
-//            testClass<AbstractKtFe10SymbolByPsiTest> {
-//                model("symbols/symbolByPsi")
-//            }
+            testClass<AbstractKtFe10SymbolByPsiTest> {
+                model("symbols/symbolByPsi")
+            }
 
 //            testClass<AbstractKtFe10CompileTimeConstantEvaluatorTest> {
 //                model("components/compileTimeConstantEvaluator")

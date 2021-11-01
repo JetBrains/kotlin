@@ -1,0 +1,152 @@
+KtKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /Foo.i
+  dispatchType: Foo
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: i
+  origin: SOURCE
+  receiverType: null
+  setter: KtPropertySetterSymbol(<setter>)
+  symbolKind: CLASS_MEMBER
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getMyI
+  javaSetterName: setMyI
+  setterDeprecationStatus: null
+
+KtPropertyGetterSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/jvm/JvmName
+  ]
+  annotations: [
+    kotlin/jvm/JvmName(name = getMyJ)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: null
+  dispatchType: Foo
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  receiverType: null
+  symbolKind: ACCESSOR
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtValueParameterSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: value
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtPropertySetterSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: [
+    kotlin/jvm/JvmName
+  ]
+  annotations: [
+    kotlin/jvm/JvmName(name = setMyJ)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: null
+  dispatchType: Foo
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  parameter: KtValueParameterSymbol(value)
+  receiverType: null
+  symbolKind: ACCESSOR
+  valueParameters: [
+    KtValueParameterSymbol(value)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /Foo.j
+  dispatchType: Foo
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: j
+  origin: SOURCE
+  receiverType: null
+  setter: KtPropertySetterSymbol(<setter>)
+  symbolKind: CLASS_MEMBER
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getMyJ
+  javaSetterName: setMyJ
+  setterDeprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationClassIds: []
+  annotations: []
+  classIdIfNonLocal: Foo
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Foo
+  origin: SOURCE
+  superTypes: [
+    [] kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null

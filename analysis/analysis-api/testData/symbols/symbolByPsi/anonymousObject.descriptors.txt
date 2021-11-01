@@ -1,0 +1,123 @@
+KtFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: true
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: run
+  origin: SOURCE
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  dispatchType: <no name provided>
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 123
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: data
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: CLASS_MEMBER
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getData
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtAnonymousObjectSymbol:
+  annotationClassIds: []
+  annotations: []
+  classIdIfNonLocal: null
+  classKind: ANONYMOUS_OBJECT
+  name: null
+  origin: SOURCE
+  superTypes: [
+    [] java/lang/Runnable
+  ]
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotatedType: [] java/lang/Runnable
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /AnonymousContainer.anonymousObject
+  dispatchType: AnonymousContainer
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtUnsupportedConstantValue
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: anonymousObject
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: CLASS_MEMBER
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getAnonymousObject
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationClassIds: []
+  annotations: []
+  classIdIfNonLocal: AnonymousContainer
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: AnonymousContainer
+  origin: SOURCE
+  superTypes: [
+    [] kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null
