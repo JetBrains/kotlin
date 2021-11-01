@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm;
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.DumbAware;
