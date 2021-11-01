@@ -278,10 +278,6 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             if (stdlibDep != null && runtimeDep != null) break;
         }
 
-        if (stdlibDep == null) {
-            throw new MojoExecutionException("Unable to find kotlin-stdlib artifacts among project dependencies");
-        }
-
         return files;
     }
 
