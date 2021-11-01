@@ -6,8 +6,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
+import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
 import java.io.File
 
@@ -34,9 +37,13 @@ open class KonanCacheTask: DefaultTask() {
     @get:OutputDirectory
     val cacheFile: File
         get() {
-            val klibName = originalKlib?.let {
-                if (it.isDirectory) it.name else it.nameWithoutExtension
-            }
+            val konanHome = compilerDistributionPath.get().absolutePath
+            val resolver = defaultResolver(
+                    emptyList(),
+                    PlatformManager(konanHome).targetByName(target),
+                    Distribution(konanHome)
+            )
+            val klibName = resolver.resolve(originalKlib!!.absolutePath).uniqueName
             return cacheDirectory.resolve("${klibName}-cache")
         }
 
