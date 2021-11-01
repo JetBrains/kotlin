@@ -7,7 +7,7 @@
 
 // CHECK: void @"kfun:#flameThrower(){}kotlin.Nothing"() #[[FLAME_THROWER_DECLARATION_ATTRIBUTES:[0-9]+]]
 fun flameThrower(): Nothing {
-    // CHECK: invoke void @ThrowException(%struct.ObjHeader* {{.*}}) #[[THROW_EXCEPTION_CALLSITE_ATTRIBUTES:[0-9]+]]
+    // CHECK: call void @ThrowException(%struct.ObjHeader* {{.*}}) #[[THROW_EXCEPTION_CALLSITE_ATTRIBUTES:[0-9]+]]
     throw Throwable("🔥")
 }
 

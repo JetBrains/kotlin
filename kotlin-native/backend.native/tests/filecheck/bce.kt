@@ -9,7 +9,7 @@ fun forEachIndicies() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in array.indices) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 }
@@ -20,7 +20,7 @@ fun forUntilSize() {
     val array = Array(10) { 0L }
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0 until array.size) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 }
@@ -32,13 +32,13 @@ fun forDownToSize() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in array.size - 1 downTo 0) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (j in array.size - 3 downTo 0) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[j] = 6
     }
 }
@@ -50,7 +50,7 @@ fun forRangeToSize() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..array.size - 1) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 
@@ -58,7 +58,7 @@ fun forRangeToSize() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (j in 0..length) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[j] = 6
     }
 }
@@ -70,7 +70,7 @@ fun forRangeToWithStep() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..array.size - 1 step 2) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 }
@@ -81,7 +81,7 @@ fun forUntilWithStep() {
     val array = CharArray(10) { '0' }
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0 until array.size step 2) {
-        // CHECK: invoke void @Kotlin_CharArray_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_CharArray_set_without_BoundCheck
         array[i] = '6'
     }
 }
@@ -92,7 +92,7 @@ fun forDownToWithStep() {
     val array = UIntArray(10) { 0U }
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in array.size - 1 downTo 0 step 2) {
-        // CHECK: invoke void @Kotlin_IntArray_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_IntArray_set_without_BoundCheck
         array[i] = 6U
     }
 }
@@ -103,7 +103,7 @@ fun forIndiciesWithStep() {
     val array = Array(10) { 0L }
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in array.indices step 2) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 }
@@ -115,7 +115,7 @@ fun forWithIndex() {
 
     // CHECK: {{^}}while_loop{{.*}}:
     for ((index, value) in array.withIndex()) {
-        // CHECK: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
         array[index] = 6
     }
 }
@@ -126,7 +126,7 @@ fun forReversed() {
     val array = Array(10) { 100 }
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in (0..array.size-1).reversed()) {
-        // CHECK: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
 }
@@ -140,7 +140,7 @@ fun forEachCall() {
     var sum = 0
     // CHECK: {{^}}while_loop{{.*}}:
     array.forEach {
-        // CHECK: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
         sum += it
     }
 }
@@ -152,7 +152,7 @@ fun forLoop() {
     var sum = 0
     // CHECK: {{^}}while_loop{{.*}}:
     for (it in array) {
-        // CHECK: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
         sum += it
     }
 }
@@ -165,10 +165,10 @@ fun innerLoop() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0 until array.size) {
-        // CHECK-DAG: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK-DAG: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
         array[i] = 7
-        // CHECK-DAG: invoke void @Kotlin_Array_set_without_BoundCheck
-        // CHECK-DAG: invoke void @Kotlin_Array_set_without_BoundCheck
+        // CHECK-DAG: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        // CHECK-DAG: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         for (j in 0 until array1.size) {
             array1[j] = array[i]
         }
@@ -185,9 +185,9 @@ fun argsInFunctionCall() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..size1) {
-        // CHECK: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
-        // CHECK: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
-        // CHECK: invoke i32 @"kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int"
+        // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK: {{call|invoke}} i32 @"kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int"
         foo(array[i], array[i])
     }
 }
@@ -199,7 +199,7 @@ fun smallLoop() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..array.size - 2) {
-        // CHECK: invoke %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
+        // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
         array[i+1] = array[i]
     }
 }
