@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.isJs
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -50,9 +48,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform.isJvm() || platform.isJs()) {
-            container.useInstance(this)
-        }
+        container.useInstance(this)
     }
 
     override fun check(
