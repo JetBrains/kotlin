@@ -1,3 +1,0 @@
-interface A
-interface B
-class C<T : A> where T : B

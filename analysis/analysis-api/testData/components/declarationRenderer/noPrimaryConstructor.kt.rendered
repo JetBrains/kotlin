@@ -1,5 +1,0 @@
-class NoPrimary {
-    val x: String
-    constructor(x: String)
-    constructor()
-}
