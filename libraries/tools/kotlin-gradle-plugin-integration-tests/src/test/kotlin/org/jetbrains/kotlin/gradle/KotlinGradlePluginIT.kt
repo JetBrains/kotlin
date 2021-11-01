@@ -30,11 +30,9 @@ import org.junit.Test
 import java.io.File
 import java.nio.file.FileSystemException
 import java.nio.file.Files
+import java.util.*
 import java.util.zip.ZipFile
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class KotlinGradleIT : BaseGradleIT() {
 
@@ -919,6 +917,49 @@ class KotlinGradleIT : BaseGradleIT() {
             assertContains("Kotlin build report is written to")
         }
     }
+
+    @Test
+    fun testBuildMetricsSmokeTest() = with(Project("simpleProject")) {
+        build("assemble", "-Pkotlin.build.report.enable=true", "-Pkotlin.build.report.verbose=true") {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
+        }
+        val reportFolder = projectDir.resolve("build/reports/kotlin-build")
+        val reports = reportFolder.listFiles()
+        assertNotNull(reports)
+        assertEquals(1, reports.size)
+        val report = reports[0].readText()
+
+        //Should contains build metrics for all compile kotlin tasks
+        assertTrue { report.contains("Time metrics:") }
+        assertTrue { report.contains("RUN_COMPILER:") }
+        assertTrue { report.contains("INCREMENTAL_COMPILATION:") }
+        assertTrue { report.contains("Build performance metrics:") }
+        assertTrue { report.contains("OUTPUT_SIZE:") }
+        assertTrue { report.contains("SNAPSHOT_SIZE:") }
+        assertTrue { report.contains("Build attributes:") }
+        assertTrue { report.contains("REBUILD_REASON:") }
+    }
+
+    @Test
+    fun testCompilerBuildMetricsSmokeTest() {
+        val buildOptions = defaultBuildOptions().copy(customEnvironmentVariables = mapOf("KOTLIN_REPORT_PERF" to "true"))
+
+        return with(Project("simpleProject")) {
+            build("assemble", "-Pkotlin.build.report.enable=true", "-Pkotlin.build.report.verbose=true", options = buildOptions) {
+                assertSuccessful()
+                assertContains("Kotlin build report is written to")
+            }
+            val reportFolder = projectDir.resolve("build/reports/kotlin-build")
+            val reports = reportFolder.listFiles()
+            assertNotNull(reports)
+            assertEquals(1, reports.size)
+            val report = reports[0].readText()
+            assertTrue { report.contains("CODE_ANALYSIS:") }
+            assertTrue { report.contains("CODE_GENERATION:") }
+        }
+    }
+
 
     @Test
     fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.FOR_MPP_SUPPORT)) {

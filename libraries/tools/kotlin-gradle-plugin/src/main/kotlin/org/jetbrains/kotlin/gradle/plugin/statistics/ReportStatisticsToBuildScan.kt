@@ -35,7 +35,7 @@ class ReportStatisticsToBuildScan(
         data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
 
         val timeData = data.timeData.map { (key, value) -> "${key.readableString}: ${value}ms"} //sometimes it is better to have separate variable to be able debug
-        val perfData = data.perfData.map { (key, value) -> "$key: ${readableFileLength(value)}"}
+        val perfData = data.perfData.map { (key, value) -> "${key.readableString}: ${readableFileLength(value)}"}
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")
         return readableString.toString()
     }

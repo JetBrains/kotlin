@@ -12,17 +12,37 @@ import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
 import org.jetbrains.kotlin.gradle.utils.Printer
 import java.io.File
+import java.io.Serializable
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 import kotlin.math.max
+
+internal class PlainTextBuildReportWriterDataProcessor(
+    val reportingSettings: ReportingSettings,
+    val reportDir: File, //from reportingSettings.buildReportDir to avoid null check
+    val rootProjectName: String
+) : BuildExecutionDataProcessor, Serializable {
+    override fun process(build: BuildExecutionData, log: Logger) {
+        val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
+        val reportFile = reportDir.resolve("${rootProjectName}-build-$ts.txt")
+
+        PlainTextBuildReportWriter(
+            outputFile = reportFile,
+            printMetrics = reportingSettings.includeMetricsInReport
+        ).process(build, log)
+    }
+}
 
 internal class PlainTextBuildReportWriter(
     private val outputFile: File,
-    private val printMetrics: Boolean,
-    private val log: Logger
-) : BuildExecutionDataProcessor {
+    private val printMetrics: Boolean
+) : Serializable {
 
     private lateinit var p: Printer
 
-    override fun process(build: BuildExecutionData) {
+    fun process(build: BuildExecutionData, log: Logger) {
         try {
             outputFile.parentFile.mkdirs()
             if (!(outputFile.parentFile.exists() && outputFile.parentFile.isDirectory)) {
@@ -54,8 +74,8 @@ internal class PlainTextBuildReportWriter(
         }
 
         p.println()
-        if (build.failure != null) {
-            p.println("Build failed: ${build.failure}")
+        if (build.failureMessages.isNotEmpty()) {
+            p.println("Build failed: ${build.failureMessages}")
         }
         p.println()
     }
@@ -79,9 +99,14 @@ internal class PlainTextBuildReportWriter(
             fun printBuildTime(buildTime: BuildTime) {
                 if (!visitedBuildTimes.add(buildTime)) return
 
-                val timeMs = collectedBuildTimes[buildTime] ?: return
-                p.println("${buildTime.name}: ${formatTime(timeMs)}")
-                p.withIndent {
+                val timeMs = collectedBuildTimes[buildTime]
+                if (timeMs != null) {
+                    p.println("${buildTime.name}: ${formatTime(timeMs)}")
+                    p.withIndent {
+                        BuildTime.children[buildTime]?.forEach { printBuildTime(it) }
+                    }
+                } else {
+                    //Skip formatting if parent metric does not set
                     BuildTime.children[buildTime]?.forEach { printBuildTime(it) }
                 }
             }
@@ -147,7 +172,7 @@ internal class PlainTextBuildReportWriter(
         for (task in kotlinTasks.sortedByDescending { it.totalTimeMs }) {
             val timeMs = task.totalTimeMs
             val percent = (timeMs.toDouble() / kotlinTotalTimeMs * 100).asString(1)
-            table.addRow(formatTime(timeMs), "$percent %", task.task.path)
+            table.addRow(formatTime(timeMs), "$percent %", task.taskPath)
         }
         table.printTo(p)
         p.println()
@@ -161,15 +186,15 @@ internal class PlainTextBuildReportWriter(
     }
 
     private fun printTaskLog(task: TaskExecutionData) {
-        val skipMessage = task.resultState.skipMessage
+        val skipMessage = task.skipMessage
         if (skipMessage != null) {
-            p.println("Task '${task.task.path}' was skipped: $skipMessage")
+            p.println("Task '${task.taskPath}' was skipped: $skipMessage")
         } else {
-            p.println("Task '${task.task.path}' finished in ${formatTime(task.totalTimeMs)}")
+            p.println("Task '${task.taskPath}' finished in ${formatTime(task.totalTimeMs)}")
         }
 
         if (task.icLogLines.isNotEmpty()) {
-            p.withIndent("Compilation log for task '${task.task.path}':") {
+            p.withIndent("Compilation log for task '${task.taskPath}':") {
                 task.icLogLines.forEach { p.println(it) }
             }
         }

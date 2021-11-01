@@ -101,8 +101,8 @@ class KotlinBuildReporterHandler {
     }
 }
 
-internal fun formatTime(ns: Long): String {
-    val seconds = ns.toDouble() / 1_000
+internal fun formatTime(ms: Long): String {
+    val seconds = ms.toDouble() / 1_000
     return seconds.asString(2) + " s"
 }
 

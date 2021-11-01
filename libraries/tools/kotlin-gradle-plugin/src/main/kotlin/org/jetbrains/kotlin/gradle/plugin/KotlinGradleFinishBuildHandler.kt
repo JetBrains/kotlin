@@ -18,7 +18,7 @@ import java.io.File
 import java.lang.management.ManagementFactory
 import kotlin.math.max
 
-class KotlinGradleFinishBuildHandler {
+internal class KotlinGradleFinishBuildHandler {
 
     companion object {
         const val SHOULD_REPORT_MEMORY_USAGE_PROPERTY = "kotlin.gradle.test.report.memory.usage"

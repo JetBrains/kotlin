@@ -26,6 +26,7 @@ data class BuildOptions(
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = null,
+    val buidReport: Boolean = false,
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -111,6 +112,10 @@ data class BuildOptions(
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
 
+        if (buidReport) {
+            arguments.add("-Pkotlin.build.report.enable=true")
+            arguments.add("-Pkotlin.build.report.verbose=true")
+        }
         return arguments.toList()
     }
 }

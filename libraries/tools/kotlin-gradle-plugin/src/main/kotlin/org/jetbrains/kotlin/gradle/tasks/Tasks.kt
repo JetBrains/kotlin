@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
@@ -245,7 +246,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         incremental
 
     @get:Internal
-    internal var reportingSettings = ReportingSettings()
+    val startParameters = BuildMetricsReporterService.getStartParameters(project)
+
+    @get:Internal
+    abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
+
+    internal fun reportingSettings() = buildMetricsReporterService.orNull?.parameters?.reportingSettings ?: ReportingSettings()
 
     @get:Input
     internal val useModuleDetection: Property<Boolean> = objects.property(Boolean::class.java).value(false)
@@ -377,6 +383,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
             executeImpl(inputChanges, outputsBackup)
         }
+
+        buildMetricsReporterService.orNull?.also { it.add(path, this::class.java.name, buildMetrics) }
     }
 
     protected open fun skipCondition(): Boolean =
@@ -762,7 +770,7 @@ abstract class KotlinCompile @Inject constructor(
             // outputFiles here. (See TaskOutputsBackup's kdoc for more info.)
             outputFiles = allOutputFiles()
                     - (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { setOf(it) } ?: emptySet()),
-            reportingSettings = reportingSettings,
+            reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
         )
@@ -1124,7 +1132,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
-            reportingSettings = reportingSettings,
+            reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJsCompilerAsync(
