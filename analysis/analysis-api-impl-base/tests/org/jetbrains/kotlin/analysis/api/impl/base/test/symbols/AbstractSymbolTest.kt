@@ -55,7 +55,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
         pointersWithRendered: List<PointerWithRenderedSymbol>,
         testServices: TestServices,
     ) {
-        val actual = pointersWithRendered.joinToString(separator = "\n") { it.rendered }
+        val actual = pointersWithRendered.joinToString(separator = "\n\n") { it.rendered }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
@@ -71,7 +71,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
                 with(DebugSymbolRenderer) { renderExtra(restored) }
             }
         }
-        val actual = restored.joinToString(separator = "\n")
+        val actual = restored.joinToString(separator = "\n\n")
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

@@ -11,112 +11,178 @@ import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.name.*
+import java.lang.Appendable
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty2
 import kotlin.reflect.full.declaredMemberExtensionProperties
-import kotlin.reflect.jvm.javaGetter
+import kotlin.reflect.full.extensionReceiverParameter
 
 public object DebugSymbolRenderer {
-    private fun StringBuilder.appendLine(indent: Int, line: String) {
-        appendLine(line.prependIndent(" ".repeat(indent)))
+    public fun render(symbol: KtSymbol): String = Block().apply {
+        renderSymbol(symbol)
+    }.toString()
+
+    public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = Block().apply {
+        renderSymbol(symbol)
+
+        withIndent {
+            KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
+                .asSequence()
+                .filter { (it.extensionReceiverParameter?.type?.classifier as? KClass<*>)?.isInstance(symbol) == true }
+                .forEach { renderProperty(it, this@renderExtra, symbol) }
+        }
+    }.toString()
+
+    private fun Block.renderProperty(property: KProperty<*>, vararg args: Any) {
+        try {
+            appendLine().append(property.name).append(": ")
+            renderValue(property.getter.call(*args))
+        } catch (e: InvocationTargetException) {
+            append("Could not render due to ").appendLine(e.cause.toString())
+        }
     }
 
-    private fun StringBuilder.append(indent: Int, value: String) {
-        append(value.prependIndent(" ".repeat(indent)))
+    private fun Block.renderSymbol(symbol: KtSymbol) {
+        val apiClass = getSymbolApiClass(symbol)
+        append(apiClass.simpleName).append(':')
+
+        withIndent {
+            apiClass.members
+                .asSequence()
+                .filterIsInstance<KProperty<*>>()
+                .filter { it.name !in ignoredPropertyNames }
+                .sortedBy { it.name }
+                .forEach { renderProperty(it, symbol) }
+        }
     }
 
-    public fun render(symbol: KtSymbol): String = buildString {
-        renderImpl(symbol)
-    }
+    private fun Block.renderList(values: List<*>) {
+        if (values.isEmpty()) {
+            append("[]")
+            return
+        }
 
-    public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = buildString {
-        renderImpl(symbol)
-        KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties.forEach { prop ->
-            val symbolClass = prop.parameters[1].type.classifier as? KClass<*> ?: return@forEach
-            if (symbolClass.isInstance(symbol)) {
-                @Suppress("UNCHECKED_CAST")
-                val value = (prop as KProperty2<KtSymbolInfoProviderMixIn, KtSymbol, Any?>).invoke(this@renderExtra, symbol)
-                val stringValue = renderValue(value)
-                appendLine(INDENT, "${prop.name}: $stringValue")
+        append('[')
+        withIndent {
+            for (value in values) {
+                appendLine()
+                renderValue(value)
             }
         }
+        appendLine().append(']')
     }
 
-    private fun StringBuilder.renderImpl(symbol: KtSymbol) {
-        val klass = getSymbolClass(symbol)
-        appendLine("${klass.simpleName}:")
-        klass.members.filterIsInstance<KProperty<*>>().sortedBy { it.name }.forEach { property ->
-            if (property.name in ignoredPropertyNames) return@forEach
-            val getter = property.javaGetter ?: return@forEach
-            val value = try {
-                getter.invoke(symbol)
-            } catch (e: InvocationTargetException) {
-                "Could not render due to ${e.cause}"
+    private fun Block.renderSymbolTag(symbol: KtSymbol) {
+        fun renderId(id: Any?, symbol: KtSymbol) {
+            if (id != null) {
+                renderValue(id)
+            } else {
+                val outerName = (symbol as? KtPossiblyNamedSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED
+                append("<local>/" + outerName.asString())
             }
-            val stringValue = renderValue(value)
-            appendLine(INDENT, "${property.name}: $stringValue")
+        }
+
+        append(getSymbolApiClass(symbol).simpleName)
+        append("(")
+        when (symbol) {
+            is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
+            is KtValueParameterSymbol -> renderValue(symbol.name)
+            is KtPropertyGetterSymbol -> append("<getter>")
+            is KtPropertySetterSymbol -> append("<setter>")
+            is KtCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
+            is KtNamedSymbol -> renderValue(symbol.name)
+            else -> error("Unsupported symbol ${symbol::class.java.name}")
+        }
+        append(")")
+    }
+
+    private fun Block.renderConstantValue(value: KtConstantValue) {
+        when (value) {
+            is KtLiteralConstantValue<*> -> renderValue(value.value)
+            is KtEnumEntryConstantValue -> {
+                append(KtEnumEntryConstantValue::class.java.simpleName)
+                append("(")
+                renderValue(value.callableId)
+                append(")")
+            }
+            else -> append(value::class.java.simpleName)
         }
     }
 
-    private fun renderValue(value: Any?): String = when (value) {
-        null -> "null"
-        is String -> value
-        is Boolean -> value.toString()
-        is Number -> value.toString()
-        is UByte -> value.toString()
-        is UShort -> value.toString()
-        is UInt -> value.toString()
-        is ULong -> value.toString()
-        is Name -> value.asString()
-        is FqName -> value.asString()
-        is ClassId -> value.asString()
-        is CallableId -> value.toString()
-        is Enum<*> -> value.name
-        is List<*> -> if (value.isEmpty()) "[]" else buildString {
-            appendLine("[")
-            value.forEach {
-                appendLine(INDENT, renderValue(it))
-            }
-            append("]")
-        }
-        is KtClassErrorType -> "ERROR_TYPE"
-        is KtType -> value.asStringForDebugging()
-        is KtSymbol -> {
-            val symbolTag = when (value) {
-                is KtClassLikeSymbol -> renderValue(value.classIdIfNonLocal ?: "<local>/${value.name}")
-                is KtFunctionSymbol -> renderValue(value.callableIdIfNonLocal ?: "<local>/${value.name}")
-                is KtSamConstructorSymbol -> renderValue(value.callableIdIfNonLocal ?: "<local>/${value.name}")
-                is KtConstructorSymbol -> "<constructor>"
-                is KtEnumEntrySymbol -> renderValue(value.callableIdIfNonLocal ?: "<local>/${value.name}")
-                is KtNamedSymbol -> renderValue(value.name)
-                is KtPropertyGetterSymbol -> "<getter>"
-                is KtPropertySetterSymbol -> "<setter>"
-                else -> TODO(value::class.toString())
-            }
-            val symbolKind = getSymbolClass(value).simpleName!!
-            "$symbolKind($symbolTag)"
-        }
-        is KtLiteralConstantValue<*> -> renderValue(value.value)
-        is KtEnumEntryConstantValue -> "KtEnumEntryConstantValue(${renderValue(value.callableId)})"
-        is KtNamedConstantValue -> "${renderValue(value.name)} = ${renderValue(value.expression)}"
-        is KtAnnotationCall -> buildString {
-            append(renderValue(value.classId))
-            appendLine(value.arguments.joinToString(prefix = "(", postfix = ")") { renderValue(it) })
-            // TODO: perhaps we want to render `psi` for all other cases as well.
-            append(INDENT, "psi: ${renderValue(value.psi)}")
-        }
-        is KtTypeAndAnnotations -> "${renderValue(value.annotations)} ${renderValue(value.type)}"
-        is DeprecationInfo -> value.toString()
-        else -> value::class.simpleName!!
+    private fun Block.renderNamedConstantValue(value: KtNamedConstantValue) {
+        append(value.name).append(" = ")
+        renderValue(value.expression)
     }
 
-    private fun getSymbolClass(symbol: KtSymbol): KClass<*> {
+    private fun Block.renderType(type: KtType) {
+        when (type) {
+            is KtClassErrorType -> append("ERROR_TYPE")
+            else -> append(type.asStringForDebugging())
+        }
+    }
+
+    private fun Block.renderTypeAndAnnotations(type: KtTypeAndAnnotations) {
+        renderList(type.annotations)
+        append(' ')
+        renderType(type.type)
+    }
+
+    private fun Block.renderAnnotationCall(call: KtAnnotationCall) {
+        renderValue(call.classId)
+        append('(')
+        call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
+            if (index > 0) {
+                append(", ")
+            }
+            renderValue(value)
+        }
+        append(')')
+
+        withIndent {
+            appendLine().append("psi: ")
+            renderValue(call.psi?.javaClass?.simpleName)
+        }
+    }
+
+    private fun Block.renderDeprecationInfo(info: DeprecationInfo) {
+        append("DeprecationInfo(")
+        append("deprecationLevel=${info.deprecationLevel}, ")
+        append("propagatesToOverrides=${info.propagatesToOverrides}, ")
+        append("message=${info.message}")
+        append(")")
+    }
+
+    private fun Block.renderValue(value: Any?) {
+        when (value) {
+            // Symbol-related values
+            is KtSymbol -> renderSymbolTag(value)
+            is KtType -> renderType(value)
+            is KtTypeAndAnnotations -> renderTypeAndAnnotations(value)
+            is KtConstantValue -> renderConstantValue(value)
+            is KtNamedConstantValue -> renderNamedConstantValue(value)
+            is KtAnnotationCall -> renderAnnotationCall(value)
+            // Other custom values
+            is Name -> append(value.asString())
+            is FqName -> append(value.asString())
+            is ClassId -> append(value.asString())
+            is DeprecationInfo -> renderDeprecationInfo(value)
+            is Visibility -> append(value::class.java.simpleName)
+            // Unsigned integers
+            is UByte -> append(value.toString())
+            is UShort -> append(value.toString())
+            is UInt -> append(value.toString())
+            is ULong -> append(value.toString())
+            // Java values
+            is Enum<*> -> append(value.name)
+            is List<*> -> renderList(value)
+            else -> append(value.toString())
+        }
+    }
+
+    private fun getSymbolApiClass(symbol: KtSymbol): KClass<*> {
         var current: Class<in KtSymbol> = symbol.javaClass
 
         while (true) {
@@ -134,6 +200,46 @@ public object DebugSymbolRenderer {
         "org.jetbrains.kotlin.analysis.api.fir",
         "org.jetbrains.kotlin.analysis.api.descriptors",
     )
+}
 
-    private const val INDENT = 2
+private class Block : Appendable {
+    private val builder = StringBuilder()
+    private var indent = 0
+
+    override fun append(seq: CharSequence): Appendable = apply {
+        seq.split('\n').forEachIndexed { index, line ->
+            if (index > 0) {
+                builder.append('\n')
+            }
+            appendIndentIfNeeded()
+            builder.append(line)
+        }
+    }
+
+    override fun append(seq: CharSequence, start: Int, end: Int): Appendable = apply {
+        append(seq.subSequence(start, end))
+    }
+
+    override fun append(c: Char): Appendable = apply {
+        if (c != '\n') {
+            appendIndentIfNeeded()
+        }
+        builder.append(c)
+    }
+
+    private fun appendIndentIfNeeded() {
+        if (builder.isEmpty() || builder[builder.lastIndex] == '\n') {
+            builder.append(" ".repeat(2 * indent))
+        }
+    }
+
+    fun withIndent(block: Block.() -> Unit) {
+        indent += 1
+        block(this)
+        indent -= 1
+    }
+
+    override fun toString(): String {
+        return builder.toString()
+    }
 }

@@ -323,7 +323,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(p3)
   ]
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtFunctionSymbol:
   annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
@@ -1724,7 +1724,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(p3)
   ]
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1750,7 +1750,7 @@ KtConstructorSymbol:
     KtValueParameterSymbol(p1)
   ]
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1968,4 +1968,4 @@ KtConstructorSymbol:
     KtValueParameterSymbol(p2)
   ]
   visibility: PackageVisibility
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)

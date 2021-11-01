@@ -29,11 +29,11 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
   javaGetterName: getI
   javaSetterName: null
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
 
 KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -62,7 +62,7 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   visibility: Public
   deprecationStatus: null
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
   javaGetterName: getI2
   javaSetterName: null
   setterDeprecationStatus: null
@@ -97,7 +97,7 @@ KtKotlinPropertySymbol:
   getterDeprecationStatus: null
   javaGetterName: getI3
   javaSetterName: setI3
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
 
 KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -126,10 +126,10 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   visibility: Public
   deprecationStatus: null
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
   javaGetterName: getI4
   javaSetterName: setI4
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
 
 KtFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -159,7 +159,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f)
 
 KtNamedClassOrObjectSymbol:
   annotationClassIds: [
@@ -186,7 +186,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use MyClass)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use MyClass)
 
 KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -219,11 +219,11 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   javaGetterName: getI2
   javaSetterName: null
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
 
 KtFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -253,7 +253,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
 
 KtNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -308,11 +308,11 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
   javaGetterName: getJ
   javaSetterName: null
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -345,11 +345,11 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
   javaGetterName: getJ2
   javaSetterName: null
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
 
 KtKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -382,8 +382,8 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
-  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   javaGetterName: getJ2
   javaSetterName: null
-  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

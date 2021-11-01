@@ -4,7 +4,7 @@ KtBackingFieldSymbol:
   isExtension: false
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtKotlinPropertySymbol(x)
+  owningProperty: KtKotlinPropertySymbol(/x)
   receiverType: null
   symbolKind: LOCAL
   deprecationStatus: null

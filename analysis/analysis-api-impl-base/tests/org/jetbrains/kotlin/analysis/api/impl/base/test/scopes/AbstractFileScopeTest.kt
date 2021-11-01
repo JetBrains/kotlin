@@ -28,11 +28,11 @@ abstract class AbstractFileScopeTest(configurator: FrontendApiTestConfiguratorSe
                     val classifierNames = scope.getPossibleClassifierNames()
                     val renderedClassifiers = scope.getClassifierSymbols().map { renderExtra(it) }
 
-                    "FILE SYMBOL:\n" + renderedSymbol +
+                    "FILE SYMBOL:\n" + renderedSymbol + "\n" +
                             "\nCALLABLE NAMES:\n" + callableNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +
-                            "\nCALLABLE SYMBOLS:\n" + renderedCallables.joinToString(separator = "\n") +
+                            "\nCALLABLE SYMBOLS:\n" + renderedCallables.joinToString(separator = "\n\n", postfix = "\n") +
                             "\nCLASSIFIER NAMES:\n" + classifierNames.joinToString(prefix = "[", postfix = "]\n", separator = ", ") +
-                            "\nCLASSIFIER SYMBOLS:\n" + renderedClassifiers.joinToString(separator = "\n")
+                            "\nCLASSIFIER SYMBOLS:\n" + renderedClassifiers.joinToString(separator = "\n\n")
                 }
             }
         }
