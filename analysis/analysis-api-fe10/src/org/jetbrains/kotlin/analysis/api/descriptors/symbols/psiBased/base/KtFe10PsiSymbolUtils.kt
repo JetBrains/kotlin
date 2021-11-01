@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -62,11 +63,20 @@ internal val KtDeclaration.ktModality: Modality?
     }
 
 internal val KtElement.ktSymbolKind: KtSymbolKind
-    get() = when {
-        this is KtPropertyAccessor -> KtSymbolKind.ACCESSOR
-        isTopLevelInFileOrScript(this) -> KtSymbolKind.TOP_LEVEL
-        this is KtDeclaration && !KtPsiUtil.isLocal(this) -> KtSymbolKind.CLASS_MEMBER
-        else -> KtSymbolKind.LOCAL
+    get() {
+        if (this is KtPropertyAccessor) {
+            return KtSymbolKind.ACCESSOR
+        }
+
+        if (this is KtDeclaration) {
+            return when (this.getParentOfType<KtDeclaration>(strict = true)) {
+                null -> KtSymbolKind.TOP_LEVEL
+                is KtCallableDeclaration, is KtPropertyAccessor -> KtSymbolKind.LOCAL
+                else -> KtSymbolKind.CLASS_MEMBER
+            }
+        }
+
+        return KtSymbolKind.LOCAL
     }
 
 internal val KtDeclaration.callableIdIfNonLocal: CallableId?

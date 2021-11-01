@@ -46,10 +46,16 @@ import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 
 internal val MemberDescriptor.ktSymbolKind: KtSymbolKind
-    get() = when {
-        containingDeclaration is PackageFragmentDescriptor -> KtSymbolKind.TOP_LEVEL
-        DescriptorUtils.isLocal(this) -> KtSymbolKind.LOCAL
-        else -> KtSymbolKind.CLASS_MEMBER
+    get() {
+        return when (this) {
+            is PropertyAccessorDescriptor -> KtSymbolKind.ACCESSOR
+            is SamConstructorDescriptor -> KtSymbolKind.SAM_CONSTRUCTOR
+            else -> when (containingDeclaration) {
+                is PackageFragmentDescriptor -> KtSymbolKind.TOP_LEVEL
+                is ClassDescriptor -> KtSymbolKind.CLASS_MEMBER
+                else -> KtSymbolKind.LOCAL
+            }
+        }
     }
 
 internal val CallableMemberDescriptor.isExplicitOverride: Boolean
