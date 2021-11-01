@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForAbstractMethod
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class KtFe10ExpressionTypeProvider(
@@ -147,7 +146,7 @@ class KtFe10ExpressionTypeProvider(
             val bindingContext = analysisContext.analyze(parentExpression)
             val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parentExpression]
             if (descriptor is CallableDescriptor) {
-                return descriptor.returnType?.takeIf { !it.isError }?.toKtType(analysisContext)
+                return descriptor.returnType?.toKtType(analysisContext)
             }
         } else if (parentExpression is KtBinaryExpressionWithTypeRHS && KtPsiUtil.isCast(parentExpression)) {
             val typeReference = parentExpression.right
@@ -171,7 +170,7 @@ class KtFe10ExpressionTypeProvider(
                             is SamConstructorDescriptor -> originalCallableDescriptor.returnTypeOrNothing
                             else -> parameterDescriptor.type
                         }
-                        return kotlinType.takeIf { !it.isError }?.toKtType(analysisContext)
+                        return kotlinType.toKtType(analysisContext)
                     }
                 }
             }
@@ -179,7 +178,7 @@ class KtFe10ExpressionTypeProvider(
 
         val bindingContext = analysisContext.analyze(ktExpression)
         val kotlinType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, ktExpression]
-        return kotlinType?.takeIf { !it.isError }?.toKtType(analysisContext)
+        return kotlinType?.toKtType(analysisContext)
     }
 
     private fun getContainingCallExpression(argument: KtValueArgument): KtCallExpression? {
