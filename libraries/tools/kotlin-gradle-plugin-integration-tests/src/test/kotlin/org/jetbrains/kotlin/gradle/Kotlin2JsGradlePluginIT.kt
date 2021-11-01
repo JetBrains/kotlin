@@ -339,7 +339,11 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
 
             Files.copy(baseJar, modifiedBaseJar)
 
+            val baseBuildscript = baseSubproject.buildGradleKts
             val libBuildscript = libSubproject.buildGradleKts
+            baseBuildscript.modify {
+                it.replace("js(\"both\")", "js(\"both\") { moduleName = \"base2\" }")
+            }
             libBuildscript.modify {
                 it.replace("implementation(project(\":base\"))", "implementation(files(\"${normalizePath(originalBaseJar.toString())}\"))")
             }
@@ -1044,12 +1048,13 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Yarn.lock persistence")
     @GradleTest
-    fun testYarnLockStore() = with(transformProjectWithPluginsDsl("cleanTask")) {
-
-        build("assemble") {
-            assertSuccessful()
-            assertFileExists("kotlin-yarn.lock")
-            assert(fileInWorkingDir("kotlin-yarn.lock").readText() == fileInWorkingDir("build/js/yarn.lock").readText())
+    fun testYarnLockStore(gradleVersion: GradleVersion) {
+        project("cleanTask", gradleVersion) {
+            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
+            build("assemble") {
+                assertFileExists(projectPath.resolve("kotlin-yarn.lock"))
+                assert(projectPath.resolve("kotlin-yarn.lock").readText() == projectPath.resolve("build/js/yarn.lock").readText())
+            }
         }
     }
 }
