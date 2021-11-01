@@ -80,11 +80,13 @@ internal class KtFe10PsiFunctionSymbol(
 
     override val receiverType: KtTypeAndAnnotations?
         get() = withValidityAssertion {
-            return if (psi.isExtensionDeclaration()) {
-                descriptor?.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations()
-            } else {
-                null
+            if (!psi.isExtensionDeclaration()) {
+                return null
             }
+
+            val descriptor = this.descriptor ?: return createErrorTypeAndAnnotations()
+            val extensionReceiverParameter = descriptor.extensionReceiverParameter ?: return null
+            return extensionReceiverParameter.type.toKtTypeAndAnnotations(analysisContext)
         }
 
     override val isExtension: Boolean

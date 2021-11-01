@@ -45,7 +45,9 @@ internal class KtFe10PsiLiteralAnonymousFunctionSymbol(
 
     override val receiverType: KtTypeAndAnnotations?
         get() = withValidityAssertion {
-            descriptor?.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations()
+            val descriptor = this.descriptor ?: return createErrorTypeAndAnnotations()
+            val extensionReceiverParameter = descriptor.extensionReceiverParameter ?: return null
+            extensionReceiverParameter.type.toKtTypeAndAnnotations(analysisContext)
         }
 
     override val isExtension: Boolean
