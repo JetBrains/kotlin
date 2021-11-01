@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -124,7 +125,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         )
 
         val firDump = firElement.render(FirRenderer.RenderMode.WithFqNames)
-        KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".txt"), firDump)
+        JUnit5Assertions.assertEqualsToTestDataFileSibling(firDump)
     }
 
     companion object {

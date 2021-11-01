@@ -36,6 +36,6 @@ abstract class AbstractRendererTest(configurator: FrontendApiTestConfiguratorSer
             }
         }
 
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".rendered"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".rendered")
     }
 }

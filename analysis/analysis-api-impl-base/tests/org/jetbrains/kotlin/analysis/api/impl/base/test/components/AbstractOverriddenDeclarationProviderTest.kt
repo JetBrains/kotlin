@@ -41,7 +41,7 @@ abstract class AbstractOverriddenDeclarationProviderTest(
                 }
             }
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
     private fun KtAnalysisSession.renderSignature(symbol: KtCallableSymbol): String = buildString {

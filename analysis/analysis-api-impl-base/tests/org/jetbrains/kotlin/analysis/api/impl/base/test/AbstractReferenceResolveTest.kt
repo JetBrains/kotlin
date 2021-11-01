@@ -61,7 +61,7 @@ abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfigu
         }
 
         val actual = "Resolved to:\n$resolvedTo"
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
     private fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =

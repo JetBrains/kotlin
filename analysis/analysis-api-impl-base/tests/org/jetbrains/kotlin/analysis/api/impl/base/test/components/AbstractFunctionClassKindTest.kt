@@ -34,6 +34,6 @@ abstract class AbstractFunctionClassKindTest (
             appendLine("expected type: $type")
             appendLine("functionClassKind: $functionClassKind")
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

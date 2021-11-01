@@ -25,8 +25,6 @@ abstract class AbstractHLImportOptimizerTest : AbstractHLApiSingleModuleTest(Fir
             unusedImportPaths.forEach(::appendLine)
         }
 
-        val expectedUnusedImports = testDataFileSibling(".imports")
-
-        testServices.assertions.assertEqualsToFile(expectedUnusedImports, actualUnusedImports)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actualUnusedImports, extension = ".imports")
     }
 }

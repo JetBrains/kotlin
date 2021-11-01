@@ -99,7 +99,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             }
         }
 
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), resultBuilder.toString())
+        testServices.assertions.assertEqualsToTestDataFileSibling(resultBuilder.toString())
     }
 
     override val enableTestInDependedMode: Boolean = false

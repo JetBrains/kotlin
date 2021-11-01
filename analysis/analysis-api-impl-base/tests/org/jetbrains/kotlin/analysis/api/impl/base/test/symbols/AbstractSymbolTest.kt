@@ -56,7 +56,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
         testServices: TestServices,
     ) {
         val actual = pointersWithRendered.joinToString(separator = "\n") { it.rendered }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
     private fun restoreSymbolsInOtherReadActionAndCompareResults(
@@ -72,7 +72,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
             }
         }
         val actual = restored.joinToString(separator = "\n")
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }
 

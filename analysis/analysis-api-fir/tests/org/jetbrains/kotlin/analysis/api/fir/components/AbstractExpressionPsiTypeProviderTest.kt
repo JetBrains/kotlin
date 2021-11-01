@@ -27,6 +27,6 @@ abstract class AbstractExpressionPsiTypeProviderTest : AbstractHLApiSingleFileTe
                 appendLine("PsiType: $psiType")
             }
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

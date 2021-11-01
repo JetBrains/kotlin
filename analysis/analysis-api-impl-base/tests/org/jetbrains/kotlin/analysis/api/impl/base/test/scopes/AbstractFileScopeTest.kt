@@ -37,6 +37,6 @@ abstract class AbstractFileScopeTest(configurator: FrontendApiTestConfiguratorSe
             }
         }
 
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

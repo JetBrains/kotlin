@@ -41,7 +41,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
                |FIR element rendered:
                |${render(fir)}""".trimMargin()
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
     private fun getElementOfType(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices): PsiElement {

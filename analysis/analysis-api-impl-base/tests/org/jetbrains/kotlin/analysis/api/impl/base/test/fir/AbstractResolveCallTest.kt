@@ -40,7 +40,7 @@ abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfigurator
                 resolveCall(expression)?.stringRepresentation()
             }
         } ?: "null"
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
     private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCall? = when (element) {

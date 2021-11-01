@@ -1,9 +1,0 @@
-interface Some
-abstract class My<T : Some> {
-    open inner class T
-    abstract val x: T
-    abstract fun foo(arg: T)
-    abstract val y: My<Some>.T
-    abstract val z: My<Some>.T
-    abstract class Some : My<Some>.T
-}

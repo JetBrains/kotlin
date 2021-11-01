@@ -33,6 +33,6 @@ abstract class AbstractExpectedExpressionTypeTest(
             appendLine("expected type: $actualExpectedTypeText")
         }
 
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

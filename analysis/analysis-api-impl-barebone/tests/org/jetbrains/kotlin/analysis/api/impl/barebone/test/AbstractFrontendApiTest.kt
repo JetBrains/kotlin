@@ -11,6 +11,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
+import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -76,11 +77,30 @@ abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfigur
 
     protected abstract fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices)
 
-    protected fun testDataFileSibling(extension: String): Path {
+    protected fun AssertionsService.assertEqualsToTestDataFileSibling(actual: String, extension: String = ".txt") {
+        val testPrefix = configurator.testPrefix
+
+        val expectedFile = getTestDataFileSiblingPath(extension, testPrefix = testPrefix)
+        assertEqualsToFile(expectedFile, actual)
+
+        if (testPrefix != null) {
+            val expectedFileWithoutPrefix = getTestDataFileSiblingPath(extension, testPrefix = null)
+            if (expectedFile != expectedFileWithoutPrefix) {
+                try {
+                    assertEqualsToFile(expectedFileWithoutPrefix, actual)
+                } catch (ignored: ComparisonFailure) {
+                    return
+                }
+
+                throw AssertionError("\"$expectedFile\" has the same content as \"$expectedFileWithoutPrefix\". Delete the prefixed file.")
+            }
+        }
+    }
+
+    private fun getTestDataFileSiblingPath(extension: String, testPrefix: String?): Path {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
 
-        val testPrefix = configurator.testPrefix
         if (testPrefix != null) {
             val prefixedFile = testDataPath.resolveSibling("$baseName.$testPrefix$extensionWithDot")
             if (prefixedFile.exists()) {

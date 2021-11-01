@@ -36,7 +36,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
             appendLine("constant_value: ${analyseForTest(expression) { constantValue?.stringRepresentation() }}")
             appendLine("constant: ${(constantValue as? KtLiteralConstantValue<*>)?.toConst()}")
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
     private fun KtConstantValue.stringRepresentation(): String {

@@ -26,6 +26,6 @@ abstract class AbstractHLExpressionTypeTest(configurator: FrontendApiTestConfigu
             appendLine("expression: ${expression.text}")
             appendLine("type: $type")
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

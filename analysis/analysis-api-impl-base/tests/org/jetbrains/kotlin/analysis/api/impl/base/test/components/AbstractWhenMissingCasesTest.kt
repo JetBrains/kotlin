@@ -32,6 +32,6 @@ abstract class AbstractWhenMissingCasesTest(
             }
         }
 
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }

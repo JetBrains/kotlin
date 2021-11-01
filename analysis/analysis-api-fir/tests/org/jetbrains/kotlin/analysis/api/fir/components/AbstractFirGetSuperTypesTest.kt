@@ -43,6 +43,6 @@ abstract class AbstractFirGetSuperTypesTest : AbstractHLApiSingleFileTest(FirFro
                 }
             }
         }
-        testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }
