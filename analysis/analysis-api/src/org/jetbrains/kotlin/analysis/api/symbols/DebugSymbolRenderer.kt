@@ -21,9 +21,9 @@ import kotlin.reflect.full.declaredMemberExtensionProperties
 import kotlin.reflect.full.extensionReceiverParameter
 
 public object DebugSymbolRenderer {
-    public fun render(symbol: KtSymbol): String = Block().apply {
-        renderSymbol(symbol)
-    }.toString()
+    public fun render(symbol: KtSymbol): String = Block().apply { renderSymbol(symbol) }.toString()
+
+    public fun renderType(type: KtType): String = Block().apply { renderType(type) }.toString()
 
     public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = Block().apply {
         renderSymbol(symbol)

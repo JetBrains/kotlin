@@ -1,2 +1,2 @@
 expression: av
-expected type: ERROR CLASS: Unresolved name: av
+expected type: ERROR_TYPE
