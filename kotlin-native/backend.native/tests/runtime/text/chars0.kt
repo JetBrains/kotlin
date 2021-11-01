@@ -7,10 +7,6 @@ package runtime.text.chars0
 
 import kotlin.test.*
 
-fun assertTrue(v: Boolean) = if (!v) throw AssertionError() else Unit
-fun assertFalse(v: Boolean) = if (v) throw AssertionError() else Unit
-fun assertEquals(a: Int, b: Int) { if (a != b) throw AssertionError() }
-
 fun testIsSupplementaryCodePoint() {
     assertFalse(Char.isSupplementaryCodePoint(-1))
     for (c in 0..0xFFFF) {
@@ -112,6 +108,20 @@ fun testCategory() {
     } catch (e: IllegalArgumentException) {}
 }
 
+fun testIsHighSurrogate() {
+    assertTrue('\uD800'.isHighSurrogate())
+    assertTrue('\uDBFF'.isHighSurrogate())
+    assertFalse('\uDC00'.isHighSurrogate())
+    assertFalse('\uDFFF'.isHighSurrogate())
+}
+
+fun testIsLowSurrogate() {
+    assertFalse('\uD800'.isLowSurrogate())
+    assertFalse('\uDBFF'.isLowSurrogate())
+    assertTrue('\uDC00'.isLowSurrogate())
+    assertTrue('\uDFFF'.isLowSurrogate())
+}
+
 @Test fun runTest() {
     testIsSurrogatePair()
     testToChars()
@@ -119,4 +129,6 @@ fun testCategory() {
     testIsSupplementaryCodePoint()
     testCase()
     testCategory()
+    testIsHighSurrogate()
+    testIsLowSurrogate()
 }
