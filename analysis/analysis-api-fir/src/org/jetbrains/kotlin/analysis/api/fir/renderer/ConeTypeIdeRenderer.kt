@@ -90,6 +90,11 @@ internal class ConeTypeIdeRenderer(
                 append(type.render())
                 renderNullability(type.type)
             }
+            is ConeDefinitelyNotNullType -> {
+                renderAnnotationList(annotations)
+                append(renderType(type.original))
+                append("!!")
+            }
             else -> appendError("Unexpected cone type ${type::class.qualifiedName}")
         }
     }
