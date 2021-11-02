@@ -82,7 +82,11 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
 
 // static
 void ObjHeader::destroyMetaObject(ObjHeader* object) {
-    mm::ExtraObjectData::Uninstall(object);
+    RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
+    auto &extraObject = *mm::ExtraObjectData::Get(object);
+    extraObject.Uninstall();
+    auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, extraObject);
 }
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {

@@ -52,7 +52,8 @@ TEST_F(ExtraObjectDataTest, Install) {
     EXPECT_FALSE(extraData.HasWeakReferenceCounter());
     EXPECT_THAT(extraData.GetBaseObject(), object.header());
 
-    mm::ExtraObjectData::Uninstall(object.header());
+    extraData.Uninstall();
+    mm::GlobalData::Instance().threadRegistry().CurrentThreadData()->ClearForTests();
 
     EXPECT_FALSE(object.header()->has_meta_object());
     EXPECT_THAT(object.header()->type_info(), typeInfo);

@@ -53,6 +53,9 @@ public:
 
     size_t GetSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe(); }
 
+    // requires LockForIter
+    void EraseAndAdvance(Iterator &it) { extraObjects_.EraseAndAdvance(it); }
+
 private:
     Queue extraObjects_;
 };

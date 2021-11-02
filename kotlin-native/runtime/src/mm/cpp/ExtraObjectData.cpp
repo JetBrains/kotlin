@@ -56,20 +56,15 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
     return data;
 }
 
-// static
-void mm::ExtraObjectData::Uninstall(ObjHeader* object) noexcept {
-    RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
+void mm::ExtraObjectData::Uninstall() noexcept {
+    auto *object = GetBaseObject();
+    *const_cast<const TypeInfo**>(&object->typeInfoOrMeta_) = typeInfo_;
+    RuntimeAssert(!object->has_meta_object(), "Object has metaobject after removing metaobject");
 
-    auto& data = ExtraObjectData::FromMetaObjHeader(object->meta_object());
-
-    *const_cast<const TypeInfo**>(&object->typeInfoOrMeta_) = data.typeInfo_;
-
-    auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
 #ifdef KONAN_OBJC_INTEROP
-    Kotlin_ObjCExport_releaseAssociatedObject(data.associatedObject_);
-    data.associatedObject_ = nullptr;
+    Kotlin_ObjCExport_releaseAssociatedObject(associatedObject_);
+    associatedObject_ = nullptr;
 #endif
-    mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, data);
 }
 
 void mm::ExtraObjectData::DetachAssociatedObject() noexcept {
@@ -77,6 +72,15 @@ void mm::ExtraObjectData::DetachAssociatedObject() noexcept {
     Kotlin_ObjCExport_detachAssociatedObject(associatedObject_);
 #endif
 }
+
+bool mm::ExtraObjectData::HasAssociatedObject() noexcept {
+#ifdef KONAN_OBJC_INTEROP
+    return associatedObject_ != nullptr;
+#else
+    return false;
+#endif
+}
+
 
 void mm::ExtraObjectData::ClearWeakReferenceCounter() noexcept {
     if (!HasWeakReferenceCounter()) return;

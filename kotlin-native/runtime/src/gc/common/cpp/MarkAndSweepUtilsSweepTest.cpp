@@ -177,8 +177,7 @@ public:
     ~MarkAndSweepUtilsSweepTest() override {
         auto deallocExtraObject = [this](ObjHeader* obj) {
             auto *extraObject = mm::ExtraObjectData::Get(obj);
-            EXPECT_NE(extraObject, nullptr);
-            obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(obj->type_info());
+            extraObject->Uninstall();
             extraObjectFactory_.DestroyExtraObjectData(extraObjectFactoryThreadQueue_, *extraObject);
             extraObjectFactoryThreadQueue_.Publish();
         };
@@ -219,6 +218,14 @@ public:
         KStdVector<ObjHeader*> objects;
         for (auto node : objectFactory_.LockForIter()) {
             objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
+        }
+        return objects;
+    }
+
+    KStdVector<mm::ExtraObjectData*> AliveExtraObjects() {
+        KStdVector<mm::ExtraObjectData*> objects;
+        for (auto &node : extraObjectFactory_.LockForIter()) {
+            objects.push_back(&node);
         }
         return objects;
     }
@@ -357,9 +364,9 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectWithExtraData) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(object.header()));
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
-    EXPECT_THAT(object.state(), GC::ObjectData::State::kUnmarked);
+    EXPECT_THAT(AliveExtraObjects(), testing::UnorderedElementsAre());
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectArrayWithExtraData) {
@@ -369,9 +376,9 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectArrayWithExtraData) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(array.header()));
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
-    EXPECT_THAT(array.state(), GC::ObjectData::State::kUnmarked);
+    EXPECT_THAT(AliveExtraObjects(), testing::UnorderedElementsAre());
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleCharArrayWithExtraData) {
@@ -381,14 +388,14 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleCharArrayWithExtraData) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(array.header()));
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
-    EXPECT_THAT(array.state(), GC::ObjectData::State::kUnmarked);
+    EXPECT_THAT(AliveExtraObjects(), testing::UnorderedElementsAre());
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedObjectWithExtraData) {
     auto& object = AllocateObject();
-    InstallExtraData(object.header());
+    auto& extra = InstallExtraData(object.header());
     object.Mark();
     ASSERT_THAT(Alive(), testing::UnorderedElementsAre(object.header()));
 
@@ -396,12 +403,12 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedObjectWithExtraData) {
 
     EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre(object.header()));
-    EXPECT_THAT(object.state(), GC::ObjectData::State::kMarkReset);
+    EXPECT_THAT(AliveExtraObjects(), testing::UnorderedElementsAre(&extra));
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedObjectArrayWithExtraData) {
     auto& array = AllocateObjectArray();
-    InstallExtraData(array.header());
+    auto& extra = InstallExtraData(array.header());
     array.Mark();
     ASSERT_THAT(Alive(), testing::UnorderedElementsAre(array.header()));
 
@@ -409,12 +416,12 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedObjectArrayWithExtraData) {
 
     EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre(array.header()));
-    EXPECT_THAT(array.state(), GC::ObjectData::State::kMarkReset);
+    EXPECT_THAT(AliveExtraObjects(), testing::UnorderedElementsAre(&extra));
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedCharArrayWithExtraData) {
     auto& array = AllocateCharArray();
-    InstallExtraData(array.header());
+    auto& extra = InstallExtraData(array.header());
     array.Mark();
     ASSERT_THAT(Alive(), testing::UnorderedElementsAre(array.header()));
 
@@ -422,7 +429,7 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedCharArrayWithExtraData) {
 
     EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre(array.header()));
-    EXPECT_THAT(array.state(), GC::ObjectData::State::kMarkReset);
+    EXPECT_THAT(AliveExtraObjects(), testing::UnorderedElementsAre(&extra));
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectWithFinalizerHook) {
@@ -457,10 +464,8 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectWithWeakCounter) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(object.header()));
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
-    EXPECT_THAT(object.state(), GC::ObjectData::State::kUnmarked);
-    EXPECT_FALSE(object.HasWeakCounter());
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectArrayWithWeakCounter) {
@@ -470,10 +475,8 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectArrayWithWeakCounter) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(array.header()));
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
-    EXPECT_THAT(array.state(), GC::ObjectData::State::kUnmarked);
-    EXPECT_FALSE(array.HasWeakCounter());
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleCharArrayWithWeakCounter) {
@@ -483,10 +486,8 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleCharArrayWithWeakCounter) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(array.header()));
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
-    EXPECT_THAT(array.state(), GC::ObjectData::State::kUnmarked);
-    EXPECT_FALSE(array.HasWeakCounter());
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedObjectWithWeakCounter) {

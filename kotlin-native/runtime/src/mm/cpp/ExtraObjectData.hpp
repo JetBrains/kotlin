@@ -41,11 +41,12 @@ public:
     static ExtraObjectData& GetOrInstall(ObjHeader* object) noexcept { return FromMetaObjHeader(object->meta_object()); }
 
     static ExtraObjectData& Install(ObjHeader* object) noexcept;
-    static void Uninstall(ObjHeader* object) noexcept;
+    void Uninstall() noexcept;
 
 #ifdef KONAN_OBJC_INTEROP
     void** GetAssociatedObjectLocation() noexcept { return &associatedObject_; }
 #endif
+    bool HasAssociatedObject() noexcept;
     void DetachAssociatedObject() noexcept;
 
     std::atomic<Flags>& flags() noexcept { return flags_; }

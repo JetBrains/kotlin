@@ -160,6 +160,11 @@ public:
         deletionQueue_ = std::move(remainingDeletions);
     }
 
+    // requires LockForIter
+    void EraseAndAdvance(Iterator &it) {
+        it.position_ = queue_.erase(it.position_);
+    }
+
     void ClearForTests() noexcept {
         queue_.clear();
         deletionQueue_.clear();

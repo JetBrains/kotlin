@@ -71,9 +71,16 @@ void SweepExtraObjects(typename Traits::ExtraObjectsFactory& objectFactory) noex
         auto &extraObject = *it;
         if (!Traits::IsMarkedByExtraObject(extraObject)) {
             extraObject.ClearWeakReferenceCounter();
-            extraObject.DetachAssociatedObject();
+            if (extraObject.HasAssociatedObject()) {
+                extraObject.DetachAssociatedObject();
+                ++it;
+            } else {
+                extraObject.Uninstall();
+                objectFactory.EraseAndAdvance(it);
+            }
+        } else {
+            ++it;
         }
-        ++it;
     }
 }
 
