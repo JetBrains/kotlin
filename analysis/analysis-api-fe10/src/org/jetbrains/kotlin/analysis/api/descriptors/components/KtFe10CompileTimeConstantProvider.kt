@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -23,15 +22,8 @@ internal class KtFe10CompileTimeConstantProvider(
         get() = analysisSession.token
 
     override fun evaluate(expression: KtExpression): KtConstantValue? {
-        val resolveSession = analysisContext.resolveSession
-        val evaluator = ConstantExpressionEvaluator(
-            resolveSession.moduleDescriptor,
-            resolveSession.languageVersionSettings,
-            resolveSession.project
-        )
-
         val bindingContext = analysisContext.analyze(expression)
-        val bindingTrace = DelegatingBindingTrace(bindingContext, "Binding trace for constant expression evaluation")
-        return evaluator.evaluateToConstantValue(expression, bindingTrace, TypeUtils.NO_EXPECTED_TYPE)?.toKtConstantValue()
+        val constant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, bindingContext)
+        return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKtConstantValue()
     }
 }

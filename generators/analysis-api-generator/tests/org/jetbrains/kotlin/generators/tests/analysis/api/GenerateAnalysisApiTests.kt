@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.AbstractKtFe10ResolveCallTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
+import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10CompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
@@ -141,9 +142,9 @@ fun main(args: Array<String>) {
                 model("symbols/symbolByPsi")
             }
 
-//            testClass<AbstractKtFe10CompileTimeConstantEvaluatorTest> {
-//                model("components/compileTimeConstantEvaluator")
-//            }
+            testClass<AbstractKtFe10CompileTimeConstantEvaluatorTest> {
+                model("components/compileTimeConstantEvaluator")
+            }
 
             testClass<AbstractKtFe10SymbolByFqNameTest> {
                 model("symbols/symbolByFqName")
