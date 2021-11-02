@@ -1,3 +1,4 @@
+// Multi-platform not supported with FIR yet.
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM

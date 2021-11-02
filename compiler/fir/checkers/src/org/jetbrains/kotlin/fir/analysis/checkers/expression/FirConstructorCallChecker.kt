@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -37,7 +38,13 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
                     klass !is FirRegularClass || klass.classKind != ClassKind.ANNOTATION_CLASS
                 }
             ) {
-                reporter.reportOn(expression.source, FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL, context)
+                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InstantiationOfAnnotationClasses) ||
+                    declarationClass.typeParameterSymbols.isNotEmpty()
+                ) reporter.reportOn(
+                    expression.source,
+                    FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL,
+                    context
+                )
             }
         }
     }
