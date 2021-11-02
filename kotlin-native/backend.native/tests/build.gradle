@@ -5365,6 +5365,7 @@ if (isAppleTarget(project)) {
             artifact = frameworkArtifactName
             library = libraryName
             isStatic = true
+            opts = ["-Xbinary=unitSuspendFunctionExport=proper"]
         }
         swiftSources = ['objcexport']
         if (isNoopGC) {
