@@ -230,7 +230,8 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
         includeEngines("junit-jupiter")
     }
 
-    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+    // Disabled cause jna dependency FD is leaking on windows agents
+    //if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
