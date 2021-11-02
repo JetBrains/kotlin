@@ -54,8 +54,17 @@ open class YarnPlugin : Plugin<Project> {
             // https://youtrack.jetbrains.com/issue/KT-48241
             project.allprojects
                 .forEach {
-                    it.tasks.implementing(RequiresNpmDependencies::class)
-                        .forEach {}
+                    val fn: (Project) -> Unit = {
+                        it.tasks.implementing(RequiresNpmDependencies::class)
+                            .forEach {}
+                    }
+                    if (it.state.executed) {
+                        fn(it)
+                    } else {
+                        it.afterEvaluate {
+                            fn(it)
+                        }
+                    }
                 }
         }
 
@@ -76,20 +85,6 @@ open class YarnPlugin : Plugin<Project> {
         yarnRootExtension.rootPackageJsonTaskProvider.configure {
             it.dependsOn(packageJsonUmbrella)
         }
-
-//        project.allprojects
-//            .forEach {
-//                val fn: (Project) -> Unit = {
-//                    it.tasks.implementing(RequiresNpmDependencies::class).all {}
-//                }
-//                if (it.state.executed) {
-//                    fn(it)
-//                } else {
-//                    it.afterEvaluate {
-//                        fn(it)
-//                    }
-//                }
-//            }
 
         val storeYarnLock = tasks.register("kotlinStoreYarnLock", YarnLockCopyTask::class.java) {
             it.dependsOn(kotlinNpmInstall)
