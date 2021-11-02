@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.types.TypeUtils
 
 internal class KtFe10PsiKotlinPropertySymbol(
     override val psi: KtProperty,
@@ -99,13 +101,17 @@ internal class KtFe10PsiKotlinPropertySymbol(
 
     override val initializer: KtConstantValue?
         get() = withValidityAssertion {
-            if (psi.initializer == null) {
-                return null
-            }
+            val initializer = psi.initializer ?: return null
 
             val compileTimeInitializer = descriptor?.compileTimeInitializer
             if (compileTimeInitializer != null) {
                 return compileTimeInitializer.toKtConstantValue()
+            }
+
+            val bindingContext = analysisContext.analyze(initializer)
+            val constantValue = ConstantExpressionEvaluator.getConstant(initializer, bindingContext)
+            if (constantValue != null) {
+                return constantValue.toConstantValue(descriptor?.type ?: TypeUtils.NO_EXPECTED_TYPE).toKtConstantValue()
             }
 
             return KtUnsupportedConstantValue
