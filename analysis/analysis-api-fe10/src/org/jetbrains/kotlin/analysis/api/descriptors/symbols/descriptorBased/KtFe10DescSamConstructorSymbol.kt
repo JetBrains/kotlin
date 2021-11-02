@@ -21,13 +21,16 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
+import org.jetbrains.kotlin.resolve.sam.SamTypeAliasConstructorDescriptor
 
 internal class KtFe10DescSamConstructorSymbol(
     override val descriptor: SamConstructorDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtSamConstructorSymbol(), KtFe10DescSymbol<SamConstructorDescriptor> {
+    private val expandedDescriptor: SamConstructorDescriptor
+        get() = (descriptor as? SamTypeAliasConstructorDescriptor)?.expandedConstructorDescriptor ?: descriptor
     override val name: Name
-        get() = withValidityAssertion { descriptor.name }
+        get() = withValidityAssertion { expandedDescriptor.name }
 
     override val valueParameters: List<KtValueParameterSymbol>
         get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }
@@ -36,7 +39,7 @@ internal class KtFe10DescSamConstructorSymbol(
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
     override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
+        get() = withValidityAssertion { expandedDescriptor.callableIdIfNotLocal }
 
     override val annotatedType: KtTypeAndAnnotations
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtTypeAndAnnotations(analysisContext) }
@@ -48,7 +51,7 @@ internal class KtFe10DescSamConstructorSymbol(
         get() = withValidityAssertion { descriptor.isExtension }
 
     override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { descriptor.getSymbolOrigin(analysisContext) }
+        get() = withValidityAssertion { expandedDescriptor.getSymbolOrigin(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> = withValidityAssertion {
         val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
