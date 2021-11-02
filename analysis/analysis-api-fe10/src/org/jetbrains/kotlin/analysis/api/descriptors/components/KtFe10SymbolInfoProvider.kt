@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -21,6 +23,9 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
@@ -33,25 +38,60 @@ internal class KtFe10SymbolInfoProvider(
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
         val descriptor = getSymbolDescriptor(symbol) ?: return null
         ForceResolveUtil.forceResolveAllContents(descriptor)
-        return analysisContext.deprecationResolver.getDeprecations(descriptor).firstOrNull()
+        return getDeprecation(descriptor)
     }
 
     override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
         return getDeprecation(symbol) // TODO
     }
 
+    private fun getDeprecation(descriptor: DeclarationDescriptor): DeprecationInfo? {
+        if (descriptor is PropertyDescriptor) {
+            val fieldDescriptor = descriptor.backingField
+            if (fieldDescriptor != null && fieldDescriptor.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)) {
+                return SimpleDeprecationInfo(DeprecationLevelValue.WARNING, propagatesToOverrides = false, message = null)
+            }
+        }
+
+        return analysisContext.deprecationResolver.getDeprecations(descriptor).firstOrNull()
+    }
+
+    private fun getAccessorDeprecation(
+        property: KtPropertySymbol,
+        accessor: KtPropertyAccessorSymbol?,
+        accessorDescriptorProvider: (PropertyDescriptor) -> PropertyAccessorDescriptor?
+    ): DeprecationInfo? {
+        val propertyDescriptor = getSymbolDescriptor(property) as? PropertyDescriptor ?: return null
+        ForceResolveUtil.forceResolveAllContents(propertyDescriptor)
+
+        if (accessor != null) {
+            val accessorDescriptor = getSymbolDescriptor(accessor) as? PropertyAccessorDescriptor
+            if (accessorDescriptor != null) {
+                ForceResolveUtil.forceResolveAllContents(accessorDescriptor.correspondingProperty)
+                val deprecation = analysisContext.deprecationResolver.getDeprecations(accessorDescriptor).firstOrNull()
+                if (deprecation != null) {
+                    return deprecation
+                }
+            }
+        }
+
+        val accessorDescriptor = accessorDescriptorProvider(propertyDescriptor)
+        if (accessorDescriptor != null) {
+            val deprecation = analysisContext.deprecationResolver.getDeprecations(accessorDescriptor).firstOrNull()
+            if (deprecation != null) {
+                return deprecation
+            }
+        }
+
+        return getDeprecation(propertyDescriptor)
+    }
+
     override fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
-        val getter = symbol.getter ?: return null
-        val accessorDescriptor = getSymbolDescriptor(getter) as? PropertyAccessorDescriptor ?: return null
-        ForceResolveUtil.forceResolveAllContents(accessorDescriptor.correspondingProperty)
-        return analysisContext.deprecationResolver.getDeprecations(accessorDescriptor).firstOrNull()
+        return getAccessorDeprecation(symbol, symbol.getter) { it.getter }
     }
 
     override fun getSetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
-        val getter = symbol.setter ?: return null
-        val accessorDescriptor = getSymbolDescriptor(getter) as? PropertyAccessorDescriptor ?: return null
-        ForceResolveUtil.forceResolveAllContents(accessorDescriptor.correspondingProperty)
-        return analysisContext.deprecationResolver.getDeprecations(accessorDescriptor).firstOrNull()
+        return getAccessorDeprecation(symbol, symbol.setter) { it.setter }
     }
 
     override fun getJavaGetterName(symbol: KtPropertySymbol): Name {
