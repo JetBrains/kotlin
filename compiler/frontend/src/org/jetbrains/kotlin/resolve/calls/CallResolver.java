@@ -291,6 +291,21 @@ public class CallResolver {
     }
 
     @NotNull
+    public OverloadResolutionResults<ReceiverParameterDescriptor> resolveThisOrSuperCallWithGivenDescriptor(
+            @NotNull ExpressionTypingContext context,
+            @NotNull Call call,
+            @NotNull ReceiverParameterDescriptor descriptor
+    ) {
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+
+        return PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
+                callResolutionContext,
+                Collections.singletonList(descriptor),
+                TracingStrategy.EMPTY
+        );
+    }
+
+    @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
@@ -605,7 +620,7 @@ public class CallResolver {
         if (newInferenceEnabled && resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
             BindingContextUtilsKt.recordScope(context.trace, context.scope, context.call.getCalleeExpression());
-            return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
+            return PSICallResolver.runResolutionAndInferenceForGivenOldCandidates(context, resolutionTask.givenCandidates, tracing);
         }
 
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", call);

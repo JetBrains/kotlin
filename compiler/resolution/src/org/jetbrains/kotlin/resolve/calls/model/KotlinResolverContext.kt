@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -48,7 +49,7 @@ class KotlinCallComponents(
 )
 
 class GivenCandidate(
-    val descriptor: FunctionDescriptor,
+    val descriptor: CallableDescriptor,
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
     val knownTypeParametersResultingSubstitutor: TypeSubstitutor?
 )
