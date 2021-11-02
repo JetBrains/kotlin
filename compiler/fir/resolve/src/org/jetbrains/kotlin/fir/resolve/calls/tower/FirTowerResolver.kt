@@ -66,6 +66,7 @@ class FirTowerResolver(
                 if (receiver is FirQualifiedAccessExpression) {
                     if (receiver.calleeReference is FirSuperReference) {
                         manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
+                        invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
                         return
                     }
                 }

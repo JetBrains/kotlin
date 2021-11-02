@@ -24510,6 +24510,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("superInvoke.kt")
+            public void testSuperInvoke() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/superInvoke.kt");
+            }
+
+            @Test
             @TestMetadata("typeParameterInDefaultValueInLocalFunction.kt")
             public void testTypeParameterInDefaultValueInLocalFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/typeParameterInDefaultValueInLocalFunction.kt");
