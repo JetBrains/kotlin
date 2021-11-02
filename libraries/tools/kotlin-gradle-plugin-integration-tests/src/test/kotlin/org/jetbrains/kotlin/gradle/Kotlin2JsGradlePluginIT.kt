@@ -37,7 +37,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@SimpleGradlePluginTests
+@JsGradlePluginTests
 class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
     @DisplayName("TS type declarations are generated")
@@ -129,7 +129,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     }
 }
 
-@SimpleGradlePluginTests
+@JsGradlePluginTests
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
 
     @DisplayName("incremental compilation for js works")
@@ -369,6 +369,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     }
 }
 
+@JsGradlePluginTests
 abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean) : KGPBaseTest() {
     private val defaultJsOptions = BuildOptions.JsOptions(
         useIrBackend = irBackend,
@@ -1018,7 +1019,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
 }
 
-@SimpleGradlePluginTests
+@JsGradlePluginTests
 class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
     @DisplayName("js with both backends mode builds successfully")
     @GradleTest
