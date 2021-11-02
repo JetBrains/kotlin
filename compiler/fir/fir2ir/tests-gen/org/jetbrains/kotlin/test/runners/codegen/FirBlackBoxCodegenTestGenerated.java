@@ -16409,6 +16409,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("JKEnumConstant.kt")
+        public void testJKEnumConstant() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/JKEnumConstant.kt");
+        }
+
+        @Test
         @TestMetadata("jvmFieldInLocalClass.kt")
         public void testJvmFieldInLocalClass() throws Exception {
             runTest("compiler/testData/codegen/box/fir/jvmFieldInLocalClass.kt");

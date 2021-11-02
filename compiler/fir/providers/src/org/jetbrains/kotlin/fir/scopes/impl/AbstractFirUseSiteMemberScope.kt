@@ -22,6 +22,7 @@ abstract class AbstractFirUseSiteMemberScope(
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
+    private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
     val directOverriddenFunctions = hashMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
     protected val directOverriddenProperties = hashMapOf<FirPropertySymbol, MutableList<FirPropertySymbol>>()
 
@@ -56,6 +57,16 @@ abstract class AbstractFirUseSiteMemberScope(
             }
         }
     }
+
+    final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        properties.getOrPut(name) {
+            doProcessProperties(name)
+        }.forEach {
+            processor(it)
+        }
+    }
+
+    protected abstract fun doProcessProperties(name: Name): Collection<FirVariableSymbol<*>>
 
     private fun computeDirectOverridden(symbol: FirNamedFunctionSymbol): Collection<FirNamedFunctionSymbol> {
         val result = mutableListOf<FirNamedFunctionSymbol>()

@@ -20,8 +20,9 @@ class FirClassUseSiteMemberScope(
     declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
 
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+    override fun doProcessProperties(name: Name): Collection<FirVariableSymbol<*>> {
         val seen = mutableSetOf<FirVariableSymbol<*>>()
+        val result = mutableSetOf<FirVariableSymbol<*>>()
         declaredMemberScope.processPropertiesByName(name) l@{
             if (it.isStatic) return@l
             if (it is FirPropertySymbol) {
@@ -29,15 +30,16 @@ class FirClassUseSiteMemberScope(
                 this@FirClassUseSiteMemberScope.directOverriddenProperties[it] = directOverridden
             }
             seen += it
-            processor(it)
+            result += it
         }
 
         superTypesScope.processPropertiesByName(name) {
             val overriddenBy = it.getOverridden(seen)
             if (overriddenBy == null) {
-                processor(it)
+                result += it
             }
         }
+        return result
     }
 
     private fun computeDirectOverridden(property: FirProperty): MutableList<FirPropertySymbol> {
