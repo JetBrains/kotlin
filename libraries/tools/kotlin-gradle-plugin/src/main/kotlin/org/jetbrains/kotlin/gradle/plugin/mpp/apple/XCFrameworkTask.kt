@@ -231,9 +231,12 @@ abstract class XCFrameworkTask : DefaultTask() {
         frameworkFiles.forEach { frameworkFile ->
             cmdArgs.add("-framework")
             cmdArgs.add(frameworkFile.file.path)
-            if (buildType == NativeBuildType.DEBUG && frameworkFile.isStatic.not()) {
-                cmdArgs.add("-debug-symbols")
-                cmdArgs.add(frameworkFile.file.path + ".dSYM")
+            if (!frameworkFile.isStatic) {
+                val dsymFile = File(frameworkFile.file.path + ".dSYM")
+                if (dsymFile.exists()) {
+                    cmdArgs.add("-debug-symbols")
+                    cmdArgs.add(dsymFile.path)
+                }
             }
         }
         cmdArgs.add("-output")
