@@ -32,8 +32,9 @@ object JsLibraryUtils {
         return when {
             isZippedKlib(candidate) -> true
             FileUtil.isJarOrZip(candidate) -> isZippedKlibInZip(candidate)
-            !File(candidate, "manifest").isFile -> false
-            !File(candidate, "ir").isDirectory -> false
+            !candidate.resolve("default").isDirectory -> false
+            !candidate.resolve("default").resolve("manifest").isFile -> false
+            !candidate.resolve("default").resolve("ir").isDirectory -> false
             else -> true
         }
     }

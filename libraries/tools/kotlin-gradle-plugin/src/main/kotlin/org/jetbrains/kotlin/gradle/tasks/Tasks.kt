@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
-import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -1047,7 +1046,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         get() = (kotlinOptions as KotlinJsOptionsImpl).sourceMapBaseDirs
 
     private fun isHybridKotlinJsLibrary(file: File): Boolean =
-        JsLibraryUtils.isKotlinJavascriptLibrary(file) && isKotlinLibrary(file)
+        JsLibraryUtils.isKotlinJavascriptLibrary(file) && JsLibraryUtils.isKotlinJavascriptIrLibrary(file)
 
     private fun KotlinJsOptions.isPreIrBackendDisabled(): Boolean =
         listOf(
@@ -1080,7 +1079,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             if (kotlinOptions.isPreIrBackendDisabled()) {
                 //::isKotlinLibrary
                 // Workaround for KT-47797
-                { isKotlinLibrary(it) }
+                { JsLibraryUtils.isKotlinJavascriptIrLibrary(it) }
             } else {
                 ::isHybridKotlinJsLibrary
             }
