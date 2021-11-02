@@ -1,3 +1,0 @@
-KtFunctionCall:
-argumentMapping = { 2 -> (other: kotlin.Int) }
-targetFunction = /to(<receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
