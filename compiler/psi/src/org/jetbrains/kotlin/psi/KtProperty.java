@@ -117,33 +117,12 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @NotNull
     @Override
     public List<KtContextReceiver> getContextReceivers() {
-        KotlinPropertyStub stub = getStub();
-        if (stub != null) {
-            KtContextReceiverList contextReceiver = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
-            if (contextReceiver != null) {
-                return contextReceiver.contextReceivers();
-            } else {
-                return Collections.emptyList();
-            }
+        KtContextReceiverList contextReceiverList = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        if (contextReceiverList != null) {
+            return contextReceiverList.contextReceivers();
+        } else {
+            return Collections.emptyList();
         }
-        return getContextReceiverTypeRefsByTree();
-    }
-
-    @NotNull
-    private List<KtContextReceiver> getContextReceiverTypeRefsByTree() {
-        ASTNode node = getNode().getFirstChildNode();
-        while (node != null) {
-            IElementType tt = node.getElementType();
-            if (tt == KtTokens.COLON) {
-                break;
-            }
-            if (tt == KtNodeTypes.CONTEXT_RECEIVER_LIST) {
-                KtContextReceiverList contextReceiver = (KtContextReceiverList) node.getPsi();
-                return contextReceiver.contextReceivers();
-            }
-            node = node.getTreeNext();
-        }
-        return Collections.emptyList();
     }
 
     @Nullable
