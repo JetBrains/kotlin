@@ -132,7 +132,7 @@ KtValueParameterSymbol:
   annotatedType: [
     Anno2()
       psi: KtAnnotationEntry
-  ] I
+  ] @R|Anno2|()  I
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
@@ -149,7 +149,7 @@ KtFunctionSymbol:
   annotatedType: [
     Anno3()
       psi: KtAnnotationEntry
-  ] I
+  ] @R|Anno3|()  I
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.f
@@ -179,7 +179,7 @@ KtKotlinPropertySymbol:
   annotatedType: [
     Anno4()
       psi: KtAnnotationEntry
-  ] I
+  ] @R|Anno4|()  I
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.x
@@ -229,7 +229,7 @@ KtNamedClassOrObjectSymbol:
     [
       Anno1()
         psi: KtAnnotationEntry
-    ] I
+    ] @R|Anno1|()  I
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
+import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -14,11 +17,15 @@ import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
@@ -34,6 +41,9 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
     }
 
     private fun KtFe10RendererConsumer.renderType(type: KotlinType) {
+        if (isDebugText) {
+            renderTypeAnnotationsDebug(type)
+        }
         when (val unwrappedType = type.unwrap()) {
             is FlexibleType -> renderFlexibleType(unwrappedType)
             is DefinitelyNotNullType -> renderDefinitelyNotNullType(unwrappedType)
@@ -63,6 +73,47 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
 
         if (type.isMarkedNullable) {
             append("?")
+        }
+    }
+
+    private fun KtFe10RendererConsumer.renderTypeAnnotationsDebug(type: KotlinType) {
+        val annotations = type.annotations
+            .filter { it.annotationClass?.classId != StandardClassIds.Annotations.ExtensionFunctionType }
+
+        renderList(annotations, separator = " ", postfix = "  ", renderWhenEmpty = false) { renderTypeAnnotationDebug(it) }
+    }
+
+    private fun KtFe10RendererConsumer.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
+        val namedValues = annotation.allValueArguments.map { KtNamedConstantValue(it.key.asString(), it.value.toKtConstantValue()) }
+        renderAnnotationDebug(annotation.annotationClass?.classId, namedValues)
+    }
+
+    private fun KtFe10RendererConsumer.renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedConstantValue>) {
+        append("@")
+
+        if (classId != null) {
+            append("R|")
+            renderFqName(classId.asSingleFqName())
+            append("|")
+        } else {
+            print("<ERROR TYPE REF>")
+        }
+
+        renderList(namedValues, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
+            append(name).append(" = ")
+            renderConstantValueDebug(value)
+        }
+    }
+
+    private fun KtFe10RendererConsumer.renderConstantValueDebug(value: KtConstantValue) {
+        when (value) {
+            is KtAnnotationConstantValue -> renderAnnotationDebug(value.classId, value.arguments)
+            is KtArrayConstantValue ->
+                renderList(value.values, separator = ", ", prefix = "[", postfix = "]") { renderConstantValueDebug(it) }
+            is KtEnumEntryConstantValue -> append(value.callableId)
+            is KtLiteralConstantValue<*> -> append(value.constantValueKind.asString).append("(").append(value.value).append(")")
+            KtUnsupportedConstantValue -> append(KtUnsupportedConstantValue::class.java.simpleName)
+            is KtErrorValue -> append("<ERROR>")
         }
     }
 
