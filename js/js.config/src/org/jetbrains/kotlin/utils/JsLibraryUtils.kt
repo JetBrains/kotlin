@@ -75,8 +75,8 @@ object JsLibraryUtils {
         var manifestFound = false
         var irFound = false
         for (entry in ZipFile(candidate).entries()) {
-            if (entry.name == "manifest") manifestFound = true
-            if (entry.name == "ir/") irFound = true
+            if (entry.name == "default/manifest") manifestFound = true
+            if (entry.name == "default/ir/") irFound = true
         }
         return manifestFound && irFound
     }
