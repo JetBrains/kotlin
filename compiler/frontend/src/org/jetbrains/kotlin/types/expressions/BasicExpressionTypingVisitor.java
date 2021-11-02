@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability;
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
@@ -636,27 +635,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         BindingTrace trace = context.trace;
         Call call = CallMaker.makeCall(expression, null, null, expression, Collections.emptyList());
-        OldResolutionCandidate<ReceiverParameterDescriptor> resolutionCandidate =
-                OldResolutionCandidate.create(
-                        call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+        OverloadResolutionResults<ReceiverParameterDescriptor> results =
+                components.callResolver.resolveThisOrSuperCallWithGivenDescriptor(context, call, descriptor);
 
-        ResolvedCallImpl<ReceiverParameterDescriptor> resolvedCall =
-                ResolvedCallImpl.create(resolutionCandidate,
-                                        TemporaryBindingTrace.create(trace, "Fake trace for fake 'this' or 'super' resolved call"),
-                                        TracingStrategy.EMPTY,
-                                        new DataFlowInfoForArgumentsImpl(context.dataFlowInfo, call));
-        resolvedCall.markCallAsCompleted();
+        ResolvedCall<?> resolvedCall = results.getResultingCall();
 
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
-
-        if (context.trace.wantsDiagnostics()) {
-            CallCheckerContext callCheckerContext =
-                    createCallCheckerContext(context);
-            for (CallChecker checker : components.callCheckers) {
-                checker.check(resolvedCall, expression, callCheckerContext);
-            }
-        }
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {

@@ -143,8 +143,36 @@ class PSICallResolver(
         }
     }
 
+    fun <D : CallableDescriptor> runResolutionAndInferenceForGivenDescriptors(
+        context: BasicCallResolutionContext,
+        descriptors: Collection<CallableDescriptor>,
+        tracingStrategy: TracingStrategy
+    ): OverloadResolutionResults<D> {
+        val isSpecialFunction = descriptors.any { it.name in SPECIAL_FUNCTION_NAMES }
+        val kotlinCall = toKotlinCall(
+            context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, null
+        )
+        val scopeTower = ASTScopeTower(context)
+        val resolutionCallbacks = createResolutionCallbacks(context)
+        val givenCandidates = descriptors.map {
+            GivenCandidate(
+                it,
+                dispatchReceiver = null,
+                knownTypeParametersResultingSubstitutor = null
+            )
+        }
+
+        val result = kotlinCallResolver.resolveAndCompleteGivenCandidates(
+            scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates
+        )
+
+        return convertToOverloadResolutionResults<D>(context, result, tracingStrategy).also {
+            clearCacheForApproximationResults()
+        }
+    }
+
     // actually, `D` is at least FunctionDescriptor, but right now because of CallResolver it isn't possible change upper bound for `D`
-    fun <D : CallableDescriptor> runResolutionAndInferenceForGivenCandidates(
+    fun <D : CallableDescriptor> runResolutionAndInferenceForGivenOldCandidates(
         context: BasicCallResolutionContext,
         resolutionCandidates: Collection<OldResolutionCandidate<D>>,
         tracingStrategy: TracingStrategy
