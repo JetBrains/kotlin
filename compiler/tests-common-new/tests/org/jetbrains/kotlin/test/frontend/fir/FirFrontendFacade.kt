@@ -66,8 +66,8 @@ class FirFrontendFacade(
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
         val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
-        val (ktFiles, originalFiles) = if (lightTreeEnabled) {
-            emptyList<KtFile>() to module.files.filter { it.isKtFile }.map { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
+        val (ktFiles, lightTreeFiles) = if (lightTreeEnabled) {
+            emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files).values
         } else {
             testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
@@ -120,7 +120,7 @@ class FirFrontendFacade(
             session,
             languageVersionSettings,
             ktFiles,
-            originalFiles,
+            lightTreeFiles,
             IrGenerationExtension.getInstances(project),
             lightTreeEnabled,
             enablePluginPhases

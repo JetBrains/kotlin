@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.lightTree.LightTreeFile
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import java.io.File
 
 abstract class AbstractFirAnalyzerFacade {
     abstract val scopeSession: ScopeSession
@@ -45,7 +45,7 @@ class FirAnalyzerFacade(
     val session: FirSession,
     val languageVersionSettings: LanguageVersionSettings,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
-    val originalFiles: Collection<File> = emptyList(), // may be empty if light tree mode disabled
+    val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val useLightTree: Boolean = false,
     val enablePluginPhases: Boolean = false,
@@ -62,7 +62,7 @@ class FirAnalyzerFacade(
         val firProvider = (session.firProvider as FirProviderImpl)
         firFiles = if (useLightTree) {
             val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
-            originalFiles.map {
+            lightTreeFiles.map {
                 builder.buildFirFile(it).also { firFile ->
                     firProvider.recordFile(firFile)
                 }
