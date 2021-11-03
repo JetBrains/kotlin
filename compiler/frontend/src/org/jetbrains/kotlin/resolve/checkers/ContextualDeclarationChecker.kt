@@ -26,37 +26,5 @@ object ContextualDeclarationChecker : DeclarationChecker {
             )
             return
         }
-        val types = mutableListOf<KtTypeReference?>()
-        when (declaration) {
-            is KtFunction -> {
-                types.addAll(declaration.valueParameters.mapNotNull { it.typeReference })
-                types.add(declaration.receiverTypeReference)
-                types.add(declaration.typeReference)
-            }
-            is KtProperty -> {
-                types.add(declaration.receiverTypeReference)
-                types.add(declaration.typeReference)
-            }
-            is KtClass -> {
-                types.addAll(declaration.primaryConstructor?.valueParameters?.map { it.typeReference } ?: emptyList())
-            }
-            is KtTypeAlias -> {
-                types.add(declaration.getTypeReference())
-            }
-        }
-
-        fun KtTypeReference.isOrHasContextualType(): Boolean {
-            val typeElement = typeElement as? KtFunctionType ?: return false
-            return !typeElement.contextReceiversTypeReferences.isNullOrEmpty()
-                    || typeElement.typeArgumentsAsTypes.any(KtTypeReference::isOrHasContextualType)
-        }
-
-        types.filterNotNull().filter { it.isOrHasContextualType() }.forEach {
-            context.trace.report(
-                Errors.UNSUPPORTED_FEATURE.on(
-                    it, LanguageFeature.ContextReceivers to context.languageVersionSettings
-                )
-            )
-        }
     }
 }

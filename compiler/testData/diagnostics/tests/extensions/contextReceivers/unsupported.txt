@@ -1,0 +1,12 @@
+package
+
+public fun f(/*0*/ g: context(kotlin.Any) () -> kotlin.Unit, /*1*/ value: kotlin.Any): context(A) () -> kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
