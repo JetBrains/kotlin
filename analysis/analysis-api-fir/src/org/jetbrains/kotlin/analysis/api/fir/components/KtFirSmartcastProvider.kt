@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.ImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.ImplicitReceiverSmartcastKind
+import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiverSmartCastKind
+import org.jetbrains.kotlin.analysis.api.components.KtSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.components.KtSmartCastProvider
-import org.jetbrains.kotlin.analysis.api.components.SmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -24,18 +24,19 @@ internal class KtFirSmartcastProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
-    override fun getSmartCastedInfo(expression: KtExpression): SmartCastInfo? = withValidityAssertion {
+    override fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo? = withValidityAssertion {
         val smartCastExpression =
             expression.getOrBuildFirSafe<FirExpressionWithSmartcast>(analysisSession.firResolveState) ?: return@withValidityAssertion null
-        SmartCastInfo(
+        KtSmartCastInfo(
             smartCastExpression.smartcastType.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@withValidityAssertion null,
-            smartCastExpression.isStable
+            smartCastExpression.isStable,
+            token,
         )
 
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<ImplicitReceiverSmartCast> = withValidityAssertion {
+    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast> = withValidityAssertion {
         val qualifiedExpression =
             expression.getOrBuildFirSafe<FirQualifiedAccessExpression>(analysisSession.firResolveState) ?: return emptyList()
         val dispatchReceiver = qualifiedExpression.dispatchReceiver
@@ -45,15 +46,17 @@ internal class KtFirSmartcastProvider(
         ) return emptyList()
         buildList {
             dispatchReceiver.takeIf { it.isStableSmartcast() }?.let { smartCasted ->
-                ImplicitReceiverSmartCast(
+                KtImplicitReceiverSmartCast(
                     smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
-                    ImplicitReceiverSmartcastKind.DISPATCH
+                    KtImplicitReceiverSmartCastKind.DISPATCH,
+                    token,
                 )
             }?.let(::add)
             extensionReceiver.takeIf { it.isStableSmartcast() }?.let { smartCasted ->
-                ImplicitReceiverSmartCast(
+                KtImplicitReceiverSmartCast(
                     smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
-                    ImplicitReceiverSmartcastKind.EXTENSION
+                    KtImplicitReceiverSmartCastKind.EXTENSION,
+                    token,
                 )
             }?.let(::add)
         }
