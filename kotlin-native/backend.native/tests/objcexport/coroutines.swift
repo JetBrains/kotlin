@@ -237,9 +237,15 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(value, nil)
     }
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    override func unit(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
+        completionHandler(KotlinUnit(), nil)
+    }
+#else
     override func unit(value: KotlinInt, completionHandler: @escaping (Error?) -> Void) {
         completionHandler(nil)
     }
+#endif
 
     override func unitAsAny(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
         completionHandler(KotlinUnit(), nil)
@@ -257,9 +263,15 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(nil, E())
     }
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    override func nothingAsUnit(value: KotlinInt, completionHandler: @escaping (KotlinNothing?, Error?) -> Void) {
+        completionHandler(nil, E())
+    }
+#else
     override func nothingAsUnit(value: KotlinInt, completionHandler: @escaping (Error?) -> Void) {
         completionHandler(E())
     }
+#endif
 }
 
 private func testBridges() throws {
@@ -279,10 +291,22 @@ private func testImplicitThrows1() throws {
     var error: Error? = nil
     var completionCalled = 0
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    var result: KotlinUnit? = nil
+
+    CoroutinesKt.throwCancellationException { _result, _error in
+        completionCalled += 1
+        result = _result
+        error = _error
+    }
+
+    try assertNil(result)
+#else
     CoroutinesKt.throwCancellationException { _error in
         completionCalled += 1
         error = _error
     }
+#endif
 
     try assertEquals(actual: completionCalled, expected: 1)
     try assertTrue(error?.kotlinException is KotlinCancellationException)
@@ -292,10 +316,22 @@ private func testImplicitThrows2() throws {
     var error: Error? = nil
     var completionCalled = 0
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    var result: KotlinUnit? = nil
+
+    ThrowCancellationExceptionImpl().throwCancellationException { _result, _error in
+            completionCalled += 1
+            result = _result
+            error = _error
+    }
+
+    try assertNil(result)
+#else
     ThrowCancellationExceptionImpl().throwCancellationException { _error in
         completionCalled += 1
         error = _error
     }
+#endif
 
     try assertEquals(actual: completionCalled, expected: 1)
     try assertTrue(error?.kotlinException is KotlinCancellationException)

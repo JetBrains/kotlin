@@ -38,9 +38,15 @@ private class ThrowsThrowableAsErrorSuspendImpl : ThrowsThrowableAsErrorSuspend 
         self.throwable = throwable
     }
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    func throwError(completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
+        completionHandler(nil, throwable.asError())
+    }
+#else
     func throwError(completionHandler: @escaping (Error?) -> Void) {
         completionHandler(throwable.asError())
     }
+#endif
 }
 
 class ThrowableAsErrorTests : SimpleTestProvider {
