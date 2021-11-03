@@ -5,8 +5,17 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
+import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.AbstractFirReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
+import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByFqNameTest
+import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByPsiTest
+import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirContextCollectionTest
@@ -14,23 +23,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractInnerDeclarationsResolvePhaseTest
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
-import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirExpectedExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirHLExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirOverriddenDeclarationProviderTest
-import org.jetbrains.kotlin.analysis.api.fir.components.AbstractFirRendererTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByPsiTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByReferenceTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
 
 fun main(args: Array<String>) {
@@ -112,6 +108,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirHLSmartCastInfoTest> {
                 model("components/smartCastInfo")
             }
+
+            testClass<AbstractFirWhenMissingCasesTest> {
+                model("components/whenMissingCases")
+            }
         }
 
         testGroup("analysis/analysis-api-fe10/tests", "analysis/analysis-api/testData") {
@@ -169,6 +169,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKtFe10HLSmartCastInfoTest> {
                 model("components/smartCastInfo")
+            }
+
+            testClass<AbstractKtFe10WhenMissingCasesTest> {
+                model("components/whenMissingCases")
             }
         }
 

@@ -1,0 +1,2 @@
+EnumCheckIsMissing - MyEnum.B
+EnumCheckIsMissing - MyEnum.C
