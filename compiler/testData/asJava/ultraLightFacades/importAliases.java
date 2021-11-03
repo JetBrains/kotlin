@@ -1,4 +1,5 @@
 public final class ImportAliasesKt /* ImportAliasesKt*/ {
-  public static final void foo();//  foo()
+  @kotlin.jvm.JvmName(name = "notFoo")
+  public static final void notFoo();//  notFoo()
 
 }
