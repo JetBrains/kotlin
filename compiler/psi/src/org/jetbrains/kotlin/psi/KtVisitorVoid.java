@@ -145,6 +145,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitSuperTypeEntry(specifier, null);
     }
 
+    public void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList) {
+        super.visitContextReceiverList(contextReceiverList, null);
+    }
+
     public void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call) {
         super.visitConstructorDelegationCall(call, null);
     }
