@@ -219,6 +219,8 @@ internal object PersistentIrGenerator {
     val removedOn = +"override var removedOn: Int = Int.MAX_VALUE"
     val annotationsField = +"override var annotationsField: List<" + IrConstructorCall + "> = emptyList()"
 
+    val contextReceiverParametersCount = +"override var contextReceiverParametersCount: Int = 0"
+
     val commonFields = lines(
         signature,
         id,
