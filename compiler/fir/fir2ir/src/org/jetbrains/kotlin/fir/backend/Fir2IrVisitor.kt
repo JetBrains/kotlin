@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
@@ -786,11 +788,10 @@ class Fir2IrVisitor(
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
         val subjectVariable = generateWhenSubjectVariable(whenExpression)
-        val psi = whenExpression.psi
         val origin = when (whenExpression.source?.elementType) {
             KtNodeTypes.WHEN -> IrStatementOrigin.WHEN
             KtNodeTypes.IF -> IrStatementOrigin.IF
-            KtNodeTypes.BINARY_EXPRESSION -> when ((psi as? KtBinaryExpression)?.operationToken) {
+            KtNodeTypes.BINARY_EXPRESSION -> when (whenExpression.source?.operationToken) {
                 KtTokens.OROR -> IrStatementOrigin.OROR
                 KtTokens.ANDAND -> IrStatementOrigin.ANDAND
                 else -> null
@@ -1200,3 +1201,11 @@ val KtSourceElement.isChildOfForLoop: Boolean
     get() =
         if (this is KtPsiSourceElement) psi.parent is KtForExpression
         else treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.FOR
+
+val KtSourceElement.operationToken: IElementType?
+    get() {
+        assert(elementType == KtNodeTypes.BINARY_EXPRESSION)
+        return if (this is KtPsiSourceElement) (psi as? KtBinaryExpression)?.operationToken
+        else treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)?.tokenType
+            ?: error("No operation reference for binary expression: $lighterASTNode")
+    }
