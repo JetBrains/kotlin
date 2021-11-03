@@ -665,7 +665,7 @@ private data class ApplicableArgumentWithConstraint(
     val position: ConstraintPosition
 )
 
-private fun ResolutionCandidate.getArgumentWithConstraintIfCompatible(
+private fun ResolutionCandidate.getReceiverArgumentWithConstraintIfCompatible(
     argument: SimpleKotlinCallArgument,
     parameter: ParameterDescriptor
 ): ApplicableArgumentWithConstraint? {
@@ -711,7 +711,7 @@ internal object CheckReceivers : ResolutionPart() {
             return receiverCandidates.single()
         }
         val extensionReceiverParameter = candidateDescriptor.extensionReceiverParameter ?: return null
-        val compatible = receiverCandidates.mapNotNull { getArgumentWithConstraintIfCompatible(it, extensionReceiverParameter) }
+        val compatible = receiverCandidates.mapNotNull { getReceiverArgumentWithConstraintIfCompatible(it, extensionReceiverParameter) }
         return when (compatible.size) {
             0 -> null
             1 -> compatible.single().argument
@@ -875,7 +875,7 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
         for (implicitReceiverGroup in implicitReceiversGroups) {
             val applicableArguments = implicitReceiverGroup.mapNotNull {
                 val argument = ReceiverExpressionKotlinCallArgument(it)
-                getArgumentWithConstraintIfCompatible(argument, candidateContextReceiverParameter)
+                getReceiverArgumentWithConstraintIfCompatible(argument, candidateContextReceiverParameter)
             }.toList()
             if (applicableArguments.size == 1) {
                 val (argument, argumentType, expectedType, position) = applicableArguments.single()
