@@ -10,13 +10,18 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
 
 public abstract class KtSmartCastProvider : KtAnalysisSessionComponent() {
-    public abstract fun getSmartCastedToType(expression: KtExpression): KtType?
+    public abstract fun getSmartCastedInfo(expression: KtExpression): SmartCastInfo?
     public abstract fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 }
 
+public class SmartCastInfo(public val smartCastType: KtType, public val isStable: Boolean)
+
 public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtExpression.getSmartCast(): KtType? =
-        analysisSession.smartCastProvider.getSmartCastedToType(this)
+    /**
+     * Gets the smart-cast information of the given expression or null if the expression is not smart casted.
+     */
+    public fun KtExpression.getSmartCastInfo(): SmartCastInfo? =
+        analysisSession.smartCastProvider.getSmartCastedInfo(this)
 
     public fun KtExpression.getImplicitReceiverSmartCast(): Collection<ImplicitReceiverSmartCast> =
         analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this)

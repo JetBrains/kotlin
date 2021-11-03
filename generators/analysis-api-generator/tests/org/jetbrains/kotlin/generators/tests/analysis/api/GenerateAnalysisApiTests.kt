@@ -108,6 +108,10 @@ fun main(args: Array<String>) {
             testClass<AbstractPsiTypeProviderTest> {
                 model("components/psiTypeProvider")
             }
+
+            testClass<AbstractFirHLSmartCastInfoTest> {
+                model("components/smartCastInfo")
+            }
         }
 
         testGroup("analysis/analysis-api-fe10/tests", "analysis/analysis-api/testData") {
@@ -161,6 +165,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKtFe10HasCommonSubtypeTest> {
                 model("components/hasCommonSubtype")
+            }
+
+            testClass<AbstractKtFe10HLSmartCastInfoTest> {
+                model("components/smartCastInfo")
             }
         }
 
