@@ -337,6 +337,18 @@ class ExportModelGenerator(
 
         val name = klass.getExportedIdentifier()
 
+        val exportedClass = ExportedClass(
+            name = name,
+            isInterface = klass.isInterface,
+            isAbstract = klass.modality == Modality.ABSTRACT,
+            superClass = superType,
+            superInterfaces = superInterfaces,
+            typeParameters = typeParameters,
+            members = members,
+            nestedClasses = nestedClasses,
+            ir = klass
+        )
+
         if (klass.kind == ClassKind.OBJECT) {
             var t: ExportedType = ExportedType.InlineInterfaceType(members + nestedClasses)
             if (superType != null)
@@ -355,21 +367,12 @@ class ExportModelGenerator(
                 isAbstract = false,
                 isProtected = klass.visibility == DescriptorVisibilities.PROTECTED,
                 irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,
-                irSetter = null
+                irSetter = null,
+                exportedObject = exportedClass,
             )
         }
 
-        return ExportedClass(
-            name = name,
-            isInterface = klass.isInterface,
-            isAbstract = klass.modality == Modality.ABSTRACT,
-            superClass = superType,
-            superInterfaces = superInterfaces,
-            typeParameters = typeParameters,
-            members = members,
-            nestedClasses = nestedClasses,
-            ir = klass
-        )
+        return exportedClass
     }
 
     private fun exportAsEnumMember(

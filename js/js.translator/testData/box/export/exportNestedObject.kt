@@ -37,6 +37,19 @@ sealed class MyEnum(val name: String) {
     object C: MyEnum("C")
 }
 
+@JsExport
+object MyObject {
+    object A {
+        fun valueA() = "OK"
+    }
+    object B {
+        fun valueB() = "OK"
+    }
+    object C {
+        fun valueC() = "OK"
+    }
+}
+
 // FILE: test.js
 
 function box() {
@@ -53,6 +66,10 @@ function box() {
     if (nestedObjectExport.MyEnum.A.name != 'A') return 'MyEnum.A failure';
     if (nestedObjectExport.MyEnum.B.name != 'B') return 'MyEnum.B failure';
     if (nestedObjectExport.MyEnum.C.name != 'C') return 'MyEnum.C failure';
+
+    if (nestedObjectExport.MyObject.A.valueA() != "OK") return 'MyObject.A failure';
+    if (nestedObjectExport.MyObject.B.valueB() != "OK") return 'MyObject.B failure';
+    if (nestedObjectExport.MyObject.C.valueC() != "OK") return 'MyObject.C failure';
 
     return 'OK';
 }

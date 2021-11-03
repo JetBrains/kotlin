@@ -241,7 +241,11 @@ class IrToJs(
             declareNewNamespace = { globalNames.declareFreshName(it, it) }
         )
         exportedDeclarations.forEach {
-            statements += exporter.generateDeclarationExport(it, null)
+            statements += exporter.generateDeclarationExport(
+                it,
+                null,
+                esModules = true
+            )
         }
 
         return GeneratedUnit(statements, exportedDeclarations)
