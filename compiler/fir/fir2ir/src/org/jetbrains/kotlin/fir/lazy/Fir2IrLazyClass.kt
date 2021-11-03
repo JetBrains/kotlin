@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -160,6 +162,13 @@ class Fir2IrLazyClass(
                             // Handle values() / valueOf() separately
                             // TODO: handle other static functions / properties properly
                             result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
+                        } else if (fir.classKind == ClassKind.ANNOTATION_CLASS && declaration.origin == FirDeclarationOrigin.Java) {
+                            // Java annotation values are exposed as properties.
+                            scope.processPropertiesByName(declaration.name) {
+                                if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
+                                    result += declarationStorage.getIrPropertySymbol(it).owner as IrProperty
+                                }
+                            }
                         } else {
                             scope.processFunctionsByName(declaration.name) {
                                 if (it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
