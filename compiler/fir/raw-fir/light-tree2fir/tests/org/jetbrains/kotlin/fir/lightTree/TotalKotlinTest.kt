@@ -35,7 +35,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
     private fun generateFirFromLightTree(onlyLightTree: Boolean, converter: LightTree2Fir, text: String, fileName: String, filePath: String) {
         if (onlyLightTree) {
-            val lightTree = converter.buildLightTree(text)
+            val lightTree = LightTree2Fir.buildLightTree(text)
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
             val firFile = converter.buildFirFile(text, fileName, filePath)
