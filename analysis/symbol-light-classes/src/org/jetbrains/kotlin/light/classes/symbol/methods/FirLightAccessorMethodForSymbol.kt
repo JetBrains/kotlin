@@ -39,7 +39,7 @@ internal class FirLightAccessorMethodForSymbol(
         if (isGetter) getterName(this) else setterName(this)
 
     private val _name: String by lazyPub {
-        propertyAccessorSymbol.getJvmNameFromAnnotation() ?: run {
+        propertyAccessorSymbol.getJvmNameFromAnnotation(accessorSite) ?: run {
             val defaultName = containingPropertySymbol.name.identifier.let {
                 if (containingClass.isAnnotationType) it else it.abiName()
             }
