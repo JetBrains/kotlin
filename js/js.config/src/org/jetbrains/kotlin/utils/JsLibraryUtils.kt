@@ -74,10 +74,13 @@ object JsLibraryUtils {
     private fun isZippedKlibInZip(candidate: File): Boolean {
         var manifestFound = false
         var irFound = false
-        for (entry in ZipFile(candidate).entries()) {
-            if (entry.name == "default/manifest") manifestFound = true
-            if (entry.name == "default/ir/") irFound = true
+        ZipFile(candidate).use {
+            for (entry in it.entries()) {
+                if (entry.name == "default/manifest") manifestFound = true
+                if (entry.name == "default/ir/") irFound = true
+            }
         }
+
         return manifestFound && irFound
     }
 
