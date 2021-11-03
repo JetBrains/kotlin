@@ -348,10 +348,13 @@ class TypeResolver(
                 val receiverTypeRef = type.receiverTypeReference
                 val receiverType = if (receiverTypeRef?.typeElement == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
-                val contextReceiversTypeRefs = type.contextReceiversTypeReferences
-                val contextReceiversTypes = contextReceiversTypeRefs?.mapNotNull {
-                    resolveType(c.noBareTypes(), it)
-                } ?: emptyList()
+                val contextReceiverList = type.contextReceiverList
+                val contextReceiversTypes = if (contextReceiverList != null) {
+                    checkContextReceiversAreEnabled(contextReceiverList)
+                    contextReceiverList.typeReferences().map { typeRef ->
+                        resolveType(c.noBareTypes(), typeRef)
+                    }
+                } else emptyList()
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
                 checkParametersOfFunctionType(parameterDescriptors)
@@ -430,6 +433,10 @@ class TypeResolver(
                 }
             }
 
+            override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
+                checkContextReceiversAreEnabled(contextReceiverList)
+            }
+
             override fun visitDynamicType(type: KtDynamicType) {
                 result = type(dynamicCallableDescriptors.dynamicType.replaceAnnotations(annotations))
                 if (!dynamicTypesSettings.dynamicTypesAllowed) {
@@ -467,6 +474,17 @@ class TypeResolver(
 
                 param.valOrVarKeyword?.let {
                     c.trace.report(Errors.UNSUPPORTED.on(it, "val or var on parameter in function type"))
+                }
+            }
+
+            private fun checkContextReceiversAreEnabled(contextReceiverList: KtContextReceiverList) {
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+                    c.trace.report(
+                        UNSUPPORTED_FEATURE.on(
+                            contextReceiverList,
+                            LanguageFeature.ContextReceivers to languageVersionSettings
+                        )
+                    )
                 }
             }
         })
