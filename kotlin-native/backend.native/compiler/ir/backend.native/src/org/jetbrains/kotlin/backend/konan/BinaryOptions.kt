@@ -24,7 +24,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val androidProgramType by option<AndroidProgramType>()
 
-    val unitSuspendFunctionExport by option<UnitSuspendFunctionExport>()
+    val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>()
 }
 
 open class BinaryOption<T : Any>(

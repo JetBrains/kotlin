@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionExport
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -44,7 +44,7 @@ interface ObjCExportLazy {
         fun isIncluded(moduleInfo: ModuleInfo): Boolean
         fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
-        val unitSuspendFunctionExport: UnitSuspendFunctionExport
+        val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
     }
 
     fun generateBase(): List<ObjCTopLevel<*>>

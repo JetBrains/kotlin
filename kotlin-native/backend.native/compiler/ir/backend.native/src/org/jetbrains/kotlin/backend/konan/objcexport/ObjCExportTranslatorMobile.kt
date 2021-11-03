@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionExport
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
@@ -13,7 +13,7 @@ class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjC
     companion object {
         fun create(namer: ObjCExportNamer): ObjCExportTranslatorMobile {
             val mapper = ObjCExportMapper(local = true)
-            return ObjCExportTranslatorMobile(ObjCExportTranslatorImpl(null, mapper, namer, ObjCExportProblemCollector.SILENT, false, UnitSuspendFunctionExport.LEGACY))
+            return ObjCExportTranslatorMobile(ObjCExportTranslatorImpl(null, mapper, namer, ObjCExportProblemCollector.SILENT, false, UnitSuspendFunctionObjCExport.LEGACY))
         }
     }
 

@@ -238,15 +238,15 @@ internal class ObjCExportCodeGenerator(
         generateContinuationToRetainedCompletionConverter(blockGenerator)
     }
 
+    internal val unitContinuationToRetainedCompletionConverter: LLVMValueRef by lazy {
+        generateUnitContinuationToRetainedCompletionConverter(blockGenerator)
+    }
+
     fun meaningfulBridgeNameOrNull(irFunction: IrFunction?): String? {
         if (!context.config.configuration.getBoolean(KonanConfigKeys.MEANINGFUL_BRIDGE_NAMES)) {
             return null
         }
         return irFunction?.name?.asString()
-    }
-
-    internal val unitContinuationToRetainedCompletionConverter: LLVMValueRef by lazy {
-        generateUnitContinuationToRetainedCompletionConverter(blockGenerator)
     }
 
     fun FunctionGenerationContext.genSendMessage(
@@ -975,7 +975,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     var errorOutPtr: LLVMValueRef? = null
     var continuation: LLVMValueRef? = null
 
-    val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionExport == UnitSuspendFunctionExport.PROPER
+    val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionObjCExport == UnitSuspendFunctionObjCExport.PROPER
 
     val kotlinArgs = methodBridge.paramBridges.mapIndexedNotNull { index, paramBridge ->
         val parameter = param(index)
@@ -1176,7 +1176,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             parameterDescriptor to param(index)
         }.toMap()
 
-        val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionExport == UnitSuspendFunctionExport.PROPER
+        val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionObjCExport == UnitSuspendFunctionObjCExport.PROPER
 
         val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
             when (bridge) {

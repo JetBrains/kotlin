@@ -55,7 +55,7 @@ internal class ObjCExportTranslatorImpl(
         val namer: ObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
         val objcGenerics: Boolean,
-        val unitSuspendFunctionExport: UnitSuspendFunctionExport
+        val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -660,7 +660,7 @@ internal class ObjCExportTranslatorImpl(
                     MethodBridgeValueParameter.SuspendCompletion -> {
                         val resultType = when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
                             is ObjCNonNullReferenceType -> {
-                                if ((unitSuspendFunctionExport == UnitSuspendFunctionExport.PROPER) && baseMethod.returnType!!.isUnit()) {
+                                if ((unitSuspendFunctionExport == UnitSuspendFunctionObjCExport.PROPER) && baseMethod.returnType!!.isUnit()) {
                                     null
                                 } else {
                                     ObjCNullableReferenceType(it, isNullableResult = false)
@@ -1009,7 +1009,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
-        unitSuspendFunctionExport: UnitSuspendFunctionExport,
+        unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
         problemCollector: ObjCExportProblemCollector
 ) {
     private val stubs = mutableListOf<Stub<*>>()

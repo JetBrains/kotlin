@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-enum class UnitSuspendFunctionExport {
+enum class UnitSuspendFunctionObjCExport {
     /**
      * In this mode suspend functions and methods with [Unit] return type are exported to Objective-C with an additional argument,
      * continuation callback, with the following Objective-C signature: `(^)(KtKotlinUnit * _Nullable, NSError * _Nullable)`.
      */
     LEGACY,
+
     /**
      * In this mode suspend functions and methods with [Unit] return type are exported to Objective-C with an additional argument,
      * continuation callback, with the following Objective-C signature: `(^)(NSError * _Nullable)`.
