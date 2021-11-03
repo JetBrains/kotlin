@@ -55,6 +55,7 @@ internal fun PersistentIrGenerator.generateConstructor() {
                 extensionReceiverParameterField.toPersistentField(+"null"),
                 valueParametersField.toPersistentField(+"emptyList()"),
                 bodyField.toBody(),
+                contextReceiverParametersCount,
                 +"override var metadata: " + MetadataSource + "? = null",
                 visibilityField.toPersistentField(+"visibility"),
                 descriptor(ClassConstructorDescriptor),

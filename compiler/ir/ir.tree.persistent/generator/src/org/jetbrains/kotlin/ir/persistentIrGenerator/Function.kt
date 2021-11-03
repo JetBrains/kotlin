@@ -57,6 +57,7 @@ internal fun PersistentIrGenerator.generateFunction() {
                 typeParametersField.toPersistentField(+"emptyList()"),
                 dispatchReceiverParameterField.toPersistentField(+"null"),
                 extensionReceiverParameterField.toPersistentField(+"null"),
+                contextReceiverParametersCount,
                 valueParametersField.toPersistentField(+"emptyList()"),
                 bodyField.toBody(),
                 +"override var metadata: " + MetadataSource + "? = null",
