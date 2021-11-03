@@ -655,7 +655,7 @@ private fun ResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType)
     return resolvedCall.knownParametersSubstitutor.safeSubstitute(resultType)
 }
 
-private data class ApplicableArgumentWithConstraint(
+private data class ApplicableContextReceiverArgumentWithConstraint(
     val argument: SimpleKotlinCallArgument,
     val argumentType: UnwrappedType,
     val expectedType: UnwrappedType,
@@ -665,14 +665,14 @@ private data class ApplicableArgumentWithConstraint(
 private fun ResolutionCandidate.getReceiverArgumentWithConstraintIfCompatible(
     argument: SimpleKotlinCallArgument,
     parameter: ParameterDescriptor
-): ApplicableArgumentWithConstraint? {
+): ApplicableContextReceiverArgumentWithConstraint? {
     val csBuilder = getSystem().getBuilder()
     val expectedTypeUnprepared = argument.getExpectedType(parameter, callComponents.languageVersionSettings)
     val expectedType = prepareExpectedType(expectedTypeUnprepared)
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argument.receiver.stableType, expectedType)
     val position = ReceiverConstraintPositionImpl(argument)
     return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType, position))
-        ApplicableArgumentWithConstraint(argument, argumentType, expectedType, position)
+        ApplicableContextReceiverArgumentWithConstraint(argument, argumentType, expectedType, position)
     else null
 }
 
