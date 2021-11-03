@@ -230,6 +230,12 @@ __attribute__((swift_name("AbstractSuspendBridge")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
+- (void)unitValue:(KtInt *)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)unitAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
 
 /**

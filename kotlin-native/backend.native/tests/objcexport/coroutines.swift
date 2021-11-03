@@ -237,6 +237,10 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(value, nil)
     }
 
+    override func unit(value: KotlinInt, completionHandler: @escaping (Error?) -> Void) {
+        completionHandler(nil)
+    }
+
     override func unitAsAny(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
         completionHandler(KotlinUnit(), nil)
     }

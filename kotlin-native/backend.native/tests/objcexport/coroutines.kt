@@ -107,6 +107,7 @@ interface SuspendBridge<T> {
 abstract class AbstractSuspendBridge : SuspendBridge<Int> {
     override suspend fun intAsAny(value: Int): Int = TODO()
 
+    override suspend fun unit(value: Int): Unit = TODO()
     override suspend fun unitAsAny(value: Int): Unit = TODO()
     override suspend fun nullableUnit(value: Int): Unit? = TODO()
 
