@@ -28,13 +28,17 @@ internal class KtFe10SmartCastProvider(override val analysisSession: KtFe10Analy
         withValidityAssertion {
             val bindingContext = analysisSession.analyze(expression)
             val stableSmartCasts = bindingContext[BindingContext.SMARTCAST, expression]
+            val unstableSmartCasts = bindingContext[BindingContext.UNSTABLE_SMARTCAST, expression]
 
             return when {
                 stableSmartCasts != null -> {
                     val type = stableSmartCasts.getKtType() ?: return null
                     SmartCastInfo(type, true)
                 }
-                // TODO: collect unstable smartcast here.
+                unstableSmartCasts != null -> {
+                    val type = unstableSmartCasts.getKtType() ?: return null
+                    SmartCastInfo(type, false)
+                }
                 else -> null
             }
         }

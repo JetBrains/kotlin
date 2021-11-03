@@ -16,16 +16,19 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SingleSmartCast
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
-import org.jetbrains.kotlin.resolve.calls.util.*
+import org.jetbrains.kotlin.resolve.calls.util.extractCallableReferenceExpression
+import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.reportTrailingLambdaErrorOr
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -358,10 +361,12 @@ class DiagnosticReporterByTrackingStrategy(
         val argumentExpression = unstableSmartCast.argument.psiExpression ?: return
 
         require(possibleTypes.isNotEmpty()) { "Receiver for unstable smart cast without possible types" }
+        val intersectWrappedTypes = intersectWrappedTypes(possibleTypes)
+        trace.record(BindingContext.UNSTABLE_SMARTCAST, argumentExpression, SingleSmartCast(null, intersectWrappedTypes))
         trace.report(
             SMARTCAST_IMPOSSIBLE.on(
                 argumentExpression,
-                intersectWrappedTypes(possibleTypes),
+                intersectWrappedTypes,
                 argumentExpression.text,
                 dataFlowValue.kind.description
             )
