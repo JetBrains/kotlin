@@ -133,62 +133,6 @@ fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: Loo
     useInstance(inlineConstTracker)
 }
 
-@Suppress("unused") // used in IDE
-fun createContainerForBodyResolve(
-    moduleContext: ModuleContext,
-    bindingTrace: BindingTrace,
-    platform: TargetPlatform,
-    statementFilter: StatementFilter,
-    analyzerServices: PlatformDependentAnalyzerServices,
-    languageVersionSettings: LanguageVersionSettings,
-    moduleStructureOracle: ModuleStructureOracle,
-    sealedProvider: SealedClassInheritorsProvider,
-    controlFlowInformationProviderFactory: ControlFlowInformationProvider.Factory,
-): StorageComponentContainer = createContainer("BodyResolve", analyzerServices) {
-    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
-
-    useInstance(statementFilter)
-
-    useInstance(BodyResolveCache.ThrowException)
-    useImpl<AnnotationResolverImpl>()
-
-    useImpl<BodyResolver>()
-    useInstance(moduleStructureOracle)
-    useInstance(controlFlowInformationProviderFactory)
-}
-
-@Suppress("unused") // used in IDE
-fun createContainerForLazyBodyResolve(
-    moduleContext: ModuleContext,
-    kotlinCodeAnalyzer: KotlinCodeAnalyzer,
-    bindingTrace: BindingTrace,
-    platform: TargetPlatform,
-    bodyResolveCache: BodyResolveCache,
-    analyzerServices: PlatformDependentAnalyzerServices,
-    languageVersionSettings: LanguageVersionSettings,
-    moduleStructureOracle: ModuleStructureOracle,
-    mainFunctionDetectorFactory: MainFunctionDetector.Factory,
-    sealedProvider: SealedClassInheritorsProvider,
-    controlFlowInformationProviderFactory: ControlFlowInformationProvider.Factory,
-): StorageComponentContainer = createContainer("LazyBodyResolve", analyzerServices) {
-    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
-    useInstance(mainFunctionDetectorFactory)
-    useInstance(kotlinCodeAnalyzer)
-    useInstance(kotlinCodeAnalyzer.fileScopeProvider)
-    useInstance(bodyResolveCache)
-    useImpl<AnnotationResolverImpl>()
-    useImpl<LazyTopDownAnalyzer>()
-    useImpl<BasicAbsentDescriptorHandler>()
-    useInstance(moduleStructureOracle)
-    useInstance(controlFlowInformationProviderFactory)
-
-    // All containers except common inject ExpectedActualDeclarationChecker, so for common we do that
-    // explicitly.
-    // Note that it is not possible to move this code to [CommonPlatformConfigurator], because during
-    // compilation of common-module to metadata we should skip those checks
-    if (platform.isCommon()) useImpl<ExpectedActualDeclarationChecker>()
-}
-
 fun createContainerForLazyLocalClassifierAnalyzer(
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
