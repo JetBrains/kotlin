@@ -258,17 +258,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface II : I
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
+            val isFakeOverride = declaration.isFakeOverride
+            val missedOverrides = mutableListOf<IrSimpleFunction>()
             declaration.collectRealOverrides()
-                .find { it.modality != Modality.ABSTRACT }
-                ?.let {
-                    val implClassDeclaration = it.parent as IrClass
-
-                    if (implClassDeclaration.shouldCopyFrom() && it.body != null) {
-                        val reference = context.getNameForStaticDeclaration(it).makeRef()
-                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
+                .onEach {
+                    if (isFakeOverride && it.modality == Modality.ABSTRACT) {
+                        missedOverrides.add(it)
                     }
                 }
-            declaration.collectRealOverrides()
                 .find { it.modality != Modality.ABSTRACT }
                 ?.let {
                     val implClassDeclaration = it.parent as IrClass
@@ -276,6 +273,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     if (implClassDeclaration.shouldCopyFrom() && it.body != null) {
                         val reference = context.getNameForStaticDeclaration(it).makeRef()
                         classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
+                        if (isFakeOverride) {
+                            classModel.postDeclarationBlock.statements += missedOverrides
+                                .map { missedOverride ->
+                                    val name = context.getNameForMemberFunction(missedOverride)
+                                    val ref = jsElementAccess(name.ident, classPrototypeRef)
+                                    jsAssignment(ref, reference).makeStmt()
+                                }
+                        }
                     }
                 }
         }
