@@ -25,6 +25,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
@@ -818,7 +819,10 @@ internal fun getContainingFile(cursor: CValue<CXCursor>): CXFile? {
 }
 
 internal val CXFile.path: String get() = clang_getFileName(this).convertAndDispose()
-internal val CXFile.canonicalPath: String get() = File(this.path).canonicalPath
+
+// TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
+private val canonicalPaths = ConcurrentHashMap<String, String>()
+internal val CXFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)
