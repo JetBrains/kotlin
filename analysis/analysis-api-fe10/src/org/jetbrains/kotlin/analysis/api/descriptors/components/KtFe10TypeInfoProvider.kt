@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -21,6 +23,11 @@ internal class KtFe10TypeInfoProvider(override val analysisSession: KtFe10Analys
     override fun isFunctionalInterfaceType(type: KtType): Boolean = withValidityAssertion {
         require(type is KtFe10Type)
         return JavaSingleAbstractMethodUtils.isSamType(type.type)
+    }
+
+    override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
+        require(type is KtFe10Type)
+        return type.type.constructor.declarationDescriptor?.getFunctionalClassKind()
     }
 
     override fun canBeNull(type: KtType): Boolean = withValidityAssertion {

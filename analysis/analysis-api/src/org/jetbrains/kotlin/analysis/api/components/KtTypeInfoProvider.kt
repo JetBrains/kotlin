@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.name.ClassId
 
 public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun isFunctionalInterfaceType(type: KtType): Boolean
+    public abstract fun getFunctionClassKind(type: KtType): FunctionClassKind?
     public abstract fun canBeNull(type: KtType): Boolean
 }
 
@@ -25,6 +27,24 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
      */
     public val KtType.isFunctionalInterfaceType: Boolean
         get() = analysisSession.typeInfoProvider.isFunctionalInterfaceType(this)
+
+    /**
+     * Returns [FunctionClassKind] of the given [KtType]
+     */
+    public val KtType.functionClassKind: FunctionClassKind?
+        get() = analysisSession.typeInfoProvider.getFunctionClassKind(this)
+
+    public val KtType.isFunctionType: Boolean
+        get() = functionClassKind == FunctionClassKind.Function
+
+    public val KtType.isKFunctionType: Boolean
+        get() = functionClassKind == FunctionClassKind.KFunction
+
+    public val KtType.isSuspendFunctionType: Boolean
+        get() = functionClassKind == FunctionClassKind.SuspendFunction
+
+    public val KtType.isKSuspendFunctionType: Boolean
+        get() = functionClassKind == FunctionClassKind.KSuspendFunction
 
     /**
      * Returns true if a public value of this type can potentially be null. This means this type is not a subtype of [Any]. However, it does not

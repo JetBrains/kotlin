@@ -73,6 +73,10 @@ fun main(args: Array<String>) {
                 model("components/expectedExpressionType")
             }
 
+            testClass<AbstractFirFunctionClassKindTest> {
+                model("components/functionClassKind")
+            }
+
             testClass<AbstractFirOverriddenDeclarationProviderTest> {
                 model("components/overriddenDeclarations")
             }
@@ -146,6 +150,10 @@ fun main(args: Array<String>) {
             testClass<AbstractKtFe10ExpectedExpressionTypeTest> {
                 model("components/expectedExpressionType")
             }
+
+//            testClass<AbstractKtFe10FunctionClassKindTest> {
+//                model("components/functionClassKind")
+//            }
 
             testClass<AbstractKtFe10OverriddenDeclarationProviderTest> {
                 model("components/overriddenDeclarations")
