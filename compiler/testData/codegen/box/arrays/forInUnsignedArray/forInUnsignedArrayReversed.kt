@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: WASM
 
 fun test(uis: UIntArray): String {
     var s = ""

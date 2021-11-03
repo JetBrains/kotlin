@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: UNSIGNED_ARRAYS
 // WITH_RUNTIME
 
 class C<T>(val x: T, vararg ys: UInt) {

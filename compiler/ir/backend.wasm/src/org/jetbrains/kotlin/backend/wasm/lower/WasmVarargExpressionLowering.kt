@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -40,8 +41,15 @@ internal class WasmVarargExpressionLowering(
             check(arrayClass.symbol in context.wasmSymbols.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
         }
 
-        val primaryConstructor
-            get() = arrayClass.primaryConstructor!!
+        val isUnsigned
+            get() = arrayClass.symbol in context.wasmSymbols.unsignedTypesToUnsignedArrays.values
+
+        val primaryConstructor: IrConstructor
+            get() {
+                if (isUnsigned)
+                    return arrayClass.constructors.find { it.valueParameters.singleOrNull()?.type == context.irBuiltIns.intType }!!
+                return arrayClass.primaryConstructor!!
+            }
         val constructors
             get() = arrayClass.constructors
 

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: UNSIGNED_ARRAYS
 // WITH_RUNTIME
 
 fun uint(vararg us: UInt): UIntArray = us
