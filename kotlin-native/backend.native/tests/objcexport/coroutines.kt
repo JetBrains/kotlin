@@ -118,23 +118,25 @@ abstract class AbstractSuspendBridge : SuspendBridge<Int> {
 private suspend fun callSuspendBridgeImpl(bridge: SuspendBridge<Int>) {
     assertEquals(1, bridge.intAsAny(1))
 
-    assertSame(Unit, bridge.unitAsAny(2))
-    assertSame(Unit, bridge.nullableUnit(3))
+    assertSame(Unit, bridge.unit(2))
+    assertSame(Unit, bridge.unitAsAny(3))
+    assertSame(Unit, bridge.nullableUnit(4))
 
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(4) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(5) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(6) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(5) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(6) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(7) }
 }
 
 private suspend fun callAbstractSuspendBridgeImpl(bridge: AbstractSuspendBridge) {
-    assertEquals(7, bridge.intAsAny(7))
+    assertEquals(8, bridge.intAsAny(8))
 
-    assertSame(Unit, bridge.unitAsAny(8))
-    assertSame(Unit, bridge.nullableUnit(9))
+    assertSame(Unit, bridge.unit(9))
+    assertSame(Unit, bridge.unitAsAny(10))
+    assertSame(Unit, bridge.nullableUnit(11))
 
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(10) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(11) }
-    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(12) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsInt(12) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsAny(13) }
+    assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(14) }
 }
 
 @Throws(Throwable::class)
