@@ -16,100 +16,139 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.tooling.internal.consumer.ConnectorServices
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
-import org.junit.Assert
-import org.junit.Test
-import java.io.File
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
+import java.nio.file.Paths
 import kotlin.test.assertTrue
 
 // todo: test client file creation/deletion
 // todo: test daemon start (does not start every build)
 // todo: test daemon shutdown when gradle daemon dies
-class KotlinDaemonIT : BaseGradleIT() {
+@DisplayName("Kotlin daemon base behaviour")
+class KotlinDaemonIT : KGPDaemonsBaseTest() {
 
-    @Test
-    fun testDaemonMultiproject() {
-        fun String.findAllStringsPrefixed(prefix: String): Array<String> {
-            val result = arrayListOf<String>()
-            val regex = ("$prefix([^\\r\\n]*)").toRegex()
-            for (match in regex.findAll(this)) {
-                result.add(match.groupValues[1])
-            }
-            return result.toTypedArray()
-        }
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
+        .copy(
+            logLevel = LogLevel.DEBUG
+        )
 
-        val project = Project("multiprojectWithDependency")
-        val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=daemon"
-
-        fun checkAfterNonIncrementalBuild(output: String) {
-            val createdSessions = output.findAllStringsPrefixed(CREATED_SESSION_FILE_PREFIX)
-            assert(createdSessions.size == 1) { "Created multiple sessions per build ${createdSessions.joinToString()}" }
-
-            val existingSessions = output.findAllStringsPrefixed(EXISTING_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals(
-                "Existing sessions don't match created sessions for two module projects",
-                createdSessions,
-                existingSessions
+    @DisplayName("Kotlin daemon is reused in multiproject")
+    @GradleTest
+    fun testDaemonMultiproject(gradleVersion: GradleVersion) {
+        project("multiprojectWithDependency", gradleVersion) {
+            gradleProperties.append(
+                "\nkotlin.compiler.execution.strategy=daemon"
             )
 
-            val deletedSessions = output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals("Deleted sessions don't match created sessions", createdSessions, deletedSessions)
-        }
+            build("build") {
+                assertOutputDoesNotContain(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE)
+                assertKotlinDaemonReusesOnlyOneSession()
+            }
 
-        project.build("build", strategyCLIArg) {
-            assertNotContains(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE)
-            checkAfterNonIncrementalBuild(output)
-        }
+            build("clean", "build") {
+                assertOutputDoesNotContain(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE)
+                assertKotlinDaemonReusesOnlyOneSession()
+            }
 
-        project.build("clean", "build", strategyCLIArg) {
-            assertNotContains(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE)
-            checkAfterNonIncrementalBuild(output)
-        }
+            build("build") {
+                assert(output.findAllStringsPrefixed(CREATED_SESSION_FILE_PREFIX).isEmpty()) {
+                    "Sessions should not be created (incremental build)"
+                }
 
-        project.build("build", strategyCLIArg) {
-            val createdSessions = output.findAllStringsPrefixed(CREATED_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals("Sessions should not be created (incremental build)", createdSessions, emptyArray())
+                assert(output.findAllStringsPrefixed(EXISTING_SESSION_FILE_PREFIX).isEmpty()) {
+                    "Sessions should not be existing (incremental build)"
+                }
 
-            val existingSessions = output.findAllStringsPrefixed(EXISTING_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals("Sessions should not be existing (incremental build)", existingSessions, emptyArray())
-
-            val deletedSessions = output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals("Sessions should not be deleted (incremental build)", deletedSessions, emptyArray())
-        }
-    }
-
-    @Test
-    fun testClientFileIsDeletedOnExit() {
-        val project = Project("kotlinProject")
-        val options = defaultBuildOptions().copy(withDaemon = false)
-
-        project.build("assemble", options = options) {
-            val regex = Regex("(?m)($CREATED_CLIENT_FILE_PREFIX|$EXISTING_CLIENT_FILE_PREFIX)(.+)$")
-            val clientFiles = regex.findAll(output).toList().map { File(it.groupValues[2]) }
-            assert(clientFiles.isNotEmpty()) { "No client files in log" }
-            clientFiles.forEach { clientFile ->
-                assert(!clientFile.exists()) { "Client file $clientFile is expected to be deleted!" }
+                assert(output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX).isEmpty()) {
+                    "Sessions should not be deleted (incremental build)"
+                }
             }
         }
     }
 
-    @Test
-    fun testGradleBuildClasspathShouldNotBeLeakedIntoDaemonClasspath() {
-        val testProject = Project("kotlinProject")
-        testProject.setupWorkingDir()
+    @DisplayName("Client file is deleted on exit")
+    @GradleTest
+    fun testClientFileIsDeletedOnExit(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            build("assemble") {
+                val regex = "(?m)($CREATED_CLIENT_FILE_PREFIX|$EXISTING_CLIENT_FILE_PREFIX)(.+)$".toRegex()
+                val clientFiles = regex.findAll(output).map { Paths.get(it.groupValues[2]) }.toList()
+                assert(clientFiles.isNotEmpty()) { "No client files in log" }
 
-        testProject.build("assemble") {
-            assertGradleClasspathNotLeaked()
+                // Stop daemons
+                ConnectorServices.reset()
+                Thread.sleep(2000) // Kotlin daemon stops itself after 1 sec of Gradle daemon
+                clientFiles.forEach { clientFile ->
+                    assertFileNotExists(clientFile)
+                }
+            }
         }
     }
 
-    private fun CompiledProject.assertGradleClasspathNotLeaked() {
-        assertContains("Kotlin compiler classpath:")
-        val daemonClasspath = output.lineSequence().find {
-            it.contains("Kotlin compiler classpath:")
-        }!!
+    @DisplayName("Gradle build classpath should not leak into Kotlin daemon")
+    @GradleTest
+    fun testGradleBuildClasspathShouldNotBeLeakedIntoDaemonClasspath(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            build("assemble") {
+                assertGradleClasspathNotLeaked()
+            }
+        }
+    }
+
+    private fun BuildResult.assertGradleClasspathNotLeaked() {
+        assertOutputContains("Kotlin compiler classpath:")
+        val daemonClasspath = output
+            .lineSequence()
+            .first {
+                it.contains("Kotlin compiler classpath:")
+            }
         assertTrue("Daemon classpath contains embeddable daemon jar leaked from Gradle dist classpath: $daemonClasspath") {
             !daemonClasspath.contains(".gradle/wrapper/dists")
         }
     }
+
+    private fun BuildResult.assertKotlinDaemonReusesOnlyOneSession() {
+        val createdSessions = output.findAllStringsPrefixed(CREATED_SESSION_FILE_PREFIX)
+        assert(createdSessions.size == 1) {
+            """
+            |${printBuildOutput()}
+            |
+            |Created multiple sessions per build: ${createdSessions.joinToString()}
+            """.trimMargin()
+        }
+
+        val existingSessions = output.findAllStringsPrefixed(EXISTING_SESSION_FILE_PREFIX)
+        assert(createdSessions == createdSessions) {
+            """
+            |${printBuildOutput()}
+            |
+            |Existing sessions don't match created sessions for two module projects.
+            |Created sessions:
+            |${createdSessions.joinToString(separator = "\n")}
+            |Existing sessions:
+            |${existingSessions.joinToString(separator = "\n")}
+            """.trimMargin()
+        }
+
+        val deletedSessions = output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX)
+        assert(createdSessions == deletedSessions) {
+            """
+            |${printBuildOutput()}
+            |
+            |Deleted sessions don't match created sessions.
+            |Created sessions:
+            |${createdSessions.joinToString(separator = "\n")}
+            |Deleted sessions:
+            |${deletedSessions.joinToString(separator = "\n")}
+            """.trimMargin()
+        }
+    }
+
+    private fun String.findAllStringsPrefixed(prefix: String): List<String> =
+        ("$prefix([^\\r\\n]*)").toRegex().findAll(this).map { it.groupValues[1] }.toList()
 }
