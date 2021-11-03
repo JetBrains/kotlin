@@ -14,7 +14,7 @@ import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Kapt caching inside Gradle daemon")
 @DaemonsGradlePluginTests
-class Kapt3AndGradleDaemon : KGPBaseTest() {
+class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
@@ -24,12 +24,6 @@ class Kapt3AndGradleDaemon : KGPBaseTest() {
                 includeCompileClasspath = false
             )
         )
-
-    @AfterEach
-    internal fun tearDown() {
-        // Stops Gradle and Kotlin daemon, so new run will pick up new jvm arguments
-        ConnectorServices.reset()
-    }
 
     @DisplayName("Javac should be loaded only once")
     @GradleTest

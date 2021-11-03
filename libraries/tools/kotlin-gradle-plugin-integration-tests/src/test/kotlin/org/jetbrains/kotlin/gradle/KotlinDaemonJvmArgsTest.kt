@@ -13,17 +13,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 
-@DaemonsGradlePluginTests
 @DisplayName("Kotlin daemon JVM args")
-class KotlinDaemonJvmArgsTest : KGPBaseTest() {
+class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-
-    @AfterEach
-    internal fun tearDown() {
-        // Stops Gradle and Kotlin daemon, so new run will pick up new jvm arguments
-        ConnectorServices.reset()
-    }
 
     @GradleTest
     @DisplayName("Kotlin daemon by default should inherit Gradle daemon max jvm heap size")
