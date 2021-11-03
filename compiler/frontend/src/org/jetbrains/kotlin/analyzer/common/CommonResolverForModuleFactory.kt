@@ -245,7 +245,6 @@ private fun createContainerToResolveCommonCode(
         if (shouldCheckExpectActual) {
             useImpl<ExpectedActualDeclarationChecker>()
         }
-        useInstance(InlineConstTracker.DoNothing)
     }
 
 fun StorageComponentContainer.configureCommonSpecificComponents() {

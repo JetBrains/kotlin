@@ -58,7 +58,6 @@ private fun createFakeTopDownAnalyzerForNative(
     configureStandardResolveComponents()
 
     useInstance(declarationProviderFactory)
-    useInstance(InlineConstTracker.DoNothing)
     CompilerEnvironment.configure(this)
 }.apply {
     val moduleDescriptor = get<ModuleDescriptorImpl>()

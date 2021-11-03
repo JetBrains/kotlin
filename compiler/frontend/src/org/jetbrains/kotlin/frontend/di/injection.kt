@@ -133,6 +133,7 @@ fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: Loo
     useInstance(inlineConstTracker)
 }
 
+@Suppress("unused") // used in IDE
 fun createContainerForBodyResolve(
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
@@ -154,9 +155,9 @@ fun createContainerForBodyResolve(
     useImpl<BodyResolver>()
     useInstance(moduleStructureOracle)
     useInstance(controlFlowInformationProviderFactory)
-    useInstance(InlineConstTracker.DoNothing)
 }
 
+@Suppress("unused") // used in IDE
 fun createContainerForLazyBodyResolve(
     moduleContext: ModuleContext,
     kotlinCodeAnalyzer: KotlinCodeAnalyzer,
@@ -180,7 +181,6 @@ fun createContainerForLazyBodyResolve(
     useImpl<BasicAbsentDescriptorHandler>()
     useInstance(moduleStructureOracle)
     useInstance(controlFlowInformationProviderFactory)
-    useInstance(InlineConstTracker.DoNothing)
 
     // All containers except common inject ExpectedActualDeclarationChecker, so for common we do that
     // explicitly.
@@ -205,7 +205,6 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useInstance(localClassDescriptorHolder)
     useInstance(lookupTracker)
     useInstance(ExpectActualTracker.DoNothing)
-    useInstance(InlineConstTracker.DoNothing)
 
     useImpl<LazyTopDownAnalyzer>()
 
@@ -238,7 +237,6 @@ fun createContainerForLazyResolve(
     configureStandardResolveComponents()
 
     useInstance(declarationProviderFactory)
-    useInstance(InlineConstTracker.DoNothing)
 
 
     targetEnvironment.configure(this)

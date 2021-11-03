@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.incremental.components
 
+import org.jetbrains.kotlin.container.DefaultImplementation
+
 /**
  * InlineConstTracker is used to track Java constants used in Kotlin for correct build scope expansion in IC during JPS build.
  */
+@DefaultImplementation(InlineConstTracker.DoNothing::class)
 interface InlineConstTracker {
 
     /**

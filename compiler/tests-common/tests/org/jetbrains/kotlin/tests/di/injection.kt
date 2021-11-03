@@ -46,7 +46,6 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
         useImpl<AnnotationResolverImpl>()
         useInstance(ModuleStructureOracle.SingleModule)
         useInstance(ControlFlowInformationProviderImpl.Factory)
-        useInstance(InlineConstTracker.DoNothing)
     })
 }
 
