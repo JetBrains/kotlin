@@ -46,11 +46,15 @@ void ThrowException(KRef exception) {
 }
 
 void HandleCurrentExceptionWhenLeavingKotlinCode() {
+#if KONAN_NO_EXCEPTIONS
+  RuntimeCheck(false, "Exceptions unsupported");
+#else
   try {
       std::rethrow_exception(std::current_exception());
   } catch (ExceptionObjHolder& e) {
       std::terminate();  // Terminate when it's a kotlin exception.
   }
+#endif
 }
 
 namespace {
