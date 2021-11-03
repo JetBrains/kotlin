@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.CheckContextReceiversResolutionPart.candidateDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.CheckReceivers.candidateDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.CheckReceivers.checkReceiver
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
