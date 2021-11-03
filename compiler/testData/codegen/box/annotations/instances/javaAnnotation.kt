@@ -1,5 +1,3 @@
-// Fir2IrLazyClass does not handle methods from java dependencies in declarations.
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM_IR
 
 // WITH_RUNTIME
