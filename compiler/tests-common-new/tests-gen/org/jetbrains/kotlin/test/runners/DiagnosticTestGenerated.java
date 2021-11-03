@@ -6431,6 +6431,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeWithReceiver.kt");
             }
 
+            @Test
+            @TestMetadata("suspendLambdaFromExpectedType.kt")
+            public void testSuspendLambdaFromExpectedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/suspendLambdaFromExpectedType.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/callableReference")
             @TestDataPath("$PROJECT_ROOT")

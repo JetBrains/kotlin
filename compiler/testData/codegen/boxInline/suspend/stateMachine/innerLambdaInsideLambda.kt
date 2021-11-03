@@ -2,7 +2,6 @@
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: inlined.kt
 
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
