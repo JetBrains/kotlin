@@ -283,27 +283,23 @@ class ResolvedAtomCompleter(
             descriptor.setReturnType(it.approximatedType)
         }
 
+        fun ReceiverParameterDescriptor.setOutTypeIfNecessary(processedType: FunctionLiteralTypes.ProcessedType) {
+            if (this is ReceiverParameterDescriptorImpl && type.shouldBeUpdated()) {
+                setOutType(processedType.approximatedType)
+            }
+        }
+
         val extensionReceiverFromDescriptor = descriptor.extensionReceiverParameter
         val substitutedReceiverType = extensionReceiverType?.substituteAndApproximate(substitutor)?.also {
-            if (extensionReceiverFromDescriptor is ReceiverParameterDescriptorImpl && extensionReceiverFromDescriptor.type.shouldBeUpdated()) {
-                extensionReceiverFromDescriptor.setOutType(it.approximatedType)
-            }
+            extensionReceiverFromDescriptor?.setOutTypeIfNecessary(it)
         }
 
         val substitutedContextReceiversTypes = descriptor.contextReceiverParameters.mapIndexedNotNull { i, contextReceiver ->
-            contextReceiversTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also {
-                if (contextReceiver is ReceiverParameterDescriptorImpl && contextReceiver.type.shouldBeUpdated()) {
-                    contextReceiver.setOutType(it.approximatedType)
-                }
-            }
+            contextReceiversTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also { contextReceiver.setOutTypeIfNecessary(it) }
         }
 
         val dispatchReceiverFromDescriptor = descriptor.dispatchReceiverParameter
-        dispatchReceiverType?.substituteAndApproximate(substitutor)?.also {
-            if (dispatchReceiverFromDescriptor is ReceiverParameterDescriptorImpl && dispatchReceiverFromDescriptor.type.shouldBeUpdated()) {
-                dispatchReceiverFromDescriptor.setOutType(it.approximatedType)
-            }
-        }
+        dispatchReceiverType?.substituteAndApproximate(substitutor)?.also { dispatchReceiverFromDescriptor?.setOutTypeIfNecessary(it) }
 
         val substitutedValueParameterTypes = descriptor.valueParameters.mapIndexedNotNull { i, valueParameter ->
             valueParameterTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also {
@@ -313,7 +309,12 @@ class ResolvedAtomCompleter(
             }
         }
 
-        return FunctionLiteralTypes(substitutedReturnType, substitutedValueParameterTypes, substitutedReceiverType, substitutedContextReceiversTypes)
+        return FunctionLiteralTypes(
+            substitutedReturnType,
+            substitutedValueParameterTypes,
+            substitutedReceiverType,
+            substitutedContextReceiversTypes
+        )
     }
 
     private fun completeLambda(resolvedAtom: ResolvedLambdaAtom) {
