@@ -40,6 +40,7 @@ class FirStatusResolver(
             FirDeclarationStatusImpl.Modifier.CONST,
             FirDeclarationStatusImpl.Modifier.LATEINIT,
             FirDeclarationStatusImpl.Modifier.TAILREC,
+            FirDeclarationStatusImpl.Modifier.EXTERNAL,
         )
 
         private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =

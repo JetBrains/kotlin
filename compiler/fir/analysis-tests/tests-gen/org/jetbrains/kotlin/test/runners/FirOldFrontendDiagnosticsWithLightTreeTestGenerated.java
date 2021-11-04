@@ -10551,6 +10551,22 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/external")
+        @TestDataPath("$PROJECT_ROOT")
+        public class External {
+            @Test
+            public void testAllFilesPresentInExternal() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/external"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("noExternalModifierInheritance.kt")
+            public void testNoExternalModifierInheritance() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/external/noExternalModifierInheritance.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/funInterface")
         @TestDataPath("$PROJECT_ROOT")
         public class FunInterface {
