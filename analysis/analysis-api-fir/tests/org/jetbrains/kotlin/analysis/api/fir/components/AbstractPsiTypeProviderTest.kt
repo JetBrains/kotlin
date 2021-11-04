@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -12,10 +13,11 @@ import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
-import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightFacade
+import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -24,16 +26,13 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 abstract class AbstractPsiTypeProviderTest : AbstractHLApiSingleFileTest(FirFrontendApiTestConfiguratorService) {
-
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val mainKtFileFqName = ktFile.packageFqName.child(Name.identifier(ktFile.name))
         val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFile)
         val containingClass =
-            declaration.parents.firstOrNull { it is KtClassOrObject }?.let { getOrCreateFirLightClass(it as KtClassOrObject) }
-                ?: getOrCreateFirLightFacade(listOf(ktFile), mainKtFileFqName)
-                ?: error("Can't get or create containing KtLightClass for $declaration")
+            getContainingKtLightClass(declaration, ktFile)
         val psiContext = containingClass.findLightDeclarationContext(declaration)
             ?: error("Can't find psi context for $declaration")
         val actual = buildString {
@@ -46,6 +45,34 @@ abstract class AbstractPsiTypeProviderTest : AbstractHLApiSingleFileTest(FirFron
             }
         }
         testServices.assertions.assertEqualsToFile(testDataFileSibling(".txt"), actual)
+    }
+
+    private fun getContainingKtLightClass(
+        declaration: KtDeclaration,
+        ktFile: KtFile,
+    ): KtLightClass {
+        val project = ktFile.project
+        return createLightClassByContainingClass(declaration, project)
+            ?: getFacadeLightClass(ktFile, project)
+            ?: error("Can't get or create containing KtLightClass for $declaration")
+
+    }
+
+    private fun getFacadeLightClass(
+        ktFile: KtFile,
+        project: Project,
+    ): KtLightClass? {
+        val mainKtFileFqName = ktFile.packageFqName.child(Name.identifier(ktFile.name))
+        return project.getService(SymbolLightClassFacadeCache::class.java)
+            .getOrCreateSymbolLightFacade(listOf(ktFile), mainKtFileFqName)
+    }
+
+    private fun createLightClassByContainingClass(
+        declaration: KtDeclaration,
+        project: Project
+    ): KtLightClass? {
+        val containingClass = declaration.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return null
+        return project.getService(KotlinAsJavaSupport::class.java).getLightClass(containingClass)
     }
 
     private fun KtLightClass.findLightDeclarationContext(ktDeclaration: KtDeclaration): KtLightElement<*, *>? {

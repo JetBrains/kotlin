@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
 
-fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
+internal fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
     CachedValuesManager.getCachedValue(classOrObject) {
         CachedValueProvider.Result
             .create(
@@ -47,7 +47,7 @@ fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
     }
 
 @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
-fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = hackyAllowRunningOnEdt {
+internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = hackyAllowRunningOnEdt {
 
     val containingFile = classOrObject.containingFile
     if (containingFile is KtCodeFragment) {
