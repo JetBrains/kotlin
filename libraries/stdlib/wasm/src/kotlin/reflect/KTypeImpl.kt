@@ -11,4 +11,27 @@ internal class KTypeImpl(
     override val classifier: KClassifier?,
     override val arguments: List<KTypeProjection>,
     override val isMarkedNullable: Boolean
-) : KType
+) : KType {
+    override fun equals(other: Any?): Boolean =
+        other is KTypeImpl &&
+                classifier == other.classifier && arguments == other.arguments && isMarkedNullable == other.isMarkedNullable
+
+    override fun hashCode(): Int =
+        (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + isMarkedNullable.hashCode()
+
+    override fun toString(): String {
+        val kClass = (classifier as? KClass<*>)
+        val classifierName = when {
+            kClass == null -> classifier.toString()
+            kClass.simpleName != null -> kClass.simpleName
+            else -> "(non-denotable type)"
+        }
+
+        val args =
+            if (arguments.isEmpty()) ""
+            else arguments.joinToString(", ", "<", ">")
+        val nullable = if (isMarkedNullable) "?" else ""
+
+        return classifierName + args + nullable
+    }
+}

@@ -45,4 +45,6 @@ internal class KClassImpl<T : Any>(private val typeData: TypeInfoData) : KClass<
         (this === other) || (other is KClassImpl<*> && other.typeData.isInterface == typeData.isInterface && other.typeData.typeId == typeData.typeId)
 
     override fun hashCode(): Int = typeData.typeId
+
+    override fun toString(): String = "class $qualifiedName"
 }
