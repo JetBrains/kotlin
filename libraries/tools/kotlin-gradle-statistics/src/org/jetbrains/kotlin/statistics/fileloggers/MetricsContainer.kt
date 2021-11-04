@@ -26,6 +26,8 @@ class MetricsContainer : IStatisticsValuesConsumer {
         }
     }
 
+    private val metricsLock = Object()
+
     private val numericalMetrics = TreeMap<MetricDescriptor, IMetricContainer<Long>>()
 
     private val booleanMetrics = TreeMap<MetricDescriptor, IMetricContainer<Boolean>>()
@@ -65,19 +67,25 @@ class MetricsContainer : IStatisticsValuesConsumer {
 
                             stringMetricsMap[name]?.also { metricType ->
                                 metricType.type.fromStringRepresentation(representation)?.also {
-                                    container.stringMetrics[MetricDescriptor(name, subProjectHash)] = it
+                                    synchronized(container.metricsLock) {
+                                        container.stringMetrics[MetricDescriptor(name, subProjectHash)] = it
+                                    }
                                 }
                             }
 
                             booleanMetricsMap[name]?.also { metricType ->
                                 metricType.type.fromStringRepresentation(representation)?.also {
-                                    container.booleanMetrics[MetricDescriptor(name, subProjectHash)] = it
+                                    synchronized(container.metricsLock) {
+                                        container.booleanMetrics[MetricDescriptor(name, subProjectHash)] = it
+                                    }
                                 }
                             }
 
                             numericalMetricsMap[name]?.also { metricType ->
                                 metricType.type.fromStringRepresentation(representation)?.also {
-                                    container.numericalMetrics[MetricDescriptor(name, subProjectHash)] = it
+                                    synchronized(container.metricsLock) {
+                                        container.numericalMetrics[MetricDescriptor(name, subProjectHash)] = it
+                                    }
                                 }
                             }
                         }
@@ -98,31 +106,39 @@ class MetricsContainer : IStatisticsValuesConsumer {
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
         val projectHash = getProjectHash(metric.perProject, subprojectName)
-        val metricContainer = booleanMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
-            .also { booleanMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-        metricContainer.addValue(metric.anonymization.anonymize(value))
+        synchronized(metricsLock) {
+            val metricContainer = booleanMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
+                .also { booleanMetrics[MetricDescriptor(metric.name, projectHash)] = it }
+            metricContainer.addValue(metric.anonymization.anonymize(value))
+        }
     }
 
     override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
         val projectHash = getProjectHash(metric.perProject, subprojectName)
-        val metricContainer = numericalMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
-            .also { numericalMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-        metricContainer.addValue(metric.anonymization.anonymize(value))
+        synchronized(metricsLock) {
+            val metricContainer = numericalMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
+                .also { numericalMetrics[MetricDescriptor(metric.name, projectHash)] = it }
+            metricContainer.addValue(metric.anonymization.anonymize(value))
+        }
     }
 
     override fun report(metric: StringMetrics, value: String, subprojectName: String?) {
-        val projectHash = if (subprojectName == null) null else processProjectName(subprojectName, metric.perProject)
-        val metricContainer = stringMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
-            .also { stringMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-        metricContainer.addValue(metric.anonymization.anonymize(value))
+        val projectHash = getProjectHash(metric.perProject, subprojectName)
+        synchronized(metricsLock) {
+            val metricContainer = stringMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
+                .also { stringMetrics[MetricDescriptor(metric.name, projectHash)] = it }
+            metricContainer.addValue(metric.anonymization.anonymize(value))
+        }
     }
 
     fun flush(trackingFile: IRecordLogger?) {
         if (trackingFile == null) return
         val allMetrics = TreeMap<MetricDescriptor, IMetricContainer<out Any>>()
-        allMetrics.putAll(numericalMetrics)
-        allMetrics.putAll(booleanMetrics)
-        allMetrics.putAll(stringMetrics)
+        synchronized(metricsLock) {
+            allMetrics.putAll(numericalMetrics)
+            allMetrics.putAll(booleanMetrics)
+            allMetrics.putAll(stringMetrics)
+        }
         for (entry in allMetrics.entries) {
             val suffix = if (entry.key.projectHash == null) "" else ".${entry.key.projectHash}"
             trackingFile.append("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")
@@ -130,14 +146,22 @@ class MetricsContainer : IStatisticsValuesConsumer {
 
         trackingFile.append(BUILD_SESSION_SEPARATOR)
 
-        stringMetrics.clear()
-        booleanMetrics.clear()
-        numericalMetrics.clear()
+        synchronized(metricsLock) {
+            stringMetrics.clear()
+            booleanMetrics.clear()
+            numericalMetrics.clear()
+        }
     }
 
-    fun getMetric(metric: NumericalMetrics): IMetricContainer<Long>? = numericalMetrics[MetricDescriptor(metric.name, null)]
+    fun getMetric(metric: NumericalMetrics): IMetricContainer<Long>? = synchronized(metricsLock) {
+        numericalMetrics[MetricDescriptor(metric.name, null)]
+    }
 
-    fun getMetric(metric: StringMetrics): IMetricContainer<String>? = stringMetrics[MetricDescriptor(metric.name, null)]
+    fun getMetric(metric: StringMetrics): IMetricContainer<String>? = synchronized(metricsLock) {
+        stringMetrics[MetricDescriptor(metric.name, null)]
+    }
 
-    fun getMetric(metric: BooleanMetrics): IMetricContainer<Boolean>? = booleanMetrics[MetricDescriptor(metric.name, null)]
+    fun getMetric(metric: BooleanMetrics): IMetricContainer<Boolean>? = synchronized(metricsLock) {
+        booleanMetrics[MetricDescriptor(metric.name, null)]
+    }
 }
