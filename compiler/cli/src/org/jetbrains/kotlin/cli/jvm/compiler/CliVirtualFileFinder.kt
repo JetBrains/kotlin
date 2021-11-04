@@ -33,10 +33,10 @@ class CliVirtualFileFinder(
     private val scope: GlobalSearchScope
 ) : VirtualFileFinder() {
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-        findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
+        findBinaryOrSigClass(classId)
 
     override fun findSourceOrBinaryVirtualFile(classId: ClassId) =
-        findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
+        findBinaryOrSigClass(classId)
             ?: findSourceClass(classId, classId.relativeClassName.asString() + ".java")
 
     override fun findMetadata(classId: ClassId): InputStream? {
@@ -69,6 +69,14 @@ class CliVirtualFileFinder(
         index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
             dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
         }?.takeIf { it in scope }
+
+    private fun findBinaryOrSigClass(classId: ClassId, simpleName: String, rootType: Set<JavaRoot.RootType>) =
+        index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
+            (dir.findChild("$simpleName.class") ?: dir.findChild("$simpleName.sig"))?.takeIf(VirtualFile::isValid)
+        }?.takeIf { it in scope }
+
+    private fun findBinaryOrSigClass(classId: ClassId) =
+        findBinaryOrSigClass(classId, classId.relativeClassName.asString().replace('.', '$'), JavaRoot.OnlyBinary)
 
     private fun findBinaryClass(classId: ClassId, fileName: String) = findClass(classId, fileName, JavaRoot.OnlyBinary)
     private fun findSourceClass(classId: ClassId, fileName: String) = findClass(classId, fileName, JavaRoot.OnlySource)

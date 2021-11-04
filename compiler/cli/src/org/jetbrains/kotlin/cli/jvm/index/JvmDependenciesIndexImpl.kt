@@ -202,6 +202,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
 
         val fileExtension = when (rootType) {
             JavaRoot.RootType.BINARY -> JavaClassFileType.INSTANCE.defaultExtension
+            JavaRoot.RootType.BINARY_SIG -> "sig"
             JavaRoot.RootType.SOURCE -> JavaFileType.INSTANCE.defaultExtension
         }
 

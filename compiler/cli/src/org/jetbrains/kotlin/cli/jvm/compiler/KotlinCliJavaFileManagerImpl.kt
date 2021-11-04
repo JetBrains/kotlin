@@ -88,7 +88,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
-        if (!usePsiClassFilesReading && virtualFile.extension == "class") {
+        if (!usePsiClassFilesReading && (virtualFile.extension == "class" || virtualFile.extension == "sig")) {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
             return binaryCache.getOrPut(classId) {
                 // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it
@@ -218,6 +218,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
         val vFile = when (rootType) {
             JavaRoot.RootType.BINARY -> packageDir.findChild("$topLevelClassName.class")
+            JavaRoot.RootType.BINARY_SIG -> packageDir.findChild("$topLevelClassName.sig")
             JavaRoot.RootType.SOURCE -> packageDir.findChild("$topLevelClassName.java")
         } ?: return null
 
@@ -238,7 +239,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val result = THashSet<String>()
         index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
             for (child in dir.children) {
-                if (child.extension == "class" || child.extension == "java") {
+                if (child.extension == "class" || child.extension == "java" || child.extension == "sig") {
                     result.add(child.nameWithoutExtension)
                 }
             }

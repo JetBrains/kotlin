@@ -40,12 +40,13 @@ interface JvmDependenciesIndex {
 data class JavaRoot(val file: VirtualFile, val type: RootType, val prefixFqName: FqName? = null) {
     enum class RootType {
         SOURCE,
-        BINARY
+        BINARY,
+        BINARY_SIG
     }
 
     companion object RootTypes {
-        val OnlyBinary: Set<RootType> = EnumSet.of(RootType.BINARY)
+        val OnlyBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.BINARY_SIG)
         val OnlySource: Set<RootType> = EnumSet.of(RootType.SOURCE)
-        val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.SOURCE)
+        val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.BINARY_SIG, RootType.SOURCE)
     }
 }
