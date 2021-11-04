@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.incremental
+package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.gradle.incremental.ClasspathSnapshotTestCommon.Util.readBytes
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.readBytes
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
