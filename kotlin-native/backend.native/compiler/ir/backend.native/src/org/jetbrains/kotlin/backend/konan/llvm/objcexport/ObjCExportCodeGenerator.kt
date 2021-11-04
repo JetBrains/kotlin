@@ -975,8 +975,6 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     var errorOutPtr: LLVMValueRef? = null
     var continuation: LLVMValueRef? = null
 
-    val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionObjCExport == UnitSuspendFunctionObjCExport.PROPER
-
     val kotlinArgs = methodBridge.paramBridges.mapIndexedNotNull { index, paramBridge ->
         val parameter = param(index)
         when (paramBridge) {
@@ -994,8 +992,8 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 null
             }
 
-            MethodBridgeValueParameter.SuspendCompletion -> {
-                val createContinuationArgument = if (properlyExportUnitSuspendFunctions && baseMethod!!.returnType.isUnit()) {
+            is MethodBridgeValueParameter.SuspendCompletion -> {
+                val createContinuationArgument = if (paramBridge.useUnitCompletion) {
                     context.llvm.Kotlin_ObjCExport_createUnitContinuationArgument
                 } else {
                     context.llvm.Kotlin_ObjCExport_createContinuationArgument
@@ -1176,8 +1174,6 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             parameterDescriptor to param(index)
         }.toMap()
 
-        val properlyExportUnitSuspendFunctions = codegen.context.config.unitSuspendFunctionObjCExport == UnitSuspendFunctionObjCExport.PROPER
-
         val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
             when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> {
@@ -1209,7 +1205,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                         errorOutPtr = it
                     }
 
-                MethodBridgeValueParameter.SuspendCompletion -> {
+                is MethodBridgeValueParameter.SuspendCompletion -> {
                     val continuation = param(irFunction.allParametersCount) // The last argument.
                     // TODO: consider placing interception into the converter to reduce code size.
                     val intercepted = callFromBridge(
@@ -1218,7 +1214,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             Lifetime.ARGUMENT
                     )
 
-                    val converter = if (properlyExportUnitSuspendFunctions && baseIrFunction.returnType.isUnit()) {
+                    val converter = if (bridge.useUnitCompletion) {
                         unitContinuationToRetainedCompletionConverter
                     } else {
                         continuationToRetainedCompletionConverter
@@ -1799,7 +1795,7 @@ private fun MethodBridgeParameter.toLlvmParamType(): LlvmParamType = when (this)
     is MethodBridgeReceiver -> ReferenceBridge.toLlvmParamType()
     MethodBridgeSelector -> LlvmParamType(int8TypePtr)
     MethodBridgeValueParameter.ErrorOutParameter -> LlvmParamType(pointerType(ReferenceBridge.toLlvmParamType().llvmType))
-    MethodBridgeValueParameter.SuspendCompletion -> LlvmParamType(int8TypePtr)
+    is MethodBridgeValueParameter.SuspendCompletion -> LlvmParamType(int8TypePtr)
 }
 
 private fun MethodBridge.ReturnValue.toLlvmRetType(
@@ -1855,7 +1851,7 @@ private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
     is MethodBridgeReceiver -> ReferenceBridge.objCEncoding
     MethodBridgeSelector -> ":"
     MethodBridgeValueParameter.ErrorOutParameter -> "^${ReferenceBridge.objCEncoding}"
-    MethodBridgeValueParameter.SuspendCompletion -> "@"
+    is MethodBridgeValueParameter.SuspendCompletion -> "@"
 }
 
 private val TypeBridge.objCEncoding: String get() = when (this) {

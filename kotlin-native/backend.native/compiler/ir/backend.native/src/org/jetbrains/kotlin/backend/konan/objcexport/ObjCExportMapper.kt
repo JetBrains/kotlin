@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal class ObjCExportMapper(
         internal val deprecationResolver: DeprecationResolver? = null,
-        private val local: Boolean = false
+        private val local: Boolean = false,
+        internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
 ) {
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
 
@@ -331,7 +332,8 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
     val returnBridge = bridgeReturnType(descriptor, convertExceptionsToErrors)
 
     if (descriptor.isSuspend) {
-        valueParameters += MethodBridgeValueParameter.SuspendCompletion
+        val useUnitCompletion = (unitSuspendFunctionExport == UnitSuspendFunctionObjCExport.PROPER) && (descriptor.returnType!!.isUnit())
+        valueParameters += MethodBridgeValueParameter.SuspendCompletion(useUnitCompletion)
     } else if (convertExceptionsToErrors) {
         // Add error out parameter before tail block parameters. The convention allows this.
         // Placing it after would trigger https://bugs.swift.org/browse/SR-12201
@@ -349,7 +351,7 @@ private fun MethodBridgeValueParameter.isBlockPointer(): Boolean = when (this) {
         is BlockPointerBridge -> true
     }
     MethodBridgeValueParameter.ErrorOutParameter -> false
-    MethodBridgeValueParameter.SuspendCompletion -> true
+    is MethodBridgeValueParameter.SuspendCompletion -> true
 }
 
 internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor): TypeBridge {

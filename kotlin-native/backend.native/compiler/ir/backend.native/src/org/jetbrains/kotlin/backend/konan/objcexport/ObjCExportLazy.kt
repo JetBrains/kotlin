@@ -88,7 +88,7 @@ internal class ObjCExportLazyImpl(
 
     private val nameTranslator: ObjCExportNameTranslator = ObjCExportNameTranslatorImpl(namerConfiguration)
 
-    private val mapper = ObjCExportMapper(deprecationResolver, local = true)
+    private val mapper = ObjCExportMapper(deprecationResolver, local = true, configuration.unitSuspendFunctionExport)
 
     private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local = true)
 
@@ -97,8 +97,7 @@ internal class ObjCExportLazyImpl(
             mapper,
             namer,
             problemCollector,
-            configuration.objcGenerics,
-            configuration.unitSuspendFunctionExport
+            configuration.objcGenerics
     )
 
     private val isValid: Boolean

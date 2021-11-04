@@ -56,10 +56,10 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
 
         return if (produceFramework) {
-            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver)
+            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
             val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
             val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
             val namer = ObjCExportNamerImpl(
                     moduleDescriptors.toSet(),
                     context.moduleDescriptor.builtIns,
@@ -68,7 +68,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                     local = false,
                     objcGenerics = objcGenerics
             )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics, unitSuspendFunctionExport)
+            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
             headerGenerator.translateModule()
             headerGenerator.buildInterface()
         } else {
@@ -87,7 +87,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
         if (!context.config.produce.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper()
+        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
                 setOf(codegen.context.moduleDescriptor),
                 context.moduleDescriptor.builtIns,

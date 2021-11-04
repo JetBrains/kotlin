@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
@@ -22,9 +21,8 @@ internal class ObjCExportHeaderGeneratorImpl(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        objcGenerics: Boolean,
-        unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, unitSuspendFunctionExport, ProblemCollector(context)) {
+        objcGenerics: Boolean
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()
 

@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -13,9 +12,8 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         namer: ObjCExportNamer,
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
-        unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
         private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, unitSuspendFunctionExport, problemCollector) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
 
     companion object {
         fun createInstance(
@@ -26,7 +24,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 deprecationResolver: DeprecationResolver? = null,
                 local: Boolean = false,
                 restrictToLocalModules: Boolean = false): ObjCExportHeaderGenerator {
-            val mapper = ObjCExportMapper(deprecationResolver, local)
+            val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
             val namerConfiguration = createNamerConfiguration(configuration)
             val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local)
 
@@ -36,7 +34,6 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 namer,
                 problemCollector,
                 configuration.objcGenerics,
-                configuration.unitSuspendFunctionExport,
                 restrictToLocalModules
             )
         }

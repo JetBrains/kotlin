@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -54,8 +53,7 @@ internal class ObjCExportTranslatorImpl(
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
-        val objcGenerics: Boolean,
-        val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
+        val objcGenerics: Boolean
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -646,7 +644,7 @@ internal class ObjCExportTranslatorImpl(
                         }
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
-                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
+                    is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 val uniqueName = unifyName(candidateName, usedNames)
@@ -657,10 +655,10 @@ internal class ObjCExportTranslatorImpl(
                     MethodBridgeValueParameter.ErrorOutParameter ->
                         ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
 
-                    MethodBridgeValueParameter.SuspendCompletion -> {
+                    is MethodBridgeValueParameter.SuspendCompletion -> {
                         val resultType = when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
                             is ObjCNonNullReferenceType -> {
-                                if ((unitSuspendFunctionExport == UnitSuspendFunctionObjCExport.PROPER) && baseMethod.returnType!!.isUnit()) {
+                                if (bridge.useUnitCompletion) {
                                     null
                                 } else {
                                     ObjCNullableReferenceType(it, isNullableResult = false)
@@ -1009,7 +1007,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
-        unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
         problemCollector: ObjCExportProblemCollector
 ) {
     private val stubs = mutableListOf<Stub<*>>()
@@ -1018,7 +1015,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics, unitSuspendFunctionExport)
+    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
