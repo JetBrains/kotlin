@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
-import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightFacade
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
@@ -90,7 +90,9 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
         //TODO Split by modules
         findFilesForFacade(facadeFqName, scope).ifNotEmpty {
-            listOfNotNull(getOrCreateFirLightFacade(this.toList(), facadeFqName))
+            listOfNotNull(
+                project.getService(SymbolLightClassFacadeCache::class.java).getOrCreateSymbolLightFacade(this.toList(), facadeFqName)
+            )
         } ?: emptyList()
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
@@ -105,7 +107,10 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
             .asSequence()
             .filter { it.isFromSource() }
             .groupBy { it.javaFileFacadeFqName }
-            .mapNotNull { getOrCreateFirLightFacade(it.value, it.key) }
+            .mapNotNull {
+                project.getService(SymbolLightClassFacadeCache::class.java)
+                    .getOrCreateSymbolLightFacade(it.value, it.key)
+            }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> =
         project.createDeclarationProvider(scope)

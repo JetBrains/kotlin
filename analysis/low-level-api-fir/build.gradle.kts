@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-internal-utils"))
 
     api(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 

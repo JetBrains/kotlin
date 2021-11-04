@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
+import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -60,6 +61,7 @@ fun MockProject.registerTestServices(
     registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
     registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
     registerService(ProjectStructureProvider::class.java, KotlinProjectStructureProviderTestImpl(testServices))
+    registerService(SymbolLightClassFacadeCache::class.java)
     reRegisterJavaElementFinder(this)
 }
 

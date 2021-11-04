@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.utils.caches.*
 import java.util.concurrent.ConcurrentHashMap
 
 class FirIdeSessionProviderStorage(val project: Project) {
     private val sessionsCache = ConcurrentHashMap<KtSourceModule, FromModuleViewSessionCache>()
 
-    private val librariesCache by cachedValue(project, project.createLibrariesModificationTracker()) { LibrariesCache() }
+    private val librariesCache by softCachedValue(project, project.createLibrariesModificationTracker()) { LibrariesCache() }
 
     fun getSessionProvider(
         rootModule: KtSourceModule,

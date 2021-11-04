@@ -92,28 +92,8 @@ internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager):
     }
 }
 
-fun getOrCreateFirLightFacade(
-    ktFiles: List<KtFile>,
-    facadeClassFqName: FqName,
-): FirLightClassForFacade? {
-    val firstFile = ktFiles.firstOrNull() ?: return null
-    //TODO Make caching keyed by all files
-    return CachedValuesManager.getCachedValue(firstFile) {
-        CachedValueProvider.Result
-            .create(
-                getOrCreateFirLightFacadeNoCache(ktFiles, facadeClassFqName),
-                firstFile.project.createProjectWideOutOfBlockModificationTracker()
-            )
-    }
-}
 
-fun getOrCreateFirLightFacadeNoCache(
-    ktFiles: List<KtFile>,
-    facadeClassFqName: FqName,
-): FirLightClassForFacade? {
-    val firstFile = ktFiles.firstOrNull() ?: return null
-    return FirLightClassForFacade(firstFile.manager, facadeClassFqName, ktFiles)
-}
+
 
 
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {

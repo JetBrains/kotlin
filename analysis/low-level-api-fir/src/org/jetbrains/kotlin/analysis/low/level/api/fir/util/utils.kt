@@ -95,25 +95,6 @@ internal fun KtDeclaration.isNonAnonymousClassOrObject() =
             && this !is KtEnumEntry
 
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline operator fun <T> CachedValue<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
-
-internal inline fun <T> cachedValue(project: Project, vararg dependencies: Any, crossinline createValue: () -> T) =
-    CachedValuesManager.getManager(project).createCachedValue {
-        CachedValueProvider.Result(
-            createValue(),
-            dependencies
-        )
-    }
-
-/**
- * Creates a value which will be cached until until any physical PSI change happens
- *
- * @see com.intellij.psi.util.CachedValue
- * @see com.intellij.psi.util.PsiModificationTracker.MODIFICATION_COUNT
- */
-internal fun <T> psiModificationTrackerBasedCachedValue(project: Project, createValue: () -> T) =
-    cachedValue(project, PsiModificationTracker.MODIFICATION_COUNT, createValue = createValue)
 
 fun KtElement.getElementTextInContext(): String {
     val context = parentOfType<KtImportDirective>()
