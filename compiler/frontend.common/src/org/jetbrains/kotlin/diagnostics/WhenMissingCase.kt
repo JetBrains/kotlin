@@ -32,8 +32,8 @@ sealed class WhenMissingCase {
     }
 
     sealed class BooleanIsMissing(val value: Boolean) : WhenMissingCase() {
-        object True : BooleanIsMissing(true)
-        object False : BooleanIsMissing(false)
+        object TrueIsMissing : BooleanIsMissing(true)
+        object FalseIsMissing : BooleanIsMissing(false)
 
         override val branchConditionText: String = value.toString()
     }

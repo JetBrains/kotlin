@@ -246,10 +246,10 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         val flags = Flags()
         whenExpression.accept(ConditionChecker, flags)
         if (!flags.containsTrue) {
-            destination.add(WhenMissingCase.BooleanIsMissing.True)
+            destination.add(WhenMissingCase.BooleanIsMissing.TrueIsMissing)
         }
         if (!flags.containsFalse) {
-            destination.add(WhenMissingCase.BooleanIsMissing.False)
+            destination.add(WhenMissingCase.BooleanIsMissing.FalseIsMissing)
         }
     }
 

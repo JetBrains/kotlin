@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cfg
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cfg.WhenOnEnumExhaustivenessChecker.enumEntries
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -117,8 +116,8 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
                 }
             }
         }
-        return (if (!containsTrue) listOf(WhenMissingCase.BooleanIsMissing.True) else listOf()) +
-                (if (!containsFalse) listOf(WhenMissingCase.BooleanIsMissing.False) else listOf()) +
+        return (if (!containsTrue) listOf(WhenMissingCase.BooleanIsMissing.TrueIsMissing) else listOf()) +
+                (if (!containsFalse) listOf(WhenMissingCase.BooleanIsMissing.FalseIsMissing) else listOf()) +
                 WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
