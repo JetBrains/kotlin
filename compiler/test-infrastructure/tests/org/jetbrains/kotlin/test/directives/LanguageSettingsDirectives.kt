@@ -59,6 +59,11 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )
 
+    val RELEASE by valueDirective(
+        description = "Configures corresponding release flag",
+        parser = Integer::valueOf
+    )
+
     val INHERIT_MULTIFILE_PARTS by directive(
         description = "Enables corresponding analysis flag (JvmAnalysisFlags.inheritMultifileParts)"
     )

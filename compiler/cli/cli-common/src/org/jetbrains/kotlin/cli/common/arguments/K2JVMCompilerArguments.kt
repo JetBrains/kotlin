@@ -389,6 +389,16 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
     var stringConcat: String? by NullableStringFreezableVar(null)
 
     @Argument(
+        value = "-Xrelease",
+        valueDescription = "Supported versions depend on used JDK",
+        description = """
+            Compile against specified JDK API. Supported versions depend on used JDK
+        """
+    )
+    var release: String? by NullableStringFreezableVar(null)
+
+
+    @Argument(
         value = "-Xsam-conversions",
         valueDescription = "{class|indy}",
         description = """Select code generation scheme for SAM conversions.

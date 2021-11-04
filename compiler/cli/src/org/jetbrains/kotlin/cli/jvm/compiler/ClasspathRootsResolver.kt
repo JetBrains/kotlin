@@ -55,7 +55,8 @@ class ClasspathRootsResolver(
     private val javaModuleFinder: CliJavaModuleFinder,
     private val requireStdlibModule: Boolean,
     private val outputDirectory: VirtualFile?,
-    private val javaFileManager: KotlinCliJavaFileManager
+    private val javaFileManager: KotlinCliJavaFileManager,
+    private val release: Int
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
@@ -124,8 +125,15 @@ class ClasspathRootsResolver(
                 modules += module
             }
         }
-
-        addModularRoots(modules, result)
+        if (release <= 0 || release >= 9) {
+            addModularRoots(modules, result)
+        } else {
+            //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
+            val listFoldersForRelease = javaModuleFinder.listFoldersForRelease(release)
+            listFoldersForRelease.forEach {
+                result += JavaRoot(it, JavaRoot.RootType.BINARY_SIG)
+            }
+        }
 
         return RootsAndModules(result, modules)
     }

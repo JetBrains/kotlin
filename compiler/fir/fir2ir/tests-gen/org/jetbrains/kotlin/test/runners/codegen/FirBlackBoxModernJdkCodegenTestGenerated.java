@@ -143,6 +143,108 @@ public class FirBlackBoxModernJdkCodegenTestGenerated extends AbstractFirBlackBo
         public void testVarHandle() throws Exception {
             runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/varHandle.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ReleaseFlag {
+            @Test
+            public void testAllFilesPresentInReleaseFlag() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ByteBuffer {
+                @Test
+                public void testAllFilesPresentInByteBuffer() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("byteBuffer.kt")
+                public void testByteBuffer() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer/byteBuffer.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_10.kt")
+                public void testByteBuffer_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer/byteBuffer_10.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_11.kt")
+                public void testByteBuffer_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer/byteBuffer_11.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_6.kt")
+                public void testByteBuffer_6() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer/byteBuffer_6.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_8.kt")
+                public void testByteBuffer_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer/byteBuffer_8.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_9.kt")
+                public void testByteBuffer_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer/byteBuffer_9.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Reflective {
+                @Test
+                public void testAllFilesPresentInReflective() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("reflective.kt")
+                public void testReflective() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective.kt");
+                }
+
+                @Test
+                @TestMetadata("reflective_10.kt")
+                public void testReflective_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective_10.kt");
+                }
+
+                @Test
+                @TestMetadata("reflective_11.kt")
+                public void testReflective_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective_11.kt");
+                }
+
+                @Test
+                @TestMetadata("reflective_6.kt")
+                public void testReflective_6() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective_6.kt");
+                }
+
+                @Test
+                @TestMetadata("reflective_8.kt")
+                public void testReflective_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective_8.kt");
+                }
+
+                @Test
+                @TestMetadata("reflective_9.kt")
+                public void testReflective_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective_9.kt");
+                }
+            }
+        }
     }
 
     @Nested
@@ -222,6 +324,168 @@ public class FirBlackBoxModernJdkCodegenTestGenerated extends AbstractFirBlackBo
             @TestMetadata("recordPropertyAccess.kt")
             public void testRecordPropertyAccess() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordPropertyAccess.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ReleaseFlag {
+            @Test
+            public void testAllFilesPresentInReleaseFlag() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ByteBuffer {
+                @Test
+                public void testAllFilesPresentInByteBuffer() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("byteBuffer.kt")
+                public void testByteBuffer() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_10.kt")
+                public void testByteBuffer_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_10.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_11.kt")
+                public void testByteBuffer_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_11.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_12.kt")
+                public void testByteBuffer_12() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_12.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_13.kt")
+                public void testByteBuffer_13() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_13.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_14.kt")
+                public void testByteBuffer_14() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_14.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_15.kt")
+                public void testByteBuffer_15() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_15.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_16.kt")
+                public void testByteBuffer_16() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_16.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_17.kt")
+                public void testByteBuffer_17() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_17.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_8.kt")
+                public void testByteBuffer_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_8.kt");
+                }
+
+                @Test
+                @TestMetadata("byteBuffer_9.kt")
+                public void testByteBuffer_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer/byteBuffer_9.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Constable {
+                @Test
+                public void testAllFilesPresentInConstable() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("constable.kt")
+                public void testConstable() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_10.kt")
+                public void testConstable_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_10.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_11.kt")
+                public void testConstable_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_11.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_12.kt")
+                public void testConstable_12() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_12.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_13.kt")
+                public void testConstable_13() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_13.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_14.kt")
+                public void testConstable_14() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_14.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_15.kt")
+                public void testConstable_15() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_15.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_16.kt")
+                public void testConstable_16() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_16.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_17.kt")
+                public void testConstable_17() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_17.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_8.kt")
+                public void testConstable_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_8.kt");
+                }
+
+                @Test
+                @TestMetadata("constable_9.kt")
+                public void testConstable_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_9.kt");
+                }
             }
         }
 
