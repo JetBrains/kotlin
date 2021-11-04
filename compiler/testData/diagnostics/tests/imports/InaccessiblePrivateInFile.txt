@@ -7,6 +7,13 @@ package api {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public object Inapplicable : api.ApplicabilityResult {
+            private constructor Inapplicable()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 
     public interface ArgumentMapping {
@@ -34,6 +41,14 @@ package impl {
 
     public final class NullArgumentMapping : api.ArgumentMapping {
         public constructor NullArgumentMapping()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun highlightingApplicabilities(): api.ApplicabilityResult
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class PositionalArgumentMapping : api.ArgumentMapping {
+        public constructor PositionalArgumentMapping()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ fun highlightingApplicabilities(): api.ApplicabilityResult

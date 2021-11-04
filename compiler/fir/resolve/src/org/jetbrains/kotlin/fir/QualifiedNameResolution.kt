@@ -47,6 +47,17 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
     for (scope in createCurrentScopeList()) {
         scope.getSingleClassifier(name)?.let {
             if (it is FirRegularClassSymbol) {
+                val isVisible = session.visibilityChecker.isVisible(
+                    it.fir,
+                    session,
+                    file,
+                    containingDeclarations,
+                    null,
+                    false,
+                )
+                if (!isVisible) {
+                    return@let
+                }
                 val classId = it.classId
                 return buildResolvedQualifier {
                     this.source = source

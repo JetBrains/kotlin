@@ -3,7 +3,9 @@
 // FILE: f11.kt
 package api
 
-interface ApplicabilityResult
+interface ApplicabilityResult {
+    object Inapplicable : ApplicabilityResult {}
+}
 
 // FILE: f12.kt
 package api
@@ -27,4 +29,11 @@ class NullArgumentMapping : ArgumentMapping {
     // This is api.ApplicabilityResult
     override fun highlightingApplicabilities(): ApplicabilityResult = object : ApplicabilityResult {
     }
+}
+
+class PositionalArgumentMapping : ArgumentMapping {
+    // The return type is now resolved properly v
+    override fun highlightingApplicabilities(): ApplicabilityResult =
+        // However, here v we still have a problem
+        ApplicabilityResult.Inapplicable
 }
