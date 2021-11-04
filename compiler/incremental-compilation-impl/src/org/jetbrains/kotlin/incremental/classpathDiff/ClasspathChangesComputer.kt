@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.incremental
+package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.gradle.incremental.ImpactAnalysis.computeImpactedSet
+import org.jetbrains.kotlin.incremental.classpathDiff.ImpactAnalysis.computeImpactedSet
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
