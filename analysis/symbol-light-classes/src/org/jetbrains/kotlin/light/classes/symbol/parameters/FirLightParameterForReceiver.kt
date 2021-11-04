@@ -72,8 +72,7 @@ internal class FirLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         analyzeWithSymbolAsContext(context) {
             receiverTypeAndAnnotations.type.asPsiType(this@FirLightParameterForReceiver)
-                ?: this@FirLightParameterForReceiver.nonExistentType()
-        }
+        } ?: nonExistentType()
     }
 
     override fun getType(): PsiType = _type

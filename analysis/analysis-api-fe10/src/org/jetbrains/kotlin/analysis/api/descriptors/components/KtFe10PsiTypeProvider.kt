@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
 import java.text.StringCharacterIterator
@@ -40,6 +41,11 @@ internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10Analysi
         return asPsiType(simplifyType(kotlinType), useSitePosition, mode)
     }
 
+    override fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode = withValidityAssertion {
+        require(type is KtFe10Type)
+        typeMapper.typeContext.getOptimalModeForValueParameter(type.type)
+    }
+
     private fun simplifyType(type: UnwrappedType): KotlinType {
         var result = type
         do {
@@ -53,7 +59,7 @@ internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10Analysi
         return result
     }
 
-    private fun asPsiType(type: KotlinType, context: PsiElement, mode: TypeMappingMode): PsiType? {
+    private fun asPsiType(type: KotlinType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType? {
         val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
         typeMapper.mapType(type, mode, signatureWriter)
 
@@ -69,7 +75,7 @@ internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10Analysi
         val typeInfo = TypeInfo.fromString(javaType, false)
         val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
-        val typeElement = ClsTypeElementImpl(context, typeText, '\u0000')
+        val typeElement = ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
         return typeElement.type
     }
 }

@@ -13,6 +13,7 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -55,6 +57,11 @@ internal class KtFirPsiTypeProvider(
         mode: TypeMappingMode,
     ): PsiType? = withValidityAssertion {
         type.coneType.asPsiType(rootModuleSession, analysisSession.firResolveState, mode, useSitePosition)
+    }
+
+    override fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode = withValidityAssertion {
+        require(type is KtFirType)
+        rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(type.coneType)
     }
 }
 
