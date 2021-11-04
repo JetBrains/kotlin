@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
@@ -39,6 +40,11 @@ internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10Analysi
         }
 
         return asPsiType(simplifyType(kotlinType), useSitePosition, mode)
+    }
+
+    override fun getOptimalModeForReturnType(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode = withValidityAssertion {
+        require(type is KtFe10Type)
+        typeMapper.typeContext.getOptimalModeForReturnType(type.type, isAnnotationMethod)
     }
 
     override fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode = withValidityAssertion {

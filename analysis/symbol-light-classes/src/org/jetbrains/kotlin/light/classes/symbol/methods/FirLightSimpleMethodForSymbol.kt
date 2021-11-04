@@ -145,7 +145,10 @@ internal class FirLightSimpleMethodForSymbol(
                     else ->
                         functionSymbol.annotatedType.type
                 }
-            ktType.asPsiType(this@FirLightSimpleMethodForSymbol)
+            ktType.asPsiType(
+                this@FirLightSimpleMethodForSymbol,
+                ktType.getOptimalModeForReturnType(containingClass.isAnnotationType)
+            )
         } ?: nonExistentType()
     }
 

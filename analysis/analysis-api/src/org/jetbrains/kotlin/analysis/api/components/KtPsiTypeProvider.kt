@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
     public abstract fun asPsiType(type: KtType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType?
+    public abstract fun getOptimalModeForReturnType(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode
     public abstract fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode
 }
 
@@ -37,6 +38,9 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
     ): PsiType? =
         analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode)
+
+    public fun KtType.getOptimalModeForReturnType(isAnnotationMethod: Boolean): TypeMappingMode =
+        analysisSession.psiTypeProvider.getOptimalModeForReturnType(this, isAnnotationMethod)
 
     public fun KtType.getOptimalModeForValueParameter(): TypeMappingMode =
         analysisSession.psiTypeProvider.getOptimalModeForValueParameter(this)

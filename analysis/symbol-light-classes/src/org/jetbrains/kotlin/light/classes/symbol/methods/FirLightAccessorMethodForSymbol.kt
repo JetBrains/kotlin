@@ -150,9 +150,12 @@ internal class FirLightAccessorMethodForSymbol(
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
         analyzeWithSymbolAsContext(containingPropertySymbol) {
-            containingPropertySymbol.annotatedType.type.asPsiType(this@FirLightAccessorMethodForSymbol)
-                ?: this@FirLightAccessorMethodForSymbol.nonExistentType()
-        }
+            val ktType = containingPropertySymbol.annotatedType.type
+            ktType.asPsiType(
+                this@FirLightAccessorMethodForSymbol,
+                ktType.getOptimalModeForReturnType(containingClass.isAnnotationType)
+            )
+        } ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType

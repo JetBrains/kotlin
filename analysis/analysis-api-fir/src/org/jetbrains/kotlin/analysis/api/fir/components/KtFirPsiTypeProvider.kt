@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi
@@ -57,6 +58,11 @@ internal class KtFirPsiTypeProvider(
         mode: TypeMappingMode,
     ): PsiType? = withValidityAssertion {
         type.coneType.asPsiType(rootModuleSession, analysisSession.firResolveState, mode, useSitePosition)
+    }
+
+    override fun getOptimalModeForReturnType(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode = withValidityAssertion {
+        require(type is KtFirType)
+        rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForReturnType(type.coneType, isAnnotationMethod)
     }
 
     override fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode = withValidityAssertion {

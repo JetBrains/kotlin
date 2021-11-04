@@ -34,10 +34,19 @@ internal class FirLightFieldForPropertySymbol(
             when {
                 isDelegated ->
                     (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
-                        it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol)
+                        val ktType = it.getKtType()
+                        ktType?.asPsiType(
+                            this@FirLightFieldForPropertySymbol,
+                            ktType.getOptimalModeForReturnType(containingClass.isAnnotationType)
+                        )
                     }
-                else ->
-                    propertySymbol.annotatedType.type.asPsiType(this@FirLightFieldForPropertySymbol)
+                else -> {
+                    val ktType = propertySymbol.annotatedType.type
+                    ktType.asPsiType(
+                        this@FirLightFieldForPropertySymbol,
+                        ktType.getOptimalModeForReturnType(containingClass.isAnnotationType)
+                    )
+                }
             }
         } ?: nonExistentType()
     }
