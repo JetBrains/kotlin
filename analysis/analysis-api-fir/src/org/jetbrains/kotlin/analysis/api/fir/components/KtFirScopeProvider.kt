@@ -82,7 +82,7 @@ internal class KtFirScopeProvider(
                 )
             } ?: return@getOrPut getEmptyScope()
 
-            KtFirMemberScope(firScope, token, builder)
+            KtFirDelegatingScope(firScope, builder, token)
         }
     }
 
@@ -90,7 +90,7 @@ internal class KtFirScopeProvider(
         val firScope = symbol.withFirForScope { fir ->
             fir.scopeProvider.getStaticScope(fir, analysisSession.rootModuleSession, ScopeSession())
         } ?: return getEmptyScope()
-        return KtFirDelegatingScopeImpl(firScope, builder, token)
+        return KtFirDelegatingScope(firScope, builder, token)
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
@@ -99,12 +99,12 @@ internal class KtFirScopeProvider(
                 analysisSession.rootModuleSession.declaredMemberScope(it)
             } ?: return@getOrPut getEmptyScope()
 
-            KtFirDeclaredMemberScope(firScope, token, builder)
+            KtFirDelegatingScope(firScope, builder, token)
         }
     }
 
     override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
-        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDeclaredMemberScope)?.firScope
+        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDelegatingScope)?.firScope
             ?: return delegatedMemberScopeCache.getOrPut(classSymbol) { getEmptyScope() }
         delegatedMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope { fir ->
@@ -219,15 +219,9 @@ internal class KtFirScopeProvider(
                 GlobalSearchScope.allScope(project), // todo
                 analysisSession.targetPlatform
             )
-            is FirContainingNamesAwareScope -> KtFirDelegatingScopeImpl(firScope, builder, token)
-            is FirMemberTypeParameterScope -> KtFirDelegatingScopeImpl(firScope, builder, token)
+            is FirContainingNamesAwareScope -> KtFirDelegatingScope(firScope, builder, token)
+            is FirMemberTypeParameterScope -> KtFirDelegatingScope(firScope, builder, token)
             else -> TODO(firScope::class.toString())
         }
     }
 }
-
-private class KtFirDelegatingScopeImpl<S : FirContainingNamesAwareScope>(
-    override val firScope: S,
-    builder: KtSymbolByFirBuilder,
-    token: ValidityToken
-) : KtFirDelegatingScope<S>(builder, token), ValidityTokenOwner

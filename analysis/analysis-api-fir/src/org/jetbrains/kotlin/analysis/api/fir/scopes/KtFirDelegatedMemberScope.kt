@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 
 internal class KtFirDelegatedMemberScope(
-    override val firScope: FirContainingNamesAwareScope,
+    firScope: FirContainingNamesAwareScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder
-) : KtFirDelegatingScope<FirContainingNamesAwareScope>(builder, token) {
+) : KtFirDelegatingScope(firScope, builder, token) {
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> {
         return super.getCallableSymbols(nameFilter).filter { it.origin == KtSymbolOrigin.DELEGATED }
