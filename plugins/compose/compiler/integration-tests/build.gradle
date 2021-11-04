@@ -15,6 +15,7 @@
  */
 
 import androidx.build.SdkResourceGenerator
+import static androidx.build.AndroidXPlugin.isPlayground
 
 plugins {
     id("kotlin")
@@ -30,7 +31,8 @@ dependencies {
 
 SdkResourceGenerator.generateForHostTest(project)
 
-tasks.findByPath("test").dependsOn(
-        tasks.findByPath(":compose:compiler:compiler:publish"),
-        tasks.findByPath(":compose:runtime:runtime:publish")
-)
+def testTask = tasks.findByPath("test")
+testTask.dependsOn(tasks.findByPath(":compose:compiler:compiler:publish"))
+if (!isPlayground(project)) {
+    testTask.dependsOn(tasks.findByPath(":compose:runtime:runtime:publish"))
+}
