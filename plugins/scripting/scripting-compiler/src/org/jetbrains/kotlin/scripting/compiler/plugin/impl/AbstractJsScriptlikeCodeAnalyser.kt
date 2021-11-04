@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -56,6 +57,7 @@ abstract class AbstractJsScriptlikeCodeAnalyser(
         val lookupTracker = LookupTracker.DO_NOTHING
         val expectActualTracker = ExpectActualTracker.DoNothing
         val inlineConstTracker = InlineConstTracker.DoNothing
+        val enumWhenTracker = EnumWhenTracker.DoNothing
         val additionalPackages = emptyList<PackageFragmentProvider>()
         val moduleDescriptor = moduleContext.module
 
@@ -68,6 +70,7 @@ abstract class AbstractJsScriptlikeCodeAnalyser(
             lookupTracker,
             expectActualTracker,
             inlineConstTracker,
+            enumWhenTracker,
             additionalPackages,
             CompilerEnvironment,
         )

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
@@ -38,6 +35,7 @@ open class CompilerCallbackServicesFacadeServer(
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
     val expectActualTracker: ExpectActualTracker? = null,
     val inlineConstTracker: InlineConstTracker? = null,
+    val enumWhenTracker: EnumWhenTracker? = null,
     val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
     val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
@@ -56,6 +54,8 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasExpectActualTracker(): Boolean = expectActualTracker != null
 
     override fun hasInlineConstTracker(): Boolean = inlineConstTracker != null
+
+    override fun hasEnumWhenTracker(): Boolean = enumWhenTracker != null
 
     override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
 
@@ -122,6 +122,10 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String) {
         inlineConstTracker?.report(filePath, owner, name, constType) ?: throw NullPointerException("inlineConstTracker was not initialized")
+    }
+
+    override fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String) {
+        enumWhenTracker?.report(whenUsageClassPath, enumClassFqName) ?: throw NullPointerException("enumWhenTracker was not initialized")
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {

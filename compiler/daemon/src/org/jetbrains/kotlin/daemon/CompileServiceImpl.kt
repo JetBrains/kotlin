@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -885,6 +886,9 @@ class CompileServiceImpl(
         }
         if (facade.hasInlineConstTracker()) {
             builder.register(InlineConstTracker::class.java, RemoteInlineConstTracker(facade, rpcProfiler))
+        }
+        if (facade.hasEnumWhenTracker()) {
+            builder.register(EnumWhenTracker::class.java, RemoteEnumWhenTracker(facade, rpcProfiler))
         }
         if (facade.hasIncrementalResultsConsumer()) {
             builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, eventManager, rpcProfiler))

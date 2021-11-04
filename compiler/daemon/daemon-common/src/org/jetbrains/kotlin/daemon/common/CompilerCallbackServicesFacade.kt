@@ -52,6 +52,9 @@ interface CompilerCallbackServicesFacade : Remote {
     fun hasInlineConstTracker(): Boolean
 
     @Throws(RemoteException::class)
+    fun hasEnumWhenTracker(): Boolean
+
+    @Throws(RemoteException::class)
     fun hasIncrementalResultsConsumer(): Boolean
 
     @Throws(RemoteException::class)
@@ -108,6 +111,11 @@ interface CompilerCallbackServicesFacade : Remote {
     // InlineConstTracker
     @Throws(RemoteException::class)
     fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String)
+
+    // ---------------------------------------------------
+    // EnumWhenTracker
+    @Throws(RemoteException::class)
+    fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String)
 
     // ---------------------------------------------------
     // IncrementalResultsConsumer (js)
