@@ -1053,7 +1053,7 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
 /**
  * Returns `true` if all characters match the given [predicate].
  * 
- * @sample samples.collections.Collections.Aggregates.all
+ * @sample samples.text.Strings.all
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false

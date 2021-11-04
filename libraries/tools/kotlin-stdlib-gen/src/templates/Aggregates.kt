@@ -51,6 +51,10 @@ object Aggregates : TemplateGroupBase() {
             return true
             """
         }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.all")
+        }
     }
 
     val f_none_predicate = fn("none(predicate: (T) -> Boolean)") {

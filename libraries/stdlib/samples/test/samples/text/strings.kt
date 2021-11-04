@@ -420,6 +420,14 @@ class Strings {
     }
 
     @Sample
+    fun all() {
+        val string = "Kotlin"
+        assertTrue(string.all { it.isLetter() })
+        assertFalse(string.all { it.isLowerCase() })
+        assertFalse(string.all { it.isDigit() })
+    }
+
+    @Sample
     fun indexOf() {
         fun matchDetails(inputString: String, whatToFind: String, startIndex: Int = 0): String {
             val matchIndex = inputString.indexOf(whatToFind, startIndex)
