@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -162,6 +163,7 @@ object TopDownAnalyzerFacadeForJVM {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val inlineConstTracker = configuration.get(CommonConfigurationKeys.INLINE_CONST_TRACKER) ?: InlineConstTracker.DoNothing
+        val enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER) ?: EnumWhenTracker.DoNothing
         val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
 
         val separateModules = !configuration.getBoolean(JVMConfigurationKeys.USE_SINGLE_MODULE)
@@ -196,7 +198,7 @@ object TopDownAnalyzerFacadeForJVM {
             val dependenciesContainer = createContainerForLazyResolveWithJava(
                 jvmPlatform,
                 dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, moduleClassResolver,
-                targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker,
+                targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker,
                 packagePartProvider(dependencyScope), languageVersionSettings,
                 useBuiltInsProvider = true,
                 configureJavaClassFinder = configureJavaClassFinder,
@@ -231,7 +233,7 @@ object TopDownAnalyzerFacadeForJVM {
         val container = createContainerForLazyResolveWithJava(
             jvmPlatform,
             moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, moduleClassResolver,
-            targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker,
+            targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker,
             partProvider, languageVersionSettings,
             useBuiltInsProvider = true,
             configureJavaClassFinder = configureJavaClassFinder,

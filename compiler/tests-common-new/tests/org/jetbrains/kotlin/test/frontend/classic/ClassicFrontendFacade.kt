@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -214,6 +215,7 @@ class ClassicFrontendFacade(
             CompilerEnvironment, LookupTracker.DO_NOTHING,
             ExpectActualTracker.DoNothing,
             InlineConstTracker.DoNothing,
+            EnumWhenTracker.DoNothing,
             packagePartProviderFactory(moduleContentScope),
             module.languageVersionSettings,
             useBuiltInsProvider = true

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -424,7 +425,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             moduleContentScope,
             moduleClassResolver,
             CompilerEnvironment,
-            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing,
+            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing, EnumWhenTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             languageVersionSettings,
             useBuiltInsProvider = true
