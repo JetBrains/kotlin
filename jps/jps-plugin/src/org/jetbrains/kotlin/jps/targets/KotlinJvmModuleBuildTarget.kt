@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -80,9 +81,10 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
-        inlineConstTracker: InlineConstTracker
+        inlineConstTracker: InlineConstTracker,
+        enumWhenTracker: EnumWhenTracker
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker)
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker)
 
         with(builder) {
             register(
@@ -363,6 +365,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val previousMappings = localContext.projectDescriptor.dataManager.mappings
         val callback = JavaBuilderUtil.getDependenciesRegistrar(localContext)
         val inlineConstTracker = environment.services[InlineConstTracker::class.java] as InlineConstTrackerImpl
+        val enumWhenTracker = environment.services[EnumWhenTracker::class.java] as EnumWhenTrackerImpl
 
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
@@ -393,24 +396,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
                 // process inlineConstTracker
                 for (sourceFile: File in sourceFiles) {
-                    val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.mapNotNull { cRef: ConstantRef ->
-                        val descriptor = when (cRef.constType) {
-                            "Byte" -> "B"
-                            "Short" -> "S"
-                            "Int" -> "I"
-                            "Long" -> "J"
-                            "Float" -> "F"
-                            "Double" -> "D"
-                            "Boolean" -> "Z"
-                            "Char" -> "C"
-                            "String" -> "Ljava/lang/String;"
-                            else -> null
-                        } ?: return@mapNotNull null
-                        Callbacks.createConstantReference(cRef.owner, cRef.name, descriptor)
-                    } ?: continue
-
-                    val className = output.outputClass.className.internalName
-                    callback.registerConstantReferences(className, cRefs)
+                    processInlineConstTracker(inlineConstTracker, sourceFile, output, callback)
+                    processEnumWhenTracker(enumWhenTracker, sourceFile, output, callback)
                 }
 
                 callback.associate(
@@ -424,5 +411,31 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val allCompiled = dirtyFilesHolder.allDirtyFiles
         JavaBuilderUtil.registerFilesToCompile(localContext, allCompiled)
         JavaBuilderUtil.registerSuccessfullyCompiled(localContext, allCompiled)
+    }
+
+    private fun processInlineConstTracker(inlineConstTracker: InlineConstTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Callbacks.Backend) {
+        val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.mapNotNull { cRef: ConstantRef ->
+            val descriptor = when (cRef.constType) {
+                "Byte" -> "B"
+                "Short" -> "S"
+                "Int" -> "I"
+                "Long" -> "J"
+                "Float" -> "F"
+                "Double" -> "D"
+                "Boolean" -> "Z"
+                "Char" -> "C"
+                "String" -> "Ljava/lang/String;"
+                else -> null
+            } ?: return@mapNotNull null
+            Callbacks.createConstantReference(cRef.owner, cRef.name, descriptor)
+        } ?: return
+
+        val className = output.outputClass.className.internalName
+        callback.registerConstantReferences(className, cRefs)
+    }
+
+    private fun processEnumWhenTracker(enumWhenTracker: EnumWhenTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Callbacks.Backend) {
+        val enumFqNameClasses = enumWhenTracker.whenExpressionFilePathToEnumClassMap[sourceFile.path]?.map { "$it.*" } ?: return
+        callback.registerImports(output.outputClass.className.internalName, listOf(), enumFqNameClasses)
     }
 }

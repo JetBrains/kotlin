@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.IncrementalJsCache
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -70,9 +71,10 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
-        inlineConstTracker: InlineConstTracker
+        inlineConstTracker: InlineConstTracker,
+        enumWhenTracker: EnumWhenTracker
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker)
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker)
 
         with(builder) {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())

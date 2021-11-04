@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.KotlinFrontEndException;
-import org.jetbrains.kotlin.util.LookupTrackerUtilKt;
+import org.jetbrains.kotlin.util.IncrementalTrackerUtilKt;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
@@ -236,7 +236,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
         KotlinType resultType = typeInfo.getType();
 
         if (resultType != null) {
-            LookupTrackerUtilKt.record(lookupTracker, expression, resultType);
+            IncrementalTrackerUtilKt.record(lookupTracker, expression, resultType);
         }
     }
 

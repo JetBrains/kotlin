@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cfg
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
@@ -24,6 +25,7 @@ interface ControlFlowInformationProvider {
             trace: BindingTrace,
             languageVersionSettings: LanguageVersionSettings,
             diagnosticSuppressor: PlatformDiagnosticSuppressor,
+            enumWhenTracker: EnumWhenTracker
         ): ControlFlowInformationProvider
     }
 }

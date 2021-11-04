@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -38,6 +39,7 @@ internal class JpsCompilerServicesFacadeImpl(
     env.services[CompilationCanceledStatus::class.java],
     env.services[ExpectActualTracker::class.java],
     env.services[InlineConstTracker::class.java],
+    env.services[EnumWhenTracker::class.java],
     env.services[IncrementalResultsConsumer::class.java],
     env.services[IncrementalDataProvider::class.java],
     port

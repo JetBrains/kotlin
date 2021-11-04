@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -58,13 +60,15 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.record
 
 class ControlFlowInformationProviderImpl private constructor(
     private val subroutine: KtElement,
     private val trace: BindingTrace,
     private val pseudocode: Pseudocode,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val diagnosticSuppressor: PlatformDiagnosticSuppressor
+    private val diagnosticSuppressor: PlatformDiagnosticSuppressor,
+    private val enumWhenTracker: EnumWhenTracker?
 ) : ControlFlowInformationProvider {
     private val pseudocodeVariablesData by lazy {
         PseudocodeVariablesData(pseudocode, trace.bindingContext)
@@ -74,13 +78,15 @@ class ControlFlowInformationProviderImpl private constructor(
         declaration: KtElement,
         trace: BindingTrace,
         languageVersionSettings: LanguageVersionSettings,
-        diagnosticSuppressor: PlatformDiagnosticSuppressor
+        diagnosticSuppressor: PlatformDiagnosticSuppressor,
+        enumWhenTracker: EnumWhenTracker? = null
     ) : this(
         declaration,
         trace,
         ControlFlowProcessor(trace, languageVersionSettings).generatePseudocode(declaration),
         languageVersionSettings,
-        diagnosticSuppressor
+        diagnosticSuppressor,
+        enumWhenTracker
     )
 
     override fun checkForLocalClassOrObjectMode() {
@@ -231,7 +237,7 @@ class ControlFlowInformationProviderImpl private constructor(
                 val expectedType = functionDescriptor?.returnType
 
                 val providerForLocalDeclaration = ControlFlowInformationProviderImpl(
-                    element, trace, localDeclarationInstruction.body, languageVersionSettings, diagnosticSuppressor
+                    element, trace, localDeclarationInstruction.body, languageVersionSettings, diagnosticSuppressor, enumWhenTracker
                 )
 
                 providerForLocalDeclaration.checkFunction(expectedType)
@@ -1057,6 +1063,9 @@ class ControlFlowInformationProviderImpl private constructor(
                         }
                         continue
                     }
+
+                    enumWhenTracker?.record(subjectType, subjectExpression, elseEntry)
+
                     if (!usedAsExpression) {
                         if (languageVersionSettings.supportsFeature(LanguageFeature.WarnAboutNonExhaustiveWhenOnAlgebraicTypes)) {
                             // report warnings on all non-exhaustive when's with algebraic subject
@@ -1318,9 +1327,10 @@ class ControlFlowInformationProviderImpl private constructor(
             declaration: KtElement,
             trace: BindingTrace,
             languageVersionSettings: LanguageVersionSettings,
-            diagnosticSuppressor: PlatformDiagnosticSuppressor
+            diagnosticSuppressor: PlatformDiagnosticSuppressor,
+            enumWhenTracker: EnumWhenTracker
         ): ControlFlowInformationProvider =
-            ControlFlowInformationProviderImpl(declaration, trace, languageVersionSettings, diagnosticSuppressor)
+            ControlFlowInformationProviderImpl(declaration, trace, languageVersionSettings, diagnosticSuppressor, enumWhenTracker)
     }
 
     companion object {

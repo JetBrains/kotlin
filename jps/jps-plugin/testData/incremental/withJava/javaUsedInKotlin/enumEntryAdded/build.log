@@ -8,9 +8,6 @@ Exit code: NOTHING_DONE
 Compiling files:
   src/Enum.java
 End of files
-
-================ Step #2 =================
-
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/UseKt$WhenMappings.class
@@ -19,5 +16,21 @@ End of files
 Compiling files:
   src/use.kt
 End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'when' expression must be exhaustive, add necessary 'C' branch or 'else' branch instead
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/Enum.class
+End of files
+Compiling files:
+  src/use.kt
+End of files
 Exit code: OK
 ------------------------------------------
+Compiling files:
+  src/Enum.java
+End of files

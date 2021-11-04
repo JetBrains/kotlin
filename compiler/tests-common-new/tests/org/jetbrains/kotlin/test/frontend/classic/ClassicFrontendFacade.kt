@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -208,6 +209,7 @@ class ClassicFrontendFacade(
             lookupTracker = LookupTracker.DO_NOTHING,
             expectActualTracker = ExpectActualTracker.DoNothing,
             inlineConstTracker = InlineConstTracker.DoNothing,
+            enumWhenTracker = EnumWhenTracker.DoNothing,
             packagePartProvider = packagePartProviderFactory(moduleContentScope),
             languageVersionSettings = module.languageVersionSettings,
             useBuiltInsProvider = true

@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
@@ -96,6 +95,10 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): FirStatement {
         processExhaustivenessCheck(whenExpression)
+        bodyResolveComponents.session.enumWhenTracker?.reportEnumUsageInWhen(
+            bodyResolveComponents.file.sourceFile?.path,
+            getSubjectType(bodyResolveComponents.session, whenExpression)
+        )
         return whenExpression
     }
 

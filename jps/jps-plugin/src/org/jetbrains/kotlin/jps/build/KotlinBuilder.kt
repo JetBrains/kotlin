@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
@@ -236,6 +237,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LookupTracker.DO_NOTHING,
             ExpectActualTracker.DoNothing,
             InlineConstTracker.DoNothing,
+            EnumWhenTracker.DoNothing,
             chunk,
             messageCollector
         ) ?: return
@@ -356,7 +358,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (!kotlinChunk.haveSameCompiler) {
             messageCollector.report(
                 ERROR,
-                KotlinJpsBundle.message("error.text.cyclically.dependent.modules.0.should.have.same.compiler", kotlinChunk.presentableModulesToCompilersList)
+                KotlinJpsBundle.message(
+                    "error.text.cyclically.dependent.modules.0.should.have.same.compiler",
+                    kotlinChunk.presentableModulesToCompilersList
+                )
             )
             return ABORT
         }
@@ -394,8 +399,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val targetsWithoutOutputDir = targets.filter { it.outputDir == null }
         if (targetsWithoutOutputDir.isNotEmpty()) {
-            messageCollector.report(ERROR,
-                                    KotlinJpsBundle.message("error.text.output.directory.not.specified.for.0", targetsWithoutOutputDir.joinToString())
+            messageCollector.report(
+                ERROR,
+                KotlinJpsBundle.message("error.text.output.directory.not.specified.for.0", targetsWithoutOutputDir.joinToString())
             )
             return ABORT
         }
@@ -405,6 +411,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val exceptActualTracer = ExpectActualTrackerImpl()
         val incrementalCaches = kotlinChunk.loadCaches()
         val inlineConstTracker = InlineConstTrackerImpl()
+        val enumWhenTracker = EnumWhenTrackerImpl()
         val environment = createCompileEnvironment(
             context,
             representativeTarget,
@@ -412,6 +419,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             lookupTracker,
             exceptActualTracer,
             inlineConstTracker,
+            enumWhenTracker,
             chunk,
             messageCollector
         ) ?: return ABORT
@@ -604,11 +612,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
+        enumWhenTracker: EnumWhenTracker,
         chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
-            kotlinModuleBuilderTarget.makeServices(this, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker)
+            kotlinModuleBuilderTarget.makeServices(
+                this,
+                incrementalCaches,
+                lookupTracker,
+                exceptActualTracer,
+                inlineConstTracker,
+                enumWhenTracker
+            )
             build()
         }
 

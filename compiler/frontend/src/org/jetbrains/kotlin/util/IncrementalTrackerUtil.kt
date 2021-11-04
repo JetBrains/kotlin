@@ -18,11 +18,16 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.containingPackage
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -49,4 +54,21 @@ fun LookupTracker.record(expression: KtExpression, type: KotlinType) {
             record(expression, typeArgument.type)
         }
     }
+}
+
+fun EnumWhenTracker.record(subjectType: KotlinType?, subjectExpression: KtExpression, elseEntry: KtWhenEntry?) {
+    if (elseEntry != null) return
+    if (subjectExpression !is KtNameReferenceExpression) return
+
+    val declarationDescriptor = subjectType?.constructor?.declarationDescriptor ?: return
+    val containingPackage = declarationDescriptor.containingPackage()?.toString() ?: return
+    val fqName = declarationDescriptor.fqNameSafe.asString()
+    val filePath = subjectExpression.containingFile.virtualFile?.path ?: return
+    val owner = if (fqName.startsWith("$containingPackage.")) {
+        containingPackage + "." + fqName.substring(containingPackage.length + 1).replace(".", "$")
+    } else {
+        fqName.replace(".", "$")
+    }
+
+    this.report(filePath, owner)
 }

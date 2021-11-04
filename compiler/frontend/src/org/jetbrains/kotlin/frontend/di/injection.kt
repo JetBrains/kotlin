@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.TypeAttributeTranslatorExtension
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -130,10 +131,16 @@ fun StorageComponentContainer.configureStandardResolveComponents() {
     useImpl<AnnotationResolverImpl>()
 }
 
-fun StorageComponentContainer.configureIncrementalCompilation(lookupTracker: LookupTracker, expectActualTracker: ExpectActualTracker, inlineConstTracker: InlineConstTracker) {
+fun StorageComponentContainer.configureIncrementalCompilation(
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker,
+    inlineConstTracker: InlineConstTracker,
+    enumWhenTracker: EnumWhenTracker
+) {
     useInstance(lookupTracker)
     useInstance(expectActualTracker)
     useInstance(inlineConstTracker)
+    useInstance(enumWhenTracker)
 }
 
 fun createContainerForBodyResolve(
@@ -209,6 +216,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useInstance(lookupTracker)
     useInstance(ExpectActualTracker.DoNothing)
     useInstance(InlineConstTracker.DoNothing)
+    useInstance(EnumWhenTracker.DoNothing)
 
     useImpl<LazyTopDownAnalyzer>()
 

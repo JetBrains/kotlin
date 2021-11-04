@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideStorage
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.fir.types.TypeComponents
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
@@ -94,7 +95,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
  * Resolve components which are same on all platforms
  */
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null) {
+fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, enumWhenTracker: EnumWhenTracker? = null) {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
     register(CheckersComponent::class, CheckersComponent())
@@ -108,6 +109,12 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null) {
         register(
             FirLookupTrackerComponent::class,
             IncrementalPassThroughLookupTrackerComponent(lookupTracker, firFileToPath)
+        )
+    }
+    if (enumWhenTracker != null) {
+        register(
+            FirEnumWhenTrackerComponent::class,
+            IncrementalPassThroughEnumWhenTrackerComponent(enumWhenTracker)
         )
     }
 }

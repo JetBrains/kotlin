@@ -403,6 +403,7 @@ fun createSession(
         projectEnvironment.getSearchScopeForProjectJavaSources(),
         librariesScope,
         lookupTracker = moduleConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
+        enumWhenTracker = moduleConfiguration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
         providerAndScopeForIncrementalCompilation,
         extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)?.let { FirExtensionRegistrar.getInstances(it.project) }
             ?: emptyList(),
