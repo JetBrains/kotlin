@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -32,24 +33,34 @@ internal class KtFe10PsiTypeProvider(override val analysisSession: KtFe10Analysi
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisSession.resolveSession) }
 
-    override fun asPsiType(type: KtType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType? = withValidityAssertion {
+    override fun asPsiType(
+        type: KtType,
+        useSitePosition: PsiElement,
+        mode: KtTypeMappingMode,
+        isAnnotationMethod: Boolean,
+    ): PsiType? = withValidityAssertion {
         val kotlinType = (type as KtFe10Type).type
 
         if (kotlinType.isError || kotlinType.arguments.any { !it.isStarProjection && it.type.isError }) {
             return null
         }
 
-        return asPsiType(simplifyType(kotlinType), useSitePosition, mode)
+        return asPsiType(simplifyType(kotlinType), useSitePosition, mode.toTypeMappingMode(type, isAnnotationMethod))
     }
 
-    override fun getOptimalModeForReturnType(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode = withValidityAssertion {
+    private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
         require(type is KtFe10Type)
-        typeMapper.typeContext.getOptimalModeForReturnType(type.type, isAnnotationMethod)
-    }
-
-    override fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode = withValidityAssertion {
-        require(type is KtFe10Type)
-        typeMapper.typeContext.getOptimalModeForValueParameter(type.type)
+        return when (this) {
+            KtTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
+            KtTypeMappingMode.DEFAULT_UAST -> TypeMappingMode.DEFAULT_UAST
+            KtTypeMappingMode.GENERIC_ARGUMENT -> TypeMappingMode.GENERIC_ARGUMENT
+            KtTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
+            KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
+            KtTypeMappingMode.RETURN_TYPE ->
+                typeMapper.typeContext.getOptimalModeForReturnType(type.type, isAnnotationMethod)
+            KtTypeMappingMode.VALUE_PARAMETER ->
+                typeMapper.typeContext.getOptimalModeForValueParameter(type.type)
+        }
     }
 
     private fun simplifyType(type: UnwrappedType): KotlinType {

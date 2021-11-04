@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -150,10 +151,10 @@ internal class FirLightAccessorMethodForSymbol(
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
         analyzeWithSymbolAsContext(containingPropertySymbol) {
-            val ktType = containingPropertySymbol.annotatedType.type
-            ktType.asPsiType(
+            containingPropertySymbol.annotatedType.type.asPsiType(
                 this@FirLightAccessorMethodForSymbol,
-                ktType.getOptimalModeForReturnType(containingClass.isAnnotationType)
+                KtTypeMappingMode.RETURN_TYPE,
+                containingClass.isAnnotationType
             )
         } ?: nonExistentType()
     }

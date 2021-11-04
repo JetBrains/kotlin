@@ -67,8 +67,7 @@ internal class FirLightFieldForEnumEntry(
     private val _type: PsiType by lazyPub {
         analyzeWithSymbolAsContext(enumEntrySymbol) {
             enumEntrySymbol.annotatedType.type.asPsiType(this@FirLightFieldForEnumEntry)
-                ?: this@FirLightFieldForEnumEntry.nonExistentType()
-        }
+        } ?: nonExistentType()
     }
 
     override fun getType(): PsiType = _type

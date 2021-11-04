@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameterBaseForSymbol(
@@ -49,10 +49,10 @@ internal abstract class FirLightParameterBaseForSymbol(
         val convertedType = analyzeWithSymbolAsContext(parameterSymbol) {
             val ktType = parameterSymbol.annotatedType.type
             val typeMappingMode = when {
-                ktType.isSuspendFunctionType -> TypeMappingMode.DEFAULT
+                ktType.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
                 // TODO: extract type mapping mode from annotation?
                 // TODO: methods with declaration site wildcards?
-                else -> ktType.getOptimalModeForValueParameter()
+                else -> KtTypeMappingMode.VALUE_PARAMETER
             }
             ktType.asPsiType(this@FirLightParameterBaseForSymbol, typeMappingMode)
         } ?: nonExistentType()

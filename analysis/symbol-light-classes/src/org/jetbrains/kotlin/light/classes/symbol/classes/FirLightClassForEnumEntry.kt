@@ -10,11 +10,11 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class FirLightClassForEnumEntry(
@@ -82,8 +82,7 @@ internal class FirLightClassForEnumEntry(
 
     private val _extendsList: PsiReferenceList? by lazyPub {
         val mappedType = analyzeWithSymbolAsContext(enumEntrySymbol) {
-            enumEntrySymbol.annotatedType
-                .type.asPsiType(this@FirLightClassForEnumEntry, TypeMappingMode.SUPER_TYPE) as? PsiClassType
+            enumEntrySymbol.annotatedType.type.asPsiType(this@FirLightClassForEnumEntry, KtTypeMappingMode.SUPER_TYPE) as? PsiClassType
                 ?: return@lazyPub null
         }
 

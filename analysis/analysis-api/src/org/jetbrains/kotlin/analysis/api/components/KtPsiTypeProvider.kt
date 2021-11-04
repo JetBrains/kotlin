@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun asPsiType(type: KtType, useSitePosition: PsiElement, mode: TypeMappingMode): PsiType?
-    public abstract fun getOptimalModeForReturnType(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode
-    public abstract fun getOptimalModeForValueParameter(type: KtType): TypeMappingMode
+    public abstract fun asPsiType(
+        type: KtType,
+        useSitePosition: PsiElement,
+        mode: KtTypeMappingMode,
+        isAnnotationMethod: Boolean,
+    ): PsiType?
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -35,13 +38,9 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtType.asPsiType(
         useSitePosition: PsiElement,
-        mode: TypeMappingMode = TypeMappingMode.DEFAULT,
+        mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
+        isAnnotationMethod: Boolean = false,
     ): PsiType? =
-        analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode)
+        analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode, isAnnotationMethod)
 
-    public fun KtType.getOptimalModeForReturnType(isAnnotationMethod: Boolean): TypeMappingMode =
-        analysisSession.psiTypeProvider.getOptimalModeForReturnType(this, isAnnotationMethod)
-
-    public fun KtType.getOptimalModeForValueParameter(): TypeMappingMode =
-        analysisSession.psiTypeProvider.getOptimalModeForValueParameter(this)
 }

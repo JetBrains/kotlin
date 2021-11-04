@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
@@ -147,7 +148,8 @@ internal class FirLightSimpleMethodForSymbol(
                 }
             ktType.asPsiType(
                 this@FirLightSimpleMethodForSymbol,
-                ktType.getOptimalModeForReturnType(containingClass.isAnnotationType)
+                KtTypeMappingMode.RETURN_TYPE,
+                containingClass.isAnnotationType
             )
         } ?: nonExistentType()
     }
