@@ -3,7 +3,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: NATIVE
-
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 import kotlin.reflect.KCallable

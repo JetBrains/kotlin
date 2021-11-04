@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND: WASM
 // KT-33992
 
 class P<T>(val a: T, val b: T)

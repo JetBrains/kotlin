@@ -1,6 +1,6 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-
+// IGNORE_BACKEND: WASM
 package test
 
 import kotlin.reflect.typeOf
