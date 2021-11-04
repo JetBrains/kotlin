@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -52,6 +53,10 @@ internal abstract class KtFirDelegatingScope<S : FirContainingNamesAwareScope>(
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
         firScope.getConstructors(builder)
+    }
+
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
     }
 
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {

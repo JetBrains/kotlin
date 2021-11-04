@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -51,11 +52,15 @@ internal abstract class KtFe10ScopeResolution : KtScope, ValidityTokenOwner {
             .map { it.toKtConstructorSymbol(analysisSession) }
     }
 
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
+    }
+
     override val token: ValidityToken
         get() = analysisSession.token
 }
 
-internal open class KtFe10ScopeLexical(
+internal class KtFe10ScopeLexical(
     override val scope: LexicalScope,
     override val analysisSession: KtFe10AnalysisSession
 ) : KtFe10ScopeResolution(), ValidityTokenOwner {
@@ -71,7 +76,8 @@ internal open class KtFe10ScopeLexical(
 internal open class KtFe10ScopeMember(
     override val scope: MemberScope,
     override val analysisSession: KtFe10AnalysisSession
-) : KtFe10ScopeResolution(), ValidityTokenOwner {
+) : KtFe10ScopeResolution() {
+
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         return scope.getFunctionNames() + scope.getVariableNames()
     }

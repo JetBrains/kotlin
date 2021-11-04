@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -12,6 +14,10 @@ import org.jetbrains.kotlin.name.Name
 public interface KtImportingScope : KtScope {
     public val imports: List<Import>
     public val isDefaultImportingScope: Boolean
+
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
+    }
 }
 
 public interface KtStarImportingScope : KtImportingScope {

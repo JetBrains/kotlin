@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.SimpleKtCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
 import org.jetbrains.kotlin.analysis.api.scopes.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -54,11 +54,11 @@ internal class KtFirScopeProvider(
     private val builder by weakRef(builder)
     private val firResolveState by weakRef(firResolveState)
 
-    private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtMemberScope>()
-    private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtDeclaredMemberScope>()
-    private val delegatedMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtDelegatedMemberScope>()
-    private val fileScopeCache = IdentityHashMap<KtFileSymbol, KtDeclarationScope<KtSymbolWithDeclarations>>()
-    private val packageMemberScopeCache = IdentityHashMap<KtPackageSymbol, KtPackageScope>()
+    private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
+    private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
+    private val delegatedMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
+    private val fileScopeCache = IdentityHashMap<KtFileSymbol, KtScope>()
+    private val packageMemberScopeCache = IdentityHashMap<KtPackageSymbol, KtScope>()
 
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? = when (this) {
         is KtFirNamedClassOrObjectSymbol -> firRef.withFir(FirResolvePhase.TYPES, body)
@@ -71,9 +71,8 @@ internal class KtFirScopeProvider(
         else -> error { "Unknown KtSymbolWithDeclarations implementation ${this::class.qualifiedName}" }
     }
 
-    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope = withValidityAssertion {
+    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
         memberScopeCache.getOrPut(classSymbol) {
-
             val firScope = classSymbol.withFirForScope { fir ->
                 val firSession = analysisSession.rootModuleSession
                 fir.unsubstitutedScope(
@@ -81,32 +80,32 @@ internal class KtFirScopeProvider(
                     ScopeSession(),
                     withForcedTypeCalculator = false
                 )
-            } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
+            } ?: return@getOrPut getEmptyScope()
 
-            KtFirMemberScope(classSymbol, firScope, token, builder)
+            KtFirMemberScope(firScope, token, builder)
         }
     }
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
         val firScope = symbol.withFirForScope { fir ->
             fir.scopeProvider.getStaticScope(fir, analysisSession.rootModuleSession, ScopeSession())
-        } ?: return KtFirEmptyMemberScope(symbol)
+        } ?: return getEmptyScope()
         return KtFirDelegatingScopeImpl(firScope, builder, token)
     }
 
-    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope = withValidityAssertion {
+    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
         declaredMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope {
                 analysisSession.rootModuleSession.declaredMemberScope(it)
-            } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
+            } ?: return@getOrPut getEmptyScope()
 
-            KtFirDeclaredMemberScope(classSymbol, firScope, token, builder)
+            KtFirDeclaredMemberScope(firScope, token, builder)
         }
     }
 
-    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtDelegatedMemberScope = withValidityAssertion {
+    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
         val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDeclaredMemberScope)?.firScope
-            ?: return delegatedMemberScopeCache.getOrPut(classSymbol) { KtFirEmptyMemberScope(classSymbol) }
+            ?: return delegatedMemberScopeCache.getOrPut(classSymbol) { getEmptyScope() }
         delegatedMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope { fir ->
                 val delegateFields = fir.delegateFields
@@ -119,20 +118,24 @@ internal class KtFirScopeProvider(
                         delegateFields
                     )
                 } else null
-            } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
+            } ?: return@getOrPut getEmptyScope()
 
-            KtFirDelegatedMemberScope(classSymbol, firScope, token, builder)
+            KtFirDelegatedMemberScope(firScope, token, builder)
         }
     }
 
-    override fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations> = withValidityAssertion {
+    override fun getFileScope(fileSymbol: KtFileSymbol): KtScope = withValidityAssertion {
         fileScopeCache.getOrPut(fileSymbol) {
             check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
             KtFirFileScope(fileSymbol, token, builder)
         }
     }
 
-    override fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope = withValidityAssertion {
+    override fun getEmptyScope(): KtScope = withValidityAssertion {
+        KtEmptyScope(token)
+    }
+
+    override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope = withValidityAssertion {
         packageMemberScopeCache.getOrPut(packageSymbol) {
             KtFirPackageScope(
                 packageSymbol.fqName,
@@ -146,8 +149,8 @@ internal class KtFirScopeProvider(
     }
 
 
-    override fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope = withValidityAssertion {
-        SimpleKtCompositeScope(subScopes, token)
+    override fun getCompositeScope(subScopes: List<KtScope>): KtScope = withValidityAssertion {
+        KtCompositeScope(subScopes, token)
     }
 
     override fun getTypeScope(type: KtType): KtScope? {

@@ -9,25 +9,23 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.scopes.KtDeclarationScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFileScope(
-    override val owner: KtFirFileSymbol,
+    private val owner: KtFirFileSymbol,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
-) : KtDeclarationScope<KtSymbolWithDeclarations>,
-    ValidityTokenOwner {
+) : KtScope {
 
     private val allNamesCached by cached {
         _callableNames + _classifierNames
@@ -95,4 +93,8 @@ internal class KtFirFileScope(
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
+
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
+    }
 }

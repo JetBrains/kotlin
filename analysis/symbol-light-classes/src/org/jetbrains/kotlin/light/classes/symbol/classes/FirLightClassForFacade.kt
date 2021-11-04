@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.analysis.api.scopes.KtDeclarationScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
@@ -109,7 +109,7 @@ class FirLightClassForFacade(
     }
 
     private fun loadFieldsFromFile(
-        fileScope: KtDeclarationScope<KtSymbolWithDeclarations>,
+        fileScope: KtScope,
         nameGenerator: FirLightField.FieldNameGenerator,
         result: MutableList<KtLightField>
     ) {

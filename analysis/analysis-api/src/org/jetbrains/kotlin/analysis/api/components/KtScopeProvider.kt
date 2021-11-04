@@ -18,19 +18,21 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
-    public abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope
+    public abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
-    public abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope
+    public abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
-    public abstract fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtDelegatedMemberScope
+    public abstract fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope
 
     public abstract fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope
 
-    public abstract fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations>
+    public abstract fun getEmptyScope(): KtScope
 
-    public abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
+    public abstract fun getFileScope(fileSymbol: KtFileSymbol): KtScope
 
-    public abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
+    public abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope
+
+    public abstract fun getCompositeScope(subScopes: List<KtScope>): KtScope
 
     public abstract fun getTypeScope(type: KtType): KtScope?
 
@@ -41,25 +43,25 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 }
 
 public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtSymbolWithMembers.getMemberScope(): KtMemberScope =
+    public fun KtSymbolWithMembers.getMemberScope(): KtScope =
         analysisSession.scopeProvider.getMemberScope(this)
 
-    public fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope =
+    public fun KtSymbolWithMembers.getDeclaredMemberScope(): KtScope =
         analysisSession.scopeProvider.getDeclaredMemberScope(this)
 
-    public fun KtSymbolWithMembers.getDelegatedMemberScope(): KtDelegatedMemberScope =
+    public fun KtSymbolWithMembers.getDelegatedMemberScope(): KtScope =
         analysisSession.scopeProvider.getDelegatedMemberScope(this)
 
     public fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
         analysisSession.scopeProvider.getStaticMemberScope(this)
 
-    public fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> =
+    public fun KtFileSymbol.getFileScope(): KtScope =
         analysisSession.scopeProvider.getFileScope(this)
 
-    public fun KtPackageSymbol.getPackageScope(): KtPackageScope =
+    public fun KtPackageSymbol.getPackageScope(): KtScope =
         analysisSession.scopeProvider.getPackageScope(this)
 
-    public fun List<KtScope>.asCompositeScope(): KtCompositeScope =
+    public fun List<KtScope>.asCompositeScope(): KtScope =
         analysisSession.scopeProvider.getCompositeScope(this)
 
     public fun KtType.getTypeScope(): KtScope? =
@@ -72,7 +74,7 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
         analysisSession.scopeProvider.getScopeContextForPosition(this, this)
 }
 
-public data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceivers: List<KtImplicitReceiver>)
+public data class KtScopeContext(val scopes: KtScope, val implicitReceivers: List<KtImplicitReceiver>)
 
 public class KtImplicitReceiver(
     override val token: ValidityToken,

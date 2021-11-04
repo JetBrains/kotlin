@@ -5,66 +5,47 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
-import org.jetbrains.kotlin.analysis.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(ExperimentalStdlibApi::class)
-class SimpleKtCompositeScope(
-    override val subScopes: List<KtScope>,
-    override val token: ValidityToken
-) : KtCompositeScope, ValidityTokenOwner {
+class KtEmptyScope(override val token: ValidityToken) : KtScope {
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
-        buildSet {
-            subScopes.flatMapTo(this) { it.getAllPossibleNames() }
-        }
+        return emptySet()
     }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        buildSet {
-            subScopes.flatMapTo(this) { it.getPossibleCallableNames() }
-        }
+        return emptySet()
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        buildSet {
-            subScopes.flatMapTo(this) { it.getPossibleClassifierNames() }
-        }
+        return emptySet()
     }
 
     override fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
-        sequence {
-            subScopes.forEach { yieldAll(it.getAllSymbols()) }
-        }
+        return emptySequence()
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
-        sequence {
-            subScopes.forEach { yieldAll(it.getCallableSymbols(nameFilter)) }
-        }
+        return emptySequence()
     }
 
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
-        sequence {
-            subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
-        }
+        return emptySequence()
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
-        sequence {
-            subScopes.forEach { yieldAll(it.getConstructors()) }
-        }
+        return emptySequence()
+    }
+
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
     }
 
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {
-        subScopes.any { it.mayContainName(name) }
+        return false
     }
 }

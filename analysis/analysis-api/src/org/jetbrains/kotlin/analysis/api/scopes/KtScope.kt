@@ -62,6 +62,13 @@ public interface KtScope : ValidityTokenOwner {
      */
     public fun getConstructors(): Sequence<KtConstructorSymbol>
 
+
+    /**
+     * Return a sequence of [KtPackageSymbol] nested in current scope contain if package name matches [nameFilter]
+     */
+    public fun getPackageSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtPackageSymbol>
+
+
     /**
      * return true if the scope may contain name, false otherwise.
      *
@@ -73,35 +80,3 @@ public interface KtScope : ValidityTokenOwner {
 }
 
 public typealias KtScopeNameFilter = (Name) -> Boolean
-
-public interface KtCompositeScope : KtScope {
-    public val subScopes: List<KtScope>
-}
-
-public interface KtMemberScope : KtDeclarationScope<KtSymbolWithMembers> {
-    override val owner: KtSymbolWithMembers
-}
-
-public interface KtDeclaredMemberScope : KtDeclarationScope<KtSymbolWithMembers> {
-    override val owner: KtSymbolWithMembers
-}
-
-public interface KtDelegatedMemberScope : KtDeclarationScope<KtSymbolWithMembers> {
-    override val owner: KtSymbolWithMembers
-}
-
-public interface KtDeclarationScope<out T : KtSymbolWithDeclarations> : KtScope {
-    public val owner: T
-}
-
-public interface KtPackageScope : KtScope {
-    public val fqName: FqName
-
-    public fun getPackageSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtPackageSymbol>
-
-    override fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
-        super.getAllSymbols() + getPackageSymbols()
-    }
-
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
-}

@@ -9,10 +9,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.scopes.KtPackageScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -25,13 +26,13 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
-    override val fqName: FqName,
+    private val fqName: FqName,
     private val project: Project,
     private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken,
     private val searchScope: GlobalSearchScope,
     private val targetPlatform: TargetPlatform,
-) : KtPackageScope {
+) : KtScope {
     private val declarationsProvider = project.createDeclarationProvider(searchScope)
     private val packageProvider = project.createPackageProvider(searchScope)
 
@@ -64,6 +65,10 @@ internal class KtFirPackageScope(
 
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
+    }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+        emptySequence()
     }
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {

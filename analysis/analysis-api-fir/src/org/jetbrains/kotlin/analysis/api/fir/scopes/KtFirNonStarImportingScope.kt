@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.scopes.KtNonStarImportingScope
@@ -26,7 +25,7 @@ internal class KtFirNonStarImportingScope(
     private val firScope: FirAbstractSimpleImportingScope,
     private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken,
-) : KtNonStarImportingScope, ValidityTokenOwner {
+) : KtNonStarImportingScope {
 
     @OptIn(ExperimentalStdlibApi::class)
     override val imports: List<NonStarImport> by cached {
