@@ -1,0 +1,2 @@
+expression: arr
+type: kotlin.Array<kotlin.collections.List<*>?>

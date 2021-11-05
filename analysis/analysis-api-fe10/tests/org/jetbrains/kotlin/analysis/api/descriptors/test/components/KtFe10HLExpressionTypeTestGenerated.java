@@ -25,6 +25,18 @@ public class KtFe10HLExpressionTypeTestGenerated extends AbstractKtFe10HLExpress
     }
 
     @Test
+    @TestMetadata("arrayElement_arrayOfNulls.kt")
+    public void testArrayElement_arrayOfNulls() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/arrayElement_arrayOfNulls.kt");
+    }
+
+    @Test
+    @TestMetadata("array_arrayOfNulls.kt")
+    public void testArray_arrayOfNulls() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/array_arrayOfNulls.kt");
+    }
+
+    @Test
     @TestMetadata("assignmentExpressionTarget.kt")
     public void testAssignmentExpressionTarget() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionType/assignmentExpressionTarget.kt");
@@ -76,6 +88,30 @@ public class KtFe10HLExpressionTypeTestGenerated extends AbstractKtFe10HLExpress
     @TestMetadata("intLiteral.kt")
     public void testIntLiteral() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionType/intLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("listElement_listOf.kt")
+    public void testListElement_listOf() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/listElement_listOf.kt");
+    }
+
+    @Test
+    @TestMetadata("listElement_mutableListOf.kt")
+    public void testListElement_mutableListOf() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/listElement_mutableListOf.kt");
+    }
+
+    @Test
+    @TestMetadata("list_listOf.kt")
+    public void testList_listOf() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/list_listOf.kt");
+    }
+
+    @Test
+    @TestMetadata("list_mutableListOf.kt")
+    public void testList_mutableListOf() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionType/list_mutableListOf.kt");
     }
 
     @Test
