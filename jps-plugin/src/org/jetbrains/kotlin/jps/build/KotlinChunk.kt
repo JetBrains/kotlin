@@ -80,7 +80,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
             val compileClasspathKind = JpsJavaClasspathKind.compile(srcTarget.isTests)
 
             val jpsJavaExtensionService = JpsJavaExtensionService.getInstance()
-            return srcTarget.module.dependenciesList.dependencies.asSequence()
+            val dependencies = srcTarget.module.dependenciesList.dependencies.asSequence()
                 .filterIsInstance<JpsModuleDependency>()
                 .mapNotNull { dep ->
                     val extension = jpsJavaExtensionService.getDependencyExtension(dep)
@@ -90,7 +90,16 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
                         ?.let { byJpsModuleBuildTarget[ModuleBuildTarget(it, srcTarget.isTests)] }
                         ?.let { KotlinModuleBuildTarget.Dependency(srcTarget, it, extension.isExported) }
                 }
-                .toList()
+                .toMutableList()
+
+            if (srcTarget.isTests) {
+                val srcProductionTarget = byJpsModuleBuildTarget[ModuleBuildTarget(srcTarget.module, isTests = false)]
+                if (srcProductionTarget != null) {
+                    dependencies.add(KotlinModuleBuildTarget.Dependency(srcTarget, srcProductionTarget, exported = true))
+                }
+            }
+
+            return dependencies
         }
     }
 
