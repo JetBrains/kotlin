@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -505,4 +506,34 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
         return null
     }
+
+    fun mapToMethodHandle(irFun: IrFunction): Handle {
+        val irNonFakeFun = when (irFun) {
+            is IrConstructor ->
+                irFun
+            is IrSimpleFunction ->
+                findSuperDeclaration(irFun, false, context.state.jvmDefaultMode)
+            else ->
+                throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
+        }
+
+        val irParentClass = irNonFakeFun.parent as? IrClass
+            ?: throw AssertionError("Unexpected parent: ${irNonFakeFun.parent.render()}")
+        val owner = typeMapper.mapOwner(irParentClass)
+        val asmMethod = mapAsmMethod(irNonFakeFun)
+        val handleTag = getMethodKindTag(irNonFakeFun)
+        return Handle(handleTag, owner.internalName, asmMethod.name, asmMethod.descriptor, irParentClass.isJvmInterface)
+    }
+
+    private fun getMethodKindTag(irFun: IrFunction): Int =
+        when {
+            irFun is IrConstructor ->
+                Opcodes.H_NEWINVOKESPECIAL
+            irFun.dispatchReceiverParameter == null ->
+                Opcodes.H_INVOKESTATIC
+            irFun.parentAsClass.isJvmInterface ->
+                Opcodes.H_INVOKEINTERFACE
+            else ->
+                Opcodes.H_INVOKEVIRTUAL
+        }
 }

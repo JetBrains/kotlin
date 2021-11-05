@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.backend.jvm.ir.getBooleanConstArgument
+import org.jetbrains.kotlin.backend.jvm.ir.getIntConstArgument
+import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
 object JvmInvokeDynamic : IntrinsicMethod() {
@@ -113,9 +108,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         return Handle(tag, owner, name, descriptor, isInterface)
     }
 
-    fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
-        return generateMethodHandle(codegen.context, irRawFunctionReference)
-    }
+    private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle =
+        codegen.context.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
 
     private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
         val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference
@@ -127,43 +121,4 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
         return Type.getMethodType(asmMethod.descriptor)
     }
-
 }
-
-internal fun generateMethodHandle(jvmBackendContext: JvmBackendContext, irRawFunctionReference: IrRawFunctionReference): Handle {
-    return generateMethodHandle(jvmBackendContext, irRawFunctionReference.symbol.owner)
-}
-
-fun generateMethodHandle(jvmBackendContext: JvmBackendContext, irFun: IrFunction): Handle {
-    val irNonFakeFun = when (irFun) {
-        is IrConstructor ->
-            irFun
-        is IrSimpleFunction -> {
-            findSuperDeclaration(irFun, false, jvmBackendContext.state.jvmDefaultMode)
-        }
-        else ->
-            throw java.lang.AssertionError("Simple function or constructor expected: ${irFun.render()}")
-    }
-
-    val irParentClass = irNonFakeFun.parent as? IrClass
-        ?: throw AssertionError("Unexpected parent: ${irNonFakeFun.parent.render()}")
-    val owner = jvmBackendContext.typeMapper.mapOwner(irParentClass)
-
-    val asmMethod = jvmBackendContext.methodSignatureMapper.mapAsmMethod(irNonFakeFun)
-
-    val handleTag = getMethodKindTag(irNonFakeFun)
-
-    return Handle(handleTag, owner.internalName, asmMethod.name, asmMethod.descriptor, irParentClass.isJvmInterface)
-}
-
-internal fun getMethodKindTag(irFun: IrFunction) =
-    when {
-        irFun is IrConstructor ->
-            Opcodes.H_NEWINVOKESPECIAL
-        irFun.dispatchReceiverParameter == null ->
-            Opcodes.H_INVOKESTATIC
-        irFun.parentAsClass.isJvmInterface ->
-            Opcodes.H_INVOKEINTERFACE
-        else ->
-            Opcodes.H_INVOKEVIRTUAL
-    }
