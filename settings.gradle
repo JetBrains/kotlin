@@ -404,6 +404,7 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "j2k/new/tests/kotlin.j2k.new.tests.iml"
     intellij "j2k/new/kotlin.j2k.new.iml"
     intellij "fir-low-level-api-ide-impl/kotlin.fir.fir-low-level-api-ide-impl.iml"
+    intellij "fir-analysis-project-structure-ide-impl/kotlin.fir.analysis-project-structure-ide-impl.iml"
     intellij "analysis-api-providers-ide-impl/kotlin.fir.analysis-api-providers-ide-impl.iml"
     intellij "native/kotlin.native.iml"
     intellij "performance-tests/kotlin.performance-tests.iml"
