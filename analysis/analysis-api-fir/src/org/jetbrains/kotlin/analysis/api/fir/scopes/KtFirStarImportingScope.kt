@@ -7,21 +7,18 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.scopes.Import
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.scopes.KtStarImportingScope
-import org.jetbrains.kotlin.analysis.api.scopes.StarImport
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirStarImportingScope(
@@ -29,13 +26,11 @@ internal class KtFirStarImportingScope(
     private val builder: KtSymbolByFirBuilder,
     project: Project,
     override val token: ValidityToken,
-) : KtStarImportingScope, ValidityTokenOwner {
-    override val isDefaultImportingScope: Boolean = withValidityAssertion { firScope is FirDefaultStarImportingScope }
-
+) : KtScope {
     //todo use more concrete scope
     private val declarationProvider = project.createDeclarationProvider(GlobalSearchScope.allScope(project))
 
-    override val imports: List<StarImport> by cached {
+    private val imports: List<StarImport> by cached {
         firScope.starImports.map { import ->
             StarImport(
                 import.packageFqName,
@@ -68,6 +63,12 @@ internal class KtFirStarImportingScope(
             }
         }
     }
+
+
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
+    }
+
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
