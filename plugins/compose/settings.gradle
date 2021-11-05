@@ -15,12 +15,21 @@
  */
 
 // see ../playground-common/README.md for details on how this works
+pluginManagement {
+    includeBuild "../../playground-common/playground-plugin"
+}
+plugins {
+    id "playground"
+}
+
 rootProject.name = "compose-compiler-playground"
-apply from: "../../playground-common/playground-include-settings.gradle"
-setupPlayground(this, "../..")
-selectProjectsFromAndroidX({ name ->
-    if (name.startsWith(":compose:compiler")) return true
-    if (isNeededForComposePlayground(name)) return true
-    return false
-})
+
+playground {
+    setupPlayground("../..")
+    selectProjectsFromAndroidX({ name ->
+        if (name.startsWith(":compose:compiler")) return true
+        if (isNeededForComposePlayground(name)) return true
+        return false
+    })
+}
 
