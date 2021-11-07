@@ -1,3 +1,4 @@
+// !LANGUAGE: +ContextReceivers
 // WITH_RUNTIME
 
 fun List<Int>.decimateEveryEvenThird() = sequence {

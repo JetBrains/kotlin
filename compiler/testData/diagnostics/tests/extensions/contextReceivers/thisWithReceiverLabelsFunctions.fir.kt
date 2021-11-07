@@ -4,7 +4,17 @@ class A<T>(val a: T)
 class B(val b: Any)
 class C(val c: Any)
 
-context(A<Int>, A<String>, B) fun f() {
+context(A<String>) fun A<Int>.f() {
+    this<!UNRESOLVED_LABEL!>@A<!>.a.length
+}
+
+<!CONFLICTING_OVERLOADS!>context(A<String>, B) fun f()<!> {
+    this<!UNRESOLVED_LABEL!>@A<!>.a.length
+    this<!UNRESOLVED_LABEL!>@B<!>.b
+    <!NO_THIS!>this<!>
+}
+
+<!CONFLICTING_OVERLOADS!>context(A<Int>, A<String>, B) fun f()<!> {
     this<!UNRESOLVED_LABEL!>@A<!>.a.length
     this<!UNRESOLVED_LABEL!>@B<!>.b
     <!NO_THIS!>this<!>
