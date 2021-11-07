@@ -39,16 +39,16 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         if (declaration.isInner || declaration.isLocal) {
-            reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_NOT_TOP_LEVEL, context)
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, context)
         }
 
         if (declaration.modality != Modality.FINAL) {
-            reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_NOT_FINAL, context)
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
         }
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
-                reporter.reportOnWithSuppression(supertypeEntry, FirErrors.INLINE_CLASS_CANNOT_EXTEND_CLASSES, context)
+                reporter.reportOnWithSuppression(supertypeEntry, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
             }
         }
 
@@ -73,7 +73,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                             val body = innerDeclaration.body!!
                             withSuppressedDiagnostics(innerDeclaration, context) { context ->
                                 reporter.reportOnWithSuppression(
-                                    body, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS, context
+                                    body, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context
                                 )
                             }
                         }
@@ -81,7 +81,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 }
                 is FirRegularClass -> {
                     if (innerDeclaration.isInner) {
-                        reporter.reportOnWithSuppression(innerDeclaration, FirErrors.INNER_CLASS_INSIDE_INLINE_CLASS, context)
+                        reporter.reportOnWithSuppression(innerDeclaration, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
                 is FirSimpleFunction -> {
@@ -89,7 +89,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
                     if (functionName in reservedFunctionNames) {
                         reporter.reportOnWithSuppression(
-                            innerDeclaration, FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS, functionName, context
+                            innerDeclaration, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
                         )
                     }
                 }
@@ -99,7 +99,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         withSuppressedDiagnostics(innerDeclaration, context) { context ->
                             reporter.reportOn(
                                 delegatedTypeRefSource,
-                                FirErrors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
+                                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
                                 context
                             )
                         }
@@ -114,7 +114,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                                 withSuppressedDiagnostics(innerDeclaration, context) { context ->
                                     reporter.reportOn(
                                         innerDeclaration.delegate!!.source,
-                                        FirErrors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS,
+                                        FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS,
                                         context
                                     )
                                 }
@@ -123,7 +123,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                                     innerDeclaration.source?.kind !is KtFakeSourceElementKind ->
                                 reporter.reportOnWithSuppression(
                                     innerDeclaration,
-                                    FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS,
+                                    FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS,
                                     context
                                 )
                         }
@@ -134,7 +134,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
-            reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, context)
+            reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, context)
             return
         }
 
@@ -149,14 +149,14 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorProperty) ->
                         reporter.reportOn(
                             primaryConstructorParameter.source,
-                            FirErrors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+                            FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
                             context
                         )
 
                     primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() ->
                         reporter.reportOn(
                             primaryConstructorParameter.returnTypeRef.source,
-                            FirErrors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                            FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
                             primaryConstructorParameter.returnTypeRef.coneType,
                             context
                         )
@@ -164,7 +164,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
                         reporter.reportOnWithSuppression(
                             primaryConstructorParameter.returnTypeRef,
-                            FirErrors.INLINE_CLASS_CANNOT_BE_RECURSIVE,
+                            FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
                             context
                         )
                 }

@@ -395,25 +395,25 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
     }
 
-    val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {
-        val INLINE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
-        val INLINE_CLASS_NOT_FINAL by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
-        val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+    val VALUE_CLASSES by object : DiagnosticGroup("Value classes") {
+        val VALUE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val VALUE_CLASS_NOT_FINAL by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
+        val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE by error<KtElement>()
-        val INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER by error<KtParameter>()
-        val PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val DELEGATED_PROPERTY_INSIDE_INLINE_CLASS by error<PsiElement>()
-        val INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE by error<KtTypeReference> {
+        val VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER by error<KtParameter>()
+        val PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val DELEGATED_PROPERTY_INSIDE_VALUE_CLASS by error<PsiElement>()
+        val VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE by error<KtTypeReference> {
             parameter<ConeKotlinType>("type")
         }
-        val INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
-        val INLINE_CLASS_CANNOT_EXTEND_CLASSES by error<KtTypeReference>()
-        val INLINE_CLASS_CANNOT_BE_RECURSIVE by error<KtTypeReference>()
-        val RESERVED_MEMBER_INSIDE_INLINE_CLASS by error<KtFunction>(PositioningStrategy.DECLARATION_NAME) {
+        val VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
+        val VALUE_CLASS_CANNOT_EXTEND_CLASSES by error<KtTypeReference>()
+        val VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtTypeReference>()
+        val RESERVED_MEMBER_INSIDE_VALUE_CLASS by error<KtFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("name")
         }
-        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS by error<PsiElement>()
-        val INNER_CLASS_INSIDE_INLINE_CLASS by error<KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
+        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
+        val INNER_CLASS_INSIDE_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }
 

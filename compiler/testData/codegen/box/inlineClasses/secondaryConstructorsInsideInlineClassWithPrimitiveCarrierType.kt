@@ -9,7 +9,7 @@ value class Foo(val x: Int) {
 
     constructor(z: Long) : this(z.toInt() + 1)
 
-    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
+    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
     constructor(other: Char) : this(other.toInt().toString()) {
         global = "OK"
     }

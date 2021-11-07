@@ -3,7 +3,7 @@
 @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @kotlin.jvm.JvmInline
 value class IC private constructor(val i: Int) {
-    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
+    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
     constructor() : this(0) {
         counter += 1
     }
