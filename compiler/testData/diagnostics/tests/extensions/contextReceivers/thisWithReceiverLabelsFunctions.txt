@@ -1,6 +1,8 @@
 package
 
 public fun f(): kotlin.Unit
+public fun f(): kotlin.Unit
+public fun A<kotlin.Int>.f(): kotlin.Unit
 public fun C.f(): kotlin.Unit
 
 public final class A</*0*/ T> {
@@ -26,3 +28,4 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

@@ -10613,6 +10613,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("labelsFromClassNameForbidden.kt")
+                public void testLabelsFromClassNameForbidden() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/labelsFromClassNameForbidden.kt");
+                }
+
+                @Test
                 @TestMetadata("lazy.kt")
                 public void testLazy() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/lazy.kt");

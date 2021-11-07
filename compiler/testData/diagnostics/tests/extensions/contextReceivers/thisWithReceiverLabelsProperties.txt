@@ -1,6 +1,7 @@
 package
 
 public var p: kotlin.Int
+public var p: kotlin.Int
 public val C.p: kotlin.Int
 
 public final class A</*0*/ T> {

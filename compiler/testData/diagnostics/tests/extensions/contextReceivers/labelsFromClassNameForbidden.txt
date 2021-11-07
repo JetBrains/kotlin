@@ -1,0 +1,5 @@
+package
+
+public val p: kotlin.String
+public fun kotlin.Int.f(): kotlin.Unit
+public fun kotlin.collections.List<kotlin.Int>.f(): kotlin.Unit

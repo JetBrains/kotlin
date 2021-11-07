@@ -228,32 +228,36 @@ class FunctionDescriptorResolver(
             }
         }
 
-        val receiverToLabelMap = linkedMapOf<ReceiverParameterDescriptor, String>()
         val extensionReceiver = receiverType?.let {
-            val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            val splitter = AnnotationSplitter(storageManager, it.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createExtensionReceiverParameterForCallable(
                 functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
-        }?.apply {
-            val extensionReceiverName = receiverTypeRef?.nameForReceiverLabel()
-            if (extensionReceiverName != null) {
-                receiverToLabelMap[this] = extensionReceiverName
-            }
         }
-
-        val contextReceiverDescriptors = contextReceiverTypes.mapNotNull { type ->
-            val splitter = AnnotationSplitter(storageManager, type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+        val contextReceiverDescriptors = contextReceiverTypes.mapNotNull {
+            val splitter = AnnotationSplitter(storageManager, it.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createContextReceiverParameterForCallable(
-                functionDescriptor, type, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
+                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
         }
-        contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
-            .forEach { (contextReceiverDescriptor, i) ->
-                contextReceivers[i].name()?.let {
-                    receiverToLabelMap[contextReceiverDescriptor] = it
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            val receiverToLabelMap = linkedMapOf<ReceiverParameterDescriptor, String>()
+            if (receiverTypeRef != null && extensionReceiver != null) {
+                receiverTypeRef.nameForReceiverLabel()?.let {
+                    receiverToLabelMap[extensionReceiver] = it
                 }
             }
-        trace.record(BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS, functionDescriptor, receiverToLabelMap)
+            contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
+                .forEach { (contextReceiverDescriptor, i) ->
+                    contextReceivers[i].name()?.let {
+                        receiverToLabelMap[contextReceiverDescriptor] = it
+                    }
+                }
+
+            trace.record(BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS, functionDescriptor, receiverToLabelMap)
+        }
+
         functionDescriptor.initialize(
             extensionReceiver,
             getDispatchReceiverParameterIfNeeded(container),

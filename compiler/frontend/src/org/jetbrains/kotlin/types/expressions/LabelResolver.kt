@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH
 import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE
@@ -33,12 +34,12 @@ object LabelResolver {
     private fun getElementsByLabelName(
         labelName: Name,
         labelExpression: KtSimpleNameExpression,
-        isThisExpression: Boolean
+        classNameLabelsEnabled: Boolean
     ): Set<KtElement> {
         val elements = linkedSetOf<KtElement>()
         var parent: PsiElement? = labelExpression.parent
         while (parent != null) {
-            val names = getLabelNamesIfAny(parent, isThisExpression)
+            val names = getLabelNamesIfAny(parent, classNameLabelsEnabled)
             if (names.contains(labelName)) {
                 elements.add(getExpressionUnderLabel(parent as KtExpression))
             }
@@ -47,7 +48,7 @@ object LabelResolver {
         return elements
     }
 
-    fun getLabelNamesIfAny(element: PsiElement, addContextReceiverNames: Boolean): List<Name> {
+    fun getLabelNamesIfAny(element: PsiElement, addClassNameLabels: Boolean): List<Name> {
         val result = mutableListOf<Name>()
         when (element) {
             is KtLabeledExpression -> result.addIfNotNull(element.getLabelNameAsName())
@@ -60,10 +61,10 @@ object LabelResolver {
             is KtPropertyAccessor -> element.property
             else -> return result
         }
-        if (addContextReceiverNames) {
+        if (addClassNameLabels) {
+            functionOrProperty.receiverTypeReference?.nameForReceiverLabel()?.let { result.add(Name.identifier(it)) }
             functionOrProperty.contextReceivers
                 .mapNotNullTo(result) { it.name()?.let { s -> Name.identifier(s) } }
-            functionOrProperty.receiverTypeReference?.nameForReceiverLabel()?.let { result.add(Name.identifier(it)) }
         }
         val name = functionOrProperty.nameAsName ?: getLabelForFunctionalExpression(functionOrProperty)
         result.addIfNotNull(name)
@@ -129,9 +130,9 @@ object LabelResolver {
         labelName: Name,
         labelExpression: KtSimpleNameExpression,
         trace: BindingTrace,
-        isThisExpression: Boolean
+        classNameLabelsEnabled: Boolean
     ): KtElement? {
-        val list = getElementsByLabelName(labelName, labelExpression, isThisExpression)
+        val list = getElementsByLabelName(labelName, labelExpression, classNameLabelsEnabled)
         if (list.isEmpty()) return null
 
         if (list.size > 1) {
@@ -175,15 +176,28 @@ object LabelResolver {
                 return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
             }
             0 -> {
-                val element = resolveNamedLabel(labelName, targetLabel, context.trace, expression is KtThisExpression)
+                val element = resolveNamedLabel(
+                    labelName, targetLabel, context.trace,
+                    classNameLabelsEnabled = expression is KtThisExpression
+                            && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+                )
                 val declarationDescriptor = context.trace.bindingContext[DECLARATION_TO_DESCRIPTOR, element]
                 if (declarationDescriptor is FunctionDescriptor) {
-                    val receiverToLabelMap =
-                        context.trace.bindingContext[DESCRIPTOR_TO_NAMED_RECEIVERS, if (declarationDescriptor is PropertyAccessorDescriptor) declarationDescriptor.correspondingProperty else declarationDescriptor]
-                    val thisReceiver = receiverToLabelMap?.entries?.find {
+                    val receiverToLabelMap = context.trace.bindingContext[
+                            DESCRIPTOR_TO_NAMED_RECEIVERS,
+                            if (declarationDescriptor is PropertyAccessorDescriptor) declarationDescriptor.correspondingProperty else declarationDescriptor
+                    ]
+                    val thisReceivers = receiverToLabelMap?.entries?.filter {
                         it.value == labelName.identifier
-                    }?.key ?: declarationDescriptor.extensionReceiverParameter
-                    if (thisReceiver != null) {
+                    }?.map { it.key } ?: emptyList()
+                    val thisReceiver = when {
+                        thisReceivers.isEmpty() -> declarationDescriptor.extensionReceiverParameter
+                        thisReceivers.size == 1 -> thisReceivers.single()
+                        else -> {
+                            BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel)
+                            return LabeledReceiverResolutionResult.labelResolutionFailed()
+                        }
+                    }?.also {
                         context.trace.record(LABEL_TARGET, targetLabel, element)
                         context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
                     }
