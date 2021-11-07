@@ -742,20 +742,20 @@ public class DefaultErrorMessages {
         MAP.put(NON_PRIVATE_CONSTRUCTOR_IN_SEALED, "Constructor must be private in sealed class");
         MAP.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class");
 
-        MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner");
-        MAP.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final");
-        MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class");
-        MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
-        MAP.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Value class primary constructor must have only final read-only (val) property parameter");
-        MAP.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields");
-        MAP.put(DELEGATED_PROPERTY_INSIDE_INLINE_CLASS, "Inline class cannot have delegated properties");
-        MAP.put(INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Inline class cannot have value parameter of type ''{0}''", RENDER_TYPE);
-        MAP.put(INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Inline class cannot implement an interface by delegation");
-        MAP.put(INLINE_CLASS_CANNOT_EXTEND_CLASSES, "Inline class cannot extend classes");
-        MAP.put(INLINE_CLASS_CANNOT_BE_RECURSIVE, "Inline class cannot be recursive");
-        MAP.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
-        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
-        MAP.put(INNER_CLASS_INSIDE_INLINE_CLASS, "Inline class cannot have inner classes");
+        MAP.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value classes cannot be local or inner");
+        MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes can be only final");
+        MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value class");
+        MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter"); // +
+        MAP.put(VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Value class primary constructor must have only final read-only (val) property parameter");
+        MAP.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields");
+        MAP.put(DELEGATED_PROPERTY_INSIDE_VALUE_CLASS, "Value class cannot have delegated properties");
+        MAP.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Value class cannot have value parameter of type ''{0}''", RENDER_TYPE);
+        MAP.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation");
+        MAP.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes");
+        MAP.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive");
+        MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
+        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
+        MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
 
