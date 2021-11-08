@@ -159,6 +159,7 @@ FILE fqName:<root> fileName:/compareTo.kt
           CONST Boolean type=kotlin.Boolean value=true
   FUN name:compareTo visibility:public modality:FINAL <T> ($receiver:T of <root>.compareTo, <this>:java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }, other:T of <root>.compareTo) returnType:kotlin.Int [operator,infix]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:T of <root>.compareTo
     VALUE_PARAMETER name:<this> index:0 type:java.util.Comparator<T of <root>.compareTo>{ kotlin.TypeAliasesKt.Comparator<T of <root>.compareTo> }
     VALUE_PARAMETER name:other index:1 type:T of <root>.compareTo
@@ -172,6 +173,7 @@ FILE fqName:<root> fileName:/compareTo.kt
     FUN name:<get-min> visibility:public modality:FINAL <T> ($receiver:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>, <this>:java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }) returnType:T of <root>.<get-min>
       correspondingProperty: PROPERTY name:min visibility:public modality:FINAL [val]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      contextReceiverParametersCount: 1
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>
       VALUE_PARAMETER name:<this> index:0 type:java.util.Comparator<T of <root>.<get-min>>{ kotlin.TypeAliasesKt.Comparator<T of <root>.<get-min>> }
       BLOCK_BODY

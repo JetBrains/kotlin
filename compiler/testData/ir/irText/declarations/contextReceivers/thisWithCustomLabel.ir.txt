@@ -94,6 +94,7 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:f visibility:public modality:FINAL <> (<this>:<root>.A<kotlin.Int>, <this>:<root>.A<kotlin.String>, <this>:<root>.B) returnType:kotlin.Unit
+    contextReceiverParametersCount: 3
     VALUE_PARAMETER name:<this> index:0 type:<root>.A<kotlin.Int>
     VALUE_PARAMETER name:<this> index:1 type:<root>.A<kotlin.String>
     VALUE_PARAMETER name:<this> index:2 type:<root>.B
@@ -112,6 +113,7 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
   PROPERTY name:p visibility:public modality:FINAL [val]
     FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, <this>:<root>.B, <this>:<root>.A<kotlin.String>, <this>:<root>.A<kotlin.Int>) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
+      contextReceiverParametersCount: 3
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:<this> index:0 type:<root>.B
       VALUE_PARAMETER name:<this> index:1 type:<root>.A<kotlin.String>

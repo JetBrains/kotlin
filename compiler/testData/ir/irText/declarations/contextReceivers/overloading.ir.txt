@@ -1,5 +1,6 @@
 FILE fqName:<root> fileName:/overloading.kt
   FUN name:foo visibility:public modality:FINAL <> (<this>:kotlin.Int, <this>:kotlin.String) returnType:kotlin.Int
+    contextReceiverParametersCount: 2
     VALUE_PARAMETER name:<this> index:0 type:kotlin.Int
     VALUE_PARAMETER name:<this> index:1 type:kotlin.String
     BLOCK_BODY
@@ -8,6 +9,7 @@ FILE fqName:<root> fileName:/overloading.kt
           $this: GET_VAR '<this>: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=42
   FUN name:foo visibility:public modality:FINAL <> (<this>:kotlin.Int) returnType:kotlin.Int
+    contextReceiverParametersCount: 1
     VALUE_PARAMETER name:<this> index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (<this>: kotlin.Int): kotlin.Int declared in <root>'

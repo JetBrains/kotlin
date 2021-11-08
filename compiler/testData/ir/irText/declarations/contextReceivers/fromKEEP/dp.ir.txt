@@ -32,6 +32,7 @@ FILE fqName:<root> fileName:/dp.kt
   PROPERTY name:dp visibility:public modality:FINAL [val]
     FUN name:<get-dp> visibility:public modality:FINAL <> ($receiver:kotlin.Int, <this>:<root>.View) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:dp visibility:public modality:FINAL [val]
+      contextReceiverParametersCount: 1
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
       VALUE_PARAMETER name:<this> index:0 type:<root>.View
       BLOCK_BODY

@@ -30,6 +30,7 @@ FILE fqName:<root> fileName:/function.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:foo visibility:public modality:FINAL <> (<this>:<root>.C) returnType:kotlin.Unit
+    contextReceiverParametersCount: 1
     VALUE_PARAMETER name:<this> index:0 type:<root>.C
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

@@ -186,6 +186,7 @@ open class DeepCopyIrTreeWithSymbols(
             overriddenSymbols = declaration.overriddenSymbols.map {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
             }
+            contextReceiverParametersCount = declaration.contextReceiverParametersCount
             copyAttributes(declaration)
             transformFunctionChildren(declaration)
         }
