@@ -847,6 +847,7 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
 
 internal object CheckContextReceiversResolutionPart : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
+        if (candidateDescriptor.contextReceiverParameters.isEmpty()) return
         val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
         val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
         for (scope in parentLexicalScopes) {
