@@ -9,6 +9,8 @@ package codegen.initializers.static
 import kotlin.test.*
 import kotlin.native.internal.*
 import kotlin.reflect.*
+import kotlin.native.Platform
+import kotlin.native.OsFamily
 
 class Delegate {
     operator fun getValue(thisRef: Any?, property: KProperty<*>) : String {
@@ -51,7 +53,9 @@ fun f() = 5
         assertEquals(15, varargGetter(1, 2, 3, 4))
         assertEquals(20, varargGetter(2, 2, 3, 4))
         assertEquals(20, varargGetter(2, 2, 3, 4))
-        assertFailsWith<ArrayIndexOutOfBoundsException> { varargGetter(3, 2, 3, 4) }
+        if (Platform.osFamily != OsFamily.WASM) {
+            assertFailsWith<ArrayIndexOutOfBoundsException> { varargGetter(3, 2, 3, 4) }
+        }
     }
 }
 
