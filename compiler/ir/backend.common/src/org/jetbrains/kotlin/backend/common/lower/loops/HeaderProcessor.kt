@@ -314,8 +314,11 @@ class ProgressionLoopHeader(
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
         with(builder) {
-            if (headerInfo.canOverflow) {
-                // If the induction variable CAN overflow, we cannot use it in the loop condition. Loop is lowered into something like:
+            if (headerInfo.canOverflow ||
+                preferJavaLikeCounterLoop && headerInfo.progressionType is UnsignedProgressionType && headerInfo.isLastInclusive
+            ) {
+                // If the induction variable CAN overflow, we cannot use it in the loop condition.
+                // Loop is lowered into something like:
                 //
                 //   if (inductionVar <= last) {
                 //     // Loop is not empty
@@ -325,6 +328,11 @@ class ProgressionLoopHeader(
                 //       // Loop body
                 //     } while (loopVar != last)
                 //   }
+                //
+                // This loop form is also preferable for loops over unsigned progressions on JVM,
+                // because HotSpot doesn't recognize unsigned integer comparison as a counter loop condition.
+                // Unsigned integer equality is fine, though.
+                // See KT-49444 for performance comparison example.
                 val newLoopOrigin = if (preferJavaLikeCounterLoop)
                     this@ProgressionLoopHeader.context.doWhileCounterLoopOrigin
                 else

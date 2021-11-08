@@ -2982,6 +2982,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             }
 
             @Test
+            @TestMetadata("forInConstBoundUnsignedRange.kt")
+            public void testForInConstBoundUnsignedRange() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInConstBoundUnsignedRange.kt");
+            }
+
+            @Test
             @TestMetadata("forInDownToUIntMinValue.kt")
             public void testForInDownToUIntMinValue() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInDownToUIntMinValue.kt");
