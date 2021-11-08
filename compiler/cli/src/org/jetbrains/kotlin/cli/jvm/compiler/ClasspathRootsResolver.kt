@@ -129,7 +129,7 @@ class ClasspathRootsResolver(
             addModularRoots(modules, result)
         } else {
             //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
-            val listFoldersForRelease = javaModuleFinder.listFoldersForRelease(release)
+            val listFoldersForRelease = javaModuleFinder.listFoldersForRelease()
             listFoldersForRelease.forEach {
                 result += JavaRoot(it, JavaRoot.RootType.BINARY_SIG)
             }
@@ -285,8 +285,13 @@ class ClasspathRootsResolver(
             if (module == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             } else {
-                for ((root, isBinary) in module.moduleRoots) {
-                    result.add(JavaRoot(root, if (isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE))
+                for ((root, isBinary, isBinarySignature) in module.moduleRoots) {
+                    result.add(
+                        JavaRoot(
+                            root,
+                            if (isBinarySignature) JavaRoot.RootType.BINARY_SIG else if (isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE
+                        )
+                    )
                 }
             }
         }
