@@ -510,6 +510,12 @@ internal class AmbiguousSuperImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AmbiguousSuper(), KtAbstractFirDiagnostic<KtSuperExpression>
 
+internal class AmbiguousTypesImpl(
+    override val candidates: List<KtType>,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AmbiguousTypes(), KtAbstractFirDiagnostic<KtTypeReference>
+
 internal class ConstructorInObjectImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

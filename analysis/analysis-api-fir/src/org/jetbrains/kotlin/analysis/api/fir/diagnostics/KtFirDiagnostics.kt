@@ -433,6 +433,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtType>
     }
 
+    abstract class AmbiguousTypes : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = AmbiguousTypes::class
+        abstract val candidates: List<KtType>
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }

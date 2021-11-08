@@ -6,19 +6,26 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildErrorClassLike
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.diagnostics.ConeAmbiguousType
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.moduleVisibilityChecker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
@@ -57,6 +64,7 @@ abstract class FirAbstractImportingScope(
         get() = when (this) {
             is FirTypeAliasSymbol -> fir.expandedConeType?.lookupTag?.toSymbol(session)?.fullyExpandedSymbol
             is FirClassSymbol<*> -> this
+            is FirErrorClassLikeSymbol -> null
         }
 
     private fun FirClassSymbol<*>.getStaticsScope(): FirContainingNamesAwareScope? =
@@ -88,12 +96,29 @@ abstract class FirAbstractImportingScope(
                 result.classId.isJvmOrNativeThrows && symbol.classId.isCommonThrows -> symbol
                 result.classId.isCommonThrows && symbol.classId.isJvmOrNativeThrows -> result
                 // TODO: if there is an ambiguity at this scope, further scopes should not be checked.
-                //  Doing otherwise causes KT-39073. Also, returning null here instead of an error symbol
-                //  or something produces poor quality diagnostics ("unresolved name" rather than "ambiguity").
-                else -> return null
+                //  Doing otherwise causes KT-39073
+                else -> reportAmbiguousType(listOfNotNull(result, symbol))
             }
         }
         return result
+    }
+
+    private fun reportAmbiguousType(symbols: List<FirClassLikeSymbol<*>>): FirErrorClassLikeSymbol {
+        val possibleTypes = symbols.mapNotNull { (it as? FirClassSymbol<*>)?.defaultType() }
+        val coneDiagnostic = ConeAmbiguousType(possibleTypes)
+//        val coneDiagnostic = ConeAmbiguityError()
+        val someSymbol = symbols.first()
+
+        return FirErrorClassLikeSymbol(coneDiagnostic, someSymbol.classId).also {
+            buildErrorClassLike {
+                source = someSymbol.source
+                moduleData = someSymbol.moduleData
+                origin = someSymbol.origin
+                status = FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.OPEN, EffectiveVisibility.Public)
+                diagnostic = coneDiagnostic
+                symbol = it
+            }
+        }
     }
 
     protected fun processFunctionsByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirNamedFunctionSymbol) -> Unit) {

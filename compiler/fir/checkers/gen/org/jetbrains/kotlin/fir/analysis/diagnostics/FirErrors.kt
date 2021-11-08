@@ -191,6 +191,7 @@ object FirErrors {
     val INCONSISTENT_TYPE_PARAMETER_VALUES by error3<KtClass, FirTypeParameterSymbol, FirRegularClassSymbol, Collection<ConeKotlinType>>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
     val INCONSISTENT_TYPE_PARAMETER_BOUNDS by error3<PsiElement, FirTypeParameterSymbol, FirRegularClassSymbol, Collection<ConeKotlinType>>()
     val AMBIGUOUS_SUPER by error1<KtSuperExpression, List<ConeKotlinType>>()
+    val AMBIGUOUS_TYPES by error1<KtTypeReference, List<ConeKotlinType>>()
 
     // Constructor problems
     val CONSTRUCTOR_IN_OBJECT by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

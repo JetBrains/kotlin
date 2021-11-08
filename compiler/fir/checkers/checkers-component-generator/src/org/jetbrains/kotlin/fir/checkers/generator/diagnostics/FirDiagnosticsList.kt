@@ -199,6 +199,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val AMBIGUOUS_SUPER by error<KtSuperExpression> {
             parameter<List<ConeKotlinType>>("candidates")
         }
+        val AMBIGUOUS_TYPES by error<KtTypeReference> {
+            parameter<List<ConeKotlinType>>("candidates")
+        }
     }
 
     val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {

@@ -29,6 +29,11 @@ class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnos
         get() = "Ambiguous supertype"
 }
 
+class ConeAmbiguousType(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
+    override val reason: String
+        get() = "Ambiguous type"
+}
+
 enum class DiagnosticKind {
     Syntax,
     ExpressionExpected,
