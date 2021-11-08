@@ -160,9 +160,9 @@ open class LinkNativeTest @Inject constructor(
                     listOf(),
                     linkerArgs,
                     optimize = false,
-                    debug = false,
+                    debug = true,
                     kind = LinkerOutputKind.EXECUTABLE,
-                    outputDsymBundle = "",
+                    outputDsymBundle = outputFile.absolutePath + ".dSYM",
                     needsProfileLibrary = false,
                     mimallocEnabled = mimallocEnabled,
                     sanitizer = sanitizer
