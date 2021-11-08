@@ -2604,6 +2604,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("callableReferenceAssignmentToVar.kt")
+            public void testCallableReferenceAssignmentToVar() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceAssignmentToVar.kt");
+            }
+
+            @Test
             @TestMetadata("classVsPackage.kt")
             public void testClassVsPackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");

@@ -80,7 +80,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
 
     object SyntheticIdForCallableReferencesResolution : CallKind(
         MapArguments,
-        NoTypeArguments,
+        MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckArguments,

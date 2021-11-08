@@ -151,6 +151,17 @@ class FirSyntheticCallGenerator(
     ): FirCallableReferenceAccess? {
         val argumentList = buildUnaryArgumentList(callableReferenceAccess)
 
+        val typeArguments =
+            when {
+                expectedTypeRef is FirResolvedTypeRef && !expectedTypeRef.coneType.isUnitOrFlexibleUnit -> listOf(
+                    buildTypeProjectionWithVariance {
+                        variance = Variance.INVARIANT
+                        typeRef = expectedTypeRef
+                    }
+                )
+                else -> emptyList()
+            }
+
         val reference =
             generateCalleeReferenceWithCandidate(
                 callableReferenceAccess,
@@ -158,7 +169,8 @@ class FirSyntheticCallGenerator(
                 argumentList,
                 SyntheticCallableId.ID.callableName,
                 CallKind.SyntheticIdForCallableReferencesResolution,
-                context
+                context,
+                typeArguments,
             )
         val fakeCallElement = buildFunctionCall {
             calleeReference = reference
@@ -175,9 +187,10 @@ class FirSyntheticCallGenerator(
         argumentList: FirArgumentList,
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect,
-        context: ResolutionContext
+        context: ResolutionContext,
+        typeArguments: List<FirTypeProjection> = emptyList()
     ): FirNamedReferenceWithCandidate {
-        val callInfo = generateCallInfo(callSite, name, argumentList, callKind)
+        val callInfo = generateCallInfo(callSite, name, argumentList, callKind, typeArguments)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
@@ -203,14 +216,20 @@ class FirSyntheticCallGenerator(
         )
     }
 
-    private fun generateCallInfo(callSite: FirExpression, name: Name, argumentList: FirArgumentList, callKind: CallKind) = CallInfo(
+    private fun generateCallInfo(
+        callSite: FirExpression,
+        name: Name,
+        argumentList: FirArgumentList,
+        callKind: CallKind,
+        typeArguments: List<FirTypeProjection> = emptyList()
+    ) = CallInfo(
         callSite = callSite,
         callKind = callKind,
         name = name,
         explicitReceiver = null,
         argumentList = argumentList,
         isImplicitInvoke = false,
-        typeArguments = emptyList(),
+        typeArguments = typeArguments,
         session = session,
         containingFile = components.file,
         containingDeclarations = components.containingDeclarations
