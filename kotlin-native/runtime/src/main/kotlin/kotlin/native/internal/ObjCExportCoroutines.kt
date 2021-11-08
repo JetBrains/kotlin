@@ -62,12 +62,6 @@ internal fun resumeContinuation(continuation: Continuation<Any?>, value: Any?) {
 }
 
 @PublishedApi
-@ExportForCppRuntime("Kotlin_ObjCExport_resumeUnitContinuationSuccess") // Also makes it a data flow root.
-internal fun resumeUnitContinuation(continuation: Continuation<Unit>) {
-    continuation.resume(Unit)
-}
-
-@PublishedApi
 @ExportForCppRuntime("Kotlin_ObjCExport_resumeContinuationFailure") // Also makes it a data flow root.
 internal fun resumeContinuationWithException(continuation: Continuation<Any?>, exception: Throwable) {
     continuation.resumeWithException(exception)

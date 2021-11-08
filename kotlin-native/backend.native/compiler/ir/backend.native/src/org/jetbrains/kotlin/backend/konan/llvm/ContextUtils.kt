@@ -502,7 +502,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     val Kotlin_ObjCExport_createContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_createUnitContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_resumeContinuation by lazyRtFunction
-    val Kotlin_ObjCExport_resumeUnitContinuation by lazyRtFunction
 
     private val Kotlin_ObjCExport_NSIntegerTypeProvider by lazyRtFunction
     private val Kotlin_longTypeProvider by lazyRtFunction

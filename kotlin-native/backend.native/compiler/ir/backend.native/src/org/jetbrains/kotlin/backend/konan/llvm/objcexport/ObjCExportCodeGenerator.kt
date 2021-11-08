@@ -784,7 +784,13 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
             invokeName = "invokeUnitCompletion"
     ) { continuation, arguments ->
         check(arguments.size == 1)
-        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeUnitContinuation, listOf(continuation) + arguments)
+
+        val errorArgument = arguments[0]
+        val resultArgument = ifThenElse(icmpNe(errorArgument, kNullInt8Ptr), kNullInt8Ptr) {
+            kotlinReferenceToLocalObjC(codegen.theUnitInstanceRef.llvm)
+        }
+        
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument) + arguments)
         ret(null)
     }
 }

@@ -82,7 +82,6 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createUnitContinuationArgument, id compl
 }
 
 extern "C" void Kotlin_ObjCExport_resumeContinuationSuccess(KRef continuation, KRef result);
-extern "C" void Kotlin_ObjCExport_resumeUnitContinuationSuccess(KRef continuation);
 extern "C" void Kotlin_ObjCExport_resumeContinuationFailure(KRef continuation, KRef exception);
 
 extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, id result, id error) {
@@ -100,17 +99,6 @@ extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, id resul
   } else {
     KRef kotlinResult = Kotlin_ObjCExport_refFromObjC(result, holder.slot());
     Kotlin_ObjCExport_resumeContinuationSuccess(continuation, kotlinResult);
-  }
-}
-
-extern "C" void Kotlin_ObjCExport_resumeUnitContinuation(KRef continuation, id error) {
-  ObjHolder holder;
-
-  if (error != nullptr) {
-    KRef exception = Kotlin_ObjCExport_NSErrorAsException(error, holder.slot());
-    Kotlin_ObjCExport_resumeContinuationFailure(continuation, exception);
-  } else {
-    Kotlin_ObjCExport_resumeUnitContinuationSuccess(continuation);
   }
 }
 
