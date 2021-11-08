@@ -1,0 +1,40 @@
+// A.class
+// ------------------------------------------
+// requires compiler version 1.4.0 (level=ERROR)
+public abstract interface A : kotlin/Any {
+
+  // signature: f()V
+  public open fun f(): kotlin/Unit
+
+  // signature: g()V
+  public abstract fun g(): kotlin/Unit
+
+  // module name: test-module
+
+  // has method bodies in interface
+}
+// B.class
+// ------------------------------------------
+// requires compiler version 1.4.0 (level=ERROR)
+public abstract interface B : A {
+
+  // signature: g()V
+  public open fun g(): kotlin/Unit
+
+  // module name: test-module
+
+  // has method bodies in interface
+}
+// C.class
+// ------------------------------------------
+public final class C : B {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}
