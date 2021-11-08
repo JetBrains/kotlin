@@ -30,7 +30,8 @@ import java.io.InputStream
 
 class CliVirtualFileFinder(
     private val index: JvmDependenciesIndex,
-    private val scope: GlobalSearchScope
+    private val scope: GlobalSearchScope,
+    private val enableSearchInCtSym: Boolean
 ) : VirtualFileFinder() {
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         findBinaryOrSigClass(classId)
@@ -70,9 +71,14 @@ class CliVirtualFileFinder(
             dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
         }?.takeIf { it in scope }
 
+    private fun findSigFileIfEnabled(
+        dir: VirtualFile,
+        simpleName: String
+    ) = if (enableSearchInCtSym) dir.findChild("$simpleName.sig") else null
+
     private fun findBinaryOrSigClass(classId: ClassId, simpleName: String, rootType: Set<JavaRoot.RootType>) =
         index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
-            (dir.findChild("$simpleName.class") ?: dir.findChild("$simpleName.sig"))?.takeIf(VirtualFile::isValid)
+            (dir.findChild("$simpleName.class") ?: findSigFileIfEnabled(dir, simpleName))?.takeIf(VirtualFile::isValid)
         }?.takeIf { it in scope }
 
     private fun findBinaryOrSigClass(classId: ClassId) =
