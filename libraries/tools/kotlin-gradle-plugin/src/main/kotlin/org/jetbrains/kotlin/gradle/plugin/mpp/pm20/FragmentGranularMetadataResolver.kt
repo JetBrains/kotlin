@@ -85,9 +85,16 @@ internal class FragmentGranularMetadataResolver(
                     val visibleFragmentNamesExcludingVisibleByParents =
                         visibleFragmentNames.minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleModuleIdentifier()))
 
+                    /*
+                    We can safely assume that a metadata extractor can be created, because the project structure metadata already
+                    had to be read in order to create the Kotlin module and infer fragment visibility.
+                    */
                     val metadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
                         project, resolvedComponentResult, configurationToResolve, true
-                    ) ?: error("Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id}")
+                    ) ?: error(
+                        "Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id} despite " +
+                                "the presence of a proper Kotlin Module"
+                    )
 
                     val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
                         ?: checkNotNull(metadataExtractor.getProjectStructureMetadata())
