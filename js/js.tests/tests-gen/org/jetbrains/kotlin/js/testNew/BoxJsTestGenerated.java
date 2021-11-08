@@ -6097,6 +6097,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("kt41964.kt")
+        public void testKt41964() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/kt41964.kt");
+        }
+
+        @Test
+        @TestMetadata("kt44981.kt")
+        public void testKt44981() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/kt44981.kt");
+        }
+
+        @Test
         @TestMetadata("label.kt")
         public void testLabel() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/label.kt");

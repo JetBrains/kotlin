@@ -5726,6 +5726,16 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/jsCode/invocation.kt");
         }
 
+        @TestMetadata("kt41964.kt")
+        public void testKt41964() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/kt41964.kt");
+        }
+
+        @TestMetadata("kt44981.kt")
+        public void testKt44981() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/kt44981.kt");
+        }
+
         @TestMetadata("label.kt")
         public void testLabel() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/label.kt");
