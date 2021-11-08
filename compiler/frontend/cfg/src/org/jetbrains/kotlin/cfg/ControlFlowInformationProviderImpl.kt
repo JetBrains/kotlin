@@ -1080,7 +1080,7 @@ class ControlFlowInformationProviderImpl private constructor(
         val declarationDescriptor = subjectType?.constructor?.declarationDescriptor ?: return
         val containingPackage = declarationDescriptor.containingPackage()?.toString() ?: return
         val fqName = declarationDescriptor.fqNameSafe.asString()
-        val filePath = subjectExpression.containingKtFile.virtualFilePath
+        val filePath = subjectExpression.containingFile.virtualFile?.path ?: return
         val owner = if (fqName.startsWith("$containingPackage.")) {
             containingPackage + "." + fqName.substring(containingPackage.length + 1).replace(".", "$")
         } else {
