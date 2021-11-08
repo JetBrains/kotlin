@@ -105,7 +105,7 @@ class DependencyProcessor(dependenciesRoot: File,
     }
 
     private val lockFile by lazy {
-      File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
+        File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
     }
 
     var showInfo = true
