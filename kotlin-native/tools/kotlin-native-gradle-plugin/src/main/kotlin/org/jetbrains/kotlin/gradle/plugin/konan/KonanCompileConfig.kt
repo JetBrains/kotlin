@@ -56,6 +56,10 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun commonSourceSets(vararg sourceSetNames: String) = tasks().forEach { it.configure { commonSourceSets(*sourceSetNames) } }
     override fun enableMultiplatform(flag: Boolean) = tasks().forEach { it.configure { enableMultiplatform(flag) } }
 
+    override fun commonSrcDir(dir: Any) = tasks().forEach { it.configure { commonSrcDir(dir) } }
+    override fun commonSrcFiles(vararg files: Any) = tasks().forEach { it.configure { commonSrcFiles(*files) } }
+    override fun commonSrcFiles(files: Collection<Any>) = tasks().forEach { it.configure { commonSrcFiles(files) } }
+
     override fun linkerOpts(values: List<String>) = tasks().forEach { it.configure { linkerOpts(values) } }
     override fun linkerOpts(vararg values: String) = tasks().forEach { it.configure { linkerOpts(*values) } }
 

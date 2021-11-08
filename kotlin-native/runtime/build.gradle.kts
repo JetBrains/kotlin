@@ -387,8 +387,7 @@ val commonBuiltinsSrc = listOf(
         }
 
 val interopRuntimeCommonSrcDir = project(":kotlin-native:Interop:Runtime").file("src/main/kotlin")
-val interopSrcDir = listOf(
-        interopRuntimeCommonSrcDir,
+val interopSrcDirs = listOf(
         project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"),
         project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin")
 )
@@ -396,7 +395,7 @@ val interopSrcDir = listOf(
 val testAnnotationCommonSrcDir = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
 val testCommonSrcDir = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
 
-val stdLibSrcDirs =  interopSrcDir + listOf(
+val stdLibSrcDirs =  interopSrcDirs + listOf(
         project.file("src/main/kotlin"),
         project(":kotlin-stdlib-common").file("../native-wasm/src/")
 )
@@ -419,27 +418,16 @@ konanArtifacts {
                 "-opt-in=kotlin.native.SymbolNameIsDeprecated"
         )
         srcFiles(commonBuiltinsSrc)
-        commonStdlibSrcDirs.forEach { extraOpts(it) }
-        testAnnotationCommonSrcDir.forEach { extraOpts(it) }
-        testCommonSrcDir.forEach { extraOpts(it) }
-        extraOpts(interopRuntimeCommonSrcDir)
-        extraOpts(
-                "-Xcommon-sources=${commonStdlibSrcDirs.joinToString(",")}",
-                "-Xcommon-sources=${testAnnotationCommonSrcDir.joinToString(",")}",
-                "-Xcommon-sources=${testCommonSrcDir.joinToString(",")}",
-                "-Xcommon-sources=$interopRuntimeCommonSrcDir",
-        )
+        commonStdlibSrcDirs.forEach { commonSrcDir(it) }
+        testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }
+        testCommonSrcDir.forEach { commonSrcDir(it) }
+        commonSrcDir(interopRuntimeCommonSrcDir)
         stdLibSrcDirs.forEach { srcDir(it) }
     }
 
     stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
         configure {
             dependsOn(":kotlin-native:distCompiler")
-
-            // Configure inputs and outputs
-            stdLibSrcDirs.forEach { inputs.dir(it) }
-            commonStdlibSrcDirs.forEach { inputs.dir(it) }
-            outputs.dir(project.buildDir.resolve("stdlib"))
         }
     }
 }
@@ -462,10 +450,9 @@ targetList.forEach { targetName ->
             doLast {
                 // Change target in manifest file
                 with(KFile(destinationDir.resolve("default/manifest").absolutePath)) {
-                    loadProperties().also {
-                        it[KLIB_PROPERTY_NATIVE_TARGETS] = targetName
-                        saveProperties(it)
-                    }
+                    val props = loadProperties()
+                    props[KLIB_PROPERTY_NATIVE_TARGETS] = targetName
+                    saveProperties(props)
                 }
             }
         }

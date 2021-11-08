@@ -282,9 +282,16 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         enableMultiplatform(true)
     }
 
-    internal fun commonSrcDir(dir: Any) {
+    override fun commonSrcDir(dir: Any) {
         commonSrcFiles_.add(directoryToKt(dir))
     }
+
+    override fun commonSrcFiles(vararg files: Any) {
+        commonSrcFiles_.add(project.files(files))
+    }
+
+    override fun commonSrcFiles(files: Collection<Any>) = commonSrcFiles(*files.toTypedArray())
+
 
     // DSL. Other parameters.
 

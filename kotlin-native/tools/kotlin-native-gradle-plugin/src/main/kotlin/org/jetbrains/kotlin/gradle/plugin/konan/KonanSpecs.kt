@@ -61,6 +61,11 @@ interface KonanCompileSpec: KonanBuildingSpec {
     fun commonSourceSet(sourceSetName: String)
     fun commonSourceSets(vararg sourceSetNames: String)
 
+    fun commonSrcDir(dir: Any)
+
+    fun commonSrcFiles(vararg files: Any)
+    fun commonSrcFiles(files: Collection<Any>)
+
     // DSL. Other parameters.
 
     fun linkerOpts(vararg values: String)
