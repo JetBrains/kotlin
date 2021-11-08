@@ -11,7 +11,7 @@ import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
 internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File, path: String) {
-    requireValidZipPath(path)
+    requireValidZipDirectoryPath(path)
 
     ZipFile(sourceZipFile).use { zip ->
         val entries = zip.listDescendants(path).toList()
@@ -35,12 +35,19 @@ internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File,
 }
 
 internal fun ZipFile.listDescendants(path: String): Sequence<ZipEntry> {
-    requireValidZipPath(path)
+    requireValidZipDirectoryPath(path)
     return entries().asSequence().filter { entry ->
         entry.name != path && entry.name.startsWith(path)
     }
 }
 
-private fun requireValidZipPath(path: String) = require(path.isEmpty() || path.endsWith("/")) {
+internal fun ensureValidZipDirectoryPath(path: String): String {
+    if (isValidZipDirectoryPath(path)) return path
+    return "$path/".also(::requireValidZipDirectoryPath)
+}
+
+private fun requireValidZipDirectoryPath(path: String) = require(isValidZipDirectoryPath(path)) {
     "Expected path to end with '/', found '$path'"
 }
+
+private fun isValidZipDirectoryPath(path: String) = path.isEmpty() || path.endsWith("/")

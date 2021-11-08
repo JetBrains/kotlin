@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
+import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import java.io.File
 import java.util.zip.ZipFile
@@ -72,16 +73,17 @@ private class CompositeMetadataJarImpl(
         val moduleOutputDirectory = outputDirectory.resolve(moduleIdentifier).also(File::mkdirs)
 
         ZipFile(getArtifactFile(sourceSetName)).use { artifactZipFile ->
-            val cinteropRootPath = "$sourceSetName-cinterop/"
-            val cinteropEntries = artifactZipFile.listDescendants(cinteropRootPath)
+            val cinteropMetadataDirectory = projectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName] ?: return emptySet()
+            val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
+            val cinteropEntries = artifactZipFile.listDescendants(cinteropMetadataDirectoryPath)
             val cinteropNames = cinteropEntries.map { entry ->
-                entry.name.removePrefix(cinteropRootPath).split("/", limit = 2).first()
+                entry.name.removePrefix(cinteropMetadataDirectoryPath).split("/", limit = 2).first()
             }.toSet()
 
             val cinteropsByOutputFile = cinteropNames.associateBy { cinteropName -> moduleOutputDirectory.resolve("$cinteropName.klib") }
             if (materializeFiles) {
                 cinteropsByOutputFile.forEach { (cinteropOutputFile, cinteropName) ->
-                    copyZipFilePartially(artifactFile, cinteropOutputFile, "$cinteropRootPath$cinteropName/")
+                    copyZipFilePartially(artifactFile, cinteropOutputFile, "$cinteropMetadataDirectoryPath$cinteropName/")
                 }
             }
 

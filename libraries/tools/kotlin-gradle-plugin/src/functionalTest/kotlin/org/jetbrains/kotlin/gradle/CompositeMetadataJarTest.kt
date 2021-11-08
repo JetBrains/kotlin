@@ -37,7 +37,34 @@ class CompositeMetadataJarTest {
         val metadataJar = CompositeMetadataJar(
             moduleIdentifier = "test-id",
             projectStructureMetadata = createProjectStructureMetadata(
-                sourceSetBinaryLayout = mapOf("testSourceSetName" to KLIB)
+                sourceSetBinaryLayout = mapOf("testSourceSetName" to KLIB),
+                sourceSetCInteropMetadataDirectory = mapOf("testSourceSetName" to "cinterop/testSourceSetName")
+            ),
+            primaryArtifactFile = primaryArtifactFile,
+            hostSpecificArtifactsBySourceSet = emptyMap()
+        )
+
+        val metadataOutputDirectory = temporaryFolder.newFolder()
+        val metadataFile = metadataJar.getSourceSetCompiledMetadata("testSourceSetName", metadataOutputDirectory, true)
+
+        assertEquals(
+            File("test-id/test-id-testSourceSetName.klib"),
+            metadataFile.relativeTo(metadataOutputDirectory)
+        )
+    }
+
+    @Test
+    fun `empty jar - no cinterop metadata directory - get metadata - returns file`() {
+        val primaryArtifactContent = temporaryFolder.newFolder()
+        val primaryArtifactFile = temporaryFolder.newFile("metadata.jar")
+        zipTo(primaryArtifactFile, primaryArtifactContent)
+        assertTrue(primaryArtifactFile.isFile, "Expected primaryArtifactFile.isFile")
+
+        val metadataJar = CompositeMetadataJar(
+            moduleIdentifier = "test-id",
+            projectStructureMetadata = createProjectStructureMetadata(
+                sourceSetBinaryLayout = mapOf("testSourceSetName" to KLIB),
+                sourceSetCInteropMetadataDirectory = emptyMap(),
             ),
             primaryArtifactFile = primaryArtifactFile,
             hostSpecificArtifactsBySourceSet = emptyMap()
@@ -155,7 +182,7 @@ class CompositeMetadataJarTest {
             .withParentDirectoriesCreated()
             .writeText("stub2 content")
 
-        primaryArtifactContent.resolve("sourceSetB-cinterop/interopB0/stub3")
+        primaryArtifactContent.resolve("nested/sourceSetB/interops/interopB0/stub3")
             .withParentDirectoriesCreated()
             .writeText("stub3 content")
 
@@ -165,7 +192,12 @@ class CompositeMetadataJarTest {
 
         val metadataJar = CompositeMetadataJar(
             moduleIdentifier = "test-id",
-            projectStructureMetadata = createProjectStructureMetadata(),
+            projectStructureMetadata = createProjectStructureMetadata(
+                sourceSetCInteropMetadataDirectory = mapOf(
+                    "sourceSetA" to "sourceSetA-cinterop",
+                    "sourceSetB" to "nested/sourceSetB/interops/"
+                )
+            ),
             primaryArtifactFile = primaryArtifactFile,
             hostSpecificArtifactsBySourceSet = emptyMap()
         )
@@ -209,7 +241,7 @@ class CompositeMetadataJarTest {
                 ?: fail("Failed to find 'interopB0.klib'")
             assertZipContentEquals(
                 temporaryFolder,
-                primaryArtifactContent.resolve("sourceSetB-cinterop/interopB0"), interopB0MetadataFile,
+                primaryArtifactContent.resolve("nested/sourceSetB/interops/interopB0"), interopB0MetadataFile,
                 "Expected correct content for extracted 'interopB0'"
             )
         }
@@ -219,6 +251,7 @@ class CompositeMetadataJarTest {
 private fun createProjectStructureMetadata(
     sourceSetNamesByVariantName: Map<String, Set<String>> = emptyMap(),
     sourceSetsDependsOnRelation: Map<String, Set<String>> = emptyMap(),
+    sourceSetCInteropMetadataDirectory: Map<String, String> = emptyMap(),
     sourceSetBinaryLayout: Map<String, SourceSetMetadataLayout> = emptyMap(),
     sourceSetModuleDependencies: Map<String, Set<ModuleDependencyIdentifier>> = emptyMap(),
     hostSpecificSourceSets: Set<String> = emptySet(),
@@ -228,6 +261,7 @@ private fun createProjectStructureMetadata(
         sourceSetNamesByVariantName = sourceSetNamesByVariantName,
         sourceSetsDependsOnRelation = sourceSetsDependsOnRelation,
         sourceSetBinaryLayout = sourceSetBinaryLayout,
+        sourceSetCInteropMetadataDirectory = sourceSetCInteropMetadataDirectory,
         sourceSetModuleDependencies = sourceSetModuleDependencies,
         hostSpecificSourceSets = hostSpecificSourceSets,
         isPublishedAsRoot = isPublishedAsRoot

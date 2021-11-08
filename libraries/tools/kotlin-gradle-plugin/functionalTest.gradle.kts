@@ -9,6 +9,7 @@ project.extensions.getByType<KotlinJvmProjectExtension>().target.compilations {
             description = "Runs functional tests"
             testClassesDirs = output.classesDirs
             classpath = sourceSets["functionalTest"].runtimeClasspath
+            workingDir = projectDir
         }
         tasks.named("check") {
             dependsOn(functionalTest)
