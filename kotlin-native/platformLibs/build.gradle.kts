@@ -77,8 +77,8 @@ konanTargetList.forEach { target ->
         }
 
         @kotlin.Suppress("UNCHECKED_CAST")
-        val libTask = konanArtifacts.getByName(libName).getByTarget(targetName) as? TaskProvider<KonanInteropTask>
-        libTask?.configure {
+        val libTask = konanArtifacts.getByName(libName).getByTarget(targetName) as TaskProvider<KonanInteropTask>
+        libTask.configure {
             dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
             dependsOn(":kotlin-native:${targetName}CrossDist")
 
@@ -90,7 +90,7 @@ konanTargetList.forEach { target ->
         }
 
         val klibInstallTask = tasks.register(libName, KonanKlibInstallTask::class.java) {
-            klib = project.provider { libTask?.get()?.artifact }
+            klib = libTask.map { it.artifact }
             repo = file("$konanHome/klib/platform/$targetName")
             this.target = targetName
             dependsOn(libTask)
