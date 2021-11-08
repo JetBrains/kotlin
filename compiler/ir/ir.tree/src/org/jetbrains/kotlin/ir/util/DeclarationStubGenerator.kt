@@ -59,6 +59,7 @@ abstract class DeclarationStubGenerator(
         }
 
     abstract val typeTranslator: TypeTranslator
+    abstract val descriptorFinder: DescriptorByIdSignatureFinder
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
 
@@ -70,7 +71,7 @@ abstract class DeclarationStubGenerator(
 //            return generateStubBySymbol(symbol, symbol.descriptor)
 //        }
         val descriptor = if (!symbol.hasDescriptor)
-            findDescriptorBySignature(
+            descriptorFinder.findDescriptorBySignature(
                 symbol.signature
                     ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
             )

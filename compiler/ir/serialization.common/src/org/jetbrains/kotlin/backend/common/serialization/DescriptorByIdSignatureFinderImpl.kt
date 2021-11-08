@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.util.DescriptorByIdSignatureFinder
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.name.FqName
@@ -16,11 +17,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class DescriptorByIdSignatureFinder(
+class DescriptorByIdSignatureFinderImpl(
     private val moduleDescriptor: ModuleDescriptor,
     private val mangler: KotlinMangler.DescriptorMangler,
     private val lookupMode: LookupMode
-) {
+) : DescriptorByIdSignatureFinder {
     init {
         assert(lookupMode != LookupMode.MODULE_ONLY || moduleDescriptor is ModuleDescriptorImpl) {
             "Incorrect lookup mode $lookupMode for $moduleDescriptor"
@@ -42,7 +43,7 @@ class DescriptorByIdSignatureFinder(
         MODULE_ONLY
     }
 
-    fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
+    override fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
         when (signature) {
             is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
             is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)

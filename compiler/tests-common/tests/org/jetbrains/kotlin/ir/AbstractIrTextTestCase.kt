@@ -57,7 +57,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val stubGenerator = DeclarationStubGeneratorImpl(
             irModule.descriptor,
             SymbolTable(signaturer, IrFactoryImpl), // TODO
-            irModule.irBuiltins
+            irModule.irBuiltins,
+            mangler,
         )
 
         val path = wholeFile.path

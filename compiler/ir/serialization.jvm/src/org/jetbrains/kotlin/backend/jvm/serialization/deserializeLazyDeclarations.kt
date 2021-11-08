@@ -54,10 +54,10 @@ fun deserializeFromByteArray(
         irProto.debugInfoList
     )
     val descriptorFinder =
-        DescriptorByIdSignatureFinder(
+        DescriptorByIdSignatureFinderImpl(
             stubGenerator.moduleDescriptor,
             JvmDescriptorMangler(null),
-            DescriptorByIdSignatureFinder.LookupMode.MODULE_WITH_DEPENDENCIES
+            DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_WITH_DEPENDENCIES
         )
 
     // Only needed for local signature computation.
@@ -129,13 +129,13 @@ private class IrLibraryFileFromAnnotation(
 
 private fun referencePublicSymbol(
     symbolTable: SymbolTable,
-    descriptorFinder: DescriptorByIdSignatureFinder,
+    descriptorFinder: DescriptorByIdSignatureFinderImpl,
     idSig: IdSignature,
     symbolKind: BinarySymbolData.SymbolKind
 ): IrSymbol {
     with(symbolTable) {
         val descriptor = descriptorFinder.findDescriptorBySignature(idSig)
-        return if (descriptor != null) {
+        return if (descriptor != null && false) {
             when (symbolKind) {
                 BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(descriptor as ClassDescriptor)
                 BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(descriptor as ClassConstructorDescriptor)
@@ -150,14 +150,15 @@ private fun referencePublicSymbol(
             }
         } else {
             when (symbolKind) {
-                BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(idSig)
-                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructorFromLinker(idSig)
-                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntryFromLinker(idSig)
+                BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(idSig)
+                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(idSig)
+                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(idSig)
                 BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL, BinarySymbolData.SymbolKind.FIELD_SYMBOL
-                    -> referenceFieldFromLinker(idSig)
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunctionFromLinker(idSig)
-                BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAliasFromLinker(idSig)
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referencePropertyFromLinker(idSig)
+                    -> referenceField(idSig)
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(idSig)
+                BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(idSig)
+                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(idSig)
+                BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(idSig)
                 else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
             }
         }

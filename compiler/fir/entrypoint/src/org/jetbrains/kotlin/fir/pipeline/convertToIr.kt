@@ -29,7 +29,8 @@ fun FirSession.convertToIr(
     extensions: GeneratorExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>
 ): Fir2IrResult {
-    val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
+    val mangler = JvmDescriptorMangler(null)
+    val signaturer = JvmIdSignatureDescriptor(mangler)
 
     val commonFirFiles = moduleData.dependsOnDependencies
         .map { it.session }
@@ -38,7 +39,7 @@ fun FirSession.convertToIr(
 
     return Fir2IrConverter.createModuleFragment(
         this, scopeSession, firFiles + commonFirFiles,
-        languageVersionSettings, signaturer,
+        languageVersionSettings, mangler, signaturer,
         extensions, FirJvmKotlinMangler(this), IrFactoryImpl,
         FirJvmVisibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(),

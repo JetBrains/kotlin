@@ -103,7 +103,8 @@ class FirAnalyzerFacade(
 
     override fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
         if (_scopeSession == null) runResolution()
-        val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
+        val mangler = JvmDescriptorMangler(null)
+        val signaturer = JvmIdSignatureDescriptor(mangler)
 
         val commonFirFiles = session.moduleData.dependsOnDependencies
             .map { it.session }
@@ -112,7 +113,7 @@ class FirAnalyzerFacade(
 
         return Fir2IrConverter.createModuleFragment(
             session, _scopeSession!!, firFiles!! + commonFirFiles,
-            languageVersionSettings, signaturer,
+            languageVersionSettings, mangler, signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),

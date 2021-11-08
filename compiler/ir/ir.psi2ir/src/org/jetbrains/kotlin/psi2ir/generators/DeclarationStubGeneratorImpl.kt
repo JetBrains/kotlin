@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -20,6 +21,7 @@ class DeclarationStubGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
     symbolTable: SymbolTable,
     irBuiltins: IrBuiltIns,
+    mangler: KotlinMangler.DescriptorMangler,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : DeclarationStubGenerator(moduleDescriptor, symbolTable, irBuiltins, extensions) {
     override val typeTranslator: TypeTranslator =
@@ -31,6 +33,12 @@ class DeclarationStubGeneratorImpl(
             true,
             extensions
         )
+
+    override val descriptorFinder: DescriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
+        moduleDescriptor,
+        mangler,
+        DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_WITH_DEPENDENCIES
+    )
 }
 
 // In most cases, IrProviders list consist of an optional deserializer and a DeclarationStubGenerator.
@@ -38,11 +46,12 @@ fun generateTypicalIrProviderList(
     moduleDescriptor: ModuleDescriptor,
     irBuiltins: IrBuiltIns,
     symbolTable: SymbolTable,
+    mangler: KotlinMangler.DescriptorMangler,
     deserializer: IrDeserializer? = null,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ): List<IrProvider> {
     val stubGenerator = DeclarationStubGeneratorImpl(
-        moduleDescriptor, symbolTable, irBuiltins, extensions
+        moduleDescriptor, symbolTable, irBuiltins, mangler, extensions
     )
     return listOfNotNull(deserializer, stubGenerator)
 }

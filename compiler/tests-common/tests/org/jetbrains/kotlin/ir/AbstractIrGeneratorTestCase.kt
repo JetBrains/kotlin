@@ -168,7 +168,9 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                 generatorExtensions
             )
             val irProviders = generateTypicalIrProviderList(
-                moduleDescriptor, context.irBuiltIns, context.symbolTable, extensions = generatorExtensions
+                moduleDescriptor, context.irBuiltIns, context.symbolTable,
+                extensions = generatorExtensions,
+                mangler = JsManglerDesc,
             )
             return psi2ir.generateModuleFragment(context, ktFilesToAnalyze, irProviders, emptyList())
         }

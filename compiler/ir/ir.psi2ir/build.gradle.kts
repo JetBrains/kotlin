@@ -8,6 +8,7 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
+    api(project(":compiler:ir.serialization.common"))
     compileOnly(intellijCore())
 }
 

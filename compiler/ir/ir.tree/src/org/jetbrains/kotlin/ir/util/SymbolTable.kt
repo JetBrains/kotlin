@@ -24,35 +24,43 @@ import org.jetbrains.kotlin.utils.threadLocal
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
+    fun referenceClass(sig: IdSignature, reg: Boolean = true): IrClassSymbol
 
     fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol
+    fun referenceConstructor(sig: IdSignature, reg: Boolean = true): IrConstructorSymbol
 
     fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol
+    fun referenceEnumEntry(sig: IdSignature, reg: Boolean = true): IrEnumEntrySymbol
     fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol
+    fun referenceField(sig: IdSignature, reg: Boolean = true): IrFieldSymbol
     fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol
+    fun referenceProperty(sig: IdSignature, reg: Boolean = true): IrPropertySymbol
 
     fun referenceProperty(descriptor: PropertyDescriptor, generate: () -> IrProperty): IrProperty
 
     fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol
+    fun referenceSimpleFunction(sig: IdSignature, reg: Boolean = true): IrSimpleFunctionSymbol
     fun referenceDeclaredFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol
     fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol
 
     fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
+    fun referenceTypeParameter(sig: IdSignature, reg: Boolean = true): IrTypeParameterSymbol
     fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
     fun referenceVariable(descriptor: VariableDescriptor): IrVariableSymbol
 
     fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol
+    fun referenceTypeAlias(sig: IdSignature, reg: Boolean = true): IrTypeAliasSymbol
 
-    fun referenceClassFromLinker(sig: IdSignature): IrClassSymbol
-    fun referenceConstructorFromLinker(sig: IdSignature): IrConstructorSymbol
-    fun referenceEnumEntryFromLinker(sig: IdSignature): IrEnumEntrySymbol
-    fun referenceFieldFromLinker(sig: IdSignature): IrFieldSymbol
-    fun referencePropertyFromLinker(sig: IdSignature): IrPropertySymbol
-    fun referenceSimpleFunctionFromLinker(sig: IdSignature): IrSimpleFunctionSymbol
-    fun referenceGlobalTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol
-    fun referenceTypeAliasFromLinker(sig: IdSignature): IrTypeAliasSymbol
+    fun referenceClassFromLinker(sig: IdSignature) = referenceClass(sig, false)
+    fun referenceConstructorFromLinker(sig: IdSignature) = referenceConstructor(sig, false)
+    fun referenceEnumEntryFromLinker(sig: IdSignature) = referenceEnumEntry(sig, false)
+    fun referenceFieldFromLinker(sig: IdSignature) = referenceField(sig, false)
+    fun referencePropertyFromLinker(sig: IdSignature) = referenceProperty(sig, false)
+    fun referenceSimpleFunctionFromLinker(sig: IdSignature) = referenceSimpleFunction(sig, false)
+    fun referenceGlobalTypeParameterFromLinker(sig: IdSignature) = referenceTypeParameter(sig, false)
+    fun referenceTypeAliasFromLinker(sig: IdSignature) = referenceTypeAlias(sig, false)
 
     fun enterScope(owner: IrSymbol)
     fun enterScope(owner: IrDeclaration)
@@ -485,9 +493,9 @@ open class SymbolTable(
     fun referenceClassIfAny(sig: IdSignature): IrClassSymbol? =
         classSymbolTable.get(sig)
 
-    override fun referenceClassFromLinker(sig: IdSignature): IrClassSymbol =
+    override fun referenceClass(sig: IdSignature, reg: Boolean): IrClassSymbol =
         classSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig, false) { IrClassPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, reg) { IrClassPublicSymbolImpl(sig) }
             else IrClassSymbolImpl().also {
                 it.privateSignature = sig
             }
@@ -554,9 +562,9 @@ open class SymbolTable(
         }
     }
 
-    override fun referenceConstructorFromLinker(sig: IdSignature): IrConstructorSymbol =
+    override fun referenceConstructor(sig: IdSignature, reg: Boolean): IrConstructorSymbol =
         constructorSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig, false) { IrConstructorPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, reg) { IrConstructorPublicSymbolImpl(sig) }
             else IrConstructorSymbolImpl()
         }
 
@@ -603,9 +611,9 @@ open class SymbolTable(
     override fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol =
         enumEntrySymbolTable.referenced(descriptor) { signature -> createEnumEntrySymbol(descriptor, signature) }
 
-    override fun referenceEnumEntryFromLinker(sig: IdSignature) =
+    override fun referenceEnumEntry(sig: IdSignature, reg: Boolean) =
         enumEntrySymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig, false) { IrEnumEntryPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, reg) { IrEnumEntryPublicSymbolImpl(sig) }
             else IrEnumEntrySymbolImpl()
         }
 
@@ -672,9 +680,11 @@ open class SymbolTable(
     override fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol =
         fieldSymbolTable.referenced(descriptor) { signature -> createFieldSymbol(descriptor, signature) }
 
-    override fun referenceFieldFromLinker(sig: IdSignature): IrFieldSymbol =
+    override fun referenceField(sig: IdSignature, reg: Boolean): IrFieldSymbol =
         fieldSymbolTable.run {
-            if (sig.isPubliclyVisible) IrFieldPublicSymbolImpl(sig) else IrFieldSymbolImpl()
+            if (sig.isPubliclyVisible) {
+                referenced(sig) { IrFieldPublicSymbolImpl(sig) }
+            } else IrFieldSymbolImpl()
         }
 
     val unboundFields: Set<IrFieldSymbol> get() = fieldSymbolTable.unboundSymbols
@@ -750,9 +760,9 @@ open class SymbolTable(
     fun referencePropertyIfAny(sig: IdSignature): IrPropertySymbol? =
         propertySymbolTable.get(sig)
 
-    override fun referencePropertyFromLinker(sig: IdSignature): IrPropertySymbol =
+    override fun referenceProperty(sig: IdSignature, reg: Boolean): IrPropertySymbol =
         propertySymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig, false) { IrPropertyPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, reg) { IrPropertyPublicSymbolImpl(sig) }
             else IrPropertySymbolImpl()
         }
 
@@ -764,9 +774,9 @@ open class SymbolTable(
     override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol =
         typeAliasSymbolTable.referenced(descriptor) { signature -> createTypeAliasSymbol(descriptor, signature) }
 
-    override fun referenceTypeAliasFromLinker(sig: IdSignature) =
+    override fun referenceTypeAlias(sig: IdSignature, reg: Boolean) =
         typeAliasSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig, false) { IrTypeAliasPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, reg) { IrTypeAliasPublicSymbolImpl(sig) }
             else IrTypeAliasSymbolImpl()
         }
 
@@ -840,9 +850,9 @@ open class SymbolTable(
     fun referenceSimpleFunctionIfAny(sig: IdSignature): IrSimpleFunctionSymbol? =
         simpleFunctionSymbolTable.get(sig)
 
-    override fun referenceSimpleFunctionFromLinker(sig: IdSignature): IrSimpleFunctionSymbol {
+    override fun referenceSimpleFunction(sig: IdSignature, reg: Boolean): IrSimpleFunctionSymbol {
         return simpleFunctionSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig, false) { IrSimpleFunctionPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, reg) { IrSimpleFunctionPublicSymbolImpl(sig) }
             else IrSimpleFunctionSymbolImpl().also {
                 it.privateSignature = sig
             }
@@ -970,8 +980,8 @@ open class SymbolTable(
     override fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol =
         scopedTypeParameterSymbolTable.referenced(classifier) { signature -> createTypeParameterSymbol(classifier, signature) }
 
-    override fun referenceGlobalTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol =
-        globalTypeParameterSymbolTable.referenced(sig, false) {
+    override fun referenceTypeParameter(sig: IdSignature, reg: Boolean): IrTypeParameterSymbol =
+        globalTypeParameterSymbolTable.referenced(sig, reg) {
             if (sig.isPubliclyVisible) IrTypeParameterPublicSymbolImpl(sig) else IrTypeParameterSymbolImpl()
         }
 

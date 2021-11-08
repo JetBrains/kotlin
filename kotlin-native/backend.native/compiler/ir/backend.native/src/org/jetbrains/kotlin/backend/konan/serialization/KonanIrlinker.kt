@@ -567,7 +567,7 @@ internal class KonanIrLinker(
             require(klib.isInteropLibrary())
         }
 
-        private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinder(
+        private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
                 DescriptorByIdSignatureFinder.LookupMode.MODULE_ONLY
         )
@@ -621,7 +621,7 @@ internal class KonanIrLinker(
             override val klib: KotlinLibrary
     ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
 
-        private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinder(
+        private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
                 DescriptorByIdSignatureFinder.LookupMode.MODULE_ONLY
         )
