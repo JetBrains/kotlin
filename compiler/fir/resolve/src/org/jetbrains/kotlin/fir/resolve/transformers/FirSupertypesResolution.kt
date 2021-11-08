@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -287,12 +288,29 @@ open class FirSupertypeResolverVisitor(
             }
             classId.isNestedClass -> {
                 val outerClassFir = classId.outerClassId?.let(::getFirClassifierByFqName) as? FirRegularClass
-                prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf())
+                val scopes = prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf())
+
+                if (classLikeDeclaration is FirRegularClass && classLikeDeclaration.isCompanion) {
+                    scopes.lowerCompanionScopePriority(classLikeDeclaration)
+                } else {
+                    scopes
+                }
             }
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()
         }
 
         return result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
+    }
+
+    private fun PersistentList<FirScope>.lowerCompanionScopePriority(companion: FirRegularClass): PersistentList<FirScope> {
+        val index = indexOfFirst { it is FirNestedClassifierScope && it.klass == companion }
+
+        if (index == -1) {
+            return this
+        }
+
+        val companionScope = this[index]
+        return this.removeAt(index).add(companionScope)
     }
 
     private fun resolveSpecificClassLikeSupertypes(
