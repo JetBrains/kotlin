@@ -145,9 +145,13 @@ tasks {
         dependsOn(named("validatePlugins"))
     }
 
-    named<DokkaTask>("dokka") {
-        outputFormat = "markdown"
-        includes = listOf("$projectDir/Module.md")
+    withType<DokkaTask>().configureEach {
+        dokkaSourceSets.configureEach {
+            includes.from("Module.md")
+        }
+    }
+    register("dokka") {
+        dependsOn(named("dokkaJavadoc"))
     }
 }
 
