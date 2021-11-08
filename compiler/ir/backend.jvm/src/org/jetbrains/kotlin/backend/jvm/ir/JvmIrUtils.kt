@@ -69,6 +69,8 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.io.File
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -279,6 +281,12 @@ fun IrClass.getSingleAbstractMethod(): IrSimpleFunction? =
 
 fun IrFile.getKtFile(): KtFile? =
     (fileEntry as? PsiIrFileEntry)?.psiFile as KtFile?
+
+fun IrFile.getIoFile(): File? =
+    when (val fe = fileEntry) {
+        is PsiIrFileEntry -> fe.psiFile.virtualFile?.path?.let(::File)
+        else -> File(fe.name).takeIf { it.exists() }
+    }
 
 inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolean {
     var result = false

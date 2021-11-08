@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -22,12 +21,13 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.File
 
 class InlineCallSiteInfo(
     val ownerClassName: String,
     val method: Method,
     val inlineScopeVisibility: DescriptorVisibility?,
-    val file: PsiFile?,
+    val file: File?,
     val lineNumber: Int
 ) {
     val isInlineOrInsideInline: Boolean
