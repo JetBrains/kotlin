@@ -67,7 +67,7 @@ class ControlFlowInformationProviderImpl private constructor(
     private val pseudocode: Pseudocode,
     private val languageVersionSettings: LanguageVersionSettings,
     private val diagnosticSuppressor: PlatformDiagnosticSuppressor,
-    private val enumWhenTracker: EnumWhenTracker
+    private val enumWhenTracker: EnumWhenTracker?
 ) : ControlFlowInformationProvider {
     private val pseudocodeVariablesData by lazy {
         PseudocodeVariablesData(pseudocode, trace.bindingContext)
@@ -78,7 +78,7 @@ class ControlFlowInformationProviderImpl private constructor(
         trace: BindingTrace,
         languageVersionSettings: LanguageVersionSettings,
         diagnosticSuppressor: PlatformDiagnosticSuppressor,
-        enumWhenTracker: EnumWhenTracker
+        enumWhenTracker: EnumWhenTracker? = null
     ) : this(
         declaration,
         trace,
@@ -1073,6 +1073,7 @@ class ControlFlowInformationProviderImpl private constructor(
     }
 
     private fun reportEnumWhenUsage(subjectType: KotlinType?, subjectExpression: KtExpression, elseEntry: KtWhenEntry?) {
+        if (enumWhenTracker == null) return
         if (elseEntry != null) return
         if (subjectExpression !is KtNameReferenceExpression) return
 
