@@ -43,6 +43,7 @@ FILE fqName:<root> fileName:/localDeclaration.kt
   FUN name:testLocalFunction visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       FUN LOCAL_FUNCTION name:local visibility:local modality:FINAL <> (<this>:<root>.A) returnType:kotlin.Unit
+        contextReceiverParametersCount: 1
         VALUE_PARAMETER name:<this> index:0 type:<root>.A
         BLOCK_BODY
           CALL 'public open fun f (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null

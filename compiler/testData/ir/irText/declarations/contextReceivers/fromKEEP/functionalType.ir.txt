@@ -80,6 +80,7 @@ FILE fqName:<root> fileName:/functionalType.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:f visibility:public modality:FINAL <T> ($receiver:<root>.K, <this>:<root>.O, g:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>) returnType:T of <root>.f
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.K
     VALUE_PARAMETER name:<this> index:0 type:<root>.O
     VALUE_PARAMETER name:g index:1 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>
@@ -108,6 +109,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                     <this>: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     g: FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.O, <root>.K, <root>.Param, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.K, <this>:<root>.O, it:<root>.Param) returnType:kotlin.String
+                        contextReceiverParametersCount: 1
                         $receiver: VALUE_PARAMETER name:$this$f type:<root>.K
                         VALUE_PARAMETER name:<this> index:0 type:<root>.O
                         VALUE_PARAMETER name:it index:1 type:<root>.Param

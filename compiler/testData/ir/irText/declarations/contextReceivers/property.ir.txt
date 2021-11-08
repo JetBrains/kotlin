@@ -36,6 +36,7 @@ FILE fqName:<root> fileName:/property.kt
   PROPERTY name:c visibility:public modality:FINAL [val]
     FUN name:<get-c> visibility:public modality:FINAL <> (<this>:<root>.B, <this>:<root>.A) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
+      contextReceiverParametersCount: 2
       VALUE_PARAMETER name:<this> index:0 type:<root>.B
       VALUE_PARAMETER name:<this> index:1 type:<root>.A
       BLOCK_BODY

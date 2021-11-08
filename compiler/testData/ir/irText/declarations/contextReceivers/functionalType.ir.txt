@@ -79,6 +79,7 @@ FILE fqName:<root> fileName:/functionalType.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:f1 visibility:public modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, g:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit>) returnType:kotlin.Unit
+    contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.R
     VALUE_PARAMETER name:<this> index:0 type:<root>.C
     VALUE_PARAMETER name:g index:1 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit>
@@ -89,6 +90,7 @@ FILE fqName:<root> fileName:/functionalType.kt
         p2: GET_VAR '<this>: <root>.R declared in <root>.f1' type=<root>.R origin=null
         p3: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Param' type=<root>.Param origin=null
   FUN name:f2 visibility:public modality:FINAL <> (<this>:<root>.C, g:@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>) returnType:kotlin.Unit
+    contextReceiverParametersCount: 1
     VALUE_PARAMETER name:<this> index:0 type:<root>.C
     VALUE_PARAMETER name:g index:1 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>
     BLOCK_BODY
@@ -97,6 +99,7 @@ FILE fqName:<root> fileName:/functionalType.kt
         p1: GET_VAR '<this>: <root>.C declared in <root>.f2' type=<root>.C origin=null
         p2: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Param' type=<root>.Param origin=null
   FUN name:f3 visibility:public modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, g:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit>) returnType:kotlin.Unit
+    contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.R
     VALUE_PARAMETER name:<this> index:0 type:<root>.C
     VALUE_PARAMETER name:g index:1 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit>
@@ -106,6 +109,7 @@ FILE fqName:<root> fileName:/functionalType.kt
         p1: GET_VAR '<this>: <root>.C declared in <root>.f3' type=<root>.C origin=null
         p2: GET_VAR '<this>: <root>.R declared in <root>.f3' type=<root>.R origin=null
   FUN name:f4 visibility:public modality:FINAL <> (<this>:<root>.C, g:@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.Unit>) returnType:kotlin.Unit
+    contextReceiverParametersCount: 1
     VALUE_PARAMETER name:<this> index:0 type:<root>.C
     VALUE_PARAMETER name:g index:1 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.Unit>
     BLOCK_BODY
@@ -117,6 +121,7 @@ FILE fqName:<root> fileName:/functionalType.kt
       VAR name:lf1 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> [val]
         FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+            contextReceiverParametersCount: 1
             $receiver: VALUE_PARAMETER name:$this$null type:<root>.R
             VALUE_PARAMETER name:<this> index:0 type:<root>.C
             VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
@@ -130,6 +135,7 @@ FILE fqName:<root> fileName:/functionalType.kt
       VAR name:lf2 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> [val]
         FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+            contextReceiverParametersCount: 1
             VALUE_PARAMETER name:<this> index:0 type:<root>.C
             VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
             BLOCK_BODY
@@ -139,6 +145,7 @@ FILE fqName:<root> fileName:/functionalType.kt
       VAR name:lf3 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> [val]
         FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C) returnType:kotlin.Unit
+            contextReceiverParametersCount: 1
             $receiver: VALUE_PARAMETER name:$this$null type:<root>.R
             VALUE_PARAMETER name:<this> index:0 type:<root>.C
             BLOCK_BODY
@@ -151,6 +158,7 @@ FILE fqName:<root> fileName:/functionalType.kt
       VAR name:lf4 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.Unit> [val]
         FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C) returnType:kotlin.Unit
+            contextReceiverParametersCount: 1
             VALUE_PARAMETER name:<this> index:0 type:<root>.C
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -181,6 +189,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                         <this>: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
                         g: FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
                             $receiver: VALUE_PARAMETER name:$this$f1 type:<root>.R
                             VALUE_PARAMETER name:<this> index:0 type:<root>.C
                             VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
@@ -198,6 +207,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                         <this>: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
                         g: FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
                             VALUE_PARAMETER name:<this> index:0 type:<root>.C
                             VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
                             BLOCK_BODY
@@ -213,6 +223,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                         <this>: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
                         g: FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.R, kotlin.Unit> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
                             $receiver: VALUE_PARAMETER name:$this$f3 type:<root>.R
                             VALUE_PARAMETER name:<this> index:0 type:<root>.C
                             BLOCK_BODY
@@ -229,6 +240,7 @@ FILE fqName:<root> fileName:/functionalType.kt
                         <this>: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
                         g: FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.Unit> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C) returnType:kotlin.Unit
+                            contextReceiverParametersCount: 1
                             VALUE_PARAMETER name:<this> index:0 type:<root>.C
                             BLOCK_BODY
                               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

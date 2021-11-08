@@ -16,16 +16,19 @@ FILE fqName:<root> fileName:/lazy.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> (<this>:<root>.Lazy<kotlin.Int>, <this>:<root>.Lazy<kotlin.CharSequence>) returnType:kotlin.Unit
+    contextReceiverParametersCount: 2
     VALUE_PARAMETER name:<this> index:0 type:<root>.Lazy<kotlin.Int>
     VALUE_PARAMETER name:<this> index:1 type:<root>.Lazy<kotlin.CharSequence>
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, <this>:<root>.Lazy<T of <root>.test2>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
     VALUE_PARAMETER name:<this> index:0 type:<root>.Lazy<T of <root>.test2>
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <T> ($receiver:<root>.Lazy<kotlin.Int>, <this>:<root>.Lazy<<root>.Lazy<T of <root>.test3>>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Lazy<kotlin.Int>
     VALUE_PARAMETER name:<this> index:0 type:<root>.Lazy<<root>.Lazy<T of <root>.test3>>
     BLOCK_BODY
