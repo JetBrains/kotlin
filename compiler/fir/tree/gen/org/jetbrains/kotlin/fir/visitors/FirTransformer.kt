@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
+import org.jetbrains.kotlin.fir.declarations.FirErrorClassLike
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -473,6 +474,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformErrorProperty(errorProperty: FirErrorProperty, data: D): FirStatement {
         return transformElement(errorProperty, data)
+    }
+
+    open fun transformErrorClassLike(errorClassLike: FirErrorClassLike, data: D): FirStatement {
+        return transformElement(errorClassLike, data)
     }
 
     open fun transformQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): FirStatement {
@@ -1001,6 +1006,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitErrorProperty(errorProperty: FirErrorProperty, data: D): FirStatement {
         return transformErrorProperty(errorProperty, data)
+    }
+
+    final override fun visitErrorClassLike(errorClassLike: FirErrorClassLike, data: D): FirStatement {
+        return transformErrorClassLike(errorClassLike, data)
     }
 
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): FirStatement {

@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.types.ConeClassLikeErrorLookupTag
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 
 sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
     val classId: ClassId
@@ -92,4 +91,17 @@ class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(cl
         get() {
             return fir.typeParameters.map { it.symbol }
         }
+}
+
+class FirErrorClassLikeSymbol(
+    val diagnostic: ConeDiagnostic,
+    classId: ClassId,
+) : FirClassLikeSymbol<FirErrorClassLike>(classId) {
+    companion object {
+        val NAME: Name = Name.special("<error class-like>")
+    }
+
+    override fun toLookupTag(): ConeClassLikeLookupTag {
+        return ConeClassLikeErrorLookupTag(classId)
+    }
 }

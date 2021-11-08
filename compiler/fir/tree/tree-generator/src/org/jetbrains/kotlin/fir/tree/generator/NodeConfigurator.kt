@@ -107,6 +107,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +typeParameters
         }
 
+        errorClassLike.configure {
+            +symbol("FirErrorClassLikeSymbol")
+        }
+
         memberDeclaration.configure {
             +status.withTransform()
         }
