@@ -52,7 +52,7 @@ open class ModuleGenerator(
         ExternalDependenciesGenerator(context.symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     }
 
-    private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
+    fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
         val irFile = createEmptyIrFile(ktFile, module)
 
         val constantValueGenerator = irDeclarationGenerator.context.constantValueGenerator
@@ -85,7 +85,7 @@ open class ModuleGenerator(
         return irFile
     }
 
-    private fun createEmptyIrFile(ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
+     fun createEmptyIrFile(ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
         val fileEntry = PsiIrFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
         return IrFileImpl(fileEntry, packageFragmentDescriptor, module).apply {
