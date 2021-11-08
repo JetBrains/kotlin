@@ -85,7 +85,7 @@ class UnreachableCodeLightTreeHelper(val tree: FlyweightCapableTreeStructure<Nod
     }
 }
 
-internal fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode?> {
+internal fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode> {
     val children = Ref<Array<LighterASTNode?>>()
     val count = tree.getChildren(this, children)
     return if (count > 0) children.get().filterNotNull() else emptyList()
