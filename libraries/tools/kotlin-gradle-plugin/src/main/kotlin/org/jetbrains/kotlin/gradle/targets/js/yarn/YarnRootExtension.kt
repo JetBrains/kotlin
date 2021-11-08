@@ -39,8 +39,8 @@ open class YarnRootExtension(
     var command by Property("yarn")
 
     var download by Property(true)
-    var lockFileName by Property("kotlin-yarn.lock")
-    var lockFileDirectory: File by Property(project.rootDir)
+    var lockFileName by Property("yarn.lock")
+    var lockFileDirectory: File by Property(project.rootDir.resolve("kotlin-js-store"))
 
     var ignoreScripts by Property(true)
 

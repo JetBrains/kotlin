@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
 import org.jetbrains.kotlin.gradle.util.normalizePath
-import org.junit.Test
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
@@ -1052,8 +1051,13 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
         project("cleanTask", gradleVersion) {
             buildGradle.modify(::transformBuildScriptWithPluginsDsl)
             build("assemble") {
-                assertFileExists(projectPath.resolve("kotlin-yarn.lock"))
-                assert(projectPath.resolve("kotlin-yarn.lock").readText() == projectPath.resolve("build/js/yarn.lock").readText())
+                assertFileExists(projectPath.resolve("kotlin-js-store").resolve("yarn.lock"))
+                assert(
+                    projectPath
+                        .resolve("kotlin-js-store")
+                        .resolve("yarn.lock")
+                        .readText() == projectPath.resolve("build/js/yarn.lock").readText()
+                )
             }
         }
     }
