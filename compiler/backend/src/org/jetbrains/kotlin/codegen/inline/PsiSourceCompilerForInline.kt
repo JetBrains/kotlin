@@ -36,6 +36,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.File
 
 class PsiSourceCompilerForInline(
     private val codegen: ExpressionCodegen,
@@ -75,7 +76,7 @@ class PsiSourceCompilerForInline(
                 parentCodegen.className,
                 signature.asmMethod,
                 context.functionDescriptor.getInlineCallSiteVisibility(),
-                callElement.containingFile,
+                callElement.containingFile?.virtualFile?.let { File(it.path) },
                 CodegenUtil.getLineNumberForElement(callElement, false) ?: 0
             )
         }
