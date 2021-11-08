@@ -26,6 +26,7 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 is FirErrorProperty -> 0
                 is FirValueParameter -> 0
                 is FirBackingField -> 0
+                is FirErrorClassLike -> 0
             }
 
         private val FirMemberDeclaration.name: Name
@@ -36,6 +37,8 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                     this.classId.shortClassName
                 is FirTypeAlias ->
                     this.name
+                is FirErrorClassLike ->
+                    this.symbol.classId.shortClassName
             }
 
         override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int {

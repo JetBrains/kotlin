@@ -350,6 +350,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 is FirAnonymousObjectSymbol -> return false
                 is FirRegularClassSymbol -> containingClassSymbol.visibility
                 is FirTypeAliasSymbol -> containingClassSymbol.visibility
+                is FirErrorClassLikeSymbol -> return false
             }
             return containingClassVisibility == Visibilities.Private || containingClassVisibility == Visibilities.PrivateToThis
         }

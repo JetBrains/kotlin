@@ -117,7 +117,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession): FirClassLikeDeclaration? {
         return when (this) {
-            is FirClass -> {
+            is FirClass,
+            is FirErrorClassLike -> {
                 if (isLocal) return null
 
                 this.classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir }

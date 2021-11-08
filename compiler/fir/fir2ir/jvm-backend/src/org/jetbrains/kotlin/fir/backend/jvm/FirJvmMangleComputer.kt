@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -221,6 +222,7 @@ open class FirJvmMangleComputer(
                     null -> (type.lookupTag as? ConeClassLikeLookupTag)?.let {
                         tBuilder.append(it.classId)
                     }
+                    is FirErrorClassLikeSymbol -> {}
                 }
 
                 type.typeArguments.asList().ifNotEmpty {

@@ -101,7 +101,7 @@ private fun FirClassLikeSymbol<*>?.findSAMConstructor(
     return when (this) {
         is FirRegularClassSymbol -> bodyResolveComponents.samResolver.getSamConstructor(fir)
         is FirTypeAliasSymbol -> findSAMConstructorForTypeAlias(bodyResolveComponents)
-        is FirAnonymousObjectSymbol, null -> null
+        is FirAnonymousObjectSymbol, is FirErrorClassLikeSymbol, null -> null
     }
 }
 
@@ -192,6 +192,9 @@ private fun processConstructors(
                     else firClass.scopeForClass(
                         substitutor, session, bodyResolveComponents.scopeSession
                     )
+                }
+                is FirErrorClassLikeSymbol -> {
+                    null
                 }
             }
 

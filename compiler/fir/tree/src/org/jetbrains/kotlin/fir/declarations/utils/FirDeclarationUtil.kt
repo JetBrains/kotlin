@@ -19,6 +19,7 @@ val FirClassLikeDeclaration.classId
     get() = when (this) {
         is FirClass -> symbol.classId
         is FirTypeAlias -> symbol.classId
+        is FirErrorClassLike -> symbol.classId
     }
 
 val FirClass.classId: ClassId get() = symbol.classId

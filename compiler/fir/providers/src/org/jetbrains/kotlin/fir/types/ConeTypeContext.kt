@@ -435,6 +435,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                     is FirClassSymbol -> false
                     is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
                     is FirTypeParameterSymbol -> symbol.allBoundsAreNullable()
+                    is FirErrorClassLikeSymbol -> false
                 }
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
