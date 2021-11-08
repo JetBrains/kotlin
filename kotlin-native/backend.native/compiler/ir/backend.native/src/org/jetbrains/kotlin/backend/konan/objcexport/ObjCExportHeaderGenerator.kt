@@ -656,15 +656,13 @@ internal class ObjCExportTranslatorImpl(
                         ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
 
                     is MethodBridgeValueParameter.SuspendCompletion -> {
-                        val resultType = when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
-                            is ObjCNonNullReferenceType -> {
-                                if (bridge.useUnitCompletion) {
-                                    null
-                                } else {
-                                    ObjCNullableReferenceType(it, isNullableResult = false)
-                                }
+                        val resultType = if (bridge.useUnitCompletion) {
+                            null
+                        } else {
+                            when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
+                                is ObjCNonNullReferenceType -> ObjCNullableReferenceType(it, isNullableResult = false)
+                                is ObjCNullableReferenceType -> ObjCNullableReferenceType(it.nonNullType, isNullableResult = true)
                             }
-                            is ObjCNullableReferenceType -> ObjCNullableReferenceType(it.nonNullType, isNullableResult = true)
                         }
                         ObjCBlockPointerType(
                                 returnType = ObjCVoidType,
