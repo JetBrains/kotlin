@@ -16,9 +16,9 @@ interface A {
 import foo.*
 import bar.*
 
-val a = A? = null
+val a: <!AMBIGUOUS_TYPES!>A?<!> = null
 
 fun test() {
-    a?.fest()
-    a?.rest()
+    a?.<!UNRESOLVED_REFERENCE!>fest<!>()
+    a?.<!UNRESOLVED_REFERENCE!>rest<!>()
 }

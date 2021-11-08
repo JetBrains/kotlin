@@ -16,7 +16,7 @@ interface A {
 import foo.*
 import bar.*
 
-val a = A? = null
+val a = A? = null // AMBIGUITY here
 
 fun test() {
     a?.fest()
