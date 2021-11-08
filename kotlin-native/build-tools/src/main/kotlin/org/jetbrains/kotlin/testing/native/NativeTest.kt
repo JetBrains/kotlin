@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.konan.target.*
+import java.io.OutputStream
 
 open class CompileNativeTest @Inject constructor(
         @InputFile val inputFile: File,
@@ -174,6 +175,14 @@ open class LinkNativeTest @Inject constructor(
         for (command in commands) {
             project.exec {
                 commandLine(command)
+                if (!logger.isInfoEnabled() && command[0].endsWith("dsymutil")) {
+                    // Suppress dsymutl's warnings.
+                    // See: https://bugs.swift.org/browse/SR-11539.
+                    val nullOutputStream = object: OutputStream() {
+                        override fun write(b: Int) {}
+                    }
+                    errorOutput = nullOutputStream
+                }
             }
         }
     }
