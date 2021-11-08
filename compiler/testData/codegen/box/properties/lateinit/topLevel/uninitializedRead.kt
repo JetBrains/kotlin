@@ -1,5 +1,8 @@
 // WITH_RUNTIME
 
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: REFLECTION
+
 import kotlin.UninitializedPropertyAccessException
 
 lateinit var str: String
