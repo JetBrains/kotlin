@@ -25602,6 +25602,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("typeAmbiguity.kt")
+            public void testTypeAmbiguity() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/scopes/typeAmbiguity.kt");
+            }
+
+            @Test
             @TestMetadata("visibility.kt")
             public void testVisibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/scopes/visibility.kt");
@@ -25668,6 +25674,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("classParents.kt")
                 public void testClassParents() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/scopes/classHeader/classParents.kt");
+                }
+
+                @Test
+                @TestMetadata("companionNestedVsOuter.kt")
+                public void testCompanionNestedVsOuter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/scopes/classHeader/companionNestedVsOuter.kt");
                 }
 
                 @Test
