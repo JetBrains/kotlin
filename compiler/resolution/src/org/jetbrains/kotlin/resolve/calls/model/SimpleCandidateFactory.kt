@@ -147,7 +147,7 @@ class SimpleCandidateFactory(
             candidate.addDiagnostic(HiddenDescriptor)
         }
 
-        if (extensionArgumentReceiver != null && descriptor !is ClassConstructorDescriptor) {
+        if (extensionArgumentReceiver != null) {
             val parameterIsDynamic = descriptor.extensionReceiverParameter!!.value.type.isDynamic()
             val argumentIsDynamic = extensionArgumentReceiver.receiver.receiverValue.type.isDynamic()
 
