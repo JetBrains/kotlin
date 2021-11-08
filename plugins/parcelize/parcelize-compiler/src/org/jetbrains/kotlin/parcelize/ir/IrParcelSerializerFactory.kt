@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.parcelize.RAW_VALUE_ANNOTATION_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
 
 class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
     /**

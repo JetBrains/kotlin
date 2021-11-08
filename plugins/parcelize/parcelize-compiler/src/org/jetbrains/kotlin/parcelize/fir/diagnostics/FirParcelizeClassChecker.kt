@@ -28,19 +28,15 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.parcelize.OLD_PARCELER_CLASS_ID
-import org.jetbrains.kotlin.parcelize.PARCELIZE_CLASS_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 object FirParcelizeClassChecker : FirClassChecker() {
-    private val CREATOR_NAME = Name.identifier("CREATOR")
-    private val PARCELABLE_CLASS_ID = ClassId(FqName("android.os"), Name.identifier("Parcelable"))
-
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         checkParcelableClass(declaration, context, reporter)
         checkParcelerClass(declaration, context, reporter)
@@ -80,7 +76,7 @@ object FirParcelizeClassChecker : FirClassChecker() {
         }
 
         val supertypes = lookupSuperTypes(klass, lookupInterfaces = true, deep = true, context.session, substituteTypes = false)
-        if (supertypes.none { it.classId == PARCELABLE_CLASS_ID }) {
+        if (supertypes.none { it.classId == PARCELABLE_ID }) {
             reporter.reportOn(source, KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE, context)
         }
 
@@ -88,7 +84,7 @@ object FirParcelizeClassChecker : FirClassChecker() {
             val superTypeRef = klass.superTypeRefs[index]
             val superType = superTypeRef.coneType
             val parcelableType = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(PARCELABLE_CLASS_ID),
+                ConeClassLikeLookupTagImpl(PARCELABLE_ID),
                 emptyArray(),
                 isNullable = false
             )
@@ -109,7 +105,7 @@ object FirParcelizeClassChecker : FirClassChecker() {
         if (klass !is FirRegularClass || klass.isCompanion) return
         for (superTypeRef in klass.superTypeRefs) {
             withSuppressedDiagnostics(superTypeRef, context) {
-                if (superTypeRef.coneType.classId == OLD_PARCELER_CLASS_ID) {
+                if (superTypeRef.coneType.classId == OLD_PARCELER_ID) {
                     val strategy = if (klass.name == SpecialNames.NO_NAME_PROVIDED) {
                         SourceElementPositioningStrategies.OBJECT_KEYWORD
                     } else {

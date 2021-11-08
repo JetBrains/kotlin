@@ -24,9 +24,16 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -41,11 +48,11 @@ import org.jetbrains.kotlin.types.SimpleType
 open class ParcelizeResolveExtension : SyntheticResolveExtension {
     companion object {
         fun resolveParcelClassType(module: ModuleDescriptor): SimpleType? {
-            return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType
+            return module.findClassAcrossModuleDependencies(PARCEL_ID)?.defaultType
         }
 
         fun resolveParcelableCreatorClassType(module: ModuleDescriptor): SimpleType? {
-            val creatorClassId = ClassId(FqName("android.os"), FqName("Parcelable.Creator"), false)
+            val creatorClassId = CREATOR_ID
             return module.findClassAcrossModuleDependencies(creatorClassId)?.defaultType
         }
 
@@ -163,46 +170,12 @@ interface ParcelizeSyntheticComponent {
     val componentKind: ComponentKind
 
     enum class ComponentKind(val methodName: String) {
-        WRITE_TO_PARCEL("writeToParcel"),
-        DESCRIBE_CONTENTS("describeContents"),
-        NEW_ARRAY("newArray"),
-        CREATE_FROM_PARCEL("createFromParcel")
+        WRITE_TO_PARCEL(WRITE_TO_PARCEL_NAME.identifier),
+        DESCRIBE_CONTENTS(DESCRIBE_CONTENTS_NAME.identifier),
+        NEW_ARRAY(NEW_ARRAY_NAME.identifier),
+        CREATE_FROM_PARCEL(CREATE_FROM_PARCEL_NAME.identifier)
     }
 }
-
-val PACKAGES_FQ_NAMES = listOf(
-    FqName("kotlinx.parcelize"),
-    FqName("kotlinx.android.parcel")
-)
-
-private fun createClassIds(name: String): List<ClassId> {
-    return PACKAGES_FQ_NAMES.map { ClassId(it, Name.identifier(name)) }
-}
-
-private fun List<ClassId>.fqNames(): List<FqName> {
-    return map { it.asSingleFqName() }
-}
-
-val TYPE_PARCELER_CLASS_IDS = createClassIds("TypeParceler")
-val TYPE_PARCELER_FQ_NAMES = TYPE_PARCELER_CLASS_IDS.fqNames()
-
-val WRITE_WITH_CLASS_IDS = createClassIds("WriteWith")
-val WRITE_WITH_FQ_NAMES = WRITE_WITH_CLASS_IDS.fqNames()
-
-val IGNORED_ON_PARCEL_CLASS_IDS = createClassIds("IgnoredOnParcel")
-val IGNORED_ON_PARCEL_FQ_NAMES = IGNORED_ON_PARCEL_CLASS_IDS.fqNames()
-
-val PARCELIZE_CLASS_CLASS_IDS = createClassIds("Parcelize")
-val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = PARCELIZE_CLASS_CLASS_IDS.fqNames()
-
-val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
-val RAW_VALUE_ANNOTATION_FQ_NAMES = RAW_VALUE_ANNOTATION_CLASS_IDS.fqNames()
-
-internal val PARCELER_CLASS_ID = ClassId(FqName("kotlinx.parcelize"), Name.identifier("Parceler"))
-internal val PARCELER_FQNAME = PARCELER_CLASS_ID.asSingleFqName()
-
-internal val OLD_PARCELER_CLASS_ID = ClassId(FqName("kotlinx.android.parcel"), Name.identifier("Parceler"))
-internal val OLD_PARCELER_FQNAME = OLD_PARCELER_CLASS_ID.asSingleFqName()
 
 val ClassDescriptor.hasParcelizeAnnotation: Boolean
     get() = PARCELIZE_CLASS_FQ_NAMES.any(annotations::hasAnnotation)
@@ -213,7 +186,7 @@ val ClassDescriptor.isParcelize: Boolean
             || getSuperInterfaces().any { DescriptorUtils.isSealedClass(it) && it.hasParcelizeAnnotation }
 
 val KotlinType.isParceler: Boolean
-    get() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQNAME
+    get() = constructor.declarationDescriptor?.fqNameSafe == PARCELER_FQN
 
 fun Annotated.findAnyAnnotation(fqNames: List<FqName>): AnnotationDescriptor? {
     for (fqName in fqNames) {

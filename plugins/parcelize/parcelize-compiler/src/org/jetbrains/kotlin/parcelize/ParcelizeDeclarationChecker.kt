@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.parcelize.serializers.ParcelSerializer
 import org.jetbrains.kotlin.parcelize.serializers.isParcelable
@@ -28,10 +30,6 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-
-val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
-val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
-val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
 open class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
@@ -126,7 +124,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         }
 
         for (type in descriptor.defaultType.supertypes()) {
-            if (type.constructor.declarationDescriptor?.fqNameSafe == OLD_PARCELER_FQNAME) {
+            if (type.constructor.declarationDescriptor?.fqNameSafe == OLD_PARCELER_FQN) {
                 val reportElement = declaration.nameIdentifier ?: declaration.getObjectKeyword() ?: declaration
                 diagnosticHolder.report(ErrorsParcelize.DEPRECATED_PARCELER.on(reportElement))
                 break
@@ -179,7 +177,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         }
 
         val superTypes = TypeUtils.getAllSupertypes(descriptor.defaultType)
-        if (superTypes.none { it.constructor.declarationDescriptor?.fqNameSafe == ANDROID_PARCELABLE_CLASS_FQNAME }) {
+        if (superTypes.none { it.constructor.declarationDescriptor?.fqNameSafe == PARCELABLE_FQN }) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.report(ErrorsParcelize.NO_PARCELABLE_SUPERTYPE.on(reportElement))
         }

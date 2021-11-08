@@ -23,7 +23,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.containingPackage
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -38,11 +44,6 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 open class ParcelizeAnnotationChecker : CallChecker {
-    @Suppress("DEPRECATION")
-    companion object {
-        val DEPRECATED_RUNTIME_PACKAGE = FqName("kotlinx.android.parcel")
-    }
-
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val constructorDescriptor = resolvedCall.resultingDescriptor as? ClassConstructorDescriptor ?: return
         val annotationClass = constructorDescriptor.constructedClass.takeIf { it.kind == ClassKind.ANNOTATION_CLASS } ?: return
@@ -159,7 +160,7 @@ open class ParcelizeAnnotationChecker : CallChecker {
         }
 
         fun KotlinType.fqName() = constructor.declarationDescriptor?.fqNameSafe
-        val parcelerSuperType = parcelerClass.defaultType.supertypes().firstOrNull { it.fqName() == PARCELER_FQNAME } ?: return
+        val parcelerSuperType = parcelerClass.defaultType.supertypes().firstOrNull { it.fqName() == PARCELER_FQN } ?: return
         val expectedType = parcelerSuperType.arguments.singleOrNull()?.type ?: return
 
         if (!actualType.isSubtypeOf(expectedType)) {

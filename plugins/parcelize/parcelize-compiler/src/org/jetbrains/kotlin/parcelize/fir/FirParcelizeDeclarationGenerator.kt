@@ -32,25 +32,19 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.isInt
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEST_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.FLAGS_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELIZE_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PARCELIZE_ID = ClassId(FqName("kotlinx.parcelize"), Name.identifier("Parcelize"))
-        private val OLD_PARCELIZE_ID = ClassId(FqName("kotlinx.android.parcel"), Name.identifier("Parcelize"))
-        private val PREDICATE = has(PARCELIZE_ID.asSingleFqName(), OLD_PARCELIZE_ID.asSingleFqName())
-
-        private val DESCRIBE_CONTENTS_NAME = Name.identifier(ComponentKind.DESCRIBE_CONTENTS.methodName)
-        private val WRITE_TO_PARCEL_NAME = Name.identifier(ComponentKind.WRITE_TO_PARCEL.methodName)
-        private val DEST_NAME = Name.identifier("dest")
-
-        private val FLAGS_NAME = Name.identifier("flags")
-
-        private val PARCEL_ID = ClassId(FqName("android.os"), Name.identifier("Parcel"))
+        private val PREDICATE = has(PARCELIZE_FQN, OLD_PARCELIZE_FQN)
         private val parcelizeMethodsNames = setOf(DESCRIBE_CONTENTS_NAME, WRITE_TO_PARCEL_NAME)
     }
 

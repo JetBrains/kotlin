@@ -30,8 +30,11 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.parcelize.ANDROID_PARCELABLE_CLASS_FQNAME
-import org.jetbrains.kotlin.parcelize.PARCELER_FQNAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.FLAGS_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -59,7 +62,7 @@ class ParcelizeIrTransformer(
                     && callee.isInline
                     && callee.fqNameWhenAvailable?.asString() == "kotlinx.parcelize.ParcelableCreatorKt.parcelableCreator"
                     && callee.typeParameters.singleOrNull()?.let {
-                        it.isReified && it.superTypes.singleOrNull()?.classFqName?.asString() == "android.os.Parcelable"
+                        it.isReified && it.superTypes.singleOrNull()?.classFqName == PARCELABLE_FQN
                     } == true
                 ) {
                     expression.getTypeArgument(0)?.getClass()?.let { parcelableClass ->
@@ -120,13 +123,13 @@ class ParcelizeIrTransformer(
 
         // If the companion extends Parceler, it can override parts of the generated implementation.
         val parcelerObject = declaration.companionObject()?.takeIf {
-            it.isSubclassOfFqName(PARCELER_FQNAME.asString())
+            it.isSubclassOfFqName(PARCELER_FQN.asString())
         }
 
         if (declaration.descriptor.hasSyntheticDescribeContents()) {
             val describeContents = declaration.addOverride(
-                ANDROID_PARCELABLE_CLASS_FQNAME,
-                "describeContents",
+                PARCELABLE_FQN,
+                DESCRIBE_CONTENTS_NAME.identifier,
                 context.irBuiltIns.intType,
                 modality = Modality.OPEN
             ).apply {
@@ -147,14 +150,14 @@ class ParcelizeIrTransformer(
 
         if (declaration.descriptor.hasSyntheticWriteToParcel()) {
             val writeToParcel = declaration.addOverride(
-                ANDROID_PARCELABLE_CLASS_FQNAME,
-                "writeToParcel",
+                PARCELABLE_FQN,
+                WRITE_TO_PARCEL_NAME.identifier,
                 context.irBuiltIns.unitType,
                 modality = Modality.OPEN
             ).apply {
                 val receiverParameter = dispatchReceiverParameter!!
                 val parcelParameter = addValueParameter("out", androidSymbols.androidOsParcel.defaultType)
-                val flagsParameter = addValueParameter("flags", context.irBuiltIns.intType)
+                val flagsParameter = addValueParameter(FLAGS_NAME, context.irBuiltIns.intType)
 
                 // We need to defer the construction of the writer, since it may refer to the [writeToParcel] methods in other
                 // @Parcelize classes in the current module, which might not be constructed yet at this point.

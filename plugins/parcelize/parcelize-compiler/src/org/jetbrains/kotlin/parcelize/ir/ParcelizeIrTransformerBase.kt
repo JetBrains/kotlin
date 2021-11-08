@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 
 abstract class ParcelizeIrTransformerBase(
@@ -80,7 +83,7 @@ abstract class ParcelizeIrTransformerBase(
         val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declarationType)
 
         declaration.addField {
-            name = ParcelizeExtensionBase.CREATOR_NAME
+            name = CREATOR_NAME
             type = creatorType
             isStatic = true
             isFinal = true
@@ -103,7 +106,7 @@ abstract class ParcelizeIrTransformerBase(
                 }
 
                 val arrayType = context.irBuiltIns.arrayClass.typeWith(declarationType.makeNullable())
-                addFunction("newArray", arrayType).apply {
+                addFunction(NEW_ARRAY_NAME.identifier, arrayType).apply {
                     overriddenSymbols = listOf(androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!)
                     val sizeParameter = addValueParameter("size", context.irBuiltIns.intType)
                     body = context.createIrBuilder(symbol).run {
@@ -117,7 +120,7 @@ abstract class ParcelizeIrTransformerBase(
                     }
                 }
 
-                addFunction("createFromParcel", declarationType).apply {
+                addFunction(CREATE_FROM_PARCEL_NAME.identifier, declarationType).apply {
                     overriddenSymbols = listOf(androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!)
                     val parcelParameter = addValueParameter("parcel", androidSymbols.androidOsParcel.defaultType)
 

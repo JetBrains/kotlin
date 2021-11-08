@@ -15,7 +15,12 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.parcelize.*
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
 
 object FirParcelizeAnnotationChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -46,7 +51,7 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker() {
         reporter: DiagnosticReporter,
         isForbidden: Boolean
     ) {
-        if (annotationClassId.packageFqName == ParcelizeAnnotationChecker.DEPRECATED_RUNTIME_PACKAGE) {
+        if (annotationClassId.packageFqName == DEPRECATED_RUNTIME_PACKAGE) {
             val factory = if (isForbidden) KtErrorsParcelize.FORBIDDEN_DEPRECATED_ANNOTATION else KtErrorsParcelize.DEPRECATED_ANNOTATION
             reporter.reportOn(annotationCall.source, factory, context)
         }

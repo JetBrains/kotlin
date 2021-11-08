@@ -25,13 +25,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.IGNORED_ON_PARCEL_CLASS_IDS
-import org.jetbrains.kotlin.parcelize.PARCELER_CLASS_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
 object FirParcelizePropertyChecker : FirPropertyChecker() {
-    private val CREATOR_NAME = Name.identifier("CREATOR")
-
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
 
@@ -94,7 +92,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
     private fun FirRegularClassSymbol.hasCustomParceler(session: FirSession): Boolean {
         val companionObjectSymbol = this.companionObjectSymbol ?: return false
         return lookupSuperTypes(companionObjectSymbol, lookupInterfaces = true, deep = true, session).any {
-            it.classId == PARCELER_CLASS_ID
+            it.classId == PARCELER_ID
         }
     }
 }

@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.descriptors.*
@@ -17,6 +16,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeResolveExtension.Companion.createMethod
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.parcelize.serializers.*
@@ -375,7 +376,7 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
         ).write(codegen, overriddenFunction) {
             if (parcelerObject != null) {
                 val newArrayMethod = parcelerObject.unsubstitutedMemberScope
-                    .getContributedFunctions(Name.identifier("newArray"), NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+                    .getContributedFunctions(NEW_ARRAY_NAME, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
                     .firstOrNull {
                         it.typeParameters.isEmpty()
                                 && it.kind == CallableMemberDescriptor.Kind.DECLARATION
