@@ -100,10 +100,10 @@ fun main(args: Array<String>) {
         oneToManyMappingsGenerators.add(lowercase)
     }
 
-    val categoryTestGenerator: CharCategoryTestGenerator
+    val stringUppercaseGenerators = mutableListOf<StringUppercaseGenerator>()
+    val stringLowercaseGenerators = mutableListOf<StringLowercaseGenerator>()
 
-    val stringUppercaseGenerator: StringUppercaseGenerator
-    val stringLowercaseGenerator: StringLowercaseGenerator
+    val categoryTestGenerator: CharCategoryTestGenerator
 
     val stringCasingTestGenerator: StringCasingTestGenerator
 
@@ -115,7 +115,9 @@ fun main(args: Array<String>) {
             categoryTestGenerator = CharCategoryTestGenerator(categoryTestFile)
 
             val commonGeneratedDir = baseDir.resolve("libraries/stdlib/common/src/generated")
-            oneToManyMappingsGenerators.add(OneToManyMappingsGenerator.forTitlecase(commonGeneratedDir.resolve("_OneToManyTitlecaseMappings.kt"), bmpUnicodeDataLines))
+            oneToManyMappingsGenerators.add(
+                OneToManyMappingsGenerator.forTitlecase(commonGeneratedDir.resolve("_OneToManyTitlecaseMappings.kt"), bmpUnicodeDataLines)
+            )
 
             val jsGeneratedDir = baseDir.resolve("libraries/stdlib/js/src/generated/")
             addRangesGenerators(jsGeneratedDir, KotlinTarget.JS)
@@ -129,8 +131,19 @@ fun main(args: Array<String>) {
             addRangesGenerators(nativeGeneratedDir, KotlinTarget.Native)
             addOneToOneMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)
             addOneToManyMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            stringUppercaseGenerator = StringUppercaseGenerator(nativeGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines)
-            stringLowercaseGenerator = StringLowercaseGenerator(nativeGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines)
+            stringUppercaseGenerators.add(StringUppercaseGenerator(nativeGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines))
+            stringLowercaseGenerators.add(
+                StringLowercaseGenerator(nativeGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.Native)
+            )
+
+            val wasmGeneratedDir = baseDir.resolve("libraries/stdlib/wasm/src/generated/")
+            addRangesGenerators(wasmGeneratedDir, KotlinTarget.WASM)
+            addOneToOneMappingsGenerators(wasmGeneratedDir, KotlinTarget.WASM)
+            addOneToManyMappingsGenerators(wasmGeneratedDir, KotlinTarget.WASM)
+            stringUppercaseGenerators.add(StringUppercaseGenerator(wasmGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines))
+            stringLowercaseGenerators.add(
+                StringLowercaseGenerator(wasmGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.WASM)
+            )
 
             val nativeTestDir = baseDir.resolve("kotlin-native/backend.native/tests/stdlib_external/text")
             stringCasingTestGenerator = StringCasingTestGenerator(nativeTestDir)
@@ -186,15 +199,17 @@ fun main(args: Array<String>) {
         it.generate()
     }
 
-    stringUppercaseGenerator.let {
+    stringUppercaseGenerators.forEach {
         specialCasingLines.forEach { line -> it.appendSpecialCasingLine(line) }
         it.generate()
     }
-    stringLowercaseGenerator.let {
+
+    stringLowercaseGenerators.forEach {
         specialCasingLines.forEach { line -> it.appendSpecialCasingLine(line) }
         wordBreakPropertyLines.forEach { line -> it.appendWordBreakPropertyLine(line) }
         it.generate()
     }
+
     stringCasingTestGenerator.let {
         derivedCorePropertiesLines.forEach { line -> it.appendDerivedCorePropertiesLine(line) }
         it.generate()

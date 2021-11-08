@@ -75,13 +75,22 @@ actual enum class RegexOption {
 
 // From char.kt
 
-actual fun Char.isHighSurrogate(): Boolean = TODO("Wasm stdlib: Text")
-actual fun Char.isLowSurrogate(): Boolean = TODO("Wasm stdlib: Text")
+/**
+ * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
+ */
+public actual fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROGATE..Char.MAX_HIGH_SURROGATE
+
+/**
+ * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
+ */
+public actual fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
-public actual fun Char.toLowerCase(): Char = TODO("Wasm stdlib: Text")
+@Deprecated("Use lowercaseChar() instead.", ReplaceWith("lowercaseChar()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public actual fun Char.toLowerCase(): Char = lowercaseCharImpl()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
@@ -93,7 +102,8 @@ public actual fun Char.toLowerCase(): Char = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-public actual fun Char.lowercaseChar(): Char = TODO("Wasm stdlib: Text")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
@@ -106,12 +116,15 @@ public actual fun Char.lowercaseChar(): Char = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.lowercase
  */
 @SinceKotlin("1.5")
-public actual fun Char.lowercase(): String = TODO("Wasm stdlib: Text")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun Char.lowercase(): String = lowercaseImpl()
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
-public actual fun Char.toUpperCase(): Char = TODO("Wasm stdlib: Text")
+@Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public actual fun Char.toUpperCase(): Char = uppercaseCharImpl()
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
@@ -123,7 +136,8 @@ public actual fun Char.toUpperCase(): Char = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-public actual fun Char.uppercaseChar(): Char = TODO("Wasm stdlib: Text")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
@@ -136,7 +150,8 @@ public actual fun Char.uppercaseChar(): Char = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.uppercase
  */
 @SinceKotlin("1.5")
-public actual fun Char.uppercase(): String = TODO("Wasm stdlib: Text")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun Char.uppercase(): String = uppercaseImpl()
 
 /**
  * Converts this character to title case using Unicode mapping rules of the invariant locale.
@@ -148,14 +163,15 @@ public actual fun Char.uppercase(): String = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.titlecase
  */
 @SinceKotlin("1.5")
-public actual fun Char.titlecaseChar(): Char = TODO("Wasm stdlib: Text")
+public actual fun Char.titlecaseChar(): Char = titlecaseCharImpl()
 
 
 /**
  * Returns the Unicode general category of this character.
  */
 @SinceKotlin("1.5")
-public actual val Char.category: CharCategory get() = TODO("Wasm stdlib: Text")
+public actual val Char.category: CharCategory
+    get() = CharCategory.valueOf(getCategoryValue())
 
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
@@ -163,7 +179,12 @@ public actual val Char.category: CharCategory get() = TODO("Wasm stdlib: Text")
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
 @SinceKotlin("1.5")
-public actual fun Char.isDefined(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isDefined(): Boolean {
+    if (this < '\u0080') {
+        return true
+    }
+    return getCategoryValue() != CharCategory.UNASSIGNED.value
+}
 
 /**
  * Returns `true` if this character is a letter.
@@ -174,7 +195,15 @@ public actual fun Char.isDefined(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isLetter
  */
 @SinceKotlin("1.5")
-public actual fun Char.isLetter(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isLetter(): Boolean {
+    if (this in 'a'..'z' || this in 'A'..'Z') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isLetterImpl()
+}
 
 /**
  * Returns `true` if this character is a letter or digit.
@@ -185,7 +214,16 @@ public actual fun Char.isLetter(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isLetterOrDigit
  */
 @SinceKotlin("1.5")
-public actual fun Char.isLetterOrDigit(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isLetterOrDigit(): Boolean {
+    if (this in 'a'..'z' || this in 'A'..'Z' || this in '0'..'9') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+
+    return isDigit() || isLetter()
+}
 
 /**
  * Returns `true` if this character is a digit.
@@ -195,7 +233,15 @@ public actual fun Char.isLetterOrDigit(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isDigit
  */
 @SinceKotlin("1.5")
-public actual fun Char.isDigit(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isDigit(): Boolean {
+    if (this in '0'..'9') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isDigitImpl()
+}
 
 /**
  * Returns `true` if this character is an upper case letter.
@@ -205,7 +251,15 @@ public actual fun Char.isDigit(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isUpperCase
  */
 @SinceKotlin("1.5")
-public actual fun Char.isUpperCase(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isUpperCase(): Boolean {
+    if (this in 'A'..'Z') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isUpperCaseImpl()
+}
 
 /**
  * Returns `true` if this character is a lower case letter.
@@ -215,7 +269,15 @@ public actual fun Char.isUpperCase(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isLowerCase
  */
 @SinceKotlin("1.5")
-public actual fun Char.isLowerCase(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isLowerCase(): Boolean {
+    if (this in 'a'..'z') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isLowerCaseImpl()
+}
 
 /**
  * Returns `true` if this character is a title case letter.
@@ -225,7 +287,12 @@ public actual fun Char.isLowerCase(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isTitleCase
  */
 @SinceKotlin("1.5")
-public actual fun Char.isTitleCase(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isTitleCase(): Boolean {
+    if (this < '\u0080') {
+        return false
+    }
+    return getCategoryValue() == CharCategory.TITLECASE_LETTER.value
+}
 
 /**
  * Returns `true` if this character is an ISO control character.
@@ -235,7 +302,9 @@ public actual fun Char.isTitleCase(): Boolean = TODO("Wasm stdlib: Text")
  * @sample samples.text.Chars.isISOControl
  */
 @SinceKotlin("1.5")
-public actual fun Char.isISOControl(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isISOControl(): Boolean {
+    return this <= '\u001F' || this in '\u007F'..'\u009F'
+}
 
 /**
  * Determines whether a character is whitespace according to the Unicode standard.
@@ -243,7 +312,7 @@ public actual fun Char.isISOControl(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isWhitespace
  */
-public actual fun Char.isWhitespace(): Boolean = TODO("Wasm stdlib: Text")
+public actual fun Char.isWhitespace(): Boolean = isWhitespaceImpl()
 
 // From string.kt
 
@@ -284,9 +353,15 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
 /**
  * Concatenates characters in this [CharArray] into a String.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public actual fun CharArray.concatToString(): String = TODO("Wasm stdlib: Text")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun CharArray.concatToString(): String {
+    var result = ""
+    for (char in this) {
+        result += char
+    }
+    return result
+}
 
 /**
  * Concatenates characters in this [CharArray] or its subrange into a String.
@@ -297,16 +372,26 @@ public actual fun CharArray.concatToString(): String = TODO("Wasm stdlib: Text")
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): String = TODO("Wasm stdlib: Text")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
+    var result = ""
+    for (index in startIndex until endIndex) {
+        result += this[index]
+    }
+    return result
+}
 
 /**
  * Returns a [CharArray] containing characters of this string.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public actual fun String.toCharArray(): CharArray = this.chars.copyOf()
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun String.toCharArray(): CharArray {
+    return CharArray(length) { get(it) }
+}
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
@@ -317,18 +402,24 @@ public actual fun String.toCharArray(): CharArray = this.chars.copyOf()
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public actual fun String.toCharArray(startIndex: Int, endIndex: Int): CharArray = TODO("Wasm stdlib: Text")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    return CharArray(endIndex - startIndex) { get(startIndex + it) }
+}
 
 /**
  * Decodes a string from the bytes in UTF-8 encoding in this array.
  *
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public actual fun ByteArray.decodeToString(): String = TODO("Wasm stdlib: Text")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun ByteArray.decodeToString(): String {
+    return decodeUtf8(this, 0, size, false)
+}
 
 /**
  * Decodes a string from the bytes in UTF-8 encoding in this array or its subrange.
@@ -341,22 +432,28 @@ public actual fun ByteArray.decodeToString(): String = TODO("Wasm stdlib: Text")
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(
-    startIndex: Int,
-    endIndex: Int,
-    throwOnInvalidSequence: Boolean
-): String = TODO("Wasm stdlib: Text")
+    startIndex: Int = 0,
+    endIndex: Int = this.size,
+    throwOnInvalidSequence: Boolean = false
+): String {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
+    return decodeUtf8(this, startIndex, endIndex, throwOnInvalidSequence)
+}
 
 /**
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public actual fun String.encodeToByteArray(): ByteArray = TODO("Wasm stdlib: Text")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public actual fun String.encodeToByteArray(): ByteArray {
+    return encodeUtf8(this, 0, length, false)
+}
 
 /**
  * Encodes this string or its substring to an array of bytes in UTF-8 encoding.
@@ -369,26 +466,39 @@ public actual fun String.encodeToByteArray(): ByteArray = TODO("Wasm stdlib: Tex
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(
-    startIndex: Int,
-    endIndex: Int,
-    throwOnInvalidSequence: Boolean
-): ByteArray = TODO("Wasm stdlib: Text")
+    startIndex: Int = 0,
+    endIndex: Int = this.length,
+    throwOnInvalidSequence: Boolean = false
+): ByteArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    return encodeUtf8(this, startIndex, endIndex, throwOnInvalidSequence)
+}
 
+/**
+ * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
+ */
+public actual fun String.substring(startIndex: Int): String =
+    subSequence(startIndex, this.length) as String
 
-internal actual fun String.nativeIndexOf(str: String, fromIndex: Int): Int = TODO("Wasm stdlib: Text")
-internal actual fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = TODO("Wasm stdlib: Text")
-
-
-public actual fun String.substring(startIndex: Int): String = TODO("Wasm stdlib: Text")
-public actual fun String.substring(startIndex: Int, endIndex: Int): String = TODO("Wasm stdlib: Text")
+/**
+ * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
+ *
+ * @param startIndex the start index (inclusive).
+ * @param endIndex the end index (exclusive).
+ */
+public actual fun String.substring(startIndex: Int, endIndex: Int): String =
+    subSequence(startIndex, endIndex) as String
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
-public actual fun String.toUpperCase(): String = TODO("Wasm stdlib: Text")
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public actual fun String.toUpperCase(): String = uppercase()
 
 /**
  * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
@@ -399,12 +509,14 @@ public actual fun String.toUpperCase(): String = TODO("Wasm stdlib: Text")
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
-public actual fun String.uppercase(): String = TODO("Wasm stdlib: Text")
+public actual fun String.uppercase(): String = uppercaseImpl()
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
-public actual fun String.toLowerCase(): String = TODO("Wasm stdlib: Text")
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public actual fun String.toLowerCase(): String = lowercase()
 
 /**
  * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
@@ -415,34 +527,120 @@ public actual fun String.toLowerCase(): String = TODO("Wasm stdlib: Text")
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
-public actual fun String.lowercase(): String = TODO("Wasm stdlib: Text")
+public actual fun String.lowercase(): String = lowercaseImpl()
 
-public actual fun String.capitalize(): String = TODO("Wasm stdlib: Text")
-public actual fun String.decapitalize(): String = TODO("Wasm stdlib: Text")
-public actual fun CharSequence.repeat(n: Int): String = TODO("Wasm stdlib: Text")
+/**
+ * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a title case letter.
+ *
+ * The title case of a character is usually the same as its upper case with several exceptions.
+ * The particular list of characters with the special title case form depends on the underlying platform.
+ *
+ * @sample samples.text.Strings.capitalize
+ */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public actual fun String.capitalize(): String = replaceFirstChar(Char::uppercaseChar)
 
+/**
+ * Returns a copy of this string having its first letter lowercased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a lower case letter.
+ *
+ * @sample samples.text.Strings.decapitalize
+ */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public actual fun String.decapitalize(): String = replaceFirstChar(Char::lowercaseChar)
+
+/**
+ * Returns a string containing this char sequence repeated [n] times.
+ * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
+ */
+public actual fun CharSequence.repeat(n: Int): String {
+    require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    return when (n) {
+        0 -> ""
+        1 -> this.toString()
+        else -> {
+            var result = ""
+            if (!isEmpty()) {
+                var s = this.toString()
+                var count = n
+                while (true) {
+                    if ((count and 1) == 1) {
+                        result += s
+                    }
+                    count = count ushr 1
+                    if (count == 0) {
+                        break
+                    }
+                    s += s
+                }
+            }
+            return result
+        }
+    }
+}
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
-actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String = TODO("Wasm stdlib: Text")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
+    return buildString(length) {
+        this@replace.forEach { c ->
+            append(if (c.equals(oldChar, ignoreCase)) newChar else c)
+        }
+    }
+}
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String = TODO("Wasm stdlib: Text")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
+    run {
+        var occurrenceIndex: Int = indexOf(oldValue, 0, ignoreCase)
+        // FAST PATH: no match
+        if (occurrenceIndex < 0) return this
+
+        val oldValueLength = oldValue.length
+        val searchStep = oldValueLength.coerceAtLeast(1)
+        val newLengthHint = length - oldValueLength + newValue.length
+        if (newLengthHint < 0) throw OutOfMemoryError()
+        val stringBuilder = StringBuilder(newLengthHint)
+
+        var i = 0
+        do {
+            stringBuilder.append(this, i, occurrenceIndex).append(newValue)
+            i = occurrenceIndex + oldValueLength
+            if (occurrenceIndex >= length) break
+            occurrenceIndex = indexOf(oldValue, occurrenceIndex + searchStep, ignoreCase)
+        } while (occurrenceIndex > 0)
+        return stringBuilder.append(this, i, length).toString()
+    }
+}
 
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
-actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean): String = TODO("Wasm stdlib: Text")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
+    val index = indexOf(oldChar, ignoreCase = ignoreCase)
+    return if (index < 0) this else this.replaceRange(index, index + 1, newChar.toString())
+}
 
 /**
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean): String = TODO("Wasm stdlib: Text")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
+    val index = indexOf(oldValue, ignoreCase = ignoreCase)
+    return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
+}
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
@@ -452,7 +650,24 @@ actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
+    if (this == null) return other == null
+    if (other == null) return false
+    if (!ignoreCase) return this == other
+
+    if (this.length != other.length) return false
+
+    for (index in 0 until this.length) {
+        val thisChar = this[index]
+        val otherChar = other[index]
+        if (!thisChar.equals(otherChar, ignoreCase)) {
+            return false
+        }
+    }
+
+    return true
+}
 
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
@@ -460,7 +675,36 @@ actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean = TODO("
  * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
  */
 @SinceKotlin("1.2")
-actual fun String.compareTo(other: String, ignoreCase: Boolean): Int = TODO("Wasm stdlib: Text")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
+    if (ignoreCase) {
+        val n1 = this.length
+        val n2 = other.length
+        val min = minOf(n1, n2)
+        if (min == 0) return n1 - n2
+        for (index in 0 until min) {
+            var thisChar = this[index]
+            var otherChar = other[index]
+
+            if (thisChar != otherChar) {
+                thisChar = thisChar.uppercaseChar()
+                otherChar = otherChar.uppercaseChar()
+
+                if (thisChar != otherChar) {
+                    thisChar = thisChar.lowercaseChar()
+                    otherChar = otherChar.lowercaseChar()
+
+                    if (thisChar != otherChar) {
+                        return thisChar.compareTo(otherChar)
+                    }
+                }
+            }
+        }
+        return n1 - n2
+    } else {
+        return compareTo(other)
+    }
+}
 
 /**
  * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
@@ -469,7 +713,7 @@ actual fun String.compareTo(other: String, ignoreCase: Boolean): Int = TODO("Was
  * @sample samples.text.Strings.contentEquals
  */
 @SinceKotlin("1.5")
-public actual infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean = TODO("Wasm stdlib: Text")
+public actual infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean = contentEqualsImpl(other)
 
 /**
  * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other], optionally ignoring case difference.
@@ -479,19 +723,43 @@ public actual infix fun CharSequence?.contentEquals(other: CharSequence?): Boole
  * @sample samples.text.Strings.contentEquals
  */
 @SinceKotlin("1.5")
-public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
+public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean {
+    return if (ignoreCase)
+        this.contentEqualsIgnoreCaseImpl(other)
+    else
+        this.contentEqualsImpl(other)
+}
 
+/**
+ * Returns `true` if this string starts with the specified prefix.
+ */
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean =
+    regionMatches(0, prefix, 0, prefix.length, ignoreCase)
 
-public actual fun String.startsWith(prefix: String, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
-public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
-public actual fun String.endsWith(suffix: String, ignoreCase: Boolean): Boolean = TODO("Wasm stdlib: Text")
+/**
+ * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ */
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean =
+    regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
+
+/**
+ * Returns `true` if this string ends with the specified suffix.
+ */
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean =
+    regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 
 // From stringsCode.kt
 
-internal actual fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = TODO("Wasm stdlib: Text")
-internal actual fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = TODO("Wasm stdlib: Text")
+/**
+ * Returns `true` if this string is empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsBlank
+ */
+public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
-actual fun CharSequence.isBlank(): Boolean = TODO("Wasm stdlib: Text")
 /**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
  * @param thisOffset the start offset in this char sequence of the substring to compare.
@@ -505,8 +773,19 @@ actual fun CharSequence.regionMatches(
     otherOffset: Int,
     length: Int,
     ignoreCase: Boolean
-): Boolean = TODO("Wasm stdlib: Text")
+): Boolean {
+    if ((otherOffset < 0) || (thisOffset < 0) || (thisOffset > this.length - length) || (otherOffset > other.length - length)) {
+        return false
+    }
 
+    for (index in 0 until length) {
+        if (!this[thisOffset + index].equals(other[otherOffset + index], ignoreCase))
+            return false
+    }
+    return true
+}
+
+private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
 /**
  * A Comparator that orders strings ignoring character case.
@@ -515,93 +794,105 @@ actual fun CharSequence.regionMatches(
  * and will result in an unsatisfactory ordering for certain locales.
  */
 @SinceKotlin("1.2")
-public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String> get() = TODO("Wasm stdlib: Text")
+public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+    get() = STRING_CASE_INSENSITIVE_ORDER
 
-actual fun String.toBoolean(): Boolean = TODO("Wasm stdlib: Text")
+/**
+ * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
+ */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
+@kotlin.internal.InlineOnly
+actual fun String.toBoolean(): Boolean = this.toBoolean()
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  *
  * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
  */
-actual fun String?.toBoolean(): Boolean = TODO("Wasm stdlib: Text")
+actual fun String?.toBoolean(): Boolean = this != null && this.lowercase() == "true"
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toByte(): Byte = TODO("Wasm stdlib: Text")
+actual fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-actual fun String.toByte(radix: Int): Byte = TODO("Wasm stdlib: Text")
-
+public actual fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toShort(): Short = TODO("Wasm stdlib: Text")
+public actual fun String.toShort(): Short = toShortOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-actual fun String.toShort(radix: Int): Short = TODO("Wasm stdlib: Text")
+public actual fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toInt(): Int = TODO("Wasm stdlib: Text")
+public actual fun String.toInt(): Int = toIntOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-actual fun String.toInt(radix: Int): Int = TODO("Wasm stdlib: Text")
+public actual fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toLong(): Long = TODO("Wasm stdlib: Text")
+public actual fun String.toLong(): Long = toLongOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
-actual fun String.toLong(radix: Int): Long = TODO("Wasm stdlib: Text")
+public actual fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numberFormatError(this)
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toDouble(): Double = TODO("Wasm stdlib: Text")
+public actual fun String.toDouble(): Double = TODO("Wasm stdlib: Text")
 
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toFloat(): Float = TODO("Wasm stdlib: Text")
-
-/**
- * Parses the string as a [Double] number and returns the result
- * or `null` if the string is not a valid representation of a number.
- */
-actual fun String.toDoubleOrNull(): Double? = TODO("Wasm stdlib: Text")
+public actual fun String.toFloat(): Float = toDouble() as Float
 
 /**
  * Parses the string as a [Float] number and returns the result
  * or `null` if the string is not a valid representation of a number.
  */
-actual fun String.toFloatOrNull(): Float? = TODO("Wasm stdlib: Text")
+public actual fun String.toFloatOrNull(): Float? = toDoubleOrNull() as Float?
+
+/**
+ * Parses the string as a [Double] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+public actual fun String.toDoubleOrNull(): Double? {
+    try {
+        return toDouble()
+    } catch (e: NumberFormatException) {
+        return null
+    }
+}
 
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
@@ -609,7 +900,7 @@ actual fun String.toFloatOrNull(): Float? = TODO("Wasm stdlib: Text")
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-actual fun Byte.toString(radix: Int): String = TODO("Wasm stdlib: Text")
+public actual fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -617,7 +908,7 @@ actual fun Byte.toString(radix: Int): String = TODO("Wasm stdlib: Text")
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-actual fun Short.toString(radix: Int): String = TODO("Wasm stdlib: Text")
+public actual fun Short.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
@@ -636,6 +927,19 @@ actual fun Int.toString(radix: Int): String = TODO("Wasm stdlib: Text")
 actual fun Long.toString(radix: Int): String = TODO("Wasm stdlib: Text")
 
 @PublishedApi
-internal actual fun checkRadix(radix: Int): Int = TODO("Wasm stdlib: Text")
+internal actual fun checkRadix(radix: Int): Int {
+    if (radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
+        throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
+    }
+    return radix
+}
 
-internal actual fun digitOf(char: Char, radix: Int): Int = TODO("Wasm stdlib: Text")
+internal actual fun digitOf(char: Char, radix: Int): Int = when {
+    char >= '0' && char <= '9' -> char - '0'
+    char >= 'A' && char <= 'Z' -> char - 'A' + 10
+    char >= 'a' && char <= 'z' -> char - 'a' + 10
+    char < '\u0080' -> -1
+    char >= '\uFF21' && char <= '\uFF3A' -> char - '\uFF21' + 10 // full-width latin capital letter
+    char >= '\uFF41' && char <= '\uFF5A' -> char - '\uFF41' + 10 // full-width latin small letter
+    else -> char.digitToIntImpl()
+}.let { if (it >= radix) -1 else it }

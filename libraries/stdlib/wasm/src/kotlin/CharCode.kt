@@ -11,4 +11,8 @@ package kotlin
  * @sample samples.text.Chars.charFromCode
  */
 @SinceKotlin("1.5")
-public actual fun Char(code: UShort): Char = TODO("Wasm stdlib: CharCode")
+@WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun Char(code: UShort): Char {
+    return code.toInt().toChar()
+}

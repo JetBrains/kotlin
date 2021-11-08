@@ -5,6 +5,7 @@
 
 package generators.unicode.ranges
 
+import templates.Backend
 import templates.KotlinTarget
 import templates.Platform
 import java.io.FileWriter
@@ -21,15 +22,15 @@ internal sealed class RangesWritingStrategy {
         fun of(target: KotlinTarget, wrapperName: String? = null): RangesWritingStrategy {
             return when (target.platform) {
                 Platform.JS -> JsRangesWritingStrategy(wrapperName!!)
-                else -> NativeRangesWritingStrategy
+                else -> NativeRangesWritingStrategy(useNativeRangesAnnotation = target.backend != Backend.Wasm)
             }
         }
     }
 }
 
-internal object NativeRangesWritingStrategy : RangesWritingStrategy() {
+internal class NativeRangesWritingStrategy(private val useNativeRangesAnnotation: Boolean) : RangesWritingStrategy() {
     override val indentation: String get() = ""
-    override val rangesAnnotation: String get() = "@SharedImmutable\n"
+    override val rangesAnnotation: String get() = if (useNativeRangesAnnotation) "@SharedImmutable\n" else ""
     override val rangesVisibilityModifier: String get() = "private"
     override fun beforeWritingRanges(writer: FileWriter) {}
     override fun afterWritingRanges(writer: FileWriter) {}

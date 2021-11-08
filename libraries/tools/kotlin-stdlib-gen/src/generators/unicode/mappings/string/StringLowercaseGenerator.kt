@@ -18,6 +18,7 @@ import java.io.FileWriter
 internal class StringLowercaseGenerator(
     private val outputFile: File,
     unicodeDataLines: List<UnicodeDataLine>,
+    private val target: KotlinTarget,
 ) : StringCasingGenerator(unicodeDataLines) {
 
     private val casedRanges = mutableListOf<IntRange>()
@@ -60,7 +61,7 @@ internal class StringLowercaseGenerator(
         casedRanges.sortBy { it.first }
         caseIgnorableRanges.sortBy { it.first }
 
-        val strategy = RangesWritingStrategy.of(KotlinTarget.Native)
+        val strategy = RangesWritingStrategy.of(target)
 
         FileWriter(outputFile).use { writer ->
             writer.writeHeader(outputFile, "kotlin.text")
