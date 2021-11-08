@@ -151,6 +151,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.35")
     implementation("com.gradle.publish:plugin-publish-plugin:0.14.0")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.6.10")
 
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")

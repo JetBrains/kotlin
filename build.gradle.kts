@@ -32,7 +32,6 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.35")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath(kotlin("serialization", bootstrapKotlinVersion))
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     }
 }
 
