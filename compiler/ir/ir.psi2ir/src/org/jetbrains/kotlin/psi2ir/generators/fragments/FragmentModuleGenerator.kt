@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
+import org.jetbrains.kotlin.psi2ir.generators.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class FragmentModuleGenerator(
@@ -24,18 +23,26 @@ class FragmentModuleGenerator(
     override fun generateModuleFragment(
         ktFiles: Collection<KtFile>,
     ): IrModuleFragment {
-        val ktBlockCodeFragment = ktFiles.singleOrNull() as? KtBlockCodeFragment
-            ?: TODO("Multiple fragments in one compilation not understood and implemented yet")
+        assert(ktFiles.singleOrNull { it is KtBlockCodeFragment} != null) {
+            "Amongst all files passed to the FragmentModuleGenerator should be exactly one KtBlockCodeFragment"
+        }
         return IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
             val irDeclarationGenerator = FragmentDeclarationGenerator(context, fragmentInfo)
-            irModule.files.add(
-                createEmptyIrFile(ktBlockCodeFragment).apply {
-                    declarations.add(
-                        irDeclarationGenerator.generateClassForCodeFragment(ktBlockCodeFragment)
-                    )
-                    patchDeclarationParents()
-                }
-            )
+            ktFiles.forEach { ktFile ->
+                irModule.files.add(
+                    if (ktFile is KtBlockCodeFragment) {
+                        createEmptyIrFile(ktFile).apply {
+                            declarations.add(
+                                irDeclarationGenerator.generateClassForCodeFragment(ktFile)
+                            )
+                            patchDeclarationParents()
+                        }
+                    } else {
+                        val fileContext = context.createFileScopeContext(ktFile)
+                        generateSingleFile(DeclarationGenerator(fileContext), ktFile, irModule)
+                    }
+                )
+            }
         }
     }
 
