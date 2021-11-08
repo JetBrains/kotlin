@@ -13,17 +13,13 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.typeWithStarProjections
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -106,7 +102,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return when (this) {
             is FirCallableDeclaration -> {
                 if (dispatchReceiverValue != null && dispatchReceiverType != null) {
-                    dispatchReceiverValue.type.findClassRepresentation(dispatchReceiverType!!, session)?.let { return it }
+                    dispatchReceiverValue.type.findClassRepresentation(dispatchReceiverType!!, session)?.toSymbol(session)?.fir?.let {
+                        return it
+                    }
                 }
 
                 this.containingClass()?.toSymbol(session)?.fir
@@ -126,37 +124,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             is FirTypeAlias -> null
         }
     }
-
-    private fun ConeKotlinType.findClassRepresentation(
-        dispatchReceiverParameterType: ConeKotlinType,
-        session: FirSession
-    ): FirClassLikeDeclaration? =
-        when (this) {
-            is ConeClassLikeType -> this.fullyExpandedType(session).lookupTag.toSymbol(session)?.fir
-            is ConeFlexibleType -> lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
-            is ConeCapturedType -> constructor.supertypes.orEmpty()
-                .findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-            is ConeDefinitelyNotNullType -> original.findClassRepresentation(dispatchReceiverParameterType, session)
-            is ConeIntegerLiteralType -> possibleTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-            is ConeIntersectionType -> intersectedTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-            is ConeTypeParameterType -> lookupTag.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-            is ConeTypeVariableType -> (this.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)
-                ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-            is ConeStubType -> (this.variable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
-                ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
-            is ConeLookupTagBasedType -> null
-        }
-
-    private fun ConeTypeParameterLookupTag.findClassRepresentationThatIsSubtypeOf(
-        supertype: ConeKotlinType,
-        session: FirSession
-    ): FirClassLikeDeclaration? =
-        typeParameterSymbol.fir.bounds.map { it.coneType }.findClassRepresentationThatIsSubtypeOf(supertype, session)
-
-    private fun Collection<ConeKotlinType>.findClassRepresentationThatIsSubtypeOf(
-        supertype: ConeKotlinType,
-        session: FirSession
-    ): FirClassLikeDeclaration? = firstOrNull { it.isSubtypeOf(supertype, session) }?.findClassRepresentation(supertype, session)
 
     private fun isSpecificDeclarationVisible(
         declaration: FirMemberDeclaration,

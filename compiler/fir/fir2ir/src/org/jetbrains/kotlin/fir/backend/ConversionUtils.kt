@@ -209,9 +209,8 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     val dispatchReceiverLookupTag = when (dispatchReceiver) {
         is FirNoReceiverExpression -> null
         else -> {
-            val session = declarationStorage.session
-            val coneType = dispatchReceiver.typeRef.coneType.lowerBoundIfFlexible()
-            (coneType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag
+            val coneType = dispatchReceiver.typeRef.coneType
+            dispatchReceiver.typeRef.coneType.findClassRepresentation(coneType, declarationStorage.session)
         }
     }
     return when (this) {

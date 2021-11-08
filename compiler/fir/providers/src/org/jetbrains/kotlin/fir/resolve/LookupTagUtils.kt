@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -110,3 +111,35 @@ private fun ConeKotlinType.withCombinedCustomAttributesFrom(other: ConeAttribute
     val combinedConeAttributes = attributes.add(ConeAttributes.create(listOf(customAttributesFromOther)))
     return withAttributes(combinedConeAttributes, context)
 }
+
+fun ConeKotlinType.findClassRepresentation(
+    dispatchReceiverParameterType: ConeKotlinType,
+    session: FirSession
+): ConeClassLikeLookupTag? =
+    when (this) {
+        is ConeClassLikeType -> this.fullyExpandedType(session).lookupTag
+        is ConeFlexibleType -> lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
+        is ConeCapturedType -> constructor.supertypes.orEmpty()
+            .findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeDefinitelyNotNullType -> original.findClassRepresentation(dispatchReceiverParameterType, session)
+        is ConeIntegerLiteralType -> possibleTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeIntersectionType -> intersectedTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeTypeParameterType -> lookupTag.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeTypeVariableType -> (this.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)
+            ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeStubType -> (this.variable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
+            ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeLookupTagBasedType -> null
+    }
+
+private fun ConeTypeParameterLookupTag.findClassRepresentationThatIsSubtypeOf(
+    supertype: ConeKotlinType,
+    session: FirSession
+): ConeClassLikeLookupTag? =
+    typeParameterSymbol.fir.bounds.map { it.coneType }.findClassRepresentationThatIsSubtypeOf(supertype, session)
+
+private fun Collection<ConeKotlinType>.findClassRepresentationThatIsSubtypeOf(
+    supertype: ConeKotlinType,
+    session: FirSession
+): ConeClassLikeLookupTag? = firstOrNull { it.isSubtypeOf(supertype, session) }?.findClassRepresentation(supertype, session)
+
