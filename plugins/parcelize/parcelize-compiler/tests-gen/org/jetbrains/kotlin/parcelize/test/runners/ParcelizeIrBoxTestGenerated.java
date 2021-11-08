@@ -368,6 +368,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     }
 
     @Test
+    @TestMetadata("overriddenDescribeContents.kt")
+    public void testOverriddenDescribeContents() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/overriddenDescribeContents.kt");
+    }
+
+    @Test
     @TestMetadata("parcelableValueClass.kt")
     public void testParcelableValueClass() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/parcelableValueClass.kt");
