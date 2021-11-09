@@ -41,6 +41,8 @@ dependencies {
     testApi(project(":kotlin-reflect"))
     testImplementation(project(":analysis:symbol-light-classes"))
 
+    testRuntimeOnly(project(":core:descriptors.runtime"))
+
     testApi(intellijDep()) {
         includeJars(
             "jps-model",
