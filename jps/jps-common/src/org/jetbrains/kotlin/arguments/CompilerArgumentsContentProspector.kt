@@ -11,33 +11,32 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.memberProperties
 
 object CompilerArgumentsContentProspector {
-    private val argumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, List<KProperty1<out CommonToolArguments, *>>> =
+    private val argumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, Collection<KProperty1<out CommonToolArguments, *>>> =
         mutableMapOf()
 
-    private val flagArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, List<KProperty1<out CommonToolArguments, Boolean>>> =
+    private val flagArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, Collection<KProperty1<out CommonToolArguments, Boolean>>> =
         mutableMapOf()
 
-    private val stringArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, List<KProperty1<out CommonToolArguments, String?>>> =
+    private val stringArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, Collection<KProperty1<out CommonToolArguments, String?>>> =
         mutableMapOf()
 
-    private val arrayArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, List<KProperty1<out CommonToolArguments, Array<String>?>>> =
+    private val arrayArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, Collection<KProperty1<out CommonToolArguments, Array<String>?>>> =
         mutableMapOf()
 
-    private fun getCompilerArguments(kClass: KClass<out CommonToolArguments>) = argumentPropertiesCache.getOrPut(kClass) {
+    private fun getCompilerArgumentsProperties(kClass: KClass<out CommonToolArguments>) =
         kClass.memberProperties.filter { prop -> prop.annotations.any { it is Argument } }
-    }
 
-    private inline fun <reified R : Any?> List<KProperty1<out CommonToolArguments, *>>.filterByReturnType(predicate: (KType?) -> Boolean) =
+    private inline fun <reified R : Any?> Collection<KProperty1<out CommonToolArguments, *>>.filterByReturnType(predicate: (KType?) -> Boolean) =
         filter { predicate(it.returnType) }.mapNotNull { it.safeAs<KProperty1<CommonToolArguments, R>>() }
 
-    fun getFlagCompilerArgumentProperties(kClass: KClass<out CommonToolArguments>): List<KProperty1<out CommonToolArguments, Boolean>> =
-        flagArgumentPropertiesCache.getOrPut(kClass) { getCompilerArguments(kClass).filterByReturnType { it?.classifier == Boolean::class } }
+    fun getFlagCompilerArgumentProperties(kClass: KClass<out CommonToolArguments>): Collection<KProperty1<out CommonToolArguments, Boolean>> =
+        flagArgumentPropertiesCache.getOrPut(kClass) { getCompilerArgumentsProperties(kClass).filterByReturnType { it?.classifier == Boolean::class } }
 
-    fun <T : CommonToolArguments> getStringCompilerArgumentProperties(kClass: KClass<T>): List<KProperty1<out CommonToolArguments, String?>> =
-        stringArgumentPropertiesCache.getOrPut(kClass) { getCompilerArguments(kClass).filterByReturnType { it?.classifier == String::class } }
+    fun getStringCompilerArgumentProperties(kClass: KClass<out CommonToolArguments>): Collection<KProperty1<out CommonToolArguments, String?>> =
+        stringArgumentPropertiesCache.getOrPut(kClass) { getCompilerArgumentsProperties(kClass).filterByReturnType { it?.classifier == String::class } }
 
-    fun <T : CommonToolArguments> getArrayCompilerArgumentProperties(kClass: KClass<T>): List<KProperty1<out CommonToolArguments, Array<String>?>> =
-        arrayArgumentPropertiesCache.getOrPut(kClass) { getCompilerArguments(kClass).filterByReturnType { (it?.classifier as? KClass<*>)?.java?.isArray == true } }
+    fun getArrayCompilerArgumentProperties(kClass: KClass<out CommonToolArguments>): Collection<KProperty1<out CommonToolArguments, Array<String>?>> =
+        arrayArgumentPropertiesCache.getOrPut(kClass) { getCompilerArgumentsProperties(kClass).filterByReturnType { (it?.classifier as? KClass<*>)?.java?.isArray == true } }
 
     val freeArgsProperty: KProperty1<in CommonToolArguments, List<String>>
         get() = CommonToolArguments::freeArgs
