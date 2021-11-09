@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -53,7 +56,7 @@ class IrBuiltInsOverDescriptors(
         get() =
             synchronized(this) {
                 if (_functionFactory == null) {
-                    _functionFactory = IrDescriptorBasedFunctionFactory(this, symbolTable)
+                    _functionFactory = IrDescriptorBasedFunctionFactory(this, symbolTable, typeTranslator)
                 }
                 _functionFactory!!
             }
