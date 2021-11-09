@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinary
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractJsTranslatorWasmTest
-import org.jetbrains.kotlin.js.testNew.*
-import org.jetbrains.kotlin.js.testNew.AbstractIrJsTypeScriptExportTest
+import org.jetbrains.kotlin.js.test.*
+import org.jetbrains.kotlin.js.test.AbstractIrJsTypeScriptExportTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {

@@ -229,10 +229,6 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     }
 
     exclude("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/es6/semantics/*")
-
-    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     setUpBoxTests()
