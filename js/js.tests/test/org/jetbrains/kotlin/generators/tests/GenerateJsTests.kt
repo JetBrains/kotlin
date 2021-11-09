@@ -10,11 +10,6 @@ import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
-import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrBoxJsES6Test
-import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsCodegenBoxES6Test
-import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsCodegenInlineES6Test
-import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsTypeScriptExportES6Test
-import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractJsTranslatorWasmTest
@@ -40,14 +35,6 @@ fun main(args: Array<String>) {
                 model("box/main", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
                 model("box/kotlin.test/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
                 model("box/native/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-            }
-
-            testClass<AbstractIrBoxJsES6Test> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR_ES6)
-            }
-
-            testClass<AbstractIrJsTypeScriptExportES6Test> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR_ES6)
             }
 
             testClass<AbstractDceTest> {
@@ -83,14 +70,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIrCodegenWasmJsInteropWasmTest> {
                 model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.WASM)
-            }
-
-            testClass<AbstractIrJsCodegenBoxES6Test> {
-                model("codegen/box", targetBackend = TargetBackend.JS_IR_ES6, excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractIrJsCodegenInlineES6Test> {
-                model("codegen/boxInline/", targetBackend = TargetBackend.JS_IR_ES6)
             }
         }
 

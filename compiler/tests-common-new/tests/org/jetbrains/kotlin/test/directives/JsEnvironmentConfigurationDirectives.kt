@@ -240,11 +240,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.File
     )
 
-    val RUN_ES6_MODE by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val PER_MODULE by directive(
         description = "",
         applicability = DirectiveApplicability.Global

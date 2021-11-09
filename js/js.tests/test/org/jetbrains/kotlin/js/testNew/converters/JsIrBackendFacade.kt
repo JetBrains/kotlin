@@ -112,7 +112,7 @@ class JsIrBackendFacade(
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
             dceDriven = runIrPir,
             dceRuntimeDiagnostic = null,
-            es6mode = JsEnvironmentConfigurationDirectives.RUN_ES6_MODE in module.directives,
+            es6mode = false,
             propertyLazyInitialization = JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION in module.directives,
             baseClassIntoMetadata = false,
             lowerPerModule = lowerPerModule,

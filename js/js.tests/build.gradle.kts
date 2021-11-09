@@ -295,35 +295,6 @@ projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-projectTest("jsEs6IrTest", true) {
-    systemProperty("kotlin.js.ir.pir", "false")
-    systemProperty("kotlin.js.ir.es6", "true")
-
-    dependsOn(":dist")
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
-    systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
-
-    exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/semantics/*")
-
-    include("org/jetbrains/kotlin/js/test/es6/semantics/*")
-
-    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
-    setUpBoxTests()
-}
-
-projectTest("jsPirTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    systemProperty("kotlin.js.ir.skipRegularMode", "true")
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
-    maxHeapSize = "3g"
-    useJUnitPlatform()
-}
-
 projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
     maxHeapSize = "3g"

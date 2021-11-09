@@ -262,7 +262,7 @@ abstract class BasicBoxTest(
                     module.name.endsWith(OLD_MODULE_SUFFIX) -> null
                     // JS_IR generates single js file for all modules (apart from runtime).
                     // TODO: Split and refactor test runner for JS_IR
-                    targetBackend in listOf(TargetBackend.JS_IR, TargetBackend.JS_IR_ES6) && !isMainModule -> null
+                    targetBackend == TargetBackend.JS_IR && !isMainModule -> null
                     else -> Pair(outputFileName, module)
                 }
             }
@@ -838,7 +838,6 @@ abstract class BasicBoxTest(
         }
 
         val libraries = when (targetBackend) {
-            TargetBackend.JS_IR_ES6 -> dependencies
             TargetBackend.JS_IR -> dependencies
             TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies
             else -> error("Unsupported target backend: $targetBackend")

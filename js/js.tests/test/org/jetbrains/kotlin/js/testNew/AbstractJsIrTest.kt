@@ -55,7 +55,6 @@ abstract class AbstractJsIrTest(
                 if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
                 if (lowerPerModule) +JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE
                 if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
-                if (getBoolean("kotlin.js.ir.es6")) +JsEnvironmentConfigurationDirectives.RUN_ES6_MODE
                 if (getBoolean("kotlin.js.ir.perModule")) +JsEnvironmentConfigurationDirectives.PER_MODULE
                 if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
                 if (!lowerPerModule && getBoolean("kotlin.js.ir.pir", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_PIR

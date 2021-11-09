@@ -179,8 +179,6 @@ abstract class BasicIrBoxTest(
 
     override val runIrPir: Boolean = !lowerPerModule && getBoolean("kotlin.js.ir.pir", true)
 
-    val runEs6Mode: Boolean = getBoolean("kotlin.js.ir.es6", false)
-
     val perModule: Boolean = getBoolean("kotlin.js.ir.perModule")
 
     // TODO Design incremental compilation for IR and add test support
@@ -408,7 +406,6 @@ abstract class BasicIrBoxTest(
             irFactory = IrFactoryImpl,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
             dceDriven = dceDriven,
-            es6mode = runEs6Mode,
             propertyLazyInitialization = propertyLazyInitialization,
             verifySignatures = !skipMangleVerification,
             lowerPerModule = lowerPerModule,
