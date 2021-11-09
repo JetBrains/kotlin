@@ -29,16 +29,13 @@ class JsArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandl
 
         val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
         val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
-        val testGroupOutputDirForPir = File(pathToRootOutputDir + "out-pir/" + testGroupOutputDirPrefix)
 
         val outputDir = getOutputDir(originalFile, testGroupOutputDirForCompilation, stopFile)
         val dceOutputDir = getOutputDir(originalFile, testGroupOutputDirForMinification, stopFile)
-        val pirOutputDir = getOutputDir(originalFile, testGroupOutputDirForPir, stopFile)
         val minOutputDir = File(dceOutputDir, originalFile.nameWithoutExtension)
 
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices), outputDir)
         copy(JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices), dceOutputDir)
-        copy(JsEnvironmentConfigurator.getPirJsArtifactsOutputDir(testServices), pirOutputDir)
         copy(JsEnvironmentConfigurator.getMinificationJsArtifactsOutputDir(testServices), minOutputDir)
     }
 

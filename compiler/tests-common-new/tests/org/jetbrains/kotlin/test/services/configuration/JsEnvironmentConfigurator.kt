@@ -50,7 +50,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         private const val OUTPUT_DIR_NAME = "outputDir"
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
         private const val DCE_OUTPUT_DIR_NAME = "dceOutputDir"
-        private const val PIR_OUTPUT_DIR_NAME = "pirOutputDir"
         private const val MINIFICATION_OUTPUT_DIR_NAME = "minOutputDir"
 
         object ExceptionThrowingReporter : JsConfig.Reporter() {
@@ -84,10 +83,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return getDceJsArtifactsOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
-        fun getPirJsArtifactPath(testServices: TestServices, moduleName: String): String {
-            return getPirJsArtifactsOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
-        }
-
         fun getJsArtifactsOutputDir(testServices: TestServices): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_DIR_NAME)
         }
@@ -98,10 +93,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getDceJsArtifactsOutputDir(testServices: TestServices): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(DCE_OUTPUT_DIR_NAME)
-        }
-
-        fun getPirJsArtifactsOutputDir(testServices: TestServices): File {
-            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(PIR_OUTPUT_DIR_NAME)
         }
 
         fun getMinificationJsArtifactsOutputDir(testServices: TestServices): File {

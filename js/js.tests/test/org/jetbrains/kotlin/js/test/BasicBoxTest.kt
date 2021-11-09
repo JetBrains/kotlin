@@ -83,7 +83,6 @@ abstract class BasicBoxTest(
     private val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
     private val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
-    private val testGroupOutputDirForPir = File(pathToRootOutputDir + "out-pir/" + testGroupOutputDirPrefix)
 
     protected open fun getOutputPrefixFile(testFilePath: String): File? = null
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
@@ -93,7 +92,6 @@ abstract class BasicBoxTest(
 
     protected open val skipRegularMode: Boolean = false
     protected open val runIrDce: Boolean = false
-    protected open val runIrPir: Boolean = false
 
     protected open val incrementalCompilationChecksEnabled = true
 
@@ -129,7 +127,6 @@ abstract class BasicBoxTest(
 
         val outputDir = getOutputDir(file)
         val dceOutputDir = getOutputDir(file, testGroupOutputDirForMinification)
-        val pirOutputDir = getOutputDir(file, testGroupOutputDirForPir)
         val fileContent = KtTestUtil.doLoadFile(file)
 
         val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find() || WITH_RUNTIME.matcher(fileContent).find() || WITH_STDLIB.matcher(fileContent).find()
@@ -219,7 +216,6 @@ abstract class BasicBoxTest(
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 val dceOutputFileName = module.outputFileName(dceOutputDir) + ".js"
-                val pirOutputFileName = module.outputFileName(pirOutputDir) + ".js"
                 val abiVersion = module.abiVersion
                 val isMainModule = mainModuleName == module.name
 
@@ -230,7 +226,6 @@ abstract class BasicBoxTest(
                     module,
                     outputFileName,
                     dceOutputFileName,
-                    pirOutputFileName,
                     dependencies,
                     allDependencies,
                     friends,
@@ -350,10 +345,6 @@ abstract class BasicBoxTest(
                         runIrEsmTests(dceOutputDir.getTestDir())
                     }
                 }
-
-                if (runIrPir && !skipDceDriven) {
-                    runIrEsmTests(pirOutputDir.getTestDir())
-                }
             }
 
             if (esModules)
@@ -379,14 +370,6 @@ abstract class BasicBoxTest(
                 )
             } + commonFiles + additionalMainFiles + inputJsFilesAfter
 
-            val pirAllJsFiles = additionalFiles + inputJsFilesBefore + generatedJsFiles.map {
-                it.first.replace(
-                    outputDir.absolutePath,
-                    pirOutputDir.absolutePath
-                )
-            } + commonFiles + additionalMainFiles + inputJsFilesAfter
-
-
             val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
             if (!dontRunGeneratedCode && generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
@@ -402,10 +385,6 @@ abstract class BasicBoxTest(
                     if (runIrDce && !checkIC) {
                         runGeneratedCode(dceAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
                     }
-                }
-
-                if (runIrPir && !skipDceDriven) {
-                    runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
                 }
             }
 
@@ -472,7 +451,6 @@ abstract class BasicBoxTest(
         module: TestModule,
         outputFileName: String,
         dceOutputFileName: String,
-        pirOutputFileName: String,
         dependencies: List<String>,
         allDependencies: List<String>,
         friends: List<String>,
@@ -520,14 +498,12 @@ abstract class BasicBoxTest(
         )
         val outputFile = File(outputFileName)
         val dceOutputFile = File(dceOutputFileName)
-        val pirOutputFile = File(pirOutputFileName)
 
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile),
             outputFile,
             dceOutputFile,
-            pirOutputFile,
             config,
             outputPrefixFile,
             outputPostfixFile,
@@ -632,7 +608,6 @@ abstract class BasicBoxTest(
             translationUnits,
             recompiledOutputFile,
             recompiledOutputFile,
-            recompiledOutputFile,
             recompiledConfig,
             outputPrefixFile,
             outputPostfixFile,
@@ -720,7 +695,6 @@ abstract class BasicBoxTest(
         units: List<TranslationUnit>,
         outputFile: File,
         dceOutputFile: File,
-        pirOutputFile: File,
         config: JsConfig,
         outputPrefixFile: File?,
         outputPostfixFile: File?,

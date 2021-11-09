@@ -81,11 +81,9 @@ class JsIrBackendFacade(
 
         val testPackage = extractTestPackage(testServices)
         val lowerPerModule = JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE in module.directives
-        val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in module.directives &&
-                JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in module.directives
         val skipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in module.directives
 
-        if (skipRegularMode && !runIrPir) return null
+        if (skipRegularMode) return null
 
         if (JsEnvironmentConfigurator.incrementalEnabledFor(module, testServices)) {
             val outputFile = if (firstTimeCompilation) {
@@ -110,7 +108,7 @@ class JsIrBackendFacade(
             deserializer,
             PhaseConfig(jsPhases), // TODO debug mode
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
-            dceDriven = runIrPir,
+            dceDriven = false,
             dceRuntimeDiagnostic = null,
             es6mode = false,
             propertyLazyInitialization = JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION in module.directives,
@@ -121,13 +119,12 @@ class JsIrBackendFacade(
             granularity = granularity
         )
 
-        return loweredIr2JsArtifact(module, loweredIr, runIrPir, granularity)
+        return loweredIr2JsArtifact(module, loweredIr, granularity)
     }
 
     private fun loweredIr2JsArtifact(
         module: TestModule,
         loweredIr: LoweredIr,
-        runIrPir: Boolean,
         granularity: JsGenerationGranularity,
     ): BinaryArtifacts.Js? {
         val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
@@ -138,14 +135,12 @@ class JsIrBackendFacade(
 
         val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + ".js")
         val dceOutputFile = File(JsEnvironmentConfigurator.getDceJsArtifactPath(testServices, module.name) + ".js")
-        val pirOutputFile = File(JsEnvironmentConfigurator.getPirJsArtifactPath(testServices, module.name) + ".js")
-        val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in module.directives
         if (!esModules) {
             val transformer = IrModuleToJsTransformer(
                 loweredIr.context,
                 mainArguments,
                 fullJs = true,
-                dceJs = if (runIrPir && dontSkipDceDriven) false else runIrDce,
+                dceJs = runIrDce,
                 multiModule = granularity == JsGenerationGranularity.PER_MODULE,
                 relativeRequirePath = false
             )
@@ -153,21 +148,14 @@ class JsIrBackendFacade(
         }
 
         val options = JsGenerationOptions(generatePackageJson = true, generateTypeScriptDefinitions = generateDts)
-        if (dontSkipDceDriven) {
-            generateEsModules(loweredIr, jsOutputSink(outputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
-            if (runIrDce) {
-                eliminateDeadDeclarations(loweredIr.allModules, loweredIr.context)
-                generateEsModules(loweredIr, jsOutputSink(dceOutputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
-                return BinaryArtifacts.Js.JsEsArtifact(outputFile, dceOutputFile).dump(module)
-            }
-            return BinaryArtifacts.Js.JsEsArtifact(outputFile, null).dump(module)
-        }
+        generateEsModules(loweredIr, jsOutputSink(outputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
 
-        if (runIrPir && dontSkipDceDriven) {
-            generateEsModules(loweredIr, jsOutputSink(pirOutputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
-            return BinaryArtifacts.Js.JsEsArtifact(pirOutputFile, null).dump(module)
+        if (runIrDce) {
+            eliminateDeadDeclarations(loweredIr.allModules, loweredIr.context)
+            generateEsModules(loweredIr, jsOutputSink(dceOutputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
+            return BinaryArtifacts.Js.JsEsArtifact(outputFile, dceOutputFile).dump(module)
         }
-        return null
+        return BinaryArtifacts.Js.JsEsArtifact(outputFile, null).dump(module)
     }
 
     private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): IrModuleInfo {
@@ -252,20 +240,13 @@ class JsIrBackendFacade(
         val moduleId = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         val outputDceFile = File(JsEnvironmentConfigurator.getDceJsArtifactPath(testServices, module.name) + ".js")
-        val outputPirFile = File(JsEnvironmentConfigurator.getPirJsArtifactPath(testServices, module.name) + ".js")
 
         val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
-        val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in module.directives
-        val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in module.directives
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
 
         if (dontSkipRegularMode) {
             compilerResult.outputs!!.writeTo(outputFile, moduleId, moduleKind)
             compilerResult.outputsAfterDce?.writeTo(outputDceFile, moduleId, moduleKind)
-        } else if (runIrPir && dontSkipDceDriven) {
-            compilerResult.outputs!!.writeTo(outputPirFile, moduleId, moduleKind)
-        } else {
-            TODO("unreachable")
         }
 
         if (generateDts) {

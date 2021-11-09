@@ -93,11 +93,10 @@ fun testWithModuleSystem(testServices: TestServices): Boolean {
 
 fun getAllFilesForRunner(
     testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>
-): Triple<List<String>, List<String>, List<String>> {
+): Pair<List<String>, List<String>> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
     val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
     val dceOutputDir = JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices)
-    val pirOutputDir = JsEnvironmentConfigurator.getPirJsArtifactsOutputDir(testServices)
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
     val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules)
@@ -113,13 +112,11 @@ fun getAllFilesForRunner(
             }
         } ?: emptyList()
     val dceJsFiles = (klibDependencies + artifactsPaths).map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
-    val pirJsFiles = (klibDependencies + artifactsPaths).map { it.replace(outputDir.absolutePath, pirOutputDir.absolutePath) }
 
     val allJsFiles = additionalFiles + inputJsFilesBefore + klibDependencies + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
     val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
-    val pirAllJsFiles = additionalFiles + inputJsFilesBefore + pirJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
 
-    return Triple(allJsFiles, dceAllJsFiles, pirAllJsFiles)
+    return Pair(allJsFiles, dceAllJsFiles)
 }
 
 fun extractAllFilesForEsRunner(testServices: TestServices, esmOutputDir: File): Pair<List<String>, List<String>> {

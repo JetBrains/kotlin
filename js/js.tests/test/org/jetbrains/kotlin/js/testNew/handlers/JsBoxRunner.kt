@@ -33,29 +33,23 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
 
         if (dontRunGeneratedCode) return
 
-        val (allJsFiles, dceAllJsFiles, pirAllJsFiles) = getAllFilesForRunner(testServices, modulesToArtifact)
+        val (allJsFiles, dceAllJsFiles) = getAllFilesForRunner(testServices, modulesToArtifact)
 
         val withModuleSystem = testWithModuleSystem(testServices)
         val testModuleName = getTestModuleName(testServices)
         val testPackage = extractTestPackage(testServices)
 
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
-        val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in globalDirectives
         val dontSkipIrIc = JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in globalDirectives
         val recompile = testServices.moduleStructure.modules
             .flatMap { it.files }.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
-        val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in globalDirectives
         if (dontSkipRegularMode) {
             runGeneratedCode(allJsFiles, testModuleName, testPackage, withModuleSystem)
 
             if (runIrDce && !(dontSkipIrIc && recompile)) {
                 runGeneratedCode(dceAllJsFiles, testModuleName, testPackage, withModuleSystem)
             }
-        }
-
-        if (runIrPir && dontSkipDceDriven) {
-            runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, withModuleSystem)
         }
     }
 
@@ -64,21 +58,14 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
 
         val esmOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).esModulesSubDir
         val esmDceOutputDir = JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices).esModulesSubDir
-        val esmPirOutputDir = JsEnvironmentConfigurator.getPirJsArtifactsOutputDir(testServices).esModulesSubDir
 
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
-        val dontSkipDceDriven = JsEnvironmentConfigurationDirectives.SKIP_DCE_DRIVEN !in globalDirectives
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
-        val runIrPir = JsEnvironmentConfigurationDirectives.RUN_IR_PIR in globalDirectives
         if (dontSkipRegularMode) {
             singleRunEsCode(esmOutputDir)
             if (runIrDce) {
                 singleRunEsCode(esmDceOutputDir)
             }
-        }
-
-        if (runIrPir && dontSkipDceDriven) {
-            singleRunEsCode(esmPirOutputDir)
         }
     }
 

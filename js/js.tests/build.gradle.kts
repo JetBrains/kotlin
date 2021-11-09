@@ -262,7 +262,6 @@ fun Test.setUpBoxTests() {
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
-    systemProperty("kotlin.js.ir.pir", "false")
     maxHeapSize = "3g"
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
@@ -275,21 +274,17 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
 
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
-    outputs.dir("$buildDir/out-pir")
 
     configureTestDistribution()
 }
 
 projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    // PIR temporary disabled
-    systemProperty("kotlin.js.ir.pir", "false")
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
     maxHeapSize = "3g"
     useJUnitPlatform()
 }
 
 projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5) {
-    systemProperty("kotlin.js.ir.pir", "false")
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
     maxHeapSize = "3g"
     useJUnitPlatform()

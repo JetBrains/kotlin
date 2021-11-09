@@ -51,13 +51,11 @@ abstract class AbstractJsIrTest(
         with(builder) {
             defaultDirectives {
                 val runIc = getBoolean("kotlin.js.ir.icMode")
-                val lowerPerModule = runIc || getBoolean("kotlin.js.ir.lowerPerModule")
                 if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
-                if (lowerPerModule) +JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE
+                if (runIc || getBoolean("kotlin.js.ir.lowerPerModule")) +JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE
                 if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
                 if (getBoolean("kotlin.js.ir.perModule")) +JsEnvironmentConfigurationDirectives.PER_MODULE
                 if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
-                if (!lowerPerModule && getBoolean("kotlin.js.ir.pir", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_PIR
             }
 
             configureJsArtifactsHandlersStep {

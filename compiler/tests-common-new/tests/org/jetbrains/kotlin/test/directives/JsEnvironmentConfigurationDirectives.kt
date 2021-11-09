@@ -86,11 +86,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val SKIP_DCE_DRIVEN by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val SPLIT_PER_MODULE by directive(
         description = "",
         applicability = DirectiveApplicability.Global
@@ -202,11 +197,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val RUN_IR_DCE by directive(
         description = "Enables dead code elimination on IR",
-        applicability = DirectiveApplicability.Global
-    )
-
-    val RUN_IR_PIR by directive(
-        description = "Enables pir on IR", // TODO what `pir` stands for?
         applicability = DirectiveApplicability.Global
     )
 

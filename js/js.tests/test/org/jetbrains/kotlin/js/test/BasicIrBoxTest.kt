@@ -177,8 +177,6 @@ abstract class BasicIrBoxTest(
 
     override val runIrDce: Boolean = getBoolean("kotlin.js.ir.dce", true)
 
-    override val runIrPir: Boolean = !lowerPerModule && getBoolean("kotlin.js.ir.pir", true)
-
     val perModule: Boolean = getBoolean("kotlin.js.ir.perModule")
 
     // TODO Design incremental compilation for IR and add test support
@@ -200,7 +198,6 @@ abstract class BasicIrBoxTest(
         units: List<TranslationUnit>,
         outputFile: File,
         dceOutputFile: File,
-        pirOutputFile: File,
         config: JsConfig,
         outputPrefixFile: File?,
         outputPostfixFile: File?,
@@ -327,29 +324,6 @@ abstract class BasicIrBoxTest(
                             dirtyFilesToRecompile
                         )
                     }
-                }
-            }
-
-            if (runIrPir && !skipDceDriven) {
-                val ir = compileToLoweredIr(
-                    config,
-                    outputFile,
-                    klibPath,
-                    allKlibPaths + klibCannonPath,
-                    friendPaths,
-                    testPackage,
-                    testFunction,
-                    propertyLazyInitialization = propertyLazyInitialization,
-                    skipMangleVerification = skipMangleVerification,
-                    safeExternalBoolean = safeExternalBoolean,
-                    safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
-                    dceDriven = true,
-                    granularity,
-                )
-                if (esModules) {
-                    generateEsModules(ir, pirOutputFile.esModulesSubDir, granularity, config, customTestModule, mainArguments)
-                } else {
-                    generateOldModuleSystems(ir.oldIr2Js(granularity, false, mainArguments), pirOutputFile, pirOutputFile, config, units)
                 }
             }
         }
@@ -535,7 +509,6 @@ abstract class BasicIrBoxTest(
 
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
         val recompiledMinOutputFile = File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + "-min.js")
-        val recompiledPirOutputFile = File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + "-pir.js")
         val recompiledConfig = createConfig(
             sourceDirs,
             module,
@@ -553,7 +526,6 @@ abstract class BasicIrBoxTest(
             dirtyFiles.map { TranslationUnit.SourceFile(createPsiFile(it)) },
             outputFile,
             recompiledMinOutputFile,
-            recompiledPirOutputFile,
             recompiledConfig,
             outputPrefixFile,
             outputPostfixFile,
