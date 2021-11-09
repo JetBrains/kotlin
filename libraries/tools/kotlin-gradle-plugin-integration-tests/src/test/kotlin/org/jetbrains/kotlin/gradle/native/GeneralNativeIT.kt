@@ -718,7 +718,7 @@ class GeneralNativeIT : BaseGradleIT() {
                     .single { it.getAttribute("name").value == "fail" || it.getAttribute("name").value == "fail[$targetName]" }
                     .getChild("failure")
                     .text
-                assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
+                assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:29\)""".toRegex()))
             }
 
             fun assertTestResultsAnyOf(
@@ -737,25 +737,30 @@ class GeneralNativeIT : BaseGradleIT() {
             // If, in the test project, preset name was updated,
             // update accordingly test result output for Gradle6.6+
             val testGradleVersion = project.chooseWrapperVersionOrFinishTest()
-            val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
-                listOf(
+            val expectedHostTestResult: String
+            val expectedIOSTestResults: List<String>
+            if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
+                expectedHostTestResult = "testProject/native-tests/TEST-TestKt_pre6.6.xml"
+                expectedIOSTestResults = listOf(
                     "testProject/native-tests/TEST-TestKt_pre6.6.xml",
                     "testProject/native-tests/TEST-TestKt-iOSsim_pre6.6.xml",
                 )
             } else {
-                listOf(
-                    "testProject/native-tests/TEST-TestKt.xml",
+                expectedHostTestResult = "testProject/native-tests/TEST-TestKt.xml"
+                expectedIOSTestResults = listOf(
                     "testProject/native-tests/TEST-TestKt-iOSsim.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSsim_wWarn.xml",
                 )
             }
-            assertTestResults(expectedTestResults.first(), hostTestTask)
+
+            assertTestResults(expectedHostTestResult, hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
             // TODO: Uncomment when this is fixed.
             //assertStacktrace(hostTestTask, "host")
             if (HostManager.hostIsMac) {
                 assertTestResultsAnyOf(
-                    expectedTestResults[0],
-                    expectedTestResults[1],
+                    expectedIOSTestResults[0],
+                    expectedIOSTestResults[1],
                     "iosTest"
                 )
                 assertStacktrace("iosTest", "ios")
