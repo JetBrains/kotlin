@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLikeType, originalType: ConeKotlinType): ConeKotlinType? {
     originalType.lowerBoundIfFlexible().fullyExpandedType(session).let {
@@ -89,6 +90,28 @@ private fun BodyResolveComponents.doUnify(
 ): Boolean {
     val originalType = originalTypeProjection.type
     val typeWithParameters = typeWithParametersProjection.type
+
+    if (originalType is ConeIntersectionType) {
+        val intersectionResult = mutableMapOf<FirTypeParameterRef, ConeTypeProjection>()
+        for (intersectedType in originalType.intersectedTypes) {
+            val localResult = mutableMapOf<FirTypeParameterRef, ConeTypeProjection>()
+            if (!doUnify(intersectedType, typeWithParametersProjection, targetTypeParameters, localResult)) return false
+            for ((typeParameter, typeProjection) in localResult) {
+                val existingTypeProjection = intersectionResult[typeParameter]
+                if (existingTypeProjection == null
+                    || (typeProjection is KotlinTypeMarker &&
+                            existingTypeProjection is KotlinTypeMarker &&
+                            AbstractTypeChecker.isSubtypeOf(session.typeContext, typeProjection, existingTypeProjection))
+                ) {
+                    intersectionResult[typeParameter] = typeProjection
+                }
+            }
+        }
+        for ((key, value) in intersectionResult) {
+            result[key] = value
+        }
+        return true
+    }
 
     // in Foo ~ in X  =>  Foo ~ X
     if (originalTypeProjection.kind == typeWithParametersProjection.kind &&
