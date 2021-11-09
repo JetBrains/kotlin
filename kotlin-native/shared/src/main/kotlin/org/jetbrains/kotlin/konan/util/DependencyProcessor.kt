@@ -96,10 +96,17 @@ class DependencyProcessor(dependenciesRoot: File,
                           private val deleteArchives: Boolean = true,
                           private val archiveType: ArchiveType = ArchiveType.systemDefault) {
 
-    private val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
-    private val cacheDirectory = homeDependencyCache.apply { mkdirs() }
+    private val dependenciesDirectory by lazy {
+        dependenciesRoot.apply { mkdirs() }
+    }
 
-    private val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
+    private val cacheDirectory by lazy {
+        homeDependencyCache.apply { mkdirs() }
+    }
+
+    private val lockFile by lazy {
+        File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
+    }
 
     var showInfo = true
     private var isInfoShown = false
@@ -289,18 +296,24 @@ class DependencyProcessor(dependenciesRoot: File,
             // String literals are internalized so we create a new instance to avoid synchronization on a shared object.
             java.lang.String("lock")
         }
+
+        val remoteDependencies = resolvedDependencies.mapNotNull { (dependency, candidate) ->
+            when (candidate) {
+                is DependencySource.Local -> null
+                is DependencySource.Remote -> dependency to candidate
+            }
+        }
+        if (remoteDependencies.isEmpty()) { return }
+
         synchronized(lock) {
             RandomAccessFile(lockFile, "rw").channel.lock().use {
-                resolvedDependencies.forEach { (dependency, candidate) ->
+                remoteDependencies.forEach { (dependency, candidate) ->
                     val baseUrl = when (candidate) {
-                        is DependencySource.Local -> null
                         DependencySource.Remote.Public -> dependenciesUrl
                         DependencySource.Remote.Internal -> InternalServer.url
                     }
                     // TODO: consider using different caches for different remotes.
-                    if (baseUrl != null) {
-                        downloadDependency(dependency, baseUrl)
-                    }
+                    downloadDependency(dependency, baseUrl)
                 }
             }
         }
