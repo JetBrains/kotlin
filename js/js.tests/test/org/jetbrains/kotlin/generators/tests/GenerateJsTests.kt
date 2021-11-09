@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.js.test.AbstractDceTest
-import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
-import org.jetbrains.kotlin.js.test.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
-import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
-import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
-import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractJsTranslatorWasmTest
+import org.jetbrains.kotlin.js.testOld.AbstractDceTest
+import org.jetbrains.kotlin.js.testOld.AbstractJsLineNumberTest
+import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxWasmTest
+import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
+import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractJsTranslatorWasmTest
 import org.jetbrains.kotlin.js.testNew.*
 import org.jetbrains.kotlin.js.testNew.AbstractIrJsTypeScriptExportTest
 import org.jetbrains.kotlin.test.TargetBackend

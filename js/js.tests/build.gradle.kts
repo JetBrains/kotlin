@@ -228,7 +228,7 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
         inputs.dir(rootDir.resolve("libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"))
     }
 
-    exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
+    exclude("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
     exclude("org/jetbrains/kotlin/js/test/es6/semantics/*")
 
     if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
@@ -339,7 +339,7 @@ projectTest("wasmTest", true) {
     setupV8()
     setupSpiderMonkey()
 
-    include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
+    include("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
 
     dependsOn(":kotlin-stdlib-wasm:compileKotlinWasm")
     systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/wasm/main")

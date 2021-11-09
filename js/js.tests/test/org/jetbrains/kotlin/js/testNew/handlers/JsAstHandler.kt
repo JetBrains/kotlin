@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import org.jetbrains.kotlin.js.facade.TranslationResult
-import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
+import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts

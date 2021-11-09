@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
 import org.jetbrains.kotlin.js.engine.loadFiles
-import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.testNew.utils.extractTestPackage
 import org.jetbrains.kotlin.js.testNew.utils.getOnlyJsFilesForRunner
 import org.jetbrains.kotlin.js.testNew.utils.getTestModuleName
 import org.jetbrains.kotlin.js.testNew.utils.testWithModuleSystem
+import org.jetbrains.kotlin.js.testOld.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator

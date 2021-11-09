@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.testNew.handlers
 
-import org.jetbrains.kotlin.js.test.engines.ExternalTool
+import org.jetbrains.kotlin.js.testOld.engines.ExternalTool
 import org.jetbrains.kotlin.js.testNew.utils.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
