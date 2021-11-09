@@ -69,7 +69,6 @@ class JpsCompatiblePluginTasks(
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
 
         private val ALLOWED_ARTIFACT_PATTERNS = listOf(
-            Regex.fromLiteral("dist_root.xml"),
             Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml")
         )
     }

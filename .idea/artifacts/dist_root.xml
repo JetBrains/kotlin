@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact build-on-make="true" name="dist_root">
-    <output-path>$PROJECT_DIR$/dist</output-path>
-    <root id="root">
-      <element id="artifact" artifact-name="dist" />
-    </root>
-  </artifact>
-</component>
