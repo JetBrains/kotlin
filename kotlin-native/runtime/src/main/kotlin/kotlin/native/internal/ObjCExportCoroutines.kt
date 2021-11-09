@@ -25,21 +25,6 @@ private fun Kotlin_ObjCExport_createContinuationArgumentImpl(
     )
 }
 
-@ExportForCppRuntime
-private fun Kotlin_ObjCExport_createUnitContinuationArgumentImpl(
-        completionHolder: Any,
-        exceptionTypes: NativePtr
-): Continuation<Any?> = createContinuationArgumentFromCallback(EmptyCompletion) { result ->
-    result.fold(
-            onSuccess = {
-                runUnitCompletionSuccess(completionHolder)
-            },
-            onFailure = { exception ->
-                runUnitCompletionFailure(completionHolder, exception, exceptionTypes)
-            }
-    )
-}
-
 private object EmptyCompletion : Continuation<Any?> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
@@ -80,13 +65,5 @@ internal fun interceptedContinuation(continuation: Continuation<Any?>): Continua
 private external fun runCompletionSuccess(completionHolder: Any, result: Any?)
 
 @FilterExceptions
-@GCUnsafeCall("Kotlin_ObjCExport_runUnitCompletionSuccess")
-private external fun runUnitCompletionSuccess(completionHolder: Any)
-
-@FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionFailure")
 private external fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)
-
-@FilterExceptions
-@GCUnsafeCall("Kotlin_ObjCExport_runUnitCompletionFailure")
-private external fun runUnitCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)

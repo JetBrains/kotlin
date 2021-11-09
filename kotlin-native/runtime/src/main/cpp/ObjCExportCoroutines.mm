@@ -14,19 +14,12 @@
 #import "ObjCExportErrors.h"
 
 typedef void (^Completion)(id _Nullable, NSError* _Nullable);
-typedef void (^UnitCompletion)(NSError* _Nullable);
 
 extern "C" void Kotlin_ObjCExport_runCompletionSuccess(KRef completionHolder, KRef result) {
   Completion completion = (Completion)GetAssociatedObject(completionHolder);
   id objCResult = Kotlin_ObjCExport_refToLocalObjC(result);
   kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   completion(objCResult, nullptr);
-}
-
-extern "C" void Kotlin_ObjCExport_runUnitCompletionSuccess(KRef completionHolder) {
-  UnitCompletion completion = (UnitCompletion)GetAssociatedObject(completionHolder);
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-  completion(nullptr);
 }
 
 extern "C" void Kotlin_ObjCExport_runCompletionFailure(
@@ -40,21 +33,7 @@ extern "C" void Kotlin_ObjCExport_runCompletionFailure(
   completion(nullptr, error);
 }
 
-extern "C" void Kotlin_ObjCExport_runUnitCompletionFailure(
-  KRef completionHolder,
-  KRef exception,
-  const TypeInfo** exceptionTypes
-) {
-  id error = Kotlin_ObjCExport_ExceptionAsNSError(exception, exceptionTypes);
-  UnitCompletion completion = (UnitCompletion)GetAssociatedObject(completionHolder);
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-  completion(error);
-}
-
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgumentImpl,
-    KRef completionHolder, const TypeInfo** exceptionTypes);
-
-extern "C" OBJ_GETTER(Kotlin_ObjCExport_createUnitContinuationArgumentImpl,
     KRef completionHolder, const TypeInfo** exceptionTypes);
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completion, const TypeInfo** exceptionTypes) {
@@ -70,15 +49,12 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completio
 }
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_createUnitContinuationArgument, id completion, const TypeInfo** exceptionTypes) {
-  if (pthread_main_np() != 1) {
-    [NSException raise:NSGenericException
-        format:@"Calling Kotlin suspend functions from Swift/Objective-C is currently supported only on main thread"];
-  }
-  ObjHolder slot;
-  KRef completionHolder = AllocInstanceWithAssociatedObject(theForeignObjCObjectTypeInfo,
-      objc_retainBlock(completion), slot.slot());
+  void (^typedCompletion)(NSError * _Nullable) = completion;
+  Completion twoArgumentCompletion = ^(_Nullable id result, NSError* _Nullable error) {
+    typedCompletion(error);
+  };
 
-  RETURN_RESULT_OF(Kotlin_ObjCExport_createUnitContinuationArgumentImpl, completionHolder, exceptionTypes);
+  RETURN_RESULT_OF(Kotlin_ObjCExport_createContinuationArgument, twoArgumentCompletion, exceptionTypes);
 }
 
 extern "C" void Kotlin_ObjCExport_resumeContinuationSuccess(KRef continuation, KRef result);
