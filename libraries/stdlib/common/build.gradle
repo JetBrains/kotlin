@@ -65,4 +65,6 @@ jar {
 configureSourcesJar()
 configureJavadocJar()
 
+sourcesJar.dependsOn(":prepare:build.version:writeStdlibVersion")
+
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
