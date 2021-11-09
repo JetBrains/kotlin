@@ -84,7 +84,7 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
             insn.isBoxing(generationState) ->
                 NotNullBasicValue(resultType)
             insn.isIteratorMethodCallOfProgression(values) ->
-                ProgressionIteratorBasicValue.byProgressionClassType(values[0].type)
+                ProgressionIteratorBasicValue.byProgressionClassType(insn, values[0].type)
             insn.isNextMethodCallOfProgressionIterator(values) ->
                 NotNullBasicValue(resultType)
             insn.isPseudo(PseudoInsn.AS_NOT_NULL) ->
