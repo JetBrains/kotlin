@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/kt47082.kt
       RETURN type=kotlin.Nothing from='public final fun foo <R> (r: <root>.Receiver<R of <root>.foo>): R of <root>.foo declared in <root>'
         CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>): E of <root>.produce declared in <root>' type=R of <root>.foo origin=null
           <E>: R of <root>.foo
-          block: FUN_EXPR type=kotlin.Function1<<root>.Derived<IrErrorType(null)>, kotlin.Unit> origin=LAMBDA
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<IrErrorType(null)>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Derived<IrErrorType(null)>) returnType:kotlin.Unit
               $receiver: VALUE_PARAMETER name:$this$produce type:<root>.Derived<IrErrorType(null)>
               BLOCK_BODY

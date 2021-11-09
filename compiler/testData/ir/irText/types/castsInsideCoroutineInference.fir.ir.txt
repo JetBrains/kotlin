@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       RETURN type=kotlin.Nothing from='public final fun scopedFlow <R> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>): <root>.Flow<R of <root>.scopedFlow> declared in <root>'
         CALL 'public final fun flow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>): <root>.Flow<T of <root>.flow> declared in <root>' type=<root>.Flow<R of <root>.scopedFlow> origin=null
           <T>: R of <root>.scopedFlow
-          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=LAMBDA
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<R of <root>.scopedFlow>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$flow type:<root>.FlowCollector<R of <root>.scopedFlow>
               BLOCK_BODY
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                   GET_VAR '$this$flow: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
                 CALL 'public final fun flowScope <R> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>' type=kotlin.Unit origin=null
                   <R>: kotlin.Unit
-                  block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, kotlin.Unit> origin=LAMBDA
+                  block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:kotlin.Unit [suspend]
                       $receiver: VALUE_PARAMETER name:$this$flowScope type:<root>.CoroutineScope
                       BLOCK_BODY
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>): <root>.Flow<T of <root>.onCompletion> declared in <root>'
         CALL 'public final fun unsafeFlow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
           <T>: T of <root>.onCompletion
-          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Unit> origin=LAMBDA
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<T of <root>.onCompletion>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$unsafeFlow type:<root>.FlowCollector<T of <root>.onCompletion>
               BLOCK_BODY
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun onCompletion <T> (action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit>): <root>.Flow<T of <root>.onCompletion> declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
           <T>: T of <root>.onCompletion
           $receiver: GET_VAR '<this>: <root>.Flow<T of <root>.onCompletion> declared in <root>.onCompletion' type=<root>.Flow<T of <root>.onCompletion> origin=null
-          action: FUN_EXPR type=kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit> origin=LAMBDA
+          action: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = 'cause')] kotlin.Throwable?, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<T of <root>.onCompletion>, it:@[ParameterName(name = 'cause')] kotlin.Throwable?) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$onCompletion type:<root>.FlowCollector<T of <root>.onCompletion>
               VALUE_PARAMETER name:it index:0 type:@[ParameterName(name = 'cause')] kotlin.Throwable?
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<kotlin.Any> origin=null
           <E>: kotlin.Any
           $receiver: GET_VAR '<this>: <root>.CoroutineScope declared in <root>.asFairChannel' type=<root>.CoroutineScope origin=null
-          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$produce type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<@[ParameterName(name = 'value')] kotlin.Any> origin=null
           <E>: @[ParameterName(name = 'value')] kotlin.Any
           $receiver: GET_VAR '<this>: <root>.CoroutineScope declared in <root>.asChannel' type=<root>.CoroutineScope origin=null
-          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>, kotlin.Unit> origin=LAMBDA
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:$this$produce type:<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>
               BLOCK_BODY

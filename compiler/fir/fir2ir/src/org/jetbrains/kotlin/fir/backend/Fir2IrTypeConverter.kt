@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -119,6 +120,13 @@ class Fir2IrTypeConverter(
                     hasEnhancedNullability -> {
                         builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
                             typeAnnotations += it
+                        }
+                    }
+                    isExtensionFunctionType -> {
+                        if (annotations.getAnnotationsByClassId(StandardClassIds.Annotations.ExtensionFunctionType).isEmpty()) {
+                            builtIns.extensionFunctionTypeAnnotationConstructorCall()?.let {
+                                typeAnnotations += it
+                            }
                         }
                     }
                     hasFlexibleNullability -> {

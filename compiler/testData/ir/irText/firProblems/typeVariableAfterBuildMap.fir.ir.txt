@@ -620,7 +620,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
           CALL 'public final fun buildMap <K, V> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.buildMap, V of kotlin.collections.MapsKt.buildMap>, kotlin.Unit>): kotlin.collections.Map<K of kotlin.collections.MapsKt.buildMap, V of kotlin.collections.MapsKt.buildMap> [inline] declared in kotlin.collections.MapsKt' type=kotlin.collections.Map<<root>.Visibility, kotlin.Int> origin=null
             <K>: <root>.Visibility
             <V>: kotlin.Int
-            builderAction: FUN_EXPR type=kotlin.Function1<kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int>, kotlin.Unit> origin=LAMBDA
+            builderAction: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int>, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int>) returnType:kotlin.Unit
                 $receiver: VALUE_PARAMETER name:$this$buildMap type:kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int>
                 BLOCK_BODY
