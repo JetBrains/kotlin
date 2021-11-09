@@ -112,6 +112,9 @@ private fun buildReflectionType(
                 )
 
             val parameters = mutableListOf<ConeKotlinType>()
+            if (fir.receiverTypeRef == null && receiverType != null) {
+                parameters += receiverType
+            }
 
             val returnType = callableReferenceAdaptation?.let {
                 parameters += it.argumentTypes
@@ -128,7 +131,7 @@ private fun buildReflectionType(
                     callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
             return createFunctionalType(
                 parameters,
-                receiverType = receiverType,
+                receiverType = receiverType.takeIf { fir.receiverTypeRef != null },
                 rawReturnType = returnType,
                 isKFunctionType = true,
                 isSuspend = isSuspend
