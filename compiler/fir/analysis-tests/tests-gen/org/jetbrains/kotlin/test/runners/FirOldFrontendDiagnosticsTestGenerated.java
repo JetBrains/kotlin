@@ -17160,6 +17160,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("innerLightClass.kt")
+            public void testInnerLightClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/innerLightClass.kt");
+            }
+
+            @Test
             @TestMetadata("innerNestedClassFromJava.kt")
             public void testInnerNestedClassFromJava() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/innerNestedClassFromJava.kt");
