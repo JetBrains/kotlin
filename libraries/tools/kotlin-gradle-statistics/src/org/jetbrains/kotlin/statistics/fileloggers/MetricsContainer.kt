@@ -93,15 +93,18 @@ class MetricsContainer : IStatisticsValuesConsumer {
     private fun processProjectName(subprojectName: String?, perProject: Boolean) =
         if (perProject && subprojectName != null) sha256(subprojectName) else null
 
+    private fun getProjectHash(perProject: Boolean, subprojectName: String?) =
+        if (subprojectName == null) null else processProjectName(subprojectName, perProject)
+
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
-        val projectHash = if (subprojectName == null) null else processProjectName(subprojectName, metric.perProject)
+        val projectHash = getProjectHash(metric.perProject, subprojectName)
         val metricContainer = booleanMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
             .also { booleanMetrics[MetricDescriptor(metric.name, projectHash)] = it }
         metricContainer.addValue(metric.anonymization.anonymize(value))
     }
 
     override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
-        val projectHash = if (subprojectName == null) null else processProjectName(subprojectName, metric.perProject)
+        val projectHash = getProjectHash(metric.perProject, subprojectName)
         val metricContainer = numericalMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
             .also { numericalMetrics[MetricDescriptor(metric.name, projectHash)] = it }
         metricContainer.addValue(metric.anonymization.anonymize(value))

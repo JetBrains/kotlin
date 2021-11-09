@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
+import org.jetbrains.kotlin.library.impl.isKotlinLibrary
+import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -330,6 +332,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
+        KotlinBuildStatsService.applyIfInitialised {
+            if (name.contains("Test"))
+                it.report(BooleanMetrics.TESTS_EXECUTED, true)
+            else
+                it.report(BooleanMetrics.COMPILATION_STARTED, true)
+        }
         val buildMetrics = metrics.get()
         buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
             systemPropertiesService.get().startIntercept()
@@ -842,7 +850,7 @@ abstract class KotlinCompile @Inject constructor(
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
         val fileChanges = inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).toList()
         return if (fileChanges.isEmpty()) {
-            ClasspathChanges.Available(emptySet(), emptySet())
+            ClasspathChanges.Available(LinkedHashSet(), LinkedHashSet())
         } else {
             val previousClasspathEntrySnapshotFiles = getPreviousClasspathEntrySnapshotFiles()
             if (previousClasspathEntrySnapshotFiles.isEmpty()) {
@@ -1046,7 +1054,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         get() = (kotlinOptions as KotlinJsOptionsImpl).sourceMapBaseDirs
 
     private fun isHybridKotlinJsLibrary(file: File): Boolean =
-        JsLibraryUtils.isKotlinJavascriptLibrary(file) && JsLibraryUtils.isKotlinJavascriptIrLibrary(file)
+        JsLibraryUtils.isKotlinJavascriptLibrary(file) && isKotlinLibrary(file)
 
     private fun KotlinJsOptions.isPreIrBackendDisabled(): Boolean =
         listOf(
@@ -1079,7 +1087,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             if (kotlinOptions.isPreIrBackendDisabled()) {
                 //::isKotlinLibrary
                 // Workaround for KT-47797
-                { JsLibraryUtils.isKotlinJavascriptIrLibrary(it) }
+                { isKotlinLibrary(it) }
             } else {
                 ::isHybridKotlinJsLibrary
             }
