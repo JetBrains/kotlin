@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
-import org.jetbrains.kotlin.js.test.BasicBoxTest
+import org.jetbrains.kotlin.js.test.BasicWasmBoxTest
 import org.jetbrains.kotlin.js.test.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.util.TextOutputImpl
@@ -29,7 +29,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     protected fun box() {
         val methodName = testName.methodName
-        val baseName = "${BasicBoxTest.TEST_DATA_DIR_PATH}/js-optimizer/$basePath"
+        val baseName = "${BasicWasmBoxTest.TEST_DATA_DIR_PATH}/js-optimizer/$basePath"
         val unoptimizedName = "$baseName/$methodName.original.js"
         val optimizedName = "$baseName/$methodName.optimized.js"
 

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
+import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.DFS
 import java.io.ByteArrayOutputStream
@@ -140,7 +141,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
 
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
         private val tmpDir = KtTestUtil.tmpDir("js-tests")
-        private val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList(), emptyList())
+        private val defaultModule = TestModule(ModuleStructureExtractor.DEFAULT_MODULE_NAME, emptyList(), emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile? {
             val currentModule = module ?: defaultModule
@@ -177,7 +178,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
     companion object {
         private val DIR_NAME = "lineNumbers"
         private val LINES_PATTERN = Regex("^ *// *LINES: *(.*)$", RegexOption.MULTILINE)
-        private val BASE_PATH = "${BasicBoxTest.TEST_DATA_DIR_PATH}/$DIR_NAME"
-        private val OUT_PATH = "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/$DIR_NAME"
+        private val BASE_PATH = "${BasicWasmBoxTest.TEST_DATA_DIR_PATH}/$DIR_NAME"
+        private val OUT_PATH = "${BasicWasmBoxTest.TEST_DATA_DIR_PATH}/out/$DIR_NAME"
     }
 }

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.js.testNew.handlers
 
-import org.jetbrains.kotlin.js.test.esModulesSubDir
-import org.jetbrains.kotlin.js.test.v8tool
+import org.jetbrains.kotlin.js.test.engines.ExternalTool
 import org.jetbrains.kotlin.js.testNew.utils.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
@@ -14,6 +13,8 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
+
+private val v8tool by lazy { ExternalTool(System.getProperty("javascript.engine.path.V8")) }
 
 class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

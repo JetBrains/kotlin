@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
 import org.junit.Assert
 
+private const val DIST_DIR_JS_PATH = "dist/js/"
+
 fun createScriptEngine(): ScriptEngine {
     return if (java.lang.Boolean.getBoolean("kotlin.js.useNashorn")) ScriptEngineNashorn() else ScriptEngineV8()
 }
@@ -27,7 +29,7 @@ fun ScriptEngine.runTestFunction(
     withModuleSystem: Boolean
 ): String {
     var script = when {
-        withModuleSystem -> BasicBoxTest.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')"
+        withModuleSystem -> "\$kotlin_test_internal\$.require('" + testModuleName!! + "')"
         testModuleName === null -> "this"
         else -> testModuleName
     }
@@ -140,9 +142,9 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
     }
 
     override val preloadedScripts = listOf(
-        BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
-        BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
-        BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
+        BasicWasmBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        DIST_DIR_JS_PATH + "kotlin.js",
+        DIST_DIR_JS_PATH + "kotlin-test.js"
     )
 
     override fun createScriptEngineForTest(): ScriptEngineNashorn {
@@ -156,7 +158,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 
 object NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
     override val preloadedScripts = listOf(
-        BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        BasicWasmBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
         "libraries/stdlib/js-v1/src/js/polyfills.js"
     )
 }
@@ -166,8 +168,8 @@ object V8JsTestChecker : AbstractJsTestChecker() {
         override fun initialValue() =
             ScriptEngineV8().apply {
                 val preloadedScripts = listOf(
-                    BasicBoxTest.DIST_DIR_JS_PATH + "kotlin.js",
-                    BasicBoxTest.DIST_DIR_JS_PATH + "kotlin-test.js"
+                    DIST_DIR_JS_PATH + "kotlin.js",
+                    DIST_DIR_JS_PATH + "kotlin-test.js"
                 )
                 loadFiles(preloadedScripts)
 

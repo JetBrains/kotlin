@@ -25,6 +25,9 @@ import java.io.File
 
 private const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
+val File.esModulesSubDir: File
+    get() = File(absolutePath + "_esm")
+
 private fun extractJsFiles(testServices: TestServices, modules: List<TestModule>): Pair<List<String>, List<String>> {
     val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
 

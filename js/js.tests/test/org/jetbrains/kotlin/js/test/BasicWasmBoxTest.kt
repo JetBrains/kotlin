@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.js.test
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.ExternalTool
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
@@ -287,6 +291,19 @@ abstract class BasicWasmBoxTest(
 
     override fun createEnvironment() =
         KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+
+    private fun KotlinTestWithEnvironment.createPsiFile(fileName: String): KtFile {
+        val psiManager = PsiManager.getInstance(project)
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
+        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+
+        return psiManager.findFile(file) as KtFile
+    }
+
+    private fun KotlinTestWithEnvironment.createPsiFiles(fileNames: List<String>): List<KtFile> {
+        return fileNames.map { this@createPsiFiles.createPsiFile(it) }
+    }
 
     companion object {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"

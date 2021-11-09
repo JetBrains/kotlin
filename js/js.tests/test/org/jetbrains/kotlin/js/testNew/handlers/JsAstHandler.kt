@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
 import org.jetbrains.kotlin.js.facade.TranslationResult
-import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
@@ -30,36 +29,26 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs?.jsProgram ?: return
             else -> return
         }
-        processJsProgram(jsProgram, ktFiles, module.targetBackend!!) {
-            testServices.assertions.fail { it }
+        processJsProgram(jsProgram, ktFiles, module.targetBackend!!)
+    }
+
+    private fun processJsProgram(program: JsProgram, psiFiles: List<String>, targetBackend: TargetBackend) {
+        // TODO: For now the IR backend generates JS code that doesn't pass verification,
+        // TODO: so we temporarily disabled AST verification.
+        if (targetBackend == TargetBackend.JS) {
+            psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it, targetBackend) }
+            program.verifyAst()
         }
     }
 
-    companion object {
-        fun processUnitsOfJsProgram(
-            program: JsProgram, units: List<TranslationUnit>, targetBackend: TargetBackend, onFail: (String) -> Unit
-        ) {
-            processJsProgram(program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file.text }, targetBackend, onFail)
-        }
-
-        fun processJsProgram(program: JsProgram, psiFiles: List<String>, targetBackend: TargetBackend, onFail: (String) -> Unit) {
-            // TODO: For now the IR backend generates JS code that doesn't pass verification,
-            // TODO: so we temporarily disabled AST verification.
-            if (targetBackend == TargetBackend.JS) {
-                psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it, targetBackend) }
-                program.verifyAst(onFail)
-            }
-        }
-
-        private fun JsProgram.verifyAst(onFail: (String) -> Unit) {
-            accept(object : RecursiveJsVisitor() {
-                override fun visitExpressionStatement(x: JsExpressionStatement) {
-                    when (x.expression) {
-                        is JsNullLiteral -> onFail("Expression statement contains `null` literal")
-                        else -> super.visitExpressionStatement(x)
-                    }
+    private fun JsProgram.verifyAst() {
+        accept(object : RecursiveJsVisitor() {
+            override fun visitExpressionStatement(x: JsExpressionStatement) {
+                when (x.expression) {
+                    is JsNullLiteral -> testServices.assertions.fail { "Expression statement contains `null` literal" }
+                    else -> super.visitExpressionStatement(x)
                 }
-            })
-        }
+            }
+        })
     }
 }

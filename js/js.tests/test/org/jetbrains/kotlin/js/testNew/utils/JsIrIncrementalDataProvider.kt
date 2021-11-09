@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.js.testNew.utils
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleName
-import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.js.test.TestModuleCache
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -23,6 +21,100 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.jsLibraryProvider
 import java.io.File
+
+class TestModuleCache(val moduleName: String, val files: MutableMap<String, FileCache>) {
+
+    constructor(moduleName: String) : this(moduleName, mutableMapOf())
+
+    fun cacheProvider(): PersistentCacheProvider {
+        return object : PersistentCacheProvider {
+            override fun fileFingerPrint(path: String): Hash {
+                return 0L
+            }
+
+            override fun serializedParts(path: String): SerializedIcDataForFile {
+                error("Is not supported")
+            }
+
+            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
+                error("Is not supported")
+            }
+
+            override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
+                error("Is not supported")
+            }
+
+            override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
+                error("Is not supported")
+            }
+
+            override fun binaryAst(path: String): ByteArray? {
+                return files[path]?.ast ?: ByteArray(0)
+            }
+
+            override fun dts(path: String): ByteArray? {
+                return files[path]?.dts
+            }
+
+            override fun sourceMap(path: String): ByteArray? {
+                return files[path]?.sourceMap
+            }
+        }
+    }
+
+    fun cacheConsumer(): PersistentCacheConsumer {
+        return object : PersistentCacheConsumer {
+            override fun commitInlineFunctions(
+                path: String,
+                hashes: Collection<Pair<IdSignature, TransHash>>,
+                sigResolver: (IdSignature) -> Int
+            ) {
+
+            }
+
+            override fun commitFileFingerPrint(path: String, fingerprint: Hash) {
+
+            }
+
+            override fun commitInlineGraph(
+                path: String,
+                hashes: Collection<Pair<IdSignature, TransHash>>,
+                sigResolver: (IdSignature) -> Int
+            ) {
+
+            }
+
+            override fun commitICCacheData(path: String, icData: SerializedIcDataForFile) {
+
+            }
+
+            override fun commitBinaryAst(path: String, astData: ByteArray) {
+                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
+                storage.ast = astData
+            }
+
+            override fun commitBinaryDts(path: String, dstData: ByteArray) {
+                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
+                storage.dts = dstData
+            }
+
+            override fun commitSourceMap(path: String, mapData: ByteArray) {
+                val storage = files.getOrPut(path) { FileCache(path, null, null, null) }
+                storage.sourceMap = mapData
+            }
+
+            override fun invalidateForFile(path: String) {
+                files.remove(path)
+            }
+
+            override fun commitLibraryPath(libraryPath: String) {
+
+            }
+        }
+    }
+
+    fun createModuleCache(): ModuleCache = ModuleCache(moduleName, files)
+}
 
 class JsIrIncrementalDataProvider(private val testServices: TestServices) : TestService {
     private val fullRuntimeKlib: String = System.getProperty("kotlin.js.full.stdlib.path")

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.test.esModulesSubDir
 import org.jetbrains.kotlin.js.testNew.handlers.JsBoxRunner.Companion.TEST_FUNCTION
+import org.jetbrains.kotlin.js.testNew.utils.esModulesSubDir
 import org.jetbrains.kotlin.js.testNew.utils.extractTestPackage
 import org.jetbrains.kotlin.js.testNew.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.library.uniqueName

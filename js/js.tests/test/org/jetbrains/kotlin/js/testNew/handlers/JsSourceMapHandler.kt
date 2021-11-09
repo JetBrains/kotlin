@@ -37,65 +37,61 @@ class JsSourceMapHandler(testServices: TestServices) : JsBinaryArtifactHandler(t
         val result = (info.unwrap() as? BinaryArtifacts.Js.OldJsArtifact)?.translationResult
             ?: throw IllegalArgumentException("JsSourceMapHandler suppose to work only with old js backend")
         val remap = JsEnvironmentConfigurationDirectives.SKIP_SOURCEMAP_REMAPPING !in module.directives
-        checkSourceMap(outputFile, (result as TranslationResult.Success).program, remap) { expected, actual ->
-            testServices.assertions.assertEquals(expected, actual)
+        checkSourceMap(outputFile, (result as TranslationResult.Success).program, remap)
+    }
+
+    private fun checkSourceMap(outputFile: File, program: JsProgram, remap: Boolean) {
+        val generatedProgram = JsProgram()
+        generatedProgram.globalBlock.statements += program.globalBlock.statements.map { it.deepCopy() }
+        generatedProgram.accept(object : RecursiveJsVisitor() {
+            override fun visitObjectLiteral(x: JsObjectLiteral) {
+                super.visitObjectLiteral(x)
+                x.isMultiline = false
+            }
+
+            override fun visitVars(x: JsVars) {
+                x.isMultiline = false
+                super.visitVars(x)
+            }
+        })
+        removeLocationFromBlocks(generatedProgram)
+        generatedProgram.accept(AmbiguousAstSourcePropagation())
+
+        val output = TextOutputImpl()
+        val pathResolver = SourceFilePathResolver(mutableListOf(File(".")), null)
+        val sourceMapBuilder = SourceMap3Builder(outputFile, output, "")
+        generatedProgram.accept(
+            JsToStringGenerationVisitor(
+                output, SourceMapBuilderConsumer(File("."), sourceMapBuilder, pathResolver, false, false)
+            )
+        )
+        val code = output.toString()
+        val generatedSourceMap = sourceMapBuilder.build()
+
+        val codeWithLines = generatedProgram.toStringWithLineNumbers()
+
+        val parsedProgram = JsProgram()
+        parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path).orEmpty()
+        removeLocationFromBlocks(parsedProgram)
+        val sourceMapParseResult = SourceMapParser.parse(generatedSourceMap)
+        val sourceMap = when (sourceMapParseResult) {
+            is SourceMapSuccess -> sourceMapParseResult.value
+            is SourceMapError -> error("Could not parse source map: ${sourceMapParseResult.message}")
+        }
+
+        if (remap) {
+            SourceMapLocationRemapper(sourceMap).remap(parsedProgram)
+            val codeWithRemappedLines = parsedProgram.toStringWithLineNumbers()
+            testServices.assertions.assertEquals(codeWithLines, codeWithRemappedLines)
         }
     }
 
-    companion object {
-        fun checkSourceMap(outputFile: File, program: JsProgram, remap: Boolean, assertEquals: (String, String) -> Unit) {
-            val generatedProgram = JsProgram()
-            generatedProgram.globalBlock.statements += program.globalBlock.statements.map { it.deepCopy() }
-            generatedProgram.accept(object : RecursiveJsVisitor() {
-                override fun visitObjectLiteral(x: JsObjectLiteral) {
-                    super.visitObjectLiteral(x)
-                    x.isMultiline = false
-                }
-
-                override fun visitVars(x: JsVars) {
-                    x.isMultiline = false
-                    super.visitVars(x)
-                }
-            })
-            removeLocationFromBlocks(generatedProgram)
-            generatedProgram.accept(AmbiguousAstSourcePropagation())
-
-            val output = TextOutputImpl()
-            val pathResolver = SourceFilePathResolver(mutableListOf(File(".")), null)
-            val sourceMapBuilder = SourceMap3Builder(outputFile, output, "")
-            generatedProgram.accept(
-                JsToStringGenerationVisitor(
-                    output, SourceMapBuilderConsumer(File("."), sourceMapBuilder, pathResolver, false, false)
-                )
-            )
-            val code = output.toString()
-            val generatedSourceMap = sourceMapBuilder.build()
-
-            val codeWithLines = generatedProgram.toStringWithLineNumbers()
-
-            val parsedProgram = JsProgram()
-            parsedProgram.globalBlock.statements += parse(code, ThrowExceptionOnErrorReporter, parsedProgram.scope, outputFile.path).orEmpty()
-            removeLocationFromBlocks(parsedProgram)
-            val sourceMapParseResult = SourceMapParser.parse(generatedSourceMap)
-            val sourceMap = when (sourceMapParseResult) {
-                is SourceMapSuccess -> sourceMapParseResult.value
-                is SourceMapError -> error("Could not parse source map: ${sourceMapParseResult.message}")
+    private fun removeLocationFromBlocks(program: JsProgram) {
+        program.globalBlock.accept(object : RecursiveJsVisitor() {
+            override fun visitBlock(x: JsBlock) {
+                super.visitBlock(x)
+                x.source = null
             }
-
-            if (remap) {
-                SourceMapLocationRemapper(sourceMap).remap(parsedProgram)
-                val codeWithRemappedLines = parsedProgram.toStringWithLineNumbers()
-                assertEquals(codeWithLines, codeWithRemappedLines)
-            }
-        }
-
-        private fun removeLocationFromBlocks(program: JsProgram) {
-            program.globalBlock.accept(object : RecursiveJsVisitor() {
-                override fun visitBlock(x: JsBlock) {
-                    super.visitBlock(x)
-                    x.source = null
-                }
-            })
-        }
+        })
     }
 }

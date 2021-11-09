@@ -44,35 +44,33 @@ class NodeJsGeneratorHandler(testServices: TestServices) : AbstractJsArtifactsCo
         FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
     }
 
-    companion object {
-        fun generateNodeRunner(files: Collection<String>, dir: File, moduleName: String, ignored: Boolean, testPackage: String?): String {
-            val filesToLoad = files.map {
-                val relativePath = when {
-                    it.startsWith(dir.absolutePath) -> FileUtil.getRelativePath(dir, File(it))!!
-                    else -> it
-                }
-                "\"${relativePath.replace(File.separatorChar, '/')}\""
+    private fun generateNodeRunner(files: Collection<String>, dir: File, moduleName: String, ignored: Boolean, testPackage: String?): String {
+        val filesToLoad = files.map {
+            val relativePath = when {
+                it.startsWith(dir.absolutePath) -> FileUtil.getRelativePath(dir, File(it))!!
+                else -> it
             }
-            val fqn = testPackage?.let { ".$it" } ?: ""
-            val loadAndRun = "load([${filesToLoad.joinToString(",")}], '$moduleName')$fqn.box()"
-
-            val sb = StringBuilder()
-            sb.append("module.exports = function(load) {\n")
-            if (ignored) {
-                sb.append("  try {\n")
-                sb.append("    var result = $loadAndRun;\n")
-                sb.append("    if (result != 'OK') return 'OK';")
-                sb.append("    return 'fail: expected test failure';\n")
-                sb.append("  }\n")
-                sb.append("  catch (e) {\n")
-                sb.append("    return 'OK';\n")
-                sb.append("}\n")
-            } else {
-                sb.append("  return $loadAndRun;\n")
-            }
-            sb.append("};\n")
-
-            return sb.toString()
+            "\"${relativePath.replace(File.separatorChar, '/')}\""
         }
+        val fqn = testPackage?.let { ".$it" } ?: ""
+        val loadAndRun = "load([${filesToLoad.joinToString(",")}], '$moduleName')$fqn.box()"
+
+        val sb = StringBuilder()
+        sb.append("module.exports = function(load) {\n")
+        if (ignored) {
+            sb.append("  try {\n")
+            sb.append("    var result = $loadAndRun;\n")
+            sb.append("    if (result != 'OK') return 'OK';")
+            sb.append("    return 'fail: expected test failure';\n")
+            sb.append("  }\n")
+            sb.append("  catch (e) {\n")
+            sb.append("    return 'OK';\n")
+            sb.append("}\n")
+        } else {
+            sb.append("  return $loadAndRun;\n")
+        }
+        sb.append("};\n")
+
+        return sb.toString()
     }
 }
