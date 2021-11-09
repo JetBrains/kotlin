@@ -2,10 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
-    java
-    `java-gradle-plugin`
     id("gradle-plugin-common-configuration")
-    id("org.jetbrains.dokka")
     id("jps-compatible")
 }
 
@@ -13,13 +10,10 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(from = "functionalTest.gradle.kts")
 }
 
-configure<GradlePluginDevelopmentExtension> {
-    isAutomatedPublishing = false
-}
-
 repositories {
     google()
-    maven("https://plugins.gradle.org/m2/")
+    mavenCentral()
+    gradlePluginPortal()
 }
 
 pill {
@@ -120,8 +114,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     configurations.api.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
 }
 
-runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-
 tasks {
     named<ProcessResources>("processResources") {
         val propertiesToExpand = mapOf(
@@ -161,65 +153,67 @@ projectTest {
     workingDir = rootDir
 }
 
-pluginBundle {
-    fun create(name: String, id: String, display: String) {
-        (plugins).create(name) {
-            this.id = id
-            this.displayName = display
-            this.description = display
+gradlePlugin {
+    plugins {
+        create("kotlinJvmPlugin") {
+            id = "org.jetbrains.kotlin.jvm"
+            description = "Kotlin JVM plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper"
+        }
+        create("kotlinJsPlugin") {
+            id = "org.jetbrains.kotlin.js"
+            description = "Kotlin JS plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper"
+        }
+        create("kotlinMultiplatformPlugin") {
+            id = "org.jetbrains.kotlin.multiplatform"
+            description = "Kotlin Multiplatform plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper"
+        }
+        create("kotlinAndroidPlugin") {
+            id = "org.jetbrains.kotlin.android"
+            description = "Kotlin Android plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper"
+        }
+        create("kotlinAndroidExtensionsPlugin") {
+            id = "org.jetbrains.kotlin.android.extensions"
+            description = "Kotlin Android Extensions plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.internal.AndroidExtensionsSubpluginIndicator"
+        }
+        create("kotlinParcelizePlugin") {
+            id = "org.jetbrains.kotlin.plugin.parcelize"
+            description = "Kotlin Parcelize plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.internal.ParcelizeSubplugin"
+        }
+        create("kotlinKaptPlugin") {
+            id = "org.jetbrains.kotlin.kapt"
+            description = "Kotlin Kapt plugin"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin"
+        }
+        create("kotlinScriptingPlugin") {
+            id = "org.jetbrains.kotlin.plugin.scripting"
+            description = "Gradle plugin for kotlin scripting"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin"
+        }
+        create("kotlinNativeCocoapodsPlugin") {
+            id = "org.jetbrains.kotlin.native.cocoapods"
+            description = "Kotlin Native plugin for CocoaPods integration"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin"
+        }
+        create("kotlinMultiplatformPluginPm20") {
+            id = "org.jetbrains.kotlin.multiplatform.pm20"
+            description = "Kotlin Multiplatform plugin with PM2.0"
+            displayName = description
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper"
         }
     }
-
-    create(
-        name = "kotlinJvmPlugin",
-        id = "org.jetbrains.kotlin.jvm",
-        display = "Kotlin JVM plugin"
-    )
-    create(
-        name = "kotlinJsPlugin",
-        id = "org.jetbrains.kotlin.js",
-        display = "Kotlin JS plugin"
-    )
-    create(
-        name = "kotlinMultiplatformPlugin",
-        id = "org.jetbrains.kotlin.multiplatform",
-        display = "Kotlin Multiplatform plugin"
-    )
-    create(
-        name = "kotlinAndroidPlugin",
-        id = "org.jetbrains.kotlin.android",
-        display = "Kotlin Android plugin"
-    )
-    create(
-        name = "kotlinAndroidExtensionsPlugin",
-        id = "org.jetbrains.kotlin.android.extensions",
-        display = "Kotlin Android Extensions plugin"
-    )
-    create(
-        name = "kotlinParcelizePlugin",
-        id = "org.jetbrains.kotlin.plugin.parcelize",
-        display = "Kotlin Parcelize plugin"
-    )
-    create(
-        name = "kotlinKaptPlugin",
-        id = "org.jetbrains.kotlin.kapt",
-        display = "Kotlin Kapt plugin"
-    )
-    create(
-        name = "kotlinScriptingPlugin",
-        id = "org.jetbrains.kotlin.plugin.scripting",
-        display = "Gradle plugin for kotlin scripting"
-    )
-    create(
-        name = "kotlinNativeCocoapodsPlugin",
-        id = "org.jetbrains.kotlin.native.cocoapods",
-        display = "Kotlin Native plugin for CocoaPods integration"
-    )
-    create(
-        name = "kotlinMultiplatformPluginPm20",
-        id = "org.jetbrains.kotlin.multiplatform.pm20",
-        display = "Kotlin Multiplatform plugin with PM2.0"
-    )
 }
-
-publishPluginMarkers()

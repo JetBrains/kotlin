@@ -67,15 +67,19 @@ fun Project.noDefaultJar() {
     }
 }
 
+fun Jar.addEmbeddedRuntime() {
+    project.configurations.findByName("embedded")?.let { embedded ->
+        dependsOn(embedded)
+        from {
+            embedded.map(project::zipTree)
+        }
+    }
+}
+
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
     val jarTask = tasks.named<Jar>("jar")
     jarTask.configure {
-        configurations.findByName("embedded")?.let { embedded ->
-            dependsOn(embedded)
-            from {
-                embedded.map(::zipTree)
-            }
-        }
+        addEmbeddedRuntime()
         setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
@@ -102,34 +106,22 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
     return task
 }
 
+private fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
+private fun Project.mainKotlinSourceSet() =
+    (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
+private fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
+
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     configure<JavaPluginExtension> {
         withSourcesJar()
     }
 
     val sourcesJar = getOrCreateTask<Jar>("sourcesJar") {
-        fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
-        fun Project.mainKotlinSourceSet() =
-            (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
-
-        fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
-
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveClassifier.set("sources")
 
         from(project.sources())
-
-        project.configurations.findByName("embedded")?.let { embedded ->
-            from(provider {
-                embedded.resolvedConfiguration
-                    .resolvedArtifacts
-                    .map { it.id.componentIdentifier }
-                    .filterIsInstance<ProjectComponentIdentifier>()
-                    .mapNotNull {
-                        project(it.projectPath).sources()
-                    }
-            })
-        }
+        addEmbeddedSources()
 
         body()
     }
@@ -142,6 +134,20 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     }
 
     return sourcesJar
+}
+
+fun Jar.addEmbeddedSources() {
+    project.configurations.findByName("embedded")?.let { embedded ->
+        from(project.provider {
+            embedded.resolvedConfiguration
+                .resolvedArtifacts
+                .map { it.id.componentIdentifier }
+                .filterIsInstance<ProjectComponentIdentifier>()
+                .mapNotNull {
+                    project.project(it.projectPath).sources()
+                }
+        })
+    }
 }
 
 fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
