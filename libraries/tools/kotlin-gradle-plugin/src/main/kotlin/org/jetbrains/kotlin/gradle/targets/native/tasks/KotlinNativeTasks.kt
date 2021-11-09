@@ -171,6 +171,11 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
         else objects.fileCollection()
     }
 
+    @get:Classpath
+    protected val friendModule: FileCollection by project.provider {
+        project.files(compilation.friendPaths)
+    }
+
     @Deprecated("For native tasks use 'libraries' instead", ReplaceWith("libraries"))
     override fun getClasspath(): FileCollection = libraries
     override fun setClasspath(configuration: FileCollection?) {
@@ -420,10 +425,6 @@ constructor(
     private val commonSourcesTree: FileTree
         get() = commonSources.asFileTree
 
-
-    private val friendModule: FileCollection by project.provider {
-        project.files(compilation.friendPaths)
-    }
     // endregion.
 
     // region Language settings imported from a SourceSet.
@@ -652,6 +653,11 @@ constructor(
             add("-Xexport-library=${it.absolutePath}")
         }
         addKey("-Xstatic-framework", isStaticFramework)
+
+        val friends = friendModule.files
+        if (friends.isNotEmpty()) {
+            addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+        }
 
         languageSettings.let {
             addArgIfNotNull("-language-version", it.languageVersion)

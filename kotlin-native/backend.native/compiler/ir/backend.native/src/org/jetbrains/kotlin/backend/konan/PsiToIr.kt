@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -91,7 +92,14 @@ internal fun Context.psiToIr(
                 get() = generatorContext.irBuiltIns
         }
 
-        val friendModules = emptyMap<String, Collection<String>>() // TODO: provide friend modules
+        val friendModules = config.resolvedLibraries.getFullList()
+                .filter { it.libraryFile in config.friendModuleFiles }
+                .map { it.uniqueName }
+
+        val friendModulesMap = (
+                listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
+                        config.resolve.includedLibraries.map { it.uniqueName }
+                ).associateWith { friendModules }
 
         KonanIrLinker(
                 moduleDescriptor,
@@ -99,7 +107,7 @@ internal fun Context.psiToIr(
                 messageLogger,
                 generatorContext.irBuiltIns,
                 symbolTable,
-                friendModules,
+                friendModulesMap,
                 forwardDeclarationsModuleDescriptor,
                 stubGenerator,
                 irProviderForCEnumsAndCStructs,

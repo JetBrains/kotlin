@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
@@ -37,13 +38,18 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        customAction: ((KotlinLibrary, ModuleDescriptorImpl) -> Unit)?,
+        friendModuleFiles: Set<File>,
+        includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>
     ): KotlinResolvedModuleDescriptors {
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+
         @Suppress("NAME_SHADOWING")
         var builtIns = builtIns
+
+        val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
         resolvedLibraries.forEach { library, packageAccessHandler ->
@@ -56,7 +62,10 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
-                customAction?.invoke(library, moduleDescriptor)
+                if (friendModuleFiles.contains(library.libraryFile))
+                    friendModuleDescriptors.add(moduleDescriptor)
+                if (includedLibraryFiles.contains(library.libraryFile))
+                    includedLibraryDescriptors.add(moduleDescriptor)
             }
         }
 
@@ -64,14 +73,17 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
         for (module in moduleDescriptors) {
-            // Yes, just to all of them.
+            val friends = additionalDependencyModules.toMutableSet()
+            if (module in includedLibraryDescriptors)
+                friends.addAll(friendModuleDescriptors)
             module.setDependencies(
+                // Yes, just to all of them.
                 moduleDescriptors + additionalDependencyModules + forwardDeclarationsModule,
-                additionalDependencyModules.toSet()
+                friends
             )
         }
 
-        return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule)
+        return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule, friendModuleDescriptors)
     }
 
     fun createForwardDeclarationsModule(
