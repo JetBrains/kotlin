@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSeria
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
-import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -429,6 +427,7 @@ fun getIrModuleInfoForKlib(
     irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
         irBuiltIns,
         symbolTable,
+        typeTranslator,
         if (loadFunctionInterfacesIntoStdlib) getFunctionFactoryCallback(deserializedModuleFragments.first()) else null,
         true
     )
@@ -483,6 +482,7 @@ fun getIrModuleInfoForSourceFiles(
         IrDescriptorBasedFunctionFactory(
             irBuiltIns,
             symbolTable,
+            psi2IrContext.typeTranslator,
             if (loadFunctionInterfacesIntoStdlib) getFunctionFactoryCallback(deserializedModuleFragments.first()) else null,
             true
         )
