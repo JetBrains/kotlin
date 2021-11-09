@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
+import org.jetbrains.kotlin.codegen.range.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
@@ -35,13 +36,13 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-import java.util.*
 
 open class BoxingInterpreter(
     private val insnList: InsnList,
     private val generationState: GenerationState
 ) : OptimizationBasicInterpreter() {
     private val boxingPlaces = HashMap<Int, BoxedBasicValue>()
+    private val progressionIterators = HashMap<AbstractInsnNode, ProgressionIteratorBasicValue>()
 
     protected open fun createNewBoxing(
         insn: AbstractInsnNode,
@@ -89,8 +90,18 @@ open class BoxingInterpreter(
                 onUnboxing(insn, firstArg, value.type)
                 value
             }
-            insn.isIteratorMethodCallOfProgression(values) ->
-                ProgressionIteratorBasicValue.byProgressionClassType(firstArg.type)
+            insn.isIteratorMethodCall() -> {
+                values.markBoxedArgumentValues()
+                val firstArgType = firstArg.type
+                if (isProgressionClass(firstArgType)) {
+                    progressionIterators.getOrPut(insn) {
+                        ProgressionIteratorBasicValue.byProgressionClassType(insn, firstArgType)!!
+                    }
+                } else {
+                    progressionIterators[insn]?.taint()
+                    value
+                }
+            }
             insn.isNextMethodCallOfProgressionIterator(values) -> {
                 val progressionIterator = firstArg as? ProgressionIteratorBasicValue
                     ?: throw AssertionError("firstArg should be progression iterator")
@@ -269,14 +280,27 @@ fun AbstractInsnNode.isNextMethodCallOfProgressionIterator(values: List<BasicVal
                 name == "next"
             }
 
+fun AbstractInsnNode.isIteratorMethodCall() =
+    isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
+        name == "iterator" && desc == "()Ljava/util/Iterator;"
+    }
+
 fun AbstractInsnNode.isIteratorMethodCallOfProgression(values: List<BasicValue>) =
     isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
         val firstArgType = values.firstOrNull()?.type
-        name == "iterator" && firstArgType != null && isProgressionClass(firstArgType)
+        name == "iterator" && desc == "()Ljava/util/Iterator;" &&
+                firstArgType != null && isProgressionClass(firstArgType)
     }
 
+private val PROGRESSION_CLASS_FQNS = setOf(
+    CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN,
+    INT_RANGE_FQN, INT_PROGRESSION_FQN,
+    LONG_RANGE_FQN, LONG_PROGRESSION_FQN
+)
+
 private fun isProgressionClass(type: Type) =
-    ProgressionIteratorBasicValue.byProgressionClassType(type) != null
+    type.className in PROGRESSION_CLASS_FQNS
+
 
 fun AbstractInsnNode.isAreEqualIntrinsicForSameTypedBoxedValues(values: List<BasicValue>) =
     isAreEqualIntrinsic() && areSameTypedPrimitiveBoxedValues(values)
