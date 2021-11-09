@@ -1,3 +1,4 @@
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_RUNTIME
 
 import kotlin.contracts.ExperimentalContracts
