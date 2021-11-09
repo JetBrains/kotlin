@@ -77,6 +77,7 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     target: KonanTarget,
     outputKind: CompilerOutputKind,
     libraries: List<File>,
+    friendModule: FileCollection,
 
     languageSettings: LanguageSettings,
     enableEndorsedLibs: Boolean,
@@ -111,6 +112,11 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
 
     exportLibraries.forEach { add("-Xexport-library=${it.absolutePath}") }
     includeLibraries.forEach { add("-Xinclude=${it.absolutePath}") }
+
+    val friends = friendModule.files
+    if (friends.isNotEmpty()) {
+        addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+    }
 }
 
 private fun buildKotlinNativeMainArgs(
