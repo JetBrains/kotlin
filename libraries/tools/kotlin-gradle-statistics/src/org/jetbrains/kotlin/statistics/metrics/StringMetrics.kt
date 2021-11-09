@@ -47,6 +47,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     // Compiler parameters
     JVM_DEFAULTS(CONCAT, SAFE),
     USE_OLD_BACKEND(CONCAT, SAFE),
+    USE_FIR(CONCAT, SAFE),
 
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, SAFE),
 }
