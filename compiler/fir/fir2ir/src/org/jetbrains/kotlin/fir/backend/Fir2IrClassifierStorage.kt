@@ -44,6 +44,10 @@ class Fir2IrClassifierStorage(
 
     private val classCache = mutableMapOf<FirRegularClass, IrClass>()
 
+    private val localClassesCreatedOnTheFly = mutableMapOf<FirClass, IrClass>()
+
+    private var processMembersOfClassesOnTheFlyImmediately = false
+
     private val typeAliasCache = mutableMapOf<FirTypeAlias, IrTypeAlias>()
 
     private val typeParameterCache = mutableMapOf<FirTypeParameter, IrTypeParameter>()
@@ -168,14 +172,39 @@ class Fir2IrClassifierStorage(
     // This function is called when we refer local class earlier than we reach its declaration
     // This can happen e.g. when implicit return type has a local class constructor
     private fun createLocalIrClassOnTheFly(klass: FirClass): IrClass {
-        // NB: klass can be either FirRegularClass or FirAnonymousObject
         val result = when (klass) {
             is FirAnonymousObject -> createIrAnonymousObject(klass, irParent = temporaryParent).apply {
-                converter.processAnonymousObjectMembers(klass, this)
+                converter.processAnonymousObjectOnTheFly(klass, this)
             }
-            is FirRegularClass -> converter.processLocalClassAndNestedClasses(klass, temporaryParent)
+            is FirRegularClass -> converter.processLocalClassAndNestedClassesOnTheFly(klass, temporaryParent)
+        }
+        // Note: usually member creation and f/o binding is delayed till non-local classes are processed in Fir2IrConverter
+        // If non-local classes are already created (this means we are in body translation) we do everything immediately
+        // The last variant is possible for local variables like 'val a = object : Any() { ... }'
+        if (processMembersOfClassesOnTheFlyImmediately) {
+            processMembersOfClassCreatedOnTheFly(klass, result)
+            converter.bindFakeOverridesInClass(result)
+        } else {
+            localClassesCreatedOnTheFly[klass] = result
         }
         return result
+    }
+
+    fun processMembersOfClassesCreatedOnTheFly() {
+        processMembersOfClassesOnTheFlyImmediately = true
+        for ((klass, irClass) in localClassesCreatedOnTheFly) {
+            processMembersOfClassCreatedOnTheFly(klass, irClass)
+        }
+        // Note: it's better to bind everything AFTER members are built, in case local classes are dependent on each other
+        localClassesCreatedOnTheFly.values.forEach(converter::bindFakeOverridesInClass)
+        localClassesCreatedOnTheFly.clear()
+    }
+
+    private fun processMembersOfClassCreatedOnTheFly(klass: FirClass, irClass: IrClass) {
+        when (klass) {
+            is FirRegularClass -> converter.processClassMembers(klass, irClass)
+            is FirAnonymousObject -> converter.processAnonymousObjectMembers(klass, irClass, processHeaders = false)
+        }
     }
 
     fun processClassHeader(regularClass: FirRegularClass, irClass: IrClass = getCachedIrClass(regularClass)!!): IrClass {

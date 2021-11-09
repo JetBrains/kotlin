@@ -115,7 +115,7 @@ class Fir2IrVisitor(
             declarationStorage.enterScope(irEnumEntry)
             classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
             val anonymousObject = (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject
-            converter.processAnonymousObjectMembers(anonymousObject, correspondingClass)
+            converter.processAnonymousObjectMembers(anonymousObject, correspondingClass, processHeaders = true)
             conversionScope.withParent(correspondingClass) {
                 conversionScope.withContainingFirClass(anonymousObject) {
                     memberGenerator.convertClassContent(correspondingClass, anonymousObject)
@@ -177,8 +177,8 @@ class Fir2IrVisitor(
         val irParent = conversionScope.parentFromStack()
         // NB: for implicit types it is possible that anonymous object is already cached
         val irAnonymousObject = classifierStorage.getCachedIrClass(anonymousObject)?.apply { this.parent = irParent }
-            ?: classifierStorage.createIrAnonymousObject(anonymousObject, irParent = irParent).also {
-                converter.processAnonymousObjectMembers(anonymousObject, it)
+            ?: classifierStorage.createIrAnonymousObject(anonymousObject, irParent = irParent).also { irClass ->
+                converter.processAnonymousObjectMembers(anonymousObject, irClass, processHeaders = true)
             }
         conversionScope.withParent(irAnonymousObject) {
             conversionScope.withContainingFirClass(anonymousObject) {

@@ -52,6 +52,17 @@ class Fir2IrConverter(
 
     private val generatorExtensions = session.extensionService.declarationGenerators
 
+    fun processLocalClassAndNestedClassesOnTheFly(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
+        val irClass = registerClassAndNestedClasses(regularClass, parent)
+        processClassAndNestedClassHeaders(regularClass)
+        return irClass
+    }
+
+    fun processAnonymousObjectOnTheFly(anonymousObject: FirAnonymousObject, irClass: IrClass) {
+        registerNestedClasses(anonymousObject, irClass)
+        processNestedClassHeaders(anonymousObject)
+    }
+
     fun processLocalClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
         val irClass = registerClassAndNestedClasses(regularClass, parent)
         processClassAndNestedClassHeaders(regularClass)
@@ -117,10 +128,13 @@ class Fir2IrConverter(
 
     fun processAnonymousObjectMembers(
         anonymousObject: FirAnonymousObject,
-        irClass: IrClass = classifierStorage.getCachedIrClass(anonymousObject)!!
+        irClass: IrClass,
+        processHeaders: Boolean
     ): IrClass {
-        registerNestedClasses(anonymousObject, irClass)
-        processNestedClassHeaders(anonymousObject)
+        if (processHeaders) {
+            registerNestedClasses(anonymousObject, irClass)
+            processNestedClassHeaders(anonymousObject)
+        }
         anonymousObject.primaryConstructorIfAny(session)?.let {
             irClass.declarations += declarationStorage.createIrConstructor(
                 it.fir, irClass, isLocal = true
@@ -388,6 +402,7 @@ class Fir2IrConverter(
             for (firFile in allFirFiles) {
                 converter.bindFakeOverridesInFile(firFile)
             }
+            classifierStorage.processMembersOfClassesCreatedOnTheFly()
 
             for (firFile in allFirFiles) {
                 firFile.accept(fir2irVisitor, null)
