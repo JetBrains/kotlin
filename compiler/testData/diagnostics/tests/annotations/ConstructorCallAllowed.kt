@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_RUNTIME
 // SKIP_TXT
 // !LANGUAGE: +InstantiationOfAnnotationClasses
