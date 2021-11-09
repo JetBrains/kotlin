@@ -34,35 +34,15 @@ dependencies {
     compileOnly project(':dependencies:intellij-core')
 }
 
-// Relocate `com.intellij.*` and some other classes to match those in the `kotlin-compiler-embeddable`
-// (for example, the actual package at runtime is `org.jetbrains.kotlin.com.intellij.*`):
-ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
-// In a standalone build, you can setup the relocation with the Shadow plugin.
-
-// You should configure your own Gradle plugin publication!
-extensions.configure(GradlePluginDevelopmentExtension) {
-    it.setAutomatedPublishing(false)
-}
-
 gradlePlugin {
     plugins {
         create("gradle-subplugin-example") {
             id = "org.jetbrains.kotlin.gradle-subplugin-example"
             implementationClass = "example.ExampleSubplugin"
-        }
-    }
-}
-
-pluginBundle {
-    plugins {
-        named("gradle-subplugin-example") {
-            id = "org.jetbrains.kotlin.gradle-subplugin-example"
             displayName = "Kotlin Gradle subplugin example"
         }
     }
 }
-
-PluginMarkersKt.publishPluginMarkers(project, true)
 
 // Disable releasing for this plugin
 // It is not intended to be released publicly

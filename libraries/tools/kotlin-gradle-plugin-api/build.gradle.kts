@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.pill.PillExtension
-
 plugins {
-    id("gradle-plugin-common-configuration")
+    id("gradle-plugin-dependency-configuration")
     id("jps-compatible")
 }
 
