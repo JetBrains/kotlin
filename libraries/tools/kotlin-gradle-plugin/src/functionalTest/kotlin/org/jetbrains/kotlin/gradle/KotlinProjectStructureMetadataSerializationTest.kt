@@ -59,6 +59,11 @@ class KotlinProjectStructureMetadataSerializationTest {
         assertEquals(KotlinProjectStructureMetadata.FORMAT_VERSION_0_3_1, deserialized.formatVersion)
         assertTrue(deserialized.isPublishedAsRoot)
         assertEquals(setOf("commonMain", "concurrentMain"), deserialized.sourceSetsDependsOnRelation["nativeMain"])
+
+        /*
+        We expect no 'cinterop metadata' in artifacts with older format versions
+        */
+        assertEquals(emptyMap(), deserialized.sourceSetCInteropMetadataDirectory)
     }
 
 }
