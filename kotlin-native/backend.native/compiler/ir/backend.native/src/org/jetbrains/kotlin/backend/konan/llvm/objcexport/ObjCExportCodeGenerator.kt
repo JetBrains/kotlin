@@ -770,7 +770,15 @@ private fun ObjCExportCodeGenerator.generateContinuationToRetainedCompletionConv
             invokeName = "invokeCompletion"
     ) { continuation, arguments ->
         check(arguments.size == 2)
-        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation) + arguments)
+
+        val resultArgument = arguments[0].let { 
+            ifThenElse(icmpEq(it, kNullInt8Ptr), kNullObjHeaderPtr) {
+                objCReferenceToKotlin(it, Lifetime.ARGUMENT)
+            }
+        }
+        val errorArgument = arguments[1]
+
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument, errorArgument))
         ret(null)
     }
 }
@@ -786,11 +794,11 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
         check(arguments.size == 1)
 
         val errorArgument = arguments[0]
-        val resultArgument = ifThenElse(icmpNe(errorArgument, kNullInt8Ptr), kNullInt8Ptr) {
-            kotlinReferenceToLocalObjC(codegen.theUnitInstanceRef.llvm)
+        val resultArgument = ifThenElse(icmpNe(errorArgument, kNullInt8Ptr), kNullObjHeaderPtr) {
+            codegen.theUnitInstanceRef.llvm
         }
         
-        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument) + arguments)
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument, errorArgument))
         ret(null)
     }
 }
