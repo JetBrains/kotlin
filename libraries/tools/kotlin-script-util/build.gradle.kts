@@ -30,7 +30,12 @@ dependencies {
     compileOnly(intellijDep()) { includeJars("util") }
     testApi(intellijDep()) { includeJars("platform-api", "util") }
     testApi(intellijCoreDep()) { includeJars("intellij-core") }
+}
 
+configurations.all {
+    resolutionStrategy {
+        force(commonDep("junit:junit"))
+    }
 }
 
 projectTest {
