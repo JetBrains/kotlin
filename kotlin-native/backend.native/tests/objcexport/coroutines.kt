@@ -64,6 +64,13 @@ suspend fun suspendFunAsync(result: Any?, continuationHolder: ContinuationHolder
         } ?: result
 
 @Throws(CoroutineException::class, CancellationException::class)
+suspend fun unitSuspendFunAsync(continuationHolder: ContinuationHolder<Unit>): Unit =
+        suspendCoroutineUninterceptedOrReturn<Unit> {
+            continuationHolder.continuation = it
+            COROUTINE_SUSPENDED
+        }
+
+@Throws(CoroutineException::class, CancellationException::class)
 fun throwException(exception: Throwable) {
     throw exception
 }

@@ -145,6 +145,54 @@ private func testSuspendFuncAsync(doThrow: Bool) throws {
     }
 }
 
+private func testUnitSuspendFuncAsync(doThrow: Bool) throws {
+    var completionCalled = 0
+    var result: AnyObject? = nil
+    var error: Error? = nil
+
+#if NO_GENERICS
+    let continuationHolder = ContinuationHolder()
+#else
+    let continuationHolder = ContinuationHolder<KotlinUnit>()
+#endif
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    CoroutinesKt.unitSuspendFunAsync(continuationHolder: continuationHolder) { _result, _error in
+        completionCalled += 1
+        result = _result as AnyObject?
+        error = _error
+    }
+#else
+    CoroutinesKt.unitSuspendFunAsync(continuationHolder: continuationHolder) { _error in
+        completionCalled += 1
+        error = _error
+    }
+#endif
+
+    try assertEquals(actual: completionCalled, expected: 0)
+
+    if doThrow {
+        let exception = CoroutineException()
+        continuationHolder.resumeWithException(exception: exception)
+
+        try assertEquals(actual: completionCalled, expected: 1)
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+        try assertNil(result)
+#endif
+        try assertSame(actual: error?.kotlinException as AnyObject?, expected: exception)
+    } else {
+        continuationHolder.resume(value: KotlinUnit.shared)
+
+        try assertEquals(actual: completionCalled, expected: 1)
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+        try assertSame(actual: result, expected: KotlinUnit.shared)
+#endif
+        try assertNil(error)
+    }
+}
+
 private func testCall() throws {
     try testCallSuspendFun(doSuspend: true, doThrow: false)
     try testCallSuspendFun(doSuspend: false, doThrow: false)
@@ -158,6 +206,9 @@ private func testCall() throws {
 
     try testSuspendFuncAsync(doThrow: false)
     try testSuspendFuncAsync(doThrow: true)
+
+    try testUnitSuspendFuncAsync(doThrow: false)
+    try testUnitSuspendFuncAsync(doThrow: true)
 }
 
 private func testCallSuspendFunChain(doSuspend: Bool, doThrow: Bool) throws {
