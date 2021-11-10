@@ -363,8 +363,7 @@ internal class KonanIrLinker(
             }
 
     override fun postProcess() {
-        if (lazyIrForCaches)
-            stubGenerator.unboundSymbolGeneration = true
+        stubGenerator.unboundSymbolGeneration = true
         super.postProcess()
     }
 

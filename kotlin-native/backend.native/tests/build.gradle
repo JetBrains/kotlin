@@ -4327,6 +4327,10 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt42172/objclib.def'
         it.headers "$projectDir/interop/objc/kt42172/objclib.h"
     }
+    createInterop("objc_kt48816") {
+        it.defFile 'interop/objc/kt48816/objclib.def'
+        it.headers "$projectDir/interop/objc/kt48816/objclib.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -4950,6 +4954,20 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, "$buildDir/libobjc_kt42172.dylib")
             }
         }
+    }
+
+    interopTest("interop_objc_kt48816_without_lazy_ir_for_caches") {
+        // Without a fix, fails in two-stage mode.
+        source = "interop/objc/kt48816/main.kt"
+        interop = "objc_kt48816"
+        // The bug was accidentally fixed with lazy IR for caches, so testing it with this feature disabled:
+        flags = ["-Xlazy-ir-for-caches=disable"]
+    }
+
+    interopTest("interop_objc_kt48816_with_lazy_ir_for_caches") {
+        source = "interop/objc/kt48816/main.kt"
+        interop = "objc_kt48816"
+        flags = ["-Xlazy-ir-for-caches=enable"]
     }
 
     standaloneTest("objc_arc_contract") {
