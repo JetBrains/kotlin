@@ -504,7 +504,7 @@ class Fir2IrDeclarationStorage(
                     containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
-                    convertAnnotationsFromLibrary(function)
+                    convertAnnotationsForNonDeclaredMembers(function, origin)
                     enterScope(this)
                     bindAndDeclareParameters(
                         function, irParent,
@@ -626,6 +626,7 @@ class Fir2IrDeclarationStorage(
         endOffset: Int,
         isLocal: Boolean = false,
         containingClass: ConeClassLikeLookupTag? = null,
+        propertyAccessorForAnnotations: FirPropertyAccessor? = propertyAccessor,
     ): IrSimpleFunction = convertCatching(propertyAccessor ?: property) {
         val prefix = if (isSetter) "set" else "get"
         val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter, containingClass)
@@ -654,7 +655,11 @@ class Fir2IrDeclarationStorage(
                 if (propertyAccessor != null) {
                     metadata = FirMetadataSource.Function(propertyAccessor)
                     // Note that deserialized annotations are stored in the accessor, not the property.
-                    convertAnnotationsFromLibrary(propertyAccessor)
+                    convertAnnotationsForNonDeclaredMembers(propertyAccessor, origin)
+                }
+
+                if (propertyAccessorForAnnotations != null) {
+                    convertAnnotationsForNonDeclaredMembers(propertyAccessorForAnnotations, origin)
                 }
                 with(classifierStorage) {
                     setTypeParameters(
@@ -710,7 +715,7 @@ class Fir2IrDeclarationStorage(
                 it.correspondingPropertySymbol = this@createBackingField.symbol
             }.apply {
                 metadata = FirMetadataSource.Property(property)
-                convertAnnotationsFromLibrary(property)
+                convertAnnotationsForNonDeclaredMembers(property, origin)
             }
         }
     }
@@ -812,7 +817,7 @@ class Fir2IrDeclarationStorage(
                     containerSource = property.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Property(property)
-                    convertAnnotationsFromLibrary(property)
+                    convertAnnotationsForNonDeclaredMembers(property, origin)
                     enterScope(this)
                     if (irParent != null) {
                         parent = irParent
@@ -860,7 +865,8 @@ class Fir2IrDeclarationStorage(
                             getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
-                        startOffset, endOffset, isLocal, containingClass
+                        startOffset, endOffset, isLocal, containingClass,
+                        property.unwrapFakeOverrides().getter,
                     )
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
@@ -870,7 +876,8 @@ class Fir2IrDeclarationStorage(
                                 setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
-                            startOffset, endOffset, isLocal, containingClass
+                            startOffset, endOffset, isLocal, containingClass,
+                            property.unwrapFakeOverrides().setter,
                         )
                     }
                     leaveScope(this)
@@ -1403,10 +1410,10 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {
-        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true ||
-            (firAnnotationContainer is FirCallableDeclaration && firAnnotationContainer.isSubstitutionOrIntersectionOverride)
-        ) {
+    private fun IrMutableAnnotationContainer.convertAnnotationsForNonDeclaredMembers(
+        firAnnotationContainer: FirAnnotationContainer, origin: IrDeclarationOrigin,
+    ) {
+        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true || origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
             annotationGenerator.generate(this, firAnnotationContainer)
         }
     }

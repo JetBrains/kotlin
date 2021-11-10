@@ -26116,6 +26116,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("fakeOverrideOfProperty.kt")
+            public void testFakeOverrideOfProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/jvmName/fakeOverrideOfProperty.kt");
+            }
+
+            @Test
             @TestMetadata("functionName.kt")
             public void testFunctionName() throws Exception {
                 runTest("compiler/testData/codegen/box/jvmName/functionName.kt");
