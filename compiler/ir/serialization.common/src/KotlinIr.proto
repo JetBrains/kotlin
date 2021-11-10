@@ -498,6 +498,7 @@ message IrFunctionBase {
   repeated IrTypeParameter type_parameter = 3;
   optional IrValueParameter dispatch_receiver = 4;
   optional IrValueParameter extension_receiver = 5;
+  optional int32 context_receiver_parameters_count = 8;
   repeated IrValueParameter value_parameter = 6;
   optional int32 body = 7;
 }
