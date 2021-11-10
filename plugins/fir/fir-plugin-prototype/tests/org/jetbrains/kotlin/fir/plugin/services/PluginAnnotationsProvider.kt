@@ -12,16 +12,20 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
+import java.io.FilenameFilter
 
 class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        const val ANNOTATIONS_JAR =
-            "plugins/fir/fir-plugin-prototype/plugin-annotations/build/libs/plugin-annotations-1.6.255-SNAPSHOT.jar"
+        private const val ANNOTATIONS_JAR_DIR = "plugins/fir/fir-plugin-prototype/plugin-annotations/build/libs/"
+        private val ANNOTATIONS_JAR_FILTER = FilenameFilter { _, name -> name.startsWith("plugin-annotations") && name.endsWith(".jar") }
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val jar = File(ANNOTATIONS_JAR)
-        testServices.assertions.assertTrue(jar.exists()) { "Jar with annotations does not exist. Please run :plugins:fir:fir-plugin-prototype:plugin-annotations:jar" }
+        val libDir = File(ANNOTATIONS_JAR_DIR)
+        testServices.assertions.assertTrue(libDir.exists() && libDir.isDirectory, failMessage)
+        val jar = libDir.listFiles(ANNOTATIONS_JAR_FILTER)?.firstOrNull() ?: testServices.assertions.fail(failMessage)
         configuration.addJvmClasspathRoot(jar)
     }
+
+    private val failMessage = { "Jar with annotations does not exist. Please run :plugins:fir:fir-plugin-prototype:plugin-annotations:jar" }
 }
