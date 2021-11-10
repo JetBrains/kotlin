@@ -193,7 +193,7 @@ fun argsInFunctionCall() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// define void @"kfun:#smallLoop(){}"()
+// CHECK-LABEL: define void @"kfun:#smallLoop(){}"()
 fun smallLoop() {
     val array = Array(10) { 100 }
 
@@ -201,6 +201,75 @@ fun smallLoop() {
     for (i in 0..array.size - 2) {
         // CHECK: {{call|invoke}} %struct.ObjHeader* @Kotlin_Array_get_without_BoundCheck
         array[i+1] = array[i]
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
+object TopLevelObject {
+    val array = Array(10) { 100 }
+}
+
+// CHECK-LABEL: define void @"kfun:#topLevelObject(){}"()
+fun topLevelObject() {
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in 0 until TopLevelObject.array.size) {
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        TopLevelObject.array[i] = 6
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
+val array = Array(10) { 100 }
+
+// CHECK-LABEL: define void @"kfun:#topLevelProperty(){}"()
+fun topLevelProperty() {
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in 0..array.size - 2) {
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        array[i] = 6
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
+open class Base() {
+    open val array = Array(10) { 100 }
+}
+
+class Child() : Base()
+
+// CHECK-LABEL: define void @"kfun:#childClassWithFakeOverride(){}"()
+fun childClassWithFakeOverride() {
+    val child = Child()
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in 0..child.array.size - 1) {
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        child.array[i] = 6
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
+class First {
+    val child = Child()
+}
+
+class Second{
+    val first = First()
+}
+
+class Third {
+    val second = Second()
+}
+
+// CHECK-LABEL: define void @"kfun:#chainedReceivers(){}"()
+fun chainedReceivers() {
+    val obj = Third()
+    val obj1 = obj
+    val obj2 = obj1
+
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in 0 until obj1.second.first.child.array.size) {
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        obj2.second.first.child.array[i] = 6
     }
 }
 // CHECK-LABEL: {{^}}epilogue:
@@ -221,4 +290,8 @@ fun main() {
     innerLoop()
     argsInFunctionCall()
     smallLoop()
+    topLevelObject()
+    topLevelProperty()
+    childClassWithFakeOverride()
+    chainedReceivers()
 }

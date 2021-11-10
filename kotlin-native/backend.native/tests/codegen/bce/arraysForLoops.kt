@@ -5,6 +5,7 @@
 package codegen.bce.arraysForLoops
 
 import kotlin.test.*
+import kotlin.reflect.KProperty
 
 @Test fun forEachIndexedTest() {
     val array = Array(10) { 0 }
@@ -468,5 +469,154 @@ fun foo(a: Int, b : Int): Int = a + b * 2
 
     for (i in 0..array.size - 2) {
         array[i+1] = array[i]
+    }
+}
+
+var needSmallArray = true
+
+class WithGetter() {
+    val array: Array<Int>
+        get() = if (needSmallArray)
+            Array(10) { 100 }
+        else
+            Array(100) { 100 }
+}
+
+class Delegate {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): Array<Int> {
+        return if (needSmallArray)
+            Array(10) { 100 }
+        else
+            Array(100) { 100 }
+    }
+}
+
+class WithDelegates {
+    val array by Delegate()
+}
+
+open class Base {
+    open val array = Array(10) { 100 }
+    val array1 by Delegate()
+}
+
+class Child : Base() {
+    override val array: Array<Int>
+        get() = if (needSmallArray)
+            Array(10) { 100 }
+        else
+            Array(100) { 100 }
+}
+
+@Test fun withGetter() {
+    val obj = WithGetter()
+    needSmallArray = false
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..obj.array.size-1) {
+            needSmallArray = true
+            obj.array[i] = 6
+            needSmallArray = false
+        }
+    }
+}
+
+@Test fun delegatedProperty() {
+    val obj = WithDelegates()
+    needSmallArray = false
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..obj.array.size-1) {
+            needSmallArray = true
+            obj.array[i] = 6
+            needSmallArray = false
+        }
+    }
+}
+
+@Test fun inheritance() {
+    val obj = Child()
+    val base = Base()
+    needSmallArray = false
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..obj.array.size-1) {
+            needSmallArray = true
+            obj.array[i] = 6
+            needSmallArray = false
+        }
+    }
+
+    needSmallArray = false
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..obj.array1.size-1) {
+            needSmallArray = true
+            obj.array1[i] = 6
+            needSmallArray = false
+        }
+    }
+
+    needSmallArray = false
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..obj.array.size-1) {
+            needSmallArray = true
+            base.array[i] = 6
+            needSmallArray = false
+        }
+    }
+}
+
+val array: Array<Int> = arrayOf(1)
+    get() = if (needSmallArray) field else arrayOf(1, 2, 3)
+
+@Test fun customeGetter() {
+    val a = array
+    needSmallArray = false
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (index in 0 until array.size) {
+            a[index] = 6
+        }
+    }
+}
+
+class First(initArray: Array<Int>) {
+    val array = initArray
+}
+
+class Second(initArray: Array<Int>){
+    val first = First(initArray)
+}
+
+class Third(initArray: Array<Int>) {
+    val second = Second(initArray)
+}
+
+@Test fun differentObjects() {
+    val a = Third(arrayOf(1, 2, 3, 4, 5))
+    val b = Third(arrayOf(1, 2))
+
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..a.second.first.array.size-1) {
+            b.second.first.array[i] = 6
+        }
+    }
+}
+
+class Foo(size: Int) {
+    val array = IntArray(size)
+}
+
+class Bar {
+    val smallFoo = Foo(1)
+    val largeFoo = Foo(10)
+
+    val smallArray = smallFoo.array
+    val largeArray = largeFoo.array
+}
+
+@Test fun differentArrays() {
+    val bar = Bar()
+
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (index in 0 until bar.largeArray.size) {
+            bar.smallArray[index] = 6
+        }
     }
 }
