@@ -535,6 +535,8 @@ class IrDeclarationDeserializer(
                         extensionReceiverParameter =
                             if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
                             else null
+                        contextReceiverParametersCount =
+                            if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
                         body =
                             if (proto.hasBody()) deserializeStatementBody(proto.body) as IrBody?
                             else null

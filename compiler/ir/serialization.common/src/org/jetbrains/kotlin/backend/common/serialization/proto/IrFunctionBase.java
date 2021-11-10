@@ -106,16 +106,21 @@ public final class IrFunctionBase extends
             break;
           }
           case 50: {
-            if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+            if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
               valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>();
-              mutable_bitField0_ |= 0x00000020;
+              mutable_bitField0_ |= 0x00000040;
             }
             valueParameter_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry));
             break;
           }
           case 56: {
-            bitField0_ |= 0x00000010;
+            bitField0_ |= 0x00000020;
             body_ = input.readInt32();
+            break;
+          }
+          case 64: {
+            bitField0_ |= 0x00000010;
+            contextReceiverParametersCount_ = input.readInt32();
             break;
           }
         }
@@ -129,7 +134,7 @@ public final class IrFunctionBase extends
       if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
         typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
       }
-      if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
         valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
       }
       try {
@@ -253,6 +258,21 @@ public final class IrFunctionBase extends
     return extensionReceiver_;
   }
 
+  public static final int CONTEXT_RECEIVER_PARAMETERS_COUNT_FIELD_NUMBER = 8;
+  private int contextReceiverParametersCount_;
+  /**
+   * <code>optional int32 context_receiver_parameters_count = 8;</code>
+   */
+  public boolean hasContextReceiverParametersCount() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>optional int32 context_receiver_parameters_count = 8;</code>
+   */
+  public int getContextReceiverParametersCount() {
+    return contextReceiverParametersCount_;
+  }
+
   public static final int VALUE_PARAMETER_FIELD_NUMBER = 6;
   private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> valueParameter_;
   /**
@@ -294,7 +314,7 @@ public final class IrFunctionBase extends
    * <code>optional int32 body = 7;</code>
    */
   public boolean hasBody() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
+    return ((bitField0_ & 0x00000020) == 0x00000020);
   }
   /**
    * <code>optional int32 body = 7;</code>
@@ -309,6 +329,7 @@ public final class IrFunctionBase extends
     typeParameter_ = java.util.Collections.emptyList();
     dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
     extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+    contextReceiverParametersCount_ = 0;
     valueParameter_ = java.util.Collections.emptyList();
     body_ = 0;
   }
@@ -379,8 +400,11 @@ public final class IrFunctionBase extends
     for (int i = 0; i < valueParameter_.size(); i++) {
       output.writeMessage(6, valueParameter_.get(i));
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
       output.writeInt32(7, body_);
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeInt32(8, contextReceiverParametersCount_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -415,9 +439,13 @@ public final class IrFunctionBase extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(6, valueParameter_.get(i));
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(7, body_);
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(8, contextReceiverParametersCount_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -523,10 +551,12 @@ public final class IrFunctionBase extends
       bitField0_ = (bitField0_ & ~0x00000008);
       extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000010);
-      valueParameter_ = java.util.Collections.emptyList();
+      contextReceiverParametersCount_ = 0;
       bitField0_ = (bitField0_ & ~0x00000020);
-      body_ = 0;
+      valueParameter_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000040);
+      body_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000080);
       return this;
     }
 
@@ -571,13 +601,17 @@ public final class IrFunctionBase extends
         to_bitField0_ |= 0x00000008;
       }
       result.extensionReceiver_ = extensionReceiver_;
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.contextReceiverParametersCount_ = contextReceiverParametersCount_;
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
       }
       result.valueParameter_ = valueParameter_;
-      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000010;
+      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+        to_bitField0_ |= 0x00000020;
       }
       result.body_ = body_;
       result.bitField0_ = to_bitField0_;
@@ -608,10 +642,13 @@ public final class IrFunctionBase extends
       if (other.hasExtensionReceiver()) {
         mergeExtensionReceiver(other.getExtensionReceiver());
       }
+      if (other.hasContextReceiverParametersCount()) {
+        setContextReceiverParametersCount(other.getContextReceiverParametersCount());
+      }
       if (!other.valueParameter_.isEmpty()) {
         if (valueParameter_.isEmpty()) {
           valueParameter_ = other.valueParameter_;
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000040);
         } else {
           ensureValueParameterIsMutable();
           valueParameter_.addAll(other.valueParameter_);
@@ -1022,12 +1059,44 @@ public final class IrFunctionBase extends
       return this;
     }
 
+    private int contextReceiverParametersCount_ ;
+    /**
+     * <code>optional int32 context_receiver_parameters_count = 8;</code>
+     */
+    public boolean hasContextReceiverParametersCount() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 context_receiver_parameters_count = 8;</code>
+     */
+    public int getContextReceiverParametersCount() {
+      return contextReceiverParametersCount_;
+    }
+    /**
+     * <code>optional int32 context_receiver_parameters_count = 8;</code>
+     */
+    public Builder setContextReceiverParametersCount(int value) {
+      bitField0_ |= 0x00000020;
+      contextReceiverParametersCount_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 context_receiver_parameters_count = 8;</code>
+     */
+    public Builder clearContextReceiverParametersCount() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      contextReceiverParametersCount_ = 0;
+      
+      return this;
+    }
+
     private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> valueParameter_ =
       java.util.Collections.emptyList();
     private void ensureValueParameterIsMutable() {
-      if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (!((bitField0_ & 0x00000040) == 0x00000040)) {
         valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>(valueParameter_);
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
        }
     }
 
@@ -1133,7 +1202,7 @@ public final class IrFunctionBase extends
      */
     public Builder clearValueParameter() {
       valueParameter_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000040);
 
       return this;
     }
@@ -1152,7 +1221,7 @@ public final class IrFunctionBase extends
      * <code>optional int32 body = 7;</code>
      */
     public boolean hasBody() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+      return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional int32 body = 7;</code>
@@ -1164,7 +1233,7 @@ public final class IrFunctionBase extends
      * <code>optional int32 body = 7;</code>
      */
     public Builder setBody(int value) {
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000080;
       body_ = value;
       
       return this;
@@ -1173,7 +1242,7 @@ public final class IrFunctionBase extends
      * <code>optional int32 body = 7;</code>
      */
     public Builder clearBody() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000080);
       body_ = 0;
       
       return this;

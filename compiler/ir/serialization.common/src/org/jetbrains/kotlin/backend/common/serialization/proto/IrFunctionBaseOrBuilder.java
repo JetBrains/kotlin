@@ -58,6 +58,15 @@ public interface IrFunctionBaseOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getExtensionReceiver();
 
   /**
+   * <code>optional int32 context_receiver_parameters_count = 8;</code>
+   */
+  boolean hasContextReceiverParametersCount();
+  /**
+   * <code>optional int32 context_receiver_parameters_count = 8;</code>
+   */
+  int getContextReceiverParametersCount();
+
+  /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> 

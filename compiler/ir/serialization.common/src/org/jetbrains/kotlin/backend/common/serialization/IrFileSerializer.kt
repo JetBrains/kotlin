@@ -1222,6 +1222,10 @@ open class IrFileSerializer(
             }
             function.dispatchReceiverParameter?.let { proto.setDispatchReceiver(serializeIrValueParameter(it)) }
             function.extensionReceiverParameter?.let { proto.setExtensionReceiver(serializeIrValueParameter(it)) }
+            val contextReceiverParametersCount = function.contextReceiverParametersCount
+            if (contextReceiverParametersCount > 0) {
+                proto.setContextReceiverParametersCount(contextReceiverParametersCount)
+            }
             function.valueParameters.forEach {
                 proto.addValueParameter(serializeIrValueParameter(it))
             }
