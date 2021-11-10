@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 fun main() {
     System.setProperty("java.awt.headless", "true")
 
-    runAndLogDuration("Generating Kotlin/Native blackbox tests") {
-        generateTestGroupSuiteWithJUnit5 {
-            cleanTestGroup("native/tests-blackbox/tests-gen", "native/tests-blackbox/testData") {
-                testClass<AbstractNativeBlackBoxTest> {
-                    model("samples")
-                    model("samples2")
-                }
+    generateTestGroupSuiteWithJUnit5 {
+        testGroup("native/tests-blackbox/tests-gen", "native/tests-blackbox/testData") {
+            testClass<AbstractNativeBlackBoxTest> {
+                model("samples")
+                model("samples2")
             }
         }
     }

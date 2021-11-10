@@ -13,19 +13,16 @@ import org.jetbrains.kotlin.konan.blackboxtest.group.ExtTestCaseGroupProvider
 fun main() {
     System.setProperty("java.awt.headless", "true")
 
-    runAndLogDuration("Generating external Kotlin/Native blackbox tests") {
-        generateTestGroupSuiteWithJUnit5 {
-            cleanTestGroup(
-                testsRoot = "native/tests-blackbox/ext-tests-gen",
-                testDataRoot = "compiler/testData"
+    generateTestGroupSuiteWithJUnit5 {
+        testGroup("native/tests-blackbox/ext-tests-gen", "compiler/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeExtBlackBoxTestGenerated",
+                annotations = listOf(
+                    annotation(CustomNativeBlackBoxTestCaseGroupProvider::class.java, ExtTestCaseGroupProvider::class.java)
+                )
             ) {
-                testClass<AbstractNativeBlackBoxTest>(
-                    suiteTestClassName = "NativeExtBlackBoxTestGenerated",
-                    annotations = listOf(annotation(CustomNativeBlackBoxTestCaseGroupProvider::class.java, ExtTestCaseGroupProvider::class.java))
-                ) {
-                    model("codegen/box")
-                    model("codegen/boxInline")
-                }
+                model("codegen/box")
+                model("codegen/boxInline")
             }
         }
     }
