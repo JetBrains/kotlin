@@ -52,7 +52,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
     @Optional
     String goldValue = null
 
-    @Input
+    @Internal
     // Checks test's output against gold value and returns true if the output matches the expectation
     Function<String, Boolean> outputChecker = { str -> (goldValue == null || goldValue == str) }
 
