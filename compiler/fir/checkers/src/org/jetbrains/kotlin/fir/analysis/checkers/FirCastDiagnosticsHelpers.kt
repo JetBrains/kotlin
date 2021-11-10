@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
@@ -145,14 +146,14 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // NOTE: this does not account for 'as Array<List<T>>'
     if (subtype.allParameterReified()) return false
 
-    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype, context).first ?: return true
+    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype, context)
 
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
     // In this case, we can't guarantee anything, so the cast is considered to be erased
 
     // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
     // If not, it's wrong to use it
-    return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownSubtype, subtype)
+    return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownSubtype, subtype, stubTypesEqualToAnything = false)
 }
 
 private fun ConeKotlinType.allParameterReified(): Boolean {
@@ -179,7 +180,7 @@ fun findStaticallyKnownSubtype(
     supertype: ConeKotlinType,
     subtype: ConeKotlinType,
     context: CheckerContext
-): Pair<ConeKotlinType?, Boolean> {
+): ConeKotlinType {
     assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
 
     val session = context.session
@@ -194,60 +195,70 @@ fun findStaticallyKnownSubtype(
     // in this case it will be Collection<T>
     val typeCheckerState = context.session.typeContext.newTypeCheckerState(
         errorTypesEqualToAnything = false,
-        stubTypesEqualToAnything = true
+        stubTypesEqualToAnything = false
     )
 
-    fun getFirstNotIntersectedType(type: ConeKotlinType): ConeKotlinType? {
-        if (type is ConeIntersectionType) {
-            for (intersectionType in type.intersectedTypes) {
-                val result = getFirstNotIntersectedType(intersectionType)
-                if (result != null) {
-                    return result
-                }
-            }
-            return null
-        }
-        return type
-    }
-
-    // Obtaining not intersected type to get not null typeConstructor.
-    // Not sure if it's correct
-    val notIntersectedSupertype = getFirstNotIntersectedType(supertype) ?: supertype
-    val supertypeWithVariables =
-        findCorrespondingSupertypes(
-            typeCheckerState,
-            subtypeWithVariablesType,
-            notIntersectedSupertype.typeConstructor(typeContext)
-        ).firstOrNull()
-
-    val variables = subtypeWithVariables.typeParameterSymbols
-
-    val substitution = if (supertypeWithVariables != null) {
-        // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
-        val typeUnifier = TypeUnifier(session, variables)
-        val unificationResult = typeUnifier.unify(supertype, supertypeWithVariables as ConeKotlinTypeProjection)
-        unificationResult.substitution.toMutableMap()
+    val normalizedTypes = if (supertype is ConeIntersectionType) {
+        supertype.intersectedTypes
     } else {
-        mutableMapOf()
+        ArrayList<ConeKotlinType>(1).also { it.add(supertype) }
     }
 
-    // If some of the parameters are not determined by unification, it means that these parameters are lost,
-    // let's put stars instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
-    var allArgumentsInferred = true
-    for (variable in variables) {
-        val value = substitution[variable]
-        if (value == null) {
-            substitution[variable] = context.session.builtinTypes.nullableAnyType.type
-            allArgumentsInferred = false
+    val resultSubstitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+
+    for (normalizedType in normalizedTypes) {
+        val supertypeWithVariables =
+            findCorrespondingSupertypes(
+                typeCheckerState,
+                subtypeWithVariablesType,
+                normalizedType.typeConstructor(typeContext)
+            ).firstOrNull()
+
+        val variables: List<FirTypeParameterSymbol> = subtypeWithVariables.typeParameterSymbols
+
+        val substitution = if (supertypeWithVariables != null) {
+            // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
+            val result = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
+            if (context.session.doUnify(
+                    supertype,
+                    supertypeWithVariables as ConeKotlinTypeProjection,
+                    variables.toSet(),
+                    result
+                )
+            ) {
+                result
+            } else {
+                mutableMapOf()
+            }
+        } else {
+            mutableMapOf()
+        }
+
+        // If some parameters are not determined by unification, it means that these parameters are lost,
+        // let's put ConeStubType instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
+        for (variable in variables) {
+            val value = substitution[variable]
+            val resultValue = if (value == null) {
+                if (!resultSubstitution.containsKey(variable)) {
+                    context.session.builtinTypes.nullableAnyType.type
+                } else {
+                    null
+                }
+            } else if (value is ConeStarProjection) {
+                ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", variable.toLookupTag()), ConeNullability.NULLABLE)
+            } else {
+                value.type
+            }
+            if (resultValue != null) {
+                resultSubstitution[variable] = resultValue
+            }
         }
     }
 
     // At this point we have values for all type parameters of List
     // Let's make a type by substituting them: List<T> -> List<Foo>
-    val substitutor = ConeSubstitutorByMap(substitution, session)
-    val substituted = substitutor.substituteOrSelf(subtypeWithVariablesType)
-
-    return Pair(substituted, allArgumentsInferred)
+    val substitutor = ConeSubstitutorByMap(resultSubstitution, session)
+    return substitutor.substituteOrSelf(subtypeWithVariablesType)
 }
 
 fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
