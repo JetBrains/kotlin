@@ -26,19 +26,19 @@ fun testLongDotCall(c1: C<Long>) {
 }
 
 fun testShortDotCall(c2: C<Short>) {
-    c2.takeT(1.plus(2))
+    c2.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1.plus(2)<!>)
     c2.takeT(<!TYPE_MISMATCH!>1.inc()<!>)
     c2.takeT(<!TYPE_MISMATCH!>1.dec()<!>)
-    c2.takeT(1.shr(2))
-    c2.takeT(1.inv())
+    c2.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1.shr(2)<!>)
+    c2.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1.inv()<!>)
 }
 
 fun testByteDotCall(c3: C<Byte>) {
-    c3.takeT(1.plus(2))
+    c3.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1.plus(2)<!>)
     c3.takeT(<!TYPE_MISMATCH!>1.inc()<!>)
     c3.takeT(<!TYPE_MISMATCH!>1.dec()<!>)
-    c3.takeT(1.shr(2))
-    c3.takeT(1.inv())
+    c3.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1.shr(2)<!>)
+    c3.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1.inv()<!>)
 }
 
 fun testLongOperatorInfixCall(c4: C<Long>) {
@@ -58,11 +58,11 @@ fun testLongOperatorInfixCall(c4: C<Long>) {
 }
 
 fun testShortOperatorInfixCall(c5: C<Short>) {
-    c5.takeT(1 + 2)
-    c5.takeT(1 shr 2)
+    c5.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>)
+    c5.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 shr 2<!>)
 }
 
 fun testByteOperatorInfixCall(c6: C<Byte>) {
-    c6.takeT(1 + 2)
-    c6.takeT(1 shr 2)
+    c6.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 2<!>)
+    c6.takeT(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 shr 2<!>)
 }

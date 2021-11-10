@@ -1,4 +1,4 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // ISSUE: Kt-47447, KT-47729
 
 fun takeLong(x: Long) {}
@@ -9,7 +9,7 @@ object Foo {
     infix fun infixOperator(x: Long) {}
 }
 
-// Should be warning in all places
+// Should be ok in all places
 fun test() {
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>1 + 1<!>)
     takeLong((<!ARGUMENT_TYPE_MISMATCH!>1 + 1<!>))

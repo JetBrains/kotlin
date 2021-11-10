@@ -249,7 +249,6 @@ enum class LanguageFeature(
     // Disabled for indefinite time. See KT-48535 and related discussion
     OptInOnOverrideForbidden(sinceVersion = null, kind = BUG_FIX),
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
-    ReportChangingIntegerOperatorResolve(sinceVersion = null),
 
     // Experimental features
 

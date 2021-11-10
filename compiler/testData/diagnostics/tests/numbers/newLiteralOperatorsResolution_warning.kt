@@ -1,4 +1,4 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_STDLIB
 // ISSUE: KT-38895
 
@@ -40,27 +40,27 @@ fun testByteUnaryOperators() {
     takeByte(<!TYPE_MISMATCH!>1.dec()<!>)
 }
 
+// all positive
 fun testLongBinaryOperators() {
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 + 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 - 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 * 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 / 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 % 1<!>)
+    takeLong(2 + 1)
+    takeLong(2 - 1)
+    takeLong(2 * 1)
+    takeLong(2 / 1)
+    takeLong(2 % 1)
 
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.plus(1)<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.minus(1)<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.times(1)<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.div(1)<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.rem(1)<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 shl 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 shr 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 ushr 1<!>)
+    takeLong(2.plus(1))
+    takeLong(2.minus(1))
+    takeLong(2.times(1))
+    takeLong(2.div(1))
+    takeLong(2.rem(1))
+    takeLong(2 shl 1)
+    takeLong(2 shr 1)
+    takeLong(2 ushr 1)
 
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 and 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 or 1<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 xor 1<!>)
+    takeLong(2 and 1)
+    takeLong(2 or 1)
+    takeLong(2 xor 1)
 
-    // positive
     takeLong(2 * 100000000000)
 }
 
@@ -68,11 +68,11 @@ fun testLongUnaryOperators() {
     // Won't change
     takeLong(+1)
     takeLong(-1)
+    takeLong(2.unaryPlus())
+    takeLong(2.unaryMinus())
+    takeLong(2.inv())
 
     // Will change
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.unaryPlus()<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.unaryMinus()<!>)
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.inv()<!>)
     takeLong(<!TYPE_MISMATCH!>1.inc()<!>)
     takeLong(<!TYPE_MISMATCH!>1.dec()<!>)
 }

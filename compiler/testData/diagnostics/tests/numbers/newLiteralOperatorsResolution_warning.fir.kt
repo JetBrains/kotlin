@@ -1,4 +1,4 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_STDLIB
 // ISSUE: KT-38895
 
@@ -40,6 +40,7 @@ fun testByteUnaryOperators() {
     takeByte(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
 }
 
+// all positive
 fun testLongBinaryOperators() {
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 + 1<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 - 1<!>)
@@ -60,7 +61,6 @@ fun testLongBinaryOperators() {
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 or 1<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 xor 1<!>)
 
-    // positive
     takeLong(2 * 100000000000)
 }
 
@@ -68,11 +68,11 @@ fun testLongUnaryOperators() {
     // Won't change
     takeLong(+1)
     takeLong(-1)
-
-    // Will change
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.unaryPlus()<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.unaryMinus()<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.inv()<!>)
+
+    // Will change
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>1.inc()<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
 }
