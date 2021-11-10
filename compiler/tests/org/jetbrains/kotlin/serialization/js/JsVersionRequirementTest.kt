@@ -36,7 +36,8 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         files: List<File>,
         outputDirectory: File,
         languageVersion: LanguageVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?>
+        analysisFlags: Map<AnalysisFlag<*>, Any?>,
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State>
     ) {
         val environment = createEnvironment(languageVersion)
         val ktFiles = files.map { file ->
