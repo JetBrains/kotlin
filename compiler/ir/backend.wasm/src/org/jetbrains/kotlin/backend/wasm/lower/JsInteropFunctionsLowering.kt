@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -14,17 +15,13 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -386,46 +383,73 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier("f")
             type = context.wasmSymbols.externalInterfaceType
         }
-        val builder = context.createIrBuilder(result.symbol)
-        val backendContext = context
-        result.body = builder.irBlockBody {
-            val lambda = context.irFactory.buildFun {
-                name = Name.identifier("kotlinClosure_${info.hashString}")
-                returnType = info.originalResultType
+
+        val closureClass = context.irFactory.buildClass {
+            name = Name.identifier("__JsClosureToKotlinClosure_${info.hashString}")
+        }.apply {
+            createImplicitParameterDeclarationWithWrappedDescriptor()
+            superTypes = listOf(functionType)
+            parent = currentParent
+        }
+
+        val closureClassField = closureClass.addField {
+            name = Name.identifier("jsClosure")
+            type = context.wasmSymbols.externalInterfaceType
+            visibility = DescriptorVisibilities.PRIVATE
+            isFinal = true
+        }
+
+        val closureClassConstructor = closureClass.addConstructor {
+            isPrimary = true
+        }.apply {
+            val parameter = addValueParameter {
+                name = closureClassField.name
+                type = closureClassField.type
             }
-            lambda.parent = result
-            val lambdaBuilder = backendContext.createIrBuilder(lambda.symbol)
+            body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
+                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                +irSetField(irGet(closureClass.thisReceiver!!), closureClassField, irGet(parameter))
+                +IrInstanceInitializerCallImpl(startOffset, endOffset, closureClass.symbol, context.irBuiltIns.unitType)
+            }
+        }
+
+        closureClass.addFunction {
+            name = Name.identifier("invoke")
+            returnType = info.originalResultType
+        }.apply {
+            addDispatchReceiver { type = closureClass.defaultType }
             info.originalParameterTypes.forEachIndexed { index, irType ->
-                lambda.addValueParameter {
+                addValueParameter {
                     name = Name.identifier("p$index")
                     type = irType
                 }
             }
-            lambda.body = lambdaBuilder.irBlockBody {
+            val lambdaBuilder = context.createIrBuilder(symbol)
+            body = lambdaBuilder.irBlockBody {
                 val jsClosureCallerCall = irCall(jsClosureCaller)
-                jsClosureCallerCall.putValueArgument(0, irGet(result.valueParameters[0]))
+                jsClosureCallerCall.putValueArgument(0, irGetField(irGet(dispatchReceiverParameter!!), closureClassField))
                 for ((adapterIndex, paramAdapter) in info.parametersAdapters.withIndex()) {
                     jsClosureCallerCall.putValueArgument(
                         adapterIndex + 1,
                         paramAdapter.adaptIfNeeded(
-                            irGet(lambda.valueParameters[adapterIndex]),
+                            irGet(valueParameters[adapterIndex]),
                             lambdaBuilder
                         )
                     )
                 }
                 +irReturn(info.resultAdapter.adaptIfNeeded(jsClosureCallerCall, lambdaBuilder))
             }
-            +irReturn(
-                IrFunctionExpressionImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    functionType,
-                    lambda,
-                    origin = KOTLIN_WASM_CLOSURE_FOR_JS_CLOSURE,
-                )
-            )
+
+            overriddenSymbols =
+                overriddenSymbols + functionType.classOrNull!!.functions.single { it.owner.name == Name.identifier("invoke") }
         }
 
+        val builder = context.createIrBuilder(result.symbol)
+        result.body = builder.irBlockBody {
+            +irReturn(irCall(closureClassConstructor).also { it.putValueArgument(0, irGet(result.valueParameters[0])) })
+        }
+
+        additionalDeclarations += closureClass
         additionalDeclarations += result
         return result
     }

@@ -199,25 +199,42 @@ fun box(): String {
     )
     if (externalWithLambdas2Count != 11) return "Fail externalWithLambdas2"
 
-
-    val jsLambda = createJsLambda()
-
-    val jsLambdaCount = jsLambda(
-        true,
-        100.toByte(),
-        200.toShort(),
-        'я',
-        300,
-        400L,
-        500.5f,
-        600.5,
-        "700",
-        create123Array(),
-        DC(800, 800),
+    val externalWithLambdas2Ref = ::externalWithLambdas2
+    val externalWithLambdas2RefCount = externalWithLambdas2Ref.invoke(
+        { true },
+        { 100.toByte() },
+        { 200.toShort() },
+        { 'я' },
+        { 300 },
+        { 400L },
+        { 500.5f },
+        { 600.5 },
+        { "700" },
+        { create123Array() },
+        { DC(800, 800) },
         { it.y }
     )
-    if (jsLambdaCount != 11)
-        return "Fail 3"
+    if (externalWithLambdas2RefCount != 11) return "Fail externalWithLambdas2"
+
+    val createJsLambdaRef = ::createJsLambda
+    for (jsLambda in arrayOf(createJsLambda(), createJsLambdaRef.invoke())) {
+        val jsLambdaCount = jsLambda(
+            true,
+            100.toByte(),
+            200.toShort(),
+            'я',
+            300,
+            400L,
+            500.5f,
+            600.5,
+            "700",
+            create123Array(),
+            DC(800, 800),
+            { it.y }
+        )
+        if (jsLambdaCount != 11)
+            return "Fail 3"
+    }
 
     complexHigherOrerTest()
 
