@@ -16139,6 +16139,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModule.kt");
             }
 
+            @Test
+            @TestMetadata("useFromAnotherModuleSuspending.kt")
+            public void testUseFromAnotherModuleSuspending() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModuleSuspending.kt");
+            }
+
+            @Test
+            @TestMetadata("useFromAnotherModuleWithDefaultParameterValues.kt")
+            public void testUseFromAnotherModuleWithDefaultParameterValues() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModuleWithDefaultParameterValues.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
             @TestDataPath("$PROJECT_ROOT")
