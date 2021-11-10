@@ -23,8 +23,9 @@ object CompilerArgumentsContentProspector {
     private val arrayArgumentPropertiesCache: MutableMap<KClass<out CommonToolArguments>, Collection<KProperty1<out CommonToolArguments, Array<String>?>>> =
         mutableMapOf()
 
-    private fun getCompilerArgumentsProperties(kClass: KClass<out CommonToolArguments>) =
+    private fun getCompilerArgumentsProperties(kClass: KClass<out CommonToolArguments>) = argumentPropertiesCache.getOrPut(kClass) {
         kClass.memberProperties.filter { prop -> prop.annotations.any { it is Argument } }
+    }
 
     private inline fun <reified R : Any?> Collection<KProperty1<out CommonToolArguments, *>>.filterByReturnType(predicate: (KType?) -> Boolean) =
         filter { predicate(it.returnType) }.mapNotNull { it.safeAs<KProperty1<CommonToolArguments, R>>() }
