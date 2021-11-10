@@ -129,6 +129,7 @@ internal class FirModuleResolveStateImpl(
         val searcher = FirDeclarationForCompiledElementSearcher(rootModuleSession.symbolProvider)
 
         return when (ktDeclaration) {
+            is KtEnumEntry -> searcher.findNonLocalEnumEntry(ktDeclaration)
             is KtClassOrObject -> searcher.findNonLocalClass(ktDeclaration)
             is KtConstructor<*> -> searcher.findConstructorOfNonLocalClass(ktDeclaration)
             is KtNamedFunction -> searcher.findNonLocalFunction(ktDeclaration)

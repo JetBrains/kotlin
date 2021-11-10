@@ -68,6 +68,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         public void testFileAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/fileAnnotation.kt");
         }
+
+        @Test
+        @TestMetadata("retentionValue.kt")
+        public void testRetentionValue() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/retentionValue.kt");
+        }
     }
 
     @Nested
