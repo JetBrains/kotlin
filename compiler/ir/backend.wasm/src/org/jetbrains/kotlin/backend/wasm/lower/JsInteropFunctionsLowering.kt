@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -53,6 +56,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (declaration !is IrSimpleFunction) return null
         val isExported = declaration.isExported()
         val isExternal = declaration.isExternal
+        if (declaration.isPropertyAccessor) return null
+        if (declaration.parent !is IrPackageFragment) return null
         if (!isExported && !isExternal) return null
         check(!(isExported && isExternal)) { "Exported external declarations are not supported: ${declaration.fqNameWhenAvailable}" }
         check(declaration.parent !is IrClass) { "Interop members are not supported:  ${declaration.fqNameWhenAvailable}" }
@@ -595,7 +600,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 }
 
-private fun StringBuilder.appendParameterList(size: Int) =
+internal fun StringBuilder.appendParameterList(size: Int) =
     repeat(size) {
         append("p")
         append(it)

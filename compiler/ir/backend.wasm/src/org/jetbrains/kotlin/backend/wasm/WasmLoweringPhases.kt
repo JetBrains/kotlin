@@ -122,6 +122,18 @@ private val tailrecLoweringPhase = makeWasmModulePhase(
     description = "Replace `tailrec` call sites with equivalent loop"
 )
 
+private val complexExternalDeclarationsToTopLevelFunctionsLowering = makeWasmModulePhase(
+    ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
+    name = "ComplexExternalDeclarationsToTopLevelFunctionsLowering",
+    description = "Lower complex external declarations to top-level functions",
+)
+
+private val complexExternalDeclarationsUsagesLowering = makeWasmModulePhase(
+    ::ComplexExternalDeclarationsUsageLowering,
+    name = "ComplexExternalDeclarationsUsageLowering",
+    description = "Lower usages of complex external declarations",
+)
+
 private val jsInteropFunctionsLowering = makeWasmModulePhase(
     ::JsInteropFunctionsLowering,
     name = "JsInteropFunctionsLowering",
@@ -531,6 +543,9 @@ val wasmPhases = NamedCompilerPhase(
             primaryConstructorLoweringPhase then
             delegateToPrimaryConstructorLoweringPhase then
             // Common prefix ends
+
+            complexExternalDeclarationsToTopLevelFunctionsLowering then
+            complexExternalDeclarationsUsagesLowering then
 
             jsInteropFunctionsLowering then
             jsInteropFunctionCallsLowering then

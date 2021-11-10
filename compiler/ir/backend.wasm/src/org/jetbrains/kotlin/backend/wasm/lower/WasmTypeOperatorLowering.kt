@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -151,9 +152,14 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private fun generateTypeCheckNonNull(argument: IrExpression, toType: IrType): IrExpression {
         assert(!toType.isMarkedNullable())
+        val classOrInterface = toType.eraseToClassOrInterface
         return when {
-            // TODO: Use instanceof for classes later
-            toType.eraseToClassOrInterface.isExternal -> builder.irTrue()
+            classOrInterface.isExternal -> {
+                if (classOrInterface.kind == ClassKind.INTERFACE)
+                    builder.irTrue()
+                else
+                    generateIsExternalClass(argument, classOrInterface)
+            }
             toType.isNothing() -> builder.irFalse()
             toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
             toType.isInterface() -> generateIsInterface(argument, toType)
@@ -313,6 +319,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return builder.irCall(symbols.refTest).apply {
             putValueArgument(0, argument)
             putTypeArgument(0, toType)
+        }
+    }
+
+    private fun generateIsExternalClass(argument: IrExpression, klass: IrClass): IrExpression {
+        val function = context.mapping.wasmJsInteropFunctionToWrapper[context.mapping.wasmExternalClassToInstanceCheck[klass]!!]!!
+        return builder.irCall(function).also {
+            it.putValueArgument(0, argument)
         }
     }
 }

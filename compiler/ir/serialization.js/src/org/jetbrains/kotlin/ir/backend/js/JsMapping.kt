@@ -45,6 +45,15 @@ class JsMapping(val state: JsMappingState) : DefaultMapping(state) {
     // Wasm mappings
     val wasmJsInteropFunctionToWrapper =
         state.newDeclarationToDeclarationMapping<IrSimpleFunction, IrSimpleFunction>()
+
+    val wasmNestedExternalToNewTopLevelFunction =
+        state.newDeclarationToDeclarationMapping<IrFunction, IrSimpleFunction>()
+
+    val wasmExternalObjectToGetInstanceFunction =
+        state.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+
+    val wasmExternalClassToInstanceCheck =
+        state.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
 

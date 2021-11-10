@@ -36,6 +36,10 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         error("Unexpected element of type ${element::class}")
     }
 
+    override fun visitProperty(declaration: IrProperty) {
+        require(declaration.isExternal)
+    }
+
     override fun visitTypeAlias(declaration: IrTypeAlias) {
         // Type aliases are not material
     }
