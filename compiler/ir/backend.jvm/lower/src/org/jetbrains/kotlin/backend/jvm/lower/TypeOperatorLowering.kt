@@ -553,7 +553,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         targetRef: IrFunctionReference
     ): IrCall {
         fun fail(message: String): Nothing =
-            throw AssertionError("$message, irFunRef:\n${targetRef.dump()}")
+            throw AssertionError("$message, targetRef:\n${targetRef.dump()}")
 
         val dynamicCallArguments = ArrayList<IrExpression>()
 
