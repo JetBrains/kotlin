@@ -231,6 +231,7 @@ include ":benchmarks",
         ":kotlin-gradle-statistics",
         ":kotlin-gradle-build-metrics",
         ":kotlin-gradle-plugin",
+        ":kotlin-gradle-plugin-android",
         ":kotlin-gradle-plugin-model",
         ":kotlin-gradle-plugin-test-utils-embeddable",
         ":kotlin-gradle-plugin-integration-tests",
@@ -609,6 +610,7 @@ project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/lib
 project(':kotlin-gradle-statistics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-statistics" as File
 project(':kotlin-gradle-build-metrics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-build-metrics" as File
 project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File
+project(':kotlin-gradle-plugin-android').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-android" as File
 project(':kotlin-gradle-plugin-model').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-model" as File
 project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable" as File
 project(':kotlin-gradle-plugin-integration-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests" as File

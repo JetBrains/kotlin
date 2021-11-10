@@ -50,6 +50,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-project-model",
     ":kotlin-gradle-plugin-api",
     ":kotlin-gradle-plugin",
+    ":kotlin-gradle-plugin-android",
     ":kotlin-gradle-plugin-model",
     ":kotlin-tooling-metadata",
     ":kotlin-reflect",
