@@ -771,11 +771,7 @@ private fun ObjCExportCodeGenerator.generateContinuationToRetainedCompletionConv
     ) { continuation, arguments ->
         check(arguments.size == 2)
 
-        val resultArgument = arguments[0].let { 
-            ifThenElse(icmpEq(it, kNullInt8Ptr), kNullObjHeaderPtr) {
-                objCReferenceToKotlin(it, Lifetime.ARGUMENT)
-            }
-        }
+        val resultArgument = objCReferenceToKotlin(arguments[0], Lifetime.ARGUMENT)
         val errorArgument = arguments[1]
 
         callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument, errorArgument))
