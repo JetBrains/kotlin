@@ -58,7 +58,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
 
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
         val candidates = if (property.isTopLevel) {
-            project.createDeclarationProvider(property.scope(project)).getTopLevelFunctions(property.symbol.callableId)
+            project.createDeclarationProvider(property.scope(project)).getTopLevelProperties(property.symbol.callableId)
         } else {
             property.containingKtClass(project)?.declarations
                 ?.filter { it.name == property.name.asString() }
