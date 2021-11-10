@@ -52,7 +52,6 @@ abstract class AbstractJsTest(
             configureJsArtifactsHandlersStep {
                 useHandlers(
                     ::JsTranslationResultHandler,
-                    ::JsAstHandler,
                     ::JsSourceMapHandler,
                     ::JsRecompiledArtifactsIdentityHandler,
                 )
