@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.target
 
 enum class Architecture(@Deprecated("Compare Architecture entries instead.") val bitness: Int) {
     X64(64),
+    PPC64LE(64),
     X86(32),
     ARM64(64),
     ARM32(32),

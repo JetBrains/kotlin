@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 plugins {
     `maven-publish`
     kotlin("multiplatform")
+    id("com.github.node-gradle.node") version "3.1.1"
 }
 
 description = "Kotlin Standard Library for experimental WebAssembly platform"

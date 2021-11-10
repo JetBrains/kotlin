@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 
 plugins {
     // TODO: update gradle-node-plugin to support configuration cache
-    id "com.github.node-gradle.node" version "2.2.0"
+    id "com.github.node-gradle.node" version "3.1.1"
 }
 
 description = 'Kotlin-test integration tests for JS'

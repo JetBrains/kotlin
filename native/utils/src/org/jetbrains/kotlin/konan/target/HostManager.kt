@@ -59,7 +59,8 @@ open class HostManager(
             ANDROID_X64,
             ANDROID_ARM32,
             ANDROID_ARM64,
-            WASM32
+            WASM32,
+            LINUX_PPC64LE
         ),
         MINGW_X64 to setOf(
             MINGW_X64,
@@ -124,6 +125,10 @@ open class HostManager(
             ANDROID_ARM32,
             ANDROID_ARM64,
             WASM32
+        ),
+        LINUX_PPC64LE to setOf(
+            LINUX_PPC64LE,
+            LINUX_X64
         )
     )
 
@@ -131,7 +136,8 @@ open class HostManager(
         LINUX_X64 to zephyrSubtargets.toSet(),
         MACOS_X64 to zephyrSubtargets.toSet(),
         MINGW_X64 to zephyrSubtargets.toSet(),
-        MACOS_ARM64 to emptySet()
+        MACOS_ARM64 to emptySet(),
+        LINUX_PPC64LE to setOf(LINUX_PPC64LE, LINUX_X64) + zephyrSubtargets
     )
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
@@ -211,6 +217,7 @@ open class HostManager(
                 "amd64" -> "x86_64"
                 "arm64" -> "aarch64"
                 "aarch64" -> "aarch64"
+                "ppc64le" -> "ppc64le"
                 else -> null
             }
 
@@ -218,6 +225,7 @@ open class HostManager(
             Pair("osx", "x86_64") to MACOS_X64,
             Pair("osx", "aarch64") to MACOS_ARM64,
             Pair("linux", "x86_64") to LINUX_X64,
+            Pair("linux", "ppc64le") to LINUX_PPC64LE,
             Pair("windows", "x86_64") to MINGW_X64
         )
 

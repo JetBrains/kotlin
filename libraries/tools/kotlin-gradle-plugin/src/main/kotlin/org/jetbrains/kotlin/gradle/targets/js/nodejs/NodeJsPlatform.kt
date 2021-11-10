@@ -28,10 +28,12 @@ internal object NodeJsPlatform {
     const val X64 = "x64"
     const val X86 = "x86"
     const val ARM64 = "arm64"
+    const val PPC64LE = "ppc64le"
 
     val architecture: String = run {
         val arch = property("os.arch").toLowerCase()
         when {
+            arch == "ppc64le" -> PPC64LE
             arch == "aarch64" -> ARM64
             arch.contains("64") -> X64
             arch == "arm" -> {
