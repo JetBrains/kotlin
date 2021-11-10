@@ -60,7 +60,6 @@ class JvmSymbols(
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
-    private val javaLangReflectPackage: IrPackageFragment = createPackage(FqName("java.lang.reflect"))
     private val javaUtilPackage: IrPackageFragment = createPackage(FqName("java.util"))
 
 
@@ -105,7 +104,6 @@ class JvmSymbols(
                 "kotlin.reflect" -> kotlinReflectPackage
                 "java.lang" -> javaLangPackage
                 "java.lang.invoke" -> javaLangInvokePackage
-                "java.lang.reflect" -> javaLangReflectPackage
                 "java.util" -> javaUtilPackage
                 "kotlin.internal" -> kotlinInternalPackage
                 else -> error("Other packages are not supported yet: $fqName")
@@ -232,102 +230,11 @@ class JvmSymbols(
     private val kDeclarationContainer: IrClassSymbol =
         createClass(StandardNames.FqNames.kDeclarationContainer.toSafe(), ClassKind.INTERFACE, Modality.ABSTRACT)
 
-    val javaLangReflectField: IrClassSymbol =
-        createClass(FqName("java.lang.reflect.Field")) { klass ->
-            klass.addFunction("setAccessible", irBuiltIns.unitType).apply {
-                addValueParameter("isAccessible", irBuiltIns.booleanType)
-            }
-            klass.addFunction("get", irBuiltIns.anyNType).apply {
-                addValueParameter("receiver", irBuiltIns.anyNType)
-            }
-            klass.addFunction("set", irBuiltIns.unitType).apply {
-                addValueParameter("receiver", irBuiltIns.anyNType)
-                addValueParameter("value", irBuiltIns.anyNType)
-            }
-        }
-
-    val javaLangReflectMethod: IrClassSymbol =
-        createClass(FqName("java.lang.reflect.Method")) { klass ->
-            klass.addFunction("setAccessible", irBuiltIns.unitType).apply {
-                addValueParameter("isAccessible", irBuiltIns.booleanType)
-            }
-            klass.addFunction("invoke", irBuiltIns.anyNType).apply {
-                addValueParameter("receiver", irBuiltIns.anyNType)
-                addValueParameter {
-                    name = Name.identifier("args")
-                    type = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
-                    varargElementType = irBuiltIns.anyNType
-                }
-            }
-        }
-
-    val javaLangReflectConstructor: IrClassSymbol =
-        createClass(FqName("java.lang.reflect.Constructor")) { klass ->
-            klass.addFunction("setAccessible", irBuiltIns.unitType).apply {
-                addValueParameter("isAccessible", irBuiltIns.booleanType)
-            }
-            klass.addFunction("newInstance", irBuiltIns.anyNType).apply {
-                addValueParameter {
-                    name = Name.identifier("args")
-                    type = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
-                    varargElementType = irBuiltIns.anyNType
-                }
-            }
-        }
-
-    val javaLangReflectFieldSetAccessible: IrSimpleFunctionSymbol =
-        javaLangReflectField.functionByName("setAccessible")
-
-    val javaLangReflectMethodSetAccessible: IrSimpleFunctionSymbol =
-        javaLangReflectMethod.functionByName("setAccessible")
-
-    val javaLangReflectConstructorSetAccessible: IrSimpleFunctionSymbol =
-        javaLangReflectConstructor.functionByName("setAccessible")
-
     val javaLangClass: IrClassSymbol =
         createClass(FqName("java.lang.Class")) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.INVARIANT)
             klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
-            klass.addFunction("getDeclaredMethod", javaLangReflectMethod.defaultType.makeNullable()).apply {
-                addValueParameter("methodName", irBuiltIns.stringType.makeNullable())
-                addValueParameter {
-                    name = Name.identifier("args")
-                    type = irBuiltIns.arrayClass.typeWith(klass.defaultType).makeNullable()
-                    varargElementType = klass.defaultType
-                }
-            }
-            klass.addFunction("getDeclaredField", javaLangReflectField.defaultType).apply {
-                addValueParameter("fieldName", irBuiltIns.stringType)
-            }
-            klass.addFunction("getDeclaredConstructor", javaLangReflectConstructor.defaultType.makeNullable()).apply {
-                addValueParameter {
-                    name = Name.identifier("args")
-                    type = irBuiltIns.arrayClass.typeWith(klass.defaultType).makeNullable()
-                    varargElementType = klass.defaultType
-                }
-            }
         }
-
-    val getDeclaredField: IrSimpleFunctionSymbol =
-        javaLangClass.functionByName("getDeclaredField")
-
-    val getDeclaredMethod: IrSimpleFunctionSymbol =
-        javaLangClass.functionByName("getDeclaredMethod")
-
-    val getDeclaredConstructor: IrSimpleFunctionSymbol =
-        javaLangClass.functionByName("getDeclaredConstructor")
-
-    val javaLangReflectFieldGet: IrSimpleFunctionSymbol =
-        javaLangReflectField.functionByName("get")
-
-    val javaLangReflectFieldSet: IrSimpleFunctionSymbol =
-        javaLangReflectField.functionByName("set")
-
-    val javaLangReflectMethodInvoke: IrSimpleFunctionSymbol =
-        javaLangReflectMethod.functionByName("invoke")
-
-    val javaLangReflectConstructorNewInstance: IrSimpleFunctionSymbol =
-        javaLangReflectConstructor.functionByName("newInstance")
 
     private val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
         createClass(FqName("java.lang.Deprecated"), classKind = ClassKind.ANNOTATION_CLASS) { klass ->
@@ -628,6 +535,10 @@ class JvmSymbols(
                 }
             }
         }
+    }
+
+    val javaLangReflectSymbols: JvmReflectSymbols by lazy {
+        JvmReflectSymbols(context)
     }
 
     override val functionAdapter: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionAdapter"), ClassKind.INTERFACE) { klass ->
@@ -1198,8 +1109,8 @@ class JvmSymbols(
     }
 }
 
-private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
+fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
     functions.single { it.owner.name.asString() == name }
 
-private fun IrClassSymbol.fieldByName(name: String): IrFieldSymbol =
+fun IrClassSymbol.fieldByName(name: String): IrFieldSymbol =
     fields.single { it.owner.name.asString() == name }

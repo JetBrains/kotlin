@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmReflectSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -83,7 +84,7 @@ internal class ReflectiveAccessLowering(
     // reflective access . We record these _before_ transformation, in order to
     // later predict the compilation strategy for fields. See the uses of
     // `fieldLocationAndReceiver`.
-    val callsOnCompanionObjects: MutableMap<IrCall,IrClassSymbol> = mutableMapOf()
+    val callsOnCompanionObjects: MutableMap<IrCall, IrClassSymbol> = mutableMapOf()
 
     private fun recordCompanionObjectAsDispatchReceiver(expression: IrCall) {
         if ((expression.dispatchReceiver as? IrGetObjectValue)?.symbol?.owner?.isCompanion == true) {
@@ -169,6 +170,7 @@ internal class ReflectiveAccessLowering(
      */
 
     private val symbols = context.ir.symbols
+    private val reflectSymbols = symbols.javaLangReflectSymbols
 
     private fun IrBuilderWithScope.javaClassObject(klass: IrType): IrExpression =
         irCall(symbols.kClassJava.owner.getter!!).apply {
@@ -182,26 +184,26 @@ internal class ReflectiveAccessLowering(
         }
 
     private fun IrBuilderWithScope.getDeclaredField(declaringClass: IrExpression, fieldName: String): IrExpression =
-        irCall(symbols.getDeclaredField).apply {
+        irCall(reflectSymbols.getDeclaredField).apply {
             dispatchReceiver = declaringClass
             putValueArgument(0, irString(fieldName))
         }
 
     private fun IrBuilderWithScope.fieldSetAccessible(field: IrExpression): IrExpression =
-        irCall(symbols.javaLangReflectFieldSetAccessible).apply {
+        irCall(reflectSymbols.javaLangReflectFieldSetAccessible).apply {
             dispatchReceiver = field
             putValueArgument(0, irTrue())
         }
 
     private fun IrBuilderWithScope.fieldSet(fieldObject: IrExpression, receiver: IrExpression, value: IrExpression): IrExpression =
-        irCall(symbols.javaLangReflectFieldSet).apply {
+        irCall(reflectSymbols.javaLangReflectFieldSet).apply {
             dispatchReceiver = fieldObject
             putValueArgument(0, receiver)
             putValueArgument(1, value)
         }
 
     private fun IrBuilderWithScope.fieldGet(fieldObject: IrExpression, receiver: IrExpression): IrExpression =
-        irCall(symbols.javaLangReflectFieldGet).apply {
+        irCall(reflectSymbols.javaLangReflectFieldGet).apply {
             dispatchReceiver = fieldObject
             putValueArgument(0, receiver)
         }
@@ -211,14 +213,14 @@ internal class ReflectiveAccessLowering(
         methodName: String,
         parameterTypes: List<IrType>
     ): IrExpression =
-        irCall(symbols.getDeclaredMethod).apply {
+        irCall(reflectSymbols.getDeclaredMethod).apply {
             dispatchReceiver = declaringClass
             putValueArgument(0, irString(methodName))
             putValueArgument(1, irVararg(symbols.javaLangClass.defaultType, parameterTypes.map { javaClassObject(it) }))
         }
 
     private fun IrBuilderWithScope.methodSetAccessible(method: IrExpression): IrExpression =
-        irCall(symbols.javaLangReflectMethodSetAccessible).apply {
+        irCall(reflectSymbols.javaLangReflectMethodSetAccessible).apply {
             dispatchReceiver = method
             putValueArgument(0, irTrue())
         }
@@ -228,7 +230,7 @@ internal class ReflectiveAccessLowering(
         receiver: IrExpression,
         arguments: List<IrExpression>
     ): IrExpression =
-        irCall(symbols.javaLangReflectMethodInvoke).apply {
+        irCall(reflectSymbols.javaLangReflectMethodInvoke).apply {
             dispatchReceiver = method
             putValueArgument(0, receiver)
             putValueArgument(1, irVararg(context.irBuiltIns.anyNType, arguments))
@@ -238,20 +240,20 @@ internal class ReflectiveAccessLowering(
         declaringClass: IrExpression,
         parameterTypes: List<IrType>
     ): IrExpression =
-        irCall(symbols.getDeclaredConstructor).apply {
+        irCall(reflectSymbols.getDeclaredConstructor).apply {
             dispatchReceiver = declaringClass
             putValueArgument(0, irVararg(symbols.javaLangClass.defaultType, parameterTypes.map { javaClassObject(it) }))
         }
 
 
     private fun IrBuilderWithScope.constructorSetAccessible(constructor: IrExpression): IrExpression =
-        irCall(symbols.javaLangReflectConstructorSetAccessible).apply {
+        irCall(reflectSymbols.javaLangReflectConstructorSetAccessible).apply {
             dispatchReceiver = constructor
             putValueArgument(0, irTrue())
         }
 
     private fun IrBuilderWithScope.constructorNewInstance(constructor: IrExpression, arguments: List<IrExpression>): IrExpression =
-        irCall(symbols.javaLangReflectConstructorNewInstance).apply {
+        irCall(reflectSymbols.javaLangReflectConstructorNewInstance).apply {
             dispatchReceiver = constructor
             putValueArgument(0, irVararg(context.irBuiltIns.anyNType, arguments))
         }
@@ -278,7 +280,7 @@ internal class ReflectiveAccessLowering(
                         parameterTypes
                     ),
                     nameHint = "method",
-                    irType = symbols.javaLangReflectMethod.defaultType
+                    irType = reflectSymbols.javaLangReflectMethod.defaultType
                 )
             +methodSetAccessible(irGet(methodVar))
             +methodInvoke(irGet(methodVar), receiver ?: irNull(), arguments)
@@ -330,7 +332,7 @@ internal class ReflectiveAccessLowering(
                             call.valueParameterTypes()
                         ),
                         nameHint = "constructor",
-                        irType = symbols.javaLangReflectConstructor.defaultType
+                        irType = reflectSymbols.javaLangReflectConstructor.defaultType
                     )
                 +constructorSetAccessible(irGet(constructorVar))
                 +constructorNewInstance(irGet(constructorVar), call.getValueArguments())
@@ -353,7 +355,7 @@ internal class ReflectiveAccessLowering(
                 val fieldVar = createTmpVariable(
                     getDeclaredField(irGet(classVar), fieldName),
                     nameHint = "field",
-                    irType = symbols.javaLangReflectField.defaultType
+                    irType = reflectSymbols.javaLangReflectField.defaultType
                 )
                 +fieldSetAccessible(irGet(fieldVar))
                 +fieldGet(irGet(fieldVar), instance ?: irGet(classVar))
@@ -385,7 +387,7 @@ internal class ReflectiveAccessLowering(
                             fieldName
                         ),
                         nameHint = "field",
-                        irType = symbols.javaLangReflectField.defaultType
+                        irType = reflectSymbols.javaLangReflectField.defaultType
                     )
                 +fieldSetAccessible(irGet(fieldVar))
                 +fieldSet(irGet(fieldVar), instance ?: irNull(), value)
@@ -502,7 +504,7 @@ internal class ReflectiveAccessLowering(
         val builder = context.createJvmIrBuilder(expression.symbol)
 
         // invokeSpecial(owner: String, name: String, descriptor: String, isInterface: Boolean): T
-        return builder.irCall(context.irIntrinsics.symbols.jvmDebuggerInvokeSpecialIntrinsic).apply {
+        return builder.irCall(context.ir.symbols.jvmDebuggerInvokeSpecialIntrinsic).apply {
             dispatchReceiver = expression.dispatchReceiver
             this.type = expression.symbol.owner.returnType
             putValueArgument(0, builder.irString("${owner.packageFqName}/${owner.name}"))
