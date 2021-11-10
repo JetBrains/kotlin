@@ -5,70 +5,43 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.util.io.DataExternalizer
-import org.jetbrains.kotlin.incremental.storage.FqNameExternalizer
-import org.jetbrains.kotlin.incremental.storage.SetExternalizer
-import org.jetbrains.kotlin.incremental.storage.LookupSymbolExternalizer
-import org.jetbrains.kotlin.name.FqName
-import java.io.*
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled
+import java.io.File
+import java.io.Serializable
 
 /**
- * Changes to the classpath of the `KotlinCompile` task, used to compute the source files that need to be recompiled during an incremental
- * run.
+ * Changes to the classpath of the `KotlinCompile` task, or information to compute them later by the Kotlin incremental compiler (see
+ * [ClasspathSnapshotEnabled.ToBeComputedByIncrementalCompiler].
  */
 sealed class ClasspathChanges : Serializable {
 
-    class Available() : ClasspathChanges() {
+    sealed class ClasspathSnapshotEnabled : ClasspathChanges() {
 
-        companion object {
-            private const val serialVersionUID = 0L
-        }
+        abstract val classpathSnapshotFiles: ClasspathSnapshotFiles
 
-        lateinit var lookupSymbols: Set<LookupSymbol> // Preferably ordered but not required
-            private set
+        class Empty(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : ClasspathSnapshotEnabled()
 
-        lateinit var fqNames: Set<FqName> // Preferably ordered but not required
-            private set
+        class ToBeComputedByIncrementalCompiler(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : ClasspathSnapshotEnabled()
 
-        constructor(lookupSymbols: Set<LookupSymbol>, fqNames: Set<FqName>) : this() {
-            this.lookupSymbols = lookupSymbols
-            this.fqNames = fqNames
-        }
+        class NotAvailableDueToMissingClasspathSnapshot(override val classpathSnapshotFiles: ClasspathSnapshotFiles) :
+            ClasspathSnapshotEnabled()
 
-        private fun writeObject(output: ObjectOutputStream) {
-            // Can't close DataOutputStream below as it will also close the underlying ObjectOutputStream, which is still in use.
-            ClasspathChangesAvailableExternalizer.save(DataOutputStream(output), this)
-        }
-
-        private fun readObject(input: ObjectInputStream) {
-            // Can't close DataInputStream below as it will also close the underlying ObjectInputStream, which is still in use.
-            ClasspathChangesAvailableExternalizer.read(DataInputStream(input)).also {
-                lookupSymbols = it.lookupSymbols
-                fqNames = it.fqNames
-            }
-        }
+        class NotAvailableForNonIncrementalRun(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : ClasspathSnapshotEnabled()
     }
 
-    sealed class NotAvailable : ClasspathChanges() {
-        object UnableToCompute : NotAvailable()
-        object ForNonIncrementalRun : NotAvailable()
-        object ClasspathSnapshotIsDisabled : NotAvailable()
-        object ReservedForTestsOnly : NotAvailable()
-        object ForJSCompiler : NotAvailable()
-    }
+    object ClasspathSnapshotDisabled : ClasspathChanges()
+
+    object NotAvailableForJSCompiler : ClasspathChanges()
 }
 
-private object ClasspathChangesAvailableExternalizer : DataExternalizer<ClasspathChanges.Available> {
+class ClasspathSnapshotFiles(
+    val currentClasspathEntrySnapshotFiles: List<File>,
+    classpathSnapshotDir: File
+) : Serializable {
 
-    override fun save(output: DataOutput, classpathChanges: ClasspathChanges.Available) {
-        SetExternalizer(LookupSymbolExternalizer).save(output, classpathChanges.lookupSymbols)
-        SetExternalizer(FqNameExternalizer).save(output, classpathChanges.fqNames)
-    }
+    val shrunkPreviousClasspathSnapshotFile: File = File(classpathSnapshotDir, "shrunk-classpath-snapshot.bin")
 
-    override fun read(input: DataInput): ClasspathChanges.Available {
-        return ClasspathChanges.Available(
-            lookupSymbols = SetExternalizer(LookupSymbolExternalizer).read(input),
-            fqNames = SetExternalizer(FqNameExternalizer).read(input)
-        )
+    companion object {
+        private const val serialVersionUID = 0L
     }
 }

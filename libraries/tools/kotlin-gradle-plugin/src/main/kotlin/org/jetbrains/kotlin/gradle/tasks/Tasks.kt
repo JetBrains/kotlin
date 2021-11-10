@@ -55,6 +55,9 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
@@ -583,7 +586,6 @@ abstract class KotlinCompile @Inject constructor(
                 )
                 val classpathSnapshotDir = getClasspathSnapshotDir(task)
                 task.classpathSnapshotProperties.classpathSnapshotDir.value(classpathSnapshotDir).disallowChanges()
-                task.classpathSnapshotProperties.classpathSnapshotDirFileCollection.from(classpathSnapshotDir)
             } else {
                 task.classpathSnapshotProperties.classpath.from(task.project.provider { task.classpath })
             }
@@ -643,14 +645,6 @@ abstract class KotlinCompile @Inject constructor(
         @get:OutputDirectory
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshotDir: DirectoryProperty
-
-        /**
-         * [FileCollection] containing a single file which is [classpathSnapshotDir], used when a [FileCollection] is required instead of a
-         * [DirectoryProperty].
-         */
-        // Set if useClasspathSnapshot == true
-        @get:Internal
-        abstract val classpathSnapshotDirFileCollection: ConfigurableFileCollection
     }
 
     @get:Internal
@@ -739,15 +733,10 @@ abstract class KotlinCompile @Inject constructor(
         val compilerRunner = compilerRunner.get()
 
         val icEnv = if (isIncrementalCompilationEnabled()) {
-            val classpathChanges = when {
-                !classpathSnapshotProperties.useClasspathSnapshot.get() -> ClasspathChanges.NotAvailable.ClasspathSnapshotIsDisabled
-                inputChanges.isIncremental -> getClasspathChanges(inputChanges)
-                else -> ClasspathChanges.NotAvailable.ForNonIncrementalRun
-            }
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
                 changedFiles = getChangedFiles(inputChanges, incrementalProps),
-                classpathChanges = classpathChanges,
+                classpathChanges = getClasspathChanges(inputChanges),
                 workingDir = taskBuildDirectory.get().asFile,
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
@@ -755,16 +744,9 @@ abstract class KotlinCompile @Inject constructor(
             )
         } else null
 
-        with(classpathSnapshotProperties) {
-            if (isIncrementalCompilationEnabled() && useClasspathSnapshot.get()) {
-                copyCurrentClasspathEntrySnapshotFiles()
-            }
-        }
-
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
-            // The compiler runner should not manage (read, modify, or delete) classpathSnapshotDir
-            outputFiles = allOutputFiles().minus(classpathSnapshotProperties.classpathSnapshotDirFileCollection),
+            outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
@@ -847,61 +829,28 @@ abstract class KotlinCompile @Inject constructor(
         return super.source(*sources)
     }
 
-    private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
-        val fileChanges = inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).toList()
-        return if (fileChanges.isEmpty()) {
-            ClasspathChanges.Available(LinkedHashSet(), LinkedHashSet())
-        } else {
-            val previousClasspathEntrySnapshotFiles = getPreviousClasspathEntrySnapshotFiles()
-            if (previousClasspathEntrySnapshotFiles.isEmpty()) {
-                // When this happens, it means that either the previous classpath was empty or there were no source files to compile in the
-                // previous non-incremental run so the task action was skipped and the classpath snapshot directory was not populated (see
-                // AbstractKotlinCompile.executeImpl).
-                // We could improve this handling, but it's fine to return `UnableToCompute` here as it's likely that there are also no
-                // source files to compile/recompile in this incremental run.
-                ClasspathChanges.NotAvailable.UnableToCompute
-            } else {
-                val currentClasspathEntrySnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
-                val changedCurrentFiles = fileChanges
-                    .filter { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
-                    .map { it.file }.toSet()
-                ClasspathChangesComputer.compute(
-                    currentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles,
-                    previousClasspathEntrySnapshotFiles = previousClasspathEntrySnapshotFiles,
-                    unchangedCurrentClasspathEntrySnapshotFiles = currentClasspathEntrySnapshotFiles.filter { it !in changedCurrentFiles }
-                )
+    private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges = when {
+        !classpathSnapshotProperties.useClasspathSnapshot.get() -> ClasspathSnapshotDisabled
+        else -> {
+            val classpathSnapshotFiles = ClasspathSnapshotFiles(
+                classpathSnapshotProperties.classpathSnapshot.files.toList(),
+                classpathSnapshotProperties.classpathSnapshotDir.get().asFile
+            )
+            when {
+                !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
+                inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> Empty(classpathSnapshotFiles)
+                !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
+                    // When this happens, it means that the classpath snapshot in the previous run was not saved for some reason. It's
+                    // likely that there were no source files to compile, so the task action was skipped (see
+                    // AbstractKotlinCompile.executeImpl), and therefore the classpath snapshot was not saved.
+                    // Missing classpath snapshot will make this run non-incremental, but because there were no source files to compile in
+                    // the previous run, *all* source files in this run (if there are any) need to be compiled anyway, so being
+                    // non-incremental is actually okay.
+                    NotAvailableDueToMissingClasspathSnapshot(classpathSnapshotFiles)
+                }
+                else -> ToBeComputedByIncrementalCompiler(classpathSnapshotFiles)
             }
         }
-    }
-
-    /**
-     * Copies classpath entry snapshot files of the current build to `classpathSnapshotDir`. They will be used in the next build (see
-     * [getPreviousClasspathEntrySnapshotFiles]).
-     *
-     * To preserve their order, we put them in subdirectories with names being their indices, as shown below:
-     *     classpathSnapshotDir/0/a-snapshot.bin
-     *     classpathSnapshotDir/1/b-snapshot.bin
-     *     ...
-     *     classpathSnapshotDir/N-1/z-snapshot.bin
-     */
-    private fun copyCurrentClasspathEntrySnapshotFiles() {
-        val snapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
-        val classpathSnapshotDir = classpathSnapshotProperties.classpathSnapshotDir.get().asFile
-        classpathSnapshotDir.deleteRecursively()
-        classpathSnapshotDir.mkdirs()
-        snapshotFiles.forEachIndexed { index, snapshotFile ->
-            snapshotFile.copyTo(File("$classpathSnapshotDir/$index/${snapshotFile.name}"))
-        }
-    }
-
-    /**
-     * Returns classpath entry snapshot files of the previous build, stored in `classpathSnapshotDir` (see
-     * [copyCurrentClasspathEntrySnapshotFiles]).
-     */
-    private fun getPreviousClasspathEntrySnapshotFiles(): List<File> {
-        val classpathSnapshotDir = classpathSnapshotProperties.classpathSnapshotDir.get().asFile
-        val subDirs = classpathSnapshotDir.listFiles()!!.sortedBy { it.name.toInt() }
-        return subDirs.map { it.listFiles()!!.single() }
     }
 }
 
@@ -1151,7 +1100,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             IncrementalCompilationEnvironment(
                 getChangedFiles(inputChanges, incrementalProps),
-                ClasspathChanges.NotAvailable.ForJSCompiler,
+                ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings
             )

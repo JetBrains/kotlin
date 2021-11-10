@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.readBytes
+import org.jetbrains.kotlin.incremental.storage.fromByteArray
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -16,8 +18,8 @@ abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
     @Test
     open fun `test ClassSnapshotDataSerializer`() {
         val originalSnapshot = testSourceFile.compileAndSnapshot()
-        val serializedSnapshot = ClassSnapshotDataSerializer.toByteArray(originalSnapshot)
-        val deserializedSnapshot = ClassSnapshotDataSerializer.fromByteArray(serializedSnapshot)
+        val serializedSnapshot = ClassSnapshotExternalizer.toByteArray(originalSnapshot)
+        val deserializedSnapshot = ClassSnapshotExternalizer.fromByteArray(serializedSnapshot)
 
         assertEquals(originalSnapshot.toGson(), deserializedSnapshot.toGson())
     }
@@ -36,8 +38,8 @@ class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTe
         val originalSnapshot = testSourceFile.compile().let {
             ClassSnapshotter.snapshot(listOf(ClassFileWithContents(it, it.readBytes())), includeDebugInfoInSnapshot = false)
         }.single()
-        val serializedSnapshot = ClassSnapshotDataSerializer.toByteArray(originalSnapshot)
-        val deserializedSnapshot = ClassSnapshotDataSerializer.fromByteArray(serializedSnapshot)
+        val serializedSnapshot = ClassSnapshotExternalizer.toByteArray(originalSnapshot)
+        val deserializedSnapshot = ClassSnapshotExternalizer.fromByteArray(serializedSnapshot)
 
         assertEquals(originalSnapshot.toGson(), deserializedSnapshot.toGson())
     }

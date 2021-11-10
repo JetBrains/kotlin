@@ -21,7 +21,7 @@ abstract class ClasspathSnapshotTestCommon {
 
     companion object {
         val testDataDir =
-            File("libraries/tools/kotlin-gradle-plugin/src/testData/org/jetbrains/kotlin/gradle/incremental/ClasspathSnapshotTestCommon")
+            File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotTestCommon")
     }
 
     @get:Rule

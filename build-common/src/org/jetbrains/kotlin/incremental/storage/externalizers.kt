@@ -22,48 +22,35 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.io.DataInput
-import java.io.DataInputStream
-import java.io.DataOutput
+import java.io.*
 
-/**
- * Storage versioning:
- * 0 - only name and value hashes are saved
- * 1 - name and scope are saved
- */
-object LookupSymbolKeyDescriptor : KeyDescriptor<LookupSymbolKey> {
+class LookupSymbolKeyDescriptor(
+    /** If `true`, original values are saved; if `false`, only hashes are saved. */
+    private val storeFullFqNames: Boolean
+) : KeyDescriptor<LookupSymbolKey> {
+
     override fun read(input: DataInput): LookupSymbolKey {
-        val version = input.readByte()
-        return when (version.toInt()) {
-            0 -> {
-                val name = input.readUTF()
-                val scope = input.readUTF()
-                LookupSymbolKey(name.hashCode(), scope.hashCode(), name, scope)
-            }
-            1 -> {
-                val first = input.readInt()
-                val second = input.readInt()
-                LookupSymbolKey(first, second, "", "")
-            }
-            else -> throw RuntimeException("Unknown version of LookupSymbolKeyDescriptor=${version}")
+        val storeFullFqNames = input.readBoolean()
+        return if (storeFullFqNames) {
+            val name = input.readUTF()
+            val scope = input.readUTF()
+            LookupSymbolKey(name.hashCode(), scope.hashCode(), name, scope)
+        } else {
+            val nameHash = input.readInt()
+            val scopeHash = input.readInt()
+            LookupSymbolKey(nameHash, scopeHash, "", "")
         }
     }
 
-    private val storeFullFqName = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient() ?: false
-
     override fun save(output: DataOutput, value: LookupSymbolKey) {
-        if (storeFullFqName) {
-            output.writeByte(0)
+        output.writeBoolean(storeFullFqNames)
+        if (storeFullFqNames) {
             output.writeUTF(value.name)
             output.writeUTF(value.scope)
         } else {
-            output.writeByte(1)
             output.writeInt(value.nameHash)
             output.writeInt(value.scopeHash)
         }
@@ -72,18 +59,6 @@ object LookupSymbolKeyDescriptor : KeyDescriptor<LookupSymbolKey> {
     override fun getHashCode(value: LookupSymbolKey): Int = value.hashCode()
 
     override fun isEqual(val1: LookupSymbolKey, val2: LookupSymbolKey): Boolean = val1 == val2
-}
-
-object LookupSymbolExternalizer : DataExternalizer<LookupSymbol> {
-
-    override fun save(output: DataOutput, lookupSymbol: LookupSymbol) {
-        output.writeString(lookupSymbol.name)
-        output.writeString(lookupSymbol.scope)
-    }
-
-    override fun read(input: DataInput): LookupSymbol {
-        return LookupSymbol(name = input.readString(), scope = input.readString())
-    }
 }
 
 object FqNameExternalizer : DataExternalizer<FqName> {
@@ -223,6 +198,32 @@ object ConstantExternalizer : DataExternalizer<Any> {
 
     private enum class Kind {
         INT, FLOAT, LONG, DOUBLE, STRING
+    }
+}
+
+fun <T> DataExternalizer<T>.saveToFile(file: File, value: T) {
+    return DataOutputStream(FileOutputStream(file).buffered()).use {
+        save(it, value)
+    }
+}
+
+fun <T> DataExternalizer<T>.loadFromFile(file: File): T {
+    return DataInputStream(FileInputStream(file).buffered()).use {
+        read(it)
+    }
+}
+
+fun <T> DataExternalizer<T>.toByteArray(value: T): ByteArray {
+    val byteArrayOutputStream = ByteArrayOutputStream()
+    DataOutputStream(byteArrayOutputStream.buffered()).use {
+        save(it, value)
+    }
+    return byteArrayOutputStream.toByteArray()
+}
+
+fun <T> DataExternalizer<T>.fromByteArray(byteArray: ByteArray): T {
+    return DataInputStream(ByteArrayInputStream(byteArray).buffered()).use {
+        read(it)
     }
 }
 

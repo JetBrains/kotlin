@@ -10,9 +10,13 @@ import java.io.Serializable
 
 @Suppress("Reformat")
 enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, val readableString: String) : Serializable {
-    OUTPUT_SIZE(readableString = "Total output size"),
-        LOOKUP_SIZE(OUTPUT_SIZE, "Lookups size"),
-        SNAPSHOT_SIZE(OUTPUT_SIZE, "ABI snapshot size"),
+    CACHE_DIRECTORY_SIZE(readableString = "Total size of the cache directory"),
+        LOOKUP_SIZE(CACHE_DIRECTORY_SIZE, "Lookups size"),
+        SNAPSHOT_SIZE(CACHE_DIRECTORY_SIZE, "ABI snapshot size"),
+
+    // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
+    ORIGINAL_CLASSPATH_SNAPSHOT_SIZE(parent = null, "Size of the original classpath snapshot (before shrinking)"),
+    SHRUNK_CLASSPATH_SNAPSHOT_SIZE(parent = null, "Size of the shrunk classpath snapshot"),
     ;
 
     companion object {

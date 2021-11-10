@@ -15,6 +15,7 @@ dependencies {
     api(project(":compiler:cli-js"))
     api(project(":kotlin-build-common"))
     api(project(":daemon-common"))
+    implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testApi(commonDep("junit:junit"))

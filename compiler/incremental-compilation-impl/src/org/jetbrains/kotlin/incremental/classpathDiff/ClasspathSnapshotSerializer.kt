@@ -10,32 +10,59 @@ import org.jetbrains.kotlin.incremental.JavaClassProtoMapValueExternalizer
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import java.io.*
+import java.io.DataInput
+import java.io.DataOutput
+import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 /** Utility to serialize a [ClasspathSnapshot]. */
-object ClasspathSnapshotSerializer {
+object CachedClasspathSnapshotSerializer {
+    private val cache = ConcurrentHashMap<File, ClasspathEntrySnapshot>()
+    private const val RECOMMENDED_MAX_CACHE_SIZE = 100
 
     fun load(classpathEntrySnapshotFiles: List<File>): ClasspathSnapshot {
-        return ClasspathSnapshot(classpathEntrySnapshotFiles.map {
-            ClasspathEntrySnapshotSerializer.load(it)
-        })
+        return ClasspathSnapshot(classpathEntrySnapshotFiles.map { snapshotFile ->
+            cache.computeIfAbsent(snapshotFile) {
+                ClasspathEntrySnapshotExternalizer.loadFromFile(it)
+            }
+        }).also {
+            handleCacheEviction(recentlyReferencedKeys = classpathEntrySnapshotFiles)
+        }
+    }
+
+    private fun handleCacheEviction(recentlyReferencedKeys: List<File>) {
+        if (cache.size > RECOMMENDED_MAX_CACHE_SIZE) {
+            // Remove old entries.
+            // Note:
+            //   - The cache entries after eviction = recently-referenced entries + some other entries (so that
+            //     size = RECOMMENDED_MAX_CACHE_SIZE)
+            //       + Removed entries don't have to be the oldest (for simplicity).
+            //       + If recentlyReferencedKeys.size > RECOMMENDED_MAX_CACHE_SIZE, all of them will be kept. The reason is that
+            //         recently-referenced entries will likely be used again, so we keep them even if the cache is larger than recommended.
+            //   - It's okay to have race condition in this method.
+            val oldKeys = cache.keys - recentlyReferencedKeys.toSet()
+            for (oldKey in oldKeys) {
+                cache.remove(oldKey)
+                if (cache.size <= RECOMMENDED_MAX_CACHE_SIZE) break
+            }
+        }
     }
 }
 
-object ClasspathEntrySnapshotSerializer : DataSerializer<ClasspathEntrySnapshot> {
+object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnapshot> {
 
     override fun save(output: DataOutput, snapshot: ClasspathEntrySnapshot) {
-        LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotDataSerializer).save(output, snapshot.classSnapshots)
+        LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotWithHashExternalizer).save(output, snapshot.classSnapshots)
     }
 
     override fun read(input: DataInput): ClasspathEntrySnapshot {
         return ClasspathEntrySnapshot(
-            classSnapshots = LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotDataSerializer).read(input)
+            classSnapshots = LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotWithHashExternalizer).read(input)
         )
     }
 }
 
-object ClassSnapshotDataSerializer : DataSerializer<ClassSnapshot> {
+object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: ClassSnapshot) {
         output.writeBoolean(snapshot is KotlinClassSnapshot)
@@ -52,6 +79,21 @@ object ClassSnapshotDataSerializer : DataSerializer<ClassSnapshot> {
         } else {
             JavaClassSnapshotExternalizer.read(input)
         }
+    }
+}
+
+object ClassSnapshotWithHashExternalizer : DataExternalizer<ClassSnapshotWithHash> {
+
+    override fun save(output: DataOutput, snapshot: ClassSnapshotWithHash) {
+        ClassSnapshotExternalizer.save(output, snapshot.classSnapshot)
+        LongExternalizer.save(output, snapshot.hash)
+    }
+
+    override fun read(input: DataInput): ClassSnapshotWithHash {
+        return ClassSnapshotWithHash(
+            classSnapshot = ClassSnapshotExternalizer.read(input),
+            hash = LongExternalizer.read(input)
+        )
     }
 }
 
@@ -181,34 +223,5 @@ object ContentHashJavaClassSnapshotExternalizer : DataExternalizer<ContentHashJa
 
     override fun read(input: DataInput): ContentHashJavaClassSnapshot {
         return ContentHashJavaClassSnapshot(contentHash = LongExternalizer.read(input))
-    }
-}
-
-interface DataSerializer<T> : DataExternalizer<T> {
-
-    fun save(file: File, value: T) {
-        return DataOutputStream(FileOutputStream(file).buffered()).use {
-            save(it, value)
-        }
-    }
-
-    fun load(file: File): T {
-        return DataInputStream(FileInputStream(file).buffered()).use {
-            read(it)
-        }
-    }
-
-    fun toByteArray(value: T): ByteArray {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        DataOutputStream(byteArrayOutputStream.buffered()).use {
-            save(it, value)
-        }
-        return byteArrayOutputStream.toByteArray()
-    }
-
-    fun fromByteArray(byteArray: ByteArray): T {
-        return DataInputStream(ByteArrayInputStream(byteArray).buffered()).use {
-            read(it)
-        }
     }
 }

@@ -32,7 +32,8 @@ import java.util.*
 
 open class LookupStorage(
     targetDataDir: File,
-    pathConverter: FileToPathConverter
+    pathConverter: FileToPathConverter,
+    storeFullFqNames: Boolean
 ) : BasicMapsOwner(targetDataDir) {
     val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
 
@@ -44,7 +45,7 @@ open class LookupStorage(
     private val countersFile = "counters".storageFile
     private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
     private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
-    val lookupMap = registerMap(LookupMap("lookups".storageFile))
+    val lookupMap = registerMap(LookupMap("lookups".storageFile, storeFullFqNames))
 
     @Volatile
     private var size: Int = 0

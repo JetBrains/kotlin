@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.SerializedJavaClass
+import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -25,7 +27,7 @@ class ClasspathEntrySnapshot(
      * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
      * or jar).
      */
-    val classSnapshots: LinkedHashMap<String, ClassSnapshot>
+    val classSnapshots: LinkedHashMap<String, ClassSnapshotWithHash>
 )
 
 /**
@@ -36,7 +38,14 @@ class ClasspathEntrySnapshot(
  * `KotlinCompile` task and the task needs to support compile avoidance. For example, this class should contain public method signatures,
  * and should not contain private method signatures, or method implementations.
  */
-sealed class ClassSnapshot
+sealed class ClassSnapshot {
+
+    /** Computes the hash of this [ClassSnapshot] and returns a [ClassSnapshotWithHash]. */
+    fun addHash() = ClassSnapshotWithHash(this, ClassSnapshotExternalizer.toByteArray(this).md5())
+}
+
+/** Contains a [ClassSnapshot] and its hash. */
+class ClassSnapshotWithHash(val classSnapshot: ClassSnapshot, val hash: Long)
 
 /** [ClassSnapshot] of a Kotlin class. */
 class KotlinClassSnapshot(

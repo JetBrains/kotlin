@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
@@ -48,7 +50,11 @@ class RelocatableCachesTest : TestWithWorkingDir() {
     private fun fillLookupStorage(projectRoot: File, reverseFiles: Boolean, reverseLookups: Boolean) {
         val storageRoot = projectRoot.storageRoot
         val fileToPathConverter = RelativeFileToPathConverter(projectRoot)
-        val lookupStorage = LookupStorage(storageRoot, fileToPathConverter)
+        val lookupStorage = LookupStorage(
+            storageRoot,
+            fileToPathConverter,
+            storeFullFqNames = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient() ?: false
+        )
         val files = LinkedHashSet<String>()
         val symbols = LinkedHashSet<LookupSymbol>()
         val lookups = MultiMap.createOrderedSet<LookupSymbol, String>()
