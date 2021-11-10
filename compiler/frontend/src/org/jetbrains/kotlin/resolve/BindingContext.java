@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -48,7 +49,6 @@ import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.util.slicedMap.RewritePolicy.DO_NOTHING;
 import static org.jetbrains.kotlin.util.slicedMap.Slices.COMPILE_TIME_VALUE_REWRITE_POLICY;
@@ -262,7 +262,7 @@ public interface BindingContext {
                     .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS)
                     .build();
 
-    WritableSlice<DeclarationDescriptor, Map<ReceiverParameterDescriptor, String>> DESCRIPTOR_TO_NAMED_RECEIVERS = Slices.createSimpleSlice();
+    WritableSlice<DeclarationDescriptor, Multimap<String, ReceiverParameterDescriptor>> DESCRIPTOR_TO_NAMED_RECEIVERS = Slices.createSimpleSlice();
     WritableSlice<KtReferenceExpression, PsiElement> LABEL_TARGET = Slices.createSimpleSlice();
     WritableSlice<KtReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET = Slices.createSimpleSlice();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.createSimpleSlice();

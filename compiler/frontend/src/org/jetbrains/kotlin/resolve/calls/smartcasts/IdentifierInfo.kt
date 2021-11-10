@@ -316,13 +316,13 @@ private fun findReceiverByLabelOrGetDefault(
     bindingContext: BindingContext,
     labelName: String
 ): ReceiverParameterDescriptor {
-    val receiverToLabelMap = bindingContext.get(
+    val labelNameToReceiverMap = bindingContext.get(
         BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS,
         if (descriptorOfThisReceiver is PropertyAccessorDescriptor) descriptorOfThisReceiver.correspondingProperty else descriptorOfThisReceiver
     )
-    return receiverToLabelMap?.entries?.find {
-        it.value == labelName
-    }?.key ?: default ?: error("'This' refers to the callable member without a receiver parameter: $descriptorOfThisReceiver")
+    return labelNameToReceiverMap?.get(labelName)?.singleOrNull()
+        ?: default
+        ?: error("'This' refers to the callable member without a receiver parameter: $descriptorOfThisReceiver")
 }
 
 private fun postfix(argumentInfo: IdentifierInfo, op: KtToken): IdentifierInfo =
