@@ -25,8 +25,41 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     putIfNotNull(JVMConfigurationKeys.FRIEND_PATHS, arguments.friendPaths?.asList())
 
-    if (arguments.jvmTarget != null) {
-        val jvmTarget = JvmTarget.fromString(arguments.jvmTarget!!)
+    val releaseTargetArg = arguments.jdkRelease
+    val jvmTargetArg = arguments.jvmTarget
+    if (releaseTargetArg != null) {
+        val value =
+            if (releaseTargetArg == "1.6" || releaseTargetArg == "1.8") releaseTargetArg.substringAfter("1.").toIntOrNull()
+            else releaseTargetArg.toIntOrNull()
+        if (value == null) {
+            messageCollector.report(
+                ERROR,
+                "Can't parse value passed for `-Xrelease`: $releaseTargetArg."
+            )
+        } else {
+            if (value < 6) {
+                messageCollector.report(
+                    ERROR,
+                    "`$value` is not valid value for `-Xrelease` flag."
+                )
+            } else {
+                //don't use release flag if it equals to compilation JDK version
+                if (value != getJavaVersion() || arguments.jdkHome != null) {
+                    put(JVMConfigurationKeys.RELEASE, value)
+                }
+                if (jvmTargetArg != null && jvmTargetArg != releaseTargetArg) {
+                    messageCollector.report(
+                        ERROR,
+                        "`-Xrelease=$releaseTargetArg` option conflicts with '-jvm-target=$jvmTargetArg'."
+                    )
+                }
+            }
+        }
+    }
+
+    val jvmTargetValue = releaseTargetArg ?: jvmTargetArg
+    if (jvmTargetValue != null) {
+        val jvmTarget = JvmTarget.fromString(jvmTargetValue)
         if (jvmTarget != null) {
             put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             if (jvmTarget == JvmTarget.JVM_1_6 && !arguments.suppressDeprecatedJvmTargetWarning) {
@@ -37,7 +70,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown JVM target version: ${arguments.jvmTarget}\n" +
+                ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
                         "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
             )
         }
@@ -70,29 +103,6 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
                 ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
                         "Supported modes: ${JvmStringConcat.values().joinToString { it.description }}"
             )
-        }
-    }
-
-    val releaseTarget = arguments.release
-    if (releaseTarget != null) {
-        val value = releaseTarget.toIntOrNull()
-        if (value == null) {
-            messageCollector.report(
-                ERROR,
-                "Can't parse value passed for `-Xrelease`: $releaseTarget."
-            )
-        } else {
-            if (value < 6) {
-                messageCollector.report(
-                    ERROR,
-                    "`$value` is not valid value for `-Xrelease` flag."
-                )
-            } else {
-                //don't use release flag if it equals to compilation JDK version
-                if (value != getJavaVersion() || arguments.jdkHome != null) {
-                    put(JVMConfigurationKeys.RELEASE, value)
-                }
-            }
         }
     }
 

@@ -1,2 +1,4 @@
 error: `5` is not valid value for `-Xrelease` flag.
+error: unknown JVM target version: 5
+Supported versions: 1.6, 1.8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 COMPILATION_ERROR

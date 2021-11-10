@@ -1,0 +1,2 @@
+error: `-Xrelease=9` option conflicts with '-jvm-target=10'.
+COMPILATION_ERROR
