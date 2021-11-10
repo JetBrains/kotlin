@@ -35,7 +35,8 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         files: List<File>,
         outputDirectory: File,
         languageVersion: LanguageVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?>
+        analysisFlags: Map<AnalysisFlag<*>, Any?>,
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State>
     ) {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
             listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), outputDirectory,
@@ -47,7 +48,7 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
                         languageVersion,
                         ApiVersion.createByLanguageVersion(languageVersion),
                         analysisFlags.toMap() + mapOf(AnalysisFlags.explicitApiVersion to true),
-                        emptyMap()
+                        specificFeatures
                     )
                 },
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -180,7 +181,10 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
                 "test.topLevelFunWithCR",
                 "test.topLevelPropWithCR"
             ),
-            customLanguageVersion = LanguageVersion.KOTLIN_1_7
+            customLanguageVersion = LanguageVersion.KOTLIN_1_7,
+            specificFeatures = mapOf(
+                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+            )
         )
     }
 }
