@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include <functional>
 #include <thread>
 
@@ -31,9 +33,11 @@ public:
         kotlin::SwitchThreadState(memoryState(), ThreadState::kRunnable);
     }
     ~ScopedMemoryInit() {
+        // ClearForTests must not be done concurrently with GC
+        SwitchThreadState(memoryState(), ThreadState::kRunnable, /* reentrant = */ true);
         ClearMemoryForTests(memoryState());
         // Ensure that memory deinit is performed in the native state.
-        SwitchThreadState(memoryState(), ThreadState::kNative, /* reentrant = */ true);
+        SwitchThreadState(memoryState(), ThreadState::kNative);
         DeinitMemoryForTests(memoryState());
     }
 

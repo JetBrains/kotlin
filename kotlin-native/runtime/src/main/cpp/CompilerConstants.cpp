@@ -13,6 +13,7 @@ using namespace kotlin;
 // These are defined by overrideRuntimeGlobals in IrToBitcode.kt
 RUNTIME_WEAK int32_t Kotlin_destroyRuntimeMode = 1;
 RUNTIME_WEAK int32_t Kotlin_gcAggressive = 0;
+RUNTIME_WEAK int32_t Kotlin_gcSchedulerType = 2;
 RUNTIME_WEAK int32_t Kotlin_workerExceptionHandling = 0;
 RUNTIME_WEAK int32_t Kotlin_freezingEnabled = 1;
 RUNTIME_WEAK const Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function = nullptr;
@@ -34,6 +35,10 @@ ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandlin
 
 ALWAYS_INLINE bool compiler::freezingEnabled() noexcept {
     return Kotlin_freezingEnabled != 0;
+}
+
+ALWAYS_INLINE compiler::GCSchedulerType compiler::getGCSchedulerType() noexcept {
+    return static_cast<compiler::GCSchedulerType>(Kotlin_gcSchedulerType);
 }
 
 #ifdef KONAN_ANDROID

@@ -54,6 +54,13 @@ enum class WorkerExceptionHandling : int32_t {
     kUseHook = 1,
 };
 
+// Must match GCSchedulerType in GCSchedulerType.kt
+enum class GCSchedulerType {
+    kDisabled = 0,
+    kWithTimer = 1,
+    kOnSafepoints = 2
+};
+
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
 
 bool gcAggressive() noexcept;
@@ -81,6 +88,8 @@ ALWAYS_INLINE inline int getSourceInfo(void* addr, SourceInfo *result, int resul
         return Kotlin_getSourceInfo_Function(addr, result, result_size);
     }
 }
+
+compiler::GCSchedulerType getGCSchedulerType() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

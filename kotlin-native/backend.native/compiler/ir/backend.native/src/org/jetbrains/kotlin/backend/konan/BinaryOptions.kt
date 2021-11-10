@@ -25,6 +25,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val androidProgramType by option<AndroidProgramType>()
 
     val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>()
+
+    val gcSchedulerType by option<GCSchedulerType>()
 }
 
 open class BinaryOption<T : Any>(

@@ -216,17 +216,11 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
 
 class SameThreadMarkAndSweepTest : public testing::Test {
 public:
-    SameThreadMarkAndSweepTest() {
-        mm::GlobalData::Instance().gcScheduler().ReplaceGCSchedulerDataForTests(
-                [](auto& config, auto scheduleGC) { return gc::internal::MakeEmptyGCSchedulerData(); });
-    }
 
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
         mm::GlobalData::Instance().objectFactory().ClearForTests();
-        mm::GlobalData::Instance().gcScheduler().ReplaceGCSchedulerDataForTests(
-                [](auto& config, auto scheduleGC) { return gc::internal::MakeGCSchedulerData(config, std::move(scheduleGC)); });
     }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }

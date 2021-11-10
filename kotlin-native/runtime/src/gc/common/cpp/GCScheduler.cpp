@@ -96,34 +96,39 @@ private:
     std::function<void()> scheduleGC_;
 };
 
-} // namespace
 
-KStdUniquePtr<gc::GCSchedulerData> gc::internal::MakeEmptyGCSchedulerData() noexcept {
+KStdUniquePtr<gc::GCSchedulerData> MakeEmptyGCSchedulerData() noexcept {
     return ::make_unique<GCEmptySchedulerData>();
 }
 
-KStdUniquePtr<gc::GCSchedulerData> gc::internal::MakeGCSchedulerDataWithTimer(
-        GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept {
+KStdUniquePtr<gc::GCSchedulerData> MakeGCSchedulerDataWithTimer(
+        gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept {
     return ::make_unique<GCSchedulerDataWithTimer>(config, std::move(scheduleGC));
 }
 
-KStdUniquePtr<gc::GCSchedulerData> gc::internal::MakeGCSchedulerDataWithoutTimer(
-        GCSchedulerConfig& config, std::function<void()> scheduleGC, std::function<uint64_t()> currentTimeCallbackNs) noexcept {
+KStdUniquePtr<gc::GCSchedulerData> MakeGCSchedulerDataWithoutTimer(
+        gc::GCSchedulerConfig& config, std::function<void()> scheduleGC, std::function<uint64_t()> currentTimeCallbackNs) noexcept {
     return ::make_unique<GCSchedulerDataWithoutTimer>(config, std::move(scheduleGC), std::move(currentTimeCallbackNs));
 }
 
-KStdUniquePtr<gc::GCSchedulerData> gc::internal::MakeGCSchedulerData(GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept {
-    if (internal::useGCTimer()) {
-        return MakeGCSchedulerDataWithTimer(config, std::move(scheduleGC));
-    } else {
-        return MakeGCSchedulerDataWithoutTimer(config, std::move(scheduleGC), []() { return konan::getTimeNanos(); });
+} // namespace
+
+KStdUniquePtr<gc::GCSchedulerData> kotlin::gc::MakeGCSchedulerData(SchedulerType type, gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept {
+    switch (type) {
+        case SchedulerType::kDisabled:
+            return MakeEmptyGCSchedulerData();
+        case SchedulerType::kWithTimer:
+            return MakeGCSchedulerDataWithTimer(config, std::move(scheduleGC));
+        case SchedulerType::kOnSafepoints:
+            return MakeGCSchedulerDataWithoutTimer(config, std::move(scheduleGC), []() { return konan::getTimeNanos(); });
     }
 }
+
 
 void gc::GCScheduler::SetScheduleGC(std::function<void()> scheduleGC) noexcept {
     RuntimeAssert(static_cast<bool>(scheduleGC), "scheduleGC cannot be empty");
     RuntimeAssert(!static_cast<bool>(scheduleGC_), "scheduleGC must not have been set");
     scheduleGC_ = std::move(scheduleGC);
     RuntimeAssert(gcData_ == nullptr, "gcData_ must not be set prior to scheduleGC call");
-    gcData_ = internal::MakeGCSchedulerData(config_, scheduleGC_);
+    gcData_ = MakeGCSchedulerData(compiler::getGCSchedulerType(), config_, scheduleGC_);
 }

@@ -20,18 +20,8 @@
 namespace kotlin {
 namespace gc {
 
-namespace internal {
+using SchedulerType = compiler::GCSchedulerType;
 
-inline bool useGCTimer() noexcept {
-#if KONAN_NO_THREADS
-    return false;
-#else
-    // With aggressive mode we use safepoint counting to drive GC.
-    return !compiler::gcAggressive();
-#endif
-}
-
-} // namespace internal
 
 struct GCSchedulerConfig {
     std::atomic<size_t> threshold = 100000; // Roughly 1 safepoint per 10ms (on a subset of examples on one particular machine).
@@ -80,7 +70,7 @@ public:
 
     // Should be called on encountering a safepoint.
     void OnSafePointRegular(size_t weight) noexcept {
-        if (!internal::useGCTimer()) {
+        if (compiler::getGCSchedulerType() == compiler::GCSchedulerType::kOnSafepoints) {
             safePointsCounter_ += weight;
             if (safePointsCounter_ < safePointsCounterThreshold_) {
                 return;
@@ -128,15 +118,6 @@ private:
     size_t safePointsCounterThreshold_ = 0;
 };
 
-namespace internal {
-
-KStdUniquePtr<GCSchedulerData> MakeEmptyGCSchedulerData() noexcept;
-KStdUniquePtr<GCSchedulerData> MakeGCSchedulerDataWithTimer(GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept;
-KStdUniquePtr<GCSchedulerData> MakeGCSchedulerDataWithoutTimer(
-        GCSchedulerConfig& config, std::function<void()> scheduleGC, std::function<uint64_t()> currentTimeCallbackNs) noexcept;
-KStdUniquePtr<GCSchedulerData> MakeGCSchedulerData(GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept;
-
-} // namespace internal
 
 class GCScheduler : private Pinned {
 public:
@@ -156,22 +137,16 @@ public:
         return GCSchedulerThreadData(config_, [this](auto& threadData) { gcData_->OnSafePoint(threadData); });
     }
 
-    template <typename F>
-    KStdUniquePtr<GCSchedulerData> ReplaceGCSchedulerDataForTests(F&& factory) noexcept {
-        RuntimeAssert(static_cast<bool>(scheduleGC_), "Can only be called after SetScheduleGC");
-
-        auto other = std::forward<F>(factory)(config_, scheduleGC_);
-        RuntimeAssert(other != nullptr, "factory cannot return a null");
-        using std::swap;
-        swap(gcData_, other);
-        return other;
-    }
-
 private:
     GCSchedulerConfig config_;
     KStdUniquePtr<GCSchedulerData> gcData_;
     std::function<void()> scheduleGC_;
 };
+
+KStdUniquePtr<gc::GCSchedulerData> MakeGCSchedulerData(
+        SchedulerType type,
+        GCSchedulerConfig& config,
+        std::function<void()> scheduleGC) noexcept;
 
 } // namespace gc
 } // namespace kotlin
