@@ -290,10 +290,22 @@ __attribute__((swift_name("CoroutinesKt")))
 + (void)suspendFunWithCompletionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(completionHandler:)")));
 
 /**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)unitSuspendFunWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(completionHandler:)")));
+
+/**
  @note This method converts instances of CoroutineException, CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
 + (void)suspendFunResult:(id _Nullable)result doSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(result:doSuspend:doThrow:completionHandler:)")));
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)unitSuspendFunDoSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(doSuspend:doThrow:completionHandler:)")));
 
 /**
  @note This method converts instances of CoroutineException, CancellationException to errors.

@@ -15,6 +15,7 @@ import kotlin.test.*
 class CoroutineException : Throwable()
 
 suspend fun suspendFun() = 42
+suspend fun unitSuspendFun() = Unit
 
 @Throws(CoroutineException::class, CancellationException::class)
 suspend fun suspendFun(result: Any?, doSuspend: Boolean, doThrow: Boolean): Any? {
@@ -28,6 +29,18 @@ suspend fun suspendFun(result: Any?, doSuspend: Boolean, doThrow: Boolean): Any?
     if (doThrow) throw CoroutineException()
 
     return result
+}
+
+@Throws(CoroutineException::class, CancellationException::class)
+suspend fun unitSuspendFun(doSuspend: Boolean, doThrow: Boolean) {
+    if (doSuspend) {
+        suspendCoroutineUninterceptedOrReturn<Unit> {
+            it.resume(Unit)
+            COROUTINE_SUSPENDED
+        }
+    }
+
+    if (doThrow) throw CoroutineException()
 }
 
 class ContinuationHolder<T> {

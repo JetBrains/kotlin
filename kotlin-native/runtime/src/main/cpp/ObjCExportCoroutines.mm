@@ -51,6 +51,8 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completio
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_createUnitContinuationArgument, id completion, const TypeInfo** exceptionTypes) {
   void (^typedCompletion)(NSError * _Nullable) = completion;
   Completion twoArgumentCompletion = ^(_Nullable id result, NSError* _Nullable error) {
+    // typedCompletion will be retained by the containing block when the latter is copied
+    // from stack to heap via objc_retainBlock.
     typedCompletion(error);
   };
 
