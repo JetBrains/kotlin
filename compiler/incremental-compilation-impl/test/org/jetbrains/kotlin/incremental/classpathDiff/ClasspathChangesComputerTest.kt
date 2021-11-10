@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.incremental.ChangesEither
+import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.snapshotAll
-import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -46,7 +47,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         val sourceFile = SimpleKotlinClass(tmpDir)
         val previousSnapshot = sourceFile.compileAndSnapshot()
         val currentSnapshot = sourceFile.changePublicMethodSignature().compileAndSnapshot()
-        val changes = ClasspathChangesComputer.computeClassChanges(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+        val changes = computeClassChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -62,7 +63,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         val sourceFile = SimpleKotlinClass(tmpDir)
         val previousSnapshot = sourceFile.compileAndSnapshot()
         val currentSnapshot = sourceFile.changeMethodImplementation().compileAndSnapshot()
-        val changes = ClasspathChangesComputer.computeClassChanges(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+        val changes = computeClassChanges(currentSnapshot, previousSnapshot)
 
         Changes(emptySet(), emptySet()).assertEquals(changes)
     }
@@ -72,7 +73,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testVariousAbiChanges/src/kotlin").canonicalFile
         val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
         val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
-        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -121,7 +122,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
             File(testDataDir, "../ClasspathChangesComputerTest/testImpactAnalysis_KotlinOrJava/src/kotlin").canonicalFile
         val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
         val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
-        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -158,7 +159,7 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
         val sourceFile = SimpleJavaClass(tmpDir)
         val previousSnapshot = sourceFile.compile().snapshot(protoBased)
         val currentSnapshot = sourceFile.changePublicMethodSignature().compile().snapshot(protoBased)
-        val changes = ClasspathChangesComputer.computeClassChanges(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+        val changes = computeClassChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -174,7 +175,7 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
         val sourceFile = SimpleJavaClass(tmpDir)
         val previousSnapshot = sourceFile.compile().snapshot(protoBased)
         val currentSnapshot = sourceFile.changeMethodImplementation().compile().snapshot(protoBased)
-        val changes = ClasspathChangesComputer.computeClassChanges(listOf(currentSnapshot), listOf(previousSnapshot)).normalize()
+        val changes = computeClassChanges(currentSnapshot, previousSnapshot)
 
         Changes(emptySet(), emptySet()).assertEquals(changes)
     }
@@ -184,7 +185,7 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
         val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testVariousAbiChanges/src/java").canonicalFile
         val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, protoBased)
         val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, protoBased)
-        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -229,7 +230,7 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
         val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testImpactAnalysis_KotlinOrJava/src/java").canonicalFile
         val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, protoBased)
         val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, protoBased)
-        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -259,7 +260,7 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
         val classpathSourceDir = File(testDataDir, "../ClasspathChangesComputerTest/testImpactAnalysis_KotlinAndJava/src").canonicalFile
         val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
         val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
-        val changes = ClasspathChangesComputer.compute(currentSnapshot, previousSnapshot).normalize()
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
 
         Changes(
             lookupSymbols = setOf(
@@ -301,7 +302,7 @@ private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder,
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshotAll(protoBased)
+        val classSnapshots = classFiles.snapshotAll(protoBased).map { it.addHash() }
         ClasspathEntrySnapshot(
             classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
         )
@@ -309,12 +310,31 @@ private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder,
     return ClasspathSnapshot(classpathEntrySnapshots)
 }
 
-/** Adapted version of [ClasspathChanges.Available] for readability in this test. */
+private fun computeClasspathChanges(
+    currentClasspathSnapshot: ClasspathSnapshot,
+    previousClasspathSnapshot: ClasspathSnapshot
+): Changes {
+    return ClasspathChangesComputer.computeChangedAndImpactedSet(
+        currentClasspathSnapshot.getNonDuplicateClassSnapshots(),
+        previousClasspathSnapshot.getNonDuplicateClassSnapshots(),
+        DoNothingBuildMetricsReporter
+    ).normalize()
+}
+
+private fun computeClassChanges(currentClassSnapshot: ClassSnapshot, previousClassSnapshot: ClassSnapshot): Changes {
+    return ClasspathChangesComputer.computeClassChanges(
+        listOf(currentClassSnapshot),
+        listOf(previousClassSnapshot),
+        DoNothingBuildMetricsReporter
+    ).normalize()
+}
+
+/** Adapted version of [ChangesEither.Known] for readability in this test. */
 private data class Changes(val lookupSymbols: Set<LookupSymbol>, val fqNames: Set<String>)
 
-private fun ClasspathChanges.normalize(): Changes {
-    this as ClasspathChanges.Available
-    return Changes(lookupSymbols, fqNames.map { it.asString() }.toSet())
+private fun ChangeSet.normalize(): Changes {
+    val changes: ChangesEither.Known = getChanges()
+    return Changes(changes.lookupSymbols.toSet(), changes.fqNames.map { it.asString() }.toSet())
 }
 
 private fun Changes.assertEquals(actual: Changes) {

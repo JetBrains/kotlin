@@ -38,10 +38,10 @@ object ClasspathEntrySnapshotter {
                 }
 
         val snapshots = try {
-            ClassSnapshotter.snapshot(classes, protoBased)
+            ClassSnapshotter.snapshot(classes, protoBased).map { it.addHash() }
         } catch (e: Throwable) {
             if (isKnownProblematicClasspathEntry(classpathEntry)) {
-                classes.map { ContentHashJavaClassSnapshot(it.contents.md5()) }
+                classes.map { ContentHashJavaClassSnapshot(it.contents.md5()).addHash() }
             } else throw e
         }
 

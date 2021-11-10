@@ -18,6 +18,7 @@ enum class BuildAttributeKind : Serializable {
 enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: String) : Serializable {
     NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON, "Build history file not found"),
     NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON, "ABI snapshot not found"),
+    CLASSPATH_SNAPSHOT_NOT_FOUND(BuildAttributeKind.REBUILD_REASON, "Classpath snapshot not found"),
     CACHE_CORRUPTION(BuildAttributeKind.REBUILD_REASON, "Cache corrupted"),
     UNKNOWN_CHANGES_IN_GRADLE_INPUTS(BuildAttributeKind.REBUILD_REASON, "Unknown Gradle changes"),
     JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED(BuildAttributeKind.REBUILD_REASON, "Untracked Java file is removed"),

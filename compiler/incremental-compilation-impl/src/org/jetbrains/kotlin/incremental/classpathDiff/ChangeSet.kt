@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-/** Intermediate data to compute [ClasspathChanges] (see [toClasspathChanges]). */
+/** Set of classes, class members, and top-level members that are changed (or impacted by a change). */
 class ChangeSet(
 
     /** Set of changed classes, preferably ordered by not required. */
@@ -73,7 +73,7 @@ class ChangeSet(
         changedTopLevelMembers + other.changedTopLevelMembers
     )
 
-    fun toClasspathChanges(): ClasspathChanges.Available {
+    internal fun getChanges(): ChangesEither.Known {
         val lookupSymbols = mutableSetOf<LookupSymbol>()
         val fqNames = mutableSetOf<FqName>()
 
@@ -98,6 +98,6 @@ class ChangeSet(
             fqNames.add(changedPackage)
         }
 
-        return ClasspathChanges.Available(lookupSymbols, fqNames)
+        return ChangesEither.Known(lookupSymbols, fqNames)
     }
 }
