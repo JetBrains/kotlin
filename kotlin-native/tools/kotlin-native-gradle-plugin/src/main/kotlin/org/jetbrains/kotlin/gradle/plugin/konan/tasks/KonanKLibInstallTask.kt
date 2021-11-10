@@ -43,6 +43,6 @@ open class KonanKlibInstallTask : DefaultTask() {
                 "-target", target,
                 "-repository", repo.absolutePath
         )
-        KonanKlibRunner(project, args, konanHome = project.kotlinNativeDist.absolutePath)
+        KonanKlibRunner(project, konanHome = project.kotlinNativeDist.absolutePath).run(args)
     }
 }
