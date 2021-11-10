@@ -23,29 +23,61 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
+import java.io.File
 
 class CliJavaModuleFinder(
-    jdkRootFile: VirtualFile?,
-    jrtFileSystemRoot: VirtualFile?,
+    private val jdkHome: File?,
+    private val messageCollector: MessageCollector?,
     private val javaFileManager: KotlinCliJavaFileManager,
     project: Project,
     private val releaseTarget: Int
 ) : JavaModuleFinder {
+
+    private val jrtFileSystemRoot = jdkHome?.path?.let { path ->
+        VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL)?.findFileByPath(path + URLUtil.JAR_SEPARATOR)
+    }
+
     private val modulesRoot = jrtFileSystemRoot?.findChild("modules")
-    private val ctSymFile = jdkRootFile?.findChild("lib")?.findChild("ct.sym")
+
     private val userModules = linkedMapOf<String, JavaModule>()
 
     private val allScope = GlobalSearchScope.allScope(project)
 
-    public val compilationJdkVersion by lazy {
-        //TODO: add test with -jdk-home
+    private val ctSymFile: VirtualFile? by lazy {
+        if (jdkHome == null) return@lazy reportError("JDK_HOME path is not specified in compiler configuration")
+
+        val jdkRootFile = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL).findFileByPath(jdkHome.path)
+            ?: return@lazy reportError("Can't create virtual file for JDK root under ${jdkHome.path}")
+
+        val lib = jdkRootFile.findChild("lib") ?: return@lazy reportError("Can't find `lib` folder under JDK root: ${jdkHome.path}")
+
+        val ctSym = lib.findChild("ct.sym") ?: return@lazy reportError("Can't find `ct.sym` file in ${jdkHome.path}")
+
+        if (!ctSym.isValid) return@lazy reportError("`ct.sym` is invalid: ${ctSym.path}")
+
+        ctSym
+    }
+
+    private val ctSymRootFolder: VirtualFile? by lazy {
+        if (ctSymFile != null) {
+            VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)
+                ?.findFileByPath(ctSymFile?.path + URLUtil.JAR_SEPARATOR)
+                ?: reportError("Can't open `ct.sym` as jar file, file path: ${ctSymFile?.path} ")
+        } else {
+            null
+        }
+    }
+
+    private val compilationJdkVersion by lazy {
         // Observe all JDK codes from folder name chars in ct.sym file,
         //  there should be maximal one corresponding to used compilation JDK
-        ctSymRootFolder()?.children?.maxOf {
+        ctSymRootFolder?.children?.maxOf {
             if (it.name == "META-INF") -1
             else it.name.substringBeforeLast("-modules").maxOf { char ->
                 char.toString().toIntOrNull(36) ?: -1
@@ -53,7 +85,11 @@ class CliJavaModuleFinder(
         } ?: -1
     }
 
-    private val isJDK12OrLater
+    val ctSymModules by lazy {
+        collectModuleRoots()
+    }
+
+    private val isCompilationJDK12OrLater
         get() = compilationJdkVersion >= 12
 
     private val useLastJdkApi: Boolean
@@ -65,10 +101,6 @@ class CliJavaModuleFinder(
 
     val allObservableModules: Sequence<JavaModule>
         get() = systemModules + userModules.values
-
-    val ctSymModules by lazy {
-         collectModuleRoots(releaseTarget)
-    }
 
     val systemModules: Sequence<JavaModule.Explicit>
         get() = if (useLastJdkApi) modulesRoot?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule) else
@@ -101,44 +133,41 @@ class CliJavaModuleFinder(
     private fun matchesRelease(fileName: String, release: Int) =
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
 
-    private fun hasCtSymFile() = ctSymFile != null && ctSymFile.isValid
-
     fun listFoldersForRelease(): List<VirtualFile> {
-        if (!hasCtSymFile()) return emptyList()
-        val root = ctSymRootFolder() ?: return emptyList()
-        return root.children.filter { matchesRelease(it.name, releaseTarget) }.flatMap {
-            if (isJDK12OrLater)
+        if (ctSymRootFolder == null) return emptyList()
+        return ctSymRootFolder!!.children.filter { matchesRelease(it.name, releaseTarget) }.flatMap {
+            if (isCompilationJDK12OrLater)
                 it.children.toList()
             else {
                 listOf(it)
             }
+        }.apply {
+            if (isEmpty()) reportError("'-Xrelease=${releaseTarget}' option is not supported by used JDK: ${jdkHome?.path}")
         }
     }
 
-    private fun collectModuleRoots(release: Int): Map<String, VirtualFile> {
-        if (!hasCtSymFile()) return emptyMap()
+    private fun collectModuleRoots(): Map<String, VirtualFile> {
         val result = mutableMapOf<String, VirtualFile>()
-        val root = ctSymRootFolder() ?: return emptyMap()
-
-
-        if (isJDK12OrLater) {
+        if (isCompilationJDK12OrLater) {
             listFoldersForRelease().forEach { modulesRoot ->
                 modulesRoot.findChild("module-info.sig")?.let {
                     result[modulesRoot.name] = modulesRoot
                 }
             }
         } else {
-            if (releaseTarget > 8) {
-                val moduleSigs = root.findChild(codeFor(release) + if (!isJDK12OrLater) "-modules" else "")
-                    ?: error("Can't find modules signatures in `ct.sym` file for `-release $release` in ${ctSymFile?.path}")
-                moduleSigs.children.forEach {
-                    result[it.name] = it
-                }
+            if (this.releaseTarget > 8 && ctSymRootFolder != null) {
+                ctSymRootFolder!!.findChild(codeFor(releaseTarget) + if (!isCompilationJDK12OrLater) "-modules" else "")?.apply {
+                    children.forEach {
+                        result[it.name] = it
+                    }
+                } ?: reportError("Can't find modules signatures in `ct.sym` file for `-Xrelease=$releaseTarget` in ${ctSymFile!!.path}")
             }
         }
         return result
     }
 
-    private fun ctSymRootFolder() = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)
-        ?.findFileByPath(ctSymFile!!.path + URLUtil.JAR_SEPARATOR)
+    private fun reportError(message: String): VirtualFile? {
+        messageCollector?.report(CompilerMessageSeverity.ERROR, message)
+        return null
+    }
 }

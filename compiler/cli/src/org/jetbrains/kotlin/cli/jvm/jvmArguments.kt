@@ -73,17 +73,26 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    val release = arguments.release
-    if (release != null) {
-        val value = release.toIntOrNull()
+    val releaseTarget = arguments.release
+    if (releaseTarget != null) {
+        val value = releaseTarget.toIntOrNull()
         if (value == null) {
             messageCollector.report(
                 ERROR,
-                "Can't parse value passed for `-Xrelease`: $release."
+                "Can't parse value passed for `-Xrelease`: $releaseTarget."
             )
         } else {
-            // TODO: check
-            put(JVMConfigurationKeys.RELEASE, value)
+            if (value < 6) {
+                messageCollector.report(
+                    ERROR,
+                    "`$value` is not valid value for `-Xrelease` flag."
+                )
+            } else {
+                //don't use release flag if it equals to compilation JDK version
+                if (value != getJavaVersion() || arguments.jdkHome != null) {
+                    put(JVMConfigurationKeys.RELEASE, value)
+                }
+            }
         }
     }
 
@@ -321,3 +330,6 @@ fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) 
 
 private val CompilerConfiguration.messageCollector: MessageCollector
     get() = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+private fun getJavaVersion(): Int =
+    System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6

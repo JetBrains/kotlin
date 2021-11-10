@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -59,7 +61,10 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit = { actual ->
-        KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "$moduleName.txt"), actual)
+        KotlinTestUtils.assertEqualsToFile(
+            File(testDataDirectory, "$moduleName.txt"),
+            getNormalizedCompilerOutput(actual, null, testDataPath).replace(System.getenv("JDK_11"), "\$JDK11")
+        )
     }
 
     private data class ModuleRunResult(val stdout: String, val stderr: String)
@@ -142,6 +147,21 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // Test that although we have moduleA in the module path, it's not in the module graph
         // because we did not provide -Xadd-modules=moduleA
         module("moduleB", listOf(module("moduleA")), addModules = emptyList())
+    }
+
+    fun testReleaseFlagWrongValue() {
+        // Test that although we have moduleA in the module path, it's not in the module graph
+        // because we did not provide -Xadd-modules=moduleA
+        module("module5", additionalKotlinArguments = listOf("-Xrelease=5"))
+        module("module12", additionalKotlinArguments = listOf("-Xrelease=12"))
+    }
+
+    fun testReleaseFlag() {
+        // Test that although we have moduleA in the module path, it's not in the module graph
+        // because we did not provide -Xadd-modules=moduleA
+        module("module")
+        module("module11", additionalKotlinArguments = listOf("-Xrelease=11"))
+        module("moduleSwing", additionalKotlinArguments = listOf("-Xrelease=9"))
     }
 
     fun testNamedReadsTransitive() {

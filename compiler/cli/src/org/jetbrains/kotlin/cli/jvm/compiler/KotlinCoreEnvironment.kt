@@ -239,15 +239,10 @@ class KotlinCoreEnvironment private constructor(
         val javaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
-        val jrtFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL)
         val releaseTarget = configuration.get(JVMConfigurationKeys.RELEASE, 0)
         val javaModuleFinder = CliJavaModuleFinder(
-            jdkHome?.path?.let { path ->
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL).findFileByPath(path)
-            },
-            jdkHome?.path?.let { path ->
-                jrtFileSystem?.findFileByPath(path + URLUtil.JAR_SEPARATOR)
-            },
+            jdkHome,
+            messageCollector,
             javaFileManager,
             project,
             releaseTarget

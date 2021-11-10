@@ -1,0 +1,2 @@
+error: `5` is not valid value for `-Xrelease` flag.
+COMPILATION_ERROR

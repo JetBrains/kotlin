@@ -1,0 +1,4 @@
+compiler/testData/javaModules/releaseFlag/moduleSwing/foo/Foo.kt:5:24: error: symbol is declared in module 'javafx.media' which current module does not depend on
+    val z: javax.swing.JFrame? = null
+                       ^
+COMPILATION_ERROR

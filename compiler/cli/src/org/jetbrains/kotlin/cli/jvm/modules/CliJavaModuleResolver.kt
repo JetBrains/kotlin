@@ -54,7 +54,8 @@ class CliJavaModuleResolver(
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
     private fun findJavaModule(file: VirtualFile): JavaModule? {
-        if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL) {
+        //TODO: proper root filtering is required
+        if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL /*|| file.extension == "sig"*/) {
             return systemModules.firstOrNull { module -> file in module }
         }
 

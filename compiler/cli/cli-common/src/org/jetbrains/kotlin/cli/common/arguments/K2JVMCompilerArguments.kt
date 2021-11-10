@@ -392,7 +392,7 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         value = "-Xrelease",
         valueDescription = "Supported versions depend on used JDK",
         description = """
-            Compile against specified JDK API. Supported versions depend on used JDK
+            Compile against specified JDK API. Supported versions depend on used JDK. 
         """
     )
     var release: String? by NullableStringFreezableVar(null)
