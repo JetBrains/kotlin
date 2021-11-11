@@ -95,8 +95,6 @@ fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
         intrinsicsSupport.reportSuspendTypeUnsupported()
     }
 
-    intrinsicsSupport.checkAnnotatedType(type)
-
     if (intrinsicsSupport.state.stableTypeOf) {
         if (intrinsicsSupport.isMutableCollectionType(type)) {
             v.invokestatic(REFLECTION, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)

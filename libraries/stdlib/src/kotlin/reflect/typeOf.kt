@@ -7,6 +7,9 @@ package kotlin.reflect
 
 /**
  * Returns a runtime representation of the given reified type [T] as an instance of [KType].
+ *
+ * Note that on JVM, the created type has no annotations ([KType.annotations] returns an empty list)
+ * even if the type in the source code is annotated. Support for type annotations might be added in a future version.
  */
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
