@@ -353,6 +353,7 @@ private val jvmFilePhases = listOf(
     rangeContainsLoweringPhase,
     forLoopsPhase,
     collectionStubMethodLowering,
+    singleAbstractMethodPhase,
     jvmInlineClassPhase,
     tailrecPhase,
     makePatchParentsPhase(1),
@@ -360,7 +361,6 @@ private val jvmFilePhases = listOf(
     enumWhenPhase,
     singletonReferencesPhase,
 
-    singleAbstractMethodPhase,
     assertionPhase,
     returnableBlocksPhase,
     sharedVariablesPhase,
