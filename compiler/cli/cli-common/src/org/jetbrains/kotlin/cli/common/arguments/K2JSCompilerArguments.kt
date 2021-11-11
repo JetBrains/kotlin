@@ -233,7 +233,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var wasm: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xwasm-debug-info", description = "Add debug info to WebAssembly compiled module")
-    var wasmDebug: Boolean by FreezableVar(false)
+    var wasmDebug: Boolean by FreezableVar(true)
 
     @Argument(
             value = "-Xwasm-launcher",
