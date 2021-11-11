@@ -1,5 +1,5 @@
 val test1: Function0<Unit>
-  field = local fun <anonymous>(): Int {
+  field = local fun <anonymous>() {
     42 /*~> Unit */
   }
 

@@ -408,8 +408,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
-        if (data is ResolutionMode.WithExpectedType && data.expectedTypeRef is FirResolvedTypeRef) {
-            // Top-down propagation: from the explicit type of the enclosing declaration to the block type
+        if (data is ResolutionMode.WithExpectedType && data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isUnitOrFlexibleUnit == true) {
+            // Unit-coercion
             block.resultType = data.expectedTypeRef
         } else {
             // Bottom-up propagation: from the return type of the last expression in the block to the block type

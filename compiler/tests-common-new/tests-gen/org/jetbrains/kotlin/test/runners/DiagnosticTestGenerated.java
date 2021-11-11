@@ -21082,6 +21082,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("incForAssignmentSmartCast.kt")
+            public void testIncForAssignmentSmartCast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/incForAssignmentSmartCast.kt");
+            }
+
+            @Test
             @TestMetadata("InconsistentGetSet.kt")
             public void testInconsistentGetSet() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/InconsistentGetSet.kt");

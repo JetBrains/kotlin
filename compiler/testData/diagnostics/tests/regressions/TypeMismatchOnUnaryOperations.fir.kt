@@ -3,10 +3,10 @@ fun main() {
     var v = 1
     val b : String = <!INITIALIZER_TYPE_MISMATCH!>v<!>;
     val f : String = <!INITIALIZER_TYPE_MISMATCH!>a!!<!>;
-    val g : String = v++;
-    val g1 : String = ++v;
-    val h : String = v--;
-    val h1 : String = --v;
+    val g : String = <!INITIALIZER_TYPE_MISMATCH!>v++<!>;
+    val g1 : String = <!INITIALIZER_TYPE_MISMATCH!>++v<!>;
+    val h : String = <!INITIALIZER_TYPE_MISMATCH!>v--<!>;
+    val h1 : String = <!INITIALIZER_TYPE_MISMATCH!>--v<!>;
     val i : String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>!true<!>;
     val j : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ true<!>;
     val k : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ bar@ true<!>;
