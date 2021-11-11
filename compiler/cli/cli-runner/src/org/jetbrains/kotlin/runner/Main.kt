@@ -144,7 +144,19 @@ object Main {
                 break
             }
             else {
-                setRunner(MainClassRunner(arg))
+                val workingDir = File(".")
+                val classFile = File(arg)
+
+                // Allow running class files with '.class' extension.
+                // In order to infer its fully qualified name, it should be located in the current working directory or a subdirectory of it
+                val className =
+                    if (arg.endsWith(".class") && classFile.exists() && classFile.canonicalPath.contains(workingDir.canonicalPath)) {
+                        classFile.canonicalFile.toRelativeString(workingDir.canonicalFile)
+                            .removeSuffix(".class")
+                            .replace(File.separatorChar, '.')
+                    } else arg
+
+                setRunner(MainClassRunner(className))
                 restAsArguments()
                 break
             }

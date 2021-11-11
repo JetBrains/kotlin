@@ -25,7 +25,7 @@ import java.net.URLClassLoader
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 
-class RunnerException(message: String) : RuntimeException(message)
+class RunnerException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
 abstract class AbstractRunner : Runner {
     protected abstract val className: String
@@ -40,6 +40,12 @@ abstract class AbstractRunner : Runner {
         }
         catch (e: ClassNotFoundException) {
             throw RunnerException("could not find or load main class $className")
+        } catch (e: NoClassDefFoundError) {
+            val message = """
+                could not find or load main class $className
+                Caused by: $e
+            """.trimIndent()
+            throw RunnerException(message)
         }
 
         val main = try {
