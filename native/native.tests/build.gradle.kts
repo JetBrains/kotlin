@@ -23,20 +23,19 @@ dependencies {
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
-val extGenerationRoot = projectDir.resolve("ext-tests-gen")
 
 sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
-        java.srcDirs(generationRoot.name, extGenerationRoot.name)
+        java.srcDirs(generationRoot.name)
     }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
     idea {
-        module.generatedSourceDirs.addAll(listOf(generationRoot, extGenerationRoot))
+        module.generatedSourceDirs.addAll(listOf(generationRoot))
     }
 }
 
@@ -86,15 +85,7 @@ if (kotlinBuildProperties.isKotlinNativeEnabled) {
     }
 }
 
-val generateOwnTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeBlackboxTestsKt") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
-}
-
-val generateExtTests by generator("org.jetbrains.kotlin.generators.tests.GenerateExtNativeBlackboxTestsKt") {
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeBlackboxTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
     dependsOn(":compiler:generateTestData")
-}
-
-val generateTests by tasks.creating<Task> {
-    dependsOn(generateOwnTests, generateExtTests)
 }

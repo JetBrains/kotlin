@@ -6,12 +6,28 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.blackboxtest.group.ExtTestCaseGroupProvider
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
+        // External box tests.
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "NativeExtBlackBoxTestGenerated",
+                annotations = listOf(
+                    annotation(CustomNativeBlackBoxTestCaseGroupProvider::class.java, ExtTestCaseGroupProvider::class.java)
+                )
+            ) {
+                model("codegen/box")
+                model("codegen/boxInline")
+            }
+        }
+
+        // Samples (how to utilize abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest> {
                 model("samples")
