@@ -348,6 +348,7 @@ publishing {
                 optionalDependencies.forEach { dependenciesNode.remove(it) }
             }
             configureKotlinPomAttributes(project, "Kotlin Test Multiplatform library")
+            suppressAllPomMetadataWarnings()
         }
         jvmTestFrameworks.forEach { framework ->
             create(framework, MavenPublication::class) {
@@ -356,6 +357,7 @@ publishing {
                 artifact(tasks.getByPath(":kotlin-test:kotlin-test-$framework:sourcesJar") as Jar)
                 artifact(emptyJavadocJar)
                 configureKotlinPomAttributes(project, "Kotlin Test Support for $framework")
+                suppressAllPomMetadataWarnings()
             }
         }
         create("js", MavenPublication::class) {
@@ -384,9 +386,6 @@ publishing {
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-annotations-common:sourcesJar") as Jar)
             artifact(emptyJavadocJar)
             configureKotlinPomAttributes(project, "Kotlin Test Common")
-        }
-        withType<MavenPublication> {
-            suppressAllPomMetadataWarnings()
         }
     }
 }
