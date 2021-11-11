@@ -12,7 +12,7 @@ fun main() {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("native/tests-blackbox/tests-gen", "native/tests-blackbox/testData") {
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest> {
                 model("samples")
                 model("samples2")

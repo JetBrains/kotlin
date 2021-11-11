@@ -14,7 +14,7 @@ fun main() {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("native/tests-blackbox/ext-tests-gen", "compiler/testData") {
+        testGroup("native/native.tests/ext-tests-gen", "compiler/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeExtBlackBoxTestGenerated",
                 annotations = listOf(
