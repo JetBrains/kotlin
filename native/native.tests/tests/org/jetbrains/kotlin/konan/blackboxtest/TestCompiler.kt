@@ -176,9 +176,6 @@ internal sealed interface TestCompilationResult {
             is DependencyFailures -> fail { describeDependencyFailures() }
         }
 
-        val TestCompilationResult.resultingArtifact: File
-            get() = assertSuccess().resultingArtifact
-
         private fun Failure.describeFailure() = when (this) {
             is CompilerFailure -> "Compilation failed.\n\n$loggedData"
             is UnexpectedFailure -> "Compilation failed with unexpected exception.\n\n$loggedData"
