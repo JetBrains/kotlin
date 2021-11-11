@@ -1069,77 +1069,77 @@ internal class NoExplicitReturnTypeInApiModeWarningImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NoExplicitReturnTypeInApiModeWarning(), KtAbstractFirDiagnostic<KtDeclaration>
 
-internal class InlineClassNotTopLevelImpl(
+internal class ValueClassNotTopLevelImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassNotTopLevel(), KtAbstractFirDiagnostic<KtDeclaration>
+) : KtFirDiagnostic.ValueClassNotTopLevel(), KtAbstractFirDiagnostic<KtDeclaration>
 
-internal class InlineClassNotFinalImpl(
+internal class ValueClassNotFinalImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassNotFinal(), KtAbstractFirDiagnostic<KtDeclaration>
+) : KtFirDiagnostic.ValueClassNotFinal(), KtAbstractFirDiagnostic<KtDeclaration>
 
-internal class AbsenceOfPrimaryConstructorForInlineClassImpl(
+internal class AbsenceOfPrimaryConstructorForValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbsenceOfPrimaryConstructorForInlineClass(), KtAbstractFirDiagnostic<KtDeclaration>
+) : KtFirDiagnostic.AbsenceOfPrimaryConstructorForValueClass(), KtAbstractFirDiagnostic<KtDeclaration>
 
 internal class InlineClassConstructorWrongParametersSizeImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.InlineClassConstructorWrongParametersSize(), KtAbstractFirDiagnostic<KtElement>
 
-internal class InlineClassConstructorNotFinalReadOnlyParameterImpl(
+internal class ValueClassConstructorNotFinalReadOnlyParameterImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassConstructorNotFinalReadOnlyParameter(), KtAbstractFirDiagnostic<KtParameter>
+) : KtFirDiagnostic.ValueClassConstructorNotFinalReadOnlyParameter(), KtAbstractFirDiagnostic<KtParameter>
 
-internal class PropertyWithBackingFieldInsideInlineClassImpl(
+internal class PropertyWithBackingFieldInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PropertyWithBackingFieldInsideInlineClass(), KtAbstractFirDiagnostic<KtProperty>
+) : KtFirDiagnostic.PropertyWithBackingFieldInsideValueClass(), KtAbstractFirDiagnostic<KtProperty>
 
-internal class DelegatedPropertyInsideInlineClassImpl(
+internal class DelegatedPropertyInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.DelegatedPropertyInsideInlineClass(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.DelegatedPropertyInsideValueClass(), KtAbstractFirDiagnostic<PsiElement>
 
-internal class InlineClassHasInapplicableParameterTypeImpl(
+internal class ValueClassHasInapplicableParameterTypeImpl(
     override val type: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassHasInapplicableParameterType(), KtAbstractFirDiagnostic<KtTypeReference>
+) : KtFirDiagnostic.ValueClassHasInapplicableParameterType(), KtAbstractFirDiagnostic<KtTypeReference>
 
-internal class InlineClassCannotImplementInterfaceByDelegationImpl(
+internal class ValueClassCannotImplementInterfaceByDelegationImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassCannotImplementInterfaceByDelegation(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.ValueClassCannotImplementInterfaceByDelegation(), KtAbstractFirDiagnostic<PsiElement>
 
-internal class InlineClassCannotExtendClassesImpl(
+internal class ValueClassCannotExtendClassesImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassCannotExtendClasses(), KtAbstractFirDiagnostic<KtTypeReference>
+) : KtFirDiagnostic.ValueClassCannotExtendClasses(), KtAbstractFirDiagnostic<KtTypeReference>
 
-internal class InlineClassCannotBeRecursiveImpl(
+internal class ValueClassCannotBeRecursiveImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InlineClassCannotBeRecursive(), KtAbstractFirDiagnostic<KtTypeReference>
+) : KtFirDiagnostic.ValueClassCannotBeRecursive(), KtAbstractFirDiagnostic<KtTypeReference>
 
-internal class ReservedMemberInsideInlineClassImpl(
+internal class ReservedMemberInsideValueClassImpl(
     override val name: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ReservedMemberInsideInlineClass(), KtAbstractFirDiagnostic<KtFunction>
+) : KtFirDiagnostic.ReservedMemberInsideValueClass(), KtAbstractFirDiagnostic<KtFunction>
 
-internal class SecondaryConstructorWithBodyInsideInlineClassImpl(
+internal class SecondaryConstructorWithBodyInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SecondaryConstructorWithBodyInsideInlineClass(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.SecondaryConstructorWithBodyInsideValueClass(), KtAbstractFirDiagnostic<PsiElement>
 
-internal class InnerClassInsideInlineClassImpl(
+internal class InnerClassInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InnerClassInsideInlineClass(), KtAbstractFirDiagnostic<KtDeclaration>
+) : KtFirDiagnostic.InnerClassInsideValueClass(), KtAbstractFirDiagnostic<KtDeclaration>
 
 internal class ValueClassCannotBeCloneableImpl(
     override val firDiagnostic: KtPsiDiagnostic,
