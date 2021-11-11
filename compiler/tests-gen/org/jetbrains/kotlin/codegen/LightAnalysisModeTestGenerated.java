@@ -5950,6 +5950,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/constructorCall/inlineFunInLocalClassConstructorCall.kt");
         }
 
+        @TestMetadata("kt49615.kt")
+        public void testKt49615() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/kt49615.kt");
+        }
+
+        @TestMetadata("kt49615a.kt")
+        public void testKt49615a() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/kt49615a.kt");
+        }
+
         @TestMetadata("loopInInlineFun.kt")
         public void testLoopInInlineFun() throws Exception {
             runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFun.kt");

@@ -7865,6 +7865,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt49615.kt")
+        public void testKt49615() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/kt49615.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49615a.kt")
+        public void testKt49615a() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/kt49615a.kt");
+        }
+
+        @Test
         @TestMetadata("loopInInlineFun.kt")
         public void testLoopInInlineFun() throws Exception {
             runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFun.kt");
