@@ -245,7 +245,7 @@ internal class AetherResolveSession(
     ): Settings {
         var main = result.effectiveSettings
         val files = File(System.getProperty("user.dir"))
-            .parentFile.listFiles(
+            .parentFile?.listFiles(
                 NameFileFilter("interpolated-settings.xml") as FileFilter
             )
         val settingsFile = files?.singleOrNull()
