@@ -66,7 +66,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
-                lowerExternalTopLevelClass(declaration)
+                lowerExternalClass(declaration)
             }
 
             override fun visitProperty(declaration: IrProperty) {
@@ -83,7 +83,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         })
     }
 
-    fun lowerExternalTopLevelClass(klass: IrClass) {
+    fun lowerExternalClass(klass: IrClass) {
         if (klass.kind == ClassKind.OBJECT)
             generateExternalObjectInstanceGetter(klass)
 
