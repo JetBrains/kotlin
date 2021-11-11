@@ -33,3 +33,17 @@ inline fun foo2(): Int {
 @Test fun runTest2() {
     assertEquals(2, bar2())
 }
+
+// Test for https://youtrack.jetbrains.com/issue/KT-49356.
+
+inline fun foo3(): Int {
+    return (return 3)
+}
+
+fun bar3(): Any {
+    return foo3()
+}
+
+@Test fun runTest3() {
+    assertEquals(3, bar3())
+}
