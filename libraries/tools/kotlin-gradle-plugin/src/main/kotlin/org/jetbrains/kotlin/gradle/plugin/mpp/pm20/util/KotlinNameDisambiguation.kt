@@ -52,6 +52,9 @@ private class DefaultKotlinFragmentNameDisambiguation(
 internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
     KotlinModuleFragment.disambiguateName(containingModule, fragmentName, simpleName)
 
+internal val KotlinModuleFragment.unambiguousNameInProject
+    get() = disambiguateName("")
+
 internal fun KotlinModuleFragment.Companion.disambiguateName(module: KotlinModule, fragmentName: String, simpleName: String) =
     lowerCamelCaseName(fragmentName, module.moduleIdentifier.moduleClassifier ?: KotlinGradleModule.MAIN_MODULE_NAME, simpleName)
 
