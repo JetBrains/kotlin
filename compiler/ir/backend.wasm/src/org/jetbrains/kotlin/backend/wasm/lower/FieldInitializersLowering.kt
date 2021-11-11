@@ -39,6 +39,10 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
 
             override fun visitField(declaration: IrField) {
                 super.visitField(declaration)
+
+                // External properties can be "initialized" with `= defineExternally`. Ignoring it.
+                if (declaration.isExternal) return
+
                 if (!declaration.isStatic) return
                 val initValue: IrExpression = declaration.initializer?.expression ?: return
 
