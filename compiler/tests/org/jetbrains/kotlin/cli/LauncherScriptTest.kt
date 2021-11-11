@@ -354,4 +354,104 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
             expectedExitCode = 1
         )
     }
+
+    fun testNoClassDefFoundErrorWhenClassInDefaultPackage() {
+        val testDir = File("$tmpdir/test")
+
+        runProcess("kotlinc", "$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
+        assertExists(File("${testDir.path}/DefaultPackageKt.class"))
+
+        runProcess(
+            "kotlin", "test.DefaultPackageKt", workDirectory = tmpdir, expectedExitCode = 1,
+            expectedStderr = """
+            error: could not find or load main class test.DefaultPackageKt
+            Caused by: java.lang.NoClassDefFoundError: test/DefaultPackageKt (wrong name: DefaultPackageKt)
+
+        """.trimIndent()
+        )
+    }
+
+    fun testNoClassDefFoundErrorWhenClassNotInDefaultPackage() {
+        val testDir = File("$tmpdir/test")
+
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        assertExists(File("${testDir.path}/HelloWorldKt.class"))
+
+        runProcess(
+            "kotlin", "HelloWorldKt", workDirectory = testDir, expectedExitCode = 1,
+            expectedStderr = """
+            error: could not find or load main class HelloWorldKt
+            Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
+
+        """.trimIndent()
+        )
+    }
+
+    /**
+     * A class whose full qualified name is `DefaultPackageKt` and is located in path `$tmpdir/test/DefaultPackageKt.class`
+     */
+    fun testRunClassFileWithExtensionInDefaultPackage() {
+        val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
+        val testDir = File("$tmpdir/test")
+
+        runProcess("kotlinc", "$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
+        assertExists(File("${testDir.path}/DefaultPackageKt.class"))
+
+        runProcess(
+            "kotlin", "test/DefaultPackageKt.class", workDirectory = tmpdir, expectedExitCode = 1,
+            expectedStderr = """
+            error: could not find or load main class test.DefaultPackageKt
+            Caused by: java.lang.NoClassDefFoundError: test/DefaultPackageKt (wrong name: DefaultPackageKt)
+            
+        """.trimIndent()
+        )
+
+        runProcess("kotlin", "DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
+        runProcess("kotlin", "./sub/../DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
+        runProcess(
+            "kotlin", "../DefaultPackageKt.class", expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class ../DefaultPackageKt.class\n",
+            workDirectory = subDir
+        )
+    }
+
+    /**
+     * A class whose full qualified name is `test.HelloWorldKt` and is located in path `$tmpdir/test/HelloWorldKt.class`
+     */
+    fun testRunClassFileWithExtensionNotInDefaultPackage() {
+        val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
+        val testDir = File("$tmpdir/test")
+
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        assertExists(File("${testDir.path}/HelloWorldKt.class"))
+
+        runProcess("kotlin", "test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+        runProcess(
+            "kotlin", "test.HelloWorldKt.class", expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class test.HelloWorldKt.class\n",
+            workDirectory = tmpdir
+        )
+        runProcess("kotlin", "test/sub/../../test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+        runProcess(
+            "kotlin", "./HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
+            expectedStderr = """
+            error: could not find or load main class HelloWorldKt
+            Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
+            
+        """.trimIndent()
+        )
+        runProcess(
+            "kotlin", "HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
+            expectedStderr = """
+            error: could not find or load main class HelloWorldKt
+            Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
+            
+        """.trimIndent()
+        )
+        runProcess(
+            "kotlin", "../HelloWorldKt.class", expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class ../HelloWorldKt.class\n",
+            workDirectory = subDir
+        )
+    }
 }
