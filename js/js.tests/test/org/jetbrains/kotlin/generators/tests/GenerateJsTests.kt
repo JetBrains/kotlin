@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxWasmTe
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractJsTranslatorWasmTest
 import org.jetbrains.kotlin.js.test.*
-import org.jetbrains.kotlin.js.test.AbstractIrJsTypeScriptExportTest
+import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
