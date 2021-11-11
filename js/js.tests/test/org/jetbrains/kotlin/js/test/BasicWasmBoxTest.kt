@@ -86,6 +86,11 @@ abstract class BasicWasmBoxTest(
                 }
             }
 
+            val additionalJsFile = filePath.removeSuffix(".kt") + ".js"
+            if (File(additionalJsFile).exists()) {
+                jsFilesBefore += additionalJsFile
+            }
+
             val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + "." + KotlinFileType.EXTENSION
             val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
 

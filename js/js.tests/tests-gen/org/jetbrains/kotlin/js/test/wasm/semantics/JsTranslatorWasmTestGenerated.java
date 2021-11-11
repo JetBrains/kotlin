@@ -130,4 +130,132 @@ public class JsTranslatorWasmTestGenerated extends AbstractJsTranslatorWasmTest 
             runTest("js/js.translator/testData/box/kotlin.test/simple.kt");
         }
     }
+
+    @TestMetadata("js/js.translator/testData/box/native")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Native extends AbstractJsTranslatorWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        @TestMetadata("accessToCompanionObjectFromInlineFun.kt")
+        public void testAccessToCompanionObjectFromInlineFun() throws Exception {
+            runTest("js/js.translator/testData/box/native/accessToCompanionObjectFromInlineFun.kt");
+        }
+
+        public void testAllFilesPresentInNative() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("castToNativeClassChecked.kt")
+        public void testCastToNativeClassChecked() throws Exception {
+            runTest("js/js.translator/testData/box/native/castToNativeClassChecked.kt");
+        }
+
+        @TestMetadata("castToNativeInterface.kt")
+        public void testCastToNativeInterface() throws Exception {
+            runTest("js/js.translator/testData/box/native/castToNativeInterface.kt");
+        }
+
+        @TestMetadata("castToNativeInterfaceChecked.kt")
+        public void testCastToNativeInterfaceChecked() throws Exception {
+            runTest("js/js.translator/testData/box/native/castToNativeInterfaceChecked.kt");
+        }
+
+        @TestMetadata("castToNullableNativeInterface.kt")
+        public void testCastToNullableNativeInterface() throws Exception {
+            runTest("js/js.translator/testData/box/native/castToNullableNativeInterface.kt");
+        }
+
+        @TestMetadata("castToTypeParamBoundedByNativeInterface.kt")
+        public void testCastToTypeParamBoundedByNativeInterface() throws Exception {
+            runTest("js/js.translator/testData/box/native/castToTypeParamBoundedByNativeInterface.kt");
+        }
+
+        @TestMetadata("class.kt")
+        public void testClass() throws Exception {
+            runTest("js/js.translator/testData/box/native/class.kt");
+        }
+
+        @TestMetadata("classObject.kt")
+        public void testClassObject() throws Exception {
+            runTest("js/js.translator/testData/box/native/classObject.kt");
+        }
+
+        @TestMetadata("kt2209.kt")
+        public void testKt2209() throws Exception {
+            runTest("js/js.translator/testData/box/native/kt2209.kt");
+        }
+
+        @TestMetadata("nestedElements.kt")
+        public void testNestedElements() throws Exception {
+            runTest("js/js.translator/testData/box/native/nestedElements.kt");
+        }
+
+        @TestMetadata("objectFunWithVararg.kt")
+        public void testObjectFunWithVararg() throws Exception {
+            runTest("js/js.translator/testData/box/native/objectFunWithVararg.kt");
+        }
+
+        @TestMetadata("passExtLambdaToNative.kt")
+        public void testPassExtLambdaToNative() throws Exception {
+            runTest("js/js.translator/testData/box/native/passExtLambdaToNative.kt");
+        }
+
+        @TestMetadata("passMemberOrExtFromNative.kt")
+        public void testPassMemberOrExtFromNative() throws Exception {
+            runTest("js/js.translator/testData/box/native/passMemberOrExtFromNative.kt");
+        }
+
+        @TestMetadata("passMemberOrExtToNative.kt")
+        public void testPassMemberOrExtToNative() throws Exception {
+            runTest("js/js.translator/testData/box/native/passMemberOrExtToNative.kt");
+        }
+
+        @TestMetadata("passTopLevelFunctionFromNative.kt")
+        public void testPassTopLevelFunctionFromNative() throws Exception {
+            runTest("js/js.translator/testData/box/native/passTopLevelFunctionFromNative.kt");
+        }
+
+        @TestMetadata("passTopLevelOrLocalFunctionToNative.kt")
+        public void testPassTopLevelOrLocalFunctionToNative() throws Exception {
+            runTest("js/js.translator/testData/box/native/passTopLevelOrLocalFunctionToNative.kt");
+        }
+
+        @TestMetadata("privateExternal.kt")
+        public void testPrivateExternal() throws Exception {
+            runTest("js/js.translator/testData/box/native/privateExternal.kt");
+        }
+
+        @TestMetadata("safeCastToNativeInterface.kt")
+        public void testSafeCastToNativeInterface() throws Exception {
+            runTest("js/js.translator/testData/box/native/safeCastToNativeInterface.kt");
+        }
+
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/native/secondaryConstructor.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("js/js.translator/testData/box/native/simple.kt");
+        }
+
+        @TestMetadata("simpleUndefined.kt")
+        public void testSimpleUndefined() throws Exception {
+            runTest("js/js.translator/testData/box/native/simpleUndefined.kt");
+        }
+
+        @TestMetadata("useClassFromInlineFun.kt")
+        public void testUseClassFromInlineFun() throws Exception {
+            runTest("js/js.translator/testData/box/native/useClassFromInlineFun.kt");
+        }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("js/js.translator/testData/box/native/vararg.kt");
+        }
+    }
 }
