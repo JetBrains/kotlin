@@ -220,6 +220,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val wasmStabilityNoWarn: Boolean
         get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
 
+    val experimentalKpmModelMapping: Boolean
+        get() = booleanProperty("kotlin.kpm.experimentalModelMapping") ?: false
+
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 

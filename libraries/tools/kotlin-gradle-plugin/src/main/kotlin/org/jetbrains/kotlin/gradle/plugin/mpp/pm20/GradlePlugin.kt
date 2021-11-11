@@ -14,8 +14,10 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
@@ -116,6 +118,13 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
+
+internal val Project.kpmModules: NamedDomainObjectContainer<KotlinGradleModule>
+    get() = when (val ext = project.topLevelExtensionOrNull) {
+        is KotlinPm20ProjectExtension -> ext.modules
+        is KotlinProjectExtension -> ext.kpmModules
+        else -> error("can't find Kotlin KPM modules in $project")
+    }
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
     val modules: NamedDomainObjectContainer<KotlinGradleModule> =
