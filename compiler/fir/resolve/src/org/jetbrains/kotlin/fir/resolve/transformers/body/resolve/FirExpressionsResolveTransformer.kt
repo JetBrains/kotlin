@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
@@ -603,7 +604,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         override fun <T> shouldRunCompletion(call: T): Boolean where T : FirStatement, T : FirResolvable = false
     }
 
-    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
+    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
         val type = coneTypeSafe<ConeClassLikeType>() ?: return this
         if (type.typeArguments.isNotEmpty()) return this
 
@@ -611,10 +612,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (firClass.typeParameters.isEmpty()) return this
 
         val originalType = argument.unwrapSmartcastExpression().typeRef.coneTypeSafe<ConeKotlinType>() ?: return this
-        val newType = components.computeRepresentativeTypeForBareType(type, originalType) ?: return buildErrorTypeRef {
-            source = this@withTypeArgumentsForBareType.source
-            diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
-        }
+        val newType = components.computeRepresentativeTypeForBareType(type, originalType)
+            ?: if (firClass.isLocal && (operation == FirOperation.AS || operation == FirOperation.SAFE_AS)) {
+                (firClass as FirClass).defaultType()
+            } else return buildErrorTypeRef {
+                source = this@withTypeArgumentsForBareType.source
+                diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
+            }
         return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
     }
 
@@ -632,7 +636,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
         }.transformTypeOperatorCallChildren()
 
-        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
+        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
             override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                 return element

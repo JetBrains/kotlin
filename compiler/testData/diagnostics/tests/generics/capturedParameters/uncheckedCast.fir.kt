@@ -6,11 +6,11 @@ fun <E> foo(x: Any, y: Any) : Any {
     }
 
     if (1 == 2) {
-        x as <!NO_TYPE_ARGUMENTS_ON_RHS!>C<!>
+        x <!UNCHECKED_CAST!>as C<!>
     }
 
     if (2 == 3) {
-        x as? <!NO_TYPE_ARGUMENTS_ON_RHS, NO_TYPE_ARGUMENTS_ON_RHS!>C<!>
+        x <!UNCHECKED_CAST!>as? C<!>
     }
 
     class Outer<F> {
