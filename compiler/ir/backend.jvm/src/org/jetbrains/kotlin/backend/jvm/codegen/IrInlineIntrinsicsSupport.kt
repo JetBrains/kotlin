@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
@@ -22,8 +20,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
@@ -114,21 +113,6 @@ class IrInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
-
-    override fun checkAnnotatedType(type: IrType) {
-        if (type.hasAnnotation(StandardNames.FqNames.extensionFunctionType)) {
-            context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_EXTENSION_FUNCTION_TYPE)
-        } else if (type.annotations.any { !it.symbol.owner.constructedClass.isSpecialAnnotation() }) {
-            context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_ANNOTATED_TYPE)
-        }
-    }
-
-    // TODO: consider inventing a safer way to do this
-    private fun IrClass.isSpecialAnnotation(): Boolean =
-        hasEqualFqName(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) ||
-                hasEqualFqName(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME) ||
-                hasEqualFqName(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME) ||
-                hasEqualFqName(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)
 
     override fun reportSuspendTypeUnsupported() {
         context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)

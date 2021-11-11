@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
@@ -221,8 +221,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(SYNCHRONIZED_ON_SUSPEND, "@Synchronized annotation is not applicable to suspend functions and lambdas");
 
         MAP.put(TYPEOF_SUSPEND_TYPE, "Suspend functional types are not supported in typeOf");
-        MAP.put(TYPEOF_EXTENSION_FUNCTION_TYPE, "Extension function types are not supported in typeOf");
-        MAP.put(TYPEOF_ANNOTATED_TYPE, "Annotated types are not supported in typeOf");
         MAP.put(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING);
     }
 
