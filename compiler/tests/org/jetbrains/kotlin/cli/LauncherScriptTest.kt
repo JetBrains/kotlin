@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.cli
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -88,6 +90,11 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     private val testDataDirectory: String
         get() = KtTestUtil.getTestDataPathBase() + "/launcher"
 
+    private fun kotlincInProcess(vararg args: String) {
+        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
+        if (exitCode != ExitCode.OK) error("Failed to compile: ${args.joinToString(" ")}\nOutput:\n$output")
+    }
+
     fun testKotlincSimple() {
         runProcess(
             "kotlinc",
@@ -116,8 +123,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlinJvmContextClassLoader() {
         val kotlinTestJar = File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-test.jar")
         assertTrue("kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}", kotlinTestJar.exists())
-        runProcess(
-            "kotlinc",
+        kotlincInProcess(
             "-cp", kotlinTestJar.path,
             "$testDataDirectory/contextClassLoaderTester.kt",
             "-d", tmpdir.path
@@ -140,11 +146,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testKotlinNoReflect() {
-        runProcess(
-            "kotlinc",
-            "$testDataDirectory/reflectionUsage.kt",
-            "-d", tmpdir.path
-        )
+        kotlincInProcess("$testDataDirectory/reflectionUsage.kt", "-d", tmpdir.path)
 
         runProcess(
             "kotlin",
@@ -156,11 +158,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
-        runProcess(
-            "kotlinc",
-            "$testDataDirectory/helloWorld.kt",
-            "-d", tmpdir.path
-        )
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
 
         runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
 
@@ -223,17 +221,11 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testLegacyAssert() {
-        runProcess(
-            "kotlinc",
-            "$testDataDirectory/legacyAssertDisabled.kt", "-Xassertions=legacy", "-d", tmpdir.path
-        )
+        kotlincInProcess("$testDataDirectory/legacyAssertDisabled.kt", "-Xassertions=legacy", "-d", tmpdir.path)
 
         runProcess("kotlin", "LegacyAssertDisabledKt", "-J-da:kotlin._Assertions", workDirectory = tmpdir)
 
-        runProcess(
-            "kotlinc",
-            "$testDataDirectory/legacyAssertEnabled.kt", "-Xassertions=legacy", "-d", tmpdir.path
-        )
+        kotlincInProcess("$testDataDirectory/legacyAssertEnabled.kt", "-Xassertions=legacy", "-d", tmpdir.path)
 
         runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
     }
@@ -266,7 +258,7 @@ println(42)
     }
 
     fun testProperty() {
-        runProcess("kotlinc", "$testDataDirectory/property.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/property.kt", "-d", tmpdir.path)
 
         runProcess(
             "kotlin", "PropertyKt", "-Dresult=OK",
@@ -303,7 +295,8 @@ println(42)
         )
         runProcess(
             "kotlin", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1, expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
+            expectedExitCode = 1,
+            expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
             "kotlin", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
@@ -322,7 +315,7 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
     }
 
     fun testHowToRunClassFile() {
-        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
 
         runProcess(
             "kotlin", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
@@ -358,7 +351,7 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
     fun testNoClassDefFoundErrorWhenClassInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
-        runProcess("kotlinc", "$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
+        kotlincInProcess("$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
         assertExists(File("${testDir.path}/DefaultPackageKt.class"))
 
         runProcess(
@@ -374,7 +367,7 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
     fun testNoClassDefFoundErrorWhenClassNotInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
-        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
         assertExists(File("${testDir.path}/HelloWorldKt.class"))
 
         runProcess(
@@ -394,7 +387,7 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
 
-        runProcess("kotlinc", "$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
+        kotlincInProcess("$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
         assertExists(File("${testDir.path}/DefaultPackageKt.class"))
 
         runProcess(
@@ -422,7 +415,7 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
 
-        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
         assertExists(File("${testDir.path}/HelloWorldKt.class"))
 
         runProcess("kotlin", "test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
