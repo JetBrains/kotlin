@@ -8,12 +8,13 @@
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension
+import org.jetbrains.kotlin.gradle.plugin.runMissingAndroidTargetProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.junit.Test
-import kotlin.test.assertNull
-import kotlin.test.assertSame
+import kotlin.test.*
 
 class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
+
     @Test
     fun `test android plugin without android target`() {
         project.plugins.apply("kotlin-multiplatform")
@@ -28,5 +29,28 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
         /* Previously failed with 'Collection is empty.' */
         assertNull(project.findAndroidTarget())
         assertSame(kotlin.android(), project.findAndroidTarget())
+    }
+
+    @Test
+    fun `test runMissingAndroidTargetProjectConfigurationHealthCheck`() {
+        project.plugins.apply("kotlin-multiplatform")
+        project.plugins.apply("android-library")
+
+        /* Arbitrary minimal Android setup */
+        val android = project.extensions.getByName("android") as LibraryExtension
+        android.compileSdkVersion(30)
+
+        kotlin.jvm()
+
+        // Missing android target -> expect warning message
+        var warningMessage: String? = null
+        project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = { warningMessage = it })
+        assertNotNull(warningMessage, "Expected warning message to be logged")
+
+        // Present android target -> expect no warning message anymore
+        kotlin.android()
+        project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = {
+            fail("Expected no warning message to be logged. Received: $it")
+        })
     }
 }
