@@ -45,10 +45,3 @@ tasks.named("compileKotlinWasm") {
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin-test"
     dependsOn(commonMainSources)
 }
-
-tasks.register<Jar>("sourcesJar") {
-    dependsOn(commonMainSources)
-    archiveClassifier.set("sources")
-    from(kotlin.sourceSets["commonMain"].kotlin)
-    from(kotlin.sourceSets["wasmMain"].kotlin)
-}
