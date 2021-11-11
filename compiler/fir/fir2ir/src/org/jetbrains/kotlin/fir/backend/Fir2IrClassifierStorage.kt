@@ -190,7 +190,10 @@ class Fir2IrClassifierStorage(
         return result
     }
 
+    // Note: this function is called exactly once, right after Fir2IrConverter finished f/o binding for regular classes
     fun processMembersOfClassesCreatedOnTheFly() {
+        // After the call of this function, members of local classes may be processed immediately
+        // Before the call it's not possible, because f/o binding for regular classes isn't done yet
         processMembersOfClassesOnTheFlyImmediately = true
         for ((klass, irClass) in localClassesCreatedOnTheFly) {
             processMembersOfClassCreatedOnTheFly(klass, irClass)
