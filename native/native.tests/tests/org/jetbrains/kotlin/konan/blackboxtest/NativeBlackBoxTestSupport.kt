@@ -28,14 +28,14 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
      */
     override fun beforeEach(extensionContext: ExtensionContext) = with(extensionContext) {
-        enclosingTestInstance.blackBoxTestProvider = getOrCreateBlackBoxTestProvider()
+        enclosingTestInstance.testRunProvider = getOrCreateTestRunProvider()
     }
 
     companion object {
         private val NAMESPACE = ExtensionContext.Namespace.create(NativeBlackBoxTestSupport::class.java.simpleName)
 
-        /** Creates a single instance of [TestProvider] per test class. */
-        private fun ExtensionContext.getOrCreateBlackBoxTestProvider(): TestProvider =
+        /** Creates a single instance of [TestRunProvider] per test class. */
+        private fun ExtensionContext.getOrCreateTestRunProvider(): TestRunProvider =
             root.getStore(NAMESPACE).getOrComputeIfAbsent(enclosingTestClass.sanitizedName) { sanitizedName ->
                 val globalEnvironment = getOrCreateGlobalEnvironment()
 
@@ -71,7 +71,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
                 val testCaseGroupProvider = requiredTestClass.createTestCaseGroupProvider(environment)
 
-                TestProvider(environment, testCaseGroupProvider)
+                TestRunProvider(environment, testCaseGroupProvider)
             }.cast()
 
         private fun ExtensionContext.getOrCreateGlobalEnvironment(): GlobalTestEnvironment =

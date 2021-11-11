@@ -11,9 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(NativeBlackBoxTestSupport::class)
 abstract class AbstractNativeBlackBoxTest {
-    internal lateinit var blackBoxTestProvider: TestProvider
+    internal lateinit var testRunProvider: TestRunProvider
 
     fun runTest(@TestDataFile testDataFilePath: String) {
-        blackBoxTestProvider.getTestByTestDataFile(getAbsoluteFile(testDataFilePath)).runAndVerify()
+        testRunProvider.getSingleTestRunForTestDataFile(getAbsoluteFile(testDataFilePath)).runAndVerify()
     }
 }

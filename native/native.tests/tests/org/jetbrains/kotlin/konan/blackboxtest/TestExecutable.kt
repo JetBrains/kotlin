@@ -8,6 +8,17 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
+internal class TestExecutable(
+    val executableFile: File,
+    val origin: TestOrigin.SingleTestDataFile,
+    val loggedCompilerCall: LoggedData.CompilerCall
+)
+
+internal class TestRun(
+    val executable: TestExecutable,
+    val runParameters: List<TestRunParameter>
+)
+
 internal sealed interface TestRunParameter {
     fun applyTo(programArgs: MutableList<String>)
 
@@ -31,13 +42,6 @@ internal sealed interface TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
     }
 }
-
-internal class TestExecutable(
-    val executableFile: File,
-    val runParameters: List<TestRunParameter>,
-    val origin: TestOrigin.SingleTestDataFile,
-    val loggedCompilerCall: LoggedData.CompilerCall
-)
 
 internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.has(): Boolean =
     firstIsInstanceOrNull<T>() != null

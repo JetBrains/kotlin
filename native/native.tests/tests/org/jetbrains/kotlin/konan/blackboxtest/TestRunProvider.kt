@@ -15,14 +15,14 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-internal class TestProvider(
+internal class TestRunProvider(
     private val environment: TestEnvironment,
     private val testCaseGroupProvider: TestCaseGroupProvider
 ) : ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory(environment)
     private val cachedCompilations: MutableMap<TestCompilationCacheKey, TestCompilation> = ConcurrentHashMap()
 
-    fun getTestByTestDataFile(testDataFile: File): TestExecutable {
+    fun getSingleTestRunForTestDataFile(testDataFile: File): TestRun {
         environment.assertNotDisposed()
 
         val testDataDir = testDataFile.parentFile
@@ -49,7 +49,9 @@ internal class TestProvider(
                 }
             }
         }
+
         val (executableFile, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+        val executable = TestExecutable(executableFile, testCase.origin, loggedCompilerCall)
 
         val runParameters = when (testCase.kind) {
             TestKind.STANDALONE_NO_TR -> listOfNotNull(
@@ -67,7 +69,7 @@ internal class TestProvider(
             )
         }
 
-        return TestExecutable(executableFile, runParameters, testCase.origin, loggedCompilerCall)
+        return TestRun(executable, runParameters)
     }
 
     override fun close() {

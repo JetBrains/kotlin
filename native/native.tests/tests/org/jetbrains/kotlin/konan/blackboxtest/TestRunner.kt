@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import kotlin.properties.Delegates
 
-internal fun TestExecutable.runAndVerify() {
-    val programArgs = mutableListOf<String>(executableFile.path)
+internal fun TestRun.runAndVerify() {
+    val programArgs = mutableListOf<String>(executable.executableFile.path)
     runParameters.forEach { it.applyTo(programArgs) }
 
-    val loggedParameters = LoggedData.TestRunParameters(loggedCompilerCall, origin, programArgs, runParameters)
+    val loggedParameters = LoggedData.TestRunParameters(executable.loggedCompilerCall, executable.origin, programArgs, runParameters)
 
     val startTimeMillis = System.currentTimeMillis()
-    val process = ProcessBuilder(programArgs).directory(executableFile.parentFile).start()
+    val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
     runParameters.get<TestRunParameter.WithInputData> {
         process.outputStream.write(inputDataFile.readBytes())
         process.outputStream.flush()
