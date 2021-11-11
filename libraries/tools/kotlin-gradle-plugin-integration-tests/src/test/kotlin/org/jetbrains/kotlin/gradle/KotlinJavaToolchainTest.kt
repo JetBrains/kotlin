@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 
-@SimpleGradlePluginTests
+@JvmGradlePluginTests
 @DisplayName("Kotlin Java Toolchain support")
 class KotlinJavaToolchainTest : KGPBaseTest() {
 

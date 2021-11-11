@@ -18,7 +18,7 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 
 @DisplayName("JVM tasks target validation")
-@SimpleGradlePluginTests
+@JvmGradlePluginTests
 class JvmTargetValidationTest : KGPBaseTest() {
 
     @DisplayName("Should produce warning if java and kotlin jvm targets are different")
