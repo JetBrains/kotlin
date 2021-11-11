@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.Language
 
-class ToolConfig(userProvidedTargetName: String?, private val flavor: KotlinPlatform) {
+class ToolConfig(userProvidedTargetName: String?, private val flavor: KotlinPlatform, private val propertyOverrides: Map<String, String>) {
 
     private val konanHome = KonanHomeProvider.determineKonanHome()
-    private val distribution = customerDistribution(konanHome)
+    private val distribution = Distribution(konanHome, propertyOverrides = propertyOverrides)
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)
     private val host = HostManager.host
