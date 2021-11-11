@@ -244,7 +244,8 @@ private class TestCompilationImpl(
             "-repo", environment.globalEnvironment.kotlinNativeHome.resolve("klib").path,
             "-output", expectedArtifactFile.path,
             "-Xskip-prerelease-check",
-            "-Xverify-ir"
+            "-Xverify-ir",
+            "-Xbinary=runtimeAssertionsMode=panic"
         )
 
         addFlattened(dependencies.libraries) { library -> listOf("-l", library.resultingArtifactPath) }
