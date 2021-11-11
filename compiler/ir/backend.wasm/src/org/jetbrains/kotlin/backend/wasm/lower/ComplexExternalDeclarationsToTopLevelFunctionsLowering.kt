@@ -148,6 +148,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         val parent = klass.parent
         if (parent is IrClass) {
             appendExternalClassReference(parent)
+            if (klass.isCompanion) {
+                // Reference to external companion object is reference to its parent class
+                return
+            }
             append('.')
         }
         append(klass.getJsNameOrKotlinName())
