@@ -734,12 +734,14 @@ standaloneTest("hello2") {
 }
 
 standaloneTest("readlnOrNull_empty") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readlnOrNull_empty.kt"
 }
 
 standaloneTest("readln_empty") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useTestData = true
     outputChecker = { s -> s.contains("ReadAfterEOFException") }
     expectedExitStatusChecker = { it != 0 }
@@ -747,42 +749,49 @@ standaloneTest("readln_empty") {
 }
 
 standaloneTest("readln_alone_CR") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_alone_CR.kt"
 }
 
 standaloneTest("readln_empty_new_line") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_empty_new_line.kt"
 }
 
 standaloneTest("readln_multiline") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_multiline.kt"
 }
 
 standaloneTest("readln_CR_and_CRLF") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_CR_and_CRLF.kt"
 }
 
 standaloneTest("readln_long_line") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_long_line.kt"
 }
 
 standaloneTest("readln_cyrillic") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_cyrillic.kt"
 }
 
 standaloneTest("readln_multiple_empty_new_lines") {
+    enabled = (project.testTarget != 'wasm32') // KT-48738
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readln_multiple_empty_new_lines.kt"
