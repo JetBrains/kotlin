@@ -73,8 +73,12 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
     compilations.all {
         listOfNotNull(
             it.compileDependencyConfigurationName,
-            it.defaultSourceSet.apiMetadataConfigurationName,
-            it.defaultSourceSet.implementationMetadataConfigurationName,
+            if (!PropertiesProvider(project).experimentalKpmModelMapping)
+                it.defaultSourceSet.apiMetadataConfigurationName
+            else null,
+            if (!PropertiesProvider(project).experimentalKpmModelMapping)
+                it.defaultSourceSet.implementationMetadataConfigurationName
+            else null,
             (it as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
 
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely

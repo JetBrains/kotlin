@@ -358,40 +358,41 @@ class KotlinMetadataTargetConfigurator :
                 }
             )
 
-            (sourceSet as DefaultKotlinSourceSet).dependencyTransformations[scope] = granularMetadataTransformation
-
-            val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
-
-            granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
+            if (sourceSet is DefaultKotlinSourceSet)
+                sourceSet.dependencyTransformations[scope] = granularMetadataTransformation
 
             val sourceSetDependencyConfigurationByScope = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
 
-            // All source set dependencies except for compileOnly agree in versions with all other published runtime dependencies:
-            if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                if (isSourceSetPublished) {
+            if (isSourceSetPublished) {
+                if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
                     project.addExtendsFromRelation(
                         ALL_RUNTIME_METADATA_CONFIGURATION_NAME,
                         sourceSetDependencyConfigurationByScope.name
                     )
                 }
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_RUNTIME_METADATA_CONFIGURATION_NAME
-                )
-            }
-
-            // All source set dependencies except for runtimeOnly agree in versions with all other published compile dependencies:
-            if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
-                if (isSourceSetPublished) {
+                if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
                     project.addExtendsFromRelation(
                         ALL_COMPILE_METADATA_CONFIGURATION_NAME,
                         sourceSetDependencyConfigurationByScope.name
                     )
                 }
-                project.addExtendsFromRelation(
-                    sourceSetMetadataConfigurationByScope.name,
-                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                )
+            }
+
+            if (!PropertiesProvider(project).experimentalKpmModelMapping) {
+                val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
+                granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
+                if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
+                    project.addExtendsFromRelation(
+                        sourceSetMetadataConfigurationByScope.name,
+                        ALL_COMPILE_METADATA_CONFIGURATION_NAME
+                    )
+                }
+                if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
+                    project.addExtendsFromRelation(
+                        sourceSetMetadataConfigurationByScope.name,
+                        ALL_COMPILE_METADATA_CONFIGURATION_NAME
+                    )
+                }
             }
         }
     }
