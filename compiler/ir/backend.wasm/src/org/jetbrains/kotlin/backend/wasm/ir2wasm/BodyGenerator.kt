@@ -267,6 +267,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             val klassId = context.referenceClassId(klass.symbol)
 
             body.buildConstI32Symbol(klassId)
+            body.buildConstI32(0) // Any::_hashCode
             generateExpression(call.getValueArgument(0)!!)
             body.buildGetGlobal(context.referenceClassRTT(klass.symbol))
             body.buildStructNew(structTypeName)

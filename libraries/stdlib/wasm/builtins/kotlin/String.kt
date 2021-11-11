@@ -59,15 +59,14 @@ public class String private constructor(internal val chars: CharArray) : Compara
 
     public override fun toString(): String = this
 
-    private var cachedHash: Int = 0
     public override fun hashCode(): Int {
-        if (cachedHash != 0 || this.isEmpty())
-            return cachedHash
+        if (_hashCode != 0 || this.isEmpty())
+            return _hashCode
         var hash = 0
         for (c in chars)
             hash = 31 * hash + c.toInt()
-        cachedHash = hash
-        return cachedHash
+        _hashCode = hash
+        return _hashCode
     }
 }
 
