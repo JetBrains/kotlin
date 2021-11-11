@@ -65,6 +65,10 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             description = "save temporary files to the given directory")
     val kotlincOption by argParser.option(ArgType.String, "Xkotlinc-option",
             description = "additional kotlinc compiler option").multiple()
+    val overrideKonanProperties by argParser.option(ArgType.String,
+            fullName = "Xoverride-konan-properties",
+            description = "Override konan.properties.values"
+        ).multiple().delimiter(";")
 
     companion object {
         val DEFAULT_MODE = GenerationMode.METADATA

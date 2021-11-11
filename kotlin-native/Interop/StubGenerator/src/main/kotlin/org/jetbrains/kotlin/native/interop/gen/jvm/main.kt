@@ -214,7 +214,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         cinteropArguments.argParser.printError("-def or -pkg should be provided!")
     }
 
-    val tool = prepareTool(cinteropArguments.target, flavor)
+    val tool = prepareTool(cinteropArguments.target, flavor, parseKeyValuePairs(cinteropArguments.overrideKonanProperties))
 
     val def = DefFile(defFile, tool.substitutions)
     val isLinkerOptsSetByUser = (cinteropArguments.linkerOpts.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
@@ -453,8 +453,8 @@ private fun resolveDependencies(
     ).getFullList(TopologicalLibraryOrder)
 }
 
-internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
-    val tool = ToolConfig(target, flavor)
+internal fun prepareTool(target: String?, flavor: KotlinPlatform, propertyOverrides: Map<String, String> = emptyMap()): ToolConfig {
+    val tool = ToolConfig(target, flavor, propertyOverrides)
     tool.downloadDependencies()
 
     System.load(tool.libclang)
@@ -527,3 +527,15 @@ internal fun buildNativeLibrary(
             headerFilter = headerFilter
     )
 }
+
+private fun parseKeyValuePairs(
+    argumentValue: List<String>,
+): Map<String, String> = argumentValue.mapNotNull {
+    val keyValueSeparatorIndex = it.indexOf('=')
+    if (keyValueSeparatorIndex > 0) {
+        it.substringBefore('=') to it.substringAfter('=')
+    } else {
+        warn("incorrect property format: expected '<key>=<value>', got '$it'")
+        null
+    }
+}.toMap()
