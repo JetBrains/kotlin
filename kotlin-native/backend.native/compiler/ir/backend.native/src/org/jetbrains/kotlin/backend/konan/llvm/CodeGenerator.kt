@@ -1516,12 +1516,16 @@ internal abstract class FunctionGenerationContext(
                 check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
                 call(context.llvm.initRuntimeIfNeeded, emptyList())
             }
-            handlePrologueExperimentalMM()
+            if (switchToRunnable) {
+                switchThreadState(Runnable)
+            }
+
             if (needSlots || needCleanupLandingpadAndLeaveFrame) {
                 call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             } else {
                 check(!setCurrentFrameIsCalled)
             }
+            handlePrologueExperimentalMM()
             resetDebugLocation()
             br(entryBb)
         }
@@ -1576,9 +1580,9 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun handlePrologueExperimentalMM() {
-        if (switchToRunnable) {
+        /*if (switchToRunnable) {
             switchThreadState(Runnable)
-        }
+        }*/
         if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
             call(context.llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
         }
