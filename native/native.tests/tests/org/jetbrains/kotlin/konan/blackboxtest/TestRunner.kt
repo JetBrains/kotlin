@@ -12,7 +12,7 @@ internal fun TestRun.runAndVerify() {
     val programArgs = mutableListOf<String>(executable.executableFile.path)
     runParameters.forEach { it.applyTo(programArgs) }
 
-    val loggedParameters = LoggedData.TestRunParameters(executable.loggedCompilerCall, executable.origin, programArgs, runParameters)
+    val loggedParameters = LoggedData.TestRunParameters(executable.loggedCompilerCall, origin, programArgs, runParameters)
 
     val startTimeMillis = System.currentTimeMillis()
     val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()

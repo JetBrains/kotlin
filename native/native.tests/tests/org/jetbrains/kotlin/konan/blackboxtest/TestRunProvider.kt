@@ -51,7 +51,7 @@ internal class TestRunProvider(
         }
 
         val (executableFile, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
-        val executable = TestExecutable(executableFile, testCase.origin, loggedCompilerCall)
+        val executable = TestExecutable(executableFile, loggedCompilerCall)
 
         val runParameters = when (testCase.kind) {
             TestKind.STANDALONE_NO_TR -> listOfNotNull(
@@ -69,7 +69,7 @@ internal class TestRunProvider(
             )
         }
 
-        return TestRun(executable, runParameters)
+        return TestRun(executable, runParameters, testCase.origin)
     }
 
     override fun close() {

@@ -10,13 +10,13 @@ import java.io.File
 
 internal class TestExecutable(
     val executableFile: File,
-    val origin: TestOrigin.SingleTestDataFile,
     val loggedCompilerCall: LoggedData.CompilerCall
 )
 
 internal class TestRun(
     val executable: TestExecutable,
-    val runParameters: List<TestRunParameter>
+    val runParameters: List<TestRunParameter>,
+    val origin: TestOrigin.SingleTestDataFile
 )
 
 internal sealed interface TestRunParameter {
