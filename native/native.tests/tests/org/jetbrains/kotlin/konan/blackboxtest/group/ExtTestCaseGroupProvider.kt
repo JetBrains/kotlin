@@ -121,20 +121,9 @@ private class ExtTestDataFile(
 ) {
     private val structure by lazy {
         structureFactory.ExtTestDataFileStructure(testDataFile) { line ->
-            if (DIRECTIVE_REGEX.matches(line)) {
-                // Remove all directives from test files. These directives are not needed anymore as they are already read and stored
-                // in [settings] property. Moreover, these directives if left in test file can potentially conflict with Native-specific
-                // test directives to be added (see [TestDirectives] for details). Also, they will create unnecessary "noise".
-                // Examples:
-                //   // !LANGUAGE: +NewInference
-                //   // LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-                //   // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-                null
-            } else {
-                // Remove all diagnostic parameters from the text. Examples:
-                //   <!NO_TAIL_CALLS_FOUND!>, <!NON_TAIL_RECURSIVE_CALL!>, <!>.
-                line.replace(DIAGNOSTIC_REGEX) { match -> match.groupValues[1] }
-            }
+            // Remove all diagnostic parameters from the text. Examples:
+            //   <!NO_TAIL_CALLS_FOUND!>, <!NON_TAIL_RECURSIVE_CALL!>, <!>.
+            line.replace(DIAGNOSTIC_REGEX) { match -> match.groupValues[1] }
         }
     }
 
@@ -627,7 +616,6 @@ private class ExtTestDataFile(
         private fun Directives.multiValues(key: String, predicate: (String) -> Boolean = { true }): Set<String> =
             listValues(key)?.flatMap { it.split(' ') }?.filter(predicate)?.toSet().orEmpty()
 
-        private val DIRECTIVE_REGEX = Regex("^// !?[A-Z_]+(:?\\s+.*|\\s*)$")
         private val DIAGNOSTIC_REGEX = Regex("<!.*?!>(.*?)<!>")
 
         private const val THREAD_LOCAL_ANNOTATION = "@kotlin.native.ThreadLocal"
@@ -654,10 +642,7 @@ private typealias SharedModuleCache = (moduleName: String, generator: SharedModu
 private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
-    inner class ExtTestDataFileStructure(
-        originalTestDataFile: File,
-        initialCleanUpTransformation: (String) -> String? // Line -> transformed line (or null if the line should be omitted).
-    ) {
+    inner class ExtTestDataFileStructure(originalTestDataFile: File, initialCleanUpTransformation: (String) -> String) {
         init {
             assertNotDisposed()
         }
@@ -818,7 +803,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             ExtTestModule(name, dependencies, friends)
     }
 
-    private inner class FilesAndModules(originalTestDataFile: File, initialCleanUpTransformation: (String) -> String?) {
+    private inner class FilesAndModules(originalTestDataFile: File, initialCleanUpTransformation: (String) -> String) {
         private val testFileFactory = ExtTestFileFactory()
         private val generatedFiles = TestFiles.createTestFiles(DEFAULT_FILE_NAME, originalTestDataFile.readText(), testFileFactory)
 
@@ -826,7 +811,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             // Clean up contents of every individual test file. Important: This should be done only after parsing testData file,
             // because parsing of testData file relies on certain directives which could be removed by the transformation.
             generatedFiles.forEach { file ->
-                file.text = file.text.lineSequence().mapNotNull(initialCleanUpTransformation).joinToString("\n")
+                file.text = file.text.lineSequence().joinToString("\n", transform = initialCleanUpTransformation)
             }
 
             val modules = generatedFiles.map { it.module }.associateBy { it.name }
