@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.invoke.MethodType
 
+val intrinsicConstEvaluationAnnotation = FqName("kotlin.internal.IntrinsicConstEvaluation")
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
 val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 val contractsDslAnnotation = FqName("kotlin.internal.ContractsDsl")
@@ -302,5 +303,5 @@ internal fun IrGetValue.isAccessToObject(): Boolean {
 }
 
 internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {
-    return this is IrSimpleFunction && this.correspondingPropertySymbol?.owner?.backingField != null
+    return this is IrSimpleFunction && this.correspondingPropertySymbol?.owner?.backingField?.initializer != null
 }

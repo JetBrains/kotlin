@@ -32,7 +32,7 @@ class IrCompileTimeChecker(
     override fun visitElement(element: IrElement, data: Nothing?) = false
 
     private fun visitStatements(statements: List<IrStatement>, data: Nothing?): Boolean {
-        if (mode == EvaluationMode.ONLY_BUILTINS) {
+        if (mode == EvaluationMode.ONLY_BUILTINS || mode == EvaluationMode.ONLY_INTRINSIC_CONST) {
             val statement = statements.singleOrNull() ?: return false
             return statement.accept(this, data)
         }
@@ -203,7 +203,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): Boolean {
-        if (mode == EvaluationMode.ONLY_BUILTINS) return false
+        if (mode == EvaluationMode.ONLY_BUILTINS || mode == EvaluationMode.ONLY_INTRINSIC_CONST) return false
         val isLambda = expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
         val isCompileTime = mode.canEvaluateFunction(expression.function)
         return expression.function.asVisited {
@@ -245,7 +245,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitTry(aTry: IrTry, data: Nothing?): Boolean {
-        if (mode == EvaluationMode.ONLY_BUILTINS) return false
+        if (mode == EvaluationMode.ONLY_BUILTINS || mode == EvaluationMode.ONLY_INTRINSIC_CONST) return false
         if (!aTry.tryResult.accept(this, data)) return false
         if (aTry.finallyExpression != null && aTry.finallyExpression?.accept(this, data) == false) return false
         return aTry.catches.all { it.result.accept(this, data) }
@@ -273,7 +273,7 @@ class IrCompileTimeChecker(
             when (this) {
                 EvaluationMode.FULL -> true
                 EvaluationMode.WITH_ANNOTATIONS -> (expression.symbol.owner as IrClass).isMarkedAsCompileTime()
-                EvaluationMode.ONLY_BUILTINS -> false
+                EvaluationMode.ONLY_BUILTINS, EvaluationMode.ONLY_INTRINSIC_CONST -> false
             }
         }
     }

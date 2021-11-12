@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
-import org.jetbrains.kotlin.ir.interpreter.isUnsigned
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
@@ -69,6 +68,17 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
                 else -> fqName in allowedExtensionFunctions
             }
         }
+    },
+
+    ONLY_INTRINSIC_CONST(mustCheckBody = false) {
+        override fun canEvaluateFunction(function: IrFunction, expression: IrCall?): Boolean {
+            return function.isCompileTimeProperty() || function.isMarkedAsIntrinsicConst()
+        }
+
+        private fun IrDeclaration?.isCompileTimeProperty(): Boolean {
+            val property = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: return false
+            return property.isConst || property.isMarkedAsIntrinsicConst()
+        }
     };
 
     abstract fun canEvaluateFunction(function: IrFunction, expression: IrCall? = null): Boolean
@@ -83,6 +93,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     )
 
     fun IrDeclaration.isMarkedAsCompileTime() = isMarkedWith(compileTimeAnnotation)
+    protected fun IrDeclaration.isMarkedAsIntrinsicConst() = isMarkedWith(intrinsicConstEvaluationAnnotation)
     private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
     private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
     protected fun IrDeclaration.isCompileTimeTypeAlias() = this.parentClassOrNull?.fqName in compileTimeTypeAliases
