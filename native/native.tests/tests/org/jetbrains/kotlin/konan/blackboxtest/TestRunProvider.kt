@@ -22,7 +22,7 @@ internal class TestRunProvider(
     private val compilationFactory = TestCompilationFactory(environment)
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
-    fun getSingleTestRunForTestDataFile(testDataFile: File): TestRun {
+    fun getSingleTestRun(testDataFile: File): TestRun {
         environment.assertNotDisposed()
 
         val testDataDir = testDataFile.parentFile

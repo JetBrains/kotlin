@@ -14,6 +14,6 @@ abstract class AbstractNativeBlackBoxTest {
     internal lateinit var testRunProvider: TestRunProvider
 
     fun runTest(@TestDataFile testDataFilePath: String) {
-        testRunProvider.getSingleTestRunForTestDataFile(getAbsoluteFile(testDataFilePath)).runAndVerify()
+        testRunProvider.getSingleTestRun(getAbsoluteFile(testDataFilePath)).runAndVerify()
     }
 }
