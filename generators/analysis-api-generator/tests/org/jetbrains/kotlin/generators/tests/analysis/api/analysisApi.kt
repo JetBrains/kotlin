@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionT
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.smartCastProvider.AbstractKtFe10HLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationOverridesProvider.AbstractKtFe10OverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationRenderer.AbstractKtFe10RendererTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeCreator.AbstractKtFe10TypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10HasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.compileTimeConstantProvider.AbstractKtFe10CompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.Abstract
 import org.jetbrains.kotlin.analysis.api.fir.components.smartCastProvider.AbstractFirHLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationOverridesProvider.AbstractFirOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationRenderer.AbstractFirRendererTest
+import org.jetbrains.kotlin.analysis.api.fir.components.typeCreator.AbstractFirTypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.fir.components.typeInfoProvider.AbstractFirFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirHasCommonSubtypeTest
@@ -180,6 +182,12 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("symbolDeclarationRenderer") {
         test(fir = AbstractFirRendererTest::class, fe10 = AbstractKtFe10RendererTest::class) {
             model("renderDeclaration")
+        }
+    }
+
+    component("typeCreator") {
+        test(fir = AbstractFirTypeParameterTypeTest::class, fe10 = AbstractKtFe10TypeParameterTypeTest::class) {
+            model("typeParameter")
         }
     }
 
