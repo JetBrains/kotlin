@@ -1,7 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1283
 // MODULE_KIND: COMMON_JS
 // FUNCTION_CALLED_TIMES: require count=2 TARGET_BACKENDS=JS
-// FUNCTION_CALLED_TIMES: require count=3 IGNORED_BACKENDS=JS
 
 @JsModule("lib")
 external fun f(x: Int): String
