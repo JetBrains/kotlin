@@ -33,10 +33,11 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
     }
 
     private fun processJsProgram(program: JsProgram, psiFiles: List<String>, targetBackend: TargetBackend) {
+        psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it, targetBackend) }
+
         // TODO: For now the IR backend generates JS code that doesn't pass verification,
         // TODO: so we temporarily disabled AST verification.
         if (targetBackend == TargetBackend.JS) {
-            psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it, targetBackend) }
             program.verifyAst()
         }
     }
