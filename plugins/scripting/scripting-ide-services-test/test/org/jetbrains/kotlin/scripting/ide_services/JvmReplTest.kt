@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import java.io.File
 import kotlin.io.path.*
+import kotlin.reflect.full.isSubclassOf
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
@@ -322,6 +323,20 @@ class JvmIdeServicesTest : TestCase() {
                 )
 
                 assertEvalResult(repl, """ "a" to "a" """, "aa")
+            }
+    }
+
+    fun testAnonymousObjectReflection() {
+        JvmTestRepl()
+            .use { repl ->
+                assertEvalResult(repl, "42", 42)
+                assertEvalUnit(repl, "val sim = object : ArrayList<String>() {}")
+
+                val compiledSnippet = checkCompile(repl, "sim")
+                val evalResult = repl.eval(compiledSnippet!!)
+
+                val a = (evalResult.valueOrThrow().get().result as ResultValue.Value).value!!
+                assertTrue(a::class.isSubclassOf(List::class))
             }
     }
 

@@ -17,4 +17,8 @@ public class ScriptPriorities {
         Integer priority = script.getUserData(PRIORITY_KEY);
         return priority == null ? 0 : priority;
     }
+
+    public static boolean isReplScript(@NotNull KtScript script) {
+        return script.getUserData(PRIORITY_KEY) != null;
+    }
 }

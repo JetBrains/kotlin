@@ -1204,14 +1204,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
         return Method(name, desc)
     }
 
-    fun mapScriptSignature(script: ScriptDescriptor, importedScripts: List<ScriptDescriptor>): JvmMethodSignature {
+    fun mapScriptSignature(script: ScriptDescriptor): JvmMethodSignature {
         val sw = BothSignatureWriter(BothSignatureWriter.Mode.METHOD)
 
         sw.writeParametersStart()
-
-        if (importedScripts.isNotEmpty()) {
-            writeParameter(sw, script.module.builtIns.array.defaultType, null)
-        }
 
         for (valueParameter in script.unsubstitutedPrimaryConstructor.valueParameters) {
             writeParameter(sw, valueParameter.type, null)/* callableDescriptor = */
