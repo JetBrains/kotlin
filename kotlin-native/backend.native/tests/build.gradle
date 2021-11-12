@@ -3180,6 +3180,10 @@ standaloneTest("lambda14") {
     flags = ['-tr']
 }
 
+task lambda_kt49360(type: KonanLocalTest) {
+    source = "codegen/lambda/lambda_kt49360.kt"
+}
+
 task funInterface_implIsNotFunction(type: KonanLocalTest) {
     source = "codegen/funInterface/implIsNotFunction.kt"
 }

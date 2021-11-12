@@ -39,6 +39,11 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         runTest("compiler/testData/ir/sourceRanges/comments.kt");
     }
 
+    @TestMetadata("elvis.kt")
+    public void testElvis() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/elvis.kt");
+    }
+
     @TestMetadata("kt17108.kt")
     public void testKt17108() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
@@ -47,6 +52,11 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
     @TestMetadata("kt24258.kt")
     public void testKt24258() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/kt24258.kt");
+    }
+
+    @TestMetadata("postfixIncrementDecrement.kt")
+    public void testPostfixIncrementDecrement() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
     }
 
     @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
