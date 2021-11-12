@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = { 42 -> (value: kotlin.Int) }
-targetFunction = <setter>(<dispatch receiver>: KtClass, value: kotlin.Int): kotlin.Unit
-substitutor = <empty substitutor>
