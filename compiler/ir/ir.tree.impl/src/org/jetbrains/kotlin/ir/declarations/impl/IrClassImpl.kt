@@ -41,14 +41,12 @@ open class IrClassImpl(
     override val isInline: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
-    override val source: SourceElement = SourceElement.NO_SOURCE
+    override val source: SourceElement = SourceElement.NO_SOURCE,
+    override val factory: IrFactory = IrFactoryImpl
 ) : IrClass() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

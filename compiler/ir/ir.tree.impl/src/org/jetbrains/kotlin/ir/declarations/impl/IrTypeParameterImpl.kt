@@ -36,14 +36,12 @@ class IrTypeParameterImpl(
     override val name: Name,
     override val index: Int,
     override val isReified: Boolean,
-    override val variance: Variance
+    override val variance: Variance,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrTypeParameter() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

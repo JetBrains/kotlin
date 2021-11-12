@@ -42,13 +42,11 @@ class IrConstructorImpl(
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource? = null,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrConstructor() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

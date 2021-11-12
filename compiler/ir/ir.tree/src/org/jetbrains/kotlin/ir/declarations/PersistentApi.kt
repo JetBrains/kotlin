@@ -35,3 +35,7 @@ open class StageController(open val currentStage: Int = 0) {
 
     open val currentDeclaration: IrDeclaration? get() = null
 }
+
+interface IdSignatureRetriever {
+    fun declarationSignature(declaration: IrDeclaration): IdSignature?
+}
