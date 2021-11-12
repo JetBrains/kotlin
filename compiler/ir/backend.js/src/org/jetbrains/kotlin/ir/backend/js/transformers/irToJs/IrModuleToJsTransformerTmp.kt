@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.CompilerResult
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -170,7 +167,7 @@ class IrModuleToJsTransformerTmp(
 
         val statements = result.declarations.statements
 
-        val fileStatements = file.accept(IrFileToJsTransformer(), staticContext).statements
+        val fileStatements = file.accept(IrFileToJsTransformer(useBareParameterNames = true), staticContext).statements
         if (fileStatements.isNotEmpty()) {
             var startComment = ""
 
@@ -225,8 +222,9 @@ class IrModuleToJsTransformerTmp(
         result.importedModules += nameGenerator.importedModules
 
         fun computeTag(declaration: IrDeclaration): String {
-            // TODO proper tags
-            return System.identityHashCode(declaration).toString()
+            return (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.toString()
+                ?: System.identityHashCode(declaration).toString()
+// TODO         ?: error("signature for ${declaration.render()} not found")
         }
 
         nameGenerator.nameMap.entries.forEach { (declaration, name) ->
