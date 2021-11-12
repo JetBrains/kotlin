@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -87,7 +89,7 @@ fun compileWithIC(
 
     generateJsTests(context, mainModule)
 
-    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, allModules)
+    lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), symbolTable.irFactory.stageController as WholeWorldStageController)
 
     val transformer = IrModuleToJsTransformerTmp(
         context,
@@ -105,6 +107,20 @@ fun compileWithIC(
     val ast = transformer.generateBinaryAst(dirtyFiles)
 
     ast.entries.forEach { (path, bytes) -> cacheConsumer.commitBinaryAst(path, bytes) }
+}
+
+fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, phaseConfig: PhaseConfig, controller: WholeWorldStageController) {
+    // Lower all the things
+    controller.currentStage = 0
+
+    val phaserState = PhaserState<Iterable<IrModuleFragment>>()
+
+    loweringList.forEachIndexed { i, lowering ->
+        controller.currentStage = i + 1
+        lowering.modulePhase.invoke(phaseConfig, phaserState, context, modules)
+    }
+
+    controller.currentStage = pirLowerings.size + 1
 }
 
 

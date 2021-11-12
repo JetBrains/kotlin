@@ -804,7 +804,7 @@ private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
     description = "Store arity for suspend functions to not remove it during DCE"
 )
 
-private val loweringList = listOf<Lowering>(
+val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     annotationInstantiationLowering,
