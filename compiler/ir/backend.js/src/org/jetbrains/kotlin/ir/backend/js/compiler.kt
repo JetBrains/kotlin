@@ -187,7 +187,9 @@ fun compileIr(
             }
             irFactory.stageController = object : StageController(irFactory.stageController.currentStage) {}
         } else {
-            jsPhases.invokeToplevel(phaseConfig, context, allModules)
+            (irFactory.stageController as? WholeWorldStageController)?.let {
+                lowerPreservingTags(allModules, context, phaseConfig, it)
+            } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
         }
     }
 
