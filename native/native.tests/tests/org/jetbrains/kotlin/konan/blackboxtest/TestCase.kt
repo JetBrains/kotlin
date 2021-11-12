@@ -46,13 +46,13 @@ internal class TestFile<M : TestModule> private constructor(
 
     // An optimization to release the memory occupied by numerous file texts.
     fun commit() {
-        state = when (val state = state) {
+        when (val state = state) {
             is State.Uncommitted -> {
                 location.parentFile.mkdirs()
                 location.writeText(state.text)
-                State.Committed
+                this.state = State.Committed
             }
-            is State.Committed -> state
+            is State.Committed -> System.err.println("$this has been committed again. Need to check why this had happened.")
         }
     }
 
