@@ -152,7 +152,8 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
             }
 
             if (expectFileDirectiveAfterModuleDirective) {
-                // Was expecting a line with the FILE directive as this is the only possible continuation of a line with the MODULE directive, but failed.
+                // Was expecting a line with the FILE directive as this is the only possible continuation of a line with
+                // the MODULE directive, but failed.
                 fail { "$location: ${TestDirectives.FILE} directive expected after ${TestDirectives.MODULE} directive" }
             }
 

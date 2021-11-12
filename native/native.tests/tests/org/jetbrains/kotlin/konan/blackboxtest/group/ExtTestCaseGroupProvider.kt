@@ -109,7 +109,8 @@ internal class ExtTestCaseGroupProvider(
 
         /** Tests that should be compiled and executed as standalone tests. */
         private val standalones: Set<File> = listOf(
-            "compiler/testData/codegen/box/annotations/instances/annotationToString.kt" // Comparison of type information obtained with reflection against non-patched string literal.
+            // Comparison of type information obtained with reflection against non-patched string literal:
+            "compiler/testData/codegen/box/annotations/instances/annotationToString.kt"
         ).mapToSet(::getAbsoluteFile)
     }
 }
@@ -122,9 +123,9 @@ private class ExtTestDataFile(
     private val structure by lazy {
         structureFactory.ExtTestDataFileStructure(testDataFile) { line ->
             if (DIRECTIVE_REGEX.matches(line)) {
-                // Remove all directives from test files. These directives are not needed anymore as they are already
-                // read and stored in [settings] property. Moreover, these directives if left in test file can potentially conflict with
-                // Native-specific test directives to be added (see [TestDirectives] for details). Also, they will create unnecessary "noise".
+                // Remove all directives from test files. These directives are not needed anymore as they are already read and stored
+                // in [settings] property. Moreover, these directives if left in test file can potentially conflict with Native-specific
+                // test directives to be added (see [TestDirectives] for details). Also, they will create unnecessary "noise".
                 // Examples:
                 //   // !LANGUAGE: +NewInference
                 //   // LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
@@ -145,7 +146,9 @@ private class ExtTestDataFile(
 
         ExtTestDataFileSettings(
             languageSettings = structure.directives.multiValues(LANGUAGE_DIRECTIVE) {
-                it != "+NewInference" /* It is already on by default, but passing it explicitly turns on a special "compatibility mode" in FE which is not desirable. */
+                // It is already on by default, but passing it explicitly turns on a special "compatibility mode" in FE,
+                // which is not desirable.
+                it != "+NewInference"
             },
             optInsForSourceCode = optInsForSourceCode + structure.directives.multiValues(USE_EXPERIMENTAL_DIRECTIVE),
             optInsForCompiler = optInsForCompiler,
