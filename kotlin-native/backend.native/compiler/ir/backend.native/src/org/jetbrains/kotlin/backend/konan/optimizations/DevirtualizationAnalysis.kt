@@ -221,6 +221,8 @@ internal object DevirtualizationAnalysis {
             for (i in this[v] until this[v + 1])
                 block(this[i])
         }
+        private fun IntArray.getEdge(v: Int, id: Int) = this[this[v] + id]
+        private fun IntArray.edgeCount(v: Int) = this[v + 1] - this[v]
 
         inner class TypeHierarchy(val allTypes: Array<DataFlowIR.Type.Declared>) {
             private val typesSubTypes = Array(allTypes.size) { mutableListOf<DataFlowIR.Type.Declared>() }
@@ -327,31 +329,65 @@ internal object DevirtualizationAnalysis {
         }
 
         private inner class CondensationBuilder(val directEdges: IntArray, val reversedEdges: IntArray) {
+            val startTime = System.currentTimeMillis()
             val nodes = constraintGraph.nodes
             val nodesCount = nodes.size
-            val visited = BitSet(nodesCount)
-            var index = 0
+            val order = IntArray(nodesCount)
             val multiNodes = IntArray(nodesCount)
+            val visited = BitSet(nodesCount)
 
-            fun build(): Condensation {
-                // First phase.
-                val order = IntArray(nodesCount)
-                for (node in nodes) {
-                    if (!visited[node.id])
-                        findOrder(node, order)
+            private fun calculateTopologicalSort() {
+                require(directEdges.size == reversedEdges.size)
+                var index = 0
+                val nodesStack = IntArray(nodesCount)
+                val edgeIdsStack = IntArray(nodesCount)
+                for (nodeId in 0 until nodesCount) {
+                    if (visited[nodeId]) continue
+                    visited.set(nodeId)
+                    nodesStack[0] = nodeId
+                    edgeIdsStack[0] = 0
+                    var stackPtr = 0
+                    while (stackPtr != -1) {
+                        val v = nodesStack[stackPtr]
+                        val eid = edgeIdsStack[stackPtr]++
+                        if (eid == directEdges.edgeCount(v)) {
+                            order[index++] = v
+                            stackPtr--
+                        } else {
+                            val next = directEdges.getEdge(v, eid)
+                            if (!visited[next]) {
+                                ++stackPtr
+                                nodesStack[stackPtr] = next
+                                edgeIdsStack[stackPtr] = 0
+                                visited.set(next)
+                            }
+                        }
+                    }
                 }
 
-                // Second phase.
+                require(index == nodesCount)
+            }
+
+            private fun calculateMultiNodes() : IntArray {
                 visited.clear()
-                index = 0
-                var multiNodesCount = 0
-                val multiNodesRepresentatives = IntArray(nodesCount)
+                var index = 0
+                val multiNodesInOrder = mutableListOf<Int>()
                 for (i in order.size - 1 downTo 0) {
                     val nodeIndex = order[i]
                     if (visited[nodeIndex]) continue
-                    multiNodesRepresentatives[multiNodesCount++] = nodeIndex
+                    multiNodesInOrder.add(nodeIndex)
                     val start = index
-                    paint(nodes[nodeIndex])
+                    var cur = start
+                    multiNodes[index++] = nodeIndex
+                    visited.set(nodeIndex)
+                    while (cur < index) {
+                        reversedEdges.forEachEdge(multiNodes[cur++]) {
+                            if (!visited[it]) {
+                                multiNodes[index++] = it
+                                visited.set(it)
+                            }
+                        }
+                    }
                     val end = index
                     for (multiNodeIndex in start until end) {
                         val node = nodes[multiNodes[multiNodeIndex]]
@@ -359,49 +395,15 @@ internal object DevirtualizationAnalysis {
                         node.multiNodeEnd = end
                     }
                 }
-
-                // Topsort the built condensation.
-                visited.clear()
-                index = 0
-                val multiNodesOrder = IntArray(multiNodesCount)
-                for (v in multiNodesRepresentatives) {
-                    if (!visited[v])
-                        findMultiNodesOrder(nodes[v], multiNodesOrder)
-                }
-                multiNodesOrder.reverse()
-
-                return Condensation(multiNodes, multiNodesOrder)
+                require(index == nodesCount)
+                return multiNodesInOrder.toIntArray()
             }
 
-            private fun findOrder(node: Node, order: IntArray) {
-                visited.set(node.id)
-                directEdges.forEachEdge(node.id) {
-                    if (!visited[it])
-                        findOrder(nodes[it], order)
-                }
-                order[index++] = node.id
-            }
 
-            private fun paint(node: Node) {
-                visited.set(node.id)
-                multiNodes[index++] = node.id
-                reversedEdges.forEachEdge(node.id) {
-                    if (!visited[it])
-                        paint(nodes[it])
-                }
-            }
-
-            private fun findMultiNodesOrder(multiNode: Node, order: IntArray) {
-                visited.set(multiNode.id)
-                for (v in multiNode.multiNodeStart until multiNode.multiNodeEnd) {
-                    val node = nodes[multiNodes[v]]
-                    directEdges.forEachEdge(node.id) {
-                        val nextMultiNode = multiNodes[nodes[it].multiNodeStart]
-                        if (!visited[nextMultiNode])
-                            findMultiNodesOrder(nodes[nextMultiNode], order)
-                    }
-                }
-                order[index++] = multiNode.id
+            fun build(): Condensation {
+                calculateTopologicalSort()
+                val multiNodesInOrder = calculateMultiNodes()
+                return Condensation(multiNodes, multiNodesInOrder)
             }
         }
 
