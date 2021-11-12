@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts.Js
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: Js) {
@@ -44,9 +46,9 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
 //            }
 //        }
 //
-//        val originalOutput = FileUtil.loadFile(originalArtifact.outputFile)
-//        val recompiledOutput = FileUtil.loadFile(incrementalArtifact.outputFile)
-//        testServices.assertions.assertEquals(originalOutput, recompiledOutput) { "Output file changed after recompilation" }
+        val originalOutput = FileUtil.loadFile(originalArtifact.outputFile)
+        val recompiledOutput = FileUtil.loadFile(incrementalArtifact.outputFile)
+        testServices.assertions.assertEquals(originalOutput, recompiledOutput) { "Output file changed after recompilation" }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

@@ -126,15 +126,16 @@ fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBacken
 
 @Suppress("UNUSED_PARAMETER")
 fun generateJsFromAst(
-    mainModule: String,
-    caches: Map<String, ModuleCache>
+    mainModuleName: String,
+    moduleKind: ModuleKind,
+    caches: Map<String, ModuleCache>,
 ): CompilerResult {
     val deserializer = JsIrAstDeserializer()
-    val fragments = JsIrProgram(caches.values.map { JsIrModule(it.name, it.name, it.asts.values.mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it))} }) })
+    val fragments = JsIrProgram(caches.values.map { JsIrModule(it.name, it.name, it.asts.values.sortedBy { it.name }.mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it))} }) })
     return CompilerResult(
         generateSingleWrappedModuleBody(
-            "main",
-            ModuleKind.PLAIN,
+            mainModuleName,
+            moduleKind,
             fragments.modules.flatMap { it.fragments },
             sourceMapsInfo = null,
             generateScriptModule = false,

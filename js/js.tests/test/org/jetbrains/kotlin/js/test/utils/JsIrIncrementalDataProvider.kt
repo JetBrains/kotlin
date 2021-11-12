@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
@@ -58,6 +62,10 @@ class TestModuleCache(val moduleName: String, val files: MutableMap<String, File
 
             override fun sourceMap(path: String): ByteArray? {
                 return files[path]?.sourceMap
+            }
+
+            override fun filePaths(): Iterable<String> {
+                return files.keys
             }
         }
     }
@@ -161,8 +169,11 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         }
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
+        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
+            .run { if (shouldBeGenerated()) arguments() else null }
+
         runtimeKlibPath.forEach {
-            recordIncrementalData(it, null, libs, configuration)
+            recordIncrementalData(it, null, libs, configuration, mainArguments)
         }
     }
 
@@ -173,11 +184,20 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val path = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
+        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
+            .run { if (shouldBeGenerated()) arguments() else null }
+
         val allDependencies = JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList()
-        recordIncrementalData(path, dirtyFiles, allDependencies + library, configuration)
+        recordIncrementalData(path, dirtyFiles, allDependencies + library, configuration, mainArguments)
     }
 
-    private fun recordIncrementalData(path: String, dirtyFiles: List<String>?, allDependencies: List<KotlinLibrary>, configuration: CompilerConfiguration) {
+    private fun recordIncrementalData(
+        path: String,
+        dirtyFiles: List<String>?,
+        allDependencies: List<KotlinLibrary>,
+        configuration: CompilerConfiguration,
+        mainArguments: List<String>?
+    ) {
         val canonicalPath = File(path).canonicalPath
         var moduleCache = predefinedKlibHasIcCache[canonicalPath]
 
@@ -196,7 +216,18 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
             val currentLib = libs[File(canonicalPath).canonicalPath] ?: error("Expected library at $canonicalPath")
 
-            rebuildCacheForDirtyFiles(currentLib, configuration, dependencyGraph, dirtyFiles, moduleCache.cacheConsumer(), IrFactoryImpl)
+            val testPackage = extractTestPackage(testServices)
+
+            rebuildCacheForDirtyFiles(
+                currentLib,
+                configuration,
+                dependencyGraph,
+                dirtyFiles,
+                moduleCache.cacheConsumer(),
+                IrFactoryImplForJsIC(WholeWorldStageController()),
+                setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
+                mainArguments,
+            )
 
             if (canonicalPath in predefinedKlibHasIcCache) {
                 predefinedKlibHasIcCache[canonicalPath] = moduleCache

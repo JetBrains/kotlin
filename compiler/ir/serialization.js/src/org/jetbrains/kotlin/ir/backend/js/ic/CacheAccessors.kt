@@ -50,6 +50,8 @@ interface PersistentCacheProvider {
 
     fun sourceMap(path: String): ByteArray?
 
+    fun filePaths(): Iterable<String>
+
     companion object {
         val EMPTY = object : PersistentCacheProvider {
             override fun fileFingerPrint(path: String): Hash {
@@ -83,6 +85,8 @@ interface PersistentCacheProvider {
             override fun sourceMap(path: String): ByteArray? {
                 return null
             }
+
+            override fun filePaths(): Iterable<String> = emptyList()
         }
     }
 }
@@ -177,6 +181,15 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
 
     override fun sourceMap(path: String): ByteArray? {
         return readBytesFromCacheFile(path, fileSourceMap)
+    }
+
+    override fun filePaths(): Iterable<String> {
+        return File(cachePath).listFiles()!!.filter { it.isDirectory }.mapNotNull { f ->
+            val fileInfo = File(f, fileInfoFile)
+            if (fileInfo.exists()) {
+                fileInfo.readLines()[0]
+            } else null
+        }
     }
 }
 

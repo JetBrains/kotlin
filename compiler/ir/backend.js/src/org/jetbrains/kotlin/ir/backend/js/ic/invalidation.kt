@@ -191,7 +191,7 @@ private fun buildCacheForModule(
     }
 
     // TODO: actual way of building a cache could change in future
-    buildCacheForModuleFiles(irModule, dependencies, deserializer, configuration, dirtyFiles, cacheConsumer)
+    buildCacheForModuleFiles(irModule, dependencies, deserializer, configuration, dirtyFiles, cacheConsumer, emptySet(), null) // TODO: main arguments?
 
     cacheConsumer.commitLibraryPath(libraryPath)
 }
@@ -434,6 +434,8 @@ fun rebuildCacheForDirtyFiles(
     dirtyFiles: Collection<String>?,
     cacheConsumer: PersistentCacheConsumer,
     irFactory: IrFactory,
+    exportedDeclarations: Set<FqName>,
+    mainArguments: List<String>?,
 ) {
     val loadedModules = loadModules(configuration.languageVersionSettings, dependencyGraph)
 
@@ -462,7 +464,16 @@ fun rebuildCacheForDirtyFiles(
 
     val currentIrModule = irModules.find { it.second == library }?.first!!
 
-    buildCacheForModuleFiles(currentIrModule, irModules.map { it.first }, jsIrLinker, configuration, dirtyFiles, cacheConsumer)
+    buildCacheForModuleFiles(
+        currentIrModule,
+        irModules.map { it.first },
+        jsIrLinker,
+        configuration,
+        dirtyFiles,
+        cacheConsumer,
+        exportedDeclarations,
+        mainArguments
+    )
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -472,14 +483,17 @@ private fun buildCacheForModuleFiles(
     deserializer: JsIrLinker,
     configuration: CompilerConfiguration,
     dirtyFiles: Collection<String>?, // if null consider the whole module dirty
-    cacheConsumer: PersistentCacheConsumer
+    cacheConsumer: PersistentCacheConsumer,
+    exportedDeclarations: Set<FqName>,
+    mainArguments: List<String>?,
 ) {
     compileWithIC(
         currentModule,
         configuration = configuration,
         deserializer = deserializer,
         dependencies = dependencies,
-        exportedDeclarations = setOf(FqName("box")),
+        mainArguments = mainArguments,
+        exportedDeclarations = exportedDeclarations,
         filesToLower = dirtyFiles?.toSet(),
         cacheConsumer = cacheConsumer,
     )
@@ -488,4 +502,17 @@ private fun buildCacheForModuleFiles(
 //    println("Store them into $cacheConsumer")
 //    val dirtyS = if (dirtyFiles == null) "[ALL]" else dirtyFiles.joinToString(",", "[", "]") { it }
 //    println("Dirty files -> $dirtyS")
+}
+
+
+fun loadModuleCaches(icCachePaths: Collection<String>): Map<String, ModuleCache> {
+    val icCacheMap: Map<ModulePath, String> = loadCacheInfo(icCachePaths)
+
+    return icCacheMap.entries.associate { (lib, cache) ->
+        val provider = createCacheProvider(cache)
+        val files = provider.filePaths()
+        lib to ModuleCache(lib, files.associate { f ->
+            f to FileCache(f, provider.binaryAst(f), provider.dts(f), provider.sourceMap(f))
+        })
+    }
 }

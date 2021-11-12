@@ -77,7 +77,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun usePerFileInvalidator(configuration: CompilerConfiguration): Boolean = false
+    private fun usePerFileInvalidator(configuration: CompilerConfiguration): Boolean = true
 
     private fun IcCacheInfo.toICCacheMap(): Map<String, ICCache> {
         return data.map { it.key to ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, it.value) }.toMap()
@@ -212,12 +212,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 MainModule.Klib(includes)
             }
 
-            val perFileCache = usePerFileInvalidator(configuration)
+            val perFileCache = usePerFileInvalidator(configurationJs)
 
             val start = System.currentTimeMillis()
 
             val updated = if (perFileCache) {
-                actualizeCacheForModule(includes, outputFilePath, configuration, libraries, icCaches, IrFactoryImpl)
+                actualizeCacheForModule(includes, outputFilePath, configurationJs, libraries, icCaches, IrFactoryImpl)
             } else {
                 buildCache(
                     cachePath = outputFilePath,
@@ -281,6 +281,27 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.irProduceJs) {
             messageCollector.report(INFO,"Produce executable: $outputFilePath")
             messageCollector.report(INFO, arguments.cacheDirectories ?: "")
+
+            if (icCaches.isNotEmpty()) {
+
+                val beforeIc2Js = System.currentTimeMillis()
+
+                val caches = loadModuleCaches(icCaches)
+                val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!
+
+                val compiledModule = generateJsFromAst(moduleName, moduleKind, caches)
+
+                val outputs = compiledModule.outputs!!
+
+                outputFile.write(outputs)
+                outputs.dependencies.forEach { (name, content) ->
+                    outputFile.resolveSibling("$name.js").write(content)
+                }
+
+                messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+
+                return OK
+            }
 
             val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
@@ -378,7 +399,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irSafeExternalBooleanDiagnostic,
                     messageCollector
                 ),
-                lowerPerModule = icCaches.isNotEmpty(),
+                lowerPerModule = false,//icCaches.isNotEmpty(),
                 granularity = granularity,
                 icCompatibleIr2Js = arguments.irNewIr2Js,
             )
