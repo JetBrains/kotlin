@@ -24,16 +24,15 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -52,9 +51,11 @@ class IrBuiltInsOverFir(
     override val irFactory: IrFactory = components.symbolTable.irFactory
 
     private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
+    private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
 
     override val operatorsPackageFragment = createPackage(KOTLIN_INTERNAL_IR_FQN)
     private val kotlinIrPackage = createPackage(kotlinPackage)
+    private val kotlinInternalIrPackage = createPackage(kotlinInternalPackage)
 
     override val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
         boolean.ensureLazyContentsCreated()
@@ -63,9 +64,12 @@ class IrBuiltInsOverFir(
 
     private val any by createClass(kotlinIrPackage, IdSignatureValues.any, build = { modality = Modality.OPEN }) {
         createConstructor()
-        createMemberFunction(OperatorNameConventions.EQUALS, booleanType, "other" to anyNType, modality = Modality.OPEN, isOperator = true)
-        createMemberFunction("hashCode", intType, modality = Modality.OPEN)
-        createMemberFunction("toString", stringType, modality = Modality.OPEN)
+        createMemberFunction(
+            OperatorNameConventions.EQUALS, booleanType, "other" to anyNType,
+            modality = Modality.OPEN, isOperator = true, isIntrinsicConst = false
+        )
+        createMemberFunction("hashCode", intType, modality = Modality.OPEN, isIntrinsicConst = false)
+        createMemberFunction("toString", stringType, modality = Modality.OPEN, isIntrinsicConst = false)
     }
     override val anyClass: IrClassSymbol get() = any.klass
     override val anyType: IrType get() = any.type
@@ -104,6 +108,7 @@ class IrBuiltInsOverFir(
             modality = Modality.OPEN,
             isOperator = true
         )
+        createIntrinsicConstOfToStringAndEquals()
         finalizeClassDefinition()
     }
     override val booleanType: IrType get() = boolean.type
@@ -117,7 +122,8 @@ class IrBuiltInsOverFir(
         createMemberFunction(OperatorNameConventions.MINUS, charType, "other" to intType, isOperator = true)
         createMemberFunction(OperatorNameConventions.MINUS, intType, "other" to charType, isOperator = true)
         val charRange = referenceClassByClassId(StandardClassIds.CharRange)!!.owner.defaultType
-        createMemberFunction(OperatorNameConventions.RANGE_TO, charRange, "other" to charType)
+        createMemberFunction(OperatorNameConventions.RANGE_TO, charRange, "other" to charType, isIntrinsicConst = false)
+        createIntrinsicConstOfToStringAndEquals()
         finalizeClassDefinition()
     }
     override val charClass: IrClassSymbol get() = char.klass
@@ -153,22 +159,23 @@ class IrBuiltInsOverFir(
     ) {
         configureSuperTypes()
         createProperty("length", intType, modality = Modality.ABSTRACT)
-        createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.ABSTRACT, isOperator = true)
-        createMemberFunction("subSequence", defaultType, "startIndex" to intType, "endIndex" to intType, modality = Modality.ABSTRACT)
+        createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.ABSTRACT, isOperator = true, isIntrinsicConst = false)
+        createMemberFunction("subSequence", defaultType, "startIndex" to intType, "endIndex" to intType, modality = Modality.ABSTRACT, isIntrinsicConst = false)
         finalizeClassDefinition()
     }
     override val charSequenceClass: IrClassSymbol get() = charSequence.klass
 
     private val string by createClass(kotlinIrPackage, IdSignatureValues.string) {
         configureSuperTypes(charSequence)
-        createProperty("length", intType, modality = Modality.OPEN)
+        createProperty("length", intType, modality = Modality.OPEN, isIntrinsicConst = true)
         createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.OPEN, isOperator = true)
         createMemberFunction(
             "subSequence",
             charSequenceClass.defaultType,
             "startIndex" to intType,
             "endIndex" to intType,
-            modality = Modality.OPEN
+            modality = Modality.OPEN,
+            isIntrinsicConst = false
         )
         createMemberFunction(
             OperatorNameConventions.COMPARE_TO,
@@ -178,10 +185,22 @@ class IrBuiltInsOverFir(
             isOperator = true
         )
         createMemberFunction(OperatorNameConventions.PLUS, defaultType, "other" to anyNType, isOperator = true)
+        createIntrinsicConstOfToStringAndEquals()
         finalizeClassDefinition()
     }
     override val stringClass: IrClassSymbol get() = string.klass
     override val stringType: IrType get() = string.type
+
+    private val intrinsicConstAnnotationFqName = kotlinInternalPackage.child(Name.identifier("IntrinsicConstEvaluation"))
+    private val intrinsicConst = kotlinInternalIrPackage.createClass(intrinsicConstAnnotationFqName).apply {
+        owner.createConstructor()
+        owner.finalizeClassDefinition()
+    }
+
+    private val intrinsicConstAnnotation: IrConstructorCall = run {
+        val constructor = intrinsicConst.constructors.single()
+        IrConstructorCallImpl.Companion.fromSymbolOwner(intrinsicConst.defaultType, constructor)
+    }
 
     private val array by createClass(kotlinIrPackage, IdSignatureValues.array) {
         configureSuperTypes()
@@ -363,9 +382,10 @@ class IrBuiltInsOverFir(
                 name: String,
                 returnType: IrType,
                 vararg valueParameterTypes: Pair<String, IrType>,
+                isIntrinsicConst: Boolean = false,
                 builder: IrSimpleFunction.() -> Unit = {}
             ) =
-                createFunction(fqName, name, returnType, valueParameterTypes, origin = BUILTIN_OPERATOR).also {
+                createFunction(fqName, name, returnType, valueParameterTypes, origin = BUILTIN_OPERATOR, isIntrinsicConst = isIntrinsicConst).also {
                     declarations.add(it)
                     it.builder()
                 }.symbol
@@ -375,15 +395,20 @@ class IrBuiltInsOverFir(
                     BuiltInOperatorNames.IEEE754_EQUALS,
                     booleanType,
                     "arg0" to fpType.makeNullable(),
-                    "arg1" to fpType.makeNullable()
+                    "arg1" to fpType.makeNullable(),
+                    isIntrinsicConst = true
                 )
             }
-            eqeqeqSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQEQ, booleanType, "" to anyNType, "" to anyNType)
-            eqeqSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQ, booleanType, "" to anyNType, "" to anyNType)
+            eqeqeqSymbol =
+                addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQEQ, booleanType, "" to anyNType, "" to anyNType)
+            eqeqSymbol =
+                addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQ, booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true)
             throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, nothingType)
             throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, nothingType)
-            andandSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.ANDAND, booleanType, "" to booleanType, "" to booleanType)
-            ororSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.OROR, booleanType, "" to booleanType, "" to booleanType)
+            andandSymbol =
+                addBuiltinOperatorSymbol(BuiltInOperatorNames.ANDAND, booleanType, "" to booleanType, "" to booleanType, isIntrinsicConst = true)
+            ororSymbol =
+                addBuiltinOperatorSymbol(BuiltInOperatorNames.OROR, booleanType, "" to booleanType, "" to booleanType, isIntrinsicConst = true)
             noWhenBranchMatchedExceptionSymbol =
                 addBuiltinOperatorSymbol(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType)
             illegalArgumentExceptionSymbol =
@@ -412,7 +437,7 @@ class IrBuiltInsOverFir(
             }
 
             fun List<IrType>.defineComparisonOperatorForEachIrType(name: String) =
-                associate { it.classifierOrFail to addBuiltinOperatorSymbol(name, booleanType, "" to it, "" to it) }
+                associate { it.classifierOrFail to addBuiltinOperatorSymbol(name, booleanType, "" to it, "" to it, isIntrinsicConst = true) }
 
             lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
             lessOrEqualFunByOperandType =
@@ -775,6 +800,7 @@ class IrBuiltInsOverFir(
         origin: IrDeclarationOrigin = object : IrDeclarationOriginImpl("BUILTIN_CLASS_METHOD") {},
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false,
+        isIntrinsicConst: Boolean = true,
         build: IrFunctionBuilder.() -> Unit = {}
     ) = parent.createFunction(
         IdSignature.CommonSignature(
@@ -783,11 +809,14 @@ class IrBuiltInsOverFir(
             null,
             0
         ),
-        name, returnType, valueParameterTypes, origin, modality, isOperator, build
+        name, returnType, valueParameterTypes, origin, modality, isOperator, isIntrinsicConst, build
     ).also { fn ->
         fn.addDispatchReceiver { type = this@createMemberFunction.defaultType }
         declarations.add(fn)
         fn.parent = this@createMemberFunction
+        if (isIntrinsicConst) {
+            fn.annotations += intrinsicConstAnnotation
+        }
 
         // very simple and fragile logic, but works for all current usages
         // TODO: replace with correct logic or explicit specification if cases become more complex
@@ -807,10 +836,12 @@ class IrBuiltInsOverFir(
         origin: IrDeclarationOrigin = object : IrDeclarationOriginImpl("BUILTIN_CLASS_METHOD") {},
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false,
+        isIntrinsicConst: Boolean = true,
         build: IrFunctionBuilder.() -> Unit = {}
     ) =
         createMemberFunction(
-            name.asString(), returnType, *valueParameterTypes, origin = origin, modality = modality, isOperator = isOperator, build = build
+            name.asString(), returnType, *valueParameterTypes,
+            origin = origin, modality = modality, isOperator = isOperator, isIntrinsicConst = isIntrinsicConst, build = build
         )
 
     private fun IrClass.configureSuperTypes(vararg superTypes: BuiltInClassValue, defaultAny: Boolean = true) {
@@ -837,6 +868,7 @@ class IrBuiltInsOverFir(
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false,
+        isIntrinsicConst: Boolean = false,
         build: IrFunctionBuilder.() -> Unit = {}
     ) = IrFunctionBuilder().run {
         this.name = Name.identifier(name)
@@ -852,6 +884,9 @@ class IrBuiltInsOverFir(
             valueParameterTypes.forEachIndexed { index, (pName, irType) ->
                 fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
             }
+            if (isIntrinsicConst) {
+                fn.annotations += intrinsicConstAnnotation
+            }
             fn.parent = this@createFunction
         }
     }
@@ -863,10 +898,11 @@ class IrBuiltInsOverFir(
         valueParameterTypes: Array<out Pair<String, IrType>>,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
         modality: Modality = Modality.FINAL,
-        isOperator: Boolean = false
+        isOperator: Boolean = false,
+        isIntrinsicConst: Boolean = false
     ) = createFunction(
         IdSignature.CommonSignature(packageFqName.asString(), name, null, 0),
-        name, returnType, valueParameterTypes, origin, modality, isOperator
+        name, returnType, valueParameterTypes, origin, modality, isOperator, isIntrinsicConst
     )
 
     private fun IrClass.addArrayMembers(elementType: IrType) {
@@ -877,15 +913,16 @@ class IrBuiltInsOverFir(
         }.also {
             it.addValueParameter("size", intType, object : IrDeclarationOriginImpl("BUILTIN_CLASS_CONSTRUCTOR") {})
         }
-        createMemberFunction(OperatorNameConventions.GET, elementType, "index" to intType, isOperator = true)
-        createMemberFunction(OperatorNameConventions.SET, unitType, "index" to intType, "value" to elementType, isOperator = true)
+        createMemberFunction(OperatorNameConventions.GET, elementType, "index" to intType, isOperator = true, isIntrinsicConst = false)
+        createMemberFunction(OperatorNameConventions.SET, unitType, "index" to intType, "value" to elementType, isOperator = true, isIntrinsicConst = false)
         createProperty("size", intType)
     }
 
     private fun IrClass.createProperty(
         propertyName: String, returnType: IrType,
         modality: Modality = Modality.FINAL,
-        isConst: Boolean = false, withGetter: Boolean = true, withField: Boolean = false, fieldInit: IrExpression? = null,
+        isConst: Boolean = false, withGetter: Boolean = true, withField: Boolean = false, isIntrinsicConst: Boolean = false,
+        fieldInit: IrExpression? = null,
         builder: IrProperty.() -> Unit = {}
     ) {
         addProperty {
@@ -900,6 +937,10 @@ class IrBuiltInsOverFir(
                 properties.find { it.name == property.name }?.let {
                     property.overriddenSymbols += it.symbol
                 }
+            }
+
+            if (isIntrinsicConst) {
+                property.annotations += intrinsicConstAnnotation
             }
 
             if (withGetter) {
@@ -991,6 +1032,7 @@ class IrBuiltInsOverFir(
                 createStandardBitwiseOps(thisType)
             }
             lazyContents?.invoke(this)
+            createIntrinsicConstOfToStringAndEquals()
             finalizeClassDefinition()
         }
 
@@ -1035,7 +1077,7 @@ class IrBuiltInsOverFir(
             createMemberFunction(
                 OperatorNameConventions.RANGE_TO,
                 if (thisType == longType || argType == longType) longRangeType else intRangeType,
-                "other" to argType, isOperator = true
+                "other" to argType, isOperator = true, isIntrinsicConst = false
             )
         }
     }
@@ -1074,10 +1116,17 @@ class IrBuiltInsOverFir(
         for (targetPrimitive in primitiveIrTypesWithComparisons) {
             createMemberFunction("to${targetPrimitive.classFqName!!.shortName().asString()}", targetPrimitive, modality = Modality.OPEN)
         }
-        createMemberFunction(OperatorNameConventions.INC, thisType, isOperator = true)
-        createMemberFunction(OperatorNameConventions.DEC, thisType, isOperator = true)
+        createMemberFunction(OperatorNameConventions.INC, thisType, isOperator = true, isIntrinsicConst = false)
+        createMemberFunction(OperatorNameConventions.DEC, thisType, isOperator = true, isIntrinsicConst = false)
     }
 
+    private fun IrClass.createIntrinsicConstOfToStringAndEquals() {
+        createMemberFunction(OperatorNameConventions.TO_STRING, stringType)
+        createMemberFunction(
+            OperatorNameConventions.EQUALS, booleanType, "other" to anyNType,
+            modality = Modality.OPEN, isOperator = true
+        )
+    }
 
     private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> =
         components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name).mapNotNull { firOpSymbol ->
