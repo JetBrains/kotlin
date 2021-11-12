@@ -17,11 +17,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.TestModule.Companion.allFriends
 import org.jetbrains.kotlin.konan.blackboxtest.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
 internal class TestCompilationFactory(private val environment: TestEnvironment) {
-    private val cachedCompilations: MutableMap<TestCompilationCacheKey, TestCompilation> = ConcurrentHashMap()
+    private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
     private sealed interface TestCompilationCacheKey {
         data class Klib(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs) : TestCompilationCacheKey

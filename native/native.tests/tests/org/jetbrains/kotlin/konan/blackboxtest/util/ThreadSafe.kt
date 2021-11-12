@@ -26,7 +26,7 @@ internal class ThreadSafeFactory<K : Any, V>(private val function: (K) -> V) {
 internal class ThreadSafeCache<K : Any, V> {
     private val map = ConcurrentHashMap<K, Any>()
 
-    operator fun get(key: K): V = unwrap(map[key]) as V
+    operator fun get(key: K): V? = unwrap(map[key]) as V?
     fun computeIfAbsent(key: K, function: (K) -> V): V = unwrap(map.computeIfAbsent(key) { wrap(function(key)) }) as V
 }
 

@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.konan.blackboxtest.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.util.ThreadSafeCache
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 
 internal class TestRunProvider(
     private val environment: TestEnvironment,
     private val testCaseGroupProvider: TestCaseGroupProvider
 ) : ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory(environment)
-    private val cachedCompilations: MutableMap<TestCompilationCacheKey, TestCompilation> = ConcurrentHashMap()
+    private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
     fun getSingleTestRunForTestDataFile(testDataFile: File): TestRun {
         environment.assertNotDisposed()
