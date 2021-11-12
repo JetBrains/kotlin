@@ -251,6 +251,27 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
     }
 
     @Test
+    fun throwsList() {
+        inlineModelTest(
+            """
+            |class C {
+            |  public void foo() throws java.io.IOException, ArithmeticException {}
+            |}
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "C" / "foo").cast<DFunction>()) {
+                with(extra[CheckedExceptions]?.exceptions?.entries?.single()?.value.assertNotNull("CheckedExceptions")) {
+                    this counts 2
+                    first().packageName equals "java.io"
+                    first().classNames equals "IOException"
+                    get(1).packageName equals "java.lang"
+                    get(1).classNames equals "ArithmeticException"
+                }
+            }
+        }
+    }
+
+    @Test
     fun annotatedAnnotation() {
         inlineModelTest(
             """
