@@ -625,18 +625,6 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
     }
 
     @Test
-    @TestMetadata("TypeParameterInAnonymousObject.kt")
-    public void testTypeParameterInAnonymousObject() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeParameterInAnonymousObject.kt");
-    }
-
-    @Test
-    @TestMetadata("TypeParameterInFunctionLiteral.kt")
-    public void testTypeParameterInFunctionLiteral() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeParameterInFunctionLiteral.kt");
-    }
-
-    @Test
     @TestMetadata("ValueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");
@@ -1199,6 +1187,64 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         @TestMetadata("ResolvePackageOfFullyQualifiedReference.kt")
         public void testResolvePackageOfFullyQualifiedReference() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/qualifiedAccess/ResolvePackageOfFullyQualifiedReference.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeParameter {
+        @Test
+        public void testAllFilesPresentInTypeParameter() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeParameter"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("multipleBounds.kt")
+        public void testMultipleBounds() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/multipleBounds.kt");
+        }
+
+        @Test
+        @TestMetadata("reified_argumentInFunctionalType.kt")
+        public void testReified_argumentInFunctionalType() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reified_argumentInFunctionalType.kt");
+        }
+
+        @Test
+        @TestMetadata("reified_extensionReceiver.kt")
+        public void testReified_extensionReceiver() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reified_extensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("reified_returnType.kt")
+        public void testReified_returnType() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reified_returnType.kt");
+        }
+
+        @Test
+        @TestMetadata("reified_valueParameter.kt")
+        public void testReified_valueParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reified_valueParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("reified_valueParameter_vararg.kt")
+        public void testReified_valueParameter_vararg() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reified_valueParameter_vararg.kt");
+        }
+
+        @Test
+        @TestMetadata("TypeParameterInAnonymousObject.kt")
+        public void testTypeParameterInAnonymousObject() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/TypeParameterInAnonymousObject.kt");
+        }
+
+        @Test
+        @TestMetadata("TypeParameterInFunctionLiteral.kt")
+        public void testTypeParameterInFunctionLiteral() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/TypeParameterInFunctionLiteral.kt");
         }
     }
 }
