@@ -44,7 +44,7 @@ open class FirTypeResolveTransformer(
     private val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
-    private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
+    private val classDeclarationsStack = ArrayDeque<FirClass>()
     private val scopes = mutableListOf<FirScope>()
     private val towerScope = scopes.asReversed()
 
@@ -79,7 +79,9 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
-        return resolveClassContent(anonymousObject, data)
+        withClassDeclarationCleanup(classDeclarationsStack, anonymousObject) {
+            return resolveClassContent(anonymousObject, data)
+        }
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor {

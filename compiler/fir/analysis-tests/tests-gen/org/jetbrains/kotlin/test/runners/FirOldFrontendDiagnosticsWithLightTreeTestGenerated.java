@@ -11244,6 +11244,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("anonymousObjectSupertypeWithTypeParameterFromFunction.kt")
+            public void testAnonymousObjectSupertypeWithTypeParameterFromFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/anonymousObjectSupertypeWithTypeParameterFromFunction.kt");
+            }
+
+            @Test
             @TestMetadata("argumentsForT.kt")
             public void testArgumentsForT() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/argumentsForT.kt");
@@ -11352,9 +11358,9 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
-            @TestMetadata("localClassWithTypeArgumentFromFunction.kt")
-            public void testLocalClassWithTypeArgumentFromFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/generics/localClassWithTypeArgumentFromFunction.kt");
+            @TestMetadata("localClassTypeRefWithTypeParameterFromFunction.kt")
+            public void testLocalClassTypeRefWithTypeParameterFromFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/localClassTypeRefWithTypeParameterFromFunction.kt");
             }
 
             @Test

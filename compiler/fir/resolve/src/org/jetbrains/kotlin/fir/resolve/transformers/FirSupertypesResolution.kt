@@ -215,11 +215,11 @@ open class FirSupertypeResolverVisitor(
     containingDeclarations: List<FirDeclaration> = emptyList(),
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
-    private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
+    private val classDeclarationsStack = ArrayDeque<FirClass>()
 
     init {
         containingDeclarations.forEach {
-            if (it is FirRegularClass) {
+            if (it is FirClass) {
                 classDeclarationsStack.add(it)
             }
         }
@@ -368,8 +368,10 @@ open class FirSupertypeResolverVisitor(
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
-        resolveSpecificClassLikeSupertypes(anonymousObject, anonymousObject.superTypeRefs)
-        visitDeclarationContent(anonymousObject, null)
+        withClassDeclarationCleanup(classDeclarationsStack, anonymousObject) {
+            resolveSpecificClassLikeSupertypes(anonymousObject, anonymousObject.superTypeRefs)
+            visitDeclarationContent(anonymousObject, null)
+        }
     }
 
     fun resolveSpecificClassLikeSupertypes(

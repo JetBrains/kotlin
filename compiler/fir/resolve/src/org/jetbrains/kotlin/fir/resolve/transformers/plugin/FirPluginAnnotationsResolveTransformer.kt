@@ -12,10 +12,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -106,7 +103,7 @@ private class FirAnnotationResolveTransformer(
     )
 
     private var owners: PersistentList<FirDeclaration> = persistentListOf()
-    private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
+    private val classDeclarationsStack = ArrayDeque<FirClass>()
 
     override fun beforeTransformingChildren(parentDeclaration: FirDeclaration): PersistentList<FirDeclaration> {
         val current = owners

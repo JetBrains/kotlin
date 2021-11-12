@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -135,8 +135,8 @@ inline fun <T> withScopeCleanup(scopes: MutableList<*>, l: () -> T): T {
 }
 
 inline fun <T> withClassDeclarationCleanup(
-    classDeclarations: ArrayDeque<FirRegularClass>,
-    topClassDeclaration: FirRegularClass,
+    classDeclarations: ArrayDeque<FirClass>,
+    topClassDeclaration: FirClass,
     l: () -> T
 ): T {
     classDeclarations.addLast(topClassDeclaration)
