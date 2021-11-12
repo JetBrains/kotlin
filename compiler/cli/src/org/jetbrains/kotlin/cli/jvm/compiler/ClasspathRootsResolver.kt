@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -51,7 +51,7 @@ class ClasspathRootsResolver(
     private val psiManager: PsiManager,
     private val messageCollector: MessageCollector?,
     private val additionalModules: List<String>,
-    private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
+    private val contentRootToVirtualFile: (JvmContentRootBase) -> VirtualFile?,
     private val javaModuleFinder: CliJavaModuleFinder,
     private val requireStdlibModule: Boolean,
     private val outputDirectory: VirtualFile?,
@@ -71,7 +71,7 @@ class ClasspathRootsResolver(
         val jvmModulePathRoots = mutableListOf<VirtualFile>()
 
         for (contentRoot in contentRoots) {
-            if (contentRoot !is JvmContentRoot) continue
+            if (contentRoot !is JvmContentRootBase) continue
             val root = contentRootToVirtualFile(contentRoot) ?: continue
             when (contentRoot) {
                 is JavaSourceRoot -> javaSourceRoots += RootWithPrefix(root, contentRoot.packagePrefix)

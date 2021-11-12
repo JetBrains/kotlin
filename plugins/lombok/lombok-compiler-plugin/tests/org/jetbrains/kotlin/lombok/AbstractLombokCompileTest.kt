@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.lombok
 
 import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -29,7 +29,7 @@ abstract class AbstractLombokCompileTest : CodegenTestCase() {
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         LombokComponentRegistrar.registerComponents(environment.project, environment.configuration)
-        environment.updateClasspath(listOf(JvmClasspathRoot(getLombokJar())))
+        environment.updateClasspath(listOf(PhysicalJvmClasspathRoot(getLombokJar())))
     }
 
     override fun updateJavaClasspath(javaClasspath: MutableList<String>) {

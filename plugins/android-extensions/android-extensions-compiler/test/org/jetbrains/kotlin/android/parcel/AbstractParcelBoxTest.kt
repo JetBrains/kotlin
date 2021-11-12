@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.android.parcel
 import org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar
 import org.jetbrains.kotlin.android.synthetic.test.addAndroidExtensionsRuntimeLibrary
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.utils.PathUtil
@@ -187,7 +187,7 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         AndroidComponentRegistrar.registerParcelExtensions(environment.project)
         addAndroidExtensionsRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(JvmClasspathRoot(layoutlibJar)))
+        environment.updateClasspath(listOf(PhysicalJvmClasspathRoot(layoutlibJar)))
     }
 
     override fun updateJavaClasspath(javaClasspath: MutableList<String>) {

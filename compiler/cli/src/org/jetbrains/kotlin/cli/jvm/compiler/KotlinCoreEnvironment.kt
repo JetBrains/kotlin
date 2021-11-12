@@ -404,14 +404,15 @@ class KotlinCoreEnvironment private constructor(
         }.orEmpty()
     }
 
-    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? =
+    private fun contentRootToVirtualFile(root: JvmContentRootBase): VirtualFile? =
         when (root) {
-            is JvmClasspathRoot ->
+            is PhysicalJvmClasspathRoot ->
                 if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Classpath entry")
             is JvmModulePathRoot ->
                 if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Java module root")
             is JavaSourceRoot ->
                 findExistingRoot(root, "Java source root")
+            is VirtualJvmClasspathRoot -> root.file
             else ->
                 throw IllegalStateException("Unexpected root: $root")
         }

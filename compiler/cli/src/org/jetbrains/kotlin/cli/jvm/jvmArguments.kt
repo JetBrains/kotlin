@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -142,7 +142,7 @@ fun CompilerConfiguration.configureExplicitContentRoots(arguments: K2JVMCompiler
     }
 
     for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
-        add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
+        add(CLIConfigurationKeys.CONTENT_ROOTS, PhysicalJvmClasspathRoot(File(path)))
     }
 }
 
@@ -181,7 +181,7 @@ fun CompilerConfiguration.addModularRootIfNotNull(isModularJava: Boolean, module
             add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
             add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
         }
-        else -> add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+        else -> add(CLIConfigurationKeys.CONTENT_ROOTS, PhysicalJvmClasspathRoot(file))
     }
 }
 

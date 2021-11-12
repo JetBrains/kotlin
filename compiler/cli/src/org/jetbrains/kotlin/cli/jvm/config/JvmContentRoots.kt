@@ -16,17 +16,27 @@
 
 package org.jetbrains.kotlin.cli.jvm.config
 
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 
-interface JvmContentRoot : ContentRoot {
+interface JvmContentRootBase : ContentRoot
+
+interface JvmClasspathRoot : JvmContentRootBase {
+    val isSdkRoot: Boolean
+}
+
+/**
+ * JVM content root based on a physical file.
+ */
+interface JvmContentRoot : JvmContentRootBase {
     val file: File
 }
 
-data class JvmClasspathRoot(override val file: File, val isSdkRoot: Boolean) : JvmContentRoot {
+data class PhysicalJvmClasspathRoot(override val file: File, override val isSdkRoot: Boolean) : JvmContentRoot, JvmClasspathRoot {
     constructor(file: File) : this(file, false)
 }
 
@@ -34,8 +44,12 @@ data class JavaSourceRoot(override val file: File, val packagePrefix: String?) :
 
 data class JvmModulePathRoot(override val file: File) : JvmContentRoot
 
+data class VirtualJvmClasspathRoot(val file: VirtualFile, override val isSdkRoot: Boolean) : JvmClasspathRoot {
+    constructor(file: VirtualFile) : this(file, false)
+}
+
 fun CompilerConfiguration.addJvmClasspathRoot(file: File) {
-    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+    add(CLIConfigurationKeys.CONTENT_ROOTS, PhysicalJvmClasspathRoot(file))
 }
 
 fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>) {
@@ -43,11 +57,11 @@ fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>) {
 }
 
 fun CompilerConfiguration.addJvmSdkRoots(files: List<File>) {
-    addAll(CLIConfigurationKeys.CONTENT_ROOTS, 0, files.map { file -> JvmClasspathRoot(file, true) })
+    addAll(CLIConfigurationKeys.CONTENT_ROOTS, 0, files.map { file -> PhysicalJvmClasspathRoot(file, true) })
 }
 
 val CompilerConfiguration.jvmClasspathRoots: List<File>
-    get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmClasspathRoot>().map(JvmContentRoot::file)
+    get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<PhysicalJvmClasspathRoot>().map(JvmContentRoot::file)
 
 val CompilerConfiguration.jvmModularRoots: List<File>
     get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmModulePathRoot>().map(JvmContentRoot::file)

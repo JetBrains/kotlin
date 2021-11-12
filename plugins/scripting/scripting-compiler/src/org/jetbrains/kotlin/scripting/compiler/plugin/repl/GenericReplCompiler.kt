@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -75,7 +75,7 @@ open class GenericReplCompiler(
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
                 compilerState.lastDependencies = newDependencies
-                classpathAddendum = newDependencies?.let { checker.environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) }
+                classpathAddendum = newDependencies?.let { checker.environment.updateClasspath(it.classpath.map(::PhysicalJvmClasspathRoot)) }
             }
 
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
