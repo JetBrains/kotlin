@@ -235,8 +235,8 @@ internal interface TestCaseGroup {
     companion object {
         val ALL_DISABLED = object : TestCaseGroup {
             override fun isEnabled(testDataFileName: String) = false
-            override fun getByName(testDataFileName: String) = error("This function should not be called")
-            override fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs) = error("This function should not be called")
+            override fun getByName(testDataFileName: String) = fail { "This function should not be called" }
+            override fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs) = fail { "This function should not be called" }
         }
     }
 }
