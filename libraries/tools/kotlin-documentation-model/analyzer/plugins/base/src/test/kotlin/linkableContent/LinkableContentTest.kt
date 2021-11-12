@@ -202,8 +202,6 @@ class LinkableContentTest : BaseAbstractTest() {
                         .cast<ContentDivergentInstance>().after
                         .cast<ContentGroup>().children.last()
                         .cast<ContentGroup>().children.last()
-                        .cast<PlatformHintedContent>().children.single()
-                        .cast<ContentGroup>().children.single()
                         .cast<ContentGroup>().children.single()
                         .cast<ContentCodeBlock>().children.single().cast<ContentText>().text
                     Assertions.assertEquals(
