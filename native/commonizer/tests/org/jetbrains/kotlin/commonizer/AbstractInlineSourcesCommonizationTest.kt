@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Pa
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult.Commonized
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import kotlin.test.assertIs
 import kotlin.test.fail
 
@@ -145,45 +146,55 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     fun commonize(
         expectedStatus: ResultsConsumer.Status = ResultsConsumer.Status.DONE,
         builder: ParametersBuilder.() -> Unit
-    ): HierarchicalCommonizationResult {
-        val consumer = MockResultsConsumer()
-        val testParameters = ParametersBuilder(this).also(builder).build()
-        val commonizerParameters = testParameters.toCommonizerParameters(consumer)
-        runCommonization(commonizerParameters)
-        assertEquals(expectedStatus, consumer.status)
-        return HierarchicalCommonizationResult(
-            inlineSourceTestFactory = DependencyAwareInlineSourceTestFactory(inlineSourceBuilder, testParameters.dependencies),
-            testParameters = testParameters,
-            commonizerParameters = commonizerParameters,
-            results = consumer.modulesByTargets.mapValues { (_, collection) -> collection.toList() }
-        )
-    }
+    ): HierarchicalCommonizationResult = commonize(inlineSourceBuilder, expectedStatus, builder)
+}
+
+fun commonize(
+    inlineSourceBuilder: InlineSourceBuilder,
+    expectedStatus: ResultsConsumer.Status = ResultsConsumer.Status.DONE,
+    builder: AbstractInlineSourcesCommonizationTest.ParametersBuilder.() -> Unit
+): HierarchicalCommonizationResult {
+    val consumer = MockResultsConsumer()
+    val testParameters = AbstractInlineSourcesCommonizationTest.ParametersBuilder(inlineSourceBuilder).also(builder).build()
+    val commonizerParameters = testParameters.toCommonizerParameters(inlineSourceBuilder, consumer)
+    runCommonization(commonizerParameters)
+    KtUsefulTestCase.assertEquals(expectedStatus, consumer.status)
+    return HierarchicalCommonizationResult(
+        inlineSourceTestFactory = DependencyAwareInlineSourceTestFactory(inlineSourceBuilder, testParameters.dependencies),
+        testParameters = testParameters,
+        commonizerParameters = commonizerParameters,
+        results = consumer.modulesByTargets.mapValues { (_, collection) -> collection.toList() }
+    )
+}
 
 
-    private fun Parameters.toCommonizerParameters(
-        resultsConsumer: ResultsConsumer,
-        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
-    ): CommonizerParameters {
-        return CommonizerParameters(
-            outputTargets = outputTargets,
-            manifestProvider = TargetDependent(outputTargets, manifestDataProvider),
-            dependenciesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
-                val explicitDependencies = dependencies.getOrNull(target).orEmpty().map { module -> createModuleDescriptor(module) }
-                val implicitDependencies = listOfNotNull(DefaultBuiltIns.Instance.builtInsModule)
-                val dependencies = explicitDependencies + implicitDependencies
-                if (dependencies.isEmpty()) null
-                else MockModulesProvider.create(dependencies)
-            },
-            targetProviders = TargetDependent(outputTargets.allLeaves()) { commonizerTarget ->
-                val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null
-                TargetProvider(
-                    target = commonizerTarget,
-                    modulesProvider = MockModulesProvider.create(target.modules.map { createModuleDescriptor(it) })
+private fun Parameters.toCommonizerParameters(
+    inlineSourceBuilder: InlineSourceBuilder,
+    resultsConsumer: ResultsConsumer,
+    manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+): CommonizerParameters {
+    return CommonizerParameters(
+        outputTargets = outputTargets,
+        manifestProvider = TargetDependent(outputTargets, manifestDataProvider),
+        dependenciesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
+            val explicitDependencies = dependencies.getOrNull(target).orEmpty()
+                .map { module -> inlineSourceBuilder.createModuleDescriptor(module) }
+            val implicitDependencies = listOfNotNull(DefaultBuiltIns.Instance.builtInsModule)
+            val dependencies = explicitDependencies + implicitDependencies
+            if (dependencies.isEmpty()) null
+            else MockModulesProvider.create(dependencies)
+        },
+        targetProviders = TargetDependent(outputTargets.allLeaves()) { commonizerTarget ->
+            val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null
+            TargetProvider(
+                target = commonizerTarget,
+                modulesProvider = MockModulesProvider.create(
+                    target.modules.map { inlineSourceBuilder.createModuleDescriptor(it) }
                 )
-            },
-            resultsConsumer = resultsConsumer
-        )
-    }
+            )
+        },
+        resultsConsumer = resultsConsumer
+    )
 }
 
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.utils
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeModuleDeserializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -39,7 +41,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
-class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSourceBuilder {
+open class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSourceBuilder {
     override fun createCirTree(module: InlineSourceBuilder.Module): CirTreeModule {
         val moduleDescriptor = createModuleDescriptor(module)
         val metadata = MockModulesProvider.SERIALIZER.serializeModule(moduleDescriptor)
@@ -65,9 +67,12 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
         return createModuleDescriptor(moduleRoot, module)
     }
 
+    // IDE doesn't have KotlinTestUtils and overrides this method
+    open fun newConfiguration(): CompilerConfiguration = KotlinTestUtils.newConfiguration()
+
     private fun createModuleDescriptor(moduleRoot: File, module: InlineSourceBuilder.Module): ModuleDescriptor {
         check(Name.isValidIdentifier(module.name))
-        val configuration = KotlinTestUtils.newConfiguration()
+        val configuration = newConfiguration()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
 
         val environment: KotlinCoreEnvironment = KotlinCoreEnvironment.createForTests(
@@ -80,7 +85,7 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
 
         val psiFiles: List<KtFile> = moduleRoot.walkTopDown()
             .filter { it.isFile }
-            .map { psiFactory.createFile(it.name, KtTestUtil.doLoadFile(it)) }
+            .map { psiFactory.createFile(it.name, FileUtil.loadFile(it, CharsetToolkit.UTF8, true)) }
             .toList()
 
         val analysisResult = CommonResolverForModuleFactory.analyzeFiles(
