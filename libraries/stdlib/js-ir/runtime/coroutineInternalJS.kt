@@ -28,11 +28,11 @@ internal fun <T> interceptContinuationIfNeeded(
 
 @SinceKotlin("1.2")
 @PublishedApi
-internal suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
+internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
 // TODO: remove `JS` suffix oncec `NameGenerator` is implemented
 @PublishedApi
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
+internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
 
 
