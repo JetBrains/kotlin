@@ -182,7 +182,8 @@ class FunctionInlining(
             }
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
-            val statements = (copiedCallee.body as IrBlockBody).statements
+            val statements = (copiedCallee.body as? IrBlockBody)?.statements
+                ?: error("Body not found for function ${callee.render()}")
 
             val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
             val endOffset = statements.lastOrNull()?.endOffset ?: callee.endOffset
