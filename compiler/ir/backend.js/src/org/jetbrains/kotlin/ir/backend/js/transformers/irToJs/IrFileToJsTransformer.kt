@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
 
-class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsBlock, JsStaticContext> {
+class IrFileToJsTransformer(private val useBareParameterNames: Boolean = false) : BaseIrElementToJsNodeTransformer<JsBlock, JsStaticContext> {
     override fun visitFile(declaration: IrFile, data: JsStaticContext): JsBlock {
         val fileContext = JsGenerationContext(
             currentFile = declaration,
             currentFunction = null,
             staticContext = data,
+            useBareParameterNames = useBareParameterNames
         )
         val block = JsGlobalBlock()
 
