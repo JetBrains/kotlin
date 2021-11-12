@@ -243,14 +243,13 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
             when {
                 inMultilineComment -> inMultilineComment = !trimmedLine.endsWith("*/")
                 trimmedLine.startsWith("/*") -> inMultilineComment = true
-                trimmedLine.isEmpty() -> Unit
-                trimmedLine.startsWith("//") -> Unit
-                trimmedLine.startsWith("@file:") -> Unit
-                else -> {
+                trimmedLine.isMeaningfulLine() -> {
                     action(lineNumber, line)
                     break
                 }
             }
         }
     }
+
+    private fun String.isMeaningfulLine() = isNotEmpty() && !startsWith("//") && !startsWith("@file:")
 }
