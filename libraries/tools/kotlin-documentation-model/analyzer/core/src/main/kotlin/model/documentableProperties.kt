@@ -38,3 +38,11 @@ data class ExceptionInSupertypes(val exceptions: SourceSetDependent<List<TypeCon
 object ObviousMember : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
     override val key: ExtraProperty.Key<Documentable, *> = this
 }
+
+data class CheckedExceptions(val exceptions: SourceSetDependent<List<DRI>>) : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
+    companion object : ExtraProperty.Key<Documentable, CheckedExceptions> {
+        override fun mergeStrategyFor(left: CheckedExceptions, right: CheckedExceptions) =
+            MergeStrategy.Replace(CheckedExceptions(left.exceptions + right.exceptions))
+    }
+    override val key: ExtraProperty.Key<Documentable, *> = CheckedExceptions
+}
