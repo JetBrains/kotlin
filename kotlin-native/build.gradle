@@ -124,6 +124,10 @@ allprojects {
     loadCommandLineProperties()
     loadLocalProperties()
     setupClang(project)
+
+    if (HostManager.host.name == "macos_arm64") {
+        JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_17)
+    }
 }
 
 void setupHostAndTarget() {
