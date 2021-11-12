@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -390,7 +387,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 fullJs = true,
                 dceJs = arguments.irDce,
                 multiModule = arguments.irPerModule,
-                relativeRequirePath = false
+                relativeRequirePath = false,
+                generateGlobalThisPolyfill = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)
             )
             val compiledModule: CompilerResult = transformer.generateModule(ir.allModules)
 

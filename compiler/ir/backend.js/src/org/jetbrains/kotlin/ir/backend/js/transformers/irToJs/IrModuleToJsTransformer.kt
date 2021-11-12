@@ -43,6 +43,7 @@ class IrModuleToJsTransformer(
     private val relativeRequirePath: Boolean = false,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true,
+    private val generateGlobalThisPolyfill: Boolean = false
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -153,7 +154,6 @@ class IrModuleToJsTransformer(
         val moduleBody = generateModuleBody(modules, staticContext)
 
         val internalModuleName = JsName("_", false)
-        val globalThisDeclaration = jsGlobalThisPolyfill();
         val globalNames = NameTable<String>(namer.globalNames)
         val exportStatements = ExportModelToJsStatements(nameGenerator) { globalNames.declareFreshName(it, it) }
             .generateModuleExport(exportedModule, internalModuleName)
@@ -164,7 +164,6 @@ class IrModuleToJsTransformer(
         val program = JsProgram()
         if (generateScriptModule) {
             with(program.globalBlock) {
-                statements += globalThisDeclaration
                 statements.addWithComment("block: imports", importStatements + crossModuleImports)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements + crossModuleExports)
@@ -174,7 +173,6 @@ class IrModuleToJsTransformer(
                 parameters += JsParameter(internalModuleName)
                 parameters += (importedJsModules + importedKotlinModules).map { JsParameter(it.internalName) }
                 with(body) {
-                    statements += globalThisDeclaration
                     statements.addWithComment("block: imports", importStatements + crossModuleImports)
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements + crossModuleExports)
@@ -288,6 +286,7 @@ class IrModuleToJsTransformer(
     private fun generateModuleBody(modules: Iterable<IrModuleFragment>, staticContext: JsStaticContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
+            if (generateGlobalThisPolyfill) it += jsGlobalThisPolyfill()
         }
 
         val preDeclarationBlock = JsGlobalBlock()
