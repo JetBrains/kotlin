@@ -85,7 +85,7 @@ private fun transformSuspendFunction(context: JsCommonBackendContext, function: 
 }
 
 
-private fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: JsCommonBackendContext): IrSimpleFunction {
+fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: JsCommonBackendContext): IrSimpleFunction {
     return context.mapping.suspendFunctionsToFunctionWithContinuations.getOrPut(this) {
         createSuspendFunctionStub(context)
     }
