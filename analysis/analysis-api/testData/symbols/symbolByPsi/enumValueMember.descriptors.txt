@@ -18,7 +18,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: Style
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
@@ -37,7 +36,6 @@ KtPropertyGetterSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  dispatchType: Style.SHEET
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -50,6 +48,7 @@ KtPropertyGetterSymbol:
   symbolKind: ACCESSOR
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): Style.SHEET
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -57,7 +56,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  dispatchType: Style.SHEET
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
@@ -78,6 +76,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Style.SHEET
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getExitAnimation
@@ -100,7 +99,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Style.exitAnimation
-  dispatchType: Style
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
@@ -121,6 +119,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Style
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getExitAnimation

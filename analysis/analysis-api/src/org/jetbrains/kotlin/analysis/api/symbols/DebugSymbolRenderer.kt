@@ -29,6 +29,12 @@ public object DebugSymbolRenderer {
         renderSymbol(symbol)
 
         withIndent {
+            @Suppress("DEPRECATION")
+            (symbol as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
+                appendLine().append("getDispatchReceiver()").append(": ")
+                renderType(dispatchType)
+            }
+
             KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
                 .asSequence()
                 .filter { (it.extensionReceiverParameter?.type?.classifier as? KClass<*>)?.isInstance(symbol) == true }

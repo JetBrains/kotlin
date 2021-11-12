@@ -46,7 +46,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: MyColor
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
@@ -100,7 +99,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Some.delegate
-  dispatchType: Some
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
@@ -121,6 +119,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Some
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getDelegate
@@ -143,7 +142,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Some.lambda
-  dispatchType: Some
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -164,6 +162,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Some
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getLambda
@@ -175,7 +174,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Some.nonLazy
-  dispatchType: Some
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -196,6 +194,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Some
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getNonLazy

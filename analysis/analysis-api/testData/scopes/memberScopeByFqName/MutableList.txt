@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.add
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -23,6 +22,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -30,7 +30,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.add
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -51,6 +50,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -58,7 +58,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.addAll
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -79,6 +78,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(elements)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -86,7 +86,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.addAll
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -106,6 +105,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(elements)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -113,7 +113,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.clear
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -131,6 +130,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -138,7 +138,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.listIterator
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -156,6 +155,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -163,7 +163,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.listIterator
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -183,6 +182,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(index)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -190,7 +190,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.remove
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -210,6 +209,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -217,7 +217,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.removeAll
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -237,6 +236,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(elements)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -244,7 +244,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.removeAt
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -264,6 +263,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(index)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -271,7 +271,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.retainAll
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -291,6 +290,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(elements)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -298,7 +298,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.set
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -319,6 +318,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -326,7 +326,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.subList
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -347,6 +346,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(toIndex)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -354,7 +354,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.contains
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -374,6 +373,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -381,7 +381,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.containsAll
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -401,6 +400,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(elements)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -408,7 +408,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.get
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -428,6 +427,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(index)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -435,7 +435,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.indexOf
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -455,6 +454,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -462,7 +462,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -480,6 +479,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -487,7 +487,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.iterator
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -505,6 +504,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -512,7 +512,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.lastIndexOf
-  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -532,6 +531,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(element)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -539,7 +539,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/MutableList.size
-  dispatchType: kotlin/collections/MutableList<E>
   getter: null
   hasBackingField: false
   hasGetter: false
@@ -560,6 +559,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/MutableList<E>
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getSize
@@ -571,7 +571,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/Any.equals
-  dispatchType: kotlin/Any
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -591,6 +590,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(other)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/Any
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -598,7 +598,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/Any.hashCode
-  dispatchType: kotlin/Any
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -616,6 +615,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/Any
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -623,7 +623,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/Any.toString
-  dispatchType: kotlin/Any
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -641,4 +640,5 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/Any
   deprecationStatus: null

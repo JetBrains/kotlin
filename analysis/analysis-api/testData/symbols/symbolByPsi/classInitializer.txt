@@ -3,7 +3,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /A.i
-  dispatchType: A
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -24,6 +23,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): A
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getI

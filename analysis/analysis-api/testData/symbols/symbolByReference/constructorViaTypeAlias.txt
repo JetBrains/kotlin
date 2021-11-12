@@ -4,7 +4,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/util/ArrayList
-  dispatchType: null
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false

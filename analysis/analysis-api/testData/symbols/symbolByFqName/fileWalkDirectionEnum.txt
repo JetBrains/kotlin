@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/listOf
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -37,7 +36,6 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/collections/listOf
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -64,7 +62,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/listOf
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false

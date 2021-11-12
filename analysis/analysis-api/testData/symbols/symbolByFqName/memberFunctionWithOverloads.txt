@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
-  dispatchType: kotlin/collections/List<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -21,6 +20,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -28,7 +28,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
-  dispatchType: kotlin/collections/List<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -48,4 +47,5 @@ KtFunctionSymbol:
     KtValueParameterSymbol(index)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null

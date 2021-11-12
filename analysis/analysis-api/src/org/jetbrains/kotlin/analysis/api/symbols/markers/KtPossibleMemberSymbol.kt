@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
 
-public interface KtPossibleMemberSymbol : KtSymbol {
-    public val dispatchType: KtType?
-}
+/**
+ * A marker interface for symbols which could potentially be members of some class.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.components.KtTypeProviderMixIn.getDispatchReceiverType
+ */
+public interface KtPossibleMemberSymbol : KtSymbol

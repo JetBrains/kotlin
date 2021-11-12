@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -66,9 +65,6 @@ class KtFe10DescDefaultPropertySetterSymbol(
 
     override val receiverType: KtTypeAndAnnotations?
         get() = withValidityAssertion { propertyDescriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
-
-    override val dispatchType: KtType?
-        get() = withValidityAssertion { propertyDescriptor.dispatchReceiverParameter?.type?.toKtType(analysisContext) }
 
     override val modality: Modality
         get() = withValidityAssertion { propertyDescriptor.ktModality }

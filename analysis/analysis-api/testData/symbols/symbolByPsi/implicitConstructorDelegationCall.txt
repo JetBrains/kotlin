@@ -18,7 +18,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: false

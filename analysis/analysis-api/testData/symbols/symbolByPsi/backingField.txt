@@ -3,7 +3,6 @@ KtPropertyGetterSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -37,7 +36,6 @@ KtPropertySetterSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -60,7 +58,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /p
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true

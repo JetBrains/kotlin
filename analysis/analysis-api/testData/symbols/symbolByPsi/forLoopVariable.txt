@@ -14,7 +14,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /usage
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false

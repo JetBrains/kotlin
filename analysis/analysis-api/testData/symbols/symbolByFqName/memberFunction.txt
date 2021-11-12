@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/List.get
-  dispatchType: kotlin/collections/List<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -23,4 +22,5 @@ KtFunctionSymbol:
     KtValueParameterSymbol(index)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null

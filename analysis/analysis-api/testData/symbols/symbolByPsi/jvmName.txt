@@ -3,7 +3,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Foo.i
-  dispatchType: Foo
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -24,6 +23,7 @@ KtKotlinPropertySymbol:
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Foo
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getMyI
@@ -40,7 +40,6 @@ KtPropertyGetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -79,7 +78,6 @@ KtPropertySetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -102,7 +100,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /Foo.j
-  dispatchType: Foo
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
@@ -123,6 +120,7 @@ KtKotlinPropertySymbol:
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Foo
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getMyJ

@@ -193,7 +193,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.foo
-  dispatchType: X<T>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -213,6 +212,7 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): X<T>
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:

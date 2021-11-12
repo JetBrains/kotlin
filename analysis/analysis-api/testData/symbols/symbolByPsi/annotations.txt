@@ -32,7 +32,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: Anno
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
@@ -79,7 +78,6 @@ KtFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /X.x
-  dispatchType: X
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -97,6 +95,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): X
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:

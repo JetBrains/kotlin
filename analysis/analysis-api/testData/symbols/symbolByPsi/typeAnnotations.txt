@@ -153,7 +153,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.f
-  dispatchType: X
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -173,6 +172,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(arg)
   ]
   visibility: Public
+  getDispatchReceiver(): X
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -183,7 +183,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /X.x
-  dispatchType: X
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -204,6 +203,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): X
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getX

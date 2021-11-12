@@ -14,7 +14,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /test
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -39,7 +38,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /testVal
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true

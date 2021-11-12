@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: test/MyClass.funWithOuterAndOwnGenericsAndBounds
-  dispatchType: test/MyClass
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -27,6 +26,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(tT2)
   ]
   visibility: Public
+  getDispatchReceiver(): test/MyClass
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -34,7 +34,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: test/MyClass.propWithOuterAndOwnGenericsAndBounds
-  dispatchType: test/MyClass
   getter: null
   hasBackingField: false
   hasGetter: false
@@ -55,6 +54,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): test/MyClass
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getPropWithOuterAndOwnGenericsAndBounds
@@ -66,7 +66,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/Any.equals
-  dispatchType: kotlin/Any
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -86,6 +85,7 @@ KtFunctionSymbol:
     KtValueParameterSymbol(other)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/Any
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -93,7 +93,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/Any.hashCode
-  dispatchType: kotlin/Any
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -111,6 +110,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/Any
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -118,7 +118,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/Any.toString
-  dispatchType: kotlin/Any
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -136,6 +135,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/Any
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -144,7 +144,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: test/MyClass
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true

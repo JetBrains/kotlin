@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /I2.bar
-  dispatchType: B
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -21,4 +20,5 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): B
   deprecationStatus: null

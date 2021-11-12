@@ -8,7 +8,6 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /i
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -40,7 +39,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /i2
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -72,7 +70,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /i3
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -104,7 +101,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /i4
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -141,7 +137,6 @@ KtFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /f
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -198,7 +193,6 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /Foo.i2
-  dispatchType: Foo
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -219,6 +213,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): Foo
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   javaGetterName: getI2
@@ -235,7 +230,6 @@ KtFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /Foo.f2
-  dispatchType: Foo
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -253,6 +247,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): Foo
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
 
 KtNamedClassOrObjectSymbol:
@@ -287,7 +282,6 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -324,7 +318,6 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j2
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -356,7 +349,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /j2
-  dispatchType: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true

@@ -4,7 +4,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
@@ -36,7 +35,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: false
@@ -84,7 +82,6 @@ KtConstructorSymbol:
   annotations: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isPrimary: false

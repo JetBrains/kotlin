@@ -3,7 +3,6 @@ KtFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -21,6 +20,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): <no name provided>
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -28,7 +28,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
-  dispatchType: <no name provided>
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -49,6 +48,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): <no name provided>
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getData
@@ -73,7 +73,6 @@ KtKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: /AnonymousContainer.anonymousObject
-  dispatchType: AnonymousContainer
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -94,6 +93,7 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   visibility: Public
+  getDispatchReceiver(): AnonymousContainer
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getAnonymousObject
