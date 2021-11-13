@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -12,9 +13,11 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -148,3 +152,28 @@ fun writeOutputs(
 
     return true
 }
+
+fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
+    args.friendPaths?.forEach { addFriendDir(it) }
+    args.classpath?.split(File.pathSeparator)?.forEach { addClasspathEntry(it) }
+    args.javaSourceRoots?.forEach {
+        addJavaSourceRoot(JavaRootPath(it, args.javaPackagePrefix))
+    }
+
+    val commonSources = args.commonSources?.toSet().orEmpty()
+    for (arg in args.freeArgs) {
+        if (arg.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
+            addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
+        } else {
+            addSourceFiles(arg)
+            if (arg in commonSources) {
+                addCommonSourceFiles(arg)
+            }
+
+            if (File(arg).isDirectory) {
+                addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
+            }
+        }
+    }
+}
+
