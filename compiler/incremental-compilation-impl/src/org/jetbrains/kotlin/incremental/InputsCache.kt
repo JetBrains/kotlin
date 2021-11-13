@@ -47,6 +47,10 @@ class InputsCache(
         }
     }
 
+    fun getOutputForSourceFiles(sources: Iterable<File>): List<File> = sources.flatMap {
+        sourceToOutputMap[it]
+    }
+
     // generatedFiles can contain multiple entries with the same source file
     // for example Kapt3 IC will generate a .java stub and .class stub for each source file
     fun registerOutputForSourceFiles(generatedFiles: List<GeneratedFile>) {

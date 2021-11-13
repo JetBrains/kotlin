@@ -77,6 +77,17 @@ open class VfsBasedProjectEnvironment(
                 } ?: GlobalSearchScope.EMPTY_SCOPE
         )
 
+    override fun getSearchScopeByDirectories(directories: Iterable<File>): AbstractProjectFileSearchScope =
+        PsiBasedProjectFileSearchScope(
+            directories
+                .mapNotNull { localFileSystem.findFileByPath(it.absolutePath) }
+                .toSet()
+                .takeIf { it.isNotEmpty() }
+                ?.let {
+                    KotlinToJVMBytecodeCompiler.DirectoriesScope(project, it)
+                } ?: GlobalSearchScope.EMPTY_SCOPE
+        )
+
     fun getSearchScopeByPsiFiles(files: Iterable<PsiFile>, allowOutOfProjectRoots: Boolean= false): AbstractProjectFileSearchScope =
         PsiBasedProjectFileSearchScope(
             files.map { it.virtualFile }.let {

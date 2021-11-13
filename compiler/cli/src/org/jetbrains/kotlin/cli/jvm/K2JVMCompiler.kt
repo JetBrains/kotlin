@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
@@ -119,40 +117,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         messageCollector.report(LOGGING, "Configuring the compilation environment")
         try {
-            val destination = arguments.destination?.let { File(it) }
             val buildFile = arguments.buildFile?.let { File(it) }
 
-            val moduleChunk = if (buildFile != null) {
-                fun strongWarning(message: String) {
-                    messageCollector.report(STRONG_WARNING, message)
-                }
-                if (destination != null) {
-                    strongWarning("The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified")
-                }
-                if (arguments.javaSourceRoots != null) {
-                    strongWarning("The '-Xjava-source-roots' option is ignored because '-Xbuild-file' is specified")
-                }
-                if (arguments.javaPackagePrefix != null) {
-                    strongWarning("The '-Xjava-package-prefix' option is ignored because '-Xbuild-file' is specified")
-                }
-                configuration.configureContentRootsFromClassPath(arguments)
-                val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
-                configuration.put(JVMConfigurationKeys.MODULE_XML_FILE, buildFile)
-                CompileEnvironmentUtil.loadModuleChunk(buildFile, sanitizedCollector)
-            } else {
-                if (destination != null) {
-                    if (destination.path.endsWith(".jar")) {
-                        configuration.put(JVMConfigurationKeys.OUTPUT_JAR, destination)
-                    } else {
-                        configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destination)
-                    }
-                }
-
-                val module = ModuleBuilder(moduleName, destination?.path ?: ".", "java-production")
-                module.configureFromArgs(arguments)
-
-                ModuleChunk(listOf(module))
-            }
+            val moduleChunk = configuration.configureModuleChunk(arguments, buildFile)
 
             val chunk = moduleChunk.modules
             configuration.configureSourceRoots(chunk, buildFile)
@@ -192,30 +159,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 MessageUtil.psiElementToMessageLocation(e.element)
             )
             return INTERNAL_ERROR
-        }
-    }
-
-    private fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
-        args.friendPaths?.forEach { addFriendDir(it) }
-        args.classpath?.split(File.pathSeparator)?.forEach { addClasspathEntry(it) }
-        args.javaSourceRoots?.forEach {
-            addJavaSourceRoot(JavaRootPath(it, args.javaPackagePrefix))
-        }
-
-        val commonSources = args.commonSources?.toSet().orEmpty()
-        for (arg in args.freeArgs) {
-            if (arg.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
-                addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
-            } else {
-                addSourceFiles(arg)
-                if (arg in commonSources) {
-                    addCommonSourceFiles(arg)
-                }
-
-                if (File(arg).isDirectory) {
-                    addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
-                }
-            }
         }
     }
 
@@ -299,6 +242,51 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (externalManager != null) return externalManager
         val argument = arguments.profileCompilerCommand ?: return defaultPerformanceManager
         return ProfilingCompilerPerformanceManager.create(argument)
+    }
+}
+
+fun CompilerConfiguration.configureModuleChunk(
+    arguments: K2JVMCompilerArguments,
+    buildFile: File?
+): ModuleChunk {
+    val destination = arguments.destination?.let { File(it) }
+
+    return if (buildFile != null) {
+        val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+        fun strongWarning(message: String) {
+            messageCollector.report(STRONG_WARNING, message)
+        }
+
+        if (destination != null) {
+            strongWarning("The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified")
+        }
+        if (arguments.javaSourceRoots != null) {
+            strongWarning("The '-Xjava-source-roots' option is ignored because '-Xbuild-file' is specified")
+        }
+        if (arguments.javaPackagePrefix != null) {
+            strongWarning("The '-Xjava-package-prefix' option is ignored because '-Xbuild-file' is specified")
+        }
+        configureContentRootsFromClassPath(arguments)
+        val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)
+        put(JVMConfigurationKeys.MODULE_XML_FILE, buildFile)
+        CompileEnvironmentUtil.loadModuleChunk(buildFile, sanitizedCollector)
+    } else {
+        if (destination != null) {
+            if (destination.path.endsWith(".jar")) {
+                put(JVMConfigurationKeys.OUTPUT_JAR, destination)
+            } else {
+                put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destination)
+            }
+        }
+
+        val module = ModuleBuilder(
+            this[CommonConfigurationKeys.MODULE_NAME] ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME,
+            destination?.path ?: ".", "java-production"
+        )
+        module.configureFromArgs(arguments)
+
+        ModuleChunk(listOf(module))
     }
 }
 

@@ -87,17 +87,23 @@ fun makeIncrementally(
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
     withIC(args) {
-        val compiler = IncrementalJvmCompilerRunner(
-            cachesDir,
-            buildReporter,
-            // Use precise setting in case of non-Gradle build
-            usePreciseJavaTracking = !args.useFir, // TODO: add fir-based java classes tracker when available and set this to true
-            outputFiles = emptyList(),
-            buildHistoryFile = buildHistoryFile,
-            modulesApiHistory = EmptyModulesApiHistory,
-            kotlinSourceFilesExtensions = kotlinExtensions,
-            classpathChanges = ClasspathSnapshotDisabled
-        )
+        val compiler =
+            if (args.useFir)
+                IncrementalFirJvmCompilerRunner(
+                    cachesDir, buildReporter, buildHistoryFile, emptyList(), EmptyModulesApiHistory, kotlinExtensions, ClasspathSnapshotDisabled
+                )
+            else
+                IncrementalJvmCompilerRunner(
+                    cachesDir,
+                    buildReporter,
+                    // Use precise setting in case of non-Gradle build
+                    usePreciseJavaTracking = !args.useFir, // TODO: add fir-based java classes tracker when available and set this to true
+                    outputFiles = emptyList(),
+                    buildHistoryFile = buildHistoryFile,
+                    modulesApiHistory = EmptyModulesApiHistory,
+                    kotlinSourceFilesExtensions = kotlinExtensions,
+                    classpathChanges = ClasspathSnapshotDisabled
+                )
         //TODO set properly
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
@@ -127,7 +133,7 @@ inline fun <R> withIC(args: CommonCompilerArguments, enabled: Boolean = true, fn
     }
 }
 
-class IncrementalJvmCompilerRunner(
+open class IncrementalJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter,
     private val usePreciseJavaTracking: Boolean,
@@ -468,12 +474,14 @@ class IncrementalJvmCompilerRunner(
         }
 
     override fun runCompiler(
-        sourcesToCompile: Set<File>,
+        sourcesToCompile: List<File>,
         args: K2JVMCompilerArguments,
         caches: IncrementalJvmCachesManager,
         services: Services,
-        messageCollector: MessageCollector
-    ): ExitCode {
+        messageCollector: MessageCollector,
+        allSources: List<File>,
+        isIncremental: Boolean
+    ): Pair<ExitCode, Collection<File>> {
         val compiler = K2JVMCompiler()
         val freeArgsBackup = args.freeArgs.toList()
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
@@ -481,7 +489,7 @@ class IncrementalJvmCompilerRunner(
         val exitCode = compiler.exec(messageCollector, services, args)
         args.freeArgs = freeArgsBackup
         reportPerformanceData(compiler.defaultPerformanceManager)
-        return exitCode
+        return exitCode to sourcesToCompile
     }
 
     override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager) {

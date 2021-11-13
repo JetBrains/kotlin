@@ -16,8 +16,8 @@ class DirtyFilesContainer(
 ) {
     private val myDirtyFiles = HashSet<File>()
 
-    fun toMutableList(): MutableList<File> =
-        ArrayList(myDirtyFiles)
+    fun toMutableLinkedSet(): LinkedHashSet<File> =
+        LinkedHashSet(myDirtyFiles)
 
     fun add(files: Iterable<File>, reason: String?) {
         val existingKotlinFiles = files.filter { it.isKotlinFile(sourceFilesExtensions) }
