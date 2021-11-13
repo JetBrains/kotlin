@@ -109,11 +109,11 @@ private class TestOutput(
 
     private inline fun <T> verifyExpectation(expected: T, actual: T, crossinline errorMessageHeader: () -> String) {
         assertEquals(expected, actual) {
-            """
-                ${errorMessageHeader()}
-
-                ${LoggedData.TestRun(loggedParameters, exitCode, stdOut, stdErr, finishTimeMillis - startTimeMillis)}
-            """.trimIndent()
+            buildString {
+                appendLine(errorMessageHeader())
+                appendLine()
+                appendLine(LoggedData.TestRun(loggedParameters, exitCode, stdOut, stdErr, finishTimeMillis - startTimeMillis))
+            }
         }
     }
 
