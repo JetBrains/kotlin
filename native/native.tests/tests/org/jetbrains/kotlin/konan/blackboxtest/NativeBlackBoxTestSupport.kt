@@ -27,8 +27,11 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      * Also, [TestInstancePostProcessor.postProcessTestInstance] allows accessing only the currently created test instance and does
      * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
      */
-    override fun beforeEach(extensionContext: ExtensionContext) = with(extensionContext) {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         enclosingTestInstance.testRunProvider = getOrCreateTestRunProvider()
+
+        // Set the essential compiler property.
+        System.setProperty("kotlin.native.home", getOrCreateGlobalEnvironment().kotlinNativeHome.path)
     }
 
     companion object {

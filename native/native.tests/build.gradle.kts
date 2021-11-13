@@ -39,14 +39,24 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-if (kotlinBuildProperties.isKotlinNativeEnabled) {
-    val kotlinNativeHome = project(":kotlin-native").projectDir.resolve("dist")
+enum class TestProperty(shortName: String) {
+    // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
+    // Don't use "kotlin.native.home" and similar properties for this purpose, as these properties may have undesired
+    // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
+    KOTLIN_NATIVE_HOME("nativeHome"),
+    COMPILER_CLASSPATH("compilerClasspath"),
+    TEST_MODE("mode"),
+    USE_CACHE("useCache");
 
-    val kotlinNativeCompilerClassPath: Configuration by configurations.creating
-    dependencies {
-        kotlinNativeCompilerClassPath(project(":kotlin-native-compiler-embeddable"))
+    private val propertyName = "kotlin.internal.native.test.$shortName"
+
+    fun setUpFromGradleProperty(task: Test, defaultValue: () -> Any? = { null }) {
+        val propertyValue = task.project.findProperty(propertyName) ?: defaultValue()
+        if (propertyValue != null) task.systemProperty(propertyName, propertyValue)
     }
+}
 
+if (kotlinBuildProperties.isKotlinNativeEnabled) {
     projectTest(taskName = "test", jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":kotlin-native:dist" /*, ":kotlin-native:distPlatformLibs"*/)
         workingDir = rootDir
@@ -60,14 +70,17 @@ if (kotlinBuildProperties.isKotlinNativeEnabled) {
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        systemProperty("kotlin.native.home", kotlinNativeHome.absolutePath)
-        systemProperty("kotlin.internal.native.classpath", kotlinNativeCompilerClassPath.files.joinToString(";"))
+        TestProperty.KOTLIN_NATIVE_HOME.setUpFromGradleProperty(this) {
+            project(":kotlin-native").projectDir.resolve("dist").absolutePath
+        }
+
+        TestProperty.COMPILER_CLASSPATH.setUpFromGradleProperty(this) {
+            configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable")).files.joinToString(";")
+        }
 
         // Pass Gradle properties as JVM properties so test process can read them.
-        listOf(
-            "kotlin.internal.native.test.mode",
-            "kotlin.internal.native.test.useCache"
-        ).forEach { propertyName -> findProperty(propertyName)?.let { systemProperty(propertyName, it) } }
+        TestProperty.TEST_MODE.setUpFromGradleProperty(this)
+        TestProperty.USE_CACHE.setUpFromGradleProperty(this)
 
         useJUnitPlatform()
     }

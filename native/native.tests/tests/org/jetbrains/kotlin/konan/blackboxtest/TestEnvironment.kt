@@ -38,22 +38,22 @@ internal class GlobalTestEnvironment(
 
         // Use isolated cached class loader.
         private val defaultKotlinNativeClassLoader: Lazy<ClassLoader> = lazy {
-            val nativeClassPath = System.getProperty(KOTLIN_NATIVE_CLASSPATH)
+            val nativeClassPath = System.getProperty(COMPILER_CLASSPATH)
                 ?.split(':', ';')
                 ?.map { File(it).toURI().toURL() }
                 ?.toTypedArray()
-                ?: fail { "Non-specified $KOTLIN_NATIVE_CLASSPATH system property" }
+                ?: fail { "Non-specified $COMPILER_CLASSPATH system property" }
 
             URLClassLoader(nativeClassPath, /* no parent class loader */ null).apply { setDefaultAssertionStatus(true) }
         }
 
         private val defaultTestMode: TestMode = run {
-            val testModeName = System.getProperty(KOTLIN_NATIVE_TEST_MODE) ?: return@run TestMode.WITH_MODULES
+            val testModeName = System.getProperty(TEST_MODE) ?: return@run TestMode.WITH_MODULES
 
             TestMode.values().firstOrNull { it.name == testModeName } ?: fail {
                 buildString {
                     appendLine("Unknown test mode name $testModeName.")
-                    appendLine("One of the following test modes should be passed through $KOTLIN_NATIVE_TEST_MODE system property:")
+                    appendLine("One of the following test modes should be passed through $TEST_MODE system property:")
                     TestMode.values().forEach { testMode ->
                         appendLine("- ${testMode.name}: ${testMode.description}")
                     }
@@ -62,10 +62,9 @@ internal class GlobalTestEnvironment(
         }
 
         private val defaultCacheSettings: TestCacheSettings = run {
-            val useCacheValue = System.getProperty(KOTLIN_NATIVE_TEST_USE_CACHE)
+            val useCacheValue = System.getProperty(USE_CACHE)
             val useCache = if (useCacheValue != null) {
-                useCacheValue.toBooleanStrictOrNull()
-                    ?: fail { "Invalid value for $KOTLIN_NATIVE_TEST_USE_CACHE system property: $useCacheValue" }
+                useCacheValue.toBooleanStrictOrNull() ?: fail { "Invalid value for $USE_CACHE system property: $useCacheValue" }
             } else
                 true
 
@@ -75,10 +74,10 @@ internal class GlobalTestEnvironment(
         private val projectBuildDir: File
             get() = System.getenv(PROJECT_BUILD_DIR)?.let(::File) ?: fail { "Non-specified $PROJECT_BUILD_DIR environment variable" }
 
-        private const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
-        private const val KOTLIN_NATIVE_CLASSPATH = "kotlin.internal.native.classpath"
-        private const val KOTLIN_NATIVE_TEST_MODE = "kotlin.internal.native.test.mode"
-        private const val KOTLIN_NATIVE_TEST_USE_CACHE = "kotlin.internal.native.test.useCache"
+        private const val KOTLIN_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
+        private const val COMPILER_CLASSPATH = "kotlin.internal.native.test.compilerClasspath"
+        private const val TEST_MODE = "kotlin.internal.native.test.mode"
+        private const val USE_CACHE = "kotlin.internal.native.test.useCache"
         private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"
     }
 }
