@@ -15,7 +15,11 @@ import kotlin.math.min
 
 internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
-        "The file is outside of the directory.\nFile: $testDataFile\nDirectory: $testDataBaseDir"
+        """
+            The file is outside of the directory.
+            File: $testDataFile
+            Directory: $testDataBaseDir
+        """.trimIndent()
     }
 
     return testDataFile.parentFile

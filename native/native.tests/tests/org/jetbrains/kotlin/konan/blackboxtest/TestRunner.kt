@@ -109,8 +109,11 @@ private class TestOutput(
 
     private inline fun <T> verifyExpectation(expected: T, actual: T, crossinline errorMessageHeader: () -> String) {
         assertEquals(expected, actual) {
-            val loggedTestRun = LoggedData.TestRun(loggedParameters, exitCode, stdOut, stdErr, finishTimeMillis - startTimeMillis)
-            "${errorMessageHeader()}\n\n$loggedTestRun"
+            """
+                ${errorMessageHeader()}
+
+                ${LoggedData.TestRun(loggedParameters, exitCode, stdOut, stdErr, finishTimeMillis - startTimeMillis)}
+            """.trimIndent()
         }
     }
 

@@ -19,7 +19,11 @@ internal fun getAbsoluteFile(localPath: String): File = File(getHomeDirectory())
 
 internal fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: File, generatedSourcesBaseDir: File): File {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
-        "The file is outside of the directory.\nFile: $testDataFile\nDirectory: $testDataBaseDir"
+        """
+            The file is outside of the directory.
+            File: $testDataFile
+            Directory: $testDataBaseDir
+        """.trimIndent()
     }
 
     val testDataFileDir = testDataFile.parentFile

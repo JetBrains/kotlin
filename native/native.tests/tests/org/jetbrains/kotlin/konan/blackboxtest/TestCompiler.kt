@@ -175,9 +175,13 @@ internal sealed interface TestCompilationResult {
             is DependencyFailures -> fail { describeDependencyFailures() }
         }
 
-        private fun Failure.describeFailure() = when (this) {
-            is CompilerFailure -> "Compilation failed.\n\n$loggedData"
-            is UnexpectedFailure -> "Compilation failed with unexpected exception.\n\n$loggedData"
+        private fun Failure.describeFailure() = buildString {
+            when (this@describeFailure) {
+                is CompilerFailure -> appendLine("Compilation failed.")
+                is UnexpectedFailure -> appendLine("Compilation failed with unexpected exception.")
+            }
+            appendLine()
+            appendLine(loggedData)
         }
 
         private fun DependencyFailures.describeDependencyFailures() =

@@ -67,7 +67,11 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
             // Don't register new test module if there is another one with the same name.
             val testModule = testModules.getOrPut(newTestModule.name) { newTestModule }
             assertTrue(testModule === newTestModule || testModule.haveSameSymbols(newTestModule)) {
-                "$location: Two declarations of the same module with different dependencies or friends found:\n$testModule\n$newTestModule"
+                """
+                    $location: Two declarations of the same module with different dependencies or friends found:
+                    $testModule
+                    $newTestModule
+                """.trimIndent()
             }
 
             currentTestModule = testModule
@@ -111,7 +115,13 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
                     directivesParser.convertToRegisteredDirective(rawDirective)
                 } catch (e: AssertionError) {
                     // Enhance error message with concrete test data file and line number where the error has happened.
-                    throw AssertionError("$location: Error while parsing directive in test data file.\nCause: ${e.message}", e)
+                    throw AssertionError(
+                        """
+                            $location: Error while parsing directive in test data file.
+                            Cause: ${e.message}
+                        """.trimIndent(),
+                        e
+                    )
                 }
 
                 if (parsedDirective != null) {
@@ -228,8 +238,10 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
                         && existingPackageName[packageName.length] == '.')
             ) {
                 val location = Location(testDataFile, existingPackageDeclarationLineNumber)
-                "$location: Invalid package name declaration found: $existingPackageDeclarationLine\nExpected: package $packageName"
-
+                """
+                    $location: Invalid package name declaration found: $existingPackageDeclarationLine
+                    Expected: package $packageName
+                """.trimIndent()
             }
             text
         } else
