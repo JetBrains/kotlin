@@ -33,12 +33,16 @@ internal fun computePackageName(testDataBaseDir: File, testDataFile: File): Pack
             else
                 buildString {
                     packagePart.forEachIndexed { index, ch ->
-                        if (index == 0) when {
-                            ch.isJavaIdentifierStart() -> append(ch)
-                            ch.isJavaIdentifierPart() -> append('_').append(ch)
-                            else -> append('_')
+                        if (ch.isJavaIdentifierPart()) {
+                            if (index == 0 && !ch.isJavaIdentifierStart()) {
+                                // If the first character is not suitable for start, escape it with '_'.
+                                append('_')
+                            }
+                            append(ch)
+                        } else {
+                            // Replace incorrect character.
+                            append('_')
                         }
-                        else append(if (ch.isJavaIdentifierPart()) ch else '_')
                     }
                 }
         }
