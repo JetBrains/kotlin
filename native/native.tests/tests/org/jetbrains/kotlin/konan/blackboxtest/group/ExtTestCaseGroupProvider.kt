@@ -78,7 +78,6 @@ internal class ExtTestCaseGroupProvider(
         /** Test data files or test data directories that are excluded from testing. */
         private val excludes: Set<File> = listOf(
             "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
-            "compiler/testData/codegen/box/callableReference/genericConstructorReference.kt",                       // ???
             "compiler/testData/codegen/box/collections/kt41123.kt",                                                 // KT-42723
             "compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt",           // KT-42020
             "compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",             // KT-42723

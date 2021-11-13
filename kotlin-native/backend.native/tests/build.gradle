@@ -344,9 +344,7 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-def ignoredTests = [
-        "compiler_testData_codegen_box_callableReference" : ["genericConstructorReference.kt"]
-]
+Map<String, List<String>> ignoredTests = [:]
 
 task run_external () {
     outputs.upToDateWhen{ false }
