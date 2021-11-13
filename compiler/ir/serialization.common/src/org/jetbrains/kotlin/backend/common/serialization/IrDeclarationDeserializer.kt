@@ -260,8 +260,17 @@ class IrDeclarationDeserializer(
             } else {
                 val symbolData = BinarySymbolData.decode(proto.base.symbol)
                 sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-                declareScopedTypeParameter(sig, {
-                    if (it.isPubliclyVisible) IrTypeParameterPublicSymbolImpl(it) else IrTypeParameterSymbolImpl() }, factory)
+                declareScopedTypeParameter(
+                    sig,
+                    {
+                        if (it.isPubliclyVisible)
+                            symbolDeserializer.deserializeIrSymbol(
+                                sig, BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
+                            ) as IrTypeParameterSymbol
+                        else IrTypeParameterSymbolImpl()
+                    },
+                    factory
+                )
             }
         }
 
