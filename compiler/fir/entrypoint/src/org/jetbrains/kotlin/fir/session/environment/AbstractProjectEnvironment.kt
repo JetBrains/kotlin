@@ -49,6 +49,8 @@ interface AbstractProjectEnvironment {
 
     fun getSearchScopeByIoFiles(files: Iterable<File>, allowOutOfProjectRoots: Boolean = false): AbstractProjectFileSearchScope
 
+    fun getSearchScopeByDirectories(directories: Iterable<File>): AbstractProjectFileSearchScope
+
     fun getSearchScopeForProjectLibraries(): AbstractProjectFileSearchScope
 
     fun getSearchScopeForProjectJavaSources(): AbstractProjectFileSearchScope

@@ -41,7 +41,7 @@ fun createSessionForTests(
     sourceScope,
     librariesScope,
     lookupTracker = null,
-    providerAndScopeForIncrementalCompilation = null,
+    incrementalCompilationContext = null,
     extensionRegistrars = emptyList(),
     needRegisterJavaElementFinder = true,
     dependenciesConfigurator = {
@@ -72,7 +72,7 @@ fun createSessionForTests(
         PsiBasedProjectFileSearchScope(sourceScope),
         PsiBasedProjectFileSearchScope(librariesScope),
         lookupTracker = null,
-        providerAndScopeForIncrementalCompilation = null,
+        incrementalCompilationContext = null,
         extensionRegistrars = emptyList(),
         needRegisterJavaElementFinder = true,
         dependenciesConfigurator = {

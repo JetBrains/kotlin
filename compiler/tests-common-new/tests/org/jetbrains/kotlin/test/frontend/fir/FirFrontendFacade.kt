@@ -93,7 +93,7 @@ class FirFrontendFacade(
             PsiBasedProjectFileSearchScope(sourcesScope),
             PsiBasedProjectFileSearchScope(librariesScope),
             lookupTracker = null,
-            providerAndScopeForIncrementalCompilation = null,
+            incrementalCompilationContext = null,
             extensionRegistrars = FirExtensionRegistrar.getInstances(project),
             needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
