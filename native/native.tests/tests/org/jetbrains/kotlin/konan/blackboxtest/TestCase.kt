@@ -52,7 +52,9 @@ internal class TestFile<M : TestModule> private constructor(
                 location.writeText(state.text)
                 this.state = State.Committed
             }
-            is State.Committed -> System.err.println("$this has been committed again. Need to check why this had happened.")
+            is State.Committed -> {
+                // Nothing to do. File is already saved to the disk.
+            }
         }
     }
 
