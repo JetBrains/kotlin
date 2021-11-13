@@ -228,7 +228,7 @@ private class ExtTestDataFile(
                         addAnnotationEntry(
                             objectDeclaration,
                             handler.psiFactory.createAnnotationEntry(THREAD_LOCAL_ANNOTATION)
-                        ).ensureSurroundedByWhiteSpace(" ")
+                        ).ensureSurroundedByWhiteSpace()
                     }
 
                     super.visitObjectDeclaration(objectDeclaration)
@@ -287,10 +287,10 @@ private class ExtTestDataFile(
 
                     if (oldPackageDirective != null) {
                         // Replace old package directive by the new one.
-                        oldPackageDirective.replace(newPackageDirective).ensureSurroundedByWhiteSpace("\n\n")
+                        oldPackageDirective.replace(newPackageDirective).ensureSurroundedByWhiteSpace()
                     } else {
                         // Insert the package directive immediately after file-level annotations.
-                        file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByWhiteSpace("\n\n")
+                        file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByWhiteSpace()
                     }
 
                     visitKtElement(file, file.collectAccessibleDeclarationNames())
@@ -482,16 +482,16 @@ private class ExtTestDataFile(
                     override fun visitKtFile(file: KtFile) {
                         val oldFileAnnotationList = file.fileAnnotationList
 
-                        val newFileAnnotationsList = handler.psiFactory.createFile(buildString {
+                        val newFileAnnotationList = handler.psiFactory.createFile(buildString {
                             allFileLevelAnnotationsSorted.forEach(::appendLine)
                         }).fileAnnotationList!!
 
                         if (oldFileAnnotationList != null) {
                             // Replace old annotations list by the new one.
-                            oldFileAnnotationList.replace(newFileAnnotationsList).ensureSurroundedByWhiteSpace("\n\n")
+                            oldFileAnnotationList.replace(newFileAnnotationList).ensureSurroundedByWhiteSpace()
                         } else {
                             // Insert the annotations list immediately before package directive.
-                            file.addBefore(newFileAnnotationsList, file.packageDirective).ensureSurroundedByWhiteSpace("\n\n")
+                            file.addBefore(newFileAnnotationList, file.packageDirective).ensureSurroundedByWhiteSpace()
                         }
                     }
                 })
@@ -805,7 +805,13 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
     private inner class FilesAndModules(originalTestDataFile: File, initialCleanUpTransformation: (String) -> String) {
         private val testFileFactory = ExtTestFileFactory()
-        private val generatedFiles = TestFiles.createTestFiles(DEFAULT_FILE_NAME, originalTestDataFile.readText(), testFileFactory)
+
+        private val generatedFiles = TestFiles.createTestFiles(
+            /* testFileName = */ DEFAULT_FILE_NAME,
+            /* expectedText = */ originalTestDataFile.readText(),
+            /* factory = */ testFileFactory,
+            /* preserveLocations = */ true
+        )
 
         private val lazyData: Triple<Map<String, ExtTestModule>, Map<ExtTestFile, KtFile>, MutableList<ExtTestFile>> by lazy {
             // Clean up contents of every individual test file. Important: This should be done only after parsing testData file,
