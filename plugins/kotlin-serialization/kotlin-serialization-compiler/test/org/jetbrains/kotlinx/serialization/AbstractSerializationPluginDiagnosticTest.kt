@@ -8,7 +8,7 @@ package org.jetbrains.kotlinx.serialization
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 
 @OptIn(ObsoleteTestInfrastructure::class)
@@ -17,6 +17,6 @@ abstract class AbstractSerializationPluginDiagnosticTest : AbstractDiagnosticsTe
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         SerializationComponentRegistrar.registerExtensions(environment.project)
-        environment.updateClasspath(listOf(PhysicalJvmClasspathRoot(coreLibraryPath!!)))
+        environment.updateClasspath(listOf(JvmClasspathRoot(coreLibraryPath!!)))
     }
 }

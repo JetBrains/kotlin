@@ -406,7 +406,7 @@ class KotlinCoreEnvironment private constructor(
 
     private fun contentRootToVirtualFile(root: JvmContentRootBase): VirtualFile? =
         when (root) {
-            is PhysicalJvmClasspathRoot ->
+            is JvmClasspathRoot ->
                 if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Classpath entry")
             is JvmModulePathRoot ->
                 if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Java module root")

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
@@ -33,7 +33,7 @@ class ReplInterpreter(
     private val classpathRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
         when (root) {
             is JvmModulePathRoot -> root.file // TODO: only add required modules
-            is PhysicalJvmClasspathRoot -> root.file
+            is JvmClasspathRoot -> root.file
             else -> null
         }
     }

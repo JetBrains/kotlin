@@ -160,7 +160,7 @@ object KotlinToJVMBytecodeCompiler {
             for (classpathRoot in module.getClasspathRoots()) {
                 configuration.add(
                     CLIConfigurationKeys.CONTENT_ROOTS,
-                    if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else PhysicalJvmClasspathRoot(File(classpathRoot))
+                    if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
                 )
             }
         }
@@ -212,7 +212,7 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             if (result.additionalClassPathRoots.isNotEmpty()) {
-                environment.updateClasspath(result.additionalClassPathRoots.map { PhysicalJvmClasspathRoot(it, false) })
+                environment.updateClasspath(result.additionalClassPathRoots.map { JvmClasspathRoot(it, false) })
             }
 
             if (result.additionalKotlinRoots.isNotEmpty()) {

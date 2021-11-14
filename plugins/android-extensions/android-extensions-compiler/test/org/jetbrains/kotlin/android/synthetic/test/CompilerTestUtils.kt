@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProvi
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -55,7 +55,7 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
 fun addAndroidExtensionsRuntimeLibrary(environment: KotlinCoreEnvironment) {
     environment.apply {
         val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "android-extensions-compiler.jar")
-        updateClasspath(listOf(PhysicalJvmClasspathRoot(runtimeLibrary)))
+        updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
     }
 }
 

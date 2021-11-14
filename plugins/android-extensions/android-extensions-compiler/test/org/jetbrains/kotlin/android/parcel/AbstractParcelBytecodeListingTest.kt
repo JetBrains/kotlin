@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar
 import org.jetbrains.kotlin.android.synthetic.test.addAndroidExtensionsRuntimeLibrary
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
 
 @OptIn(ObsoleteTestInfrastructure::class)
@@ -17,6 +17,6 @@ abstract class AbstractParcelBytecodeListingTest : AbstractAsmLikeInstructionLis
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         AndroidComponentRegistrar.registerParcelExtensions(environment.project)
         addAndroidExtensionsRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(PhysicalJvmClasspathRoot(AbstractParcelBoxTest.layoutlibJar)))
+        environment.updateClasspath(listOf(JvmClasspathRoot(AbstractParcelBoxTest.layoutlibJar)))
     }
 }

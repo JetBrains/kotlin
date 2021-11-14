@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -297,7 +297,7 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
             initialConfiguration
         )
 
-    context.environment.updateClasspath(classpath.map(::PhysicalJvmClasspathRoot))
+    context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
 
     sourceFiles.addAll(newSources)
 

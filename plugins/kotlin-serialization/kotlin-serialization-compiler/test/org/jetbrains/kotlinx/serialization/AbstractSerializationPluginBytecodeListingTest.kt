@@ -7,7 +7,7 @@ package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 
@@ -17,6 +17,6 @@ abstract class AbstractSerializationPluginBytecodeListingTest : AbstractAsmLikeI
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         SerializationComponentRegistrar.registerExtensions(environment.project)
-        environment.updateClasspath(listOf(PhysicalJvmClasspathRoot(coreLibraryPath!!)))
+        environment.updateClasspath(listOf(JvmClasspathRoot(coreLibraryPath!!)))
     }
 }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.PhysicalJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
@@ -349,6 +349,6 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
 private fun addAnnotationProcessingRuntimeLibrary(environment: KotlinCoreEnvironment) {
     environment.apply {
         val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "kotlin-annotation-processing-runtime.jar")
-        updateClasspath(listOf(PhysicalJvmClasspathRoot(runtimeLibrary)))
+        updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
     }
 }
