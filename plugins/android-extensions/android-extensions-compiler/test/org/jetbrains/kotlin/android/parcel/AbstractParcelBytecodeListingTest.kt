@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.android.synthetic.test.addAndroidExtensionsRuntimeLi
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
+import java.io.File
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractParcelBytecodeListingTest : AbstractAsmLikeInstructionListingTest() {
