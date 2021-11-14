@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: in progress (delegate branch)
 import kotlin.reflect.KProperty
 
 class TypeInference {
