@@ -1550,8 +1550,7 @@ open class RawFirBuilder(
                             ownerRegularOrAnonymousObjectSymbol = null,
                             ownerRegularClassTypeParametersCount = null,
                             isExtension = false,
-                            receiver = extractDelegateExpression(),
-                            context = context
+                            context = context,
                         )
                     }
                 } else {
@@ -1616,7 +1615,6 @@ open class RawFirBuilder(
                                 ownerRegularClassTypeParametersCount,
                                 context,
                                 isExtension = receiverTypeReference != null,
-                                receiver = extractDelegateExpression()
                             )
                         }
                     }
