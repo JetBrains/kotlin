@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -33,7 +34,9 @@ import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
@@ -191,6 +194,11 @@ private fun throwTwiceVisitingError(element: FirElement) {
     ) {
         return
     }
+    if (element is FirExpression) {
+        val psiParent = element.source?.psi?.parent
+        if (psiParent is KtPropertyDelegate || psiParent?.parent is KtPropertyDelegate) return
+    }
+
     val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
 }
