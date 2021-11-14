@@ -47,12 +47,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
     @Deprecated(message = "This option is not working well with Gradle caching and will be removed in the future.", level = DeprecationLevel.WARNING)
     override var jdkHome: kotlin.String? = null
 
-    internal var jvmTargetField: kotlin.String? = null
-    override var jvmTarget: kotlin.String
-        get() = jvmTargetField ?: "1.8"
-        set(value) {
-            jvmTargetField = value
-        }
+    override var jvmTarget: kotlin.String? = null
 
     override var moduleName: kotlin.String? = null
 
@@ -95,7 +90,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         useFirField?.let { args.useFir = it }
         javaParametersField?.let { args.javaParameters = it }
         jdkHome?.let { args.jdkHome = it }
-        jvmTargetField?.let { args.jvmTarget = it }
+        jvmTarget?.let { args.jvmTarget = it }
         moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
         noStdlibField?.let { args.noStdlib = it }
@@ -113,7 +108,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     useFir = false
     javaParameters = false
     jdkHome = null
-    jvmTarget = "1.8"
+    jvmTarget = null
     moduleName = null
     noJdk = false
     noStdlib = true

@@ -89,7 +89,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<version>",
         description = "Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14, 15, 16 or 17), default is 1.8"
     )
-    var jvmTarget: String? by NullableStringFreezableVar(JvmTarget.DEFAULT.description)
+    var jvmTarget: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")

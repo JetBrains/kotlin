@@ -21,9 +21,9 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
     /**
      * Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14, 15, 16 or 17), default is 1.8
      * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17"
-     * Default value: "1.8"
+     * Default value: null
      */
-     var jvmTarget: kotlin.String
+     var jvmTarget: kotlin.String?
 
     /**
      * Name of the generated .kotlin_module file

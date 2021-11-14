@@ -155,7 +155,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
             // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
             val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptionsImpl.orNull)
-                .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTargetField }
+                .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTarget }
 
             if (appliedJvmTargets.isEmpty()) {
                 // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
@@ -180,7 +180,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
             kotlinCompileTaskProvider()?.let { task ->
                 // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
                 val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptionsImpl.orNull)
-                    .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTargetField }
+                    .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTarget }
 
                 if (appliedJvmTargets.isEmpty()) {
                     // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly

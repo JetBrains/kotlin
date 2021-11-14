@@ -36,7 +36,7 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
     )
 
     object JvmTargetVersions : DefaultValues(
-        "\"" + JvmTarget.DEFAULT.description + "\"",
+        "null",
         JvmTarget.values().map { "\"${it.description}\"" }
     )
 

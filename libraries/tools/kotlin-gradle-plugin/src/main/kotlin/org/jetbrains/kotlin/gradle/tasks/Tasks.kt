@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.*
@@ -797,10 +798,11 @@ abstract class KotlinCompile @Inject constructor(
                     else -> targetCompatibility
                 }
 
-                if (normalizedJavaTarget != args.jvmTarget) {
+                val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
+                if (normalizedJavaTarget != jvmTarget) {
                     val javaTaskName = associatedJavaCompileTaskName.get()
                     val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
-                            "'$name' task (current target is ${args.jvmTarget}) " +
+                            "'$name' task (current target is $jvmTarget) " +
                             "jvm target compatibility should be set to the same Java version."
                     when (jvmTargetValidationMode.get()) {
                         PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)

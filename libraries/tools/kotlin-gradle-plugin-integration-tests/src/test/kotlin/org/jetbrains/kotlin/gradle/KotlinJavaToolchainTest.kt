@@ -573,9 +573,9 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 tasks.named("compileKotlin") {
                     doLast {
                         def actualJvmTarget = filteredArgumentsMap['jvmTarget']
-                        if (actualJvmTarget != "1.8") {
+                        if (actualJvmTarget != "null") {
                             //noinspection GroovyAssignabilityCheck
-                            throw new GradleException("Expected `jvmTarget` value is '1.8' but the actual value was ${'$'}actualJvmTarget")
+                            throw new GradleException("Expected `jvmTarget` value is 'null' but the actual value was ${'$'}actualJvmTarget")
                         }
                     }
                 }

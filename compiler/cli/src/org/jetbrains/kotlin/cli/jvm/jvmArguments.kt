@@ -76,6 +76,11 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
+        put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+    }
+
+
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
         val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)

@@ -33,7 +33,6 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
         val kotlinOptions = mutableListOf(
             "-jdk-home", KtTestUtil.getJdk11Home().path,
-            "-jvm-target", "1.8",
             "-Xmodule-path=$paths"
         )
         if (addModules.isNotEmpty()) {
