@@ -131,7 +131,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
         require(this is ConeStubType)
-        return this.variable.typeConstructor
+        return this.constructor.variable.typeConstructor
     }
 
     override fun KotlinTypeMarker.typeDepth() = when (this) {

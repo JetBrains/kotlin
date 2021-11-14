@@ -322,7 +322,11 @@ fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): Con
     return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
 }
 
-sealed class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
+data class ConeStubTypeConstructor(val variable: ConeTypeVariable, val isTypeVariableInSubtyping: Boolean) : TypeConstructorMarker
+
+sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val nullability: ConeNullability) : StubTypeMarker,
+    ConeSimpleKotlinType() {
+
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 
@@ -335,7 +339,7 @@ sealed class ConeStubType(val variable: ConeTypeVariable, override val nullabili
 
         other as ConeStubType
 
-        if (variable != other.variable) return false
+        if (constructor != other.constructor) return false
         if (nullability != other.nullability) return false
 
         return true
@@ -343,14 +347,16 @@ sealed class ConeStubType(val variable: ConeTypeVariable, override val nullabili
 
     override fun hashCode(): Int {
         var result = 0
-        result = 31 * result + variable.hashCode()
+        result = 31 * result + constructor.hashCode()
         result = 31 * result + nullability.hashCode()
         return result
     }
 }
 
-class ConeStubTypeForBuilderInference(variable: ConeTypeVariable, nullability: ConeNullability) : ConeStubType(variable, nullability)
-class ConeStubTypeForTypeVariableInSubtyping(variable: ConeTypeVariable, nullability: ConeNullability) : ConeStubType(variable, nullability)
+open class ConeStubTypeForBuilderInference(variable: ConeTypeVariable, nullability: ConeNullability) :
+    ConeStubType(ConeStubTypeConstructor(variable, isTypeVariableInSubtyping = false), nullability)
+class ConeStubTypeForTypeVariableInSubtyping(variable: ConeTypeVariable, nullability: ConeNullability) :
+    ConeStubType(ConeStubTypeConstructor(variable, isTypeVariableInSubtyping = true), nullability)
 
 open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
     val typeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)

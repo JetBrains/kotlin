@@ -145,7 +145,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 require(b is ConeStubType) {
                     "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
                 }
-                val nameDiff = a.variable.typeConstructor.name.compareTo(b.variable.typeConstructor.name)
+                val nameDiff = a.constructor.variable.typeConstructor.name.compareTo(b.constructor.variable.typeConstructor.name)
                 if (nameDiff != 0) {
                     return nameDiff
                 }
