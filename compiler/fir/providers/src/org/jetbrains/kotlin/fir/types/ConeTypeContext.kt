@@ -414,6 +414,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeStubTypeForBuilderInference
     }
 
+    override fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker {
+        if (this !is ConeStubTypeConstructor) return this
+        if (this.isTypeVariableInSubtyping) return this
+        return this.variable.typeConstructor
+    }
+
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>) as SimpleTypeMarker

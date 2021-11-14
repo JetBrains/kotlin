@@ -94,6 +94,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
     }
 
+    override fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker {
+        return this
+    }
+
     override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
         require(this is AbstractStubType, this::errorMessage)
         return this.originalTypeVariable as TypeVariableTypeConstructorMarker
