@@ -169,7 +169,7 @@ class FirBuilderInferenceSession(
 
         val bindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         for ((variable, nonFixedType) in stubsForPostponedVariables) {
-            bindings[nonFixedType.variable.typeConstructor] = variable.defaultType
+            bindings[nonFixedType.constructor] = variable.defaultType
         }
 
         return ctx.typeSubstitutorByTypeConstructor(bindings)

@@ -46,8 +46,8 @@ fun ConeKotlinType.render(): String {
                 postfix = ")"
             )
         }
-        is ConeStubTypeForBuilderInference -> "${renderAttributes()}Stub (builder inference): $variable"
-        is ConeStubType -> "${renderAttributes()}Stub (subtyping): $variable"
+        is ConeStubTypeForBuilderInference -> "${renderAttributes()}Stub (builder inference): ${constructor.variable}"
+        is ConeStubType -> "${renderAttributes()}Stub (subtyping): ${constructor.variable}"
         is ConeIntegerLiteralType -> "${renderAttributes()}ILT: $value"
     } + nullabilitySuffix
 }
