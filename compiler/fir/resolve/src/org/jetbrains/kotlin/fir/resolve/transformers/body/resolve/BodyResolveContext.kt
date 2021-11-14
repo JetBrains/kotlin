@@ -677,14 +677,12 @@ class BodyResolveContext(
 
     inline fun <T> forPropertyDelegateAccessors(
         property: FirProperty,
-        delegateExpression: FirExpression,
         resolutionContext: ResolutionContext,
         callCompleter: FirCallCompleter,
         f: FirDelegatedPropertyInferenceSession.() -> T
     ) {
         val inferenceSession = FirDelegatedPropertyInferenceSession(
             property,
-            delegateExpression,
             resolutionContext,
             callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
         )
