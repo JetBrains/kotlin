@@ -1208,6 +1208,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("delegateWithArgInference.kt")
+            public void testDelegateWithArgInference() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateWithArgInference.kt");
+            }
+
+            @Test
             @TestMetadata("delegateWithLambda.kt")
             public void testDelegateWithLambda() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateWithLambda.kt");
@@ -1235,6 +1241,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             @TestMetadata("provideDelegate.kt")
             public void testProvideDelegate() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/delegates/provideDelegate.kt");
+            }
+
+            @Test
+            @TestMetadata("receiverInference.kt")
+            public void testReceiverInference() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/delegates/receiverInference.kt");
             }
         }
 
@@ -5115,6 +5127,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             @TestMetadata("InnerClassOfThrowableOnObject.kt")
             public void testInnerClassOfThrowableOnObject() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/InnerClassOfThrowableOnObject.kt");
+            }
+
+            @Test
+            @TestMetadata("hideBySeverity.kt")
+            public void testHideBySeverity() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/hideBySeverity.kt");
             }
 
             @Test
