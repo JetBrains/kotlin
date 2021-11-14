@@ -358,6 +358,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isStubType(): Boolean
     fun SimpleTypeMarker.isStubTypeForVariableInSubtyping(): Boolean
     fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean
+    fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker
 
     fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker
 
