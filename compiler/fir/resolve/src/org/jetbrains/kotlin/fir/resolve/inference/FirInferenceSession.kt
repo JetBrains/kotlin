@@ -9,9 +9,14 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class FirInferenceSession {
     companion object {
@@ -25,6 +30,10 @@ abstract class FirInferenceSession {
     abstract fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
+    abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
+
+    abstract fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean
+
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
@@ -32,11 +41,8 @@ abstract class FirInferenceSession {
         // TODO: diagnostic holder
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
-    abstract fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement
-
     abstract fun clear()
+    abstract fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType>
 }
 
 abstract class FirStubInferenceSession : FirInferenceSession() {
@@ -55,9 +61,11 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
         completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
-    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-    override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-    override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
+
+    override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean = false
+
+    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
 
     override fun clear() {
     }

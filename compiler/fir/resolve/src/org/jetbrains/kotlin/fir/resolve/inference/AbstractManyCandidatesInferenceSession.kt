@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class AbstractManyCandidatesInferenceSession(
     protected val resolutionContext: ResolutionContext
@@ -22,13 +23,6 @@ abstract class AbstractManyCandidatesInferenceSession(
 
     protected val components: BodyResolveComponents
         get() = resolutionContext.bodyResolveComponents
-
-    override val currentConstraintSystem: ConstraintStorage
-        get() = partiallyResolvedCalls.lastOrNull()
-            ?.second
-            ?.system
-            ?.asReadOnlyStorage()
-            ?: ConstraintStorage.Empty
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         // do nothing
@@ -42,9 +36,7 @@ abstract class AbstractManyCandidatesInferenceSession(
         errorCalls += call
     }
 
-    final override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement {
-        return !completedCalls.add(call)
-    }
+    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
 
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
@@ -54,4 +46,5 @@ abstract class AbstractManyCandidatesInferenceSession(
         partiallyResolvedCalls.clear()
         completedCalls.clear()
     }
+
 }
