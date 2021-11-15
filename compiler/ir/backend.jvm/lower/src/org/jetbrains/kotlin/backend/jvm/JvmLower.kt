@@ -407,6 +407,7 @@ private fun buildJvmLoweringPhases(
                 validateIrBeforeLowering then
                 processOptionalAnnotationsPhase then
                 expectDeclarationsRemovingPhase then
+                constEvaluationPhase then
                 serializeIrPhase then
                 scriptsToClassesPhase then
                 fileClassPhase then

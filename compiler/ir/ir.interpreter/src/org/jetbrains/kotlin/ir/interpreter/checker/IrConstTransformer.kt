@@ -1,36 +1,32 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.backend.evaluate
+package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeChecker
+import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-fun evaluateConstants(irModuleFragment: IrModuleFragment) {
-    val interpreter = IrInterpreter(irModuleFragment.irBuiltins)
-    irModuleFragment.files.forEach { it.transformChildren(IrConstTransformer(interpreter, it), null) }
-}
-
-//TODO create abstract class that will be common for this and lowering
-class IrConstTransformer(private val interpreter: IrInterpreter, private val irFile: IrFile) : IrElementTransformerVoid() {
-
+class IrConstTransformer(
+    private val interpreter: IrInterpreter, private val irFile: IrFile, private val mode: EvaluationMode
+) : IrElementTransformerVoid() {
     private fun IrExpression.replaceIfError(original: IrExpression): IrExpression {
         return if (this !is IrErrorExpression) this else original
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
+        if (expression.accept(IrCompileTimeChecker(mode = mode), null)) {
             return interpreter.interpret(expression, irFile).replaceIfError(expression)
         }
         return super.visitCall(expression)
@@ -43,7 +39,7 @@ class IrConstTransformer(private val interpreter: IrInterpreter, private val irF
         val expression = initializer?.expression ?: return declaration
         if (expression is IrConst<*>) return declaration
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-        if (isConst && expression.accept(IrCompileTimeChecker(declaration, mode = EvaluationMode.ONLY_BUILTINS), null)) {
+        if (isConst && expression.accept(IrCompileTimeChecker(declaration, mode), null)) {
             initializer.expression = interpreter.interpret(expression, irFile).replaceIfError(expression)
         }
 
@@ -89,7 +85,7 @@ class IrConstTransformer(private val interpreter: IrInterpreter, private val irF
     }
 
     private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
-        if (this.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
+        if (this.accept(IrCompileTimeChecker(mode = mode), null)) {
             val const = interpreter.interpret(this, irFile).replaceIfError(this)
             return const.convertToConstIfPossible(expectedType)
         } else if (this is IrConstructorCall) {

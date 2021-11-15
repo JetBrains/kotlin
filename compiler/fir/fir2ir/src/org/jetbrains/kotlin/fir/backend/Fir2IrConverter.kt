@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.evaluate.evaluateConstants
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -38,6 +37,9 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
+import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
@@ -424,6 +426,13 @@ class Fir2IrConverter(
     }
 
     companion object {
+        private fun evaluateConstants(irModuleFragment: IrModuleFragment) {
+            val interpreter = IrInterpreter(irModuleFragment.irBuiltins)
+            irModuleFragment.files.forEach {
+                it.transformChildren(IrConstTransformer(interpreter, it, mode = EvaluationMode.ONLY_BUILTINS), null)
+            }
+        }
+
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun createModuleFragment(
             session: FirSession,
