@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.showMissingNativeStdlibWarning
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 internal fun Project.setupKotlinNativePlatformDependencies() {
@@ -47,12 +50,33 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
 internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     return when (target) {
         is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
-        is SharedCommonizerTarget -> commonizeNativeDistributionTask?.get()?.getCommonizedPlatformLibrariesFor(target) ?: project.files()
+        // TODO NOW:
+        //   - clean-up
+        //   - think about cases when host isn't among `target.targets`
+        //      consider: macos vs. linux. If we're on macos, then `getOriginalPlatformLibraries(macos)` for source-set without macos woould be stupid
+        //   - think about compilation
+        //   - think about toggle for the feature
+        //
+        //is SharedCommonizerTarget -> commonizeNativeDistributionTask?.get()?.getCommonizedPlatformLibrariesFor(target) ?: project.files()
+        is SharedCommonizerTarget -> {
+            val presentKonanTargets = target.targets.mapTo(mutableSetOf()) { it.konanTarget }
+            val hostKonantarget = HostManager.host
+
+            // TODO NOW: copy pasted from org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation to make choice consistent
+            //  If it is not consistent, then here we'll advise to use libraries from one platform, and during compilation compiler will receive
+            //  other target, forcing it to skip passed library and failing with "can not find library X"
+            //  Probably, the fallback on RHS of elvis is the trickiest part (case like analyzing darwin source set on linux)
+            val representativeTarget = presentKonanTargets.find { it.enabledOnCurrentHost } ?: presentKonanTargets.first()
+            getOriginalPlatformLibrariesFor(representativeTarget)
+        }
     }
 }
 
-private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection = project.filesProvider {
-    konanDistribution.platformLibsDir.resolve(target.konanTarget.name).listLibraryFiles().toSet()
+private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection =
+    getOriginalPlatformLibrariesFor(target.konanTarget)
+
+private fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
+    konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
 }
 
 private fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
