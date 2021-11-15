@@ -4008,6 +4008,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("superAccessToJavaField.kt")
+            public void testSuperAccessToJavaField() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/visibility/superAccessToJavaField.kt");
+            }
+
+            @Test
             @TestMetadata("visibilityWithOverrides.kt")
             public void testVisibilityWithOverrides() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/visibility/visibilityWithOverrides.kt");

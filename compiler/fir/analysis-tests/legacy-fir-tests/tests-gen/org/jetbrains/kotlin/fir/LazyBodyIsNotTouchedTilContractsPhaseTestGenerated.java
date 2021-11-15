@@ -3589,6 +3589,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/singletonConstructors.kt");
         }
 
+        @TestMetadata("superAccessToJavaField.kt")
+        public void testSuperAccessToJavaField() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/superAccessToJavaField.kt");
+        }
+
         @TestMetadata("visibilityWithOverrides.kt")
         public void testVisibilityWithOverrides() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/visibilityWithOverrides.kt");

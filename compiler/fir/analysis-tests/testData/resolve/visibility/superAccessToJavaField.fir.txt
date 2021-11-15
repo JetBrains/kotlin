@@ -1,0 +1,14 @@
+FILE: main.kt
+    public abstract interface MyBase : R|Base| {
+    }
+    public abstract class Implementation : R|Derived|, R|MyBase| {
+        public constructor(): R|Implementation| {
+            super<R|Derived|>()
+        }
+
+        public final val parentNode: R|kotlin/String?|
+            public get(): R|kotlin/String?| {
+                ^ this@R|/Implementation|.super<R|Derived|>.R|/Derived.parent|
+            }
+
+    }
