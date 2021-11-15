@@ -26,6 +26,11 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
 
     abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>>
     abstract fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>?
+
+    /**
+     * @return `true` iff file has a top-level annotation from the [FirRegisteredPluginAnnotations.annotations] list.
+     * @see FirRegisteredPluginAnnotations.annotations
+     */
     abstract fun fileHasPluginAnnotations(file: FirFile): Boolean
     abstract fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean
 
