@@ -89,6 +89,7 @@ object NewCommonSuperTypeCalculator {
         val allNotNull =
             types.all {
                 isTypeVariable(it) ||
+                        isNotNullStubType(it) ||
                         AbstractNullabilityChecker.isSubtypeOfAny(stateStubTypesEqualToAnything, it)
             }
         val notNullTypes = if (!allNotNull) types.map { it.withNullability(false) } else types
@@ -208,6 +209,10 @@ object NewCommonSuperTypeCalculator {
 
     private fun TypeSystemCommonSuperTypesContext.isTypeVariable(type: SimpleTypeMarker): Boolean {
         return type.isStubTypeForVariableInSubtyping() || isCapturedTypeVariable(type)
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.isNotNullStubType(type: SimpleTypeMarker): Boolean {
+        return type.isStubTypeForBuilderInference() && !type.isMarkedNullable()
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: SimpleTypeMarker): Boolean {
