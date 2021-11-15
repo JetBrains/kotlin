@@ -15,7 +15,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
@@ -370,7 +370,7 @@ internal fun addSourcesToKotlinCompileTask(
 
 private fun KotlinCompilation<*>.ownModuleName(): String {
     val project = target.project
-    val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+    val baseName = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull
         ?: project.name
     val suffix = if (isMain()) "" else "_$compilationName"
     return filterModuleName("$baseName$suffix")
