@@ -36,3 +36,6 @@ val KotlinBuildProperties.isObsoleteJdkOverrideEnabled: Boolean
 
 val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
     get() = getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false)
+
+val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
+    get() = (getOrNull("kotlin.test.junit5.maxParallelForks") as? String)?.toInt()
