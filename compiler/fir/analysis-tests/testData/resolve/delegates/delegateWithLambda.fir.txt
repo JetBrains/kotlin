@@ -18,18 +18,20 @@ FILE: delegateWithLambda.kt
     public final fun getAny(): R|kotlin/Any?| {
         ^getAny Null(null)
     }
+    public final fun <Q> materialize(): R|Q| {
+        ^materialize Null(null)!!
+    }
     public final class Test : R|kotlin/Any| {
         public constructor(): R|Test| {
             super<R|kotlin/Any|>()
         }
 
         public final val x: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
-            lval y: R|kotlin/String| = (R|/getAny|() as? R|kotlin/String|) ?: String()
-            ^ R|<local>/y|
+            ^ R|/materialize|<R|kotlin/String|>()
         }
         )
             public get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.x|)
+                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (builder inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.x|)
             }
 
     }

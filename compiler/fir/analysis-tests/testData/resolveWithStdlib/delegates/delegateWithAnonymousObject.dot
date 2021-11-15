@@ -92,10 +92,10 @@ digraph delegateWithAnonymousObject_kt {
     35 -> {36};
     36 -> {37};
 
-    subgraph cluster_10 {
+    subgraph cluster_13 {
         color=red
         38 [label="Enter function getValue" style="filled" fillcolor=red];
-        subgraph cluster_11 {
+        subgraph cluster_14 {
             color=blue
             39 [label="Enter block"];
             40 [label="Function call: R|/IssueListView.IssueListView|()"];
@@ -113,10 +113,10 @@ digraph delegateWithAnonymousObject_kt {
     42 -> {43} [style=dotted];
     43 -> {44} [style=dotted];
 
-    subgraph cluster_12 {
+    subgraph cluster_15 {
         color=red
         45 [label="Enter function setValue" style="filled" fillcolor=red];
-        subgraph cluster_13 {
+        subgraph cluster_16 {
             color=blue
             46 [label="Enter block"];
             47 [label="Function call: R|/IssueListView.IssueListView|()"];
@@ -138,16 +138,16 @@ digraph delegateWithAnonymousObject_kt {
     51 -> {52} [style=dotted];
     52 -> {53} [style=dotted];
 
-    subgraph cluster_14 {
+    subgraph cluster_17 {
         color=red
         54 [label="Enter function getter" style="filled" fillcolor=red];
-        subgraph cluster_15 {
+        subgraph cluster_18 {
             color=blue
             55 [label="Enter block"];
             56 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
             57 [label="Access variable this@R|/IssuesListUserProfile|"];
-            58 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
-            59 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+            58 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (builder inference): TypeVariable(_Target)|>|(...)"];
+            59 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (builder inference): TypeVariable(_Target)|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
             60 [label="Stub" style="filled" fillcolor=gray];
             61 [label="Exit block" style="filled" fillcolor=gray];
         }
@@ -163,10 +163,10 @@ digraph delegateWithAnonymousObject_kt {
     60 -> {61} [style=dotted];
     61 -> {62} [style=dotted];
 
-    subgraph cluster_16 {
+    subgraph cluster_19 {
         color=red
         63 [label="Enter function setter" style="filled" fillcolor=red];
-        subgraph cluster_17 {
+        subgraph cluster_20 {
             color=blue
             64 [label="Enter block"];
             65 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
@@ -185,7 +185,7 @@ digraph delegateWithAnonymousObject_kt {
     68 -> {69};
     69 -> {70};
 
-    subgraph cluster_18 {
+    subgraph cluster_21 {
         color=red
         71 [label="Enter property" style="filled" fillcolor=red];
         72 [label="Postponed enter to lambda"];
@@ -217,7 +217,8 @@ digraph delegateWithAnonymousObject_kt {
         80 [label="Exit property" style="filled" fillcolor=red];
     }
     70 -> {71};
-    71 -> {72} [color=red];
+    71 -> {72};
+    71 -> {26} [style=dashed];
     71 -> {72};
     72 -> {73};
     72 -> {} [style=dashed];
