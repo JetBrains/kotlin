@@ -33,9 +33,6 @@ class FirDelegatedPropertyInferenceSession(
             val stubToTypeVariableSubstitutor = createToSyntheticTypeVariableSubstitutor()
             syntheticTypeVariableByTypeVariable.values.forEach {
                 system.registerVariable(it)
-                val stubType =
-                    stubTypeBySyntheticTypeVariable[it]!!
-                system.addEqualityConstraint(it.defaultType, stubType, SimpleConstraintSystemConstraintPosition)
             }
             partiallyResolvedCalls.forEach { (_, candidate) ->
                 integrateConstraints(
