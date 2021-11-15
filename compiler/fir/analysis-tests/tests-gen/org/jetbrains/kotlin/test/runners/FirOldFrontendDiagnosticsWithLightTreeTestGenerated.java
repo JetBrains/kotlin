@@ -4096,6 +4096,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("IsErasedAllowFromOut3.kt")
+            public void testIsErasedAllowFromOut3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowFromOut3.kt");
+            }
+
+            @Test
             @TestMetadata("IsErasedAllowFromOutAtClass.kt")
             public void testIsErasedAllowFromOutAtClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowFromOutAtClass.kt");

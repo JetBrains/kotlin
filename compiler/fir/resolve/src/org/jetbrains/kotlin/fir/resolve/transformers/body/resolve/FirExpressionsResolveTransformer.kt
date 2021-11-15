@@ -606,7 +606,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
         val type = coneTypeSafe<ConeClassLikeType>() ?: return this
-        if (type.typeArguments.isNotEmpty()) return this
+        if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes.
+        // TODO: Check equality of size of arguments and parameters?
 
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
         if (firClass.typeParameters.isEmpty()) return this

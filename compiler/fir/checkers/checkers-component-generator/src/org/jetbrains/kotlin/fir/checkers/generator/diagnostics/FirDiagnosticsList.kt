@@ -1102,7 +1102,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val CASTS_AND_IS_CHECKS by object : DiagnosticGroup("Casts and is-checks") {
-        val CANNOT_CHECK_FOR_ERASED by warning<PsiElement> {
+        val CANNOT_CHECK_FOR_ERASED by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
         val CAST_NEVER_SUCCEEDS by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.OPERATOR)

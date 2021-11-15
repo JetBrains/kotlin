@@ -237,17 +237,12 @@ fun findStaticallyKnownSubtype(
         // If some parameters are not determined by unification, it means that these parameters are lost,
         // let's put ConeStubType instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
         for (variable in variables) {
-            val value = substitution[variable]
-            val resultValue = if (value == null) {
-                if (!resultSubstitution.containsKey(variable)) {
-                    context.session.builtinTypes.nullableAnyType.type
-                } else {
-                    null
+            val resultValue = when (val value = substitution[variable]) {
+                null -> null
+                is ConeStarProjection -> {
+                    ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), ConeNullability.NULLABLE)
                 }
-            } else if (value is ConeStarProjection) {
-                ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", variable.toLookupTag()), ConeNullability.NULLABLE)
-            } else {
-                value.type
+                else -> value.type
             }
             if (resultValue != null) {
                 resultSubstitution[variable] = resultValue

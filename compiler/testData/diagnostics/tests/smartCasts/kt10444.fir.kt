@@ -4,7 +4,7 @@
 class Base<in T>
 class Qwe<T : Any>(val a: T?) {
     fun test1(obj: Any) {
-        obj <!UNCHECKED_CAST!>as Qwe<T><!>
+        obj as Qwe<T>
         check(obj.a)
     }
 

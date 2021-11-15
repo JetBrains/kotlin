@@ -22,7 +22,12 @@ fun <E> foo(x: Any, y: Any) : Any {
         return y
     }
 
+    if (y is <!CANNOT_CHECK_FOR_ERASED!>Outer<*>.Inner<!>) {
+        return y
+    }
+
     y <!UNCHECKED_CAST!>as Outer<*>.Inner<!>
+    y <!USELESS_CAST!>as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer.Inner<!><!>
 
     return C()
 }
