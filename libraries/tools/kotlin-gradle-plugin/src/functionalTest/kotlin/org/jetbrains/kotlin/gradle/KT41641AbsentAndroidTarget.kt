@@ -53,4 +53,37 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
             fail("Expected no warning message to be logged. Received: $it")
         })
     }
+
+    @Test
+    fun `test kotlin-mpp-absentAndroidTarget-nowarn flag`() {
+        project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = "true"
+        project.plugins.apply("kotlin-multiplatform")
+        project.plugins.apply("android-library")
+
+        /* Arbitrary minimal Android setup */
+        val android = project.extensions.getByName("android") as LibraryExtension
+        android.compileSdkVersion(30)
+
+        kotlin.jvm()
+
+        project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = {
+            fail("Expected no warning message to be logged. Received $it")
+        })
+
+        // Test when nowarn is set to false
+        run {
+            var warningMessage: String? = null
+            project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = "false"
+            project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = { warningMessage = it })
+            assertNotNull(warningMessage, "Expected warning message to be logged")
+        }
+
+        // Test when nowarn is set to null
+        run {
+            var warningMessage: String? = null
+            project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = null
+            project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = { warningMessage = it })
+            assertNotNull(warningMessage, "Expected warning message to be logged")
+        }
+    }
 }

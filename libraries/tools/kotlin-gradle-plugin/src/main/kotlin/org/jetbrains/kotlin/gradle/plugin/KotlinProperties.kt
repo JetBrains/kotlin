@@ -167,6 +167,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 
+    val ignoreAbsentAndroidMultiplatformTarget: Boolean
+        get() = booleanProperty("kotlin.mpp.absentAndroidTarget.nowarn") ?: false
+
     val ignoreIncorrectNativeDependencies: Boolean?
         get() = booleanProperty(KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES)
 

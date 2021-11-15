@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
@@ -33,6 +34,10 @@ internal fun Project.runMissingKotlinTargetsProjectConfigurationHealthCheck() = 
 internal fun Project.runMissingAndroidTargetProjectConfigurationHealthCheck(
     warningLogger: (warningMessage: String) -> Unit = project.logger::warn
 ) = project.runProjectConfigurationHealthCheck check@{
+    if (project.kotlinPropertiesProvider.ignoreAbsentAndroidMultiplatformTarget) {
+        return@check
+    }
+
     val androidPluginId = androidPluginIds
         .firstOrNull { androidPluginId -> plugins.findPlugin(androidPluginId) != null } ?: return@check
 
