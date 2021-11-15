@@ -366,6 +366,15 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             stream,
             exitCode
         )
+        try {
+            metrics.measure(BuildTime.CLEAR_JAR_CACHE) {
+                val coreEnvironment = Class.forName("org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment", true, classLoader)
+                val dispose = coreEnvironment.getMethod("disposeApplicationEnvironment")
+                dispose.invoke(null)
+            }
+        } catch (e: Throwable) {
+            log.warn("Unable to clear jar cache after in-process compilation: $e")
+        }
         log.logFinish(KotlinCompilerExecutionStrategy.IN_PROCESS)
         return exitCode
     }
