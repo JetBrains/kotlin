@@ -14113,6 +14113,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("exactOnElvis.kt")
+                public void testExactOnElvis() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/exactOnElvis.kt");
+                }
+
+                @Test
                 @TestMetadata("fixVariablesInRightOrder.kt")
                 public void testFixVariablesInRightOrder() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/fixVariablesInRightOrder.kt");

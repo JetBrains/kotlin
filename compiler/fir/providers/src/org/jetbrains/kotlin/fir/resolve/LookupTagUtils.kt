@@ -100,15 +100,15 @@ fun ConeKotlinType.withParameterNameAnnotation(valueParameter: FirValueParameter
     }
     val attributesWithParameterNameAnnotation =
         ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(listOf(parameterNameAnnotationCall))))
-    return withCombinedCustomAttributesFrom(attributesWithParameterNameAnnotation, context)
+    return withCombinedAttributesFrom(attributesWithParameterNameAnnotation, context)
 }
 
-fun ConeKotlinType.withCombinedCustomAttributesFrom(other: ConeKotlinType, context: ConeTypeContext): ConeKotlinType =
-    withCombinedCustomAttributesFrom(other.attributes, context)
+fun ConeKotlinType.withCombinedAttributesFrom(other: ConeKotlinType, context: ConeTypeContext): ConeKotlinType =
+    withCombinedAttributesFrom(other.attributes, context)
 
-private fun ConeKotlinType.withCombinedCustomAttributesFrom(other: ConeAttributes, context: ConeTypeContext): ConeKotlinType {
-    val customAttributesFromOther = other.custom ?: return this
-    val combinedConeAttributes = attributes.add(ConeAttributes.create(listOf(customAttributesFromOther)))
+private fun ConeKotlinType.withCombinedAttributesFrom(other: ConeAttributes, context: ConeTypeContext): ConeKotlinType {
+    if (other.isEmpty()) return this
+    val combinedConeAttributes = attributes.add(other)
     return withAttributes(combinedConeAttributes, context)
 }
 

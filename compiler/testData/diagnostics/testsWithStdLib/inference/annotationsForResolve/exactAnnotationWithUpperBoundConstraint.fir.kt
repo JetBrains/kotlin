@@ -13,5 +13,5 @@ fun test() {
     val r2 = map.getOrDefault_Exact("y", null as Int?)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>r2<!>
 
-    map.getOrDefault_Exact("y", "string")
+    map.getOrDefault_Exact("y", <!ARGUMENT_TYPE_MISMATCH!>"string"<!>)
 }

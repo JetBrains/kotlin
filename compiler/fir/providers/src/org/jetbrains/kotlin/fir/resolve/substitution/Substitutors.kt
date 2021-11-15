@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.withCombinedCustomAttributesFrom
+import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -165,7 +165,7 @@ data class ConeSubstitutorByMap(
         if (type !is ConeTypeParameterType) return null
         val result =
             substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
-                ?.withCombinedCustomAttributesFrom(type, useSiteSession.typeContext)
+                ?.withCombinedAttributesFrom(type, useSiteSession.typeContext)
                 ?: return null
         if (type.isUnsafeVarianceType(useSiteSession)) {
             return useSiteSession.typeApproximator.approximateToSuperType(
@@ -182,7 +182,7 @@ fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeK
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
             val new = map[type.typeConstructor(context)] ?: return null
-            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedCustomAttributesFrom(type, context)
+            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type, context)
         }
     }
 }

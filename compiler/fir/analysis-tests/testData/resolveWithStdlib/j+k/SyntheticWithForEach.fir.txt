@@ -1,6 +1,6 @@
 FILE: test.kt
     public final fun <D : R|kotlin/Any|> R|Call<D>|.testForEach(): R|kotlin/Unit| {
-        this@R|/testForEach|.R|/Call.arguments|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>|, value: R|ft<kotlin/String, kotlin/String?>|): R|kotlin/Unit| <inline=NoInline>  {
+        this@R|/testForEach|.R|/Call.arguments|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<@EnhancedNullability kotlin/String, @EnhancedNullability kotlin/String?>|, value: R|ft<@EnhancedNullability kotlin/String, @EnhancedNullability kotlin/String?>|): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/key|.R|kotlin/String.length|
             R|<local>/value|.R|kotlin/String.length|
         }

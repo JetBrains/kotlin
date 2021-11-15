@@ -2,11 +2,11 @@ FILE: test.kt
     public abstract interface UseIterable : R|MyIterable<kotlin/String>| {
         public open fun test(): R|kotlin/Unit| {
             lval it: R|kotlin/collections/MutableIterator<ft<kotlin/String, kotlin/String?>>| = this@R|/UseIterable|.R|SubstitutionOverride</UseIterable.iterator: R|kotlin/collections/MutableIterator<ft<kotlin/String, kotlin/String?>>|>|()
-            lval split: R|java/util/Spliterator<ft<kotlin/String, kotlin/String?>>| = this@R|/UseIterable|.R|SubstitutionOverride</UseIterable.spliterator: R|@EnhancedNullability java/util/Spliterator<ft<kotlin/String, kotlin/String?>>|>|()
+            lval split: R|java/util/Spliterator<ft<@EnhancedNullability kotlin/String, @EnhancedNullability kotlin/String?>>| = this@R|/UseIterable|.R|SubstitutionOverride</UseIterable.spliterator: R|@EnhancedNullability java/util/Spliterator<ft<@EnhancedNullability kotlin/String, @EnhancedNullability kotlin/String?>>|>|()
         }
 
     }
     public final fun test(some: R|kotlin/collections/Iterable<kotlin/String>|): R|kotlin/Unit| {
         lval it: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/some|.R|SubstitutionOverride<kotlin/collections/Iterable.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
-        lval split: R|java/util/Spliterator<kotlin/String>| = R|<local>/some|.R|SubstitutionOverride<kotlin/collections/Iterable.spliterator: R|@EnhancedNullability java/util/Spliterator<kotlin/String>|>|()
+        lval split: R|java/util/Spliterator<@EnhancedNullability kotlin/String>| = R|<local>/some|.R|SubstitutionOverride<kotlin/collections/Iterable.spliterator: R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/String>|>|()
     }

@@ -49,8 +49,8 @@ class Case3<T> {
     fun get(): T {
         var x = getTN()
         x = x ?: getT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T")!>x<!>
-        return x
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
+        return <!RETURN_TYPE_MISMATCH!>x<!>
     }
 }
 
