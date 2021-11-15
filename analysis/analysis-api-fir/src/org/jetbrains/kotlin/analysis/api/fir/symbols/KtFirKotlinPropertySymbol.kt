@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -60,6 +61,10 @@ internal class KtFirKotlinPropertySymbol(
 
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    }
+
+    override val typeParameters: List<KtTypeParameterSymbol> by cached {
+        fir.typeParameters.map { builder.classifierBuilder.buildTypeParameterSymbol(it) }
     }
 
     override val receiverType: KtTypeAndAnnotations? by cached {

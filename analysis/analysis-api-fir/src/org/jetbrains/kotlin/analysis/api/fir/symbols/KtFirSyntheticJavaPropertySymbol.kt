@@ -49,6 +49,10 @@ internal class KtFirSyntheticJavaPropertySymbol(
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 
+    override val typeParameters: List<KtTypeParameterSymbol> by cached {
+        fir.typeParameters.map { builder.classifierBuilder.buildTypeParameterSymbol(it) }
+    }
+
     override val receiverType: KtTypeAndAnnotations? by cached {
         firRef.receiverTypeAndAnnotations(builder)
     }

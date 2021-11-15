@@ -53,6 +53,10 @@ KtKotlinPropertySymbol:
   receiverType: [] test/TwoParams<TT1, TT2>
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: [
+    KtTypeParameterSymbol(TT1)
+    KtTypeParameterSymbol(TT2)
+  ]
   visibility: Public
   getDispatchReceiver(): test/MyClass
   deprecationStatus: null

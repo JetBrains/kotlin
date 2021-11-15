@@ -89,6 +89,7 @@ KtSyntheticJavaPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
   deprecationStatus: null

@@ -27,6 +27,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
@@ -58,6 +59,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
@@ -89,6 +91,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -120,6 +123,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
@@ -212,6 +216,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
@@ -301,6 +306,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
@@ -337,6 +343,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
@@ -368,6 +375,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

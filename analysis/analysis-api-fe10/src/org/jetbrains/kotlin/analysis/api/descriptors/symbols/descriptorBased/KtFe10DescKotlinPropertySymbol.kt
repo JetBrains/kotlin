@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10Neve
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
@@ -89,6 +90,9 @@ internal class KtFe10DescKotlinPropertySymbol(
 
     override val receiverType: KtTypeAndAnnotations?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
+
+    override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { descriptor.typeParameters.map { it.toKtTypeParameter(analysisContext) } }
 
     override val hasBackingField: Boolean
         get() = withValidityAssertion {

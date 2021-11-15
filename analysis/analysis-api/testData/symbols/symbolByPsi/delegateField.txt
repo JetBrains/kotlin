@@ -118,6 +118,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
   deprecationStatus: null
@@ -161,6 +162,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
   deprecationStatus: null
@@ -193,6 +195,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
   deprecationStatus: null

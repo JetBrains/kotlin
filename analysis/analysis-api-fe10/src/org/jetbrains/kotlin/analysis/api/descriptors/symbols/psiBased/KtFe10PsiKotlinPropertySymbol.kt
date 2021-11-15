@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
@@ -138,6 +139,11 @@ internal class KtFe10PsiKotlinPropertySymbol(
 
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }
+
+    override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion {
+            psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisContext) }
+        }
 
     override val modality: Modality
         get() = withValidityAssertion { psi.ktModality ?: descriptor?.ktModality ?: Modality.FINAL }
