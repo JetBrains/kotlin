@@ -11,7 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
@@ -106,12 +106,9 @@ constructor(
     @Input
     var saveEvaluatedConfigFile: Boolean = true
 
-    @Transient
-    private val baseConventions: BasePluginConvention? = project.convention.plugins["base"] as BasePluginConvention?
-
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
-        library = baseConventions?.archivesBaseName,
+        library = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull,
         libraryTarget = KotlinWebpackOutput.Target.UMD,
         globalObject = "this"
     )
@@ -125,7 +122,7 @@ constructor(
     internal var _destinationDirectory: File? = null
 
     private val defaultDestinationDirectory by lazy {
-        project.buildDir.resolve(baseConventions!!.distsDirName)
+        project.extensions.getByType(BasePluginExtension::class.java).distsDirectory.asFile.get()
     }
 
     @get:Internal
@@ -136,7 +133,7 @@ constructor(
         }
 
     private val defaultOutputFileName by lazy {
-        baseConventions?.archivesBaseName + ".js"
+        project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull + ".js"
     }
 
     @get:Internal
