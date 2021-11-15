@@ -51,7 +51,7 @@ public final class InlineMutableMap {
     public static method equals-impl(p0: java.util.Map, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.util.Map, p1: java.util.Map): boolean
     public bridge final method get(p0: java.lang.Object): IV
-    public synthetic bridge method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public method get-qgyy0Jc(p0: int): IV
     public static method get-qgyy0Jc(p0: java.util.Map, p1: int): IV
     public method getEntries(): java.util.Set
@@ -73,7 +73,7 @@ public final class InlineMutableMap {
     public method putAll(p0: java.util.Map): void
     public static method putAll-impl(p0: java.util.Map, p1: java.util.Map): void
     public bridge final method remove(p0: java.lang.Object): IV
-    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
     public method remove-qgyy0Jc(p0: int): IV
     public static method remove-qgyy0Jc(p0: java.util.Map, p1: int): IV
     public synthetic bridge method size(): int

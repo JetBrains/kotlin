@@ -54,7 +54,10 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
         val specialMethodInfo = specialBridgeMethods.getSpecialMethodInfo(function)
         if (specialMethodInfo != null)
             return SpecialBridge(
-                function, computeJvmMethod(function), specialMethodInfo.needsGenericSignature, methodInfo = specialMethodInfo
+                overridden = function, signature = computeJvmMethod(function),
+                needsGenericSignature = specialMethodInfo.needsGenericSignature,
+                methodInfo = specialMethodInfo,
+                needsUnsubstitutedBridge = specialMethodInfo.needsUnsubstitutedBridge
             )
 
         val specialBuiltInInfo = specialBridgeMethods.getBuiltInWithDifferentJvmName(function)
@@ -87,10 +90,22 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
                 parent = function.parent
             }
 
+            val substitutedOverrideSignature = computeJvmMethod(substitutedOverride)
+            val unsubstitutedSpecialBridge =
+                when {
+                    specialBridge.unsubstitutedSpecialBridge != null ->
+                        specialBridge.unsubstitutedSpecialBridge
+                    specialBridge.needsUnsubstitutedBridge && specialBridge.signature != substitutedOverrideSignature ->
+                        specialBridge.copy(isSynthetic = true)
+                    else ->
+                        null
+                }
+
             return specialBridge.copy(
-                signature = computeJvmMethod(substitutedOverride),
+                signature = substitutedOverrideSignature,
                 substitutedParameterTypes = substitutedParameterTypes,
-                substitutedReturnType = function.returnType
+                substitutedReturnType = function.returnType,
+                unsubstitutedSpecialBridge = unsubstitutedSpecialBridge
             )
         }
 
