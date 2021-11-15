@@ -44,7 +44,7 @@ class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinVar
 
 internal fun KotlinGradleVariant.ownModuleName(): String {
     val project = containingModule.project
-    val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+    val baseName = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull
         ?: project.name
     val suffix = if (containingModule.moduleClassifier == null) "" else "_${containingModule.moduleClassifier}"
     return filterModuleName("$baseName$suffix")
