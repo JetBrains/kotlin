@@ -27,9 +27,9 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 
     override fun transformFile(file: FirFile, data: D): FirFile {
         scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
-        val state = beforeChildren(file)
+        val state = beforeTransformingChildren(file)
         file.transformDeclarations(this, data)
-        afterChildren(state)
+        afterTransformingChildren(state)
         return transformDeclaration(file, data) as FirFile
     }
 
@@ -42,11 +42,11 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         data: D
     ): FirStatement {
         return transformDeclaration(regularClass, data).also {
-            val state = beforeChildren(regularClass)
+            val state = beforeTransformingChildren(regularClass)
             regularClass.transformDeclarations(this, data)
             regularClass.transformCompanionObject(this, data)
             regularClass.transformSuperTypeRefs(this, data)
-            afterChildren(state)
+            afterTransformingChildren(state)
         } as FirStatement
     }
 
@@ -55,9 +55,9 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         data: D
     ): FirSimpleFunction {
         return transformDeclaration(simpleFunction, data).also {
-            val state = beforeChildren(simpleFunction)
+            val state = beforeTransformingChildren(simpleFunction)
             simpleFunction.transformValueParameters(this, data)
-            afterChildren(state)
+            afterTransformingChildren(state)
         } as FirSimpleFunction
     }
 
@@ -66,9 +66,9 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         data: D
     ): FirConstructor {
         return transformDeclaration(constructor, data).also {
-            val state = beforeChildren(constructor)
+            val state = beforeTransformingChildren(constructor)
             constructor.transformValueParameters(this, data)
-            afterChildren(state)
+            afterTransformingChildren(state)
         } as FirConstructor
     }
 
@@ -102,9 +102,22 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         return element
     }
 
-    protected open fun beforeChildren(declaration: FirDeclaration): S? {
+    /**
+     * Gets called before transforming [parentDeclaration]'s nested declarations (like in a class of a file).
+     *
+     * @param parentDeclaration A declaration whose nested declarations are about to be transformed.
+     * @return Some state of the transformer; when the nested declarations are transformed, this state will be
+     * passed to the [afterTransformingChildren].
+     */
+    protected open fun beforeTransformingChildren(parentDeclaration: FirDeclaration): S? {
         return null
     }
 
-    protected open fun afterChildren(state: S?) {}
+    /**
+     * Gets called after performing transformation of some declaration's nested declarations; can be used to restore the internal
+     * state of the transformer.
+     *
+     * @param state A state produced by the [beforeTransformingChildren] call before the transformation.
+     */
+    protected open fun afterTransformingChildren(state: S?) {}
 }

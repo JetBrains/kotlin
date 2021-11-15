@@ -94,13 +94,13 @@ private class FirAnnotationResolveTransformer(
     private var owners: PersistentList<FirDeclaration> = persistentListOf()
     private val classDeclarationsStack = ArrayDeque<FirRegularClass>()
 
-    override fun beforeChildren(declaration: FirDeclaration): PersistentList<FirDeclaration> {
+    override fun beforeTransformingChildren(parentDeclaration: FirDeclaration): PersistentList<FirDeclaration> {
         val current = owners
-        owners = owners.add(declaration)
+        owners = owners.add(parentDeclaration)
         return current
     }
 
-    override fun afterChildren(state: PersistentList<FirDeclaration>?) {
+    override fun afterTransformingChildren(state: PersistentList<FirDeclaration>?) {
         requireNotNull(state)
         owners = state
     }
