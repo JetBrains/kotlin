@@ -254,7 +254,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
         if (this is ErrorTypeConstructor) return emptyList()
         return when (this) {
-            is ConeStubTypeConstructor -> emptyList()
+            is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.type)
             is ConeTypeVariableTypeConstructor -> emptyList()
             is ConeTypeParameterLookupTag -> symbol.fir.bounds.map { it.coneType }
             is ConeClassLikeLookupTag -> {
