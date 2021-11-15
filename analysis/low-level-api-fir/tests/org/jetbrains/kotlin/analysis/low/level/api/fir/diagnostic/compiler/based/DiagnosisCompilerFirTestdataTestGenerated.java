@@ -3990,6 +3990,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("privateAliasInSamePackage.kt")
+            public void testPrivateAliasInSamePackage() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/visibility/privateAliasInSamePackage.kt");
+            }
+
+            @Test
             @TestMetadata("protectedInCompanion.kt")
             public void testProtectedInCompanion() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/visibility/protectedInCompanion.kt");

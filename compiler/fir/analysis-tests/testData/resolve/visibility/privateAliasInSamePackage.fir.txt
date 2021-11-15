@@ -1,0 +1,26 @@
+FILE: First.kt
+    package first
+
+    private final typealias Key = R|kotlin/String|
+FILE: Third.kt
+    package first
+
+    public open class Base<T> : R|kotlin/Any| {
+        public constructor<T>(): R|first/Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun get(): R|T?| {
+            ^get Null(null)
+        }
+
+    }
+    public final class Derived : R|first/Base<second/Second.Key>| {
+        public constructor(): R|first/Derived| {
+            super<R|first/Base<second/Second.Key>|>()
+        }
+
+    }
+    public final fun test(d: R|first/Derived|): R|kotlin/Unit| {
+        R|<local>/d|.R|SubstitutionOverride<first/Derived.get: R|second/Second.Key?|>|()?.{ $subj$.R|second/Second.Key.foo|() }
+    }
