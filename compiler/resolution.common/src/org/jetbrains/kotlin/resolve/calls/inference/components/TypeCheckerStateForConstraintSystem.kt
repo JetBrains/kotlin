@@ -86,9 +86,23 @@ abstract class TypeCheckerStateForConstraintSystem(
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {
-        val typeMarker = type.asSimpleType()?.asCapturedType() ?: return null
+        val simpleType = type.asSimpleType()
+        val typeMarker = simpleType?.asCapturedType() ?: return null
 
         val projection = typeMarker.typeConstructorProjection()
+
+        if (projection.isStarProjection()) {
+            return when (out) {
+                true -> simpleType.typeConstructor().supertypes().let {
+                    if (it.isEmpty())
+                        nullableAnyType()
+                    else
+                        intersectTypes(it.toList())
+                }
+                false -> typeMarker.lowerType()
+            }
+        }
+
         return when (projection.getVariance()) {
             TypeVariance.IN -> if (!out) typeMarker.lowerType() ?: projection.getType() else null
             TypeVariance.OUT -> if (out) projection.getType() else null
