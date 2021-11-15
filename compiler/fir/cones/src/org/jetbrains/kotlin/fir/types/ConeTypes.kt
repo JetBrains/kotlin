@@ -91,6 +91,7 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     final override fun toString(): String {
         return render()
     }
+
     abstract override fun equals(other: Any?): Boolean
     abstract override fun hashCode(): Int
 }
@@ -224,12 +225,30 @@ data class ConeCapturedType(
     }
 }
 
-data class ConeTypeVariableType(
+class ConeTypeVariableType(
     override val nullability: ConeNullability,
     override val lookupTag: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeLookupTagBasedType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeTypeVariableType) return false
+
+        if (nullability != other.nullability) return false
+        if (lookupTag != other.lookupTag) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        result = 31 * result + nullability.hashCode()
+        result = 31 * result + lookupTag.hashCode()
+        return result
+    }
+
+
 }
 
 data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
