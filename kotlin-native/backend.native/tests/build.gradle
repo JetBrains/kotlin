@@ -5152,6 +5152,15 @@ dynamicTest("interop_exceptions_throwThroughBridge") {
     interop = "exceptions_throwThroughBridge"
 }
 
+dynamicTest("interop_kotlin_exception_hook") {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions + dynamic is unsupported for wasm.
+    source = "interop/exceptions/exceptionHook.kt"
+    cSource = "$projectDir/interop/exceptions/exceptionHook.cpp"
+    clangTool = "clang++"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("OK. Kotlin unhandled exception hook") }
+}
+
 interopTest("interop_exceptions_cCallback") {
     disabled = (project.testTarget == 'wasm32') // Uses exceptions
     source = "interop/exceptions/cCallback.kt"
