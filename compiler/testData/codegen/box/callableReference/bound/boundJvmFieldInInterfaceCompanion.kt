@@ -1,6 +1,6 @@
 // !LANGUAGE: +JvmFieldInInterface
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Bar(val value: String)
 

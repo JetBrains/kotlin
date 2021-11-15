@@ -1,6 +1,6 @@
 // "Add empty primary constructor" "false"
 // IGNORE_IRRELEVANT_ACTIONS
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

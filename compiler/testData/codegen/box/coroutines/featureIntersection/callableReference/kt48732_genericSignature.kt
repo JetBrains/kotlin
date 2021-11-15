@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 
 suspend fun id(x: String): String = x
 

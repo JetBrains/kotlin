@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 class C(val x: String)
 
 val x = "O"

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface IFoo<T> {
     fun foo(x: T): String = "O"

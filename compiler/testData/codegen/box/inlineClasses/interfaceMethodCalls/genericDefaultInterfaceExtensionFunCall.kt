@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface IFoo<T : IFoo<T>> {
     fun T.foo(): String = bar()

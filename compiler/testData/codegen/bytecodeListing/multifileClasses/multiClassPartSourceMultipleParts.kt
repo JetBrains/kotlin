@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: part1.kt
 @file:JvmMultifileClass
 @file:JvmName("MultiFileClass")

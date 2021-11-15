@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Delegate {
     operator fun getValue(t: Any?, p: Any): String = "OK"

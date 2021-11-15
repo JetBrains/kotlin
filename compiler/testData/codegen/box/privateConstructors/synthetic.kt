@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // private constructors are transformed into synthetic
 class PrivateConstructor private constructor() {

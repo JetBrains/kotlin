@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 package js
 
 fun test(x: List<Int>?) {

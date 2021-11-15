@@ -2,7 +2,7 @@
 // v-- fir2ir produces an IrFunctionReference of type KProperty0 instead of an IrPropertyReference
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: J.java
 public interface J<T> {
     public T getValue();

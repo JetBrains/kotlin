@@ -1,5 +1,5 @@
 // a.b.c.ActualTypeAliasCustomJvmPackageNameKt
-// WITH_RUNTIME
+// WITH_STDLIB
 @file:JvmPackageName("a.b.c")
 package p
 

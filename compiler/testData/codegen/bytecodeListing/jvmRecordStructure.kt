@@ -2,7 +2,7 @@
 // !LANGUAGE: +JvmRecordSupport
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
-// WITH_RUNTIME
+// WITH_STDLIB
 // JDK_KIND: FULL_JDK_17
 
 // D8 does not yet desugar java records.

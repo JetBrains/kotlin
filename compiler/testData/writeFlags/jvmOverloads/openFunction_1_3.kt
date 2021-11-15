@@ -1,5 +1,5 @@
 // !LANGUAGE: -GenerateJvmOverloadsAsFinal
-// WITH_RUNTIME
+// WITH_STDLIB
 
 open class Foo {
     @JvmOverloads

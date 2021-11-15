@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: kt24258.kt
 
 val lazyNullString: String by lazy { J.nullString() }

@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT: writeToParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import android.util.Size
 import kotlinx.parcelize.*

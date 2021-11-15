@@ -1,6 +1,6 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

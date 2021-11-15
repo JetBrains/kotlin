@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 class C(var x: Int) {
     val y by C::x
     var ym by C::x

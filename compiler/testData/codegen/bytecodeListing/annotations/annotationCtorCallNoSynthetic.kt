@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class Foo(val bar: Bar)

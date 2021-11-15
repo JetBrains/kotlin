@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // ASSERTIONS_MODE: jvm
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // If assertions are disabled, neither argument to assert should be evaluated.
 // If assertions are enabled, both arguments should be evaluate to values before

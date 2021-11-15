@@ -9,7 +9,7 @@ interface Test {
 
 // MODULE: main(lib)
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 2.kt
 abstract class TestClass : Test {
     abstract override fun test(): String

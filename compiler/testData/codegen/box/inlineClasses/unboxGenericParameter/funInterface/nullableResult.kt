@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <T> foo(a: Result<T>?): T? = bar(a) {
     it?.getOrThrow()

@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_GENERATED
-//WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo(x: String, ys: List<String>) =
         x + ys.fold("", { a, b -> a + b })

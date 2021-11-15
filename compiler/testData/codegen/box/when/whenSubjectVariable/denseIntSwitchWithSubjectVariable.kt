@@ -1,5 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun dense(x: Int): Int {
     return when (val xx = x) {

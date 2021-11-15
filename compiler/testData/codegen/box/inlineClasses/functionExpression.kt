@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun new(init: (Z) -> Unit): Z = Z(42)
 

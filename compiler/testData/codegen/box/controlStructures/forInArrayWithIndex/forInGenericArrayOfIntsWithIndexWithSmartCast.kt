@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val arr = arrayOf(10, 20, 30, 40)
 

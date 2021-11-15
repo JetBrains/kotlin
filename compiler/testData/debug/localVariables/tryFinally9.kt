@@ -1,6 +1,6 @@
 // The local variables in the try and finally blocks are not removed for the finally block with the old backend.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 inline fun f(block: () -> Unit) {

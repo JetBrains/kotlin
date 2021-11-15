@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT writeToParcel, createFromParcel, newArray
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlinx.android.parcel.*
 import android.os.Parcel

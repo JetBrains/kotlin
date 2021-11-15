@@ -1,6 +1,6 @@
 // !JVM_DEFAULT_MODE: all
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // JVM_TARGET: 1.8
 
 class Cell<T>(val x: T)

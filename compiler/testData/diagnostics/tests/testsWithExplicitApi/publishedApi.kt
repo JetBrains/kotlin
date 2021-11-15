@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// WITH_RUNTIME
+// WITH_STDLIB
 
 public class A {
     @PublishedApi

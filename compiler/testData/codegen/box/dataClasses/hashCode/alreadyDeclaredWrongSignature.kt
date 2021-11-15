@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 data class A(val x: Int) {
   fun hashCode(other: Any): Int = 0

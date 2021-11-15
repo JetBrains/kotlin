@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: JVM, WASM
 interface I<T> {
     fun foo(x: T): Any?

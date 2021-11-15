@@ -1,5 +1,5 @@
 // !API_VERSION: 1.4
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val x = 0u
 val y = 0uL

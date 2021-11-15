@@ -1,6 +1,6 @@
 // The local variables `y` and `i` are visible in the finally block with old backend.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 inline fun f(block: () -> Unit) {

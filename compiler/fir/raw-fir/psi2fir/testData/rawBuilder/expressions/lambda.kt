@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 data class Tuple(val x: Int, val y: Int)
 
 inline fun use(f: (Tuple) -> Int) = f(Tuple(1, 2))

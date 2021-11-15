@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val xsl = arrayListOf("a", "b", "c", "d")
 val xs = xsl.asSequence()

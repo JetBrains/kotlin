@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM, JVM_IR, ANDROID, ANDROID_IR
 // IGNORE_LIGHT_ANALYSIS
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 
 // This test fails on FE 1.0, but works in production compiler (see KT-49191):

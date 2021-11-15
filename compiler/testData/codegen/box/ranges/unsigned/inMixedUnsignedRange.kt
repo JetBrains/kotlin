@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun ub_ub(x: UByte, a: UByte, b: UByte) = x in a..b
 fun ub_us(x: UByte, a: UShort, b: UShort) = x in a..b

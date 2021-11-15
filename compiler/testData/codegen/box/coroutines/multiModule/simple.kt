@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // MODULE: controller(support)
 // FILE: controller.kt

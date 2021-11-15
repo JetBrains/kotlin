@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @Ann(i, s, f, d, l, b, bool, c, str) class MyClass
 

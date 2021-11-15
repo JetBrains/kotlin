@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: NATIVE
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // MODULE: lib(support)
 // FILE: lib.kt
 
@@ -18,7 +18,7 @@ suspend fun <R> notInlined(
 
 // MODULE: main(lib, support)
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*

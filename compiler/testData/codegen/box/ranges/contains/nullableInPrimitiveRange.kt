@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val x: Int? = 42
 fun xFun(): Int? = 42

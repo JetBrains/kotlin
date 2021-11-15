@@ -1,5 +1,5 @@
 // "Add empty primary constructor" "true"
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <T> underlying(a: IC): T = bar(a, object : IFace<IC, T> {
     override fun call(ic: IC): T = (ic.value as FooHolder).value as T

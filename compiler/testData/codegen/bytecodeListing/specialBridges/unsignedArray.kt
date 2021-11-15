@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_ANNOTATIONS
 
 inline class UIntArray(@PublishedApi internal val storage: IntArray) : Collection<UInt> {

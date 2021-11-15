@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // Test to ensure that we are using the correct class loader
 // for generic types and bundles. See:

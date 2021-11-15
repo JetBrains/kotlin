@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract val size: Int

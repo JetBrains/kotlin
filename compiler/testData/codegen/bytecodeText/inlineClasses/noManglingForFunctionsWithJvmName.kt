@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 inline class IC(val x: Int)
 
 class C {

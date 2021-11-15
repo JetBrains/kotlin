@@ -1,5 +1,5 @@
 // Issues: KT-33542, KT-33544
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

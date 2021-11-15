@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun <T> foo(f: () -> T): String {
     return (f() as? Inv<T>)?.result() ?: "Bad"

@@ -1,5 +1,5 @@
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 1.kt
 // TARGET_BACKEND: JVM
 package test

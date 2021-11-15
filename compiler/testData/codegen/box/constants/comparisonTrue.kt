@@ -1,7 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // WASM_MUTE_REASON: FLAKY
 
-// WITH_RUNTIME
+// WITH_STDLIB
 fun foo(): Array<Boolean> {
     return arrayOf(
         19 < 20.0,

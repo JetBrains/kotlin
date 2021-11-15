@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface Test {
     @JvmDefault

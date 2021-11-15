@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

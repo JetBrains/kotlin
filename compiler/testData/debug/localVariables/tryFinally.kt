@@ -1,6 +1,6 @@
 // The old backend has the local y covering the finally block as well.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: test.kt
 fun box() {

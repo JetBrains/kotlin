@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 data class B(val x: Int) {
   fun equals(other: B): Boolean = false

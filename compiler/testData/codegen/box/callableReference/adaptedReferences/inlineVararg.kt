@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun foo(mkString: (Char, Char) -> String): String =
         mkString('O','K')

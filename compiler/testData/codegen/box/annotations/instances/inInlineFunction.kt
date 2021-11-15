@@ -3,7 +3,7 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // IGNORE_DEXING
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +InstantiationOfAnnotationClasses
 
 import kotlin.test.*

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // !JVM_DEFAULT_MODE: compatibility
 // TARGET_BACKEND: JVM

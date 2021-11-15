@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 abstract class GenericBase<T> {
     abstract fun foo(x: T): T

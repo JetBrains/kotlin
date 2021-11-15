@@ -2,7 +2,7 @@
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
 // IGNORE_BACKEND: JS_IR_ES6
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {
     override fun toString(): String = "$prefix'$s'"

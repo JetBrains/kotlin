@@ -1,6 +1,6 @@
 // !IGNORE_DATA_FLOW_IN_ASSERT
 // SKIP_TXT
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun test1(s: String?) {
     assert(s!!.isEmpty())

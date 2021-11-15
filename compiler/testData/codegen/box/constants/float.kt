@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_MATH
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.math.*
 

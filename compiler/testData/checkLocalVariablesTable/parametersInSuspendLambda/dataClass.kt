@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 data class Data(val x: String, val y: Int)
 
 suspend fun test() {

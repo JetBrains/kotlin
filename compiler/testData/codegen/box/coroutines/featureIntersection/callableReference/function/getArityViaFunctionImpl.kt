@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 
 import kotlin.test.assertEquals

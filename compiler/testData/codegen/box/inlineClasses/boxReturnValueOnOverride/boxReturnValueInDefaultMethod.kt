@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface X<T> {
     operator fun plus(n: Int) : T

@@ -1,5 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1294
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun deinitialize(foo: dynamic) {
   foo.bar = null

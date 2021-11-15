@@ -2,7 +2,7 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !OPT_IN: kotlin.ExperimentalMultiplatform
 // IGNORE_BACKEND: NATIVE
-// WITH_RUNTIME
+// WITH_STDLIB
 // MODULE: library
 // FILE: expected.kt
 

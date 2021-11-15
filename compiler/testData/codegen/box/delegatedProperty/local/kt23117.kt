@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.properties.Delegates.notNull
 
 fun box(): String {

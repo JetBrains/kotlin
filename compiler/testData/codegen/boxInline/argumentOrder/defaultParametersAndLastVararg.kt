@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND_FIR: JVM_IR

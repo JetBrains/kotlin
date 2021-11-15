@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 fun foo(): Array<Boolean> {
     return arrayOf(
         0.0 / 0 == 0.0 / 0,

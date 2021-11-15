@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     // These should all be empty progressions

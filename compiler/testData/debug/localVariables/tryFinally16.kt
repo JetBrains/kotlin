@@ -1,6 +1,6 @@
 // The local `i` is visible in the finally block with old backend.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 fun box(): String {
     try {

@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     suspend fun bar() {}

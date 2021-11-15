@@ -1,6 +1,6 @@
 // See https://youtrack.jetbrains.com/issue/KT-22424
 // IGNORE_BACKEND: JS
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun testUnoptimized(): String {
     var arr = intArrayOf(1, 2, 3, 4)

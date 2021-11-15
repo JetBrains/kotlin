@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // See KT-38104
 // The support for PersistableBundles is broken on JVM.
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test

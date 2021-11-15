@@ -1,4 +1,4 @@
-<!DIRECTIVES("WITH_RUNTIME")!>
+<!DIRECTIVES("WITH_STDLIB")!>
 
 val <!ELEMENT(1)!> = {`false`: Boolean -> !`false` }
 

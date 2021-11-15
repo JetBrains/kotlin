@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 data class Foo(val name: String)
 
 fun test(foo: Foo?) {

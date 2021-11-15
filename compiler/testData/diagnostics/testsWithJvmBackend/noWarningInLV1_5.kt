@@ -1,5 +1,5 @@
 // !LANGUAGE: +JvmInlineValueClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package kotlin.jvm
 

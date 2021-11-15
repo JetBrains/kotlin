@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Outer<X>(val x: X) {
     inner class Inner<Y>(val y: Y) {

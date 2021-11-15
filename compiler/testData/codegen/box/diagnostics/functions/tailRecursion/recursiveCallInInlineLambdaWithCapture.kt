@@ -1,6 +1,6 @@
 // KT-14961
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun listOfFactor(number: Int): List<Int> {
     tailrec fun listOfFactor(number: Int, acc: List<Int>): List<Int> {

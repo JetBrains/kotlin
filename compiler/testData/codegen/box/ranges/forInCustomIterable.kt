@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class C : Iterable<String> {
     // Unused declaration, which is here only to confuse the backend who might lookup symbols by name

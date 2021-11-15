@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface IBase {
     fun testDefault1() = if (this is B) this.foo() else "fail"

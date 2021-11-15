@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 @file:Suppress("AMBIGUOUS_ANONYMOUS_TYPE_INFERRED")
 
 open class CrashMe {

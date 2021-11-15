@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 abstract class Itr : Iterator<String>
 abstract class MItr : MutableIterator<String>

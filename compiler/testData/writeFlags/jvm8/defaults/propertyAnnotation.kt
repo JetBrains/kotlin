@@ -1,7 +1,7 @@
 // !JVM_DEFAULT_MODE: enable
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 
 annotation class Property(val value: String)
 

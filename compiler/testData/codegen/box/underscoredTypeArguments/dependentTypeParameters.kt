@@ -1,5 +1,5 @@
 // !LANGUAGE: +PartiallySpecifiedTypeArguments
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 abstract class SomeClass<T> {

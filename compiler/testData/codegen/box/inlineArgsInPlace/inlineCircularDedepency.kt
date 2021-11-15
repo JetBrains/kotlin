@@ -1,5 +1,5 @@
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val z = ArrayList<String>()
 

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 open class CharSequenceWithExtensionIterator(val s: String) : CharSequence {

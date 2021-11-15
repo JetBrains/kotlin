@@ -4,7 +4,7 @@
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: WASM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.reflect.KCallable
 import kotlin.test.*

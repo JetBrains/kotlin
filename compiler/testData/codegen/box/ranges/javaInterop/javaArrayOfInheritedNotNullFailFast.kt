@@ -1,7 +1,7 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM, JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get() in loop header". The not-null assertion is not generated when
 // assigning to the loop variable. The root cause seems to be that the loop variable is a KtParameter and

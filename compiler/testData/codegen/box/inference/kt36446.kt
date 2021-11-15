@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_REFLECT
 
 import kotlin.experimental.ExperimentalTypeInference

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 abstract class A : AbstractMutableList<Int>()
 

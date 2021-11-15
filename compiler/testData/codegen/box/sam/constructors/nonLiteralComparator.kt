@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // SKIP_DCE_DRIVEN
 
 fun box(): String {

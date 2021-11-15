@@ -1,5 +1,5 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// WITH_RUNTIME
+// WITH_STDLIB
 class Foo {
     annotation class Anno
 

@@ -1,5 +1,5 @@
 // NO_UNIFIED_NULL_CHECKS
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 fun box(): String {

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_REFLECT
 
 interface A

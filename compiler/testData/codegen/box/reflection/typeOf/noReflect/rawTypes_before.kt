@@ -2,7 +2,7 @@
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: box.kt
 
 package test

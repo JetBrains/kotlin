@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.reflect.KProperty
 

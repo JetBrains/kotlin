@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Outer {
     inner class Inner @JvmOverloads constructor(val s1: String, val s2: String = "OK") {

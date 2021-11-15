@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // CHECK_CASES_COUNT: function=sparse count=3
 // CHECK_IF_COUNT: function=sparse count=0
 

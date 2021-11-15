@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo(l: List<String>, vararg values: Any): Boolean =
     l.any(values::contains)

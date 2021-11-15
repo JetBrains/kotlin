@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: inlined.kt
 import kotlin.coroutines.*
 

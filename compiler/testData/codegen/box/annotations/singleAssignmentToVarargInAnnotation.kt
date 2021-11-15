@@ -2,7 +2,7 @@
 // !LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 annotation class Ann(vararg val p: Int)
 

@@ -1,5 +1,5 @@
 
-//WITH_RUNTIME
+// WITH_STDLIB
 class Test {
 
     data class Style(

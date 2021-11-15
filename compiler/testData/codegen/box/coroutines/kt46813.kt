@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.coroutines.*
 
 fun <T, R> T.map(transform: suspend (T) -> R): suspend () -> R =

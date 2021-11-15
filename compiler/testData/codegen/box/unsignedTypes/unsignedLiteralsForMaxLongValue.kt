@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     val maxULong = 0xFFFF_FFFF_FFFF_FFFFuL

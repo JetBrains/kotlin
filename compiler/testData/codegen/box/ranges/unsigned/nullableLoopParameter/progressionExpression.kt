@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // See KT-38833: Runtime exception is "java.lang.ClassCastException: java.lang.Integer cannot be cast to kotlin.UInt"
 // IGNORE_LIGHT_ANALYSIS
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     var result = 0u

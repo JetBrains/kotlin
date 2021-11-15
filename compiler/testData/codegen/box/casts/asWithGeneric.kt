@@ -5,7 +5,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <T> test1() = null as T
 fun <T> test2(): T {

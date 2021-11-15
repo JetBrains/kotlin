@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 const val MB = Byte.MIN_VALUE
 const val MS = Short.MIN_VALUE

@@ -1,5 +1,5 @@
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun test(xs: List<String>, flag: Boolean = false): Map<String, String> {
     val result = linkedMapOf<String, String>()

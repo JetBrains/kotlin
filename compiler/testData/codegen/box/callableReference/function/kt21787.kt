@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 class Container {
     var id: Int? = null
 }

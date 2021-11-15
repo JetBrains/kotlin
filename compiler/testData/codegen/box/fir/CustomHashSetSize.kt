@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // MODULE: m1
 // FILE: m1/THash.java

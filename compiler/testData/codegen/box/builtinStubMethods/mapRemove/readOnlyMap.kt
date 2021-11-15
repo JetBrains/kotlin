@@ -2,7 +2,7 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: A.java
 public class A {

@@ -1,6 +1,6 @@
 // "Add ''Parcelable'' supertype" "false"
 // IGNORE_IRRELEVANT_ACTIONS
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

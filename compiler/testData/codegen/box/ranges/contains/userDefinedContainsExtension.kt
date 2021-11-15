@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 operator fun ClosedRange<Int>.contains(value: Long) = false
 operator fun ClosedRange<UInt>.contains(value: ULong) = false

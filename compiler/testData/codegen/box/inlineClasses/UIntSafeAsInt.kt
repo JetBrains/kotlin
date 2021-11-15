@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun testUIntSafeAsInt(x: UInt) = x as? Int
 

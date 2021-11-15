@@ -1,6 +1,6 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Test.java
 
 // import kotlin.jvm.functions.Arity;

@@ -1,5 +1,5 @@
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 import java.util.concurrent.locks.ReentrantReadWriteLock

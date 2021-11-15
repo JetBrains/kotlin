@@ -1,7 +1,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 fun test() {
     val ans1 = runCatching { 42 }

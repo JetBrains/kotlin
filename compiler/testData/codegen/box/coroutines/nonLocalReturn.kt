@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.coroutines.*
 
 suspend fun coroutineScope(c: suspend () -> Unit) {

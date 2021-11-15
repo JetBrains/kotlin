@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // SAM_CONVERSIONS: CLASS
 //   ^ test checks reflection for synthetic classes
 // MODULE: lib

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 class MyCharSequence(val s: String) : CharSequence {

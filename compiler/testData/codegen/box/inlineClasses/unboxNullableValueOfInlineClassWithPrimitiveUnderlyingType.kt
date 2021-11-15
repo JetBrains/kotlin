@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class BoxT<T>(val boxed: T)
 class BoxAny(val boxed: Any?)

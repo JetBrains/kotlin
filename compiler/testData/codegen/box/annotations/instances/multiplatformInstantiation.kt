@@ -5,7 +5,7 @@
 
 // (supported: JVM_IR, JS_IR(_E6))
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
 
 // MODULE: lib

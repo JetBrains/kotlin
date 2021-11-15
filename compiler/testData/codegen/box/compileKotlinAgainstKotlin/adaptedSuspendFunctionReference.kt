@@ -1,6 +1,6 @@
 // KT-45286
 // MODULE: lib
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: A.kt
 
 package a

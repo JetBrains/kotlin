@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 fun box(): String {
     val uintProgression = 1u..7u step 3  // `step` ensures type is UIntProgression, NOT UIntRange
     for (i in uintProgression step 2) {

@@ -1,5 +1,5 @@
 // ISSUE: KT-41164
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

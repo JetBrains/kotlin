@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 enum class Test0(val x: Int) {
     ZERO;

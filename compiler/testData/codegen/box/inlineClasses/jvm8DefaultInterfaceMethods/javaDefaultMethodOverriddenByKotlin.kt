@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: javaDefaultMethod.kt
 interface K2 : J {
     override fun get2() = "Kotlin"

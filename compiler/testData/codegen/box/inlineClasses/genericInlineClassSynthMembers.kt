@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // MODULE: lib1
 // FILE: lib1.kt

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 //  In Kotlin/JVM arrays are cloneable
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.*
 

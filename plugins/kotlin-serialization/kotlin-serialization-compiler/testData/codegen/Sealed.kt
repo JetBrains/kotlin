@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT deserialize, write$Self, childSerializers, <init>, <clinit>, invoke, serializer
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlinx.serialization.*
 

@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 operator fun ClosedRange<Float>.iterator() =
     object : Iterator<Float> {

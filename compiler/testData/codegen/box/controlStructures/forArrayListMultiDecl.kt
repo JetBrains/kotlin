@@ -1,5 +1,5 @@
 
-// WITH_RUNTIME
+// WITH_STDLIB
 val alist = arrayListOf(1 to 2, 2 to 3, 3 to 4)
 
 fun box(): String {

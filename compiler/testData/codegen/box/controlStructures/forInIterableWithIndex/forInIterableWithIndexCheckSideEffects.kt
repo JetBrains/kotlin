@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class CountingIterable<out T>(private val s: Iterable<T>) : Iterable<T> {
     var hasNextCtr = 0

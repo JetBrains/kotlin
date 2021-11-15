@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: main.kt
 import kotlin.reflect.KFunction1

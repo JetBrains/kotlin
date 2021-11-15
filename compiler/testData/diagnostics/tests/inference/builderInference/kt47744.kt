@@ -1,6 +1,6 @@
 // !LANGUAGE: -UnrestrictedBuilderInference
 // !DIAGNOSTICS: -OPT_IN_IS_NOT_ENABLED -UNCHECKED_CAST
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

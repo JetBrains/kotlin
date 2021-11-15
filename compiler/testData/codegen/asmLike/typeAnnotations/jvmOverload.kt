@@ -2,7 +2,7 @@
 // RENDER_ANNOTATIONS
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 package foo
 
 @Target(AnnotationTarget.TYPE)

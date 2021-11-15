@@ -1,7 +1,7 @@
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // NO_CHECK_LAMBDA_INLINING
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: inlined.kt
 fun handle(f: suspend () -> Unit) {}
 

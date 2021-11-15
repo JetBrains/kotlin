@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // ISSUE: KT-32429
 
 import kotlin.properties.Delegates.observable

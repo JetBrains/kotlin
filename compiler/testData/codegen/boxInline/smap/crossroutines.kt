@@ -1,5 +1,5 @@
 // This test depends on line numbers
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: 1.kt
 package test

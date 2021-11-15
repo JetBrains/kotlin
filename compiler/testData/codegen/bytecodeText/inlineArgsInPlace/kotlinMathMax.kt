@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun vectorReductionMax(vA: DoubleArray): Double {
     val n = vA.size

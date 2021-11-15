@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // CHECK_CASES_COUNT: function=intFoo count=3
 // CHECK_IF_COUNT: function=intFoo count=0
 // CHECK_CASES_COUNT: function=shortFoo count=3 TARGET_BACKENDS=JS

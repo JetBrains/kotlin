@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 fun foo() {
     val array = Array(0, { IntArray(0) } )
     array.forEach { println(it.asList()) }

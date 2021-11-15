@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 internal object EmptyList : List<Nothing>, RandomAccess {
     override fun equals(other: Any?): Boolean = TODO()

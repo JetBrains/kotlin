@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 data class A(val x: String, val y: String)
 
 suspend inline fun foo(a: A, block: suspend (A) -> String): String = block(a)

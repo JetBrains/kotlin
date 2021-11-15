@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: kt45377.kt
 
 import kotlin.coroutines.*

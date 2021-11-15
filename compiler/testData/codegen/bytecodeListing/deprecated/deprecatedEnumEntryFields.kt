@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 enum class Test {
     @Deprecated("") ENTRY1,

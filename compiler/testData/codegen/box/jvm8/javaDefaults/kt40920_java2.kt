@@ -1,7 +1,7 @@
 // !JVM_DEFAULT_MODE: disable
 // JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Base.java
 
 public interface Base {

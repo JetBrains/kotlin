@@ -1,5 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.*
 

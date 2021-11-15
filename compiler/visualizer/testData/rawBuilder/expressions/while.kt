@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 fun foo(limit: Int) {
 //      Int Int
 //      │   │

@@ -1,6 +1,6 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND_FIR: JVM_IR
 
 import kotlin.experimental.ExperimentalTypeInference

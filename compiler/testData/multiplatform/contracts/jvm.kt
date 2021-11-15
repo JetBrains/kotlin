@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 package jvm
 
 fun test(x: List<Int>?) {

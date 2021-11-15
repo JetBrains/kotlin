@@ -1,6 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1302
 // SKIP_IR_INCREMENTAL_CHECKS
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: a.kt
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

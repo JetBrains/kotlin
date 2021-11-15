@@ -1,5 +1,5 @@
 // TARGET_BACKEND: WASM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: externals.js
 

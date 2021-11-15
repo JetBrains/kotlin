@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // See: https://issuetracker.google.com/177856519
 // IGNORE_BACKEND: JVM
 

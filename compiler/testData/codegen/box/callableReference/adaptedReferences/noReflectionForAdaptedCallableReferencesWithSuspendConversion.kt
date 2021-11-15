@@ -1,6 +1,6 @@
 // !LANGUAGE: +SuspendConversion
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.reflect.KCallable
 

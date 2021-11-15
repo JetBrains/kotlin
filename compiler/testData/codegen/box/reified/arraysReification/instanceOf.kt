@@ -6,7 +6,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun <reified T> foo(x: Any?) = Pair(x is T, x is T?)
 

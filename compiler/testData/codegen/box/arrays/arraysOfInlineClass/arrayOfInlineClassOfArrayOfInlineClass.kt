@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline class Data(val data: Array<UInt>)
 

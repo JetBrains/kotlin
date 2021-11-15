@@ -1,5 +1,5 @@
 // This issue affects AIDL generated files, as reported in KT-25807
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: J.java
 import android.os.Parcel;
 import test.K;

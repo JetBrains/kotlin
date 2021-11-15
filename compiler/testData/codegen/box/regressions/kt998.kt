@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun findPairless(a : IntArray) : Int {
   loop@ for (i in a.indices) {

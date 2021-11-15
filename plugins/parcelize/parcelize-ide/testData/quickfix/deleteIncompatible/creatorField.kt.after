@@ -1,6 +1,6 @@
 // "Remove custom ''CREATOR'' property" "true"
 // ERROR: Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

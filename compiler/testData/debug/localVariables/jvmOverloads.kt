@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 class C {
     @kotlin.jvm.JvmOverloads fun foo(firstParam: Int, secondParam: String = "") {

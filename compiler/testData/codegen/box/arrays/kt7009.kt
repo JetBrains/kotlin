@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box() : String {
     val value = (1 to doubleArrayOf(1.0)).second[0]

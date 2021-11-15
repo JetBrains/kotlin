@@ -1,7 +1,7 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM, JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get()". The not-null assertion is not generated when assigning to the
 // variables in the destructuring declaration. The root cause seems to be that

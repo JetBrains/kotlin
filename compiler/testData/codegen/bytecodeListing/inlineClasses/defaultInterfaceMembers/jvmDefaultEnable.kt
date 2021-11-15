@@ -1,5 +1,5 @@
 // !JVM_DEFAULT_MODE: enable
-// WITH_RUNTIME
+// WITH_STDLIB
 // JVM_TARGET: 1.8
 
 interface IFooBar {

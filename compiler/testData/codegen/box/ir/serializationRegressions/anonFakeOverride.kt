@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // extracted case from KT-48912
 

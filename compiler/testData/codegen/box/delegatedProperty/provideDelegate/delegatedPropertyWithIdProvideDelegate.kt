@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val test1: Map<String, String> by lazy(LazyThreadSafetyMode.NONE) {
     mapOf("string" to "string").mapValues { it.toString() }

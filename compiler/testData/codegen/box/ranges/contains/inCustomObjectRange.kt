@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class A(val z: Int) : Comparable<A> {
     override fun compareTo(other: A): Int {

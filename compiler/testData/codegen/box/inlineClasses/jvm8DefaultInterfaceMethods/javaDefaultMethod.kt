@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: javaDefaultMethod.kt
 @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @kotlin.jvm.JvmInline

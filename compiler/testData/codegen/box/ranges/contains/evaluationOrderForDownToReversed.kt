@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 var order = StringBuilder()

@@ -1,6 +1,6 @@
 // JVM backend has the `a` local covering the finally block. It shouldn't.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 inline fun g(block: () -> Unit) {

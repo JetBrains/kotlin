@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     val x: Array<List<*>> = arrayOf(listOf(1))

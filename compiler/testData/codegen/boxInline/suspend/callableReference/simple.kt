@@ -1,5 +1,5 @@
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +ReleaseCoroutines
 // NO_CHECK_LAMBDA_INLINING
 // FILE: test.kt

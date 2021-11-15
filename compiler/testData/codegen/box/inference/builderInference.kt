@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // ISSUE: KT-33545
 
 import kotlin.experimental.ExperimentalTypeInference

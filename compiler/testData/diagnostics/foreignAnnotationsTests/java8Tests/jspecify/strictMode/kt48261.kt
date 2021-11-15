@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // JSR305_GLOBAL_REPORT: strict
 // JSPECIFY_STATE: strict
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 
 // FILE: MyCollection.java

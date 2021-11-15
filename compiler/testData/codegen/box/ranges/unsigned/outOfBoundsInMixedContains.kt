@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun testIn(x: ULong) =
     x in UInt.MIN_VALUE..UInt.MAX_VALUE

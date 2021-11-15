@@ -1,6 +1,6 @@
 // The old backend gets the local variables for finally blocks wrong.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 fun compute(): String {

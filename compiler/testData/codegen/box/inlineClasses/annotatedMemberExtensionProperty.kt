@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Anno

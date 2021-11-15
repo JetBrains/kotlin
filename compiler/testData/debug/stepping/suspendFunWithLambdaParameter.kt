@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 suspend fun foo(block: Long.() -> String): String {
     return 1L.block()

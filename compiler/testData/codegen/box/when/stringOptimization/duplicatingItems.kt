@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // CHECK_CASES_COUNT: function=foo count=3 TARGET_BACKENDS=JS
 // CHECK_CASES_COUNT: function=foo count=4 IGNORED_BACKENDS=JS
 // CHECK_IF_COUNT: function=foo count=0

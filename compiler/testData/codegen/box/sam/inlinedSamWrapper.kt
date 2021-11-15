@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // SAM_CONVERSIONS: CLASS
 // FILE: MyRunnable.java
 public interface MyRunnable {

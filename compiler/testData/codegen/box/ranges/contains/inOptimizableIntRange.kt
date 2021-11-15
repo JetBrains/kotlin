@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 fun check(x: Int, left: Int, right: Int): Boolean {

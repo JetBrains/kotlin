@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 import kotlin.test.*
 

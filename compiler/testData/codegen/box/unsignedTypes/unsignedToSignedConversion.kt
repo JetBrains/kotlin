@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun takeUByte(u: UByte) = u.toByte()
 fun takeUShort(u: UShort) = u.toShort()

@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 inline class A(val s: String) {
     fun fromResult(x: Result<String>) =

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // KJS_FULL_RUNTIME
 
 fun <T : Result<*>> isSuccess(a: A<T>): String =

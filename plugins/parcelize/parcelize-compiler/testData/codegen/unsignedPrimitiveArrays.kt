@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: JVM
 
 import kotlinx.parcelize.*

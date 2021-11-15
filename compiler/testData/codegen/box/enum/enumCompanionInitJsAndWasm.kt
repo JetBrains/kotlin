@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JS_IR
 // TARGET_BACKEND: JS_IR_ES6
 // TARGET_BACKEND: WASM
-// WITH_RUNTIME
+// WITH_STDLIB
 var result = ""
 
 enum class E(a: String) {

@@ -1,6 +1,6 @@
 // The local variables `z` and `y` are visible in the finally block with old backend.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 fun box(): String {

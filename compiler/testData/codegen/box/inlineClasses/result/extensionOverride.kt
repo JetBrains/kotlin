@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 fun <T> Result<T>.get(): T = getOrNull()!!
 
 interface C<T> {

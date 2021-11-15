@@ -6,7 +6,7 @@
 // IGNORE_BACKEND: JS, NATIVE
 // IGNORE_LIGHT_ANALYSIS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 import kotlin.jvm.internal.FunctionBase

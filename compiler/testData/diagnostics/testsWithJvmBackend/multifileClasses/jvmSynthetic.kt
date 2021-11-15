@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: f.kt
 
 @file:JvmName("Foo")

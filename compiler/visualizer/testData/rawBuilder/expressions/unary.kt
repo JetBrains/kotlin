@@ -1,5 +1,5 @@
 // FIR_IGNORE
-// WITH_RUNTIME
+// WITH_STDLIB
 fun test() {
 //      Int Int
 //      │   │

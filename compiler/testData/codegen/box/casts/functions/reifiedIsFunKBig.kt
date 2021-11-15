@@ -3,7 +3,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // This is a big, ugly, semi-auto generated test.
 // Use corresponding 'Small' test for debug.
 

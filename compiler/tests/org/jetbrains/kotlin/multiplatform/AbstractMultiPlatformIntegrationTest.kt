@@ -43,10 +43,9 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
         val tmpdir = KtTestUtil.tmpDir(getTestName(true))
 
-        val optionalStdlibCommon =
-            if (InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_RUNTIME"))
-                arrayOf("-cp", findStdlibCommon().absolutePath)
-            else emptyArray()
+        val withRuntime = InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_RUNTIME") ||
+                InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_STDLIB")
+        val optionalStdlibCommon = if (withRuntime) arrayOf("-cp", findStdlibCommon().absolutePath) else emptyArray()
 
         val commonDest = File(tmpdir, "common").absolutePath
         val jvmDest = File(tmpdir, "jvm").absolutePath.takeIf { jvmSrc != null }

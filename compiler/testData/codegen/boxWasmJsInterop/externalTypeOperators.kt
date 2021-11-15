@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: externals.js
 
 const primitives1 = [3.14, "Test string 1",  true, Symbol("symbol"), 131283889534859707199254740992n];

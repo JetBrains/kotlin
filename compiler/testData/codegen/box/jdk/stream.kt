@@ -5,7 +5,7 @@
 // IGNORE_BACKEND: ANDROID
 
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import java.util.stream.*
 

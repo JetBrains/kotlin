@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // LAMBDAS: INDY
-// WITH_RUNTIME
+// WITH_STDLIB
 // CHECK_BYTECODE_TEXT
 
 // FILE: nullabilityAssertions.kt

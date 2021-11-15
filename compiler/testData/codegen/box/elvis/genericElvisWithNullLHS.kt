@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun test() {
     fun returnMutableList(): MutableList<Int>? = null

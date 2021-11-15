@@ -1,5 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference -UseBuilderInferenceOnlyIfNeeded
-// WITH_RUNTIME
+// WITH_STDLIB
 // !DIAGNOSTICS: -OPT_IN_USAGE_ERROR -CAST_NEVER_SUCCEEDS
 // IGNORE_BACKEND_FIR: JVM_IR
 

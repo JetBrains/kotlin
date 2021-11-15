@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun isZeroUInt(n: UInt?) = 0U == n
 fun isZeroULong(n: ULong?) = 0UL == n

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // ADDITIONAL_COMPILER_ARGUMENTS: -opt-in=kotlin.ExperimentalMultiplatform
 
 @OptionalExpectation

@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: WASM
 // DONT_TARGET_EXACT_BACKEND: JS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class NestedAnnotation(val value: String)

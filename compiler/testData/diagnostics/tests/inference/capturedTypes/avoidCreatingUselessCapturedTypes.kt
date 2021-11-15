@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 
 object Entities {
     val map: Map<String, Int> = hashMapOf(

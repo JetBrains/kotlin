@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]

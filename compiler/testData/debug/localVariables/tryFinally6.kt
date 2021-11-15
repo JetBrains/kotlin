@@ -1,6 +1,6 @@
 // JVM backend has `a` visible in the `compute` finally block. It shouldn't be.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 inline fun h(block: () -> Unit) {

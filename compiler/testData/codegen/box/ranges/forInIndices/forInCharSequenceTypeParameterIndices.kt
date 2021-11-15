@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <T: CharSequence> test(s: T): Int {
     var result = 0

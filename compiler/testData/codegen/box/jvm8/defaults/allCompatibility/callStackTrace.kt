@@ -1,7 +1,7 @@
 // !JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 // JVM_TARGET: 1.8
 // FILE: Simple.java
 

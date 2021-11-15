@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <T> underlying(a: IC): T = bar(a) {
     it.value as T

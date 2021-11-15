@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 class World() {
   public val items: ArrayList<Item> = ArrayList<Item>()
 

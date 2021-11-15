@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // ISSUE: KT-32462
 
 fun decodeValue(value: String): Any {

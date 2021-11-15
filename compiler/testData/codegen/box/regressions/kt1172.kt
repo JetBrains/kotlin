@@ -6,7 +6,7 @@
 // IGNORE_BACKEND: JS, NATIVE
 // not sure if it's ok to change Object to Any
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package test.regressions.kt1172
 

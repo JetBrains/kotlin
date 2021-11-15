@@ -1,7 +1,7 @@
 // !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // This test exists only to check that we don't accidentally break the buggy behavior of the old JVM backend in JVM IR (KT-42321).
 // Feel free to remove it as soon as there's no language version where such code is allowed (KT-38895).
 

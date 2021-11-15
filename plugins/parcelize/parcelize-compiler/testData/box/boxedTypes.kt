@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")

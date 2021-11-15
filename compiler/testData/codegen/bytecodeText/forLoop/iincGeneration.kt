@@ -7,7 +7,7 @@
 // Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
 // with compiler built from your changes if you are not sure.
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun intRangeTo(a: Int, b: Int) { for (i in a .. b) {} }
 fun intRangeToStep(a: Int, b: Int) { for (i in a .. b step 127) {} }  // Uses IADD in non-IR

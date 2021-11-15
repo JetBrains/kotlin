@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun uint(vararg us: UInt): UIntArray = us
 

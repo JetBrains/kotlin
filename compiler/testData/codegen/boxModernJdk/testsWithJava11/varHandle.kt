@@ -1,7 +1,7 @@
 // !LANGUAGE: +PolymorphicSignature
 // TARGET_BACKEND: JVM
 // SKIP_JDK6
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import java.lang.invoke.MethodHandles
 import kotlin.concurrent.thread

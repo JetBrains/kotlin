@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun inInt(x: Long): Boolean {
     return x in 1..2

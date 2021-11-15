@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun interface Fn<T, R> {
     fun run(s: String, i: Int, t: T): R

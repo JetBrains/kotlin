@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class CountingSequence<out T>(private val s: Sequence<T>) : Sequence<T> {
     var hasNextCtr = 0

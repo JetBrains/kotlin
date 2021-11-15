@@ -1,6 +1,6 @@
 // The JVM backend does not have `x` visible in the locals table for the for loop at all.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: test.kt
 suspend fun h() { }

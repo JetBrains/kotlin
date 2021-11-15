@@ -1,5 +1,5 @@
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR

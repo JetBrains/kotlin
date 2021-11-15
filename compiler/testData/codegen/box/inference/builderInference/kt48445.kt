@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: WASM
 // !LANGUAGE: +UnrestrictedBuilderInference
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 internal class TowerDataElementsForName() {
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 // SKIP_KT_DUMP
 // FILE: kt44993.kt
 fun f(r: KotlinBox<JavaBox>): String =

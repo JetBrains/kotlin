@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty

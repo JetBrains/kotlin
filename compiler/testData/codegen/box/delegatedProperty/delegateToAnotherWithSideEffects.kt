@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 var result = "Fail"
 
 object O {

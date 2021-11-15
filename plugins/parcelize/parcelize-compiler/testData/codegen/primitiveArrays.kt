@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 /*
  * Serializing of short arrays is not properly supported in old frontend, so this

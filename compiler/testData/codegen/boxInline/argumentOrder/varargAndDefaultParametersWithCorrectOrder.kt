@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +UseCorrectExecutionOrderForVarargArguments
 // NO_CHECK_LAMBDA_INLINING
 // KJS_WITH_FULL_RUNTIME

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun foo(x: (Int, Int) -> Int): Int =
     x(120,3)

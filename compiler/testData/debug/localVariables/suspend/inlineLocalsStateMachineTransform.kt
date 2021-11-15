@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 inline fun hasLocal(): Int {
     val x = 41

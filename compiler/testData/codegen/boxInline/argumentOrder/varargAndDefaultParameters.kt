@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: NATIVE
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR

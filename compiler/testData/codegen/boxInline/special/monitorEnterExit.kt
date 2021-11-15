@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: mySynchronized.kt
 
 import kotlin.jvm.internal.unsafe.*

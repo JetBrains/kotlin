@@ -1,6 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: common.kt
 
 expect open class C() {

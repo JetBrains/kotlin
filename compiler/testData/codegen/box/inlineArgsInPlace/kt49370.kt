@@ -1,5 +1,5 @@
 // !OPT_IN: kotlin.ExperimentalStdlibApi
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: WASM
 
 fun box(): String {

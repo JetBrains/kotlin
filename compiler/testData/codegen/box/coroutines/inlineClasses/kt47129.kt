@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.coroutines.*
 
 fun <T> runBlocking(c: suspend () -> T): T {

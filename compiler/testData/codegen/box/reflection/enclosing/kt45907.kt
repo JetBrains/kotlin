@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String = use {
     class Local(val n: Int)

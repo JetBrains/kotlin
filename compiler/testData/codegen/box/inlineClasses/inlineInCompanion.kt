@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: R.kt
 import kotlin.jvm.JvmInline
 

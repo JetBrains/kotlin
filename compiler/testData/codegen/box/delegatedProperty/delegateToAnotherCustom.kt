@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 var x: String
     get() = throw Exception("x's getter shouldn't be called")
     set(_) { throw Exception("x's setter shouldn't be called") }

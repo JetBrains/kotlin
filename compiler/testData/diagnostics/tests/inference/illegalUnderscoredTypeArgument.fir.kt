@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <K, T> foo(x: (K) -> T): Pair<K, T> = TODO()
 

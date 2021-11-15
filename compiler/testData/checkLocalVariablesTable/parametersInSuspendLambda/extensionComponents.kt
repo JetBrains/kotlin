@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 class A<T>(val x: String, val y: String, val z: T)
 
 suspend fun <T> foo(a: A<T>, block: suspend (A<T>) -> String): String = block(a)

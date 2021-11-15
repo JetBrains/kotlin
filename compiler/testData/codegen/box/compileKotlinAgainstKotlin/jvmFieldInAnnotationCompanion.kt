@@ -1,6 +1,6 @@
 // !LANGUAGE: +JvmFieldInInterface +NestedClassesInAnnotations
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // MODULE: lib
 // FILE: Foo.kt

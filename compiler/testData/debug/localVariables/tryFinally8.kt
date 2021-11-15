@@ -1,6 +1,6 @@
 // The old backend has `y` and `i` visible on the finally block.
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 
 inline fun f(block: () -> Unit) {

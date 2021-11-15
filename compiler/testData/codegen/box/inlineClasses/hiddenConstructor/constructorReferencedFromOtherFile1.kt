@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 1.kt
 
 fun box(): String = X(Z("OK")).z.result

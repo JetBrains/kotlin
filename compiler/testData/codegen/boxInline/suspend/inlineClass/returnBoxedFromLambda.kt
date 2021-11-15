@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // FILE: 1.kt
 inline fun <T, R> (suspend () -> T).map(crossinline transform: suspend (T) -> R): suspend () -> R =

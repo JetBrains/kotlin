@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun <reified T> baz(value: T): String = "OK" + value
 

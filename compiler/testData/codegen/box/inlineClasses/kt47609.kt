@@ -1,6 +1,6 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 annotation class Ann(val value: String)
 

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun createArray(ctor: (Int, (Int) -> Char) -> CharArray) =
     ctor(1) { 'O' }
