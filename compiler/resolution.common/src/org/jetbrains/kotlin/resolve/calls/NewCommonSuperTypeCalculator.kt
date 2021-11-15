@@ -179,19 +179,22 @@ object NewCommonSuperTypeCalculator {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
         }
 
-        val nonStubTypeVariables = types.filter { !it.isStubTypeForBuilderInference() }
-        val areAllNonStubTypesNothing = nonStubTypeVariables.isNotEmpty() && nonStubTypeVariables.all { it.isNothing() }
-        if (nonStubTypeVariables.size == 1 && !areAllNonStubTypesNothing) return nonStubTypeVariables.single()
+        val nonStubTypeVariables = nonTypeVariables.filter { !it.isStubTypeForBuilderInference() }
+        val hasStubTypesForBuilderInference = nonStubTypeVariables.size != nonTypeVariables.size
+        if (hasStubTypesForBuilderInference) {
+            val areAllNonStubTypesNothing = nonStubTypeVariables.isNotEmpty() && nonStubTypeVariables.all { it.isNothing() }
+            if (hasStubTypesForBuilderInference && nonStubTypeVariables.size == 1 && !areAllNonStubTypesNothing) return nonStubTypeVariables.single()
 
-        if (nonStubTypeVariables.isEmpty() || areAllNonStubTypesNothing) {
-            val stubTypeVariables = types.filter { it.isStubType() }
-            val uniqueStubTypes =
-                stubTypeVariables.distinctBy { it.asDefinitelyNotNullType()?.original()?.typeConstructor() ?: it.typeConstructor() }
+            if (nonStubTypeVariables.isEmpty() || areAllNonStubTypesNothing) {
+                val stubTypeVariables = types.filter { it.isStubType() }
+                val uniqueStubTypes =
+                    stubTypeVariables.distinctBy { it.asDefinitelyNotNullType()?.original()?.typeConstructor() ?: it.typeConstructor() }
 
-            if (uniqueStubTypes.size > 1) return nullableAnyType()
+                if (uniqueStubTypes.size > 1) return nullableAnyType()
 
-            if (stubTypeVariables.none { it.isDefinitelyNotNullType() }) {
-                return uniquify(stubTypeVariables.ifEmpty { types }, stateStubTypesNotEqual).singleOrNull() ?: return nullableAnyType()
+                if (stubTypeVariables.none { it.isDefinitelyNotNullType() }) {
+                    return uniquify(stubTypeVariables.ifEmpty { types }, stateStubTypesNotEqual).singleOrNull() ?: return nullableAnyType()
+                }
             }
         }
 
