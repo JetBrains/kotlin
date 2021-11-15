@@ -1931,6 +1931,18 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt49548.kt")
+            public void testKt49548() throws Exception {
+                runTest("compiler/testData/codegen/box/boxingOptimization/kt49548.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49548a.kt")
+            public void testKt49548a() throws Exception {
+                runTest("compiler/testData/codegen/box/boxingOptimization/kt49548a.kt");
+            }
+
+            @Test
             @TestMetadata("kt5493.kt")
             public void testKt5493() throws Exception {
                 runTest("compiler/testData/codegen/box/boxingOptimization/kt5493.kt");
@@ -2024,6 +2036,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("unsafeRemoving.kt")
             public void testUnsafeRemoving() throws Exception {
                 runTest("compiler/testData/codegen/box/boxingOptimization/unsafeRemoving.kt");
+            }
+
+            @Test
+            @TestMetadata("unsignedArrayForEach.kt")
+            public void testUnsignedArrayForEach() throws Exception {
+                runTest("compiler/testData/codegen/box/boxingOptimization/unsignedArrayForEach.kt");
             }
 
             @Test
@@ -9848,6 +9866,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt49168.kt")
+            public void testKt49168() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/kt49168.kt");
+            }
+
+            @Test
             @TestMetadata("lastExpressionIsLoop.kt")
             public void testLastExpressionIsLoop() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
@@ -16525,9 +16549,27 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("ColorValuePanel.kt")
+            public void testColorValuePanel() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/ColorValuePanel.kt");
+            }
+
+            @Test
             @TestMetadata("ConstValAccess.kt")
             public void testConstValAccess() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/ConstValAccess.kt");
+            }
+
+            @Test
+            @TestMetadata("CustomHashSetSize.kt")
+            public void testCustomHashSetSize() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");
+            }
+
+            @Test
+            @TestMetadata("CustomThrowableMessage.kt")
+            public void testCustomThrowableMessage() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/CustomThrowableMessage.kt");
             }
 
             @Test
@@ -16576,6 +16618,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("IrBuiltIns.kt")
             public void testIrBuiltIns() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");
+            }
+
+            @Test
+            @TestMetadata("JKEnumConstant.kt")
+            public void testJKEnumConstant() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/JKEnumConstant.kt");
             }
 
             @Test
@@ -17401,12 +17449,6 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 @TestMetadata("functionExpressionWithThisReference.kt")
                 public void testFunctionExpressionWithThisReference() throws Exception {
                     runTest("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt");
-                }
-
-                @Test
-                @TestMetadata("functionExpressionWithThisReferenceNI.kt")
-                public void testFunctionExpressionWithThisReferenceNI() throws Exception {
-                    runTest("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReferenceNI.kt");
                 }
 
                 @Test
@@ -19949,6 +19991,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("safeAsOfTypeParameterWithInlineClassBound.kt")
             public void testSafeAsOfTypeParameterWithInlineClassBound() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBound.kt");
+            }
+
+            @Test
+            @TestMetadata("samWrapperDifferentModule.kt")
+            public void testSamWrapperDifferentModule() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt");
             }
 
             @Test
@@ -22869,6 +22917,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                     }
 
                     @Test
+                    @TestMetadata("kt49613.kt")
+                    public void testKt49613() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/kt49613.kt");
+                    }
+
+                    @Test
                     @TestMetadata("localFunction1.kt")
                     public void testLocalFunction1() throws Exception {
                         runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/localFunction1.kt");
@@ -23841,12 +23895,6 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("genericSamProjectedOut.kt")
             public void testGenericSamProjectedOut() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt");
-            }
-
-            @Test
-            @TestMetadata("genericSamProjectedOutWithNewInference.kt")
-            public void testGenericSamProjectedOutWithNewInference() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOutWithNewInference.kt");
             }
 
             @Test
