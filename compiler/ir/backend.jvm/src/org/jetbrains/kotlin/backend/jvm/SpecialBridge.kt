@@ -42,4 +42,9 @@ data class SpecialBridge(
     val isFinal: Boolean = true,
     val isSynthetic: Boolean = false,
     val isOverriding: Boolean = true,
+    // 'true' if we also should produce a synthetic bridge with unsubstituted signature.
+    // NB this is passed down the hierarchy to the point where 'unsubstitutedSpecialBridge' is created,
+    // see BridgeLoweringCache::computeSpecialBridge
+    val needsUnsubstitutedBridge: Boolean = false,
+    val unsubstitutedSpecialBridge: SpecialBridge? = null
 )

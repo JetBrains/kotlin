@@ -49,6 +49,9 @@ object BuiltinSpecialBridgesUtil {
         signatureByDescriptor: (FunctionDescriptor) -> Signature,
         state: GenerationState
     ): Set<BridgeForBuiltinSpecial<Signature>> {
+//        if (function.name.asString() == "get" && function.containingDeclaration.name.asString() == "B") {
+//            println("get(Ljava/lang/Object;)Ljava/lang/Object;")
+//        }
 
         val functionHandle = DescriptorBasedFunctionHandleForJvm(function, state)
         val fake = !functionHandle.isDeclaration

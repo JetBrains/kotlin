@@ -169,7 +169,7 @@ public final class DStringMap {
     public bridge final method entrySet(): java.util.Set
     public @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.Number
     public bridge final method get(p0: java.lang.Object): java.lang.Number
-    public synthetic bridge method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public @org.jetbrains.annotations.NotNull method getKeys(): java.util.Set
     public method getSize(): int

@@ -7,8 +7,10 @@ public abstract class AMMapSD {
     public bridge method containsValue(p0: double): boolean
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge final method get(p0: java.lang.Object): java.lang.Double
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public bridge method get(p0: java.lang.String): java.lang.Double
     public bridge final method remove(p0: java.lang.Object): java.lang.Double
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
     public bridge method remove(p0: java.lang.String): java.lang.Double
 }
 
@@ -21,5 +23,6 @@ public abstract class AMapSD {
     public bridge method containsValue(p0: double): boolean
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge final method get(p0: java.lang.Object): java.lang.Double
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public bridge method get(p0: java.lang.String): java.lang.Double
 }

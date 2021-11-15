@@ -16,7 +16,7 @@ public abstract class IntIntMap {
     public bridge final method entrySet(): java.util.Set
     public abstract method get(p0: int): java.lang.Integer
     public bridge final method get(p0: java.lang.Object): java.lang.Integer
-    public synthetic bridge method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public abstract method getEntries(): java.util.Set
     public abstract method getKeys(): java.util.Set
     public abstract method getSize(): int

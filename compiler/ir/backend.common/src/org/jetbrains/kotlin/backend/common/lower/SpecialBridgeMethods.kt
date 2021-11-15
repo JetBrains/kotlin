@@ -24,6 +24,7 @@ data class SpecialMethodWithDefaultInfo(
     val defaultValueGenerator: (IrSimpleFunction) -> IrExpression,
     val argumentsToCheck: Int,
     val needsGenericSignature: Boolean = false,
+    val needsUnsubstitutedBridge: Boolean = false
 )
 
 class BuiltInWithDifferentJvmName(
@@ -78,11 +79,11 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(StandardNames.FqNames.list, "lastIndexOf", 1) to
                 SpecialMethodWithDefaultInfo(::constMinusOne, 1),
         makeDescription(StandardNames.FqNames.map, "getOrDefault", 2) to
-                SpecialMethodWithDefaultInfo(::getSecondArg, 1, needsGenericSignature = true),
+                SpecialMethodWithDefaultInfo(::getSecondArg, 1, needsGenericSignature = true, needsUnsubstitutedBridge = true),
         makeDescription(StandardNames.FqNames.map, "get", 1) to
-                SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true),
+                SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true, needsUnsubstitutedBridge = true),
         makeDescription(StandardNames.FqNames.mutableMap, "remove", 1) to
-                SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true)
+                SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true, needsUnsubstitutedBridge = true)
     )
 
     private val specialProperties = mapOf(

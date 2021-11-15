@@ -2297,6 +2297,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("kt48945.kt")
+        public void testKt48945() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/kt48945.kt");
+        }
+
+        @Test
         @TestMetadata("mutableCollectionOfPrimitive.kt")
         public void testMutableCollectionOfPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/mutableCollectionOfPrimitive.kt");
