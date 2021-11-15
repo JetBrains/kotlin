@@ -40,7 +40,7 @@ internal fun Project.runMissingAndroidTargetProjectConfigurationHealthCheck(
 
     warningLogger(
         """
-            Missing 'android()' Kotlin target in ${project.name} (${project.path})'.
+            Missing 'android()' Kotlin target in multiplatform project ${project.name} (${project.path})'.
             The Android Gradle plugin was applied without creating a corresponding 'android()' Kotlin Target:
             
             ```
