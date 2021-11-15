@@ -31934,6 +31934,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt10926.kt")
+            public void testKt10926() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/kt10926.kt");
+            }
+
+            @Test
+            @TestMetadata("kt10926EnabledFeature.kt")
+            public void testKt10926EnabledFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/kt10926EnabledFeature.kt");
+            }
+
+            @Test
             @TestMetadata("kt1781.kt")
             public void testKt1781() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/kt1781.kt");

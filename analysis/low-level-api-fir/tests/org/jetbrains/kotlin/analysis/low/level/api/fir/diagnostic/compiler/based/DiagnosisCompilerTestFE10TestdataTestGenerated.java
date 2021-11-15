@@ -25380,6 +25380,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt17765.kt")
+            public void testKt17765() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/kt17765.kt");
+            }
+
+            @Test
             @TestMetadata("OverloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/OverloadPriority.kt");
@@ -31931,6 +31937,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("inferredNullableArrayAsVararg.kt")
             public void testInferredNullableArrayAsVararg() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/inferredNullableArrayAsVararg.kt");
+            }
+
+            @Test
+            @TestMetadata("kt10926.kt")
+            public void testKt10926() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/kt10926.kt");
+            }
+
+            @Test
+            @TestMetadata("kt10926EnabledFeature.kt")
+            public void testKt10926EnabledFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/kt10926EnabledFeature.kt");
             }
 
             @Test
