@@ -86,12 +86,13 @@ object NewCommonSuperTypeCalculator {
         }
 
         // i.e. result type also should be marked nullable
-        val notAllNotNull =
-            types.any { !isTypeVariable(it) && !AbstractNullabilityChecker.isSubtypeOfAny(stateStubTypesEqualToAnything, it) }
-        val notNullTypes = if (notAllNotNull) types.map { it.withNullability(false) } else types
+        val allNotNull = types.all {
+            isTypeVariable(it) || isNotNullStubTypeForBuilderInference(it) || AbstractNullabilityChecker.isSubtypeOfAny(stateStubTypesEqualToAnything, it)
+        }
+        val notNullTypes = if (!allNotNull) types.map { it.withNullability(false) } else types
 
         val commonSuperType = commonSuperTypeForNotNullTypes(notNullTypes, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
-        return if (notAllNotNull)
+        return if (!allNotNull)
             refineNullabilityForUndefinedNullability(types, commonSuperType) ?: commonSuperType.withNullability(true)
         else
             commonSuperType
@@ -205,6 +206,10 @@ object NewCommonSuperTypeCalculator {
 
     private fun TypeSystemCommonSuperTypesContext.isTypeVariable(type: SimpleTypeMarker): Boolean {
         return type.isStubTypeForVariableInSubtyping() || isCapturedTypeVariable(type)
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.isNotNullStubTypeForBuilderInference(type: SimpleTypeMarker): Boolean {
+        return type.isStubTypeForBuilderInference() && !type.isMarkedNullable()
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: SimpleTypeMarker): Boolean {
