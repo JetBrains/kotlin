@@ -150,7 +150,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
 
     val mppHierarchicalStructureByDefault: Boolean
-        get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT) ?: false
+        get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT) ?: true
 
     val enableCompatibilityMetadataVariant: Boolean
         get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: !mppHierarchicalStructureByDefault
