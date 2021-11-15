@@ -302,7 +302,7 @@ class KotlinMetadataTargetConfigurator :
 
         return compilationFactory.create(compilationName).apply {
             target.compilations.add(this@apply)
-            addExactSourceSetsEagerly(setOf(sourceSet))
+            source(sourceSet) // TODO NOW: Maybe this is wrong! Check change against master
             configureMetadataDependenciesForCompilation(this@apply)
 
             if (!isHostSpecific) {

@@ -26,9 +26,10 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
-import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -115,47 +116,59 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             addAsCommonSources
         ) { sourceSet.kotlin }
 
-    internal fun addExactSourceSetsEagerly(sourceSets: Set<KotlinSourceSet>) {
+
+    private fun addExactSource(sourceSet: KotlinSourceSet) {
         with(target.project) {
-            //TODO possibly issue with forced instantiation
-            sourceSets.forEach { sourceSet ->
-                addSourcesToCompileTask(
-                    sourceSet,
-                    addAsCommonSources = lazy {
-                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project).contains(sourceSet.name)
-                    }
-                )
-
-                // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
-                // old Java & Android projects:
-                addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
-                addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
-                addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName, forced = false)
-
-                if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
-                    addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName, forced = false)
+            addSourcesToCompileTask(
+                sourceSet,
+                addAsCommonSources = lazy {
+                    CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project).contains(sourceSet.name)
                 }
+            )
 
-                if (sourceSet.name != defaultSourceSetName) {
-                    kotlinExtension.sourceSets.findByName(defaultSourceSetName)?.let { defaultSourceSet ->
-                        // Temporary solution for checking consistency across source sets participating in a compilation that may
-                        // not be interconnected with the dependsOn relation: check the settings as if the default source set of
-                        // the compilation depends on the one added to the compilation:
-                        defaultSourceSetLanguageSettingsChecker.runAllChecks(
-                            defaultSourceSet,
-                            sourceSet
-                        )
-                    }
+            // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
+            // old Java & Android projects:
+            addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
+            addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
+            addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName, forced = false)
+
+            if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
+                addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName, forced = false)
+            }
+
+            if (sourceSet.name != defaultSourceSetName) {
+                kotlinExtension.sourceSets.findByName(defaultSourceSetName)?.let { defaultSourceSet ->
+                    // Temporary solution for checking consistency across source sets participating in a compilation that may
+                    // not be interconnected with the dependsOn relation: check the settings as if the default source set of
+                    // the compilation depends on the one added to the compilation:
+                    defaultSourceSetLanguageSettingsChecker.runAllChecks(
+                        defaultSourceSet,
+                        sourceSet
+                    )
                 }
             }
         }
     }
 
     final override fun source(sourceSet: KotlinSourceSet) {
-        if (kotlinSourceSets.add(sourceSet)) {
-            target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.withAllDependsOnSourceSets())
+        val tracked = mutableSetOf(sourceSet)
+
+        fun trackDependsOnEdges(sourceSet: KotlinSourceSet) {
+            if (sourceSet !is DefaultKotlinSourceSet) {
+                throw UnsupportedOperationException("Source Set ${sourceSet.javaClass.name} not supported")
             }
+
+            sourceSet.dependsOnContainer.all { dependsOnSourceSet ->
+                if (tracked.add(dependsOnSourceSet)) {
+                    addExactSource(dependsOnSourceSet)
+                    trackDependsOnEdges(dependsOnSourceSet)
+                }
+            }
+        }
+
+        if (kotlinSourceSets.add(sourceSet)) {
+            addExactSource(sourceSet)
+            trackDependsOnEdges(sourceSet)
         }
     }
 

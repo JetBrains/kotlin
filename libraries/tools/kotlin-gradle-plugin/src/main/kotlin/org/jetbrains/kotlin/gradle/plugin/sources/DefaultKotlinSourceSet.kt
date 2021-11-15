@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.kotlin.dsl.domainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.commonizer.util.transitiveClosure
@@ -87,7 +88,7 @@ class DefaultKotlinSourceSet(
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
     override fun dependsOn(other: KotlinSourceSet) {
-        dependsOnSourceSetsImpl.add(other)
+        dependsOnContainer.add(other)
 
         // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
         checkForCircularDependencies()
@@ -97,10 +98,10 @@ class DefaultKotlinSourceSet(
         }
     }
 
-    private val dependsOnSourceSetsImpl = mutableSetOf<KotlinSourceSet>()
+    internal val dependsOnContainer = project.objects.domainObjectContainer(KotlinSourceSet::class)
 
     override val dependsOn: Set<KotlinSourceSet>
-        get() = dependsOnSourceSetsImpl
+        get() = dependsOnContainer
 
     override fun toString(): String = "source set $name"
 
