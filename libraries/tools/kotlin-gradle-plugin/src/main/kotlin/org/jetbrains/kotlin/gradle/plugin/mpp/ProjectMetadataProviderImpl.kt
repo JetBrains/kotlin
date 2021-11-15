@@ -9,8 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 
@@ -26,17 +29,18 @@ private class ProjectMetadataProviderImpl(
     private val moduleIdentifier: KotlinModuleIdentifier
 ) : ProjectMetadataProvider() {
     override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection {
-        return when (val projectExtension = dependencyProject.topLevelExtension) {
-            is KotlinMultiplatformExtension -> projectExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
-                .firstOrNull { it.name == sourceSetName }
-                ?.output?.classesDirs ?: dependencyProject.files()
-
-            is KotlinPm20ProjectExtension -> {
+        val projectExtension = dependencyProject.topLevelExtensionOrNull
+        return when {
+            dependencyProject.hasKpmModel -> {
                 val moduleId = moduleIdentifier
-                val module = projectExtension.modules.single { it.moduleIdentifier == moduleId }
-                val metadataCompilationRegistry = projectExtension.metadataCompilationRegistryByModuleId.getValue(moduleId)
+                val module = dependencyProject.kpmModules.single { it.moduleIdentifier == moduleId }
+                val metadataCompilationRegistry = dependencyProject.metadataCompilationRegistryByModuleId.getValue(moduleId)
                 metadataCompilationRegistry.byFragment(module.fragments.getByName(sourceSetName)).output.classesDirs
             }
+            projectExtension is KotlinMultiplatformExtension ->
+                projectExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
+                    .firstOrNull { it.name == sourceSetName }
+                    ?.output?.classesDirs ?: dependencyProject.files()
             else -> error("unexpected top-level Kotlin extension $projectExtension")
         }
     }

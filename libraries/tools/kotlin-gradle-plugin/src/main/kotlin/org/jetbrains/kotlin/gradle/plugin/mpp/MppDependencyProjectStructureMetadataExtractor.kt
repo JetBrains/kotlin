@@ -10,6 +10,8 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import java.io.File
 import java.io.InputStream
@@ -28,11 +30,11 @@ internal class ProjectMppDependencyProjectStructureMetadataExtractor(
 ) : MppDependencyProjectStructureMetadataExtractor() {
 
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
-        return when (val topLevelExtension = dependencyProject.topLevelExtensionOrNull) {
-            is KotlinPm20ProjectExtension -> buildProjectStructureMetadata(
-                topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
+        return when {
+            dependencyProject.topLevelExtensionOrNull == null -> null
+            dependencyProject.hasKpmModel -> buildProjectStructureMetadata(
+                dependencyProject.kpmModules.single { it.moduleIdentifier == moduleIdentifier }
             )
-            null -> null
             else -> buildKotlinProjectStructureMetadata(dependencyProject)
         }
     }
