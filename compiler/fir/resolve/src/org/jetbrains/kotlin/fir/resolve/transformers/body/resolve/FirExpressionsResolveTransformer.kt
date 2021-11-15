@@ -825,19 +825,19 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): FirStatement {
         val arg = getClassCall.argument
-        val dataWithExpectedType = if (arg is FirConstExpression<*>) {
+        val dataForLhs = if (arg is FirConstExpression<*>) {
             withExpectedType(arg.typeRef.resolvedTypeFromPrototype(arg.kind.expectedConeType(session)))
         } else {
-            data
+            ResolutionMode.ContextIndependent
         }
 
         val transformedGetClassCall = run {
             val argument = getClassCall.argument
             val replacedArgument: FirExpression =
                 if (argument is FirPropertyAccessExpression)
-                    transformQualifiedAccessExpression(argument, dataWithExpectedType, isUsedAsReceiver = true) as FirExpression
+                    transformQualifiedAccessExpression(argument, dataForLhs, isUsedAsReceiver = true) as FirExpression
                 else
-                    argument.transform(this, dataWithExpectedType)
+                    argument.transform(this, dataForLhs)
 
             getClassCall.argumentList.transformArguments(object : FirTransformer<Nothing?>() {
                 @Suppress("UNCHECKED_CAST")
