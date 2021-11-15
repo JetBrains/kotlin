@@ -221,22 +221,21 @@ open class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
-        val phases = prefixPhases?.then(jvmPhases) ?: jvmPhases
+        val phases = prefixPhases?.then(jvmLoweringPhases) ?: jvmLoweringPhases
         val phaseConfig = customPhaseConfig ?: PhaseConfig(phases)
         val context = JvmBackendContext(
             state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
-            notifyCodegenStart,
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getKtFile))
 
-        phases.invokeToplevel(
-            phaseConfig,
-            context,
-            irModuleFragment
-        )
+        phases.invokeToplevel(phaseConfig, context, irModuleFragment)
+
+        notifyCodegenStart()
+
+        jvmCodegenPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
 
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
