@@ -19,9 +19,9 @@ class DefaultKotlinCompilationOutput(
 
     override val classesDirs: ConfigurableFileCollection = project.files()
 
-    override val allOutputs = project.files().apply {
+    override val allOutputs: ConfigurableFileCollection = project.files().apply {
         from(classesDirs)
-        from(Callable { resourcesDir })
+        from(Callable { resourcesDirProvider })
     }
 
     override val resourcesDir: File

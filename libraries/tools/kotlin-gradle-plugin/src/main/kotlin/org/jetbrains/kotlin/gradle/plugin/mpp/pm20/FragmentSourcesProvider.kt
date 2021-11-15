@@ -55,7 +55,7 @@ open class LifecycleTasksManager(private val project: Project) {
     open fun registerClassesTask(compilationData: KotlinCompilationData<*>) = with(project) {
         val classesTaskName = compilationData.compileAllTaskName
         val classesTask = project.tasks.register(classesTaskName) { classesTask ->
-            classesTask.dependsOn(compilationData.output.allOutputs)
+            classesTask.inputs.files(compilationData.output.allOutputs)
         }
         project.tasks.named(LifecycleBasePlugin.BUILD_TASK_NAME).configure { it.dependsOn(classesTask) }
     }
