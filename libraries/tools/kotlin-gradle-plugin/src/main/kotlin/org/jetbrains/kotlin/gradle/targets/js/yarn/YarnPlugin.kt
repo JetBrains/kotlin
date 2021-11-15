@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -44,29 +45,9 @@ open class YarnPlugin : Plugin<Project> {
             task.description = "Create root package.json"
 
             task.mustRunAfter(rootClean)
-
-            // Yes, we need to break Task Configuration Avoidance here
-            // In case when we need to create package.json's files and execute kotlinNpmInstall,
-            // We need to configure all RequiresNpmDependencies tasks to install them,
-            // Because we need to persist yarn.lock
-            // We execute this block in configure phase of rootPackageJson to be sure,
-            // That Task Configuration Avoidance will not be broken for tasks not related with NPM installing
-            // https://youtrack.jetbrains.com/issue/KT-48241
-            project.allprojects
-                .forEach {
-                    val fn: (Project) -> Unit = {
-                        it.tasks.implementing(RequiresNpmDependencies::class)
-                            .forEach {}
-                    }
-                    if (it.state.executed) {
-                        fn(it)
-                    } else {
-                        it.afterEvaluate {
-                            fn(it)
-                        }
-                    }
-                }
         }
+
+        configureRequiresNpmDependencies(project, rootPackageJson)
 
         val kotlinNpmInstall = tasks.named(KotlinNpmInstallTask.NAME)
         kotlinNpmInstall.configure {
@@ -107,6 +88,42 @@ open class YarnPlugin : Plugin<Project> {
             it.dependsOn(restoreYarnLock)
             it.finalizedBy(storeYarnLock)
         }
+    }
+
+    // Yes, we need to break Task Configuration Avoidance here
+    // In case when we need to create package.json's files and execute kotlinNpmInstall,
+    // We need to configure all RequiresNpmDependencies tasks to install them,
+    // Because we need to persist yarn.lock
+    // We execute this block in configure phase of rootPackageJson to be sure,
+    // That Task Configuration Avoidance will not be broken for tasks not related with NPM installing
+    // https://youtrack.jetbrains.com/issue/KT-48241
+    private fun configureRequiresNpmDependencies(
+        project: Project,
+        rootPackageJson: TaskProvider<RootPackageJsonTask>
+    ) {
+        val fn: (Project) -> Unit = {
+            it.tasks.implementing(RequiresNpmDependencies::class)
+                .forEach {}
+        }
+        rootPackageJson.configure {
+            project.allprojects
+                .forEach { project ->
+                    if (it.state.executed) {
+                        fn(project)
+                    }
+                }
+        }
+
+        project.allprojects
+            .forEach {
+                if (!it.state.executed) {
+                    it.afterEvaluate { project ->
+                        rootPackageJson.configure {
+                            fn(project)
+                        }
+                    }
+                }
+            }
     }
 
     companion object {
