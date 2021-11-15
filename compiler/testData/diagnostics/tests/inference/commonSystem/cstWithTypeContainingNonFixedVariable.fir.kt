@@ -82,7 +82,7 @@ fun testCapturedVariable() {
 
     c2
 
-    val c3 = select(SubInv<Number>(), createInvIn())
+    val c3 = <!NEW_INFERENCE_ERROR!>select(SubInv<Number>(), createInvIn())<!>
 
     c3
 }
