@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.interpreter.createGetValue
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.stop
+import org.jetbrains.kotlin.ir.interpreter.exceptions.withExceptionHandler
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
@@ -31,8 +32,10 @@ internal sealed class IntrinsicBase {
 
     fun customEvaluateInstruction(irFunction: IrFunction, environment: IrInterpreterEnvironment): CustomInstruction {
         return CustomInstruction {
-            evaluate(irFunction, environment)
-            environment.callStack.dropFrameAndCopyResult()
+            withExceptionHandler(environment) { // Exception handling is used only for indent actions; TODO: drop later
+                evaluate(irFunction, environment)
+                environment.callStack.dropFrameAndCopyResult()
+            }
         }
     }
 }
@@ -339,5 +342,29 @@ internal object DataClassArrayToString : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val array = environment.callStack.loadState(irFunction.valueParameters.single().symbol) as Primitive<*>
         environment.callStack.pushState(environment.convertToState(arrayToString(array.value), irFunction.returnType))
+    }
+}
+
+internal object Indent : IntrinsicBase() {
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf(
+            "kotlin.text.StringsKt.trimIndent", "kotlin.text.trimIndent",
+            "kotlin.text.StringsKt.trimMargin", "kotlin.text.trimMargin",
+            "kotlin.text.StringsKt.trimMargin\$default", "kotlin.text.trimMargin\$default",
+        )
+    }
+
+    override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
+        val str = environment.callStack.loadState(irFunction.getExtensionReceiver()!!).asString()
+        val trimmed = when (irFunction.fqName) {
+            "kotlin.text.StringsKt.trimIndent", "kotlin.text.trimIndent" -> str.trimIndent()
+            "kotlin.text.StringsKt.trimMargin", "kotlin.text.trimMargin" -> {
+                val marginPrefix = environment.callStack.loadState(irFunction.valueParameters.single().symbol).asString()
+                str.trimMargin(marginPrefix)
+            }
+            "kotlin.text.StringsKt.trimMargin\$default", "kotlin.text.trimMargin\$default" -> str.trimMargin()
+            else -> TODO("unknown trim function")
+        }
+        environment.callStack.pushState(environment.convertToState(trimmed, irFunction.returnType))
     }
 }
