@@ -15,6 +15,8 @@
 #include <execinfo.h>
 #endif
 
+#include <algorithm>
+
 #include "Common.h"
 #include "ExecFormat.h"
 #include "Porting.h"
@@ -29,22 +31,30 @@ namespace {
 
 #if USE_GCC_UNWIND
 struct Backtrace {
-    Backtrace(int count, int skip) : skipCount(skip) {
-        uint32_t size = count - skipCount;
-        if (size < 0) {
-            size = 0;
-        }
-        array.reserve(size);
+    Backtrace(size_t skip, std_support::span<void*> buffer): currentSize(0), skipCount(skip), buffer(buffer) {}
+
+    void setNextElement(_Unwind_Ptr element) {
+        RuntimeAssert(currentSize < buffer.size(), "Buffer overflow");
+        buffer[currentSize++] = reinterpret_cast<void*>(element);
     }
 
-    void setNextElement(_Unwind_Ptr element) { array.push_back(reinterpret_cast<void*>(element)); }
+    bool full() const { return currentSize >= buffer.size(); }
 
-    int skipCount;
-    KStdVector<void*> array;
+    size_t currentSize;
+    size_t skipCount;
+    std_support::span<void*> buffer;
 };
 
+_Unwind_Ptr getUnwindPtr(_Unwind_Context* context) {
+#if (__MINGW32__ || __MINGW64__)
+    return _Unwind_GetRegionStart(context);
+#else
+    return _Unwind_GetIP(context);
+#endif
+}
+
 _Unwind_Reason_Code depthCountCallback(struct _Unwind_Context* context, void* arg) {
-    int* result = reinterpret_cast<int*>(arg);
+    size_t* result = reinterpret_cast<size_t*>(arg);
     (*result)++;
     return _URC_NO_REASON;
 }
@@ -56,11 +66,12 @@ _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void* arg) {
         return _URC_NO_REASON;
     }
 
-#if (__MINGW32__ || __MINGW64__)
-    _Unwind_Ptr address = _Unwind_GetRegionStart(context);
-#else
-    _Unwind_Ptr address = _Unwind_GetIP(context);
-#endif
+    // If the buffer is full, skip the remaining frames.
+    if (backtrace->full()) {
+        return _URC_NO_REASON;
+    }
+
+    _Unwind_Ptr address = getUnwindPtr(context);
     backtrace->setNextElement(address);
 
     return _URC_NO_REASON;
@@ -79,34 +90,76 @@ int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-NO_INLINE KStdVector<void*> kotlin::GetCurrentStackTrace(int extraSkipFrames) noexcept {
+NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
 #if KONAN_NO_BACKTRACE
     return {};
 #else
-    // Skips this function frame + anything asked by the caller.
-    const int kSkipFrames = 1 + extraSkipFrames;
-#if USE_GCC_UNWIND
-    int depth = 0;
-    _Unwind_Backtrace(depthCountCallback, static_cast<void*>(&depth));
-    Backtrace result(depth, kSkipFrames);
-    if (result.array.capacity() > 0) {
-        _Unwind_Backtrace(unwindCallback, static_cast<void*>(&result));
-    }
-    return std::move(result.array);
-#else
-    const int maxSize = 32;
-    void* buffer[maxSize];
 
-    int size = backtrace(buffer, maxSize);
-    if (size < kSkipFrames) return {};
+#if (__MINGW32__ || __MINGW64__)
+    // Skip GetCurrentStackTrace, _Unwind_Backtrace + anything asked by the caller.
+    const size_t kSkipFrames = 2 + skipFrames;
+#else
+    // Skip GetCurrentStackTrace + anything asked by the caller.
+    const size_t kSkipFrames = 1 + skipFrames;
+#endif
 
     KStdVector<void*> result;
-    result.reserve(size - kSkipFrames);
-    for (int index = kSkipFrames; index < size; ++index) {
-        result.push_back(buffer[index]);
-    }
+#if USE_GCC_UNWIND
+    size_t depth = 0;
+    _Unwind_Backtrace(depthCountCallback, static_cast<void*>(&depth));
+    if (depth <= kSkipFrames) return {};
+    result.resize(depth - kSkipFrames);
+
+    Backtrace traceHolder(kSkipFrames, std_support::span<void*>(result.data(), result.size()));
+    _Unwind_Backtrace(unwindCallback, static_cast<void*>(&traceHolder));
+    RuntimeAssert(result.size() == traceHolder.currentSize, "Expected and collected sizes of the stacktrace differ");
+
     return result;
+#else
+    // Take into account this function and StackTrace::current.
+    constexpr size_t maxSize = GetMaxStackTraceDepth<StackTraceCapacityKind::kDynamic>() + 2;
+    result.resize(maxSize);
+    auto size = static_cast<size_t>(backtrace(result.data(), static_cast<int>(result.size())));
+    if (size <= kSkipFrames) return {};
+    result.resize(size);
+
+    // Drop first kSkipFrames elements.
+    result.erase(result.begin(), std::next(result.begin(), kSkipFrames));
+    return result;
+#endif // !USE_GCC_UNWIND
+#endif // !KONAN_NO_BACKTRACE
+}
+
+// TODO: this implementation is just a hack, e.g. the result is inexact;
+// however it is better to have an inexact stacktrace than not to have any.
+NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept {
+#if KONAN_NO_BACKTRACE
+    return {};
+#else
+
+#if (__MINGW32__ || __MINGW64__)
+    // Skip GetCurrentStackTrace, _Unwind_Backtrace + anything asked by the caller.
+    const size_t kSkipFrames = 2 + skipFrames;
+#else
+    // Skip GetCurrentStackTrace + anything asked by the caller.
+    const size_t kSkipFrames = 1 + skipFrames;
 #endif
+
+#if USE_GCC_UNWIND
+    Backtrace traceHolder(kSkipFrames, buffer);
+    _Unwind_Backtrace(unwindCallback, static_cast<void*>(&traceHolder));
+    return traceHolder.currentSize;
+#else
+    // Take into account this function and StackTrace::current.
+    constexpr size_t maxSize = GetMaxStackTraceDepth<StackTraceCapacityKind::kFixed>() + 2;
+    void* tmpBuffer[maxSize];
+    size_t size = backtrace(tmpBuffer, static_cast<int>(maxSize));
+    if (size <= kSkipFrames) return 0;
+
+    size_t elementsCount = std::min(buffer.size(), size - kSkipFrames);
+    std::copy_n(std::begin(tmpBuffer) + kSkipFrames, elementsCount, std::begin(buffer));
+    return elementsCount;
+#endif // !USE_GCC_UNWIND
 #endif // !KONAN_NO_BACKTRACE
 }
 
@@ -183,17 +236,18 @@ KNativePtr adjustAddressForSourceInfo(KNativePtr address) {
 KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
 #endif
 
-KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, size_t stackTraceSize) noexcept {
+KStdVector<KStdString> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
 #if KONAN_NO_BACKTRACE
     KStdVector<KStdString> strings;
     strings.push_back("<UNIMPLEMENTED>");
     return strings;
 #else
+    size_t size = stackTrace.size();
     KStdVector<KStdString> strings;
-    strings.reserve(stackTraceSize);
-    if (stackTraceSize > 0) {
+    strings.reserve(size);
+    if (size > 0) {
         SourceInfo buffer[10]; // outside of the loop to avoid calling constructors and destructors each time
-        for (size_t index = 0; index < stackTraceSize; ++index) {
+        for (size_t index = 0; index < size; ++index) {
             KNativePtr address = stackTrace[index];
             if (!address || reinterpret_cast<uintptr_t>(address) == 1) continue;
             address = adjustAddressForSourceInfo(address);
@@ -246,17 +300,10 @@ NO_INLINE void kotlin::PrintStackTraceStderr() {
     // NOTE: This might be called from both runnable and native states (including in uninitialized runtime)
     // TODO: This is intended for runtime use. Try to avoid memory allocations and signal unsafe functions.
 
-    // TODO: This might have to go into `GetCurrentStackTrace`, but this changes the generated stacktrace for
-    //       `Throwable`.
-#if KONAN_WINDOWS
-    // Skip this function and `_Unwind_Backtrace`.
-    constexpr int kSkipFrames = 2;
-#else
     // Skip this function.
     constexpr int kSkipFrames = 1;
-#endif
-    auto stackTrace = GetCurrentStackTrace(kSkipFrames);
-    auto stackTraceStrings = GetStackTraceStrings(stackTrace.data(), stackTrace.size());
+    StackTrace trace = StackTrace<>::current(kSkipFrames);
+    auto stackTraceStrings = GetStackTraceStrings(trace.data());
     for (auto& frame : stackTraceStrings) {
         konan::consoleErrorUtf8(frame.c_str(), frame.size());
         konan::consoleErrorf("\n");
