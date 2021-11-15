@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization.linkerissues
 
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -200,9 +198,8 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
         }
     }
 
-    // TODO: find a way to access KotlinLibrary without descriptors
     protected val IrModuleDeserializer.kotlinLibrary: KotlinLibrary?
-        get() = (moduleDescriptor.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
+        get() = klib as? KotlinLibrary
 
     val moduleIdComparator: Comparator<ResolvedDependencyId> = Comparator { a, b ->
         when {
