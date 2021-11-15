@@ -457,6 +457,15 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
             }
         }
     }
+
+    @Test
+    fun `test MPP allTests task depending on Android unit tests`(): Unit = with(Project("new-mpp-android")) {
+        build(":lib:allTests", "--dry-run") {
+            assertSuccessful()
+            assertContains(":lib:testDebugUnitTest SKIPPED")
+            assertContains(":lib:testReleaseUnitTest SKIPPED")
+        }
+    }
 }
 
 open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {

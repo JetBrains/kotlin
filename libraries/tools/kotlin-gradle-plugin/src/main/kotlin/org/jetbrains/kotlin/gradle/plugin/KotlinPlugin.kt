@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
 import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.SourceKind
+import com.android.build.gradle.api.*
 import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.ArtifactRepository
-import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
@@ -47,6 +44,7 @@ import org.jetbrains.kotlin.gradle.targets.js.jsPluginDeprecationMessage
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -883,6 +881,8 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         }
 
         project.includeKotlinToolingMetadataInApk()
+
+        addAndroidUnitTestTasksAsDependenciesToAllTest(project)
     }
 
     /**
@@ -979,6 +979,24 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             minOf(baseExtension.compileOptions.sourceCompatibility, baseExtension.compileOptions.targetCompatibility)
         if (javaVersion == JavaVersion.VERSION_1_6)
             kotlinOptions.jvmTarget = "1.6"
+    }
+
+    private fun addAndroidUnitTestTasksAsDependenciesToAllTest(project: Project) {
+        val allTestTaskName = project.kotlinTestRegistry.allTestsTaskName
+        project.tasks.matching { it.name == allTestTaskName }.configureEach { task ->
+            task.dependsOn(project.provider {
+                val androidUnitTestTasks = mutableListOf<Any>()
+                forEachVariant(project) { variant ->
+                    if (variant is UnitTestVariant) {
+                        // There's no API for getting the Android unit test tasks from the variant, so match them by name:
+                        androidUnitTestTasks.add(project.provider {
+                            project.tasks.matching { it.name == lowerCamelCaseName("test", variant.name) }
+                        })
+                    }
+                }
+                androidUnitTestTasks
+            })
+        }
     }
 
     private fun preprocessVariant(
