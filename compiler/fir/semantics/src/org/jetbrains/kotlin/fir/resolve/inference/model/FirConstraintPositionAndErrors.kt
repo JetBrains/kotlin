@@ -28,3 +28,7 @@ class ConeExplicitTypeParameterConstraintPosition(
 class ConeLambdaArgumentConstraintPosition(
     anonymousFunction: FirAnonymousFunction
 ) : LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction)
+
+
+class ConeBuilderInferenceSubstitutionConstraintPosition(initialConstraint: InitialConstraint) :
+    BuilderInferenceSubstitutionConstraintPosition<Nothing?, InitialConstraint>(null, initialConstraint) // TODO

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -21,13 +22,12 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.safeSubstitute
 
 class FirBuilderInferenceSession(
     private val lambda: FirAnonymousFunction,
@@ -195,10 +195,13 @@ class FirBuilderInferenceSession(
         var introducedConstraint = false
 
         for (initialConstraint in storage.initialConstraints) {
+            if (initialConstraint.position is BuilderInferencePosition) continue
+            val substitutedConstraint = initialConstraint.substitute(callSubstitutor)
+
             val lower =
-                nonFixedToVariablesSubstitutor.substituteOrSelf(callSubstitutor.substituteOrSelf(initialConstraint.a as ConeKotlinType)) // TODO: SUB
+                nonFixedToVariablesSubstitutor.substituteOrSelf(substitutedConstraint.a as ConeKotlinType) // TODO: SUB
             val upper =
-                nonFixedToVariablesSubstitutor.substituteOrSelf(callSubstitutor.substituteOrSelf(initialConstraint.b as ConeKotlinType)) // TODO: SUB
+                nonFixedToVariablesSubstitutor.substituteOrSelf(substitutedConstraint.b as ConeKotlinType) // TODO: SUB
 
             if (commonSystem.isProperType(lower) && commonSystem.isProperType(upper)) continue
 
@@ -207,12 +210,12 @@ class FirBuilderInferenceSession(
             when (initialConstraint.constraintKind) {
                 ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
 
-                ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, initialConstraint.position)
+                ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, substitutedConstraint.position)
 
                 ConstraintKind.EQUALITY ->
                     with(commonSystem) {
-                        addSubtypeConstraint(lower, upper, initialConstraint.position)
-                        addSubtypeConstraint(upper, lower, initialConstraint.position)
+                        addSubtypeConstraint(lower, upper, substitutedConstraint.position)
+                        addSubtypeConstraint(upper, lower, substitutedConstraint.position)
                     }
             }
         }
@@ -227,6 +230,20 @@ class FirBuilderInferenceSession(
         }
 
         return introducedConstraint
+    }
+
+    private fun InitialConstraint.substitute(substitutor: TypeSubstitutorMarker): InitialConstraint {
+        val lowerSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
+        val upperSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
+
+        if (lowerSubstituted == a && upperSubstituted == b) return this
+
+        return InitialConstraint(
+            lowerSubstituted,
+            upperSubstituted,
+            this.constraintKind,
+            ConeBuilderInferenceSubstitutionConstraintPosition(this) // TODO
+        )
     }
 
     private fun updateCalls(commonSystem: NewConstraintSystemImpl) {
