@@ -38,9 +38,11 @@ open class KotlinCompilationTaskConfigurator(
         addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
         addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
 
-        return project.tasks.named(compilationData.compileKotlinTaskName, KotlinCompile::class.java) {
+        val result = project.tasks.named(compilationData.compileKotlinTaskName, KotlinCompile::class.java) {
             it.kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
         }
+        compilationData.output.classesDirs.from(result.map { it.destinationDirectory })
+        return result
     }
 
     protected fun createKotlinNativeCompilationTask(
