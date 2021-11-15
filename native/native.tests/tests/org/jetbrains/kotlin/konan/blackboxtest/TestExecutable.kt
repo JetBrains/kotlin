@@ -22,11 +22,26 @@ internal class TestRun(
 internal sealed interface TestRunParameter {
     fun applyTo(programArgs: MutableList<String>)
 
-    class WithPackageName(val packageName: String) : TestRunParameter {
-        override fun applyTo(programArgs: MutableList<String>) {
-            programArgs += "--ktest_filter=$packageName.*"
+    sealed class WithFilter : TestRunParameter {
+        protected abstract val wildcard: String
+        abstract fun testMatches(testName: String): Boolean
+
+        final override fun applyTo(programArgs: MutableList<String>) {
+            programArgs += "--ktest_filter=$wildcard"
         }
     }
+
+    class WithPackageFilter(private val packageFQN: PackageName) : WithFilter() {
+        override val wildcard get() = "$packageFQN.*"
+        override fun testMatches(testName: String) = testName.startsWith("$packageFQN.")
+    }
+
+/*
+    class WithFunctionFilter(private val functionFQN: String) : WithFilter() {
+        override val wildcard get() = functionFQN
+        override fun testMatches(testName: String) = testName == functionFQN
+    }
+*/
 
     object WithGTestLogger : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) {

@@ -29,6 +29,8 @@ internal class GlobalTestEnvironment(
     val cacheSettings: TestCacheSettings = defaultCacheSettings,
     val baseBuildDir: File = projectBuildDir
 ) {
+    val hostTarget: KonanTarget = HostManager.host
+
     fun getRootCacheDirectory(debuggable: Boolean): File? =
         (cacheSettings as? TestCacheSettings.WithCache)?.getRootCacheDirectory(this, debuggable)
 

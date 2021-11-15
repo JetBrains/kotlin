@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.konan.blackboxtest.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.runner.AbstractRunner
+import org.jetbrains.kotlin.konan.blackboxtest.runner.LocalTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.util.ThreadSafeCache
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -64,12 +66,24 @@ internal class TestRunProvider(
             )
             TestKind.REGULAR -> listOfNotNull(
                 TestRunParameter.WithGTestLogger,
-                TestRunParameter.WithPackageName(packageName = testCase.nominalPackageName),
+                TestRunParameter.WithPackageFilter(testCase.nominalPackageName),
                 testCase.expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
             )
         }
 
         return TestRun(executable, runParameters, testCase.origin)
+    }
+
+    // Currently, only local test runner is supported.
+    fun createRunner(testRun: TestRun): AbstractRunner<*> = when (val target = environment.globalEnvironment.target) {
+        environment.globalEnvironment.hostTarget -> LocalTestRunner(testRun)
+        else -> fail {
+            """
+                Running at non-host target is not supported yet.
+                Compilation target: $target
+                Host target: ${environment.globalEnvironment.hostTarget}
+            """.trimIndent()
+        }
     }
 
     override fun close() {
