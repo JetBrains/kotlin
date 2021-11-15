@@ -243,6 +243,20 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             }
         }
 
+        session.typeContext.run {
+            if (result.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
+                && result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == false
+            ) {
+                // Sometimes return type for special call for elvis operator might be nullable,
+                // but result is not nullable if the right type is not nullable
+                result.replaceTypeRef(
+                    result.typeRef.withReplacedConeType(result.typeRef.coneType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+                )
+            }
+        }
+
+
+
         dataFlowAnalyzer.exitElvis(elvisExpression)
         return result
     }

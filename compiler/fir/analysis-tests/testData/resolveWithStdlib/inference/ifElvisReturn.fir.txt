@@ -14,7 +14,7 @@ FILE: ifElvisReturn.kt
                 R|<local>/b|
             }
             else ->  {
-                R|/materialize|<R|kotlin/Nothing|>() ?: ^foo Unit
+                R|/materialize|<R|B|>() ?: ^foo Unit
             }
         }
 
