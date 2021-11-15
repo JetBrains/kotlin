@@ -7,15 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
-import org.jetbrains.kotlin.gradle.plugin.addConvention
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory.Companion.defaultSourceFolder
-import java.io.File
+import org.jetbrains.kotlin.gradle.targets.android.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
 
 internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     val project = target.project
