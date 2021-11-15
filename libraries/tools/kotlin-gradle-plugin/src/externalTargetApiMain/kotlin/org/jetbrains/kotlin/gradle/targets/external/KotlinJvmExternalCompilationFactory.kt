@@ -3,16 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
-package org.jetbrains.kotlin.gradle.plugin.mpp
+package org.jetbrains.kotlin.gradle.targets.external
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
-import org.jetbrains.kotlin.gradle.targets.external.KotlinExternalTarget
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation.DefaultSourceSetNameOption
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation.DefaultSourceSetNameOption.KotlinConvention
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
+import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation.DefaultSourceSetNameOption
+import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation.DefaultSourceSetNameOption.KotlinConvention
 
 class KotlinJvmExternalCompilationFactory(
     val project: Project,

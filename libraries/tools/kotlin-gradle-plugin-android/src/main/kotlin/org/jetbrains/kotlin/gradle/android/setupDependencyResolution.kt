@@ -12,7 +12,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation
+import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmExternalCompilation) {

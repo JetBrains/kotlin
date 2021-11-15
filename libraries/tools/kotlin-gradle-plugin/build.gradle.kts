@@ -13,6 +13,40 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(from = "functionalTest.gradle.kts")
 }
 
+/*
+External Target API
+ */
+run {
+    val mainCompilation = kotlin.target.compilations.getByName("main")
+
+    val externalTargetApiMainCompilation = kotlin.target.compilations.create("externalTargetApiMain") {
+        associateWith(mainCompilation)
+    }
+
+    val externalTargetApiElements = configurations.create("externalTargetApiElements") {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
+
+    artifacts.add(externalTargetApiElements.name, externalTargetApiMainCompilation.compileKotlinTaskProvider)
+
+    val externalTargetApiCompilationJar = tasks.create<Jar>("externalTargetApiJar") {
+        from(externalTargetApiMainCompilation.compileKotlinTaskProvider)
+    }
+
+    configurations.getByName("externalTargetApiMainImplementation")
+        .extendsFrom(configurations.implementation.get())
+
+    publishing {
+        publications.create<MavenPublication>("externalTargetApi") {
+            artifactId = "kotlin-gradle-external-target-api"
+            artifact(externalTargetApiCompilationJar) {
+                builtBy(externalTargetApiCompilationJar)
+            }
+        }
+    }
+}
+
 configure<GradlePluginDevelopmentExtension> {
     isAutomatedPublishing = false
 }

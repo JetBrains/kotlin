@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.targets.external.ExternalKotlinTargetDescriptor
+import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation
 import org.jetbrains.kotlin.gradle.targets.external.externalTarget
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation
 import java.util.concurrent.Callable
 
 fun KotlinMultiplatformExtension.android2() {

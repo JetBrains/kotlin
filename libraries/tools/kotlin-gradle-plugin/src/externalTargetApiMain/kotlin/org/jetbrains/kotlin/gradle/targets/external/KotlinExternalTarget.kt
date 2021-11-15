@@ -18,14 +18,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmExternalCompilationFactory
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation.DefaultSourceSetNameOption
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmExternalCompilation.DefaultSourceSetNameOption.KotlinConvention
+import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation.DefaultSourceSetNameOption
+import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation.DefaultSourceSetNameOption.KotlinConvention
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.filesProvider
-
 
 data class ExternalKotlinTargetDescriptor(
     val targetName: String,
