@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -23,8 +24,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -610,11 +613,12 @@ fun FirRegularClass.getIrSymbolsForSealedSubclasses(components: Fir2IrComponents
     }.filterIsInstance<IrClassSymbol>()
 }
 
+@OptIn(FirExtensionApiInternals::class)
 fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
-    val symbolProvider = symbolProvider
+    val symbolProvider = generatedDeclarationsSymbolProvider ?: return emptyList()
     val declarationGenerators = extensionService.declarationGenerators
-    val topLevelClasses = declarationGenerators.flatMap { it.getTopLevelClassIds() }.groupBy { it.packageFqName }
-    val topLevelCallables = declarationGenerators.flatMap { it.getTopLevelCallableIds() }.groupBy { it.packageName }
+    val topLevelClasses = declarationGenerators.flatMap { it.topLevelClassIdsCache.getValue() }.groupBy { it.packageFqName }
+    val topLevelCallables = declarationGenerators.flatMap { it.topLevelCallableIdsCache.getValue() }.groupBy { it.packageName }
 
     return buildList {
         for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {

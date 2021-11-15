@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -92,14 +91,6 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
 
     override val key: SomePluginKey
         get() = SomePluginKey
-
-    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
-        return false
-    }
-
-    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
-        return false
-    }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

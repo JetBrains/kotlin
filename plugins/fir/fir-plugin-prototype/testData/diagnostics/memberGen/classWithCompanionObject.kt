@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.fir.plugin.D
+import org.jetbrains.kotlin.fir.plugin.E
 
-@D
+@E
 class SomeClass
 
 fun takeInt(x: Int) {}

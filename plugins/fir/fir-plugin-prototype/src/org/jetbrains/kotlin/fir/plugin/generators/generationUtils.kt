@@ -59,7 +59,7 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
 }
 
 @OptIn(SymbolInternals::class)
-fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, callableId: CallableId, isInner: Boolean): FirConstructor {
+fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean): FirConstructor {
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
     return buildPrimaryConstructor {
         moduleData = session.moduleData
@@ -76,9 +76,9 @@ fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, callabl
             Modality.FINAL,
             EffectiveVisibility.Public
         )
-        symbol = FirConstructorSymbol(callableId)
-        if (isInner) {
-            dispatchReceiverType = callableId.classId?.let {
+        symbol = FirConstructorSymbol(classId)
+        if (isInner && classId.isNestedClass) {
+            dispatchReceiverType = classId.parentClassId?.let {
                 val firClass = session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir as? FirClass
                 firClass?.defaultType()
             }

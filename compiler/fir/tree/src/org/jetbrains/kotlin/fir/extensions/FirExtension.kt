@@ -45,3 +45,6 @@ abstract class FirDeclarationPredicateRegistrar {
     abstract fun register(vararg predicates: DeclarationPredicate)
     abstract fun register(predicates: Collection<DeclarationPredicate>)
 }
+
+@RequiresOptIn
+annotation class FirExtensionApiInternals

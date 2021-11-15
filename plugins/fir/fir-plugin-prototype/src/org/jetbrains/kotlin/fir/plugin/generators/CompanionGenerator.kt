@@ -10,14 +10,10 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.has
@@ -37,11 +33,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 /*
- * Generates companion object with fun foo(): Int for each class annotated with @D
+ * Generates companion object with fun foo(): Int for each class annotated with @E
  */
 class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PREDICATE = has("D".fqn())
+        private val PREDICATE = has("E".fqn())
         private val FOO_NAME = Name.identifier("foo")
     }
 
@@ -101,16 +97,6 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         } else {
             emptySet()
         }
-    }
-
-    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
-        if (klass !is FirRegularClass) return false
-        if (matchedClasses.none { it.classId == klass.classId.outerClassId }) return false
-        return klass.isCompanion
-    }
-
-    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
-        return session.predicateBasedProvider.matches(PREDICATE, klass)
     }
 
     override val key: FirPluginKey

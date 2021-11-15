@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.FirCachesFactory
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.impl.groupExtensionsByName
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 
+@OptIn(FirExtensionApiInternals::class)
 class FirExtensionDeclarationsSymbolProvider private constructor(
     session: FirSession,
     cachesFactory: FirCachesFactory,
@@ -53,10 +53,37 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         hasPackage(packageFqName)
     }
 
+    private val extensionsByTopLevelClassId: FirLazyValue<Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+        session.firCachesFactory.createLazyValue {
+            extensions.flatGroupBy { it.topLevelClassIdsCache.getValue() }
+        }
+
+    private val extensionsByNestedClassifierClassId: FirCache<ClassId, Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+        session.firCachesFactory.createCache cache@{ outerClassId, _ ->
+            val outerClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(outerClassId) as? FirClassSymbol<*>
+                ?: return@cache emptyMap()
+            session.groupExtensionsByName(
+                outerClassSymbol.fir,
+                nameExtractor = { nestedClassifierNamesCache.getValue(outerClassSymbol) },
+                nameTransformer = { outerClassId.createNestedClassId(it) }
+            )
+        }
+
+    private val extensionsByTopLevelCallableId: FirLazyValue<Map<CallableId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+        session.firCachesFactory.createLazyValue {
+            extensions.flatGroupBy { it.topLevelCallableIdsCache.getValue() }
+        }
+
     // ------------------------------------------ generators ------------------------------------------
 
     private fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        val generatedClasses = extensions.mapNotNull { it.generateClassLikeDeclaration(classId) }.onEach { it.fir.validate() }
+        val matchedExtensions = when {
+            classId.isNestedClass -> extensionsByNestedClassifierClassId.getValue(classId.outerClassId!!)[classId]
+            else -> extensionsByTopLevelClassId.getValue()[classId]
+        } ?: return null
+        val generatedClasses = matchedExtensions
+            .mapNotNull { it.generateClassLikeDeclaration(classId) }
+            .onEach { it.fir.validate() }
         return when (generatedClasses.size) {
             0 -> null
             1 -> generatedClasses.first()
@@ -65,11 +92,15 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     }
 
     private fun generateTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> {
-        return extensions.flatMap { it.generateFunctions(callableId, owner = null) }.onEach { it.fir.validate() }
+        return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
+            .flatMap { it.generateFunctions(callableId, owner = null) }
+            .onEach { it.fir.validate() }
     }
 
     private fun generateTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> {
-        return extensions.flatMap { it.generateProperties(callableId, owner = null) }.onEach { it.fir.validate() }
+        return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
+            .flatMap { it.generateProperties(callableId, owner = null) }
+            .onEach { it.fir.validate() }
     }
 
     private fun hasPackage(packageFqName: FqName): Boolean {
@@ -103,5 +134,3 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         return fqName.takeIf { packageCache.getValue(fqName, null) }
     }
 }
-
-val FirSession.generatedDeclarationsSymbolProvider: FirExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()

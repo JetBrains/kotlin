@@ -208,3 +208,30 @@ inline fun <T> Boolean.ifTrue(body: () -> T?): T? =
 
 inline fun <T> Boolean.ifFalse(body: () -> T?): T? =
     if (!this) body() else null
+
+inline fun <T, K> List<T>.flatGroupBy(keySelector: (T) -> Collection<K>): Map<K, List<T>> {
+    return flatGroupBy(keySelector, keyTransformer = { it }, valueTransformer = { it })
+}
+
+inline fun <T, U, K, V> List<T>.flatGroupBy(
+    keySelector: (T) -> Collection<U>,
+    keyTransformer: (U) -> K,
+    valueTransformer: (T) -> V
+): Map<K, List<V>> {
+    val result = mutableMapOf<K, MutableList<V>>()
+    for (element in this) {
+        val keys = keySelector(element)
+        val value = valueTransformer(element)
+        for (key in keys) {
+            val transformedKey = keyTransformer(key)
+            // Map.computeIfAbsent is missing in JDK 1.6
+            var list = result[transformedKey]
+            if (list == null) {
+                list = mutableListOf()
+                result[transformedKey] = list
+            }
+            list += value
+        }
+    }
+    return result
+}

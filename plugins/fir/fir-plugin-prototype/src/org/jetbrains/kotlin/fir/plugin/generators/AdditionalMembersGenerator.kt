@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 /*
  * For each class annotated with @C generates
@@ -43,6 +43,10 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
         predicateBasedProvider.getSymbolsByPredicate(PREDICATE).filterIsInstance<FirRegularClassSymbol>()
+    }
+
+    private val nestedClassIds by lazy {
+        matchedClasses.map { it.classId.createNestedClassId(NESTED_NAME) }
     }
 
     override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
@@ -68,15 +72,17 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         }.symbol
     }
 
-    override fun generateConstructors(callableId: CallableId): List<FirConstructorSymbol> {
-        val classId = callableId.classId ?: return emptyList()
-        if (callableId.callableName != NESTED_NAME) return emptyList()
-        if (matchedClasses.none { it.classId == classId }) return emptyList()
-        return listOf(buildConstructor(classId.createNestedClassId(NESTED_NAME), callableId, isInner = false).symbol)
+    override fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> {
+        assert(owner.classId in nestedClassIds)
+        return listOf(buildConstructor(owner.classId, isInner = false).symbol)
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
-        return if (classSymbol in matchedClasses) setOf(MATERIALIZE_NAME) else emptySet()
+        return when {
+            classSymbol in matchedClasses -> setOf(MATERIALIZE_NAME)
+            classSymbol.classId in nestedClassIds -> setOf(SpecialNames.INIT)
+            else -> emptySet()
+        }
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
@@ -91,14 +97,6 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
 
     override val key: FirPluginKey
         get() = Key
-
-    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
-        return session.predicateBasedProvider.matches(PREDICATE, klass)
-    }
-
-    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
-        return session.predicateBasedProvider.matches(PREDICATE, klass)
-    }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

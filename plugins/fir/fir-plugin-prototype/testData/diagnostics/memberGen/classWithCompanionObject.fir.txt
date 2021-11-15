@@ -1,5 +1,5 @@
 FILE: classWithCompanionObject.kt
-    @R|org/jetbrains/kotlin/fir/plugin/D|() public final class SomeClass : R|kotlin/Any|, R|foo/MyInterface| {
+    @R|org/jetbrains/kotlin/fir/plugin/E|() public final class SomeClass : R|kotlin/Any| {
         public constructor(): R|SomeClass| {
             super<R|kotlin/Any|>()
         }

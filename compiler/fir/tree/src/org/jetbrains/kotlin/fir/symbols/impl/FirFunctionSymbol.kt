@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 
 sealed class FirFunctionSymbol<D : FirFunction>(
     override val callableId: CallableId
@@ -57,6 +55,8 @@ class FirIntersectionOverrideFunctionSymbol(
 class FirConstructorSymbol(
     callableId: CallableId
 ) : FirFunctionSymbol<FirConstructor>(callableId) {
+    constructor(classId: ClassId) : this(classId.callableIdForConstructor())
+
     val isPrimary: Boolean
         get() = fir.isPrimary
 

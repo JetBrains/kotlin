@@ -22,11 +22,25 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.name.FqName
 
-class FirPluginAnnotationsResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+class FirPluginAnnotationsResolveProcessor(
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirTransformerBasedResolveProcessor(session, scopeSession) {
     override val transformer = FirPluginAnnotationsResolveTransformer(session, scopeSession)
+
+    @OptIn(FirSymbolProviderInternals::class)
+    override fun beforePhase() {
+        session.generatedDeclarationsSymbolProvider?.disable()
+    }
+
+    @OptIn(FirSymbolProviderInternals::class)
+    override fun afterPhase() {
+        session.generatedDeclarationsSymbolProvider?.enable()
+    }
 }
 
 class FirPluginAnnotationsResolveTransformer(

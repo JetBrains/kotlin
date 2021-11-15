@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 
 /*
  * Generates class /foo.AllOpenGenerated with
@@ -83,28 +80,11 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         return buildClass(classId).symbol
     }
 
-    override fun generateConstructors(callableId: CallableId): List<FirConstructorSymbol> {
-        val classId = when {
-            callableId.isGeneratedConstructor -> GENERATED_CLASS_ID
-            callableId.isNestedConstructor -> GENERATED_CLASS_ID.createNestedClassId(callableId.callableName)
-            else -> return emptyList()
-        }
-
-        return listOf(buildConstructor(classId, callableId, isInner = false).symbol)
+    override fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> {
+        val classId = owner.classId
+        if (classId != GENERATED_CLASS_ID && classId !in classIdsForMatchedClasses) return emptyList()
+        return listOf(buildConstructor(classId, isInner = false).symbol)
     }
-
-    private val CallableId.isGeneratedConstructor: Boolean
-        get() {
-            if (classId != null) return false
-            if (packageName != FOO_PACKAGE) return false
-            return callableName == GENERATED_CLASS_ID.shortClassName
-        }
-
-    private val CallableId.isNestedConstructor: Boolean
-        get() {
-            if (classId != GENERATED_CLASS_ID) return false
-            return classIdsForMatchedClasses.keys.any { it.shortClassName == callableName }
-        }
 
     private fun generateNestedClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {
         if (owner.classId != GENERATED_CLASS_ID) return null
@@ -138,10 +118,10 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
-        return if (classSymbol.classId in classIdsForMatchedClasses) {
-            setOf(MATERIALIZE_NAME)
-        } else {
-            emptySet()
+        return when (classSymbol.classId) {
+            in classIdsForMatchedClasses -> setOf(MATERIALIZE_NAME, SpecialNames.INIT)
+            GENERATED_CLASS_ID -> setOf(SpecialNames.INIT)
+            else -> emptySet()
         }
     }
 
@@ -163,14 +143,6 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     override val key: FirPluginKey
         get() = Key
-
-    override fun needToGenerateAdditionalMembersInClass(klass: FirClass): Boolean {
-        return false
-    }
-
-    override fun needToGenerateNestedClassifiersInClass(klass: FirClass): Boolean {
-        return false
-    }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

@@ -22,6 +22,7 @@ class FirTotalResolveProcessor(session: FirSession, enablePluginPhases: Boolean 
 
     fun process(files: List<FirFile>) {
         for (processor in processors) {
+            processor.beforePhase()
             when (processor) {
                 is FirTransformerBasedResolveProcessor -> {
                     for (file in files) {
@@ -32,6 +33,7 @@ class FirTotalResolveProcessor(session: FirSession, enablePluginPhases: Boolean 
                     processor.process(files)
                 }
             }
+            processor.afterPhase()
         }
     }
 }
