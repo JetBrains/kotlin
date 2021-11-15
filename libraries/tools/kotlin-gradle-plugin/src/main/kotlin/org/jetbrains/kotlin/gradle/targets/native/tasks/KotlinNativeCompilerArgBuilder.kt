@@ -77,9 +77,8 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     target: KonanTarget,
     outputKind: CompilerOutputKind,
     libraries: List<File>,
-    friendModule: FileCollection,
+    friendModules: List<File>,
 
-    languageSettings: LanguageSettings,
     enableEndorsedLibs: Boolean,
     kotlinOptions: KotlinCommonToolOptions,
     compilerPlugins: List<CompilerPluginData>,
@@ -108,14 +107,13 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     binaryOptions.forEach { (name, value) -> add("-Xbinary=$name=$value") }
     addKey("-Xstatic-framework", isStaticFramework)
 
-    addAll(buildKotlinNativeCommonArgs(languageSettings, enableEndorsedLibs, kotlinOptions, compilerPlugins))
+    addAll(buildKotlinNativeCommonArgs(null, enableEndorsedLibs, kotlinOptions, compilerPlugins))
 
     exportLibraries.forEach { add("-Xexport-library=${it.absolutePath}") }
     includeLibraries.forEach { add("-Xinclude=${it.absolutePath}") }
 
-    val friends = friendModule.files
-    if (friends.isNotEmpty()) {
-        addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+    if (friendModules.isNotEmpty()) {
+        addArg("-friend-modules", friendModules.joinToString(File.pathSeparator) { it.absolutePath })
     }
 }
 
@@ -137,7 +135,7 @@ private fun buildKotlinNativeMainArgs(
 }
 
 internal fun buildKotlinNativeCommonArgs(
-    languageSettings: LanguageSettings,
+    languageSettings: LanguageSettings?, //null for linking
     enableEndorsedLibs: Boolean,
     kotlinOptions: KotlinCommonToolOptions,
     compilerPlugins: List<CompilerPluginData>
@@ -150,7 +148,7 @@ internal fun buildKotlinNativeCommonArgs(
         addArgs("-P", plugin.options.arguments)
     }
 
-    with(languageSettings) {
+    languageSettings?.run {
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
         addKey("-progressive", progressiveMode)
