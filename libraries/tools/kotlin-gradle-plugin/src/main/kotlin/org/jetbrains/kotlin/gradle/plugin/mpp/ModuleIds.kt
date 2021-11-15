@@ -77,20 +77,20 @@ internal object ModuleIds {
                 check(moduleIdentifier.buildId == thisProject.currentBuildId().name)
                 val dependencyProject = thisProject.project(moduleIdentifier.projectId)
                 val topLevelExtension = dependencyProject.topLevelExtension
-                val getRootPublication: () -> MavenPublication? = when (topLevelExtension) {
-                    is KotlinMultiplatformExtension -> {
-                        { topLevelExtension.rootSoftwareComponent.publicationDelegate }
+                val getRootPublication: () -> MavenPublication? = when {
+                    dependencyProject.hasKpmModel -> {
+                        { dependencyProject.kpmModelContainer.rootPublication }
                     }
-                    is KotlinPm20ProjectExtension -> {
-                        { topLevelExtension.rootPublication }
+                    topLevelExtension is KotlinMultiplatformExtension -> {
+                        { topLevelExtension.rootSoftwareComponent.publicationDelegate }
                     }
                     else -> error("unexpected top-level extension $topLevelExtension")
                 }
-                val capabilities = when (topLevelExtension) {
-                    is KotlinMultiplatformExtension -> emptyList()
-                    is KotlinPm20ProjectExtension -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
-                        topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
+                val capabilities = when {
+                    dependencyProject.hasKpmModel -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
+                        dependencyProject.kpmModules.single { it.moduleIdentifier == moduleIdentifier }
                     ))
+                    topLevelExtension is KotlinMultiplatformExtension -> emptyList()
                     else -> error("unexpected top-level extension $topLevelExtension")
                 }
                 val coordinatesProvider = MavenPublicationCoordinatesProvider(

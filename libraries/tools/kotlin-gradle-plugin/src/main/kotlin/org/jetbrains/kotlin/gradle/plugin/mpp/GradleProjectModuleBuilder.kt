@@ -124,7 +124,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
     private fun getModulesFromPm20Project(project: Project) = project.kpmModules.toList()
 
     fun buildModulesFromProject(project: Project): List<KotlinModule> {
-        if (project.topLevelExtension is KotlinPm20ProjectExtension)
+        if (project.hasKpmModel)
             return getModulesFromPm20Project(project)
 
         val extension = project.multiplatformExtensionOrNull
@@ -313,8 +313,11 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
     }
 
     private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: KotlinModuleVariant): Configuration =
-        when (project.topLevelExtension) {
-            is KotlinMultiplatformExtension, is KotlinSingleTargetExtension -> {
+        when {
+            project.hasKpmModel -> {
+                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
+            }
+            else -> {
                 val targets =
                     project.multiplatformExtensionOrNull?.targets ?: listOf((project.kotlinExtension as KotlinSingleTargetExtension).target)
 
@@ -333,10 +336,6 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
 
                 project.configurations.getByName(compilation.compileDependencyConfigurationName)
             }
-            is KotlinPm20ProjectExtension -> {
-                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
-            }
-            else -> error("could not find the compile dependencies configuration for variant $requestingVariant")
         }
 
     companion object {
