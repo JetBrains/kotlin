@@ -75,6 +75,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): Style.SHEET
   deprecationStatus: null
@@ -118,6 +119,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): Style
   deprecationStatus: null

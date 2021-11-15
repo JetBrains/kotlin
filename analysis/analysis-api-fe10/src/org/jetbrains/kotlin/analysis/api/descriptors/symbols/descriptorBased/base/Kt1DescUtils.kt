@@ -196,6 +196,10 @@ internal fun TypeProjection.toKtTypeArgument(analysisContext: Fe10AnalysisContex
     }
 }
 
+internal fun TypeParameterDescriptor.toKtTypeParameter(analysisContext: Fe10AnalysisContext): KtTypeParameterSymbol {
+    return KtFe10DescTypeParameterSymbol(this, analysisContext)
+}
+
 internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10AnalysisContext): KtSymbolOrigin {
     when (this) {
         is SyntheticJavaPropertyDescriptor -> return KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY

@@ -47,6 +47,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): <no name provided>
   deprecationStatus: null
@@ -92,6 +93,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
   getDispatchReceiver(): AnonymousContainer
   deprecationStatus: null

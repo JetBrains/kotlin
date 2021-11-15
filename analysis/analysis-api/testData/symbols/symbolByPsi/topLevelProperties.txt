@@ -22,6 +22,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -72,6 +73,7 @@ KtKotlinPropertySymbol:
   receiverType: [] kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null

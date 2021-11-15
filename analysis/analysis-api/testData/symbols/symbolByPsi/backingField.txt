@@ -77,6 +77,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
