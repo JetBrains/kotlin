@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 
@@ -131,6 +132,8 @@ fun compileIr(
         is MainModule.Klib -> dependencyModules
     }
 
+    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+
     val context = JsIrBackendContext(
         moduleDescriptor,
         irBuiltIns,
@@ -152,7 +155,9 @@ fun compileIr(
     ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
     deserializer.postProcess()
-    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+    if (allowUnboundSymbols) {
+        symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+    }
 
     allModules.forEach { module ->
         moveBodilessDeclarationsToSeparatePlace(context, module)
