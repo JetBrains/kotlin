@@ -92,7 +92,9 @@ class Psi2IrTranslator(
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
         deserializers.forEach { it.postProcess() }
-        context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+        if (!context.configuration.allowUnboundSymbols) {
+            context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+        }
 
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference

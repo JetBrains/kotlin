@@ -134,6 +134,7 @@ fun generateIrForKlibSerialization(
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val serializedIrFiles = mutableListOf<SerializedIrFile>()
 
@@ -162,7 +163,7 @@ fun generateIrForKlibSerialization(
     }
 
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
-    val psi2Ir = Psi2IrTranslator(configuration.languageVersionSettings, Psi2IrConfiguration(errorPolicy.allowErrors))
+    val psi2Ir = Psi2IrTranslator(configuration.languageVersionSettings, Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols))
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
 
@@ -325,6 +326,7 @@ fun loadIr(
     val allDependencies = depsDescriptors.allDependencies.map { it.library }
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+    val allowUnboundSymbol = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -332,7 +334,7 @@ fun loadIr(
     when (mainModule) {
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
-            val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable)
+            val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable, allowUnboundSymbol)
             val friendModules =
                 mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.library.uniqueName })
 
@@ -465,6 +467,9 @@ fun getIrModuleInfoForSourceFiles(
     val feContext = psi2IrContext.run {
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
+
+    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+
     val irLinker =
         JsIrLinker(
             psi2IrContext.moduleDescriptor,
@@ -488,7 +493,9 @@ fun getIrModuleInfoForSourceFiles(
         )
 
     val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger)
-    symbolTable.noUnboundLeft("Unbound symbols left after linker")
+    if (!allowUnboundSymbols) {
+        symbolTable.noUnboundLeft("Unbound symbols left after linker")
+    }
 
 
     // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
@@ -536,11 +543,12 @@ private fun preparePsi2Ir(
     depsDescriptors: ModulesStructure,
     errorIgnorancePolicy: ErrorTolerancePolicy,
     symbolTable: SymbolTable,
+    allowUnboundSymbols: Boolean
 ): GeneratorContext {
     val analysisResult = depsDescriptors.jsFrontEndResult
     val psi2Ir = Psi2IrTranslator(
         depsDescriptors.compilerConfiguration.languageVersionSettings,
-        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors)
+        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors, allowUnboundSymbols)
     )
     return psi2Ir.createGeneratorContext(
         analysisResult.moduleDescriptor,
