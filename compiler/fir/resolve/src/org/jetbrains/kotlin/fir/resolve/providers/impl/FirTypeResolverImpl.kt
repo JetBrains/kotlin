@@ -78,6 +78,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     private fun FirBasedSymbol<*>?.isVisible(
         useSiteFile: FirFile?,
         containingDeclarations: List<FirDeclaration>,
+        supertypeSupplier: SupertypeSupplier
     ): Boolean {
         val declaration = this?.fir
         return if (useSiteFile != null && declaration is FirMemberDeclaration) {
@@ -86,8 +87,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 session,
                 useSiteFile,
                 containingDeclarations,
-                null,
-                false,
+                dispatchReceiver = null,
+                isCallToPropertySetter = false,
+                supertypeSupplier = supertypeSupplier
             )
         } else {
             true
@@ -98,6 +100,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         typeRef: FirTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
         useSiteFile: FirFile?,
+        supertypeSupplier: SupertypeSupplier
     ): Pair<FirBasedSymbol<*>?, ConeSubstitutor?> {
         return when (typeRef) {
             is FirResolvedTypeRef -> {
@@ -125,7 +128,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
                         val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
 
-                        if (resolvedSymbol.isVisible(useSiteFile, containingDeclarations)) {
+                        if (resolvedSymbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
                             acceptedSymbol = resolvedSymbol
                             substitutor = substitutorFromScope
                         } else {
@@ -451,11 +454,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
         useSiteFile: FirFile?,
+        supertypeSupplier: SupertypeSupplier
     ): ConeKotlinType {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.type
             is FirUserTypeRef -> {
-                val (symbol, substitutor) = resolveToSymbol(typeRef, scopeClassDeclaration, useSiteFile)
+                val (symbol, substitutor) = resolveToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier)
                 resolveUserType(
                     typeRef,
                     symbol,

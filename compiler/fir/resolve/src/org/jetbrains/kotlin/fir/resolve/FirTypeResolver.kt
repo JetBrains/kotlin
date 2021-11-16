@@ -18,7 +18,8 @@ abstract class FirTypeResolver : FirSessionComponent {
         scopeClassDeclaration: ScopeClassDeclaration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
-        useSiteFile: FirFile?
+        useSiteFile: FirFile?,
+        supertypeSupplier: SupertypeSupplier
     ): ConeKotlinType
 }
 

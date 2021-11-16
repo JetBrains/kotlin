@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -21,7 +22,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
-    private val errorTypeAsResolved: Boolean = true
+    private val errorTypeAsResolved: Boolean = true,
+    private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
 ) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
@@ -83,6 +85,7 @@ class FirSpecificTypeResolverTransformer(
                 areBareTypesAllowed,
                 isOperandOfIsOperator,
                 currentFile,
+                supertypeSupplier
             )
         )
     }
@@ -101,6 +104,7 @@ class FirSpecificTypeResolverTransformer(
             areBareTypesAllowed,
             isOperandOfIsOperator,
             currentFile,
+            supertypeSupplier
         ).takeIfAcceptable()
         return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
             buildResolvedTypeRef {

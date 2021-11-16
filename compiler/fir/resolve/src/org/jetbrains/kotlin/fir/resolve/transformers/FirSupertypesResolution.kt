@@ -344,7 +344,7 @@ open class FirSupertypeResolverVisitor(
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
         val scopes = prepareScopes(classLikeDeclaration)
 
-        val transformer = FirSpecificTypeResolverTransformer(session)
+        val transformer = FirSpecificTypeResolverTransformer(session, supertypeSupplier = supertypeComputationSession.supertypesSupplier)
         val resolvedTypesRefs = transformer.withFile(useSiteFile) {
             resolveSuperTypeRefs(
                 transformer,
