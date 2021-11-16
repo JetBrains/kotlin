@@ -77,6 +77,8 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             public open fun toString (): kotlin.String [fake_override] declared in <root>.A
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+          annotations:
+            IntrinsicConstEvaluation
           overridden:
             public final name: kotlin.String [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.String [fake_override]
@@ -163,7 +165,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
-          arg: CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Int' type=kotlin.String origin=null
+          arg: CALL 'public final fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
             $this: GET_VAR 'x: kotlin.Int declared in <root>.A.<init>' type=kotlin.Int origin=null
         CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
@@ -209,6 +211,8 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         public open fun toString (): kotlin.String declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
       overridden:
         public final name: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.String [fake_override]

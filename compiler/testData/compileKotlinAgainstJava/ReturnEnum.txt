@@ -10,7 +10,7 @@ public/*package*/ final enum class Kind : kotlin.Enum<test.Kind!> {
     enum entry THIRD
 
     private constructor Kind()
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.Kind!): kotlin.Int

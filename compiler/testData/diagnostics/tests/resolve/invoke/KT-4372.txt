@@ -6,7 +6,7 @@ public fun </*0*/ TInner, /*1*/ TOuter> Foo<TInner, TOuter>.invoke(/*0*/ name: k
 
 public final enum class EnumClass : kotlin.Enum<EnumClass> {
     private constructor EnumClass(/*0*/ x: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

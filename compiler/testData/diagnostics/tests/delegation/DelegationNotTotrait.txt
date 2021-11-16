@@ -18,7 +18,7 @@ public open enum class EN : kotlin.Enum<EN> {
     enum entry A
 
     private constructor EN()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EN): kotlin.Int
@@ -48,7 +48,7 @@ public interface T {
 
 public final class Test2 : EN {
     public constructor Test2(/*0*/ e: EN)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EN): kotlin.Int

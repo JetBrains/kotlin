@@ -37,7 +37,7 @@ public final enum class FooEmum : kotlin.Enum<FooEmum> {
     enum entry B
 
     private constructor FooEmum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final fun classFun(): kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

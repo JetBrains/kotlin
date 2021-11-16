@@ -6,7 +6,7 @@ public fun kk(/*0*/ a: KotlinEnumA, /*1*/ b: KotlinEnumB): kotlin.Boolean
 
 public final enum class JavaEnumA : kotlin.Enum<JavaEnumA!> {
     public constructor JavaEnumA()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: JavaEnumA!): kotlin.Int
@@ -23,7 +23,7 @@ public final enum class JavaEnumA : kotlin.Enum<JavaEnumA!> {
 
 public final enum class JavaEnumB : kotlin.Enum<JavaEnumB!> {
     public constructor JavaEnumB()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: JavaEnumB!): kotlin.Int
@@ -40,7 +40,7 @@ public final enum class JavaEnumB : kotlin.Enum<JavaEnumB!> {
 
 public final enum class KotlinEnumA : kotlin.Enum<KotlinEnumA> {
     private constructor KotlinEnumA()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: KotlinEnumA): kotlin.Int
@@ -57,7 +57,7 @@ public final enum class KotlinEnumA : kotlin.Enum<KotlinEnumA> {
 
 public final enum class KotlinEnumB : kotlin.Enum<KotlinEnumB> {
     private constructor KotlinEnumB()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: KotlinEnumB): kotlin.Int

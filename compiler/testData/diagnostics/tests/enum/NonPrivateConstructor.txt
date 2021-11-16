@@ -6,7 +6,7 @@ public final enum class E : kotlin.Enum<E> {
     internal constructor E()
     public constructor E(/*0*/ x: kotlin.Int)
     private constructor E(/*0*/ y: kotlin.Int, /*1*/ z: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

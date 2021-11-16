@@ -12,7 +12,7 @@ public final enum class K : kotlin.Enum<test.K> {
 
     private constructor K(/*0*/ kotlin.String = ...)
     private final val default: kotlin.String
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.K): kotlin.Int

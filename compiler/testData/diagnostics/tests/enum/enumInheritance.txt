@@ -20,7 +20,7 @@ public final enum class MyEnum : MyClass {
 
 public final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
     private constructor MyEnum2()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum2): kotlin.Int
@@ -37,7 +37,7 @@ public final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
 
 public final enum class MyEnum3 : MyEnumBase {
     private constructor MyEnum3()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnumBase): kotlin.Int
@@ -54,7 +54,7 @@ public final enum class MyEnum3 : MyEnumBase {
 
 public final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
     private constructor MyEnumBase()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnumBase): kotlin.Int

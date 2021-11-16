@@ -12,7 +12,7 @@ public final enum class En : kotlin.Enum<test.En> {
         public final fun `<get-b>`(): kotlin.Boolean
     public final val i: kotlin.Int
         public final fun `<get-i>`(): kotlin.Int
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int

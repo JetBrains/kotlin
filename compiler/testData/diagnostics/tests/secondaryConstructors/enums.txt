@@ -16,7 +16,7 @@ public final enum class A : kotlin.Enum<A> {
     private constructor A(/*0*/ x: kotlin.Int)
     private constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
     private constructor A(/*0*/ x: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A): kotlin.Int
@@ -44,7 +44,7 @@ public final enum class B : kotlin.Enum<B> {
     private constructor B(/*0*/ x: kotlin.Int)
     private constructor B(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
     private constructor B(/*0*/ x: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: B): kotlin.Int
@@ -63,7 +63,7 @@ public final enum class C : kotlin.Enum<C> {
     enum entry EMPTY
 
     private constructor C()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: C): kotlin.Int
@@ -88,7 +88,7 @@ public final enum class D : kotlin.Enum<D> {
     private constructor D()
     private constructor D(/*0*/ prop: kotlin.Int)
     private constructor D(/*0*/ x: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val prop: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

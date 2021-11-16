@@ -64,15 +64,19 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Ser
 
     }
 
-    public final infix fun and(other: R|kotlin/Boolean|): R|kotlin/Boolean|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun and(other: R|kotlin/Boolean|): R|kotlin/Boolean|
 
-    public open operator fun compareTo(other: R|kotlin/Boolean|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Boolean|): R|kotlin/Int|
 
-    public final operator fun not(): R|kotlin/Boolean|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
-    public final infix fun or(other: R|kotlin/Boolean|): R|kotlin/Boolean|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun not(): R|kotlin/Boolean|
 
-    public final infix fun xor(other: R|kotlin/Boolean|): R|kotlin/Boolean|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun or(other: R|kotlin/Boolean|): R|kotlin/Boolean|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun xor(other: R|kotlin/Boolean|): R|kotlin/Boolean|
 
     private constructor(): R|kotlin/Boolean|
 
@@ -114,57 +118,59 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     }
 
-    public open operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Byte|
 
-    public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Short|): R|kotlin/Int|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final operator fun inc(): R|kotlin/Byte|
 
-    public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun rangeTo(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
 
@@ -174,47 +180,49 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    public open fun toDouble(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
-    public open fun toFloat(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toFloat(): R|kotlin/Float|
 
-    public open fun toInt(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
-    public open fun toLong(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toLong(): R|kotlin/Long|
 
-    public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
-    public final operator fun unaryMinus(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
-    public final operator fun unaryPlus(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Int|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryPlus(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Byte|
 
@@ -274,33 +282,37 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
 
     }
 
-    public open operator fun compareTo(other: R|kotlin/Char|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Char|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Char|
 
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
     public final operator fun inc(): R|kotlin/Char|
 
-    public final operator fun minus(other: R|kotlin/Char|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Char|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Char|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Char|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Char|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Char|
 
     public final operator fun rangeTo(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toByte(): R|kotlin/Byte|
 
-    public final fun toChar(): R|kotlin/Char|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toChar(): R|kotlin/Char|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toDouble())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toDouble(): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toDouble())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toDouble(): R|kotlin/Double|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toFloat())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toFloat(): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toFloat())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toFloat(): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code)) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toInt(): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code)) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toInt(): R|kotlin/Int|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toLong())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toLong(): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toLong())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toShort(): R|kotlin/Short|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
     private constructor(): R|kotlin/Char|
 
@@ -416,99 +428,103 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     }
 
-    public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public open operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Float|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Int|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Long|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Short|): R|kotlin/Double|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final operator fun inc(): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Float|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Float|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Int|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Int|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Long|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Long|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Short|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Short|): R|kotlin/Double|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    public open fun toDouble(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
-    public open fun toFloat(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toFloat(): R|kotlin/Float|
 
-    public open fun toInt(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
-    public open fun toLong(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
-    public final operator fun unaryMinus(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
-    public final operator fun unaryPlus(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Double|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryPlus(): R|kotlin/Double|
 
     private constructor(): R|kotlin/Double|
 
@@ -553,7 +569,7 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
     public open fun toString(): R|kotlin/String|
 
-    public final val name: R|kotlin/String|
+    @PROPERTY:R|kotlin/internal/IntrinsicConstEvaluation|() public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
 
     public final val ordinal: R|kotlin/Int|
@@ -595,99 +611,103 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     }
 
-    public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
 
-    public open operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Int|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Long|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Short|): R|kotlin/Float|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final operator fun inc(): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Int|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Int|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Long|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Long|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Short|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Short|): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    public open fun toDouble(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
-    public open fun toFloat(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toFloat(): R|kotlin/Float|
 
-    public open fun toInt(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
-    public open fun toLong(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
-    public final operator fun unaryMinus(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
-    public final operator fun unaryPlus(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Float|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryPlus(): R|kotlin/Float|
 
     private constructor(): R|kotlin/Float|
 
@@ -732,63 +752,65 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|j
 
     }
 
-    public final infix fun and(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun and(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
 
-    public open operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Short|): R|kotlin/Int|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final operator fun inc(): R|kotlin/Int|
 
-    public final fun inv(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun inv(): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final infix fun or(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun or(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun rangeTo(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
 
@@ -798,55 +820,57 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|j
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Int|
 
-    public final infix fun shr(bitCount: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun shr(bitCount: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    public open fun toDouble(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
-    public open fun toFloat(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toFloat(): R|kotlin/Float|
 
-    public open fun toInt(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
-    public open fun toLong(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toLong(): R|kotlin/Long|
 
-    public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
-    public final operator fun unaryMinus(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
-    public final operator fun unaryPlus(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Int|
 
-    public final infix fun ushr(bitCount: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryPlus(): R|kotlin/Int|
 
-    public final infix fun xor(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun ushr(bitCount: R|kotlin/Int|): R|kotlin/Int|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun xor(other: R|kotlin/Int|): R|kotlin/Int|
 
     private constructor(): R|kotlin/Int|
 
@@ -888,63 +912,65 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     }
 
-    public final infix fun and(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun and(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public open operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Short|): R|kotlin/Long|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final operator fun inc(): R|kotlin/Long|
 
-    public final fun inv(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun inv(): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Long|
 
-    public final infix fun or(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun or(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Long|
 
     public final operator fun rangeTo(other: R|kotlin/Byte|): R|kotlin/ranges/LongRange|
 
@@ -954,55 +980,57 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Long|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Long|
 
-    public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Long|
 
-    public final infix fun shr(bitCount: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun shr(bitCount: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Int|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Short|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Short|): R|kotlin/Long|
 
-    public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    public open fun toDouble(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
-    public open fun toFloat(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toFloat(): R|kotlin/Float|
 
-    public open fun toInt(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
-    public open fun toLong(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toLong(): R|kotlin/Long|
 
-    public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
-    public final operator fun unaryMinus(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
-    public final operator fun unaryPlus(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Long|
 
-    public final infix fun ushr(bitCount: R|kotlin/Int|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryPlus(): R|kotlin/Long|
 
-    public final infix fun xor(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun ushr(bitCount: R|kotlin/Int|): R|kotlin/Long|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun xor(other: R|kotlin/Long|): R|kotlin/Long|
 
     private constructor(): R|kotlin/Long|
 
@@ -1092,57 +1120,59 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     }
 
-    public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Float|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Long|): R|kotlin/Int|
 
-    public open operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun dec(): R|kotlin/Short|
 
-    public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun div(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun div(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun div(other: R|kotlin/Short|): R|kotlin/Int|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final operator fun inc(): R|kotlin/Short|
 
-    public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Short|): R|kotlin/Int|
 
     public final operator fun rangeTo(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
 
@@ -1152,47 +1182,49 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Float|): R|kotlin/Float|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Int|): R|kotlin/Int|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Long|): R|kotlin/Long|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Byte|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Double|): R|kotlin/Double|
 
-    public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Float|): R|kotlin/Float|
 
-    public final operator fun times(other: R|kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Int|): R|kotlin/Int|
 
-    public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Long|): R|kotlin/Long|
 
-    public final operator fun times(other: R|kotlin/Short|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun times(other: R|kotlin/Short|): R|kotlin/Int|
 
-    public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    public open fun toDouble(): R|kotlin/Double|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
-    public open fun toFloat(): R|kotlin/Float|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toFloat(): R|kotlin/Float|
 
-    public open fun toInt(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
-    public open fun toLong(): R|kotlin/Long|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toLong(): R|kotlin/Long|
 
-    public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
-    public final operator fun unaryMinus(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
-    public final operator fun unaryPlus(): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Int|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryPlus(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Short|
 
@@ -1230,15 +1262,19 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
     }
 
-    public open operator fun compareTo(other: R|kotlin/String|): R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/String|): R|kotlin/Int|
 
-    public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
-    public final operator fun plus(other: R|kotlin/Any?|): R|kotlin/String|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
+
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Any?|): R|kotlin/String|
 
     public open fun subSequence(startIndex: R|kotlin/Int|, endIndex: R|kotlin/Int|): R|kotlin/CharSequence|
 
-    public open val length: R|kotlin/Int|
+    @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
+
+    @PROPERTY:R|kotlin/internal/IntrinsicConstEvaluation|() public open val length: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public constructor(): R|kotlin/String|

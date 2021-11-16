@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 

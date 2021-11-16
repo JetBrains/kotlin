@@ -6,7 +6,7 @@ public final enum class AbstractEnum : kotlin.Enum<test.AbstractEnum!> {
     enum entry ONE
 
     private constructor AbstractEnum()
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.AbstractEnum!): kotlin.Int

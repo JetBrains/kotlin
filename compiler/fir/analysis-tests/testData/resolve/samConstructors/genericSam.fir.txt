@@ -1,11 +1,11 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
         R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
-            ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
+            ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Int.toString|()
         }
         )
         R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
-            ^ R|<local>/x|.R|kotlin/Any.toString|()
+            ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
         )
         <CS errors: /MyFunction>#<R|ERROR CLASS: Cannot infer argument for type parameter T|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(<L> = MyFunction@fun <anonymous>(x: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=NoInline>  {

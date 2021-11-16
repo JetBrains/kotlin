@@ -31,7 +31,7 @@ package abstract {
         public final var l: kotlin.Int
         public final var l1: kotlin.Int
         public final var n: kotlin.Int
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: abstract.MyEnum): kotlin.Int

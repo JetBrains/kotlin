@@ -43,7 +43,7 @@ public final enum class EnumSpecialized : kotlin.Enum<EnumSpecialized>, Foo<kotl
     enum entry ENTRY
 
     private constructor EnumSpecialized()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public open override /*1*/ /*fake_override*/ val kotlin.String.prop: kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

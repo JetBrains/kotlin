@@ -80,7 +80,7 @@ public final enum class F : kotlin.Enum<F> {
     enum entry F1
 
     private constructor F()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     internal final tailrec fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
     internal open tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
@@ -104,7 +104,7 @@ public final enum class G : kotlin.Enum<G> {
     enum entry G1
 
     private constructor G()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     internal final tailrec fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
     internal open tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit

@@ -61,6 +61,8 @@ FILE fqName:events fileName:/kt38765.kt
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [external,primary] declared in events.internal.NestedExternalEnum'
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [external,fake_override,val]
+        annotations:
+          IntrinsicConstEvaluation
         overridden:
           public final name: kotlin.String [val]
         FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>) returnType:kotlin.String [external,fake_override]

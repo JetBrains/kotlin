@@ -8,7 +8,7 @@ public final enum class A : kotlin.Enum<A!> {
     enum entry ANOTHER
 
     private constructor A(/*0*/ s: kotlin.String!)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var s: kotlin.String!
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

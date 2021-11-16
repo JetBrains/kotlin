@@ -9,7 +9,7 @@ public final enum class En : kotlin.Enum<En> {
     enum entry SUBCLASS
 
     private constructor En()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final fun ENTRY(): kotlin.Int
     public final fun SUBCLASS(): kotlin.Int

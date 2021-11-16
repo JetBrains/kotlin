@@ -4,7 +4,7 @@ package
 public final expect enum class Foo : kotlin.Enum<Foo> {
     expect enum entry ENTRY
 
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Foo): kotlin.Int
@@ -18,7 +18,7 @@ public final expect enum class Foo : kotlin.Enum<Foo> {
 }
 
 public final expect enum class _TimeUnit : kotlin.Enum<_TimeUnit> {
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: _TimeUnit): kotlin.Int
@@ -38,7 +38,7 @@ public final enum class FooImpl : kotlin.Enum<FooImpl!> {
     enum entry ENTRY
 
     public constructor FooImpl(/*0*/ value: kotlin.String!)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected/*protected and package*/ final val value: kotlin.String!
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

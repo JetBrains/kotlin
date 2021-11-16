@@ -79,6 +79,8 @@ FILE fqName:<root> fileName:/classes.kt
           <E>: <root>.TestEnumClass
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnumClass modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnumClass>]'
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
       overridden:
         public final name: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnumClass>) returnType:kotlin.String [fake_override]

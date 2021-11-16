@@ -16,7 +16,7 @@ public object A : Bar<AFoo> {
 
 public final enum class AFoo : kotlin.Enum<AFoo>, Foo {
     private constructor AFoo()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: AFoo): kotlin.Int
@@ -40,7 +40,7 @@ public object B : Bar<BFoo> {
 
 public final enum class BFoo : kotlin.Enum<BFoo>, Foo {
     private constructor BFoo()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: BFoo): kotlin.Int

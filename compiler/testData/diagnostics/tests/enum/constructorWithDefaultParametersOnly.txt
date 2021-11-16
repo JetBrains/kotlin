@@ -8,7 +8,7 @@ public final enum class TestErrors : kotlin.Enum<TestErrors> {
     enum entry TEST3
 
     private constructor TestErrors(/*0*/ x: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -29,7 +29,7 @@ public final enum class TestMultipleConstructors : kotlin.Enum<TestMultipleConst
 
     private constructor TestMultipleConstructors(/*0*/ x: kotlin.String = ...)
     private constructor TestMultipleConstructors(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.Int = ...)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.String
     public final val y: kotlin.Int
@@ -54,7 +54,7 @@ public final enum class TestOk : kotlin.Enum<TestOk> {
     enum entry TEST3
 
     private constructor TestOk(/*0*/ x: kotlin.String = ...)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -75,7 +75,7 @@ public final enum class TestVarargs : kotlin.Enum<TestVarargs> {
 
     private constructor TestVarargs(/*0*/ vararg xs: kotlin.Any /*kotlin.Array<out kotlin.Any>*/)
     private constructor TestVarargs(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

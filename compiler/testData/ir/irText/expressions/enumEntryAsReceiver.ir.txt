@@ -48,6 +48,8 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:private [final]' type=kotlin.Function0<kotlin.String> origin=null
                   receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value>' type=<root>.X.B origin=null
         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+          annotations:
+            IntrinsicConstEvaluation
           overridden:
             public final name: kotlin.String [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.String [fake_override]
@@ -98,6 +100,8 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.X
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
       overridden:
         public final name: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.String [fake_override]

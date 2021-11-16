@@ -52,7 +52,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     enum entry B
 
     private constructor ExplicitlyMarkedEnum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ExplicitlyMarkedEnum): kotlin.Int
@@ -93,7 +93,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     enum entry B
 
     private constructor ExplicitlyMarkedEnumCustom()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: ExplicitlyMarkedEnumCustom): kotlin.Int
@@ -122,7 +122,7 @@ public final enum class MarkedNameEnum : kotlin.Enum<MarkedNameEnum> {
     enum entry B
 
     private constructor MarkedNameEnum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MarkedNameEnum): kotlin.Int
@@ -143,7 +143,7 @@ public final enum class SimpleEnum : kotlin.Enum<SimpleEnum> {
     enum entry B
 
     private constructor SimpleEnum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: SimpleEnum): kotlin.Int

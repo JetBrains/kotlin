@@ -6,7 +6,7 @@ public final enum class SomeEnum11 : kotlin.Enum<SomeEnum11> {
     enum entry B
 
     private constructor SomeEnum11(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -28,7 +28,7 @@ public final enum class SomeEnum12 : kotlin.Enum<SomeEnum12> {
     enum entry B
 
     private constructor SomeEnum12(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -50,7 +50,7 @@ public final enum class SomeEnum21 : kotlin.Enum<SomeEnum21> {
     enum entry B
 
     private constructor SomeEnum21(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -72,7 +72,7 @@ public final enum class SomeEnum22 : kotlin.Enum<SomeEnum22> {
     enum entry B
 
     private constructor SomeEnum22(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -94,7 +94,7 @@ public final enum class SomeEnum3 : kotlin.Enum<SomeEnum3> {
     enum entry B
 
     private constructor SomeEnum3(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

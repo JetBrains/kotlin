@@ -13,5 +13,5 @@ FILE: safeString2.kt
 
     }
     public final fun test(foo: R|Foo?|): R|kotlin/Unit| {
-        lval s: R|kotlin/String?| = R|<local>/foo|?.{ $subj$.R|/Foo.name| }?.{ $subj$.R|kotlin/Any.toString|() }
+        lval s: R|kotlin/String?| = R|<local>/foo|?.{ $subj$.R|/Foo.name| }?.{ $subj$.R|kotlin/String.toString|() }
     }

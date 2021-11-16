@@ -7,7 +7,7 @@ public final expect enum class En : kotlin.Enum<En> {
 
     private constructor En(/*0*/ x: kotlin.Int)
     private constructor En(/*0*/ s: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: En): kotlin.Int
@@ -23,7 +23,7 @@ public final expect enum class En : kotlin.Enum<En> {
 public final expect enum class En2 : kotlin.Enum<En2> {
     expect enum entry E1
 
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: En2): kotlin.Int

@@ -6,7 +6,7 @@ public final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImplement
     enum entry E2
 
     private constructor EnumImplementingTraitWithFun()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithFun): kotlin.Int
@@ -29,7 +29,7 @@ public final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplement
 
     private constructor EnumImplementingTraitWithVal()
     public abstract override /*1*/ /*fake_override*/ val bar: kotlin.Int
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumImplementingTraitWithVal): kotlin.Int

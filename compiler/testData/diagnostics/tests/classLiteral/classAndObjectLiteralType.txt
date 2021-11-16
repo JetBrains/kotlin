@@ -33,7 +33,7 @@ public final enum class TestEnum : kotlin.Enum<TestEnum> {
     enum entry TEST_ENTRY
 
     private constructor TestEnum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestEnum): kotlin.Int

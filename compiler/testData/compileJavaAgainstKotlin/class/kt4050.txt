@@ -8,7 +8,7 @@ public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry ENTRY
 
     private constructor MyEnum(/*0*/ @test.AAA kotlin.Int)
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     @kotlin.Deprecated(message = "") public final val ord: kotlin.Int
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any

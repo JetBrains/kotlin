@@ -7,7 +7,7 @@ public final class A {
         enum entry ENTRY
 
         /*primary*/ private constructor E()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
             public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
             public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int

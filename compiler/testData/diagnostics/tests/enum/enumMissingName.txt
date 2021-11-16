@@ -8,7 +8,7 @@ public final enum class `<no name provided>` : kotlin.Enum<`<no name provided>`>
     enum entry BLUE
 
     private constructor `<no name provided>`(/*0*/ rgb: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val rgb: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

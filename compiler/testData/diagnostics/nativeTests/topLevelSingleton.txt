@@ -44,7 +44,7 @@ public final class Bar2 {
     enum entry BLUE
 
     private constructor Color(/*0*/ rgb: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var rgb: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -66,7 +66,7 @@ public final enum class Color1 : kotlin.Enum<Color1> {
     enum entry BLUE
 
     private constructor Color1(/*0*/ rgb: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var rgb: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -88,7 +88,7 @@ public final enum class Color2 : kotlin.Enum<Color2> {
     enum entry BLUE
 
     private constructor Color2()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final var rgb: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -111,7 +111,7 @@ public final enum class Color3 : kotlin.Enum<Color3> {
 
     private constructor Color3()
     public final var field1: kotlin.Int
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Color3): kotlin.Int
@@ -132,7 +132,7 @@ public final enum class Color4 : kotlin.Enum<Color4> {
     enum entry BLUE
 
     private constructor Color4()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Color4): kotlin.Int

@@ -177,7 +177,7 @@ FILE: CanBeValChecker.kt
             else ->  {
                 R|<local>/a| = R|<local>/args|.R|kotlin/Any.toString|()
                 when () {
-                    !=(R|<local>/a|, Null(null)) && R|<local>/a|.R|kotlin/Any.equals|(String(cde)) ->  {
+                    !=(R|<local>/a|, Null(null)) && R|<local>/a|.R|kotlin/String.equals|(String(cde)) ->  {
                         ^main Unit
                     }
                 }

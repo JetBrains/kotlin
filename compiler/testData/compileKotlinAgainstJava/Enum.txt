@@ -12,7 +12,7 @@ public final enum class Enum : kotlin.Enum<test.Enum!> {
     enum entry EAST
 
     private constructor Enum()
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.Enum!): kotlin.Int

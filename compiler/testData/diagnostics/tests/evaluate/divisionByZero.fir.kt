@@ -16,6 +16,6 @@ val a11 = <!DIVISION_BY_ZERO!>1 / 0.0<!>
 val a12 = <!DIVISION_BY_ZERO!>1L / 0<!>
 
 val b1: Byte = <!TYPE_MISMATCH!>1 / 0<!>
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, DIVISION_BY_ZERO!>1 / 0<!>) val b2 = 1
+@Ann(<!DIVISION_BY_ZERO!>1 / 0<!>) val b2 = 1
 
 annotation class Ann(val i : Int)

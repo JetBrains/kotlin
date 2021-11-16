@@ -17,7 +17,7 @@ public final inline annotation class InlineAnn : kotlin.Annotation {
 
 public final inline enum class InlineEnum : kotlin.Enum<InlineEnum> {
     private constructor InlineEnum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: InlineEnum): kotlin.Int

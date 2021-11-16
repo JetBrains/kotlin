@@ -12,7 +12,7 @@ public final class EnumCapturesProperty : kotlin.script.templates.standard.Scrip
         enum entry Eleven
 
         private constructor Bar(/*0*/ s: kotlin.String = ...)
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         public final val s: kotlin.String
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

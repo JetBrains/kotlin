@@ -111,6 +111,8 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-anObject>' type=<root>.MyEnum.Z origin=null
         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+          annotations:
+            IntrinsicConstEvaluation
           overridden:
             public final name: kotlin.String [fake_override,val]
           FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.MyEnum>) returnType:kotlin.String [fake_override]
@@ -157,6 +159,8 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
             public open fun toString (): kotlin.String [fake_override] declared in <root>.MyEnum
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.MyEnum>
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
       overridden:
         public final name: kotlin.String [val]
       FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.MyEnum>) returnType:kotlin.String [fake_override]

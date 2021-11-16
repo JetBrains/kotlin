@@ -8,7 +8,7 @@ public final enum class EnumName : kotlin.Enum<test.EnumName!> {
     enum entry SECOND
 
     private constructor EnumName()
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.EnumName!): kotlin.Int

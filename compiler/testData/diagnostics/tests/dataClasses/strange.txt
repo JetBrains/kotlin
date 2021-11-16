@@ -6,7 +6,7 @@ public final data enum class First : kotlin.Enum<First> {
     enum entry B
 
     private constructor First(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any

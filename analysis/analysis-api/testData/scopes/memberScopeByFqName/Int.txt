@@ -1,5 +1,8 @@
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.and
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -27,7 +30,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -55,7 +61,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -83,7 +92,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -111,7 +123,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -139,7 +154,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -167,7 +185,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -221,7 +242,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -249,7 +273,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -277,7 +304,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -305,7 +335,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -333,7 +366,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -361,7 +397,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -378,6 +417,37 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   returnType: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(other)
+  ]
+  visibility: Public
+  getDispatchReceiver(): kotlin/Int
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/Int.equals
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -415,7 +485,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.inv
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -441,7 +514,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -469,7 +545,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -497,7 +576,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -525,7 +607,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -553,7 +638,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -581,7 +669,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -609,7 +700,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.or
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -637,7 +731,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -665,7 +762,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -693,7 +793,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -721,7 +824,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -749,7 +855,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -777,7 +886,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -920,6 +1032,8 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
       psi: null
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
@@ -950,6 +1064,8 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
+      psi: null
+    kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -982,6 +1098,8 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
       psi: null
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
@@ -1013,6 +1131,8 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
       psi: null
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
@@ -1043,6 +1163,8 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
+      psi: null
+    kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -1075,6 +1197,8 @@ KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
       psi: null
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
@@ -1103,7 +1227,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.shl
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1131,7 +1258,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.shr
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1159,7 +1289,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1187,7 +1320,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1215,7 +1351,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1243,7 +1382,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1271,7 +1413,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1299,7 +1444,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1327,7 +1475,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toByte
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1353,7 +1504,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toChar
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1379,7 +1533,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toDouble
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1405,7 +1562,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toFloat
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1431,7 +1591,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toInt
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1457,7 +1620,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toLong
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1483,7 +1649,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.toShort
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1509,7 +1678,39 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/Int.toString
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/String
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): kotlin/Int
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.unaryMinus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1535,7 +1736,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.unaryPlus
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1561,7 +1765,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.ushr
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1589,7 +1796,10 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotationsList: []
+  annotationsList: [
+    kotlin/internal/IntrinsicConstEvaluation()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.xor
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1618,34 +1828,6 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
-  hasStableParameterNames: true
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: true
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: equals
-  origin: LIBRARY
-  receiverType: null
-  returnType: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol(other)
-  ]
-  visibility: Public
-  getDispatchReceiver(): kotlin/Any
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
@@ -1662,32 +1844,6 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   returnType: kotlin/Int
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): kotlin/Any
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
-  hasStableParameterNames: true
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: toString
-  origin: LIBRARY
-  receiverType: null
-  returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

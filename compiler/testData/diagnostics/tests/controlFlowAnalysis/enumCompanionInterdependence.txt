@@ -6,7 +6,7 @@ public final enum class B : kotlin.Enum<B> {
     enum entry B2
 
     private constructor B(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -37,7 +37,7 @@ public final enum class C : kotlin.Enum<C> {
     enum entry C2
 
     private constructor C(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -68,7 +68,7 @@ public final enum class EnumCompanion1 : kotlin.Enum<EnumCompanion1> {
     enum entry ANOTHER
 
     private constructor EnumCompanion1(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -96,7 +96,7 @@ public final enum class EnumCompanion2 : kotlin.Enum<EnumCompanion2> {
     enum entry INSTANCE
 
     private constructor EnumCompanion2(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -126,7 +126,7 @@ public final enum class EnumCompanion3 : kotlin.Enum<EnumCompanion3> {
     enum entry ANOTHER
 
     private constructor EnumCompanion3(/*0*/ x: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val x: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -162,7 +162,7 @@ public final enum class ExtractionTarget : kotlin.Enum<ExtractionTarget> {
     enum entry LAZY_PROPERTY
 
     private constructor ExtractionTarget(/*0*/ targetName: kotlin.String)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val targetName: kotlin.String
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -191,7 +191,7 @@ public final enum class Fruit : kotlin.Enum<Fruit> {
     enum entry APPLE
 
     private constructor Fruit(/*0*/ personal: kotlin.Int)
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     public final val score: kotlin.Int
     public final val score2: kotlin.Int
