@@ -62,9 +62,7 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
-import kotlin.collections.set
 
 object FirKotlinToJvmBytecodeCompiler {
     fun compileModulesUsingFrontendIR(
@@ -83,11 +81,12 @@ object FirKotlinToJvmBytecodeCompiler {
             "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
         )
 
-        val outputs = newLinkedHashMapWithExpectedSize<Module, Pair<FirResult, GenerationState>>(chunk.size)
+        val outputs = ArrayList<Pair<FirResult, GenerationState>>(chunk.size)
         val targetIds = projectConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
         val incrementalComponents = projectConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         val isMultiModuleChunk = chunk.size > 1
 
+        // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
         for (module in chunk) {
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
             val context = CompilationContext(
@@ -105,19 +104,18 @@ object FirKotlinToJvmBytecodeCompiler {
                 (projectEnvironment as? PsiBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
             )
             val generationState = context.compileModule() ?: return false
-            outputs[module] = generationState
+            outputs += generationState
         }
 
         val mainClassFqName: FqName? = runIf(chunk.size == 1 && projectConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-            val firResult = outputs.values.single().first
-            findMainClass(firResult)
+            findMainClass(outputs.single().first)
         }
 
         return writeOutputs(
             (projectEnvironment as? PsiBasedProjectEnvironment)?.project,
             projectConfiguration,
             chunk,
-            outputs.mapValues { (_, value) -> value.second },
+            outputs.map(Pair<FirResult, GenerationState>::second),
             mainClassFqName
         )
     }

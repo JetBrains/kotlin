@@ -63,6 +63,13 @@ open class JvmIrCodegenFactory(
         val notifyCodegenStart: () -> Unit
     ) : CodegenFactory.BackendInput
 
+    private data class JvmIrCodegenInput(
+        override val state: GenerationState,
+        val context: JvmBackendContext,
+        val module: IrModuleFragment,
+        val notifyCodegenStart: () -> Unit,
+    ) : CodegenFactory.CodegenInput
+
     override fun convertToIr(input: CodegenFactory.IrConversionInput): JvmIrBackendInput {
         val (mangler, symbolTable) =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
@@ -213,7 +220,7 @@ open class JvmIrCodegenFactory(
         )
     }
 
-    override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {
+    override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
         val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
@@ -233,9 +240,13 @@ open class JvmIrCodegenFactory(
 
         phases.invokeToplevel(phaseConfig, context, irModuleFragment)
 
-        notifyCodegenStart()
+        return JvmIrCodegenInput(state, context, irModuleFragment, notifyCodegenStart)
+    }
 
-        jvmCodegenPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
+    override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
+        val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
+        notifyCodegenStart()
+        jvmCodegenPhases.invokeToplevel(PhaseConfig(jvmCodegenPhases), context, module)
 
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`

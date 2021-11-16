@@ -119,16 +119,16 @@ fun writeOutputs(
     project: Project?,
     projectConfiguration: CompilerConfiguration,
     chunk: List<Module>,
-    outputs: Map<Module, GenerationState>,
+    outputs: List<GenerationState>,
     mainClassFqName: FqName?
 ): Boolean {
     try {
-        for ((_, state) in outputs) {
+        for (state in outputs) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             writeOutput(state.configuration, state.factory, mainClassFqName)
         }
     } finally {
-        outputs.values.forEach(GenerationState::destroy)
+        outputs.forEach(GenerationState::destroy)
     }
 
     if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {

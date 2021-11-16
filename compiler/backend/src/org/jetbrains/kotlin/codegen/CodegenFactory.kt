@@ -36,7 +36,14 @@ interface CodegenFactory {
     // modules combined, and then backend is run on each individual module.
     fun getModuleChunkBackendInput(wholeBackendInput: BackendInput, sourceFiles: Collection<KtFile>): BackendInput
 
-    fun generateModule(state: GenerationState, input: BackendInput)
+    fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput
+
+    fun invokeCodegen(input: CodegenInput)
+
+    fun generateModule(state: GenerationState, input: BackendInput) {
+        val result = invokeLowerings(state, input)
+        invokeCodegen(result)
+    }
 
     class IrConversionInput(
         val project: Project,
@@ -57,7 +64,13 @@ interface CodegenFactory {
         }
     }
 
+    // These opaque interfaces are needed to transfer the result of psi2ir to lowerings to codegen.
+    // Hopefully this can be refactored/simplified once the old JVM backend code is removed.
     interface BackendInput
+
+    interface CodegenInput {
+        val state: GenerationState
+    }
 
     companion object {
         fun doCheckCancelled(state: GenerationState) {
@@ -69,7 +82,9 @@ interface CodegenFactory {
 }
 
 object DefaultCodegenFactory : CodegenFactory {
-    object DummyOldBackendInput : CodegenFactory.BackendInput
+    private object DummyOldBackendInput : CodegenFactory.BackendInput
+
+    private class DummyOldCodegenInput(override val state: GenerationState) : CodegenFactory.CodegenInput
 
     override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = DummyOldBackendInput
 
@@ -78,7 +93,7 @@ object DefaultCodegenFactory : CodegenFactory {
         sourceFiles: Collection<KtFile>,
     ): CodegenFactory.BackendInput = DummyOldBackendInput
 
-    override fun generateModule(state: GenerationState, input: CodegenFactory.BackendInput) {
+    override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
         val filesInPackages = MultiMap<FqName, KtFile>()
         val filesInMultifileClasses = MultiMap<FqName, KtFile>()
 
@@ -103,6 +118,12 @@ object DefaultCodegenFactory : CodegenFactory {
             CodegenFactory.doCheckCancelled(state)
             generatePackage(state, packageFqName, filesInPackages.get(packageFqName))
         }
+
+        return DummyOldCodegenInput(state)
+    }
+
+    override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
+        // Do nothing
     }
 
     private fun generateMultifileClass(state: GenerationState, multifileClassFqName: FqName, files: Collection<KtFile>) {
