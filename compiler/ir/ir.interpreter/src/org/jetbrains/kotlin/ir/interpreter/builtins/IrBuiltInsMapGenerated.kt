@@ -197,6 +197,9 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         "CHECK_NOT_NULL" -> when (type) {
             "T0?" -> return a!!
         }
+        "code" -> when (type) {
+            "Char" -> return (a as Char).code
+        }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($type)")
 }

@@ -55,6 +55,7 @@ fun generateMap(): String {
         val irNullCheck = irBuiltIns.checkNotNullSymbol.owner
         this += Operation(irNullCheck.name.asString(), listOf("T0?"), customExpression = "a!!")
         this += Operation("toString", listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
+        this += Operation("code", listOf("Char"), customExpression = "(a as Char).code")
         // TODO next operation can be dropped after serialization introduction
         this += Operation("toString", listOf("Unit"), customExpression = "Unit.toString()")
     })
