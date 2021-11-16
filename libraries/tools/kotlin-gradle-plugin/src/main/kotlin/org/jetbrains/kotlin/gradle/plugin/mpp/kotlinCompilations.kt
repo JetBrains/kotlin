@@ -475,7 +475,7 @@ internal object CompilationSourceSetUtil {
                 return@provider result
             })
 
-            project.gradle.taskGraph.whenReady { shouldFinalizeValue = true }
+            project.gradle.taskGraph.whenReady { shouldFinalizeValue = false } // TODO NOW
 
             // In case the value is first queried after the task graph has been calculated, finalize the value as soon as a task executes:
             object : TaskExecutionListener {

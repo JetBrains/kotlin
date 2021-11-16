@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.external
 
+import org.gradle.api.Named
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
@@ -16,8 +17,11 @@ class KotlinExternalTargetCompilationHandle internal constructor(
     val target: KotlinExternalTargetHandle,
     internal val compilation: KotlinJvmExternalCompilation,
     internal val compilationTask: TaskProvider<out KotlinCompile>
-) {
+) : Named {
+
     val project = target.project
+
+    override fun getName(): String = compilation.name
 
     val defaultSourceSet = compilation.defaultSourceSet
 
@@ -37,6 +41,10 @@ class KotlinExternalTargetCompilationHandle internal constructor(
     fun setRuntimeDependencyFilesConfiguration(configuration: Configuration) {
         compilation.runtimeDependencyFiles = configuration
         project.addExtendsFromRelation(configuration.name, compilation.runtimeDependencyConfigurationName)
+    }
+
+    fun associateWith(other: KotlinExternalTargetCompilationHandle) {
+        this.compilation.associateWith(other.compilation)
     }
 
     val runtimeOnlyConfiguration

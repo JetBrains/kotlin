@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.external
 
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.namedDomainObjectSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
@@ -17,12 +18,19 @@ class KotlinExternalTargetHandle internal constructor(
 
     val platformType = target.platformType
 
-    fun createCompilation(
+    private val compilations = project.objects.namedDomainObjectSet(KotlinExternalTargetCompilationHandle::class)
+
+    fun getKotlinCompilation(name: String): KotlinExternalTargetCompilationHandle {
+        return compilations.getByName(name)
+    }
+
+    fun createKotlinCompilation(
         name: String,
         classesOutputDirectory: Provider<Directory>,
         defaultSourceSetNameOption: DefaultSourceSetNameOption = DefaultSourceSetNameOption.KotlinConvention
     ): KotlinExternalTargetCompilationHandle {
         val compilation = target.compilationsFactory.create(name, defaultSourceSetNameOption)
+        compilation.output.classesDirs.from(project.filesProvider { classesOutputDirectory.get().asFile })
 
         val compilationTask = KotlinTasksProvider().registerKotlinJVMTask(
             target.project, compilation.compileKotlinTaskName, compilation
@@ -31,8 +39,11 @@ class KotlinExternalTargetHandle internal constructor(
             compilation.allKotlinSourceSets.forEach { sourceSet -> compileTask.source(sourceSet.kotlin) }
             compileTask.destinationDirectory.set(classesOutputDirectory)
         }
-
         target.compilations.add(compilation)
-        return KotlinExternalTargetCompilationHandle(this, compilation, compilationTask)
+
+        val compilationHandle = KotlinExternalTargetCompilationHandle(this, compilation, compilationTask)
+        compilations.add(compilationHandle)
+
+        return compilationHandle
     }
 }

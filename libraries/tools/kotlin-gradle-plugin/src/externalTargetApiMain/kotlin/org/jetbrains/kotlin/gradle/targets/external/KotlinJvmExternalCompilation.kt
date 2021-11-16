@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.gradle.targets.external
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
 
 internal class KotlinJvmExternalCompilation(
@@ -28,4 +29,8 @@ internal class KotlinJvmExternalCompilation(
         }
 
     override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+
+    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        // TODO NOW
+    }
 }

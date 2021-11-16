@@ -20,6 +20,11 @@ internal fun setupAndroidMain(externalTargetHandle: KotlinExternalTargetHandle) 
     // Create Kotlin Compilation for variants
     project.extensions.getByType<AppExtension>().applicationVariants.all { variant ->
         project.logger.quiet("Variant: ${variant.name} source sets: ${variant.sourceSets}")
-        externalTargetHandle.createKotlinCompilation(variant, androidMain)
+        val mainKotlinCompilation = externalTargetHandle.createKotlinCompilation(variant)
+        mainKotlinCompilation.defaultSourceSet.dependsOn(androidMain)
+
+        // Associate unitTests with main compilation
+        val unitTestKotlinCompilation = externalTargetHandle.getKotlinCompilation(variant.unitTestVariant.name)
+        unitTestKotlinCompilation.associateWith(mainKotlinCompilation)
     }
 }

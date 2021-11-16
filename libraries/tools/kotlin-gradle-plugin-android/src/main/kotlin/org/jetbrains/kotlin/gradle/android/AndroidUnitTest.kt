@@ -19,6 +19,7 @@ internal fun setupAndroidUnitTest(externalTargetHandle: KotlinExternalTargetHand
 
     project.extensions.getByType<AppExtension>().unitTestVariants.all { variant ->
         project.logger.quiet("UnitTestVariant: ${variant.name} source sets: ${variant.sourceSets}")
-        externalTargetHandle.createKotlinCompilation(variant, androidUnitTest)
+        val kotlinCompilation = externalTargetHandle.createKotlinCompilation(variant)
+        kotlinCompilation.defaultSourceSet.dependsOn(androidUnitTest)
     }
 }
