@@ -240,6 +240,7 @@ enum class LanguageFeature(
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_7, kind = BUG_FIX),
     PartiallySpecifiedTypeArguments(KOTLIN_1_7),
     EliminateAmbiguitiesWithExternalTypeParameters(KOTLIN_1_7),
+    EliminateAmbiguitiesOnInheritedSamInterfaces(KOTLIN_1_7),
 
     // 1.8
 

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.*
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
@@ -61,6 +60,8 @@ class NewOverloadingConflictResolver(
             val resolvedCall = candidate.resolvedCall
             val isEliminationAmbiguitiesWithExternalTypeParametersEnabled =
                 candidate.callComponents.languageVersionSettings.supportsFeature(LanguageFeature.EliminateAmbiguitiesWithExternalTypeParameters)
+            val isEliminationAmbiguitiesOnInheritedSamInterfacesEnabled =
+                candidate.callComponents.languageVersionSettings.supportsFeature(LanguageFeature.EliminateAmbiguitiesOnInheritedSamInterfaces)
             val descriptor = if (isEliminationAmbiguitiesWithExternalTypeParametersEnabled) {
                 resolvedCall.candidateDescriptor
             } else {
@@ -69,25 +70,30 @@ class NewOverloadingConflictResolver(
             val valueParameters = descriptor.valueParameters
 
             var numDefaults = 0
-            val valueArgumentToParameterType = HashMap<KotlinCallArgument, KotlinType>()
+            val valueArgumentToParameterType = HashMap<KotlinCallArgument, TypeWithConversion>()
             for ((valueParameter, resolvedValueArgument) in resolvedCall.argumentMappingByOriginal) {
                 if (resolvedValueArgument is ResolvedCallArgument.DefaultArgument) {
                     numDefaults++
                 } else {
                     val originalValueParameter = valueParameters[valueParameter.index]
                     for (valueArgument in resolvedValueArgument.arguments) {
-                        valueArgumentToParameterType[valueArgument] =
-                            candidate.resolvedCall.argumentsWithConversion[valueArgument]?.convertedTypeByOriginParameter
-                                ?: valueArgument.getExpectedType(originalValueParameter, candidate.callComponents.languageVersionSettings)
+                        val originalType = candidate.resolvedCall.argumentsWithConversion[valueArgument]?.originalParameterType
+                        val resultType = candidate.resolvedCall.argumentsWithConversion[valueArgument]?.convertedTypeByOriginParameter
+                            ?: valueArgument.getExpectedType(originalValueParameter, candidate.callComponents.languageVersionSettings)
+                        valueArgumentToParameterType[valueArgument] = TypeWithConversion(
+                            resultType,
+                            if (isEliminationAmbiguitiesOnInheritedSamInterfacesEnabled) originalType else null
+                        )
                     }
                 }
             }
 
-            return FlatSignature.create(candidate,
-                                        descriptor,
-                                        numDefaults,
-                                        resolvedCall.atom.argumentsInParenthesis.map { valueArgumentToParameterType[it] } +
-                                                listOfNotNull(resolvedCall.atom.externalArgument?.let { valueArgumentToParameterType[it] })
+            return FlatSignature.create(
+                candidate,
+                descriptor,
+                numDefaults,
+                parameterTypes = resolvedCall.atom.argumentsInParenthesis.map { valueArgumentToParameterType[it] } +
+                        listOfNotNull(resolvedCall.atom.externalArgument?.let { valueArgumentToParameterType[it] })
             )
 
         }

@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
+// !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces +SamConversionForKotlinFunctions +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
@@ -25,6 +25,5 @@ fun test(k: K) {
 
     k.bas { it checkType { _<Any?>() }; "" } checkType { _<Int>() }
 
-    // NI: TODO
-    k.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!> { <!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any>() }; "" } <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    k.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }

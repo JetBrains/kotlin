@@ -89,7 +89,8 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
 
 class SamConversionDescription(
     val convertedTypeByOriginParameter: UnwrappedType,
-    val convertedTypeByCandidateParameter: UnwrappedType // expected type for corresponding argument
+    val convertedTypeByCandidateParameter: UnwrappedType, // expected type for corresponding argument
+    val originalParameterType: UnwrappedType // need to overload resolution on inherited SAM interfaces
 )
 
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {

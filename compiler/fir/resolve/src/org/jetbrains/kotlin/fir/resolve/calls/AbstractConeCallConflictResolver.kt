@@ -166,7 +166,7 @@ abstract class AbstractConeCallConflictResolver(
         return FlatSignature(
             call,
             (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
-            valueParameterTypes = emptyList(),
+            emptyList(),
             hasExtensionReceiver = false,
             hasVarargs = false,
             numDefaults = 0,

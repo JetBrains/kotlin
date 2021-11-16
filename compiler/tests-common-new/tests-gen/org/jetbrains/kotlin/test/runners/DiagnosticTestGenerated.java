@@ -25392,6 +25392,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt17765.kt")
+            public void testKt17765() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/kt17765.kt");
+            }
+
+            @Test
             @TestMetadata("OverloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/OverloadPriority.kt");
