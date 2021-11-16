@@ -16,20 +16,43 @@
 
 package org.jetbrains.kotlin.cli.jvm.config
 
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 
-interface JvmContentRoot : ContentRoot {
+interface JvmContentRootBase : ContentRoot
+
+interface JvmClasspathRootBase : JvmContentRootBase {
+    val isSdkRoot: Boolean
+}
+
+/**
+ * JVM content root based on a physical file.
+ */
+interface JvmContentRoot : JvmContentRootBase {
     val file: File
 }
 
-data class JvmClasspathRoot(override val file: File, val isSdkRoot: Boolean) : JvmContentRoot {
+/**
+ * JVM content root containing class files in a physical file system (for example a JAR file).
+ */
+data class JvmClasspathRoot(override val file: File, override val isSdkRoot: Boolean) : JvmContentRoot, JvmClasspathRootBase {
     constructor(file: File) : this(file, false)
 }
 
+/**
+ * JVM content root containing class files in a virutal file system.
+ */
+data class VirtualJvmClasspathRoot(val file: VirtualFile, override val isSdkRoot: Boolean) : JvmClasspathRootBase {
+    constructor(file: VirtualFile) : this(file, false)
+}
+
+/**
+ * JVM content root in a physical file system that contains source files.
+ */
 data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 
 data class JvmModulePathRoot(override val file: File) : JvmContentRoot
