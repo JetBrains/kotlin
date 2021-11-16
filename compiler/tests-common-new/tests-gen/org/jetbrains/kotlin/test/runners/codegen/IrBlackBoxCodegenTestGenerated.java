@@ -15887,6 +15887,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("typealiasForContextualClass.kt")
+        public void testTypealiasForContextualClass() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/typealiasForContextualClass.kt");
+        }
+
+        @Test
         @TestMetadata("useFromAnotherModule.kt")
         public void testUseFromAnotherModule() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/useFromAnotherModule.kt");

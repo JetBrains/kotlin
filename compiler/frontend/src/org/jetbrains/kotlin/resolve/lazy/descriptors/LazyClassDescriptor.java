@@ -311,9 +311,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     .map(typeReference -> {
                         KotlinType kotlinType =
                                 c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
-                        return new ReceiverParameterDescriptorImpl(
+                        return DescriptorFactory.createContextReceiverParameterForClass(
                                 this,
-                                new ContextClassReceiver(this, kotlinType, null),
+                                kotlinType,
                                 Annotations.Companion.getEMPTY()
                         );
             }).collect(Collectors.toList());
