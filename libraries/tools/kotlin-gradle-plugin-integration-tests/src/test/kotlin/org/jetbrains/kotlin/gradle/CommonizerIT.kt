@@ -426,6 +426,16 @@ class CommonizerIT : BaseGradleIT() {
         `test multiple cinterops with test source sets and compilations`(false)
     }
 
+    @Test
+    fun `test KT-49735 two kotlin targets with same konanTarget`() {
+        with(Project("commonize-kt-49735-twoKotlinTargets-oneKonanTarget")) {
+            build(":assemble") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                assertSuccessful()
+            }
+        }
+    }
+
     private fun `test multiple cinterops with test source sets and compilations`(testSourceSetsDependingOnMain: Boolean) {
         with(Project("commonizeMultipleCInteropsWithTests", minLogLevel = INFO)) {
 

@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilati
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 
 internal fun Project.getCommonizerTarget(sourceSet: KotlinSourceSet): CommonizerTarget? {
-    val compilationTargets = compilationsBySourceSets(this)[sourceSet].orEmpty()
+    val allCompilationLeafTargets = compilationsBySourceSets(this)[sourceSet].orEmpty()
         .filter { compilation -> compilation !is KotlinMetadataCompilation }
         .map { compilation -> getCommonizerTarget(compilation) ?: return null }
+        .allLeaves()
 
     return when {
-        compilationTargets.isEmpty() -> null
-        compilationTargets.size == 1 -> compilationTargets.single()
-        else -> SharedCommonizerTarget(compilationTargets.allLeaves())
+        allCompilationLeafTargets.isEmpty() -> null
+        allCompilationLeafTargets.size == 1 -> allCompilationLeafTargets.single()
+        else -> SharedCommonizerTarget(allCompilationLeafTargets)
     }
 }
 

@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
@@ -81,6 +82,33 @@ class SourceSetCommonizerTargetTest {
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), project.getCommonizerTarget(nativeMain))
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), project.getCommonizerTarget(commonMain))
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), project.getCommonizerTarget(commonTest))
+    }
+
+    @Test
+    fun `nativeMain linuxX64-a linuxX64-b`() {
+        kotlin.linuxX64("linuxA")
+        kotlin.linuxX64("linuxB")
+
+        val commonMain = kotlin.sourceSets.getByName("commonMain")
+        val commonTest = kotlin.sourceSets.getByName("commonTest")
+        val nativeMain = kotlin.sourceSets.create("nativeMain")
+        val linuxAMain = kotlin.sourceSets.getByName("linuxAMain")
+        val linuxBMain = kotlin.sourceSets.getByName("linuxBMain")
+        val linuxATest = kotlin.sourceSets.getByName("linuxATest")
+        val linuxBTest = kotlin.sourceSets.getByName("linuxBTest")
+
+        nativeMain.dependsOn(commonMain)
+        linuxAMain.dependsOn(nativeMain)
+        linuxBMain.dependsOn(nativeMain)
+
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(linuxAMain))
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(linuxATest))
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(linuxBMain))
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(linuxBTest))
+
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(nativeMain))
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(commonMain))
+        assertEquals(LeafCommonizerTarget(LINUX_X64), project.getCommonizerTarget(commonTest))
     }
 
     @Test
