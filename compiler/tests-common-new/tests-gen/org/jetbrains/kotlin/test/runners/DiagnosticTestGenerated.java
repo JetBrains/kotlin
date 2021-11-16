@@ -26498,6 +26498,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("privateSealedConstructors_error.kt")
+            public void testPrivateSealedConstructors_error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/privateSealedConstructors_error.kt");
+            }
+
+            @Test
+            @TestMetadata("privateSealedConstructors_warning.kt")
+            public void testPrivateSealedConstructors_warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/privateSealedConstructors_warning.kt");
+            }
+
+            @Test
             @TestMetadata("privateTypeInConstructor.kt")
             public void testPrivateTypeInConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/privateTypeInConstructor.kt");

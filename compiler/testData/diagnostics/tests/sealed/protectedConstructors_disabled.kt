@@ -22,7 +22,7 @@ sealed class Case3 private constructor(val x: Int) {
     class Inheritor2 : Case3("Hello")
 }
 
-class Case3Inheritor3 : Case3(20) // should be an error in 1.6 (?)
+class Case3Inheritor3 : Case3(20) // should be an error in 1.8
 
 sealed class Case4 {
     <!NON_PRIVATE_CONSTRUCTOR_IN_SEALED!>protected<!> constructor(x: Int)

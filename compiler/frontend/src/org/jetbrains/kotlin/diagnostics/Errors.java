@@ -810,6 +810,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtParenthesizedExpression> PARENTHESIZED_COMPANION_LHS_DEPRECATION = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS = DiagnosticFactory0.create(WARNING);
+
     // Type inference
 
     DiagnosticFactory0<KtParameter> CANNOT_INFER_PARAMETER_TYPE = DiagnosticFactory0.create(ERROR);

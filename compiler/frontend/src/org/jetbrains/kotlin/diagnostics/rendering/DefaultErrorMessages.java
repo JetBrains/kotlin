@@ -450,6 +450,8 @@ public class DefaultErrorMessages {
 
         MAP.put(PARENTHESIZED_COMPANION_LHS_DEPRECATION, "Access to companion object through parenthesized class name is deprecated. Please, add explicit Companion qualifier.");
 
+        MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "Resolution to private constructor of sealed class. In future it will be allowed to use this constructor only inside declaring sealed class");
+
         MAP.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed");
         MAP.put(LOCAL_VARIABLE_WITH_GETTER, "Local variables are not allowed to have getters");
         MAP.put(LOCAL_VARIABLE_WITH_SETTER, "Local variables are not allowed to have setters");
