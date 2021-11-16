@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAn
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.callResolver.AbstractKtFe10ResolveCallTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.compileTimeConstantProvider.AbstractKtFe10CompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.diagnosticsProvider.AbstractKtFe10CollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10ReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10WhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10DeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10ExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10HLExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.smartCastProvider.AbstractKtFe10HLSmartCastInfoTest
@@ -18,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDecla
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationRenderer.AbstractKtFe10RendererTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeCreator.AbstractKtFe10TypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10HasCommonSubtypeTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10DeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.scopes.AbstractKtFe10SubstitutionOverridesUnwrappingTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirA
 import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.fir.components.callResolver.AbstractFirResolveCallTest
 import org.jetbrains.kotlin.analysis.api.fir.components.compileTimeConstantProvider.AbstractFirCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.fir.components.diagnosticsProvider.AbstractFirCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.fir.components.expressionInfoProvider.AbstractFirReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.fir.components.expressionInfoProvider.AbstractFirWhenMissingCasesTest
 import org.jetbrains.kotlin.analysis.api.fir.components.expressionTypeProvider.AbstractFirDeclarationReturnTypeTest
@@ -194,6 +196,14 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
             fir = AbstractFirDeclarationReturnTypeTest::class, fe10 = AbstractKtFe10DeclarationReturnTypeTest::class
         ) {
             model("declarationReturnType")
+        }
+    }
+
+    component("diagnosticsProvider") {
+        test(
+            fir = AbstractFirCollectDiagnosticsTest::class, fe10 = AbstractKtFe10CollectDiagnosticsTest::class
+        ) {
+            model("diagnostics")
         }
     }
 
