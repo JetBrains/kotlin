@@ -5977,6 +5977,7 @@ fileCheckTest("filecheck_signext_zeroext_objc_export") {
 }
 
 fileCheckTest("filecheck_function_attributes_at_callsite") {
+    enabled = (project.testTarget != 'wasm32') // KT-49739
     annotatedSource = project.file('filecheck/function_attributes_at_callsite.kt')
 }
 
