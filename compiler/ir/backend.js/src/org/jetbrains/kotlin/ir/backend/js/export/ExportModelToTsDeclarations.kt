@@ -114,10 +114,8 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
-        val superClassClause = superClass?.let { " extends ${it.toTypeScript(indent)}" } ?: ""
-        val superInterfacesClause = if (superInterfaces.isNotEmpty()) {
-            " $superInterfacesKeyword " + superInterfaces.joinToString(", ") { it.toTypeScript(indent) }
-        } else ""
+        val superClassClause = superClass?.let { it.toExtendsClause(indent) } ?: ""
+        val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
         val members = members.map {
             if (!ir.isInner || it !is ExportedFunction || !it.isStatic) {
@@ -151,9 +149,33 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
 
         val nestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
         val klassExport = "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
-        val staticsExport = if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent, prefix) else ""
+        val staticsExport =
+            if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent, prefix) else ""
 
         if (name.isValidES5Identifier()) klassExport + staticsExport else ""
+    }
+}
+
+fun ExportedType.toExtendsClause(indent: String): String {
+    return when (this) {
+        is ExportedType.ImplicitlyExportedType -> " /*${type.toExtendsClause(indent)} */"
+        else -> " extends ${toTypeScript(indent)}"
+    }
+}
+
+fun List<ExportedType>.toImplementsClause(superInterfacesKeyword: String, indent: String): String {
+    val (exportedInterfaces, nonExportedInterfaces) = partition { it !is ExportedType.ImplicitlyExportedType }
+    val listOfNonExportedInterfaces = nonExportedInterfaces.joinToString(", ") {
+        (it as ExportedType.ImplicitlyExportedType).type.toTypeScript(indent)
+    }
+    return when {
+        exportedInterfaces.isEmpty() && nonExportedInterfaces.isNotEmpty() ->
+            " /* $superInterfacesKeyword $listOfNonExportedInterfaces */"
+        exportedInterfaces.isNotEmpty() -> {
+            val nonExportedInterfacesTsString = if (nonExportedInterfaces.isNotEmpty()) "/*, $listOfNonExportedInterfaces */" else ""
+            " $superInterfacesKeyword " + exportedInterfaces.joinToString(", ") { it.toTypeScript(indent) } + nonExportedInterfacesTsString
+        }
+        else -> ""
     }
 }
 
@@ -235,4 +257,7 @@ fun ExportedType.toTypeScript(indent: String): String = when (this) {
     }
     is ExportedType.LiteralType.StringLiteralType -> "\"$value\""
     is ExportedType.LiteralType.NumberLiteralType -> value.toString()
+    is ExportedType.ImplicitlyExportedType -> {
+        ExportedType.Primitive.Any.toTypeScript(indent) + "/* ${type.toTypeScript("")} */"
+    }
 }

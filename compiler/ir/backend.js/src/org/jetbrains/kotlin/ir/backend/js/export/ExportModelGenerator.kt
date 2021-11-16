@@ -468,6 +468,7 @@ class ExportModelGenerator(
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
+                val isImplicitlyExported = !klass.isExported(context)
                 val name = if (generateNamespacesForPackages) klass.fqNameWhenAvailable!!.asString() else klass.name.asString()
 
                 when (klass.kind) {
@@ -484,7 +485,7 @@ class ExportModelGenerator(
                         name,
                         type.arguments.map { exportTypeArgument(it) }
                     )
-                }
+                }.withImplicitlyExported(isImplicitlyExported)
             }
 
             else -> error("Unexpected classifier $classifier")
