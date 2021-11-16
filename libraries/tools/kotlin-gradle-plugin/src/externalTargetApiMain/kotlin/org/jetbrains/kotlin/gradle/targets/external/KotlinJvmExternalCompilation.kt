@@ -15,17 +15,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilationToRunnableFiles
 
-class KotlinJvmExternalCompilation
-internal constructor(
+internal class KotlinJvmExternalCompilation(
     target: KotlinExternalTarget,
     name: String,
     private val defaultSourceSetNameOption: DefaultSourceSetNameOption = DefaultSourceSetNameOption.KotlinConvention
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name) {
-
-    sealed class DefaultSourceSetNameOption {
-        object KotlinConvention : DefaultSourceSetNameOption()
-        data class Name(val name: String) : DefaultSourceSetNameOption()
-    }
 
     override val defaultSourceSetName: String
         get() = when (defaultSourceSetNameOption) {

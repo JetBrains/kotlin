@@ -9,10 +9,10 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
-import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation.DefaultSourceSetNameOption
-import org.jetbrains.kotlin.gradle.targets.external.KotlinJvmExternalCompilation.DefaultSourceSetNameOption.KotlinConvention
+import org.jetbrains.kotlin.gradle.targets.external.DefaultSourceSetNameOption
+import org.jetbrains.kotlin.gradle.targets.external.DefaultSourceSetNameOption.KotlinConvention
 
-class KotlinJvmExternalCompilationFactory(
+internal class KotlinJvmExternalCompilationFactory(
     val project: Project,
     val target: KotlinExternalTarget,
 ) : KotlinCompilationFactory<KotlinJvmExternalCompilation> {

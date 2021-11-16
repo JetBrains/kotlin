@@ -7,7 +7,7 @@ dependencies {
     implementation(gradleKotlinDsl())
     implementation(project(":kotlin-gradle-plugin"))
     implementation(project(":kotlin-gradle-plugin", "externalTargetApiElements"))
-    compileOnly("com.android.tools.build:gradle:3.4.0")
+    compileOnly("com.android.tools.build:gradle:7.0.0")
 }
 
 gradlePlugin {
