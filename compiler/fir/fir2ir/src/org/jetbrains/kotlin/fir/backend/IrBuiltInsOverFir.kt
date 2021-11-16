@@ -348,6 +348,9 @@ class IrBuiltInsOverFir(
         }
     }
 
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol
+        get() = TODO("Not yet implemented")
+
     override lateinit var lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
     override lateinit var lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
     override lateinit var greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set

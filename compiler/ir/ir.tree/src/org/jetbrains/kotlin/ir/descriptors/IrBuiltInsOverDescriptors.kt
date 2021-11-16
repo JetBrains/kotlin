@@ -408,6 +408,8 @@ class IrBuiltInsOverDescriptors(
                 it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
     }
 
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
+
     override val enumClass = builtIns.enum.toIrSymbol()
 
     private fun builtInsPackage(vararg packageNameSegments: String) =
