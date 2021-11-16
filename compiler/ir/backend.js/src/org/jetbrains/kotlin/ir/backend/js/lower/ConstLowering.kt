@@ -31,7 +31,7 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
         carrierFactory: (Int, Int, IrType, C) -> IrExpression,
         vararg args: C
     ): IrExpression {
-        val constructor = irClass.constructors.single()
+        val constructor = irClass.constructors.single { it.owner.isPrimary }
         val argType = constructor.owner.valueParameters.first().type
         return IrConstructorCallImpl.fromSymbolOwner(irClass.defaultType, constructor).apply {
             for (i in args.indices) {
