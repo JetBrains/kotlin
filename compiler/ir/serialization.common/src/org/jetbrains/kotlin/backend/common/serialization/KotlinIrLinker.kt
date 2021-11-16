@@ -14,12 +14,17 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrErrorType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -31,6 +36,7 @@ abstract class KotlinIrLinker(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
+    private val allowUnboundSymbols: Boolean = false
 ) : IrDeserializer, FileLocalAwareLinker {
 
     // Kotlin-MPP related data. Consider some refactoring
@@ -57,12 +63,26 @@ abstract class KotlinIrLinker(
         idSignature: IdSignature,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
-        throw SignatureIdNotFoundInModuleWithDependencies(
-            idSignature = idSignature,
-            problemModuleDeserializer = moduleDeserializer,
-            allModuleDeserializers = deserializersForModules.values,
-            userVisibleIrModulesSupport = userVisibleIrModulesSupport
-        ).raiseIssue(messageLogger)
+        if (allowUnboundSymbols) {
+            return object : IrModuleDeserializer(null, KotlinAbiVersion.CURRENT) {
+                override fun contains(idSig: IdSignature): Boolean = false
+
+                override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+                    return referenceDeserializedSymbol(symbolTable, null, symbolKind, idSig)
+                }
+
+                override val moduleFragment: IrModuleFragment
+                    get() = TODO("Not yet implemented")
+                override val moduleDependencies: Collection<IrModuleDeserializer> get() = emptyList()
+            }
+        } else {
+            throw SignatureIdNotFoundInModuleWithDependencies(
+                idSignature = idSignature,
+                problemModuleDeserializer = moduleDeserializer,
+                allModuleDeserializers = deserializersForModules.values,
+                userVisibleIrModulesSupport = userVisibleIrModulesSupport
+            ).raiseIssue(messageLogger)
+        }
     }
 
     fun resolveModuleDeserializer(module: ModuleDescriptor, idSignature: IdSignature?): IrModuleDeserializer {
@@ -145,7 +165,9 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                throw SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
+                if (!allowUnboundSymbols) {
+                    throw SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
+                }
             }
         }
 
@@ -192,10 +214,95 @@ abstract class KotlinIrLinker(
         deserializersForModules.values.forEach { it.init() }
     }
 
+
+    private fun markUnlinkedClassifiers(): Set<IrClassifierSymbol> {
+        if (!allowUnboundSymbols) return emptySet()
+        val entries = fakeOverrideBuilder.fakeOverrideCandidates
+        val result = mutableSetOf<IrClassifierSymbol>()
+
+        fun IrType.isUnlinked(visited: MutableSet<IrClassifierSymbol>): Boolean {
+            val simpleType = this as? IrSimpleType ?: return this !is IrErrorType
+
+            val classifier = simpleType.classifier
+
+            if (!classifier.isBound) {
+                return true
+            }
+
+            if (classifier in result) {
+                return true
+            }
+
+            if (!visited.add(classifier)) return false
+
+            val superTypes = when (val decl = classifier.owner) {
+                is IrClass -> decl.superTypes
+                is IrTypeParameter -> decl.superTypes
+                else -> emptyList()
+            }
+
+            if (superTypes.any { it.isUnlinked(visited) }) {
+                result.add(classifier)
+                return true
+            }
+
+            for (ta in simpleType.arguments) {
+                if (ta is IrTypeProjection) {
+                    val projected = ta.type
+                    if (projected.isUnlinked(visited)) {
+                        result.add(classifier)
+                        return true
+                    }
+                }
+            }
+
+            return false
+        }
+
+        fun IrClass.isUnlinked(visited: MutableSet<IrClassifierSymbol>): Boolean {
+            if (symbol in result) return true
+            for (s in superTypes) {
+                if (s.isUnlinked(visited)) {
+                    result.add(symbol)
+                    return true
+                }
+            }
+            return false
+        }
+
+        val toRemove = mutableListOf<IrClass>()
+
+        for (e in entries) {
+            val klass = e.key
+            if (klass.isUnlinked(mutableSetOf())) {
+                toRemove.add(klass)
+            }
+        }
+
+        toRemove.forEach { entries.remove(it) }
+
+        return result
+    }
+
+    private fun applyToModules(transformer: IrElementTransformerVoid) {
+        deserializersForModules.values.forEach { it.moduleFragment.transformChildrenVoid(transformer) }
+    }
+
     override fun postProcess() {
         finalizeExpectActualLinker()
+
+        val unlinkedClassifiers = markUnlinkedClassifiers()
+
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
+
+        if (allowUnboundSymbols) {
+            val t = UnlinkedDeclarationsProcessor(builtIns, unlinkedClassifiers, messageLogger)
+            t.addLinkageErrorIntoUnlinkedClasses()
+
+            applyToModules(t.signatureTransformer())
+            applyToModules(t.usageTransformer())
+        }
 
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
