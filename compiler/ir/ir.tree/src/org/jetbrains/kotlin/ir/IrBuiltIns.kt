@@ -148,6 +148,8 @@ abstract class IrBuiltIns {
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
 
+    abstract val linkageErrorSymbol: IrSimpleFunctionSymbol
+
     abstract fun functionN(arity: Int): IrClass
     abstract fun kFunctionN(arity: Int): IrClass
     abstract fun suspendFunctionN(arity: Int): IrClass
