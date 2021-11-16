@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFromJava
@@ -42,7 +43,7 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
             JvmIrManglerComputer(builder, newMode, compatibleMode)
 
         override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean =
-            irFunction.isFromJava()
+            irFunction.isFromJava() && (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol == null
 
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
             if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
