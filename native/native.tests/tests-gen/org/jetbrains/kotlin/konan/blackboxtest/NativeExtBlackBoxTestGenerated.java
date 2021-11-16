@@ -16023,6 +16023,59 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/extensionClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @CustomNativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+        public class ExtensionClasses {
+            @Test
+            public void testAllFilesPresentInExtensionClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("constructors.kt")
+            public void testConstructors() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/constructors.kt");
+            }
+
+            @Test
+            @TestMetadata("contextualPrimaryConstructorWithParams.kt")
+            public void testContextualPrimaryConstructorWithParams() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/contextualPrimaryConstructorWithParams.kt");
+            }
+
+            @Test
+            @TestMetadata("edouble.kt")
+            public void testEdouble() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/edouble.kt");
+            }
+
+            @Test
+            @TestMetadata("genericCollection.kt")
+            public void testGenericCollection() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/genericCollection.kt");
+            }
+
+            @Test
+            @TestMetadata("generics.kt")
+            public void testGenerics() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/generics.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("useFromAnotherModule.kt")
+            public void testUseFromAnotherModule() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionClasses/useFromAnotherModule.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
         @TestDataPath("$PROJECT_ROOT")
         @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
@@ -16198,6 +16251,142 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("whenFail.kt")
             public void testWhenFail() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/whenFail.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
+            @TestDataPath("$PROJECT_ROOT")
+            @CustomNativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+            public class ContextReceivers {
+                @Test
+                public void testAllFilesPresentInContextReceivers() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("contextAndExtensionSameName.kt")
+                public void testContextAndExtensionSameName() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/contextAndExtensionSameName.kt");
+                }
+
+                @Test
+                @TestMetadata("inferGenericPropertyType.kt")
+                public void testInferGenericPropertyType() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/inferGenericPropertyType.kt");
+                }
+
+                @Test
+                @TestMetadata("localDeclaration.kt")
+                public void testLocalDeclaration() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/localDeclaration.kt");
+                }
+
+                @Test
+                @TestMetadata("overload.kt")
+                public void testOverload() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/overload.kt");
+                }
+
+                @Test
+                @TestMetadata("overloading.kt")
+                public void testOverloading() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/overloading.kt");
+                }
+
+                @Test
+                @TestMetadata("plusAssign.kt")
+                public void testPlusAssign() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/plusAssign.kt");
+                }
+
+                @Test
+                @TestMetadata("plusMatrix.kt")
+                public void testPlusMatrix() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/plusMatrix.kt");
+                }
+
+                @Test
+                @TestMetadata("simpleCall.kt")
+                public void testSimpleCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/simpleCall.kt");
+                }
+
+                @Test
+                @TestMetadata("this.kt")
+                public void testThis() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/this.kt");
+                }
+
+                @Test
+                @TestMetadata("useFromAnotherModule.kt")
+                public void testUseFromAnotherModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModule.kt");
+                }
+
+                @Test
+                @TestMetadata("useFromAnotherModuleSuspending.kt")
+                public void testUseFromAnotherModuleSuspending() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModuleSuspending.kt");
+                }
+
+                @Test
+                @TestMetadata("useFromAnotherModuleWithDefaultParameterValues.kt")
+                public void testUseFromAnotherModuleWithDefaultParameterValues() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/useFromAnotherModuleWithDefaultParameterValues.kt");
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
+                @TestDataPath("$PROJECT_ROOT")
+                @CustomNativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+                public class FromKEEP {
+                    @Test
+                    public void testAllFilesPresentInFromKEEP() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("canvas.kt")
+                    public void testCanvas() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/canvas.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("compareTo.kt")
+                    public void testCompareTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/compareTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("decimateEveryEvenThird.kt")
+                    public void testDecimateEveryEvenThird() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/decimateEveryEvenThird.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dp.kt")
+                    public void testDp() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/dp.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionalType.kt")
+                    public void testFunctionalType() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/functionalType.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("monoidSum.kt")
+                    public void testMonoidSum() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/monoidSum.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("structuredConcurrency.kt")
+                    public void testStructuredConcurrency() throws Exception {
+                        runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/structuredConcurrency.kt");
+                    }
+                }
             }
         }
 
