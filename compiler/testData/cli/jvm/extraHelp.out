@@ -35,6 +35,8 @@ where advanced options include:
   -Xjava-package-prefix      Package prefix for Java files
   -Xjava-source-roots=<path> Paths to directories with Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
+  -Xjdk-release=<version>    Compile against specified JDK API. Requires JDK 9 or newer.
+                             Supported versions depend on used JDK (For JDK 17 supported targets are 1.8, 9, 10 - 17). Also set `-jvm-target` value
   -Xjspecify-annotations=ignore|strict|warn
                              Specify behavior for jspecify annotations.
                              Default value is 'warn'
