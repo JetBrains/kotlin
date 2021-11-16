@@ -83,7 +83,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             typeAliasConstructor.initialize(
                 null,
                 underlyingConstructorDescriptor.dispatchReceiverParameter?.substitute(substitutorForUnderlyingClass),
-                emptyList(),
+                underlyingConstructorDescriptor.contextReceiverParameters.map { it.substitute(substitutorForUnderlyingClass) },
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,
                 returnType,
@@ -203,10 +203,21 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                 )
             }
 
+            val classDescriptor = typeAliasDescriptor.classDescriptor
+            val contextReceiverParameters = classDescriptor?.let {
+                constructor.contextReceiverParameters.map {
+                    DescriptorFactory.createContextReceiverParameterForClass(
+                        classDescriptor,
+                        substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT),
+                        Annotations.EMPTY
+                    )
+                }
+            } ?: emptyList()
+
             typeAliasConstructor.initialize(
                 receiverParameter,
                 null,
-                emptyList(),
+                contextReceiverParameters,
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,
                 returnType,

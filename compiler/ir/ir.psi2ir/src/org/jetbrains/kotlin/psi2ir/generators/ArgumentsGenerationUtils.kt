@@ -252,7 +252,7 @@ fun StatementGenerator.generateCallReceiver(
             }
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver ?: dispatchReceiver)
             extensionReceiverValue = null
-            contextReceiverValues = emptyList()
+            contextReceiverValues = contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
         }
         else -> {
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
