@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -47,6 +48,8 @@ interface ImplicitScopeTower {
     val isDebuggerContext: Boolean
 
     val isNewInferenceEnabled: Boolean
+
+    val languageVersionSettings: LanguageVersionSettings
 
     val typeApproximator: TypeApproximator
 

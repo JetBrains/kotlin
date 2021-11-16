@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtVisibilityChecker
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilityUtils.isVisible
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -52,14 +54,20 @@ internal class KtFe10VisibilityChecker(
             val bindingContext = analysisContext.analyze(receiverExpression, AnalysisMode.PARTIAL)
             val receiverType = bindingContext.getType(receiverExpression) ?: return false
             val explicitReceiver = ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
-            return DescriptorVisibilities.isVisible(explicitReceiver, targetDescriptor, useSiteDescriptor)
+            return isVisible(
+                explicitReceiver,
+                targetDescriptor,
+                useSiteDescriptor,
+                analysisContext.languageVersionSettings
+            )
         } else {
             val bindingContext = analysisContext.analyze(useSiteDeclaration, AnalysisMode.FULL)
 
             val lexicalScope = position.getResolutionScope(bindingContext)
             if (lexicalScope != null) {
-                return lexicalScope.getImplicitReceiversHierarchy()
-                    .any { DescriptorVisibilities.isVisible(it.value, targetDescriptor, useSiteDescriptor) }
+                return lexicalScope.getImplicitReceiversHierarchy().any {
+                    isVisible(it.value, targetDescriptor, useSiteDescriptor, analysisContext.languageVersionSettings)
+                }
             }
         }
 

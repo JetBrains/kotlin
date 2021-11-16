@@ -40,7 +40,12 @@ abstract class DescriptorVisibility protected constructor() {
      *
      * Also it's important that implementation that take receiver into account do aware about these special values.
      */
-    abstract fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
+    abstract fun isVisible(
+        receiver: ReceiverValue?,
+        what: DeclarationDescriptorWithVisibility,
+        from: DeclarationDescriptor,
+        useSpecialRulesForPrivateSealedConstructors: Boolean
+    ): Boolean
 
     /**
      * True, if it makes sense to check this visibility in imports and not import inaccessible declarations with such visibility.

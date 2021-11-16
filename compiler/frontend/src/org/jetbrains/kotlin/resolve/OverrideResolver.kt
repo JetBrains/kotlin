@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilityUtils.useSpecialRulesForPrivateSealedConstructors
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.resolve.calls.util.isOrOverridesSynthesized
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import java.util.*
 
@@ -366,7 +366,7 @@ class OverrideResolver(
                     override fun nothingToOverride(overriding: CallableMemberDescriptor) {
                         trace.report(NOTHING_TO_OVERRIDE.on(member, declared))
                     }
-                }
+                }, languageVersionSettings
             )
         } else if (!overriddenDescriptors.isEmpty() && !overridesBackwardCompatibilityHelper.overrideCanBeOmitted(declared)) {
             val overridden = overriddenDescriptors.first()
@@ -854,7 +854,8 @@ class OverrideResolver(
         private fun checkOverridesForMemberMarkedOverride(
             declared: CallableMemberDescriptor,
             kotlinTypeRefiner: KotlinTypeRefiner,
-            reportError: CheckOverrideReportForDeclaredMemberStrategy
+            reportError: CheckOverrideReportForDeclaredMemberStrategy,
+            languageVersionSettings: LanguageVersionSettings
         ) {
             val overriddenDescriptors = declared.overriddenDescriptors
 
@@ -868,7 +869,7 @@ class OverrideResolver(
 
                 val invisibleOverriddenDescriptor =
                     findInvisibleOverriddenDescriptor(
-                        declared, declaringClass, kotlinTypeRefiner
+                        declared, declaringClass, kotlinTypeRefiner, languageVersionSettings
                     )
                 if (invisibleOverriddenDescriptor != null) {
                     reportError.cannotOverrideInvisibleMember(declared, invisibleOverriddenDescriptor)
@@ -953,7 +954,8 @@ class OverrideResolver(
         private fun findInvisibleOverriddenDescriptor(
             declared: CallableMemberDescriptor,
             declaringClass: ClassDescriptor,
-            kotlinTypeRefiner: KotlinTypeRefiner
+            kotlinTypeRefiner: KotlinTypeRefiner,
+            languageVersionSettings: LanguageVersionSettings
         ): CallableMemberDescriptor? {
             @OptIn(TypeRefinement::class)
             for (supertype in kotlinTypeRefiner.refineSupertypes(declaringClass)) {
@@ -962,7 +964,7 @@ class OverrideResolver(
                 all.addAll(supertype.memberScope.getContributedVariables(declared.name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
                 for (fromSuper in all) {
                     if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared, null).result == OVERRIDABLE) {
-                        if (OverridingUtil.isVisibleForOverride(declared, fromSuper)) {
+                        if (OverridingUtil.isVisibleForOverride(declared, fromSuper, languageVersionSettings.useSpecialRulesForPrivateSealedConstructors)) {
                             throw IllegalStateException(
                                 "Descriptor " + fromSuper + " is overridable by " + declared +
                                         " and visible but does not appear in its getOverriddenDescriptors()"

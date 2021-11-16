@@ -956,7 +956,9 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             // We already checked it in convertClass()
             val declaration = kaptContext.origins[containingClass]?.descriptor as ClassDescriptor
             val superClass = declaration.getSuperClassOrAny()
-            val superClassConstructor = superClass.constructors.firstOrNull { it.visibility.isVisible(null, it, declaration) }
+            val superClassConstructor = superClass.constructors.firstOrNull {
+                it.visibility.isVisible(null, it, declaration, useSpecialRulesForPrivateSealedConstructors = true)
+            }
 
             val superClassConstructorCall = if (superClassConstructor != null) {
                 val args = mapJList(superClassConstructor.valueParameters) { param ->

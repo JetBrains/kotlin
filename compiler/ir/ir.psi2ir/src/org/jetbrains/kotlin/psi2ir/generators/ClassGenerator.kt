@@ -155,7 +155,7 @@ class ClassGenerator(
         context.extensions.getParentClassStaticScope(classDescriptor)?.run {
             for (parentStaticMember in getContributedDescriptors()) {
                 if (parentStaticMember is FunctionDescriptor &&
-                    DescriptorVisibilities.isVisibleIgnoringReceiver(parentStaticMember, classDescriptor)
+                    DescriptorVisibilityUtils.isVisibleIgnoringReceiver(parentStaticMember, classDescriptor, context.languageVersionSettings)
                 ) {
                     val fakeOverride = createFakeOverrideDescriptorForParentStaticMember(classDescriptor, parentStaticMember)
                     declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let {

@@ -64,10 +64,11 @@ internal abstract class AbstractScopeTowerLevel(
 
             val shouldSkipVisibilityCheck = scopeTower.isNewInferenceEnabled
             if (!shouldSkipVisibilityCheck) {
-                DescriptorVisibilities.findInvisibleMember(
+                DescriptorVisibilityUtils.findInvisibleMember(
                     getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
                     descriptor,
-                    scopeTower.lexicalScope.ownerDescriptor
+                    scopeTower.lexicalScope.ownerDescriptor,
+                    scopeTower.languageVersionSettings
                 )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }

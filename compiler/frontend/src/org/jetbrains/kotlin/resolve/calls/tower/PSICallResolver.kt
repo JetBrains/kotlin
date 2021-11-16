@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class PSICallResolver(
     private val typeResolver: TypeResolver,
@@ -395,6 +394,7 @@ class PSICallResolver(
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        override val languageVersionSettings: LanguageVersionSettings get() = context.languageVersionSettings
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
         override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter get() = this@PSICallResolver.implicitsResolutionFilter

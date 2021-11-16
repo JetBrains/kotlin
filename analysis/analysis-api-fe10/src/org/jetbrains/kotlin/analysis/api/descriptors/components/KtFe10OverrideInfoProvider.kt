@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilityUtils.isVisibleWithAnyReceiver
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.util.ImplementationStatus
 
@@ -31,7 +31,7 @@ internal class KtFe10OverrideInfoProvider(
     override fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean = withValidityAssertion {
         val memberDescriptor = getSymbolDescriptor(memberSymbol) as? DeclarationDescriptorWithVisibility ?: return false
         val classDescriptor = getSymbolDescriptor(classSymbol) ?: return false
-        return DescriptorVisibilities.isVisibleWithAnyReceiver(memberDescriptor, classDescriptor)
+        return isVisibleWithAnyReceiver(memberDescriptor, classDescriptor, analysisSession.analysisContext.languageVersionSettings)
     }
 
     override fun getImplementationStatus(

@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
@@ -35,9 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -50,7 +45,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
@@ -846,7 +840,7 @@ class DoubleColonExpressionResolver(
         ): Boolean {
             val receiver = receiverTypeFor(descriptor, lhs)?.let(::TransientReceiver)
             val setter = descriptor.setter
-            return descriptor.isVar && (setter == null || DescriptorVisibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
+            return descriptor.isVar && (setter == null || DescriptorVisibilities.isVisible(receiver, setter, scopeOwnerDescriptor, false))
         }
 
         fun createKCallableTypeForReference(

@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
-import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
@@ -43,11 +43,16 @@ internal object CheckVisibility : ResolutionPart() {
 
         val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER
         val invisibleMember =
-            DescriptorVisibilities.findInvisibleMember(receiverValue, resolvedCall.candidateDescriptor, containingDescriptor) ?: return
+            DescriptorVisibilityUtils.findInvisibleMember(
+                receiverValue,
+                resolvedCall.candidateDescriptor,
+                containingDescriptor,
+                callComponents.languageVersionSettings
+            ) ?: return
 
         if (dispatchReceiverArgument is ExpressionKotlinCallArgument) {
             val smartCastReceiver = getReceiverValueWithSmartCast(receiverValue, dispatchReceiverArgument.receiver.stableType)
-            if (DescriptorVisibilities.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor) == null) {
+            if (DescriptorVisibilityUtils.findInvisibleMember(smartCastReceiver, candidateDescriptor, containingDescriptor, callComponents.languageVersionSettings) == null) {
                 addDiagnostic(
                     SmartCastDiagnostic(
                         dispatchReceiverArgument,

@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
-import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 fun FunctionDescriptor.hasJavaOriginInHierarchy(): Boolean {
@@ -46,9 +46,13 @@ fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility,
             override fun isVisible(
                 receiver: ReceiverValue?,
                 what: DeclarationDescriptorWithVisibility,
-                from: DeclarationDescriptor
+                from: DeclarationDescriptor,
+                useSpecialRulesForPrivateSealedConstructors: Boolean
             ) = originalVisibility.isVisible(
-                if (isUsedForExtension) DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER else receiver, originalDescriptor, from
+                if (isUsedForExtension) DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER else receiver,
+                originalDescriptor,
+                from,
+                useSpecialRulesForPrivateSealedConstructors
             )
 
             override fun mustCheckInImports() = throw UnsupportedOperationException("Should never be called for this visibility")
