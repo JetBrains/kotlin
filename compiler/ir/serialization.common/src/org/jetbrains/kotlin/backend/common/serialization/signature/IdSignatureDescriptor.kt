@@ -17,15 +17,14 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
 
-    protected open fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder = DescriptorBasedSignatureBuilder(mangler, type)
+    protected open fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder = DescriptorBasedSignatureBuilder(type)
 
-    protected open inner class DescriptorBasedSignatureBuilder(private val mangler: KotlinMangler.DescriptorMangler, private val type: SpecialDeclarationType) :
+    protected open inner class DescriptorBasedSignatureBuilder(private val type: SpecialDeclarationType) :
         IdSignatureBuilder<DeclarationDescriptor>(),
         DeclarationDescriptorVisitor<Unit, Nothing?> {
 
         override fun accept(d: DeclarationDescriptor) {
             d.accept(this, null)
-            assert(!isTopLevelPrivate) { "$d is Top level private" }
         }
 
         private fun createContainer() {
@@ -194,5 +193,9 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
         return if (mangler.run { descriptor.isExported(compatibleMode = false) })
             createSignatureBuilder(SpecialDeclarationType.ANON_INIT).buildSignature(descriptor)
         else null
+    }
+
+    override fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit) {
+        body()
     }
 }

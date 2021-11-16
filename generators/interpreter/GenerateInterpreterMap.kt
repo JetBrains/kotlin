@@ -296,6 +296,10 @@ private fun getIrBuiltIns(): IrBuiltIns {
         override fun composeAnonInitSignature(descriptor: ClassDescriptor): IdSignature? = null
 
         override fun composeFieldSignature(descriptor: PropertyDescriptor): IdSignature? = null
+
+        override fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit) {
+            body()
+        }
     }
     val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
     val typeTranslator = TypeTranslatorImpl(symbolTable, languageSettings, moduleDescriptor)

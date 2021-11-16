@@ -167,10 +167,19 @@ sealed class IdSignature {
         override fun hashCode(): Int = hashCode
     }
 
-    class FileSignature(val fileSymbol: IrFileSymbol) : IdSignature() {
-        override fun equals(other: Any?): Boolean = other is FileSignature && fileSymbol == other.fileSymbol
+    class FileSignature(
+        private val id: Any,
+        private val fqName: FqName,
+        val fileName: String
+    ) : IdSignature() {
 
-        override fun hashCode(): Int = fileSymbol.owner.hashCode()
+        constructor(fileSymbol: IrFileSymbol) : this(
+            fileSymbol, fileSymbol.owner.fqName, fileSymbol.owner.fileEntry.name
+        )
+
+        override fun equals(other: Any?): Boolean = other is FileSignature && id == other.id
+
+        override fun hashCode(): Int = id.hashCode()
 
         override val isPubliclyVisible: Boolean
             get() = true
@@ -186,10 +195,10 @@ sealed class IdSignature {
             error("Should not reach here ($this)")
         }
 
-        override fun packageFqName(): FqName = fileSymbol.owner.fqName
+        override fun packageFqName(): FqName = fqName
 
         override fun render(): String {
-            return "File '${fileSymbol.owner.fileEntry.name}'"
+            return "File '$fileName'"
         }
 
         override val hasTopLevel: Boolean
@@ -386,4 +395,6 @@ interface IdSignatureComposer {
     fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature?
     fun composeFieldSignature(descriptor: PropertyDescriptor): IdSignature?
     fun composeAnonInitSignature(descriptor: ClassDescriptor): IdSignature?
+
+    fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit)
 }

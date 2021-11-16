@@ -59,7 +59,7 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
 
 class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : DescriptorBasedKotlinManglerImpl() {
     private object ExportChecker : DescriptorExportCheckerVisitor() {
-        override fun DeclarationDescriptor.isPlatformSpecificExported() = false
+        override fun DeclarationDescriptor.isPlatformSpecificExported() = true
     }
 
     private class JvmDescriptorManglerComputer(

@@ -62,11 +62,13 @@ fun deserializeFromByteArray(
 
     // Only needed for local signature computation.
     val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), toplevelParent.packageFqName!!)
+    val dummyFileSignature = IdSignature.FileSignature(Any(), toplevelParent.packageFqName!!, "<unknown>")
 
     val symbolDeserializer = IrSymbolDeserializer(
         symbolTable,
         irLibraryFile,
         fileSymbol = dummyIrFile.symbol,
+        fileSignature = dummyFileSignature,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
         handleExpectActualMapping = { _, symbol -> symbol } no expect declarations
@@ -100,7 +102,9 @@ fun deserializeFromByteArray(
         }
     }
 
-    ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
+    stubGenerator.symbolTable.signaturer.withFileSignature(dummyFileSignature) {
+        ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
+    }
     buildFakeOverridesForLocalClasses(stubGenerator.symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)
 }
 
