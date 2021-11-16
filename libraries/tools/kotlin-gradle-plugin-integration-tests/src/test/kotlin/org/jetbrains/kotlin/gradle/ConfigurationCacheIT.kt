@@ -221,7 +221,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 }
 
 @SimpleGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_6_6)
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(configurationCache = true)

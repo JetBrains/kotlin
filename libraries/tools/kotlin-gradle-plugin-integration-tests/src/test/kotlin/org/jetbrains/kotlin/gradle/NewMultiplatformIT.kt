@@ -1841,7 +1841,12 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testWasmJs() = with(Project("new-mpp-wasm-js", gradleVersion)) {
+    fun testWasmJs() = with(Project(
+        "new-mpp-wasm-js",
+        // TODO: this test fails with deprecation error on Gradle <7.0
+        // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
+        gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0")
+    )) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         build("build") {

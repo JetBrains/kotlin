@@ -1169,8 +1169,7 @@ class KotlinGradleIT : BaseGradleIT() {
     @Test
     fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(
         Project(
-            projectName = "kt-35942-android",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1")
+            projectName = "kt-35942-android"
         )
     ) {
         build(

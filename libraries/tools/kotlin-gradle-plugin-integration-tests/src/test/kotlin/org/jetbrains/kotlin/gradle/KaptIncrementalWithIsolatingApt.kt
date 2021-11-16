@@ -276,8 +276,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         if (System.getProperty("os.name")?.toLowerCase()?.contains("windows") == true) return
 
         val project = Project(
-            projectName = "kaptIncrementalWithParceler",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1")
+            projectName = "kaptIncrementalWithParceler"
         ).apply {
             setupWorkingDir()
         }

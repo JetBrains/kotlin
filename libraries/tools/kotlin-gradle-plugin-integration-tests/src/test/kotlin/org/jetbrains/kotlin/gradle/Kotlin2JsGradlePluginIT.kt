@@ -1025,6 +1025,9 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
 
 @JsGradlePluginTests
 class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
+    // TODO: This test fails with deprecation error on Gradle <7.0
+    // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @DisplayName("js with both backends mode builds successfully")
     @GradleTest
     fun testJsBothModeWithTests(gradleVersion: GradleVersion) {

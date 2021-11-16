@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.GradleVersionRequired.Companion.OLDEST_SUPPORTED
+import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 import org.junit.Assume
 
 sealed class GradleVersionRequired(val minVersion: String, val maxVersion: String?) {
     companion object {
-        const val OLDEST_SUPPORTED = "6.1.1"
+        const val OLDEST_SUPPORTED = minSupportedGradleVersion
 
-        val FOR_MPP_SUPPORT = AtLeast("6.1.1")
+        val FOR_MPP_SUPPORT = AtLeast(OLDEST_SUPPORTED)
     }
 
     class Exact(version: String) : GradleVersionRequired(version, version)
