@@ -109,7 +109,6 @@ abstract class BuildMetaInfo {
         "intellijPluginRoot",
         "kotlinHome",
         "listPhases",
-        "namesExcludedFromDumping",
         "phasesToDump",
         "phasesToDumpAfter",
         "phasesToDumpBefore",
