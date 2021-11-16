@@ -23,6 +23,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.CopyDefaultValuesFromExpectLowering
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.KlibAssignableParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
@@ -103,6 +104,8 @@ class ComposeIrGenerationExtension(
             bindingTrace,
             metrics
         ).lower(moduleFragment)
+
+        CopyDefaultValuesFromExpectLowering().lower(moduleFragment)
 
         val mangler = when {
             pluginContext.platform.isJs() -> JsManglerIr
