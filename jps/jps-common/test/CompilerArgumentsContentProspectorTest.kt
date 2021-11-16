@@ -1,11 +1,14 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.Assert.*
 import kotlin.reflect.KProperty
-
 
 class CompilerArgumentsContentProspectorTest {
 
@@ -127,7 +130,6 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::phasesToDumpBefore,
             CommonCompilerArguments::phasesToDumpAfter,
             CommonCompilerArguments::phasesToDump,
-            CommonCompilerArguments::namesExcludedFromDumping,
             CommonCompilerArguments::phasesToValidateBefore,
             CommonCompilerArguments::phasesToValidateAfter,
             CommonCompilerArguments::phasesToValidate,

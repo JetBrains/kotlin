@@ -21,7 +21,6 @@ class PhaseConfigBuilder(private val compoundPhase: CompilerPhase<*, *, *>) {
     var dumpOnlyFqName: String? = null
     val toValidateStateBefore = mutableSetOf<AnyNamedPhase>()
     val toValidateStateAfter = mutableSetOf<AnyNamedPhase>()
-    val namesOfElementsExcludedFromDumping = mutableSetOf<String>()
     var needProfiling = false
     var checkConditions = false
     var checkStickyConditions = false
@@ -30,7 +29,6 @@ class PhaseConfigBuilder(private val compoundPhase: CompilerPhase<*, *, *>) {
         compoundPhase, compoundPhase.toPhaseMap(), enabled,
         verbose, toDumpStateBefore, toDumpStateAfter, dumpToDirectory, dumpOnlyFqName,
         toValidateStateBefore, toValidateStateAfter,
-        namesOfElementsExcludedFromDumping,
         needProfiling, checkConditions, checkStickyConditions
     )
 }
@@ -46,7 +44,6 @@ class PhaseConfig(
     override val dumpOnlyFqName: String? = null,
     private val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
     private val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
-    private val namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
     override val needProfiling: Boolean = false,
     override val checkConditions: Boolean = false,
     override val checkStickyConditions: Boolean = false
@@ -60,7 +57,6 @@ class PhaseConfig(
         it.dumpOnlyFqName = dumpOnlyFqName
         it.toValidateStateBefore.addAll(toValidateStateBefore)
         it.toValidateStateAfter.addAll(toValidateStateAfter)
-        it.namesOfElementsExcludedFromDumping.addAll(namesOfElementsExcludedFromDumping)
         it.needProfiling = needProfiling
         it.checkConditions = checkConditions
         it.checkStickyConditions = checkStickyConditions

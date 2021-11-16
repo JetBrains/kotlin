@@ -249,12 +249,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var phasesToDump: Array<String>? by FreezableVar(null)
 
     @Argument(
-        value = "-Xexclude-from-dumping",
-        description = "Names of elements that should not be dumped"
-    )
-    var namesExcludedFromDumping: Array<String>? by FreezableVar(null)
-
-    @Argument(
         value = "-Xdump-directory",
         description = "Dump backend state into directory"
     )

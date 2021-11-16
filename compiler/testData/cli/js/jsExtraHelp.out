@@ -90,7 +90,6 @@ where advanced options include:
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xexclude-from-dumping     Names of elements that should not be dumped
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
