@@ -232,6 +232,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
     var errorTolerancePolicy: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
+    var partialLinkage: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
     var wasm: Boolean by FreezableVar(false)
 

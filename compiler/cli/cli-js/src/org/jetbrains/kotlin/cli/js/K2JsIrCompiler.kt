@@ -135,6 +135,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.REPOSITORIES, repositories)
 
+        configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, arguments.partialLinkage)
+
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
         for (arg in arguments.freeArgs) {
