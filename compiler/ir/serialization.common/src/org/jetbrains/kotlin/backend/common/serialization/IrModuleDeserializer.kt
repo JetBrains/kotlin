@@ -51,9 +51,11 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
     }
 }
 
-abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val libraryAbiVersion: KotlinAbiVersion) {
+abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescriptor?, val libraryAbiVersion: KotlinAbiVersion) {
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol
+
+    val moduleDescriptor: ModuleDescriptor get() = _moduleDescriptor ?: error("No ModuleDescriptor provided")
 
     open fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
         error("Unsupported operation")
