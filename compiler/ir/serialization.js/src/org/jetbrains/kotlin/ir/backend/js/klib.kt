@@ -412,6 +412,8 @@ fun getIrModuleInfoForKlib(
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
+    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+
     val irLinker =
         JsIrLinker(
             null,
@@ -421,7 +423,8 @@ fun getIrModuleInfoForKlib(
             null,
             null,
             loweredIcData,
-            friendModules
+            friendModules,
+            allowUnboundSymbols
         )
 
     val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
@@ -479,7 +482,8 @@ fun getIrModuleInfoForSourceFiles(
             feContext,
             null,
             loweredIcData,
-            friendModules
+            friendModules,
+            allowUnboundSymbols
         )
     val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null,null, mapping)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
