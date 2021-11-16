@@ -2770,7 +2770,7 @@ class ComposableFunctionBodyTransformer(
     private fun visitRememberCall(expression: IrCall): IrExpression {
         val inputArgs = mutableListOf<IrExpression>()
         var hasSpreadArgs = false
-        var calculationArg: IrFunctionExpression? = null
+        var calculationArg: IrExpression? = null
         for (i in 0 until expression.valueArgumentsCount) {
             val param = expression.symbol.owner.valueParameters[i]
             val arg = expression.getValueArgument(i)
@@ -2781,7 +2781,7 @@ class ComposableFunctionBodyTransformer(
                 break
 
             when {
-                param.name.identifier == "calculation" && arg is IrFunctionExpression -> {
+                param.name.identifier == "calculation" -> {
                     calculationArg = arg
                 }
                 arg is IrVararg -> {
@@ -2820,12 +2820,10 @@ class ComposableFunctionBodyTransformer(
 
         encounteredComposableCall(withGroups = false)
 
-        val invalidExpr = if (inputArgs.isEmpty())
-            irConst(false)
-        else
-            inputArgs
-                .map { irChangedOrInferredChanged(it) }
-                .reduce { acc, changed -> irBooleanOr(acc, changed) }
+        val invalidExpr = inputArgs
+            .mapNotNull(::irChangedOrInferredChanged)
+            .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
+            ?: irConst(false)
 
         return irCache(
             expression.startOffset,
@@ -2836,12 +2834,12 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun irChangedOrInferredChanged(arg: IrExpression): IrExpression {
+    private fun irChangedOrInferredChanged(arg: IrExpression): IrExpression? {
         val meta = paramMetaOf(arg, isProvided = true)
         val param = meta.maskParam
 
         return when {
-            meta.isStatic -> irConst(false)
+            meta.isStatic -> null
             meta.isCertain &&
                 meta.stability.knownStable() &&
                 param is IrChangedBitMaskVariable -> {
