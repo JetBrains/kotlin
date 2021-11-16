@@ -116,7 +116,7 @@ class FirDelegatedPropertyInferenceSession(
         return object : AbstractConeSubstitutor(typeContext) {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 if (type !is ConeStubType) return null
-                return bindings[type.constructor]
+                return bindings[type.constructor].updateNullabilityIfNeeded(type)
             }
         }
     }

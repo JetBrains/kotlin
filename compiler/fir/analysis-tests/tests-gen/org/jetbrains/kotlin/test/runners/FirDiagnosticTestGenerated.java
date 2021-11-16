@@ -4974,6 +4974,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("nullableTypeDelegate.kt")
+            public void testNullableTypeDelegate() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/nullableTypeDelegate.kt");
+            }
+
+            @Test
             @TestMetadata("propertyWithFunctionalType.kt")
             public void testPropertyWithFunctionalType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/propertyWithFunctionalType.kt");
