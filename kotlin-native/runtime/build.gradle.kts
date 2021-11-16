@@ -404,14 +404,20 @@ val stdLibSrcDirs =  interopSrcDirs + listOf(
         project(":kotlin-stdlib-common").file("../native-wasm/src/")
 )
 
-val args = listOf("-nopack", "-nostdlib", "-no-default-libs", "-no-endorsed-libs", /* -Werror (TODO: check) */)
+val args = listOf<String>(/* -Werror (TODO: check) */)
 
 lateinit var stdlibBuildTask: TaskProvider<Task>
 
 konanArtifacts {
     library("stdlib") {
         baseDir(project.buildDir.resolve("stdlib"))
+
         enableMultiplatform(true)
+        noStdLib(true)
+        noPack(true)
+        noDefaultLibs(true)
+        noEndorsedLibs(true)
+
         extraOpts(args + project.globalBuildArgs)
         extraOpts(
                 "-module-name", "stdlib",
@@ -421,6 +427,7 @@ konanArtifacts {
                 "-opt-in=kotlin.native.internal.InternalForKotlinNative",
                 "-opt-in=kotlin.native.SymbolNameIsDeprecated"
         )
+
         srcFiles(commonBuiltinsSrc)
         commonStdlibSrcDirs.forEach { commonSrcDir(it) }
         testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }

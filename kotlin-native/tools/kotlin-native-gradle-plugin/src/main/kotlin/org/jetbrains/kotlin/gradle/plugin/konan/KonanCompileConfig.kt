@@ -66,6 +66,7 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun enableDebug(flag: Boolean) = tasks().forEach { it.configure { enableDebug(flag) } }
     override fun noStdLib(flag: Boolean) = tasks().forEach { it.configure { noStdLib(flag) } }
     override fun noMain(flag: Boolean) = tasks().forEach { it.configure { noMain(flag) } }
+    override fun noPack(flag: Boolean) = tasks().forEach { it.configure { noPack(flag) } }
     override fun enableOptimizations(flag: Boolean) = tasks().forEach { it.configure { enableOptimizations(flag) } }
     override fun enableAssertions(flag: Boolean) = tasks().forEach { it.configure { enableAssertions(flag) } }
 

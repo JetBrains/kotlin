@@ -74,6 +74,7 @@ interface KonanCompileSpec: KonanBuildingSpec {
     fun enableDebug(flag: Boolean)
     fun noStdLib(flag: Boolean)
     fun noMain(flag: Boolean)
+    fun noPack(flag: Boolean)
     fun enableOptimizations(flag: Boolean)
     fun enableAssertions(flag: Boolean)
 
