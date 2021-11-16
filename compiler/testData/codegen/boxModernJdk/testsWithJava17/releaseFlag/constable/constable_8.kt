@@ -1,4 +1,4 @@
-// RELEASE: 8
+// JDK_RELEASE: 8
 // CHECK_BYTECODE_TEXT
 // 0 CHECKCAST java/lang/constant/Constable
 // 0 LOCALVARIABLE constable Ljava/lang/constant/Constable;

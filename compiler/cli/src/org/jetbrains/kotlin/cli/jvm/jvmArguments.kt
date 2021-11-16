@@ -45,7 +45,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             } else {
                 //don't use release flag if it equals to compilation JDK version
                 if (value != getJavaVersion() || arguments.jdkHome != null) {
-                    put(JVMConfigurationKeys.RELEASE, value)
+                    put(JVMConfigurationKeys.JDK_RELEASE, value)
                 }
                 if (jvmTargetArg != null && jvmTargetArg != releaseTargetArg) {
                     messageCollector.report(
@@ -185,7 +185,7 @@ fun CompilerConfiguration.configureExplicitContentRoots(arguments: K2JVMCompiler
 }
 
 fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: K2JVMCompilerArguments) {
-    val releaseFlagValue = this.get(JVMConfigurationKeys.RELEASE, 0)
+    val releaseFlagValue = this.get(JVMConfigurationKeys.JDK_RELEASE, 0)
     val isModularJava = isModularJava() && (releaseFlagValue <= 0 || releaseFlagValue >= 9)
 
     fun addRoot(moduleName: String, libraryName: String, getLibrary: (KotlinPaths) -> File, noLibraryArgument: String) {

@@ -1,4 +1,4 @@
-// RELEASE: 13
+// JDK_RELEASE: 13
 // CHECK_BYTECODE_TEXT
 // 1 public final static clear\(Ljava/nio/ByteBuffer;\)Ljava/nio/ByteBuffer;
 // 1 INVOKEVIRTUAL java/nio/ByteBuffer.clear \(\)Ljava/nio/ByteBuffer;

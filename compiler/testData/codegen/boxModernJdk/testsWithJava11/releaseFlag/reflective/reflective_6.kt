@@ -1,4 +1,4 @@
-// RELEASE: 6
+// JDK_RELEASE: 6
 // CHECK_BYTECODE_TEXT
 // 0 CHECKCAST java/lang/ReflectiveOperationException
 // 0 LOCALVARIABLE reflective Ljava/lang/ReflectiveOperationException;

@@ -59,7 +59,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )
 
-    val RELEASE by valueDirective(
+    val JDK_RELEASE by valueDirective(
         description = "Configures corresponding release flag",
         parser = Integer::valueOf
     )

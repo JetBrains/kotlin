@@ -106,7 +106,7 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<JvmStringConcat> STRING_CONCAT =
             CompilerConfigurationKey.create("Specifies string concatenation scheme");
 
-    public static final CompilerConfigurationKey<Integer> RELEASE =
+    public static final CompilerConfigurationKey<Integer> JDK_RELEASE =
             CompilerConfigurationKey.create("Specifies JDK API version");
 
     public static final CompilerConfigurationKey<JvmClosureGenerationScheme> SAM_CONVERSIONS =
