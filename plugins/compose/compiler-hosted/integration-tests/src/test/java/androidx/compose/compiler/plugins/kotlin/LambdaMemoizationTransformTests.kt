@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin
 import org.junit.Test
 
 class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
-
     @Test
     fun testCapturedThisFromFieldInitializer(): Unit = verifyComposeIrTransform(
         """
@@ -184,7 +183,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 {
                   Local().something(2)
                 }
-              }, %composer, 0)
+              }, %composer, 0b1110 and %changed or 0b01110000 and %changed)
               %composer.endReplaceableGroup()
             }
         """,
@@ -220,7 +219,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 {
                   Foo(1)
                 }
-              }, %composer, 0)
+              }, %composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
         """,
@@ -654,7 +653,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               {
                 println("Captures a" + a)
               }
-            }, %composer, 0), %composer, 0)
+            }, %composer, 0b1110 and %dirty), %composer, 0)
           } else {
             %composer.skipToGroupEnd()
           }
