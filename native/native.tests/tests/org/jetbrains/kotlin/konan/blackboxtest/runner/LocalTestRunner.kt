@@ -15,7 +15,7 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
     override val visibleProcessName get() = "Tested process"
     override val executable get() = testRun.executable
 
-    override val programArgs = buildList<String> {
+    override val programArgs = buildList {
         add(executable.executableFile.path)
         testRun.runParameters.forEach { it.applyTo(this) }
     }
@@ -74,29 +74,29 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
                 }
             }
 
-            verifyExpectation(true, testStatuses.isNotEmpty()) { "No tests have been executed." }
+            verifyExpectation(testStatuses.isNotEmpty()) { "No tests have been executed." }
 
             val passedTests = testStatuses[GTEST_STATUS_OK]?.size ?: 0
-            verifyExpectation(true, passedTests > 0) { "No passed tests." }
+            verifyExpectation(passedTests > 0) { "No passed tests." }
 
             testRun.runParameters.get<TestRunParameter.WithFilter> {
                 val excessiveTests = testStatuses.getValue(GTEST_STATUS_OK).filter { testName -> !testMatches(testName) }
-                verifyExpectation(true, excessiveTests.isEmpty()) { "Excessive tests have been executed: $excessiveTests." }
+                verifyExpectation(excessiveTests.isEmpty()) { "Excessive tests have been executed: $excessiveTests." }
             }
 
             val failedTests = (testStatuses - GTEST_STATUS_OK).values.sumOf { it.size }
             verifyExpectation(0, failedTests) { "There are failed tests." }
 
-            testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {
-                val mergedOutput = cleanStdOut.toString() + stdErr
-                verifyExpectation(expectedOutputDataFile.readText(), mergedOutput) { "Tested process output mismatch." }
-            }
+            verifyOutputData(mergedOutput = cleanStdOut.toString() + stdErr)
         }
 
-        private fun verifyPlainTest() {
+        private fun verifyPlainTest() = verifyOutputData(mergedOutput = stdOut + stdErr)
+
+        private fun verifyOutputData(mergedOutput: String) {
             testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {
-                val mergedOutput = stdOut + stdErr
-                verifyExpectation(expectedOutputDataFile.readText(), mergedOutput) { "Tested process output mismatch." }
+                verifyExpectation(expectedOutputDataFile.readText(), mergedOutput) {
+                    "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
+                }
             }
         }
     }
