@@ -621,7 +621,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 if (includeCompileClasspath && project.classLoadersCacheSize() > 0) {
                     project.logger.warn(
                         "ClassLoaders cache can't be enabled together with AP discovery in compilation classpath."
-                                + "\nSet 'kapt.includeCompileClasspath = false' to disable discovery"
+                                + "\nSet 'kapt.include.compile.classpath=false' to disable discovery"
                     )
                 } else {
                     it.classLoadersCacheSize = project.classLoadersCacheSize()
