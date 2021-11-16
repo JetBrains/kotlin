@@ -120,11 +120,11 @@ FILE fqName:<root> fileName:/functionalType.kt
     BLOCK_BODY
       VAR name:lf1 type:@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> [val]
         FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, <anonymous parameter 0>:<root>.Param) returnType:kotlin.Unit
             contextReceiverParametersCount: 1
             $receiver: VALUE_PARAMETER name:$this$null type:<root>.R
             VALUE_PARAMETER name:<this> index:0 type:<root>.C
-            VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
+            VALUE_PARAMETER UNDERSCORE_PARAMETER name:<anonymous parameter 0> index:1 type:<root>.Param
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public final fun <get-r> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
@@ -134,10 +134,10 @@ FILE fqName:<root> fileName:/functionalType.kt
                   $this: GET_VAR '<this>: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
       VAR name:lf2 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> [val]
         FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C, <anonymous parameter 0>:<root>.Param) returnType:kotlin.Unit
             contextReceiverParametersCount: 1
             VALUE_PARAMETER name:<this> index:0 type:<root>.C
-            VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
+            VALUE_PARAMETER UNDERSCORE_PARAMETER name:<anonymous parameter 0> index:1 type:<root>.Param
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
@@ -188,11 +188,11 @@ FILE fqName:<root> fileName:/functionalType.kt
                         $receiver: GET_VAR '$this$with: <root>.R declared in <root>.test.<anonymous>.<anonymous>' type=<root>.R origin=null
                         <this>: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
                         g: FUN_EXPR type=@[ExtensionFunctionType] @[ContextFunctionTypeParams(count = '1')] kotlin.Function3<<root>.C, <root>.R, <root>.Param, kotlin.Unit> origin=LAMBDA
-                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.R, <this>:<root>.C, <anonymous parameter 0>:<root>.Param) returnType:kotlin.Unit
                             contextReceiverParametersCount: 1
                             $receiver: VALUE_PARAMETER name:$this$f1 type:<root>.R
                             VALUE_PARAMETER name:<this> index:0 type:<root>.C
-                            VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
+                            VALUE_PARAMETER UNDERSCORE_PARAMETER name:<anonymous parameter 0> index:1 type:<root>.Param
                             BLOCK_BODY
                               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                                 CALL 'public final fun <get-r> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
@@ -206,10 +206,10 @@ FILE fqName:<root> fileName:/functionalType.kt
                       CALL 'public final fun f2 (<this>: <root>.C, g: @[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                         <this>: GET_VAR '$this$with: <root>.C declared in <root>.test.<anonymous>' type=<root>.C origin=null
                         g: FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function2<<root>.C, <root>.Param, kotlin.Unit> origin=LAMBDA
-                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C, $noName_0:<root>.Param) returnType:kotlin.Unit
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<this>:<root>.C, <anonymous parameter 0>:<root>.Param) returnType:kotlin.Unit
                             contextReceiverParametersCount: 1
                             VALUE_PARAMETER name:<this> index:0 type:<root>.C
-                            VALUE_PARAMETER name:$noName_0 index:1 type:<root>.Param
+                            VALUE_PARAMETER UNDERSCORE_PARAMETER name:<anonymous parameter 0> index:1 type:<root>.Param
                             BLOCK_BODY
                               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                                 CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
