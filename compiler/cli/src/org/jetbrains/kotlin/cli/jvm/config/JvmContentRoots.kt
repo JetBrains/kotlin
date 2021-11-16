@@ -29,30 +29,19 @@ interface JvmClasspathRootBase : JvmContentRootBase {
     val isSdkRoot: Boolean
 }
 
-/**
- * JVM content root based on a physical file.
- */
 interface JvmContentRoot : JvmContentRootBase {
     val file: File
 }
 
-/**
- * JVM content root containing class files in a physical file system (for example a JAR file).
- */
 data class JvmClasspathRoot(override val file: File, override val isSdkRoot: Boolean) : JvmContentRoot, JvmClasspathRootBase {
     constructor(file: File) : this(file, false)
 }
 
-/**
- * JVM content root containing class files in a virutal file system.
- */
+@Suppress("unused") // Might be useful for external tools which invoke kotlinc with their own file system, not based on java.io.File.
 data class VirtualJvmClasspathRoot(val file: VirtualFile, override val isSdkRoot: Boolean) : JvmClasspathRootBase {
     constructor(file: VirtualFile) : this(file, false)
 }
 
-/**
- * JVM content root in a physical file system that contains source files.
- */
 data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 
 data class JvmModulePathRoot(override val file: File) : JvmContentRoot
