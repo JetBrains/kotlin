@@ -408,6 +408,9 @@ class PSICallResolver(
             }
         }
 
+        override fun getNameForGivenImportAlias(name: Name): Name? =
+            context.call.callElement.containingKtFile.getNameForGivenImportAlias(name)
+
         override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,
             name: Name,

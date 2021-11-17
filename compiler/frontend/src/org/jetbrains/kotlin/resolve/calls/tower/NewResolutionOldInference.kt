@@ -370,6 +370,9 @@ class NewResolutionOldInference(
                 cache.getOrPut(it) { resolutionContext.transformToReceiverWithSmartCastInfo(it) }
             }
 
+        override fun getNameForGivenImportAlias(name: Name): Name? =
+            resolutionContext.call.callElement.containingKtFile.getNameForGivenImportAlias(name)
+
         override val lexicalScope: LexicalScope get() = resolutionContext.scope
 
         override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
