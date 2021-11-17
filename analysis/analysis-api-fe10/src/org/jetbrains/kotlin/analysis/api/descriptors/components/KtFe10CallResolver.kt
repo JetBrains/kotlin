@@ -65,8 +65,8 @@ internal class KtFe10CallResolver(
             val accessorSymbol = when (targetDescriptor) {
                 is SyntheticJavaPropertyDescriptor -> {
                     when {
-                        access.isWrite -> targetDescriptor.setMethod?.let { KtFe10DescFunctionSymbol(it, analysisContext) }
-                        access.isRead -> KtFe10DescFunctionSymbol(targetDescriptor.getMethod, analysisContext)
+                        access.isWrite -> targetDescriptor.setMethod?.let { KtFe10DescFunctionSymbol.build(it, analysisContext) }
+                        access.isRead -> KtFe10DescFunctionSymbol.build(targetDescriptor.getMethod, analysisContext)
                         else -> null
                     }
                 }

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
-internal class KtFe10DescFunctionSymbol(
+internal class KtFe10DescFunctionSymbol private constructor(
     override val descriptor: FunctionDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtFunctionSymbol(), KtFe10DescMemberSymbol<FunctionDescriptor> {
@@ -90,5 +90,11 @@ internal class KtFe10DescFunctionSymbol(
         }
 
         return KtFe10NeverRestoringSymbolPointer()
+    }
+
+    companion object {
+        fun build(descriptor: FunctionDescriptor, analysisContext: Fe10AnalysisContext): KtFe10DescFunctionSymbol {
+            return KtFe10DescFunctionSymbol(descriptor, analysisContext)
+        }
     }
 }

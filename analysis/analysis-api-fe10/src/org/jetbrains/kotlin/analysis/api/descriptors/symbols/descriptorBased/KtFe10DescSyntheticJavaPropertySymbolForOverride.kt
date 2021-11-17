@@ -52,12 +52,12 @@ internal class KtFe10DescSyntheticJavaPropertySymbolForOverride(
         }
 
     override val javaGetterSymbol: KtFunctionSymbol
-        get() = withValidityAssertion { KtFe10DescFunctionSymbol(descriptor.getterMethod, analysisContext) }
+        get() = withValidityAssertion { KtFe10DescFunctionSymbol.build(descriptor.getterMethod, analysisContext) }
 
     override val javaSetterSymbol: KtFunctionSymbol?
         get() = withValidityAssertion {
             val setMethod = descriptor.setterMethod ?: return null
-            return KtFe10DescFunctionSymbol(setMethod, analysisContext)
+            return KtFe10DescFunctionSymbol.build(setMethod, analysisContext)
         }
 
     override val hasSetter: Boolean

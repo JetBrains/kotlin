@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
@@ -129,7 +128,7 @@ internal fun CallableDescriptor.toKtCallableSymbol(analysisContext: Fe10Analysis
             if (DescriptorUtils.isAnonymousFunction(this)) {
                 KtFe10DescAnonymousFunctionSymbol(this, analysisContext)
             } else {
-                KtFe10DescFunctionSymbol(this, analysisContext)
+                KtFe10DescFunctionSymbol.build(this, analysisContext)
             }
         }
         is SyntheticFieldDescriptor -> KtFe10DescSyntheticFieldSymbol(this, analysisContext)
