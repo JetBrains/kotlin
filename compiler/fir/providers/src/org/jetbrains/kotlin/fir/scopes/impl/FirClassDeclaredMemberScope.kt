@@ -7,15 +7,17 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-abstract class FirClassDeclaredMemberScope : FirContainingNamesAwareScope()
+abstract class FirClassDeclaredMemberScope(val classId: ClassId) : FirContainingNamesAwareScope()
 
 class FirClassDeclaredMemberScopeImpl(
     val useSiteSession: FirSession,
@@ -23,7 +25,7 @@ class FirClassDeclaredMemberScopeImpl(
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
     symbolProvider: FirSymbolProvider? = null
-) : FirClassDeclaredMemberScope() {
+) : FirClassDeclaredMemberScope(klass.classId) {
     private val nestedClassifierScope: FirContainingNamesAwareScope? = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {

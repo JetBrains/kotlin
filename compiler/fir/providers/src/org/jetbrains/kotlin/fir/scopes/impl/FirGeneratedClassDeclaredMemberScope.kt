@@ -28,7 +28,7 @@ class FirGeneratedClassDeclaredMemberScope(
     val useSiteSession: FirSession,
     val firClass: FirClass,
     needNestedClassifierScope: Boolean
-) : FirClassDeclaredMemberScope() {
+) : FirClassDeclaredMemberScope(firClass.classId) {
     private val extensions: List<FirDeclarationGenerationExtension> = firClass.findGeneratedExtensions(useSiteSession) {
         needToGenerateAdditionalMembersInClass(it)
     }

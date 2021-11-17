@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
@@ -25,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmSignature
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -44,6 +42,7 @@ class JavaClassUseSiteMemberScope(
     superTypesScope: FirTypeScope,
     declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
+    klass.classId,
     session,
     JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypesScope, considerReturnTypeKinds = true),
     superTypesScope,

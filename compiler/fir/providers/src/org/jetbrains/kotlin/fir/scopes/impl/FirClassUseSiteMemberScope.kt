@@ -6,19 +6,22 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isStatic
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteMemberScope(
+    classId: ClassId,
     session: FirSession,
     superTypesScope: FirTypeScope,
     declaredMemberScope: FirContainingNamesAwareScope
-) : AbstractFirUseSiteMemberScope(session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
+) : AbstractFirUseSiteMemberScope(classId, session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
 
     override fun doProcessProperties(name: Name): Collection<FirVariableSymbol<*>> {
         val seen = mutableSetOf<FirVariableSymbol<*>>()
