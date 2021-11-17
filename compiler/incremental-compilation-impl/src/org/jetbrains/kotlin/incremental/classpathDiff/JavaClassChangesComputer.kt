@@ -24,11 +24,18 @@ object JavaClassChangesComputer {
         val currentClasses: Map<ClassId, RegularJavaClassSnapshot> = currentJavaClassSnapshots.associateBy { it.classId }
         val previousClasses: Map<ClassId, RegularJavaClassSnapshot> = previousJavaClassSnapshots.associateBy { it.classId }
 
-        // No need to collect added classes as they don't impact recompilation
+        // Note: Added classes can also impact recompilation.
+        // For example, suppose a source file uses `SomeClass` through `*` imports:
+        //     import foo.* // foo.SomeClass is added in the second build
+        //     import bar.* // bar.SomeClass is present in the first build and unchanged in the second build
+        // In the second build, the source file needs to be recompiled as `SomeClass` is ambiguous now (in this example, the recompilation
+        // will fail, but recompilation needs to happen).
+        val addedClasses = currentClasses.keys - previousClasses.keys
         val removedClasses = previousClasses.keys - currentClasses.keys
-        val unchangedOrModifiedClasses = previousClasses.keys - removedClasses
+        val unchangedOrModifiedClasses = currentClasses.keys - addedClasses
 
         return ChangeSet.Collector().run {
+            addChangedClasses(addedClasses)
             addChangedClasses(removedClasses)
             unchangedOrModifiedClasses.forEach {
                 collectClassChanges(currentClasses[it]!!, previousClasses[it]!!, this)
@@ -63,18 +70,21 @@ object JavaClassChangesComputer {
         previousMemberSnapshots: List<AbiSnapshot>,
         changes: ChangeSet.Collector
     ) {
-        val currentMemberHashes: Set<Long> = currentMemberSnapshots.map { it.abiHash }.toSet()
+        val currentMemberHashes: Map<Long, AbiSnapshot> = currentMemberSnapshots.associateBy { it.abiHash }
         val previousMemberHashes: Map<Long, AbiSnapshot> = previousMemberSnapshots.associateBy { it.abiHash }
 
-        val addedMembers = currentMemberHashes - previousMemberHashes.keys
-        val removedMembers = previousMemberHashes.keys - currentMemberHashes
+        val addedMembers = currentMemberHashes.keys - previousMemberHashes.keys
+        val removedMembers = previousMemberHashes.keys - currentMemberHashes.keys
 
         // Note:
-        //   - No need to collect added members as they don't impact recompilation.
-        //   - Modified members have a current version and a previous version. The current version will appear in addedMembers (which will
-        //     not be collected), and the previous version will appear in removedMembers (which will be collected).
+        //   - Added members can also impact recompilation. For example, suppose a source file calls `foo(1)` where `foo` is defined as:
+        //         fun foo(x: Int) { } // Added in the second build
+        //         fun foo(x: Any) { } // Present in the first build and unchanged in the second build
+        //     In the second build, the source file needs to be recompiled as `foo(1)` will now resolve to `foo(Int)` instead of `foo(Any)`.
+        //   - Modified members will appear in both addedMembers and removedMembers.
         //   - Multiple members may have the same name (but never the same signature (name + desc) or ABI hash). It's okay to report the
         //     same name multiple times.
+        changes.addChangedClassMembers(classId, addedMembers.map { currentMemberHashes[it]!!.name })
         changes.addChangedClassMembers(classId, removedMembers.map { previousMemberHashes[it]!!.name })
 
         // TODO: Check whether the condition to add SAM_LOOKUP_NAME below is too broad, and correct it if necessary.
