@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -249,7 +250,7 @@ class FirBuilderInferenceSession(
     private fun updateCalls(commonSystem: NewConstraintSystemImpl) {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
-        val nonFixedTypesToResultSubstitutor = ConeComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
+        val nonFixedTypesToResultSubstitutor = ChainedSubstitutor(nonFixedToVariablesSubstitutor, commonSystemSubstitutor)
 
         val stubTypeSubstitutor = FirStubTypeTransformer(nonFixedTypesToResultSubstitutor)
         lambda.transformSingle(stubTypeSubstitutor, null)
@@ -260,13 +261,6 @@ class FirBuilderInferenceSession(
             call.transformSingle(completionResultsWriter, null)
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }
-    }
-}
-
-class ConeComposedSubstitutor(val left: ConeSubstitutor, val right: ConeSubstitutor) : ConeSubstitutor() {
-    override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
-        val rightSubstitution = right.substituteOrNull(type)
-        return left.substituteOrNull(rightSubstitution ?: type)
     }
 }
 
