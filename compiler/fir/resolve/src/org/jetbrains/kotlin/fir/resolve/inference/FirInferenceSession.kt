@@ -25,7 +25,7 @@ abstract class FirInferenceSession {
     }
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract val currentConstraintSystem: ConstraintStorage
+    abstract val currentConstraintStorage: ConstraintStorage
 
     abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
@@ -52,7 +52,7 @@ abstract class FirInferenceSession {
 abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 
-    override val currentConstraintSystem: ConstraintStorage
+    override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
 
     override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}

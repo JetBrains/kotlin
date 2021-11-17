@@ -34,7 +34,7 @@ abstract class AbstractManyCandidatesInferenceSession(
         // do nothing
     }
 
-    final override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
+    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to call.candidate
     }
 

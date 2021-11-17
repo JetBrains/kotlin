@@ -37,7 +37,7 @@ class FirBuilderInferenceSession(
 ) : AbstractManyCandidatesInferenceSession(resolutionContext) {
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
 
-    override val currentConstraintSystem: ConstraintStorage
+    override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
 
     override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean {

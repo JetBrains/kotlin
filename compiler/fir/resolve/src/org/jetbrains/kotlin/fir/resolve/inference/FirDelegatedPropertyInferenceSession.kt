@@ -27,41 +27,9 @@ class FirDelegatedPropertyInferenceSession(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
 ) : AbstractManyCandidatesInferenceSession(resolutionContext) {
 
-    private var refreshConstraintStorage = true
+    private val currentConstraintSystem = components.session.inferenceComponents.createConstraintSystem()
+    override val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
-    private val system = components.session.inferenceComponents.createConstraintSystem()
-
-    private var stubToTypeVariableSubstitutor: ConeSubstitutor = ConeSubstitutor.Empty
-
-    private fun computeConstraintStorage(): ConstraintStorage {
-        stubToTypeVariableSubstitutor = createToSyntheticTypeVariableSubstitutor()
-        syntheticTypeVariableByTypeVariable.values.forEach {
-            system.registerVariable(it)
-        }
-        partiallyResolvedCalls.forEach { (_, candidate) ->
-            integrateConstraints(
-                system,
-                candidate.system.asReadOnlyStorage(),
-                stubToTypeVariableSubstitutor,
-                shouldIntegrateAllConstraints = false
-            )
-        }
-
-        return system.currentStorage()
-    }
-
-    private lateinit var cachedConstraintStorage: ConstraintStorage
-
-    override val currentConstraintSystem: ConstraintStorage
-        get() {
-            if (refreshConstraintStorage) {
-                refreshConstraintStorage = false
-                cachedConstraintStorage = computeConstraintStorage()
-            }
-            return cachedConstraintStorage
-        }
-
-    private val commonSystem = components.session.inferenceComponents.createConstraintSystem()
     private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.type
     private lateinit var resultingConstraintSystem: NewConstraintSystem
 
@@ -71,14 +39,25 @@ class FirDelegatedPropertyInferenceSession(
         }
     }
 
+    fun integrateResolvedCall(storage: ConstraintStorage) {
+        registerSyntheticVariables(storage)
+        val stubToTypeVariableSubstitutor = createToSyntheticTypeVariableSubstitutor()
+        integrateConstraints(
+            currentConstraintSystem,
+            storage,
+            stubToTypeVariableSubstitutor,
+            false
+        )
+    }
+
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to candidate
-        integrateConstraints(
-            system,
-            candidate.system.asReadOnlyStorage(),
-            stubToTypeVariableSubstitutor,
-            shouldIntegrateAllConstraints = false
-        )
+        integrateResolvedCall(candidate.system.asReadOnlyStorage())
+    }
+
+    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
+        super.addPartiallyResolvedCall(call)
+        integrateResolvedCall(call.candidate.system.currentStorage())
     }
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -176,6 +155,8 @@ class FirDelegatedPropertyInferenceSession(
     }
 
     fun completeCandidates(): List<FirResolvable> {
+        val commonSystem = components.session.inferenceComponents.createConstraintSystem()
+
         @Suppress("UNCHECKED_CAST")
         val notCompletedCalls = partiallyResolvedCalls.mapNotNull { partiallyResolvedCall ->
             partiallyResolvedCall.first.takeIf { resolvable ->
@@ -185,7 +166,7 @@ class FirDelegatedPropertyInferenceSession(
 
         val stubToTypeVariableSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
-        partiallyResolvedCalls.forEach { (call, candidate) ->
+        for ((call, candidate) in partiallyResolvedCalls) {
             integrateConstraints(
                 commonSystem,
                 candidate.system.asReadOnlyStorage(),
@@ -238,43 +219,17 @@ class FirDelegatedPropertyInferenceSession(
 
     private val syntheticTypeVariableByTypeVariable = mutableMapOf<TypeVariableMarker, ConeTypeVariable>()
 
-
-    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
-
-        val bindings = mutableMapOf<TypeConstructorMarker, ConeStubType>()
-
-//        val synthToOriginal = syntheticTypeVariableByTypeVariable.entries.associateBy({ it.value }, { it.key })
-//
-//        for (variable in system.postponedTypeVariables) {
-//            variable as ConeTypeVariable
-//            if (isSyntheticTypeVariable(variable)) {
-//                system.fixVariable(
-//                    variable,
-//                    ConeStubTypeForBuilderInference(
-//                        synthToOriginal[variable]!! as ConeTypeVariable,
-//                        ConeNullability.create(variable.defaultType.isMarkedNullable)
-//                    ),
-//                    ConeFixVariableConstraintPosition(variable)
-//                )
-//                system.unmarkPostponedVariable(variable)
-//            }
-//        }
-
-        for (variable in system.postponedTypeVariables) {
-            variable as ConeTypeVariable
+    private fun registerSyntheticVariables(storage: ConstraintStorage) {
+        for (variableWithConstraints in storage.notFixedTypeVariables.values) {
+            val variable = variableWithConstraints.typeVariable as ConeTypeVariable
 
             val syntheticVariable = syntheticTypeVariableByTypeVariable.getOrPut(variable) {
-                refreshConstraintStorage = true
-                ConeTypeVariable("_" + variable.typeConstructor.name)
+                ConeTypeVariable("_" + variable.typeConstructor.name).also {
+                    currentConstraintSystem.registerVariable(it)
+                }
             }
 
-//            val potentialType = resolutionContext.inferenceComponents.resultTypeResolver.findResultType(
-//                system,
-//                system.notFixedTypeVariables[variable.typeConstructor]!!,
-//                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-//            )
-
-            bindings[variable.typeConstructor] = stubTypesByTypeVariable.getOrPut(variable) {
+            stubTypesByTypeVariable.getOrPut(variable) {
                 ConeStubTypeForBuilderInference(
                     syntheticVariable,
                     ConeNullability.create(syntheticVariable.defaultType.isMarkedNullable)
@@ -282,6 +237,17 @@ class FirDelegatedPropertyInferenceSession(
                     stubTypeBySyntheticTypeVariable[syntheticVariable] = it
                 }
             }
+        }
+    }
+
+    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
+
+        val bindings = mutableMapOf<TypeConstructorMarker, ConeStubType>()
+
+        for (variable in system.postponedTypeVariables) {
+            variable as ConeTypeVariable
+
+            bindings[variable.typeConstructor] = stubTypesByTypeVariable[variable]!!
         }
 
         return bindings
@@ -302,9 +268,7 @@ class FirDelegatedPropertyInferenceSession(
         if (shouldIntegrateAllConstraints) {
             storage.notFixedTypeVariables.values.forEach {
                 if (isSyntheticTypeVariable(it.typeVariable)) return@forEach
-                if (it.typeVariable.freshTypeConstructor(commonSystem.typeSystemContext) !in commonSystem.allTypeVariables) {
-                    commonSystem.registerVariable(it.typeVariable)
-                }
+                commonSystem.registerTypeVariableIfNotPresent(it.typeVariable)
             }
         }
         /*
@@ -347,12 +311,19 @@ class FirDelegatedPropertyInferenceSession(
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 if (isSyntheticTypeVariable(typeVariable)) continue
 
-                commonSystem.registerVariable(typeVariable)
+                commonSystem.registerTypeVariableIfNotPresent(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, BuilderInferencePosition)
                 introducedConstraint = true
             }
         }
 
         return introducedConstraint
+    }
+}
+
+
+fun NewConstraintSystemImpl.registerTypeVariableIfNotPresent(typeVariable: TypeVariableMarker) {
+    if (typeVariable.freshTypeConstructor(typeSystemContext) !in allTypeVariables) {
+        registerVariable(typeVariable)
     }
 }
