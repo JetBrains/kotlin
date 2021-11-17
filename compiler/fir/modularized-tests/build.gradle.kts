@@ -24,6 +24,7 @@ dependencies {
 
     testRuntimeOnly("xerces:xercesImpl:2.12.0")
     testRuntimeOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijDep()) { includeJars("commons-lang-2.4") }
 
     testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
