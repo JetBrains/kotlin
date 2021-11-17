@@ -28,7 +28,6 @@ abstract class FirInferenceSession {
     abstract val currentConstraintSystem: ConstraintStorage
 
     abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
     abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
@@ -57,7 +56,6 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
         get() = ConstraintStorage.Empty
 
     override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {}
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
     override fun inferPostponedVariables(

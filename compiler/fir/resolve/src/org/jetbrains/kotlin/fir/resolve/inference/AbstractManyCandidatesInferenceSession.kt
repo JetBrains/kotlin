@@ -38,17 +38,12 @@ abstract class AbstractManyCandidatesInferenceSession(
         partiallyResolvedCalls += call to call.candidate
     }
 
-    final override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {
-        errorCalls += call
-    }
-
     override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
 
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
 
     override fun clear() {
-        errorCalls.clear()
         partiallyResolvedCalls.clear()
         completedCalls.clear()
     }
