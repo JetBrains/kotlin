@@ -39,7 +39,7 @@
   },
   "supertypes": [
     {
-      "internalName": "kotlin/Any"
+      "internalName": "java/lang/Object"
     }
   ]
 }

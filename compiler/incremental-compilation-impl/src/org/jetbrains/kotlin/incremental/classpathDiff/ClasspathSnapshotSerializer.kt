@@ -65,19 +65,28 @@ object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnaps
 object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: ClassSnapshot) {
-        output.writeBoolean(snapshot is KotlinClassSnapshot)
         when (snapshot) {
-            is KotlinClassSnapshot -> KotlinClassSnapshotExternalizer.save(output, snapshot)
-            is JavaClassSnapshot -> JavaClassSnapshotExternalizer.save(output, snapshot)
+            is KotlinClassSnapshot -> {
+                output.writeString(KotlinClassSnapshot::class.java.name)
+                KotlinClassSnapshotExternalizer.save(output, snapshot)
+            }
+            is JavaClassSnapshot -> {
+                output.writeString(JavaClassSnapshot::class.java.name)
+                JavaClassSnapshotExternalizer.save(output, snapshot)
+            }
+            is InaccessibleClassSnapshot -> {
+                output.writeString(InaccessibleClassSnapshot::class.java.name)
+                InaccessibleClassSnapshotExternalizer.save(output, snapshot)
+            }
         }
     }
 
     override fun read(input: DataInput): ClassSnapshot {
-        val isKotlinClassSnapshot = input.readBoolean()
-        return if (isKotlinClassSnapshot) {
-            KotlinClassSnapshotExternalizer.read(input)
-        } else {
-            JavaClassSnapshotExternalizer.read(input)
+        return when (val className = input.readString()) {
+            KotlinClassSnapshot::class.java.name -> KotlinClassSnapshotExternalizer.read(input)
+            JavaClassSnapshot::class.java.name -> JavaClassSnapshotExternalizer.read(input)
+            InaccessibleClassSnapshot::class.java.name -> InaccessibleClassSnapshotExternalizer.read(input)
+            else -> error("Unrecognized class name: $className")
         }
     }
 }
@@ -144,7 +153,6 @@ object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
         when (snapshot) {
             is RegularJavaClassSnapshot -> RegularJavaClassSnapshotExternalizer.save(output, snapshot)
             is ProtoBasedJavaClassSnapshot -> ProtoBasedJavaClassSnapshotExternalizer.save(output, snapshot)
-            is EmptyJavaClassSnapshot -> EmptyJavaClassSnapshotExternalizer.save(output, snapshot)
             is ContentHashJavaClassSnapshot -> ContentHashJavaClassSnapshotExternalizer.save(output, snapshot)
         }
     }
@@ -153,7 +161,6 @@ object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
         return when (val className = input.readString()) {
             RegularJavaClassSnapshot::class.java.name -> RegularJavaClassSnapshotExternalizer.read(input)
             ProtoBasedJavaClassSnapshot::class.java.name -> ProtoBasedJavaClassSnapshotExternalizer.read(input)
-            EmptyJavaClassSnapshot::class.java.name -> EmptyJavaClassSnapshotExternalizer.read(input)
             ContentHashJavaClassSnapshot::class.java.name -> ContentHashJavaClassSnapshotExternalizer.read(input)
             else -> error("Unrecognized class name: $className")
         }
@@ -204,14 +211,14 @@ object ProtoBasedJavaClassSnapshotExternalizer : DataExternalizer<ProtoBasedJava
     }
 }
 
-object EmptyJavaClassSnapshotExternalizer : DataExternalizer<EmptyJavaClassSnapshot> {
+object InaccessibleClassSnapshotExternalizer : DataExternalizer<InaccessibleClassSnapshot> {
 
-    override fun save(output: DataOutput, snapshot: EmptyJavaClassSnapshot) {
+    override fun save(output: DataOutput, snapshot: InaccessibleClassSnapshot) {
         // Nothing to save
     }
 
-    override fun read(input: DataInput): EmptyJavaClassSnapshot {
-        return EmptyJavaClassSnapshot
+    override fun read(input: DataInput): InaccessibleClassSnapshot {
+        return InaccessibleClassSnapshot
     }
 }
 

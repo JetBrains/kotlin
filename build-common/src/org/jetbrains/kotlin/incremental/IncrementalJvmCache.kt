@@ -25,7 +25,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
@@ -630,30 +629,19 @@ class KotlinClassInfo constructor(
     companion object {
 
         fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
-            return KotlinClassInfo(
-                kotlinClass.classId,
-                kotlinClass.classHeader.kind,
-                kotlinClass.classHeader.data ?: emptyArray(),
-                kotlinClass.classHeader.strings ?: emptyArray(),
-                kotlinClass.classHeader.multifileClassName,
-                getConstantsMap(kotlinClass.fileContents),
-                getInlineFunctionsMap(kotlinClass.classHeader, kotlinClass.fileContents)
-            )
+            return createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
         }
 
-        /** Creates [KotlinClassInfo] from the given classContents, or returns `null` if the class is not a Kotlin class. */
-        fun tryCreateFrom(classContents: ByteArray): KotlinClassInfo? {
-            return FileBasedKotlinClass.create(classContents) { classId, _, classHeader, _ ->
-                KotlinClassInfo(
-                    classId,
-                    classHeader.kind,
-                    classHeader.data ?: emptyArray(),
-                    classHeader.strings ?: emptyArray(),
-                    classHeader.multifileClassName,
-                    getConstantsMap(classContents),
-                    getInlineFunctionsMap(classHeader, classContents)
-                )
-            }
+        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
+            return KotlinClassInfo(
+                classId,
+                classHeader.kind,
+                classHeader.data ?: emptyArray(),
+                classHeader.strings ?: emptyArray(),
+                classHeader.multifileClassName,
+                getConstantsMap(classContents),
+                getInlineFunctionsMap(classHeader, classContents)
+            )
         }
     }
 }

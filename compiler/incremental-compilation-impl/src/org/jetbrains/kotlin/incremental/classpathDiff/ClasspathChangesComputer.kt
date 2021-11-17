@@ -153,7 +153,7 @@ object ClasspathChangesComputer {
                     )
                     incrementalJvmCache.markDirty(JvmClassName.byClassId(previousSnapshot.serializedJavaClass.classId))
                 }
-                is RegularJavaClassSnapshot, is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+                is RegularJavaClassSnapshot, is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
                     error("Unexpected type (it should have been handled earlier): ${previousSnapshot.javaClass.name}")
                 }
             }
@@ -183,7 +183,7 @@ object ClasspathChangesComputer {
                         collector = changesCollector
                     )
                 }
-                is RegularJavaClassSnapshot, is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+                is RegularJavaClassSnapshot, is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
                     error("Unexpected type (it should have been handled earlier): ${currentSnapshot.javaClass.name}")
                 }
             }
@@ -331,7 +331,7 @@ internal fun ClassSnapshot.getClassId(): ClassId {
         is KotlinClassSnapshot -> classInfo.classId
         is RegularJavaClassSnapshot -> classId
         is ProtoBasedJavaClassSnapshot -> serializedJavaClass.classId
-        is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+        is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
             error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
         }
     }
@@ -351,7 +351,7 @@ internal fun ClassSnapshot.getSupertypes(classIdResolver: (JvmClassName) -> Clas
             val (proto, nameResolver) = serializedJavaClass.toProtoData()
             proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
         }
-        is EmptyJavaClassSnapshot, is ContentHashJavaClassSnapshot -> {
+        is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
             error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
         }
     }
