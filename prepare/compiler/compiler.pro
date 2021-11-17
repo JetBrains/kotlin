@@ -38,6 +38,7 @@
 -dontwarn org.jline.builtins.Nano$Buffer
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn com.intellij.util.io.Compressor$Tar
+-dontwarn com.google.gson.**
 
 # Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.*
