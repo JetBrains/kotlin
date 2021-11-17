@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package org.jetbrains.kotlin.gradle.android
+package org.jetbrains.kotlin.gradle.android.multiplatform
 
 import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet

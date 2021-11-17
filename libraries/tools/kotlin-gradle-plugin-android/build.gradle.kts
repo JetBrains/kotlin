@@ -14,7 +14,12 @@ gradlePlugin {
     plugins {
         create("kotlinAndroidTargetPlugin") {
             id = "kotlin-android-target"
-            implementationClass = "org.jetbrains.kotlin.gradle.android.KotlinExternalAndroidTargetPlugin"
+            implementationClass = "org.jetbrains.kotlin.gradle.android.multiplatform.KotlinExternalAndroidTargetPlugin"
+        }
+
+        create("kotlinAndroidKpmPlugin") {
+            id ="kotlin-android-kpm"
+            implementationClass = "org.jetbrains.kotlin.gradle.android.kpm.KotlinAndroidKpmPlugin"
         }
     }
 }

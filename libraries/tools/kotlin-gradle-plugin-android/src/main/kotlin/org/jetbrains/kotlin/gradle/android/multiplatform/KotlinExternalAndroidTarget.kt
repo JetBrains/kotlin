@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.gradle.android
+package org.jetbrains.kotlin.gradle.android.multiplatform
 
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.Project

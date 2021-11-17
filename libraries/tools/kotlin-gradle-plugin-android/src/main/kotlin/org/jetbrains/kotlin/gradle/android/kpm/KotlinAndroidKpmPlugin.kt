@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.android
+package org.jetbrains.kotlin.gradle.android.kpm
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class KotlinExternalAndroidTargetPlugin : Plugin<Project> {
+class KotlinAndroidKpmPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        //
+
     }
 }
