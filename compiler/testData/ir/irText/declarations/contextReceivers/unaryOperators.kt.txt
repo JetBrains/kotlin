@@ -1,0 +1,109 @@
+data class Result {
+  constructor(i: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val i: Int
+    field = i
+    get
+
+  operator fun component1(): Int {
+    return <this>.#i
+  }
+
+  fun copy(i: Int = <this>.#i): Result {
+    return Result(i = i)
+  }
+
+  override fun toString(): String {
+    return "Result(" + "i=" + <this>.#i + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Result -> return false
+    }
+    val tmp0_other_with_cast: Result = other as Result
+    when {
+      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+    }
+    return true
+  }
+
+}
+
+var operationScore: Int
+  field = 0
+  get
+  set
+
+operator fun Result.unaryMinus(<this>: Int): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().unaryMinus())
+}
+
+operator fun Result.unaryPlus(<this>: Int): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = when {
+    less(arg0 = <this>.<get-i>(), arg1 = 0) -> <this>.<get-i>().unaryMinus()
+    else -> <this>.<get-i>()
+  })
+}
+
+operator fun Result.inc(<this>: Int): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().plus(other = 1))
+}
+
+operator fun Result.dec(<this>: Int): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().minus(other = 1))
+}
+
+fun box(): String {
+  var result: Result = Result(i = 0)
+  with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
+    { // BLOCK
+      val tmp0: Result = result
+      result = tmp0.inc(<this> = $this$with)
+      tmp0
+    } /*~> Unit */
+    { // BLOCK
+      val tmp1: Result = result
+      result = tmp1.inc(<this> = $this$with)
+      tmp1
+    } /*~> Unit */
+    result.unaryMinus(<this> = $this$with) /*~> Unit */
+    result.unaryPlus(<this> = $this$with) /*~> Unit */
+    return { // BLOCK
+      val tmp2: Result = result
+      result = tmp2.dec(<this> = $this$with)
+      tmp2
+    }
+  }
+) /*~> Unit */
+  return when {
+    when {
+      EQEQ(arg0 = result.<get-i>(), arg1 = 1) -> EQEQ(arg0 = <get-operationScore>(), arg1 = 5)
+      else -> false
+    } -> "OK"
+    else -> "fail"
+  }
+}

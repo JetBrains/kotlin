@@ -1,0 +1,65 @@
+var operationScore: Int
+  field = 0
+  get
+  set
+
+class Delegate {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var delegateValue: String
+    field = "fail"
+    get
+    set
+
+  operator fun getValue(<this>: Int, thisRef: Any?, property: KProperty<*>): String {
+    { // BLOCK
+      <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+    }
+    return <this>.<get-delegateValue>()
+  }
+
+  operator fun setValue(<this>: Int, thisRef: Any?, property: KProperty<*>, value: String) {
+    { // BLOCK
+      <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+    }
+    <this>.<set-delegateValue>(<set-?> = value)
+  }
+
+}
+
+class Result {
+  private /* final field */ val contextReceiverField0: Int
+  constructor(<this>: Int) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = <this>
+    /* <init>() */
+
+  }
+
+  var s: String /* by */
+    field = Delegate()
+    get(): String {
+      return <this>.#s$delegate.getValue(<this> = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
+    }
+    set(<set-?>: String) {
+      return <this>.#s$delegate.setValue(<this> = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
+    }
+
+}
+
+fun box(): String {
+  val result: Result = with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
+    return Result(<this> = $this$with)
+  }
+)
+  result.<set-s>(<set-?> = "OK")
+  val returnValue: String = result.<get-s>()
+  return when {
+    EQEQ(arg0 = <get-operationScore>(), arg1 = 2) -> returnValue
+    else -> "fail"
+  }
+}
