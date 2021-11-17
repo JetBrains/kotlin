@@ -11,13 +11,19 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class AbstractManyCandidatesInferenceSession(
     protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
-    private val errorCalls: MutableList<FirResolvable> = mutableListOf()
+    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    ) {
+    }
+
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
     private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
 

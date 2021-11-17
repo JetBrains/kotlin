@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.*
@@ -160,6 +162,17 @@ class FirDelegatedPropertyInferenceSession(
 
     override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean {
         return typeVariable in syntheticTypeVariableByTypeVariable.values
+    }
+
+    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    ) {
+        completionContext.fixVariable(
+            typeVariable,
+            stubTypeBySyntheticTypeVariable[typeVariable]!!,
+            ConeFixVariableConstraintPosition(typeVariable)
+        )
     }
 
     fun completeCandidates(): List<FirResolvable> {

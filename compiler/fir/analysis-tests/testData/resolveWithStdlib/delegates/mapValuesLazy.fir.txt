@@ -1,0 +1,16 @@
+FILE: mapValuesLazy.kt
+    public abstract interface TDat : R|kotlin/Any| {
+    }
+    public final fun resolve(str: R|kotlin/String|): R|TDat| {
+        ^resolve Null(null)!!
+    }
+    public final val recProp: R|kotlin/collections/Map<kotlin/String, TDat>|by R|kotlin/lazy|<R|kotlin/collections/Map<kotlin/String, TDat>|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/Map<kotlin/String, TDat>| <inline=NoInline>  {
+        ^ R|kotlin/collections/mapOf|<R|kotlin/String|, R|kotlin/String|>(String().R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String())).R|kotlin/collections/mapValues|<R|kotlin/String|, R|kotlin/String|, R|TDat|>(<L> = mapValues@fun <anonymous>(it: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|TDat| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/resolve|(R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|kotlin/String|>|)
+        }
+        )
+    }
+    )
+        public get(): R|kotlin/collections/Map<kotlin/String, TDat>| {
+            ^ D|/recProp|.R|kotlin/getValue|<R|kotlin/collections/Map<kotlin/String, TDat>|>(Null(null), ::R|/recProp|)
+        }

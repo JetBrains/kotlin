@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -33,6 +34,10 @@ abstract class FirInferenceSession {
     abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
 
     abstract fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean
+    abstract fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    )
 
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
@@ -64,6 +69,10 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
 
     override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean = false
+    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    ) {}
 
     override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
 
