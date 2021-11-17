@@ -112,7 +112,18 @@ class FirSignatureEnhancement(
             }
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
-                val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), firElement.computeDefaultQualifiers(), null)
+                val newReturnTypeRef = enhanceReturnType(
+                    firElement, emptyList(), firElement.computeDefaultQualifiers(),
+                    predefinedEnhancementInfo = null
+                ).let {
+                    val lowerBound = it.type.lowerBoundIfFlexible()
+
+                    if (firElement.isStatic && firElement.initializer != null && (lowerBound.isString || lowerBound.isInt)) {
+                        it.withReplacedConeType(it.type.withNullability(ConeNullability.NOT_NULL, session.typeContext))
+                    } else {
+                        it
+                    }
+                }
 
                 val symbol = FirFieldSymbol(original.callableId)
                 buildJavaField {

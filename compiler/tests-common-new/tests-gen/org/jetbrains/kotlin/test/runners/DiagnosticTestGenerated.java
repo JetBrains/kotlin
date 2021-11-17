@@ -18087,6 +18087,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("constantStaticStringField.kt")
+                public void testConstantStaticStringField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/constantStaticStringField.kt");
+                }
+
+                @Test
                 @TestMetadata("notNullTypeParameterWithKotlinNullable.kt")
                 public void testNotNullTypeParameterWithKotlinNullable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullable.kt");
