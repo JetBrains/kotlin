@@ -29,9 +29,6 @@ fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver
     object : CallReceiver {
         override fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression =
             this@adjustForCallee.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-                assert(contextReceiverValues.isEmpty()) {
-                    "Synthetic property accessor call adjustment with context receivers, callee: $callee"
-                }
                 val numReceiversPresent = listOfNotNull(dispatchReceiverValue, extensionReceiverValue).size
                 val numReceiversExpected = listOfNotNull(callee.dispatchReceiverParameter, callee.extensionReceiverParameter).size
                 if (numReceiversPresent != numReceiversExpected)
