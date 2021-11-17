@@ -1,6 +1,4 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: in progress (delegate branch)
 // WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
