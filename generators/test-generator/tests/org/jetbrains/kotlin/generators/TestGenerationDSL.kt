@@ -66,7 +66,7 @@ class TestGroup(
 
     fun testClass(
         testKClass: KClass<*>,
-        baseTestClassName: String,
+        baseTestClassName: String = testKClass.java.name,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
         useJunit4: Boolean,
         annotations: List<AnnotationModel> = emptyList(),
