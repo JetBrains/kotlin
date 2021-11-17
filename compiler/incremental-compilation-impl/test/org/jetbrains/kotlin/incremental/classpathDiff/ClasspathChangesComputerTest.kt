@@ -194,34 +194,25 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
 
                 // ModifiedClassChangedMembers
                 LookupSymbol(name = "modifiedField", scope = "com.example.ModifiedClassChangedMembers"),
+                LookupSymbol(name = "addedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedField", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "modifiedMethod", scope = "com.example.ModifiedClassChangedMembers"),
+                LookupSymbol(name = "addedMethod", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = "removedMethod", scope = "com.example.ModifiedClassChangedMembers"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ModifiedClassChangedMembers"),
 
+                // AddedClass
+                LookupSymbol(name = "AddedClass", scope = "com.example"),
+
                 // RemovedClass
                 LookupSymbol(name = "RemovedClass", scope = "com.example")
-            ) + if (protoBased) {
-                setOf(
-                    // ModifiedClassChangedMembers
-                    LookupSymbol(name = "addedField", scope = "com.example.ModifiedClassChangedMembers"),
-                    LookupSymbol(name = "addedMethod", scope = "com.example.ModifiedClassChangedMembers"),
-
-                    // AddedClass
-                    LookupSymbol(name = "AddedClass", scope = "com.example"),
-                )
-            } else {
-                emptySet()
-            },
+            ),
             fqNames = setOf(
                 "com.example.ModifiedClassUnchangedMembers",
                 "com.example.ModifiedClassChangedMembers",
+                "com.example.AddedClass",
                 "com.example.RemovedClass"
-            ) + if (protoBased) {
-                setOf("com.example.AddedClass")
-            } else {
-                emptySet()
-            }
+            )
         ).assertEquals(changes)
     }
 
