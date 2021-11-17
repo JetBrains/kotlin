@@ -31,7 +31,6 @@ class SafeCallReceiver(
     val startOffset: Int,
     val endOffset: Int,
     val extensionReceiver: IntermediateValue?,
-    // TODO: Use context receivers
     val contextReceivers: List<IntermediateValue>,
     val dispatchReceiver: IntermediateValue?,
     val isStatement: Boolean
@@ -51,7 +50,7 @@ class SafeCallReceiver(
             extensionReceiverValue = null
         }
 
-        val irResult = withDispatchAndExtensionAndContextReceivers(dispatchReceiverValue, extensionReceiverValue, emptyList())
+        val irResult = withDispatchAndExtensionAndContextReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceivers)
 
         val resultType = if (isStatement) generator.context.irBuiltIns.unitType else irResult.type.makeNullable()
 
