@@ -107,12 +107,12 @@ class AbiSnapshotForTests(
 class ProtoBasedJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
 
 /**
- * [JavaClassSnapshot] of a Java class where there is nothing to capture.
+ * [ClassSnapshot] of an inaccessible class.
  *
- * For example, the snapshot of a local class is empty as a local class can't be referenced from other source files and therefore any
- * changes in a local class will not cause recompilation of other source files.
+ * For example, a local class is inaccessible as it can't be referenced from other source files and therefore any changes in a local class
+ * will not require recompilation of other source files.
  */
-object EmptyJavaClassSnapshot : JavaClassSnapshot()
+object InaccessibleClassSnapshot : ClassSnapshot()
 
 /**
  * [JavaClassSnapshot] of a Java class where a proper snapshot can't be created for some reason, so we use the hash of the class contents as

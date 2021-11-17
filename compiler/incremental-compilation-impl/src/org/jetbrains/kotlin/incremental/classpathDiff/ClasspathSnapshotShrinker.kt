@@ -20,7 +20,7 @@ object ClasspathSnapshotShrinker {
     /**
      * Shrinks the given [ClasspathSnapshot] by retaining only classes that are referenced. Referencing info is stored in [LookupStorage].
      *
-     * This method also removes duplicate classes and [EmptyJavaClassSnapshot]s first.
+     * This method also removes duplicate classes and [InaccessibleClassSnapshot]s first.
      */
     fun shrink(
         classpathSnapshot: ClasspathSnapshot,
@@ -28,10 +28,10 @@ object ClasspathSnapshotShrinker {
         metrics: BuildMetricsReporter
     ): List<ClassSnapshotWithHash> {
         val allClasses = metrics.measure(BuildTime.GET_NON_DUPLICATE_CLASSES) {
-            // It's important to remove duplicate classes first before removing `EmptyJavaClassSnapshot`s.
+            // It's important to remove duplicate classes first before removing `InaccessibleClassSnapshot`s.
             // For example, if jar1!/com/example/A.class is empty and jar2!/com/example/A.class is non-empty, incorrect order of the actions
             // will lead to incorrect results.
-            classpathSnapshot.getNonDuplicateClassSnapshots().filter { it.classSnapshot !is EmptyJavaClassSnapshot }
+            classpathSnapshot.getNonDuplicateClassSnapshots().filter { it.classSnapshot !is InaccessibleClassSnapshot }
         }
         val lookupSymbols = metrics.measure(BuildTime.GET_LOOKUP_SYMBOLS) {
             lookupStorage.lookupMap.keys

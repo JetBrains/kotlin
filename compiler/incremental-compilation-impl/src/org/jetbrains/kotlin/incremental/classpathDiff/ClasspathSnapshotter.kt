@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.JavaClassDescriptorCreator
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.incremental.toSerializedJavaClass
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 import java.util.zip.ZipInputStream
 
@@ -40,7 +36,7 @@ object ClasspathEntrySnapshotter {
         val snapshots = try {
             ClassSnapshotter.snapshot(classes, protoBased).map { it.addHash() }
         } catch (e: Throwable) {
-            if (isKnownProblematicClasspathEntry(classpathEntry)) {
+            if ((protoBased ?: protoBasedDefaultValue) && isKnownProblematicClasspathEntry(classpathEntry)) {
                 classes.map { ContentHashJavaClassSnapshot(it.contents.md5()).addHash() }
             } else throw e
         }
@@ -74,112 +70,83 @@ object ClasspathEntrySnapshotter {
 /** Creates [ClassSnapshot]s of classes. */
 object ClassSnapshotter {
 
-    /**
-     * Creates [ClassSnapshot]s of the given classes.
-     *
-     * Note that for Java (non-Kotlin) classes, creating a [ClassSnapshot] for a nested class will require accessing the outer class (and
-     * possibly vice versa). Therefore, outer classes and nested classes must be passed together in one invocation of this method.
-     */
+    /** Creates [ClassSnapshot]s of the given classes. */
     fun snapshot(
         classes: List<ClassFileWithContents>,
         protoBased: Boolean? = null,
         includeDebugInfoInSnapshot: Boolean? = null
     ): List<ClassSnapshot> {
-        // Snapshot Kotlin classes first
-        val kotlinClassSnapshots: Map<ClassFileWithContents, KotlinClassSnapshot?> = classes.associateWith {
-            trySnapshotKotlinClass(it)
-        }
+        val classesInfo: List<BasicClassInfo> = classes.map { BasicClassInfo.compute(it.contents) }
 
-        // Snapshot the remaining Java classes in one invocation
+        // Find inaccessible classes first, their snapshots will be `InaccessibleClassSnapshot`s.
+        val inaccessibleClasses: Set<BasicClassInfo> = getInaccessibleClasses(classesInfo).toSet()
+
+        // Snapshot the remaining accessible classes
+        val accessibleClasses: List<ClassFileWithContents> = classes.mapIndexedNotNull { index, clazz ->
+            if (classesInfo[index] in inaccessibleClasses) null else clazz
+        }
+        val accessibleClassesInfo: List<BasicClassInfo> = classesInfo.filterNot { it in inaccessibleClasses }
+        val accessibleSnapshots: List<ClassSnapshot> =
+            doSnapshot(accessibleClasses, accessibleClassesInfo, protoBased, includeDebugInfoInSnapshot)
+        val accessibleClassSnapshots: Map<ClassFileWithContents, ClassSnapshot> = accessibleClasses.zipToMap(accessibleSnapshots)
+
+        return classes.map { accessibleClassSnapshots[it] ?: InaccessibleClassSnapshot }
+    }
+
+    private fun doSnapshot(
+        classes: List<ClassFileWithContents>,
+        classesInfo: List<BasicClassInfo>,
+        protoBased: Boolean? = null,
+        includeDebugInfoInSnapshot: Boolean? = null
+    ): List<ClassSnapshot> {
+        // Snapshot Kotlin classes first
+        val kotlinSnapshots: List<KotlinClassSnapshot?> = classes.mapIndexed { index, clazz ->
+            trySnapshotKotlinClass(clazz, classesInfo[index])
+        }
+        val kotlinClassSnapshots: Map<ClassFileWithContents, KotlinClassSnapshot?> = classes.zipToMap(kotlinSnapshots)
+
+        // Snapshot the remaining Java classes
         val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it] == null }
-        val snapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses, protoBased, includeDebugInfoInSnapshot)
-        val javaClassSnapshots: Map<ClassFileWithContents, JavaClassSnapshot> = javaClasses.zipToMap(snapshots)
+        val javaClassesInfo: List<BasicClassInfo> = classesInfo.mapIndexedNotNull { index, classInfo ->
+            val javaClass = classes[index]
+            if (kotlinClassSnapshots[javaClass] == null) classInfo else null
+        }
+        val javaSnapshots: List<JavaClassSnapshot> =
+            snapshotJavaClasses(javaClasses, javaClassesInfo, protoBased, includeDebugInfoInSnapshot)
+        val javaClassSnapshots: Map<ClassFileWithContents, JavaClassSnapshot> = javaClasses.zipToMap(javaSnapshots)
 
         return classes.map { kotlinClassSnapshots[it] ?: javaClassSnapshots[it]!! }
     }
 
     /** Creates [KotlinClassSnapshot] of the given class, or returns `null` if the class is not a Kotlin class. */
-    private fun trySnapshotKotlinClass(clazz: ClassFileWithContents): KotlinClassSnapshot? {
-        return KotlinClassInfo.tryCreateFrom(clazz.contents)?.let {
-            KotlinClassSnapshot(it, computeSupertypes(it, clazz.contents))
-        }
+    private fun trySnapshotKotlinClass(classFile: ClassFileWithContents, classInfo: BasicClassInfo): KotlinClassSnapshot? {
+        return if (classInfo.isKotlinClass) {
+            val kotlinClassInfo = KotlinClassInfo.createFrom(classInfo.classId, classInfo.kotlinClassHeader!!, classFile.contents)
+            KotlinClassSnapshot(kotlinClassInfo, classInfo.supertypes)
+        } else null
     }
 
-    // TODO: Find a faster way to get supertypes without loading protos (e.g., attach to an existing ASM visitor)
-    private fun computeSupertypes(classInfo: KotlinClassInfo, classContents: ByteArray): List<JvmClassName> {
-        return try {
-            val (nameResolver, proto) = JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
-            val supertypeClassIds = proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
-            supertypeClassIds.map { JvmClassName.byClassId(it) }
-        } catch (e: Exception) {
-            // The above method call currently fails on a few classes for some reason:
-            //   - org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException: Message was missing required fields.
-            //     (Lite runtime could not determine which fields were missing) for SomeClassKt.class
-            //   - java.lang.NullPointerException: parseDelimitedFrom(this, EXTENSION_REGISTRY) must not be null for
-            //     kotlin-stdlib-1.6.255-SNAPSHOT.jar
-            // Fall back to ASM visitor to get the supertypes.
-            val supertypeClassNames = mutableListOf<String>()
-            ClassReader(classContents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-                override fun visit(
-                    version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?
-                ) {
-                    superName?.let { supertypeClassNames.add(it) }
-                    interfaces?.let { supertypeClassNames.addAll(it) }
-                }
-            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
-            supertypeClassNames.map { JvmClassName.byInternalName(it) }
-        }
-    }
-
-    /**
-     * Creates [JavaClassSnapshot]s of the given Java classes.
-     *
-     * Note that creating a [JavaClassSnapshot] for a nested class will require accessing the outer class (and possibly vice versa).
-     * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
-     */
+    /** Creates [JavaClassSnapshot]s of the given Java classes. */
     private fun snapshotJavaClasses(
         classes: List<ClassFileWithContents>,
+        classesInfo: List<BasicClassInfo>,
         protoBased: Boolean? = null,
         includeDebugInfoInSnapshot: Boolean? = null
     ): List<JavaClassSnapshot> {
-        val classNames: List<JavaClassName> = classes.map { JavaClassName.compute(it.contents) }
-        val classNameToClassFile: Map<JavaClassName, ClassFileWithContents> = classNames.zipToMap(classes)
-
-        // We divide classes into 2 categories:
-        //   - Special classes, which includes local, anonymous, or synthetic classes, and their nested classes. These classes can't be
-        //     referenced from other source files, so any changes in these classes will not cause recompilation of other source files.
-        //     Therefore, the snapshots of these classes are empty.
-        //   - Regular classes: Any classes that do not belong to the above category.
-        val specialClasses = getSpecialClasses(classNames).toSet()
-
-        // Snapshot special classes first
-        val specialClassSnapshots: Map<JavaClassName, JavaClassSnapshot?> = classNames.associateWith {
-            if (it in specialClasses) {
-                EmptyJavaClassSnapshot
-            } else null
-        }
-
-        // Snapshot the remaining regular classes
-        val regularClasses: List<JavaClassName> = classNames.filter { specialClassSnapshots[it] == null }
-        val regularClassIds = computeJavaClassIds(regularClasses)
-        val regularClassFiles: List<ClassFileWithContents> = regularClasses.map { classNameToClassFile[it]!! }
-
-        val snapshots: List<JavaClassSnapshot> = if (protoBased ?: protoBasedDefaultValue) {
-            snapshotJavaClassesProtoBased(regularClassIds, regularClassFiles)
+        return if (protoBased ?: protoBasedDefaultValue) {
+            snapshotJavaClassesProtoBased(classes, classesInfo)
         } else {
-            regularClassIds.mapIndexed { index, classId ->
-                JavaClassSnapshotter.snapshot(classId, regularClassFiles[index].contents, includeDebugInfoInSnapshot)
+            classes.mapIndexed { index, clazz ->
+                JavaClassSnapshotter.snapshot(clazz.contents, classesInfo[index], includeDebugInfoInSnapshot)
             }
         }
-        val regularClassSnapshots: Map<JavaClassName, JavaClassSnapshot> = regularClasses.zipToMap(snapshots)
-
-        return classNames.map { specialClassSnapshots[it] ?: regularClassSnapshots[it]!! }
     }
 
     private fun snapshotJavaClassesProtoBased(
-        classIds: List<ClassId>,
-        classFilesWithContents: List<ClassFileWithContents>
+        classFilesWithContents: List<ClassFileWithContents>,
+        classesInfo: List<BasicClassInfo>
     ): List<JavaClassSnapshot> {
+        val classIds = classesInfo.map { it.classId }
         val classesContents = classFilesWithContents.map { it.contents }
         val descriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(classIds, classesContents)
         val snapshots: List<JavaClassSnapshot> = descriptors.mapIndexed { index, descriptor ->
@@ -206,28 +173,52 @@ object ClassSnapshotter {
         return snapshots
     }
 
-    /** Returns local, anonymous, or synthetic classes, and their nested classes. */
-    private fun getSpecialClasses(classNames: List<JavaClassName>): List<JavaClassName> {
-        val specialClasses: MutableMap<JavaClassName, Boolean> = HashMap(classNames.size)
-        val nameToClassName: Map<String, JavaClassName> = classNames.associateBy { it.name }
-
-        fun JavaClassName.isSpecial(): Boolean {
-            specialClasses[this]?.let { return it }
-
-            return if (isAnonymous || isSynthetic) {
-                true
-            } else when (this) {
-                is TopLevelClass -> false
-                is NestedNonLocalClass -> {
-                    nameToClassName[outerName]?.isSpecial() ?: error("Can't find outer class '$outerName' of class '$name'")
-                }
-                is LocalClass -> true
-            }.also {
-                specialClasses[this] = it
+    /**
+     * Returns inaccessible classes, i.e. classes that can't be referenced from other source files (and therefore any changes in these
+     * classes will not require recompilation of other source files).
+     *
+     * Examples include private, local, anonymous, and synthetic classes.
+     *
+     * If a class is inaccessible, its nested classes (if any) are also inaccessible.
+     *
+     * NOTE: If we do not have enough info to determine whether a class is inaccessible, we will assume that the class is accessible to be
+     * safe.
+     */
+    private fun getInaccessibleClasses(classesInfo: List<BasicClassInfo>): List<BasicClassInfo> {
+        fun BasicClassInfo.isInaccessible(): Boolean {
+            if (this.isKotlinClass && this.kotlinClassHeader!!.kind != KotlinClassHeader.Kind.CLASS) {
+                // We're not sure about these kinds of Kotlin classes, so we assume it's accessible (see this method's kdoc)
+                return false
+            }
+            return if (isKotlinClass) {
+                // TODO: Is it safe to add isKotlinSynthetic to this lists?
+                isPrivate || isLocal || isAnonymous
+            } else {
+                isPrivate || isLocal || isAnonymous || isJavaSynthetic
             }
         }
 
-        return classNames.filter { it.isSpecial() }
+        val classIsInaccessible: MutableMap<BasicClassInfo, Boolean> = HashMap(classesInfo.size)
+        val classIdToClassInfo: Map<ClassId, BasicClassInfo> = classesInfo.associateBy { it.classId }
+
+        fun BasicClassInfo.isTransitivelyInaccessible(): Boolean {
+            classIsInaccessible[this]?.let { return it }
+
+            val inaccessible = if (isInaccessible()) {
+                true
+            } else classId.outerClassId?.let { outerClassId ->
+                classIdToClassInfo[outerClassId]?.isTransitivelyInaccessible()
+                // If we can't find the outer class from the given list of classes (which could happen with faulty jars), we assume that
+                // the class is accessible (see this method's kdoc).
+                    ?: false
+            } ?: false
+
+            return inaccessible.also {
+                classIsInaccessible[this] = inaccessible
+            }
+        }
+
+        return classesInfo.filter { it.isTransitivelyInaccessible() }
     }
 
     /** Returns `true` if it is known that the given exception can be thrown when calling [JavaClassDescriptor.toSerializedJavaClass]. */

@@ -320,14 +320,14 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @NotNull
-    private static ClassId resolveNameByInternalName(@NotNull String name, @NotNull InnerClassesInfo innerClasses) {
+    public static ClassId resolveNameByInternalName(@NotNull String name, @NotNull InnerClassesInfo innerClasses) {
         if (!name.contains("$")) {
             return ClassId.topLevel(new FqName(name.replace('/', '.')));
         }
 
         List<String> classes = new ArrayList<>(1);
         boolean local = false;
-        
+
         while (true) {
             OuterAndInnerName outer = innerClasses.get(name);
             if (outer == null) break;
