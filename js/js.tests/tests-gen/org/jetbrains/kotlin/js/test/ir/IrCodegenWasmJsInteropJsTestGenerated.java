@@ -26,6 +26,12 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
     }
 
     @Test
+    @TestMetadata("defaultValues.kt")
+    public void testDefaultValues() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
+    }
+
+    @Test
     @TestMetadata("externalTypeOperators.kt")
     public void testExternalTypeOperators() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");

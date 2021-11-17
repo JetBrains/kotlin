@@ -269,13 +269,19 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
+        val function: IrFunction = call.symbol.owner.realOverrideTarget
+
         call.dispatchReceiver?.let { generateExpression(it) }
         call.extensionReceiver?.let { generateExpression(it) }
         for (i in 0 until call.valueArgumentsCount) {
-            generateExpression(call.getValueArgument(i)!!)
+            val valueArgument = call.getValueArgument(i)
+            if (valueArgument == null) {
+                generateDefaultInitializerForType(context.transformType(function.valueParameters[i].type), body)
+            } else {
+                generateExpression(valueArgument)
+            }
         }
 
-        val function: IrFunction = call.symbol.owner.realOverrideTarget
 
         if (tryToGenerateIntrinsicCall(call, function)) {
             if (function.returnType == irBuiltIns.unitType)

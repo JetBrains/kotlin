@@ -300,7 +300,7 @@ private val addMainFunctionCallsLowering = makeCustomWasmModulePhase(
 )
 
 private val defaultArgumentStubGeneratorPhase = makeWasmModulePhase(
-    ::DefaultArgumentStubGenerator,
+    { context -> DefaultArgumentStubGenerator(context, skipExternalMethods = true) },
     name = "DefaultArgumentStubGenerator",
     description = "Generate synthetic stubs for functions with default parameter values"
 )

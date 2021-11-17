@@ -164,7 +164,11 @@ internal fun convertJsStringToKotlinString(x: ExternalInterfaceType): String {
 internal external fun jsWriteStringIntoMemory(str: ExternalInterfaceType, addr: Int)
 
 
-internal fun kotlinToJsStringAdapter(x: String): ExternalInterfaceType {
+internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
+    // Using nullable String to represent default value
+    // for parameters with default values
+    if (x == null)
+        return null
     return importStringFromWasm(exportString(x))
 }
 

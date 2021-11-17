@@ -81,6 +81,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
      *  fun foo__externalAdapter(x: KotlinType): KotlinType = adaptResult(foo(adaptParameter(x)));
      */
     fun transformExternalFunction(function: IrSimpleFunction): List<IrDeclaration>? {
+        // External functions with default parameter values are already processed by
+        // [ComplexExternalDeclarationsToTopLevelFunctionsLowering]
+        if (function.valueParameters.any { it.defaultValue != null })
+            return null
+
         val valueParametersAdapters = function.valueParameters.map {
             it.type.kotlinToJsAdapterIfNeeded(isReturn = false)
         }
@@ -600,11 +605,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 }
 
-internal fun StringBuilder.appendParameterList(size: Int) =
+internal fun StringBuilder.appendParameterList(size: Int, name: String = "p", isEnd: Boolean = true) =
     repeat(size) {
-        append("p")
+        append(name)
         append(it)
-        if (it + 1 < size)
+        if (!isEnd || it + 1 < size)
             append(", ")
     }
 

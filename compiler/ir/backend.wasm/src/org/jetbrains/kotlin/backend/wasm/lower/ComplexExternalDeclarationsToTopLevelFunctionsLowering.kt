@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -159,53 +162,94 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 
     fun processExternalConstructor(constructor: IrConstructor) {
         val klass = constructor.constructedClass
-        val jsCode = buildString {
-            append("(")
-            appendParameterList(constructor.valueParameters.size)
-            append(") => new ")
-            appendExternalClassReference(klass)
-            append("(")
-            appendParameterList(constructor.valueParameters.size)
-            append(")")
-        }
-
-        val res = createExternalJsFunction(
-            klass.name,
-            "_\$external_constructor",
-            resultType = klass.defaultType,
-            jsCode = jsCode
+        processFunctionOrConstructor(
+            function = constructor,
+            name = klass.name,
+            returnType = klass.defaultType,
+            isConstructor = true,
+            jsFunctionReference = buildString { appendExternalClassReference(klass) }
         )
-
-        constructor.valueParameters.forEach { res.addValueParameter(it.name, it.type) }
-        externalFunToTopLevelMapping[constructor] = res
     }
 
     fun processExternalSimpleFunction(function: IrSimpleFunction) {
-        if (function.parent is IrPackageFragment) return
-        val jsName = function.getJsNameOrKotlinName()
+        val jsFun = function.getJsFunAnnotation()
+        // Wrap external functions without @JsFun to lambdas `foo` -> `(a, b) => foo(a, b)`.
+        // This way we wouldn't fail if we don't call them.
+        if (jsFun != null && function.valueParameters.all { it.defaultValue == null })
+            return
+        processFunctionOrConstructor(
+            function = function,
+            name = function.name,
+            returnType = function.returnType,
+            isConstructor = false,
+            jsFunctionReference = jsFun?.let { "($it)" } ?: function.getJsNameOrKotlinName().identifier
+        )
+    }
+
+    fun processFunctionOrConstructor(
+        function: IrFunction,
+        name: Name,
+        returnType: IrType,
+        isConstructor: Boolean,
+        jsFunctionReference: String
+    ) {
         val dispatchReceiver = function.dispatchReceiverParameter
-        require(dispatchReceiver != null) {
-            "Non top-level external function w/o dispatchReceiverParameter: ${function.fqNameWhenAvailable}"
-        }
+        val numValueParameters = function.valueParameters.size
+
+
+        val numDefaultParameters =
+            numDefaultParametersForExternalFunction(function)
 
         val jsCode = buildString {
-            append("(_this, ")
-            appendParameterList(function.valueParameters.size)
-            append(") => _this.")
-            append(jsName)
             append("(")
-            appendParameterList(function.valueParameters.size)
+            if (dispatchReceiver != null) {
+                append("_this, ")
+            }
+            appendParameterList(numValueParameters, isEnd = numDefaultParameters == 0)
+
+            // Parameters with default values are handled via adding additional flags to indicate that parameter is default .
+            //
+            //   external fun foo(x: Int, y: Int = definedExternally, z: Int = definedExternally)
+            //
+            //     =>
+            //
+            //   @JsCode("""(x, y, z, isDefault1, isDefault2) =>
+            //      foo(
+            //          x,
+            //          isDefault1 ? undefined : y,
+            //          isDefault2 ? undefined : z
+            //      )
+            //   """)
+            //   external fun foo(x: Int, y: Int, z: Int, isDefault1: Int, isDefault: Int)
+
+            appendParameterList(numDefaultParameters, "isDefault", isEnd = true)
+            append(") => ")
+            if (isConstructor) {
+                append("new ")
+            }
+            if (dispatchReceiver != null) {
+                append("_this.")
+            }
+            append(jsFunctionReference)
+            append("(")
+            appendParameterList(numValueParameters - numDefaultParameters, isEnd = numDefaultParameters == 0)
+            repeat(numDefaultParameters) {
+                append("isDefault$it ? undefined : p${numValueParameters - numDefaultParameters + it}, ")
+            }
             append(")")
         }
         val res = createExternalJsFunction(
-            function.name,
-            "_\$external_member_fun",
-            resultType = function.returnType,
+            name,
+            "_\$external_fun",
+            resultType = returnType,
             jsCode = jsCode
         )
-        res.addValueParameter("_this", dispatchReceiver.type)
+        if (dispatchReceiver != null) {
+            res.addValueParameter("_this", dispatchReceiver.type)
+        }
         function.valueParameters.forEach { res.addValueParameter(it.name, it.type) }
-
+        // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
+        repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
         externalFunToTopLevelMapping[function] = res
     }
 
@@ -289,11 +333,26 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
             }
 
             fun transformCall(call: IrFunctionAccessExpression): IrExpression {
+                val oldFun = call.symbol.owner.realOverrideTarget
                 val newFun: IrSimpleFunction? =
-                    context.mapping.wasmNestedExternalToNewTopLevelFunction[call.symbol.owner.realOverrideTarget]
+                    context.mapping.wasmNestedExternalToNewTopLevelFunction[oldFun]
 
                 return if (newFun != null) {
-                    irCall(call, newFun, receiversAsArguments = true)
+                    val newCall = irCall(call, newFun, receiversAsArguments = true)
+
+                    // Add default arguments flags if needed
+                    val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
+                    val firstDefaultFlagArgumentIdx = newFun.valueParameters.size - numDefaultParameters
+                    val firstOldDefaultArgumentIdx = call.valueArgumentsCount - numDefaultParameters
+                    repeat(numDefaultParameters) {
+                        val value = if (call.getValueArgument(firstOldDefaultArgumentIdx + it) == null) 1 else 0
+                        newCall.putValueArgument(
+                            firstDefaultFlagArgumentIdx + it,
+                            IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
+                        )
+                    }
+
+                    newCall
                 } else {
                     call
                 }
@@ -302,4 +361,12 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
     }
 }
 
+private fun numDefaultParametersForExternalFunction(function: IrFunction): Int {
+    val firstDefaultParameterIndex: Int? =
+        function.valueParameters.firstOrNull { it.defaultValue != null }?.index
 
+    return if (firstDefaultParameterIndex == null)
+        0
+    else
+        function.valueParameters.size - firstDefaultParameterIndex
+}
