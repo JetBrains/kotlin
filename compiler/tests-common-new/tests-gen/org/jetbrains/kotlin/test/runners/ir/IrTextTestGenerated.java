@@ -736,15 +736,39 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("arrayAccessCompositeOperators.kt")
+            public void testArrayAccessCompositeOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/arrayAccessCompositeOperators.kt");
+            }
+
+            @Test
+            @TestMetadata("arrayAccessOperators.kt")
+            public void testArrayAccessOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/arrayAccessOperators.kt");
+            }
+
+            @Test
             @TestMetadata("class.kt")
             public void testClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/class.kt");
             }
 
             @Test
+            @TestMetadata("compoundAssignmentOperators.kt")
+            public void testCompoundAssignmentOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/compoundAssignmentOperators.kt");
+            }
+
+            @Test
             @TestMetadata("contextualPrimaryConstructorWithParams.kt")
             public void testContextualPrimaryConstructorWithParams() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextualPrimaryConstructorWithParams.kt");
+            }
+
+            @Test
+            @TestMetadata("delegatedPropertiesOperators.kt")
+            public void testDelegatedPropertiesOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/delegatedPropertiesOperators.kt");
             }
 
             @Test
@@ -763,6 +787,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             @TestMetadata("genericOuterClass.kt")
             public void testGenericOuterClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/genericOuterClass.kt");
+            }
+
+            @Test
+            @TestMetadata("iteratorOperator.kt")
+            public void testIteratorOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/iteratorOperator.kt");
             }
 
             @Test
@@ -805,6 +835,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             @TestMetadata("thisWithCustomLabel.kt")
             public void testThisWithCustomLabel() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/thisWithCustomLabel.kt");
+            }
+
+            @Test
+            @TestMetadata("unaryOperators.kt")
+            public void testUnaryOperators() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/unaryOperators.kt");
             }
 
             @Nested

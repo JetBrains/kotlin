@@ -16270,15 +16270,45 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 }
 
                 @Test
+                @TestMetadata("arrayAccessCompositeOperators.kt")
+                public void testArrayAccessCompositeOperators() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/arrayAccessCompositeOperators.kt");
+                }
+
+                @Test
+                @TestMetadata("arrayAccessOperators.kt")
+                public void testArrayAccessOperators() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/arrayAccessOperators.kt");
+                }
+
+                @Test
+                @TestMetadata("compoundAssignmentOperators.kt")
+                public void testCompoundAssignmentOperators() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/compoundAssignmentOperators.kt");
+                }
+
+                @Test
                 @TestMetadata("contextAndExtensionSameName.kt")
                 public void testContextAndExtensionSameName() throws Exception {
                     runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/contextAndExtensionSameName.kt");
                 }
 
                 @Test
+                @TestMetadata("delegatedPropertiesOperators.kt")
+                public void testDelegatedPropertiesOperators() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/delegatedPropertiesOperators.kt");
+                }
+
+                @Test
                 @TestMetadata("inferGenericPropertyType.kt")
                 public void testInferGenericPropertyType() throws Exception {
                     runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/inferGenericPropertyType.kt");
+                }
+
+                @Test
+                @TestMetadata("iteratorOperator.kt")
+                public void testIteratorOperator() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/iteratorOperator.kt");
                 }
 
                 @Test
@@ -16321,6 +16351,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 @TestMetadata("this.kt")
                 public void testThis() throws Exception {
                     runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/this.kt");
+                }
+
+                @Test
+                @TestMetadata("unaryOperators.kt")
+                public void testUnaryOperators() throws Exception {
+                    runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/unaryOperators.kt");
                 }
 
                 @Test
