@@ -8,17 +8,25 @@ package org.jetbrains.kotlin.konan.blackboxtest.runner
 import org.jetbrains.kotlin.konan.blackboxtest.LoggedData
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import java.lang.AssertionError
 
 internal abstract class AbstractRunner<R> {
     protected abstract fun buildRun(): AbstractRun
     protected abstract fun buildResultHandler(runResult: RunResult): ResultHandler
+    protected abstract fun handleUnexpectedFailure(t: Throwable): Nothing
 
-    fun run(): R {
+    fun run(): R = try {
         val run = buildRun()
         val runResult = run.run()
-
         val resultHandler = buildResultHandler(runResult)
-        return resultHandler.handle()
+        resultHandler.handle()
+    } catch (t: Throwable) {
+        if (t is AssertionError)
+            throw t
+        else {
+            // An unexpected failure.
+            handleUnexpectedFailure(t)
+        }
     }
 
     interface AbstractRun {

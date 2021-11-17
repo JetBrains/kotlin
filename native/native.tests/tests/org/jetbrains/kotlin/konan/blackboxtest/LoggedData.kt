@@ -70,20 +70,7 @@ internal abstract class LoggedData {
         }
     }
 
-    class CompilerCallUnexpectedFailure(
-        private val parameters: CompilerParameters,
-        private val throwable: Throwable
-    ) : LoggedData() {
-        override fun computeText() = buildString {
-            appendLine("UNEXPECTED FAILURE IN COMPILER:")
-            appendLine("$throwable")
-            appendLine()
-            appendLine("STACK TRACE:")
-            appendLine(throwable.stackTraceToString())
-            appendLine()
-            appendLine(parameters)
-        }
-    }
+    class CompilerCallUnexpectedFailure(parameters: CompilerParameters, throwable: Throwable) : UnexpectedFailure(parameters, throwable)
 
     class TestRunParameters(
         private val compilerCall: CompilerCall,
@@ -130,6 +117,23 @@ internal abstract class LoggedData {
             appendLine("========== BEGIN: TEST STDERR ==========")
             if (stdErr.isNotEmpty()) appendLine(stdErr.trimEnd())
             appendLine("========== END: TEST STDERR ==========")
+            appendLine()
+            appendLine(parameters)
+        }
+    }
+
+    class TestRunUnexpectedFailure(parameters: TestRunParameters, throwable: Throwable) : UnexpectedFailure(parameters, throwable)
+
+    abstract class UnexpectedFailure(
+        private val parameters: LoggedData,
+        private val throwable: Throwable
+    ) : LoggedData() {
+        override fun computeText() = buildString {
+            appendLine("ERROR MESSAGE:")
+            appendLine("${throwable.message}")
+            appendLine()
+            appendLine("STACK TRACE:")
+            appendLine(throwable.stackTraceToString().trimEnd())
             appendLine()
             appendLine(parameters)
         }

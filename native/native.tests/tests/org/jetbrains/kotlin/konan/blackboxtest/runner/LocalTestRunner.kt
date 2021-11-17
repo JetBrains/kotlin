@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.LoggedData
 import org.jetbrains.kotlin.konan.blackboxtest.TestRun
 import org.jetbrains.kotlin.konan.blackboxtest.TestRunParameter
 import org.jetbrains.kotlin.konan.blackboxtest.get
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 
 internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProcessRunner<Unit>() {
     override val visibleProcessName get() = "Tested process"
@@ -20,12 +21,13 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
         testRun.runParameters.forEach { it.applyTo(this) }
     }
 
-    private fun getLoggedParameters() = LoggedData.TestRunParameters(
-        compilerCall = executable.loggedCompilerCall,
-        origin = testRun.origin,
-        runArgs = programArgs,
-        runParameters = testRun.runParameters
-    )
+    private val loggedParameters: LoggedData.TestRunParameters
+        get() = LoggedData.TestRunParameters(
+            compilerCall = executable.loggedCompilerCall,
+            origin = testRun.origin,
+            runArgs = programArgs,
+            runParameters = testRun.runParameters
+        )
 
     override fun customizeProcess(process: Process) {
         testRun.runParameters.get<TestRunParameter.WithInputData> {
@@ -36,8 +38,16 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
 
     override fun buildResultHandler(runResult: RunResult) = ResultHandler(runResult)
 
+    override fun handleUnexpectedFailure(t: Throwable) = fail {
+        buildString {
+            appendLine("Test execution failed with unexpected exception.")
+            appendLine()
+            appendLine(LoggedData.TestRunUnexpectedFailure(loggedParameters, t))
+        }
+    }
+
     inner class ResultHandler(runResult: RunResult) : AbstractLocalProcessRunner<Unit>.ResultHandler(runResult) {
-        override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), exitCode, stdOut, stdErr, durationMillis)
+        override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, exitCode, stdOut, stdErr, durationMillis)
 
         override fun doHandle() {
             if (testRun.runParameters.has<TestRunParameter.WithGTestLogger>()) {
