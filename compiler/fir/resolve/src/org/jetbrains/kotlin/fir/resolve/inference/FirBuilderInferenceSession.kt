@@ -181,7 +181,7 @@ class FirBuilderInferenceSession(
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
         shouldIntegrateAllConstraints: Boolean
     ): Boolean {
-        storage.notFixedTypeVariables.values.forEach { commonSystem.registerVariable(it.typeVariable) }
+        storage.notFixedTypeVariables.values.forEach { commonSystem.registerTypeVariableIfNotPresent(it.typeVariable) }
 
         /*
         * storage can contain the following substitutions:
@@ -224,7 +224,7 @@ class FirBuilderInferenceSession(
         if (shouldIntegrateAllConstraints) {
             for ((variableConstructor, type) in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
-                commonSystem.registerVariable(typeVariable)
+                commonSystem.registerTypeVariableIfNotPresent(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, BuilderInferencePosition)
                 introducedConstraint = true
             }
