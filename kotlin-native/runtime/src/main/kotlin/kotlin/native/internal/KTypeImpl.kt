@@ -57,6 +57,7 @@ internal class KTypeImpl<T>(
 
     @ExportForCompiler
     @ConstantConstructorIntrinsic("KTYPE_IMPL")
+    @Suppress("UNREACHABLE_CODE")
     constructor() : this(null, TODO("This is intrinsic constructor and it shouldn't be used directly"), false)
 
     override fun equals(other: Any?) =

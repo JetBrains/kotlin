@@ -27,7 +27,7 @@ import kotlinx.cinterop.*
  * Class representing worker.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-public inline class Worker @PublishedApi internal constructor(val id: Int) {
+public value class Worker @PublishedApi internal constructor(val id: Int) {
     companion object {
         /**
          * Start new scheduling primitive, such as thread, to accept new tasks via `execute` interface.

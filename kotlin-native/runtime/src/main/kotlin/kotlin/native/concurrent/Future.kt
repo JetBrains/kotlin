@@ -26,7 +26,7 @@ enum class FutureState(val value: Int) {
  * Class representing abstract computation, whose result may become available in the future.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-public inline class Future<T> @PublishedApi internal constructor(val id: Int) {
+public value class Future<T> @PublishedApi internal constructor(val id: Int) {
     /**
      * Blocks execution until the future is ready.
      *

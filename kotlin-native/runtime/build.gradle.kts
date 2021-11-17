@@ -404,8 +404,6 @@ val stdLibSrcDirs =  interopSrcDirs + listOf(
         project(":kotlin-stdlib-common").file("../native-wasm/src/")
 )
 
-val args = listOf<String>(/* -Werror (TODO: check) */)
-
 lateinit var stdlibBuildTask: TaskProvider<Task>
 
 konanArtifacts {
@@ -418,8 +416,9 @@ konanArtifacts {
         noDefaultLibs(true)
         noEndorsedLibs(true)
 
-        extraOpts(args + project.globalBuildArgs)
+        extraOpts(project.globalBuildArgs)
         extraOpts(
+                "-Werror",
                 "-module-name", "stdlib",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
