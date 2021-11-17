@@ -437,7 +437,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
         return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
     }
     return when (origin) {
-        FirDeclarationOrigin.Source, FirDeclarationOrigin.Library -> null
+        FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
         FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.getAsForbiddenNamedArgumentsTarget(session)
         // For intersection overrides, the logic in

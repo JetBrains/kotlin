@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -65,6 +66,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     session: FirSession,
     val moduleDataProvider: ModuleDataProvider,
     val kotlinScopeProvider: FirKotlinScopeProvider,
+    val defaultDeserializationOrigin: FirDeclarationOrigin,
 ) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
@@ -146,6 +148,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     kotlinScopeProvider,
                     parentContext,
                     sourceElement,
+                    origin = defaultDeserializationOrigin,
                     deserializeNestedClass = this::getClass,
                 )
                 symbol to postProcessor

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
@@ -155,6 +156,7 @@ object FirSessionFactory {
                     it.packagePartProvider,
                     projectEnvironment.getKotlinClassFinder(it.scope),
                     projectEnvironment.getFirJavaFacade(this, moduleData, it.scope),
+                    defaultDeseializationOrigin = FirDeclarationOrigin.Precompiled
                 )
             }
 

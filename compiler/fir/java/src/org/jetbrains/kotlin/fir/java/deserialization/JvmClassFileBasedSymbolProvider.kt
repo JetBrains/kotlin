@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationInfos
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -44,7 +45,8 @@ class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider) {
+    defaultDeseializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeseializationOrigin) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
