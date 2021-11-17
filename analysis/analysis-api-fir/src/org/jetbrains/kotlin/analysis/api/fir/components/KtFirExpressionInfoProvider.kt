@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtExpressionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
@@ -24,6 +25,7 @@ internal class KtFirExpressionInfoProvider(
     override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
         val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveState) ?: return null
         val firTargetSymbol = fir.target.labeledElement
+        if (firTargetSymbol is FirErrorFunction) return null
         return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol)
     }
 
