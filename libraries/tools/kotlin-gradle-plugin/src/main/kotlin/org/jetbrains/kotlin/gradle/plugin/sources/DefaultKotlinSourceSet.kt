@@ -11,12 +11,16 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeNativeDistributionTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizedPlatformLibrariesFor
+import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.util.*
@@ -153,6 +157,13 @@ class DefaultKotlinSourceSet(
         } ?: return emptyList()
 
         return getDependenciesTransformation(scope)
+    }
+
+    @Suppress("unused")
+    fun getScopeForCommonApiChecks(): Iterable<File>? {
+        val target = project.getCommonizerTarget(this) as? SharedCommonizerTarget ?: return null
+        val task = project.commonizeNativeDistributionTask?.get() ?: return null
+        return task.getCommonizedPlatformLibrariesFor(target)
     }
 
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> =

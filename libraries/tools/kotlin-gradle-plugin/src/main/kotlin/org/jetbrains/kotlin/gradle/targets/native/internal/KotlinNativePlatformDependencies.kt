@@ -56,6 +56,8 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
         //      consider: macos vs. linux. If we're on macos, then `getOriginalPlatformLibraries(macos)` for source-set without macos woould be stupid
         //   - think about compilation
         //   - think about toggle for the feature
+        //   - consider not using intransitive metadata-configuration (or maybe prove that it is needed -- e.g. consider (macos, linux) source set
+        //      on macos host. Probably, dependency on macos libraries shouldn't leak to linux)
         //
         //is SharedCommonizerTarget -> commonizeNativeDistributionTask?.get()?.getCommonizedPlatformLibrariesFor(target) ?: project.files()
         is SharedCommonizerTarget -> {
@@ -79,9 +81,9 @@ private fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): F
     konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
 }
 
-private fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
+internal fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): List<File> {
     val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(getRootOutputDirectory(), target)
-    return project.filesProvider { targetOutputDirectory.listLibraryFiles() }.builtBy(this)
+    return targetOutputDirectory.listLibraryFiles()
 }
 
 private fun Project.addDependencies(
