@@ -14,6 +14,7 @@
           <option value=":compiler:tests-java8:generateTests" />
           <option value=":compiler:tests-against-klib:generateTests" />
           <option value=":js:js.tests:generateTests" />
+          <option value=":native:native.tests:generateTests" />
           <option value=":core:descriptors.runtime:generateTests" />
         </list>
       </option>
