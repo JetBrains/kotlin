@@ -25,25 +25,38 @@ class FirDelegatedPropertyInferenceSession(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
 ) : AbstractManyCandidatesInferenceSession(resolutionContext) {
 
+    private var refreshConstraintStorage = true
+
+    private val system = components.session.inferenceComponents.createConstraintSystem()
+
+    private var stubToTypeVariableSubstitutor: ConeSubstitutor = ConeSubstitutor.Empty
+
+    private fun computeConstraintStorage(): ConstraintStorage {
+        stubToTypeVariableSubstitutor = createToSyntheticTypeVariableSubstitutor()
+        syntheticTypeVariableByTypeVariable.values.forEach {
+            system.registerVariable(it)
+        }
+        partiallyResolvedCalls.forEach { (_, candidate) ->
+            integrateConstraints(
+                system,
+                candidate.system.asReadOnlyStorage(),
+                stubToTypeVariableSubstitutor,
+                shouldIntegrateAllConstraints = false
+            )
+        }
+
+        return system.currentStorage()
+    }
+
+    private lateinit var cachedConstraintStorage: ConstraintStorage
+
     override val currentConstraintSystem: ConstraintStorage
         get() {
-//            return ConstraintStorage.Empty
-            val system = components.session.inferenceComponents.createConstraintSystem()
-
-            val stubToTypeVariableSubstitutor = createToSyntheticTypeVariableSubstitutor()
-            syntheticTypeVariableByTypeVariable.values.forEach {
-                system.registerVariable(it)
+            if (refreshConstraintStorage) {
+                refreshConstraintStorage = false
+                cachedConstraintStorage = computeConstraintStorage()
             }
-            partiallyResolvedCalls.forEach { (_, candidate) ->
-                integrateConstraints(
-                    system,
-                    candidate.system.asReadOnlyStorage(),
-                    stubToTypeVariableSubstitutor,
-                    false
-                )
-            }
-
-            return system.currentStorage()
+            return cachedConstraintStorage
         }
 
     private val commonSystem = components.session.inferenceComponents.createConstraintSystem()
@@ -58,6 +71,12 @@ class FirDelegatedPropertyInferenceSession(
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to candidate
+        integrateConstraints(
+            system,
+            candidate.system.asReadOnlyStorage(),
+            stubToTypeVariableSubstitutor,
+            shouldIntegrateAllConstraints = false
+        )
     }
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -232,6 +251,7 @@ class FirDelegatedPropertyInferenceSession(
             variable as ConeTypeVariable
 
             val syntheticVariable = syntheticTypeVariableByTypeVariable.getOrPut(variable) {
+                refreshConstraintStorage = true
                 ConeTypeVariable("_" + variable.typeConstructor.name)
             }
 
