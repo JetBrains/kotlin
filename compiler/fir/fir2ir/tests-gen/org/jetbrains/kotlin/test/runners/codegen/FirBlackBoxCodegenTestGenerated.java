@@ -16158,6 +16158,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("propertyCompoundAssignment.kt")
+            public void testPropertyCompoundAssignment() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/propertyCompoundAssignment.kt");
+            }
+
+            @Test
             @TestMetadata("simpleCall.kt")
             public void testSimpleCall() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/simpleCall.kt");

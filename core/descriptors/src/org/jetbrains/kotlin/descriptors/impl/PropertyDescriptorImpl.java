@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartSet;
@@ -444,7 +445,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         List<ReceiverParameterDescriptor> substitutedContextReceivers = new ArrayList<ReceiverParameterDescriptor>();
         for (ReceiverParameterDescriptor contextReceiverParameter: contextReceiverParameters) {
-            ReceiverParameterDescriptor substitutedContextReceiver = substituteParameterDescriptor(substitutor, substitutedDescriptor,
+            ReceiverParameterDescriptor substitutedContextReceiver = substituteContextParameterDescriptor(substitutor, substitutedDescriptor,
                                                                                                       contextReceiverParameter);
             if (substitutedContextReceiver != null) {
                 substitutedContextReceivers.add(substitutedContextReceiver);
@@ -537,6 +538,20 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return new ReceiverParameterDescriptorImpl(
                 substitutedPropertyDescriptor,
                 new ExtensionReceiver(substitutedPropertyDescriptor, substitutedType, receiverParameterDescriptor.getValue()),
+                receiverParameterDescriptor.getAnnotations()
+        );
+    }
+
+    private static ReceiverParameterDescriptor substituteContextParameterDescriptor(
+            TypeSubstitutor substitutor,
+            PropertyDescriptor substitutedPropertyDescriptor,
+            ReceiverParameterDescriptor receiverParameterDescriptor
+    ) {
+        KotlinType substitutedType = substitutor.substitute(receiverParameterDescriptor.getType(), Variance.IN_VARIANCE);
+        if (substitutedType == null) return null;
+        return new ReceiverParameterDescriptorImpl(
+                substitutedPropertyDescriptor,
+                new ContextReceiver(substitutedPropertyDescriptor, substitutedType, receiverParameterDescriptor.getValue()),
                 receiverParameterDescriptor.getAnnotations()
         );
     }
