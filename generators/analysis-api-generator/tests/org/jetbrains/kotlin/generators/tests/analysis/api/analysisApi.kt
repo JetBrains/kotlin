@@ -5,14 +5,33 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.descriptors.test.AbstractKtFe10ResolveCallTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.*
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10CompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.callResolver.AbstractKtFe10ResolveCallTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10WhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10ExpectedExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10HLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.smartCastProvider.AbstractKtFe10HLSmartCastInfoTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationOverridesProvider.AbstractKtFe10OverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationRenderer.AbstractKtFe10RendererTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10HasCommonSubtypeTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.compileTimeConstantProvider.AbstractKtFe10CompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.AbstractFirReferenceResolveTest
-import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.components.callResolver.AbstractFirResolveCallTest
+import org.jetbrains.kotlin.analysis.api.fir.components.compileTimeConstantProvider.AbstractFirCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.fir.components.expressionInfoProvider.AbstractFirWhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.fir.components.expressionTypeProvider.AbstractFirExpectedExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.components.expressionTypeProvider.AbstractFirHLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.components.importOptimizer.AbstractHLImportOptimizerTest
+import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractExpressionPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.components.smartCastProvider.AbstractFirHLSmartCastInfoTest
+import org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationOverridesProvider.AbstractFirOverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationRenderer.AbstractFirRendererTest
+import org.jetbrains.kotlin.analysis.api.fir.components.typeInfoProvider.AbstractFirFunctionClassKindTest
+import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirGetSuperTypesTest
+import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
