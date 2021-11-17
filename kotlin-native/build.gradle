@@ -133,9 +133,8 @@ void setupHostAndTarget() {
 }
 
 void setupClang(Project project) {
-
     project.extensions.platformManager = project.project(":kotlin-native").ext.platformManager
-    project.extensions.execClang = new org.jetbrains.kotlin.ExecClang(project)
+    project.extensions.execClang = org.jetbrains.kotlin.ExecClang.create(project)
 }
 
 void loadLocalProperties() {

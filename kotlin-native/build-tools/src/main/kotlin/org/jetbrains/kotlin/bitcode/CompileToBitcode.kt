@@ -10,16 +10,59 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.ExecClang
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.SanitizerKind
 import java.io.File
 import javax.inject.Inject
 import kotlinBuildProperties
 import isNativeRuntimeDebugInfoEnabled
+import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
+import org.gradle.process.ExecOperations
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.konan.target.*
 
-open class CompileToBitcode @Inject constructor(
+interface CompileToBitcodeParameters : WorkParameters {
+    var objDir: File
+    var target: String
+    var compilerExecutable: String
+    var compilerArgs: List<String>
+    var llvmLinkArgs: List<String>
+
+    var konanHome: File
+    var llvmDir: File
+    var experimentalDistribution: Boolean
+}
+
+abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeParameters> {
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    override fun execute() {
+        with(parameters) {
+            objDir.mkdirs()
+
+            val platformManager = PlatformManager(buildDistribution(konanHome.absolutePath), experimentalDistribution)
+            val execClang = ExecClang.create(objects, platformManager, llvmDir)
+
+            execClang.execKonanClang(target) {
+                workingDir = objDir
+                executable = compilerExecutable
+                args = compilerArgs
+            }
+
+            execOperations.exec {
+                executable = "${llvmDir.absolutePath}/bin/llvm-link"
+                args = llvmLinkArgs
+            }
+        }
+    }
+}
+
+abstract class CompileToBitcode @Inject constructor(
         @Internal val srcRoot: File,
         @Input val folderName: String,
         @Input val target: String,
@@ -164,24 +207,27 @@ open class CompileToBitcode @Inject constructor(
     val outFile: File
         get() = File(targetDir, "${folderName}.bc")
 
+    @get:Inject
+    abstract val workerExecutor: WorkerExecutor
+
     @TaskAction
     fun compile() {
-        objDir.mkdirs()
-        val plugin = project.extensions.getByType<ExecClang>()
+        val workQueue = workerExecutor.noIsolation()
 
-        plugin.execKonanClang(target) {
-            workingDir = objDir
-            executable = executable
-            args = compilerFlags + inputFiles.map { it.absolutePath }
-        }
-
-        project.exec {
-            val llvmDir = project.findProperty("llvmDir")
-            executable = "$llvmDir/bin/llvm-link"
-            args = listOf("-o", outFile.absolutePath) + linkerArgs +
+        val parameters = { it: CompileToBitcodeParameters ->
+            it.objDir = objDir
+            it.target = target
+            it.compilerExecutable = executable
+            it.compilerArgs = compilerFlags + inputFiles.map { it.absolutePath }
+            it.llvmLinkArgs = listOf("-o", outFile.absolutePath) + linkerArgs +
                     inputFiles.map {
                         bitcodeFileForInputFile(it).absolutePath
                     }
+
+            it.konanHome = project.project(":kotlin-native").projectDir
+            it.llvmDir = project.file(project.findProperty("llvmDir")!!)
         }
+
+        workQueue.submit(CompileToBitcodeJob::class.java, parameters)
     }
 }

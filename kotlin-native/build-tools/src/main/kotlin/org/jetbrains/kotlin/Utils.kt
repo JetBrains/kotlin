@@ -410,7 +410,7 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
     val platform = platformManager.platform(testTarget)
 
     objDir.mkdirs()
-    ExecClang(project).execClangForCompilerTests(testTarget) {
+    ExecClang.create(project).execClangForCompilerTests(testTarget) {
         args = listOf("-c", *cSources.map { it.absolutePath }.toTypedArray())
         workingDir(objDir)
     }
