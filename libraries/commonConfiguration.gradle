@@ -56,14 +56,6 @@ ext.configurePublishing = { Project project, configure = { } ->
     }
 }
 
-ext.configureGradlePluginPublishing = { Project project ->
-    ArtifactsKt.publishGradlePlugin(project)
-}
-
-ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
-    PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
-}
-
 ext.configureFrontendIr = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {

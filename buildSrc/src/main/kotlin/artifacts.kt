@@ -195,18 +195,6 @@ fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication
     publication.configure()
 }
 
-fun Project.publishGradlePlugin() {
-    mainPublicationName = "pluginMaven"
-    publish()
-
-    afterEvaluate {
-        tasks.withType<PublishTask> {
-            // Makes plugin publication task reuse poms and metadata from publication named "pluginMaven"
-            useAutomatedPublishing()
-        }
-    }
-}
-
 fun Project.idePluginDependency(block: () -> Unit) {
     val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
     if (shouldActivate) {

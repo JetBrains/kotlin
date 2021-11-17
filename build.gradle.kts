@@ -374,7 +374,6 @@ val gradlePluginProjects = listOf(
 
 apply {
     from("libraries/commonConfiguration.gradle")
-    from("libraries/configureGradleTools.gradle")
 }
 
 apply {

@@ -7,8 +7,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.plugins.JavaLibraryPlugin
-import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
-import org.gradle.api.plugins.JavaPlugin.SOURCES_ELEMENTS_CONFIGURATION_NAME
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -92,10 +90,6 @@ fun Project.configureGradlePluginCommonSettings() {
                 addEmbeddedRuntime()
             } else if (name == sourcesJarTaskName) {
                 addEmbeddedSources()
-
-                configurePublishedComponent {
-                    addVariantsFromConfiguration(configurations[SOURCES_ELEMENTS_CONFIGURATION_NAME]) {}
-                }
             }
         }
 
@@ -114,10 +108,6 @@ fun Project.configureGradlePluginCommonSettings() {
             tasks.withType<Jar>().configureEach {
                 if (name == javadocJarTaskName) {
                     from(dokkaTask.flatMap { it.outputDirectory })
-
-                    configurePublishedComponent {
-                        addVariantsFromConfiguration(configurations[JAVADOC_ELEMENTS_CONFIGURATION_NAME]) { }
-                    }
                 }
             }
         }
