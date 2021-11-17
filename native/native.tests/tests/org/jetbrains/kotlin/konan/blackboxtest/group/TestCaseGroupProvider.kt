@@ -93,7 +93,7 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
                 val testModule = currentTestModule ?: switchTestModule(TestModule.newDefaultModule(), location)
 
                 testModule.files += TestFile.createUncommitted(
-                    location = generatedSourcesDir.resolve(fileName),
+                    location = generatedSourcesDir.resolve(testModule.name).resolve(fileName),
                     module = testModule,
                     text = currentTestFileText
                 )
