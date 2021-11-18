@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated.KEYWORDS
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
@@ -13,7 +13,7 @@ import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.math.min
 
-internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
+internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageFQN {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
         """
             The file is outside of the directory.
@@ -48,10 +48,10 @@ internal fun computePackageName(testDataBaseDir: File, testDataFile: File): Pack
         }
 }
 
-internal fun Set<PackageName>.findCommonPackageName(): PackageName? = when (size) {
+internal fun Set<PackageFQN>.findCommonPackageName(): PackageFQN? = when (size) {
     0 -> null
     1 -> first()
-    else -> map { packageName: PackageName ->
+    else -> map { packageName: PackageFQN ->
         packageName.split('.')
     }.reduce { commonPackageNameParts: List<String>, packageNameParts: List<String> ->
         ArrayList<String>(min(commonPackageNameParts.size, packageNameParts.size)).apply {

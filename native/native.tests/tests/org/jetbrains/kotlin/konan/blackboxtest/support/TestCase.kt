@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
-internal typealias PackageName = String
+internal typealias PackageFQN = String
 
 /**
  * Helps to track the origin of every [TestCase], [TestCompilation] or [TestExecutable]. Used for issue reporting purposes.
@@ -153,7 +153,7 @@ internal class TestCase(
     val modules: Set<TestModule.Exclusive>,
     val freeCompilerArgs: TestCompilerArgs,
     val origin: TestOrigin.SingleTestDataFile,
-    val nominalPackageName: PackageName,
+    val nominalPackageName: PackageFQN,
     val expectedOutputDataFile: File?,
     val extras: StandaloneNoTestRunnerExtras? = null
 ) {

@@ -210,7 +210,7 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
 
     private fun fixPackageDeclaration(
         testFile: TestFile<TestModule.Exclusive>,
-        packageName: PackageName,
+        packageName: PackageFQN,
         testDataFile: File
     ) = testFile.update { text ->
         var existingPackageDeclarationLine: String? = null

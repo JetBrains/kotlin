@@ -107,7 +107,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
     private fun multiModuleArtifactFile(modules: Collection<TestModule>, extension: String): File {
         var filesCount = 0
         var hash = 0
-        val uniquePackageNames = hashSetOf<PackageName>()
+        val uniquePackageNames = hashSetOf<PackageFQN>()
 
         modules.forEach { module ->
             module.files.forEach { file ->
@@ -137,7 +137,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
         return artifactDirForPackageName(commonPackageName).resolve(artifactFileName)
     }
 
-    private fun artifactDirForPackageName(packageName: PackageName?): File {
+    private fun artifactDirForPackageName(packageName: PackageFQN?): File {
         val baseDir = environment.testBinariesDir
         val outputDir = if (packageName != null) baseDir.resolve(packageName.replace('.', '_')) else baseDir
 

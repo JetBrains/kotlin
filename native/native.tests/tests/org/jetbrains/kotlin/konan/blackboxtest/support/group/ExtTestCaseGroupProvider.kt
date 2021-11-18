@@ -633,7 +633,7 @@ private class ExtTestDataFileSettings(
     val optInsForCompiler: Set<String>,
     val expectActualLinker: Boolean,
     val generatedSourcesDir: File,
-    val effectivePackageName: PackageName
+    val effectivePackageName: PackageFQN
 )
 
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?

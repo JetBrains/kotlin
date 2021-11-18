@@ -31,7 +31,7 @@ internal sealed interface TestRunParameter {
         }
     }
 
-    class WithPackageFilter(private val packageFQN: PackageName) : WithFilter() {
+    class WithPackageFilter(private val packageFQN: PackageFQN) : WithFilter() {
         override val wildcard get() = "$packageFQN.*"
         override fun testMatches(testName: String) = testName.startsWith("$packageFQN.")
     }
