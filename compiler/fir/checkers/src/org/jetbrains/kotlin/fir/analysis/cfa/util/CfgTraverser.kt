@@ -20,7 +20,7 @@ fun <D> ControlFlowGraph.traverse(
 ) {
     for (node in getNodesInOrder(direction)) {
         node.accept(visitor, data)
-        (node as? CFGNodeWithCfgOwner<*>)?.subGraphs?.forEach { it.traverse(direction, visitor, data) }
+        (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(direction, visitor, data) }
     }
 }
 
@@ -61,7 +61,7 @@ private fun <I> ControlFlowGraph.collectDataForNodeInternal(
 ) {
     val nodes = getNodesInOrder(direction)
     for (node in nodes) {
-        if (visitSubGraphs && direction == TraverseDirection.Backward && node is CFGNodeWithCfgOwner<*>) {
+        if (visitSubGraphs && direction == TraverseDirection.Backward && node is CFGNodeWithSubgraphs<*>) {
             node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
         }
         val previousNodes = when (direction) {
@@ -85,7 +85,7 @@ private fun <I> ControlFlowGraph.collectDataForNodeInternal(
         if (hasChanged) {
             nodeMap[node] = newData
         }
-        if (visitSubGraphs && direction == TraverseDirection.Forward && node is CFGNodeWithCfgOwner<*>) {
+        if (visitSubGraphs && direction == TraverseDirection.Forward && node is CFGNodeWithSubgraphs<*>) {
             node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
         }
     }

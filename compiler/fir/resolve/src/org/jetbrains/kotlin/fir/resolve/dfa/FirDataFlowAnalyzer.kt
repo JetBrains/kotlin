@@ -328,6 +328,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return controlFlowGraph
     }
 
+    fun enterAnonymousObject(anonymousObject: FirAnonymousObject) {
+        graphBuilder.enterAnonymousObject(anonymousObject).mergeIncomingFlow()
+    }
+
     fun exitAnonymousObject(anonymousObject: FirAnonymousObject): ControlFlowGraph {
         // TODO: support capturing of mutable properties, KT-44877
         val (node, controlFlowGraph) = graphBuilder.exitAnonymousObject(anonymousObject)

@@ -111,6 +111,7 @@ fun CFGNode<*>.render(): String =
                 is ClassEnterNode -> "Enter class ${owner.name}"
                 is ClassExitNode -> "Exit class ${owner.name}"
                 is LocalClassExitNode -> "Exit local class ${owner.name}"
+                is AnonymousObjectEnterNode -> "Enter anonymous object"
                 is AnonymousObjectExitNode -> "Exit anonymous object"
                 is AnonymousObjectExpressionExitNode -> "Exit anonymous object expression"
 

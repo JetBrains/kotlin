@@ -156,15 +156,21 @@ interface ExitNodeMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
-sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<E>(owner, level, id) {
+sealed class CFGNodeWithSubgraphs<out E : FirElement>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<E>(owner, level, id) {
     private val _subGraphs = mutableListOf<ControlFlowGraph>()
 
     fun addSubGraph(graph: ControlFlowGraph){
         _subGraphs += graph
     }
 
-    val subGraphs: List<ControlFlowGraph> by lazy {
-        _subGraphs.also { it.addIfNotNull(fir.controlFlowGraphReference?.controlFlowGraph) }
+    open val subGraphs: List<ControlFlowGraph>
+        get() = _subGraphs
+}
+
+sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNodeWithSubgraphs<E>(owner, level, id) {
+    override val subGraphs: List<ControlFlowGraph> by lazy {
+        fir.controlFlowGraphReference?.controlFlowGraph?.run(::addSubGraph)
+        super.subGraphs
     }
 }
 
@@ -271,7 +277,13 @@ class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularCl
     }
 }
 
-class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousObject>(owner, level, id) {
+class AnonymousObjectEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousObject>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitAnonymousObjectEnterNode(this, data)
+    }
+}
+
+class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNodeWithSubgraphs<FirAnonymousObject>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousObjectExitNode(this, data)
     }
