@@ -101,41 +101,6 @@ done
         }
     }
 
-    @Ignore("Fails on TC for unclear reasons, rewrite to the new API")
-    @Test
-    fun testResolveStdJUnitHelloWorld() {
-        val savedErr = System.err
-        try {
-            System.setErr(PrintStream(NullOutputStream()))
-            Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
-        } finally {
-            System.setErr(savedErr)
-        }
-
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        Assert.assertNotNull(scriptClass)
-        captureOut {
-            scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
-        }.let {
-            Assert.assertEquals(argsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
-        }
-    }
-
-    @Ignore("Fails on TC for unclear reasons, rewrite to the new API")
-    @Test
-    fun testResolveStdJUnitDynVer() {
-        val (out, err) = captureOutAndErr {
-            Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
-        }
-        Assert.assertTrue(
-            "Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err",
-            err.contains("error: unresolved reference: assertThrows")
-        )
-
-        val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        Assert.assertNotNull(scriptClass)
-    }
-
     private fun compileScript(
         scriptFileName: String,
         scriptTemplate: KClass<out Any>,
