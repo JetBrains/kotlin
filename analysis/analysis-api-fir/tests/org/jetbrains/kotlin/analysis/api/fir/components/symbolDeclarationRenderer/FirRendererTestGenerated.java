@@ -185,4 +185,26 @@ public class FirRendererTestGenerated extends AbstractFirRendererTest {
     public void testWhere() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/where.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Types {
+        @Test
+        public void testAllFilesPresentInTypes() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("annotaionOnTypes.kt")
+        public void testAnnotaionOnTypes() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotaionOnTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("annotaionOnTypesWithComplexExpression.kt")
+        public void testAnnotaionOnTypesWithComplexExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotaionOnTypesWithComplexExpression.kt");
+        }
+    }
 }

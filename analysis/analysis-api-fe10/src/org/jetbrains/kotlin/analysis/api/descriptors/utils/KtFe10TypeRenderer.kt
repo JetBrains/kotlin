@@ -44,6 +44,10 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
     private fun KtFe10RendererConsumer.renderType(type: KotlinType) {
         if (isDebugText) {
             renderTypeAnnotationsDebug(type)
+        } else {
+            renderFe10Annotations(type.annotations) { classId ->
+                classId != StandardClassIds.Annotations.ExtensionFunctionType
+            }
         }
         when (val unwrappedType = type.unwrap()) {
             is FlexibleType -> renderFlexibleType(unwrappedType)

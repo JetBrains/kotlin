@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.api.descriptors.utils
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.RendererModifier
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.isExplicitOverride
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValueRenderer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -101,11 +103,6 @@ internal class KtFe10Renderer(
 
             renderType(approximatedType, shouldApproximate = false)
             return
-        }
-
-        renderAnnotations(type.annotations) { classId ->
-            !options.typeRendererOptions.renderFunctionType
-                    || classId != StandardClassIds.Annotations.ExtensionFunctionType
         }
 
         typeRenderer.render(type, this)
@@ -510,35 +507,7 @@ internal class KtFe10Renderer(
             return
         }
 
-        for (annotation in annotations) {
-            val annotationClass = annotation.annotationClass ?: continue
-
-            val classId = annotationClass.classId
-            if (classId != null && !predicate(classId)) {
-                continue
-            }
-
-            if (annotationClass.fqNameSafe != StandardNames.FqNames.parameterName) {
-                append('@')
-                renderType(annotation.type)
-
-                val valueArguments = annotation.allValueArguments.entries.sortedBy { it.key.asString() }
-                renderList(valueArguments, separator = ", ", prefix = "(", postfix = ")", renderWhenEmpty = false) { (name, value) ->
-                    append(name.render())
-                    append(" = ")
-                    when (value) {
-                        is UByteValue -> append(value.value.toUByte().toString())
-                        is UShortValue -> append(value.value.toUShort().toString())
-                        is UIntValue -> append(value.value.toUInt().toString())
-                        is ULongValue -> append(value.value.toULong().toString())
-                        is EnumValue, is AnnotationValue, is KClassValue, is ArrayValue, is ErrorValue -> append("NOT_CONST_EXPRESSION")
-                        else -> append(value.value)
-                    }
-                }
-
-                append(' ')
-            }
-        }
+        renderFe10Annotations(annotations, predicate)
     }
 
     private fun KtFe10RendererConsumer.renderModifiers(descriptor: DeclarationDescriptor) {

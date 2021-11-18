@@ -1,4 +1,4 @@
-@Target(allowedTargets = NOT_CONST_EXPRESSION) annotation class base
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS]) annotation class base
 @base annotation class derived
 @base class correct {
     constructor(x: Int)

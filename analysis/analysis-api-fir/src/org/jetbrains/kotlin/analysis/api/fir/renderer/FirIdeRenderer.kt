@@ -43,8 +43,8 @@ internal class FirIdeRenderer private constructor(
         }
     }
 
-    private fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotation>? = null): String =
-        typeIdeRenderer.renderType(type, annotations)
+    private fun renderType(type: ConeTypeProjection): String =
+        typeIdeRenderer.renderType(type)
 
     private fun renderType(firRef: FirTypeRef, approximate: Boolean = false): String {
         require(firRef is FirResolvedTypeRef)
@@ -52,12 +52,7 @@ internal class FirIdeRenderer private constructor(
         val approximatedIfNeeded = approximate.ifTrue {
             PublicTypeApproximator.approximateTypeToPublicDenotable(firRef.coneType, session, approximateLocalTypes = true)
         } ?: firRef.coneType
-        val annotations = if (RendererModifier.ANNOTATIONS in options.modifiers) {
-            firRef.annotations
-        } else {
-            null
-        }
-        return renderType(approximatedIfNeeded, annotations)
+        return renderType(approximatedIfNeeded)
     }
 
     private fun StringBuilder.renderName(declaration: FirDeclaration) {
@@ -653,7 +648,7 @@ internal class FirIdeRenderer private constructor(
         append(": ")
         val parameterType = typeToRender.coneType
         if (isVarArg) {
-            append(renderType(parameterType.arrayElementType() ?: parameterType, typeToRender.annotations))
+            append(renderType(parameterType.arrayElementType() ?: parameterType))
         } else {
             append(renderType(typeToRender))
         }

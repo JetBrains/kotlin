@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.renderer
 
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
+import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
+import org.jetbrains.kotlin.analysis.api.fir.evaluate.KtFirConstantValueConverter
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValueRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtUnsupportedConstantValue
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -47,14 +51,15 @@ private fun renderAnnotation(annotation: FirAnnotation, coneTypeIdeRenderer: Con
 
 private fun renderAndSortAnnotationArguments(descriptor: FirAnnotation, session: FirSession): List<String> {
     val argumentList = mapAnnotationParameters(descriptor, session).entries.map { (name, value) ->
-        "$name = ${renderConstant(value)}"
+        "$name = ${renderConstant(value, session)}"
     }
     return argumentList.sorted()
 }
 
-private fun renderConstant(value: FirExpression): String {
-    return when (value) {
-        is FirConstExpression<*> -> value.toString()
-        else -> "NOT_CONST_EXPRESSION"
-    }
+private fun renderConstant(value: FirExpression, useSiteSession: FirSession): String {
+    val evaluated = FirCompileTimeConstantEvaluator.evaluate(value)
+    val constantValue = KtFirConstantValueConverter.toConstantValue(evaluated ?: value, useSiteSession)
+        ?: KtUnsupportedConstantValue
+
+    return KtConstantValueRenderer.render(constantValue)
 }

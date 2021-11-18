@@ -35,7 +35,12 @@ public data class KtTypeRendererOptions(
     /**
      * Whether to render type arguments.
      */
-    public val renderTypeArguments: Boolean = true
+    public val renderTypeArguments: Boolean = true,
+
+    /**
+     * Should annotations on types be rendered.
+     */
+    public val renderTypeAnnotations: Boolean = true
 ) {
     public companion object {
         public val DEFAULT: KtTypeRendererOptions = KtTypeRendererOptions()

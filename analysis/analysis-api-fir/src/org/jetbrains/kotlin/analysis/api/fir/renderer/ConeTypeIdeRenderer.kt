@@ -39,19 +39,13 @@ internal class ConeTypeIdeRenderer(
         if (message != null) append(" <$message>")
     }
 
-    private var filterExtensionFunctionType: Boolean = false
-
-    private fun StringBuilder.renderAnnotationList(annotations: List<FirAnnotation>?) {
-        if (annotations != null) {
-            val filteredExtensionIfNeeded = annotations.applyIf(filterExtensionFunctionType) {
-                annotations.filterNot { it.toAnnotationClassId() == StandardClassIds.Annotations.ExtensionFunctionType }
-            }
-            renderAnnotations(this@ConeTypeIdeRenderer, filteredExtensionIfNeeded, session)
+    private fun StringBuilder.renderAnnotationList(type: ConeKotlinType) {
+        if (options.renderTypeAnnotations) {
+            renderAnnotations(this@ConeTypeIdeRenderer, type.customAnnotations, session)
         }
     }
 
-    fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotation>? = null): String = buildString {
-
+    fun renderType(type: ConeTypeProjection): String = buildString {
         when (type) {
             is ConeKotlinErrorType -> {
                 renderErrorType(type)
@@ -59,39 +53,36 @@ internal class ConeTypeIdeRenderer(
             //is Dynamic??? -> append("dynamic")
             is ConeClassLikeType -> {
                 if (options.renderFunctionType && shouldRenderAsPrettyFunctionType(type)) {
-                    val oldFilterExtensionFunctionType = filterExtensionFunctionType
-                    filterExtensionFunctionType = true
-                    renderAnnotationList(annotations)
+                    renderAnnotationList(type)
                     renderFunctionType(type)
-                    filterExtensionFunctionType = oldFilterExtensionFunctionType
                 } else {
-                    renderAnnotationList(annotations)
+                    renderAnnotationList(type)
                     renderTypeConstructorAndArguments(type)
                 }
             }
             is ConeTypeParameterType -> {
-                renderAnnotationList(annotations)
+                renderAnnotationList(type)
                 append(type.lookupTag.name.asString())
                 renderNullability(type.type)
             }
             is ConeIntersectionType -> {
-                renderAnnotationList(annotations)
+                renderAnnotationList(type)
                 type.intersectedTypes.joinTo(this, "&", prefix = "(", postfix = ")") {
                     renderType(it)
                 }
                 renderNullability(type.type)
             }
             is ConeFlexibleType -> {
-                renderAnnotationList(annotations)
+                renderAnnotationList(type)
                 append(renderFlexibleType(renderType(type.lowerBound), renderType(type.upperBound)))
             }
             is ConeCapturedType -> {
-                renderAnnotationList(annotations)
+                renderAnnotationList(type)
                 append(type.render())
                 renderNullability(type.type)
             }
             is ConeDefinitelyNotNullType -> {
-                renderAnnotationList(annotations)
+                renderAnnotationList(type)
                 append(renderType(type.original))
                 append("!!")
             }
@@ -214,7 +205,9 @@ internal class ConeTypeIdeRenderer(
             else -> error("Invalid declaration ${declaration.renderWithType()}")
         } ?: return listOf(declaration)
 
-        return if(containingClass.isLocal) { containingClass.collectForLocal().reversed() } else null
+        return if (containingClass.isLocal) {
+            containingClass.collectForLocal().reversed()
+        } else null
     }
 
     private fun StringBuilder.renderTypeConstructorAndArguments(type: ConeClassLikeType) {
