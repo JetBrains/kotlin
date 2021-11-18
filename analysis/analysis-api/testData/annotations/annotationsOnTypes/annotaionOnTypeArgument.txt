@@ -1,0 +1,5 @@
+KtTypeReference: @TypeAnnotation Int
+annotations: [
+  TypeAnnotation()
+    psi: KtAnnotationEntry
+]

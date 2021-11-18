@@ -41,3 +41,8 @@ fun KtSymbol.getNameWithPositionString(): String {
         else -> psi::class.simpleName
     } + "@" + psi.position()
 }
+
+fun String.indented(indent: Int): String {
+    val indentString = " ".repeat(indent)
+    return indentString + replace("\n", "\n$indentString")
+}

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractHLApiSingleFileTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleModuleTest(configurator) {
     final override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val singleFile = ktFiles.single()
+        val singleFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
         doTestByFileStructure(singleFile, module, testServices)
     }
 
