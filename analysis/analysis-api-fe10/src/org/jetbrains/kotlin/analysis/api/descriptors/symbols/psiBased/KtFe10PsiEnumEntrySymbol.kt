@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.callableIdIfNonLocal
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -46,13 +46,13 @@ internal class KtFe10PsiEnumEntrySymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { psi.callableIdIfNonLocal }
 
-    override val annotatedType: KtTypeAndAnnotations
+    override val type: KtType
         get() = withValidityAssertion {
             val containingDescriptor = descriptor?.containingDeclaration
             if (containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.ENUM_CLASS) {
-                return containingDescriptor.defaultType.toKtTypeAndAnnotations(analysisContext)
+                return containingDescriptor.defaultType.toKtType(analysisContext)
             } else {
-                createErrorTypeAndAnnotations()
+                createErrorType()
             }
         }
 

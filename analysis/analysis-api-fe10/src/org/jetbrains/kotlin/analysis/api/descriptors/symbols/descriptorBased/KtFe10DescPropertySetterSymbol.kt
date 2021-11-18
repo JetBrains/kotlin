@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.hasBody
@@ -22,8 +22,8 @@ internal class KtFe10DescPropertySetterSymbol(
     override val descriptor: PropertySetterDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertySetterSymbol(), KtFe10DescMemberSymbol<PropertySetterDescriptor> {
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }
+    override val type: KtType
+        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
@@ -49,8 +49,8 @@ internal class KtFe10DescPropertySetterSymbol(
     override val parameter: KtValueParameterSymbol
         get() = withValidityAssertion { KtFe10DescValueParameterSymbol(descriptor.valueParameters.single(), analysisContext) }
 
-    override val receiverType: KtTypeAndAnnotations?
-        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
+    override val receiverType: KtType?
+        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtType(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {
         withValidityAssertion {

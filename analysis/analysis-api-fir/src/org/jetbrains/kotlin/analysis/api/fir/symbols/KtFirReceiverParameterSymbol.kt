@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 
@@ -33,8 +33,8 @@ internal class KtFirReceiverParameterSymbol(
     private val builder by weakRef(_builder)
     internal val firRef = firRef(fir, resolveState)
 
-    override val type: KtTypeAndAnnotations by cached {
-        firRef.receiverTypeAndAnnotations(builder) ?: throw IllegalStateException("$fir doesn't have an extension receiver.")
+    override val type: KtType by cached {
+        firRef.receiverType(builder) ?: throw IllegalStateException("$fir doesn't have an extension receiver.")
     }
     override val origin: KtSymbolOrigin get() = firRef.withFir { it.ktSymbolOrigin() }
 

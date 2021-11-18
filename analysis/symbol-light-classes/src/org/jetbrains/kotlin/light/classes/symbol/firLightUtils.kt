@@ -27,14 +27,6 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
 
 
 internal fun KtAnalysisSession.mapSuperType(
-    type: KtTypeAndAnnotations,
-    psiContext: PsiElement,
-    kotlinCollectionAsIs: Boolean = false
-): PsiClassType? {
-    return mapSuperType(type.type, psiContext, kotlinCollectionAsIs)
-}
-
-internal fun KtAnalysisSession.mapSuperType(
     type: KtType,
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false

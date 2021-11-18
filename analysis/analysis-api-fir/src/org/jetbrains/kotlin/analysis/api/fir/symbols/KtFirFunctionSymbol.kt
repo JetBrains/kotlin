@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.containsAnnotation
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.getAnnotationClassIds
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
@@ -18,14 +16,13 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.WrongSymbolForSamConstructor
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFunctionSymbol(
@@ -47,8 +43,8 @@ internal class KtFirFunctionSymbol(
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
     override val name: Name get() = firRef.withFir { it.name }
-    override val annotatedType: KtTypeAndAnnotations by cached {
-        firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    override val type: KtType by cached {
+        firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 
     override val valueParameters: List<KtValueParameterSymbol> by firRef.withFirAndCache { fir ->
@@ -65,17 +61,16 @@ internal class KtFirFunctionSymbol(
 
     override val hasStableParameterNames: Boolean = firRef.withFir { it.getHasStableParameterNames(it.moduleData.session) }
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
-    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
-    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firRef, resolveState.rootModuleSession, token) }
+
 
     override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val isInfix: Boolean get() = firRef.withFir { it.isInfix }
     override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 
-    override val receiverType: KtTypeAndAnnotations? by cached {
-        firRef.receiverTypeAndAnnotations(builder)
+    override val receiverType: KtType? by cached {
+        firRef.receiverType(builder)
     }
 
     override val isOperator: Boolean get() = firRef.withFir { it.isOperator }

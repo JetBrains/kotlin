@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -54,8 +56,8 @@ class KtFe10DescDefaultPropertySetterSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { propertyDescriptor.setterCallableIdIfNotLocal }
 
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtTypeAndAnnotations(analysisContext) }
+    override val type: KtType
+        get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { propertyDescriptor.getSymbolOrigin(analysisContext) }
@@ -63,8 +65,8 @@ class KtFe10DescDefaultPropertySetterSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 
-    override val receiverType: KtTypeAndAnnotations?
-        get() = withValidityAssertion { propertyDescriptor.extensionReceiverParameter?.type?.toKtTypeAndAnnotations(analysisContext) }
+    override val receiverType: KtType?
+        get() = withValidityAssertion { propertyDescriptor.extensionReceiverParameter?.type?.toKtType(analysisContext) }
 
     override val modality: Modality
         get() = withValidityAssertion { propertyDescriptor.ktModality }
@@ -72,17 +74,8 @@ class KtFe10DescDefaultPropertySetterSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 
-    override val annotations: List<KtAnnotationCall>
-        get() = withValidityAssertion { emptyList() }
-
-    override fun containsAnnotation(classId: ClassId): Boolean {
-        withValidityAssertion {
-            return false
-        }
-    }
-
-    override val annotationClassIds: Collection<ClassId>
-        get() = withValidityAssertion { emptyList() }
+    override val annotationsList: KtAnnotationsList
+        get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {
         withValidityAssertion {
@@ -103,8 +96,8 @@ class KtFe10DescDefaultPropertySetterSymbol(
         override val name: Name
             get() = withValidityAssertion { Name.identifier("value") }
 
-        override val annotatedType: KtTypeAndAnnotations
-            get() = withValidityAssertion { propertyDescriptor.type.toKtTypeAndAnnotations(analysisContext) }
+        override val type: KtType
+            get() = withValidityAssertion { propertyDescriptor.type.toKtType(analysisContext) }
 
         override val origin: KtSymbolOrigin
             get() = withValidityAssertion { propertyDescriptor.getSymbolOrigin(analysisContext) }
@@ -112,17 +105,9 @@ class KtFe10DescDefaultPropertySetterSymbol(
         override val psi: PsiElement?
             get() = withValidityAssertion { null }
 
-        override val annotations: List<KtAnnotationCall>
-            get() = withValidityAssertion { emptyList() }
+        override val annotationsList: KtAnnotationsList
+            get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
 
-        override fun containsAnnotation(classId: ClassId): Boolean {
-            withValidityAssertion {
-                return false
-            }
-        }
-
-        override val annotationClassIds: Collection<ClassId>
-            get() = withValidityAssertion { emptyList() }
 
         override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
             withValidityAssertion {

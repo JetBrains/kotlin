@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescMemberSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.CallableId
@@ -41,8 +41,8 @@ internal class KtFe10DescEnumEntrySymbol(
             )
         }
 
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { enumDescriptor.defaultType.toKtTypeAndAnnotations(analysisContext) }
+    override val type: KtType
+        get() = withValidityAssertion { enumDescriptor.defaultType.toKtType(analysisContext) }
 
     override val name: Name
         get() = withValidityAssertion { descriptor.name }

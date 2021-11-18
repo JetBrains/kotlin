@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -28,8 +28,8 @@ internal class KtFe10DescLocalVariableSymbol(
     override val isVal: Boolean
         get() = withValidityAssertion { !descriptor.isVar }
 
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.type.toKtTypeAndAnnotations(analysisContext) }
+    override val type: KtType
+        get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion { KtSymbolKind.LOCAL }

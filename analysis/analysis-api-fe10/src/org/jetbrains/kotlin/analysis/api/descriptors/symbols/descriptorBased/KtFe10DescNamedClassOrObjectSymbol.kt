@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -71,9 +71,9 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
             }
         }
 
-    override val superTypes: List<KtTypeAndAnnotations>
+    override val superTypes: List<KtType>
         get() = withValidityAssertion {
-            descriptor.getSupertypesWithAny().map { it.toKtTypeAndAnnotations(analysisContext) }
+            descriptor.getSupertypesWithAny().map { it.toKtType(analysisContext) }
         }
 
     override val classIdIfNonLocal: ClassId?

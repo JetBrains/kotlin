@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.renderer
 
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.mapAnnotationParameters
+import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId

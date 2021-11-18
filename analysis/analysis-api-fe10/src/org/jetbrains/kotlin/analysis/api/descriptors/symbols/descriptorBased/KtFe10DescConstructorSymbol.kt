@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10Neve
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -35,8 +35,8 @@ internal class KtFe10DescConstructorSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor.returnType.toKtTypeAndAnnotations(analysisContext) }
+    override val type: KtType
+        get() = withValidityAssertion { descriptor.returnType.toKtType(analysisContext) }
 
     override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.typeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisContext) } }

@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirSamConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -34,8 +33,8 @@ internal class KtFirSamConstructorSymbol(
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
     override val name: Name get() = firRef.withFir { it.name }
-    override val annotatedType: KtTypeAndAnnotations by cached {
-        firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    override val type: KtType by cached {
+        firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 
     override val valueParameters: List<KtValueParameterSymbol> by firRef.withFirAndCache { fir ->
@@ -47,8 +46,8 @@ internal class KtFirSamConstructorSymbol(
     override val hasStableParameterNames: Boolean = firRef.withFir { it.getHasStableParameterNames(it.moduleData.session) }
 
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val receiverType: KtTypeAndAnnotations? by cached {
-        firRef.receiverTypeAndAnnotations(builder)
+    override val receiverType: KtType? by cached {
+        firRef.receiverType(builder)
     }
 
     override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()

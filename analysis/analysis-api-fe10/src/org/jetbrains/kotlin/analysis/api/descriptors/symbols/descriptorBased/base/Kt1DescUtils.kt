@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.ba
 import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10TypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10Renderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
@@ -182,10 +182,6 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
         }
         else -> error("Unexpected type $this")
     }
-}
-
-internal fun KotlinType.toKtTypeAndAnnotations(analysisContext: Fe10AnalysisContext): KtTypeAndAnnotations {
-    return KtFe10TypeAndAnnotations(toKtType(analysisContext), this, analysisContext.token)
 }
 
 internal fun TypeProjection.toKtTypeArgument(analysisContext: Fe10AnalysisContext): KtTypeArgument {

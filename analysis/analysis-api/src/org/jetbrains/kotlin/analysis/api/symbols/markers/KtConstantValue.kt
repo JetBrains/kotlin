@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement

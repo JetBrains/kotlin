@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -44,8 +46,8 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val isVararg: Boolean
         get() = withValidityAssertion { false }
 
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor?.type?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations() }
+    override val type: KtType
+        get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
@@ -53,15 +55,8 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val name: Name
         get() = withValidityAssertion { descriptor?.name ?: Name.identifier("value") }
 
-    override val annotations: List<KtAnnotationCall>
-        get() = withValidityAssertion { emptyList() }
-
-    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        return false
-    }
-
-    override val annotationClassIds: Collection<ClassId>
-        get() = withValidityAssertion { emptyList() }
+    override val annotationsList: KtAnnotationsList
+        get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
         return KtFe10NeverRestoringSymbolPointer()

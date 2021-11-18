@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
@@ -306,7 +305,7 @@ internal fun FirLightClassBase.createField(
     )
 }
 
-internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtTypeAndAnnotations>): PsiReferenceList {
+internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
 
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
@@ -334,9 +333,8 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
 
     //TODO Add support for kotlin.collections.
     superTypes.asSequence()
-        .filter { it.type.needToAddTypeIntoList() }
-        .mapNotNull { typeAnnotated ->
-            val type = typeAnnotated.type
+        .filter { it.needToAddTypeIntoList() }
+        .mapNotNull { type ->
             if (type !is KtNonErrorClassType) return@mapNotNull null
             analyzeWithSymbolAsContext(type.classSymbol) {
                 mapSuperType(type, this@createInheritanceList, kotlinCollectionAsIs = true)

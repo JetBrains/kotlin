@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
@@ -71,18 +71,18 @@ internal class KtFe10PsiFunctionSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { psi.callableIdIfNonLocal }
 
-    override val annotatedType: KtTypeAndAnnotations
-        get() = withValidityAssertion { descriptor?.returnType?.toKtTypeAndAnnotations(analysisContext) ?: createErrorTypeAndAnnotations() }
+    override val type: KtType
+        get() = withValidityAssertion { descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType() }
 
-    override val receiverType: KtTypeAndAnnotations?
+    override val receiverType: KtType?
         get() = withValidityAssertion {
             if (!psi.isExtensionDeclaration()) {
                 return null
             }
 
-            val descriptor = this.descriptor ?: return createErrorTypeAndAnnotations()
+            val descriptor = this.descriptor ?: return createErrorType()
             val extensionReceiverParameter = descriptor.extensionReceiverParameter ?: return null
-            return extensionReceiverParameter.type.toKtTypeAndAnnotations(analysisContext)
+            return extensionReceiverParameter.type.toKtType(analysisContext)
         }
 
     override val isExtension: Boolean

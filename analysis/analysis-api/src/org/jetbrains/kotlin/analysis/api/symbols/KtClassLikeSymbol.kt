@@ -52,7 +52,7 @@ public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(),
     KtSymbolWithMembers {
 
     public abstract val classKind: KtClassKind
-    public abstract val superTypes: List<KtTypeAndAnnotations>
+    public abstract val superTypes: List<KtType>
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
 }

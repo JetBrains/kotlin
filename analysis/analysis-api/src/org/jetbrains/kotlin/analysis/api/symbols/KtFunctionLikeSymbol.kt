@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
@@ -66,7 +67,7 @@ public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     final override val callableIdIfNonLocal: CallableId? get() = null
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
     final override val isExtension: Boolean get() = false
-    final override val receiverType: KtTypeAndAnnotations? get() = null
+    final override val receiverType: KtType? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }

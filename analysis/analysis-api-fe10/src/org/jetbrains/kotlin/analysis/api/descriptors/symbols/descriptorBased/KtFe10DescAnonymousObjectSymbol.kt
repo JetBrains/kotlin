@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescMemberSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
@@ -20,8 +20,8 @@ internal class KtFe10DescAnonymousObjectSymbol(
     override val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtAnonymousObjectSymbol(), KtFe10DescMemberSymbol<ClassDescriptor> {
-    override val superTypes: List<KtTypeAndAnnotations>
-        get() = withValidityAssertion { descriptor.typeConstructor.supertypes.map { it.toKtTypeAndAnnotations(analysisContext) } }
+    override val superTypes: List<KtType>
+        get() = withValidityAssertion { descriptor.typeConstructor.supertypes.map { it.toKtType(analysisContext) } }
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()

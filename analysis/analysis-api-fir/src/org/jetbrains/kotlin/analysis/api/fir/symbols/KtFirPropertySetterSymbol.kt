@@ -7,19 +7,16 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.containsAnnotation
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.getAnnotationClassIds
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirPropertySetterSymbol(
     fir: FirPropertyAccessor,
@@ -54,9 +50,8 @@ internal class KtFirPropertySetterSymbol(
     override val modality: Modality get() = getModality()
     override val visibility: Visibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
-    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
-    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firRef, resolveState.rootModuleSession, token) }
+
 
     /**
      * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
@@ -74,12 +69,12 @@ internal class KtFirPropertySetterSymbol(
 
     override val valueParameters: List<KtValueParameterSymbol> by cached { listOf(parameter) }
 
-    override val annotatedType: KtTypeAndAnnotations by cached {
-        firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    override val type: KtType by cached {
+        firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 
-    override val receiverType: KtTypeAndAnnotations? by cached {
-        firRef.receiverTypeAndAnnotations(builder)
+    override val receiverType: KtType? by cached {
+        firRef.receiverType(builder)
     }
 
     override val hasStableParameterNames: Boolean = firRef.withFir { it.getHasStableParameterNames(it.moduleData.session) }

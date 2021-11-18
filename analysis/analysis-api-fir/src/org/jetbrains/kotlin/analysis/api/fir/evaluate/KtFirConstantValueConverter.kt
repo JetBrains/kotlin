@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
@@ -131,7 +132,7 @@ internal object KtFirConstantValueConverter {
                     else -> null
                 }
             }
-            else -> KtUnsupportedConstantValue
-        }
+            else -> null
+        } ?: FirCompileTimeConstantEvaluator.evaluate(this)?.convertConstantExpression()
     }
 }

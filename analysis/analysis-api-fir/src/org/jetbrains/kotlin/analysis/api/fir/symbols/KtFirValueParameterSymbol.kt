@@ -7,19 +7,16 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationApplicationForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.KtFirAnnotationCall
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.containsAnnotation
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.getAnnotationClassIds
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.customAnnotations
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -92,25 +88,20 @@ internal class KtFirValueParameterSymbol(
     }
 
     override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
-    override val annotatedType: KtTypeAndAnnotations by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
         if (fir.isVararg) {
-            val annotations = fir.returnTypeRef.annotations.map { annotation ->
-                KtFirAnnotationCall(firRef, annotation)
-            }
             // There SHOULD always be an array element type (even if it is an error type, e.g., unresolved).
             val arrayElementType = fir.returnTypeRef.coneType.arrayElementType()
                 ?: error("No array element type for vararg value parameter: ${fir.renderWithType()}")
-            KtSimpleFirTypeAndAnnotations(arrayElementType, annotations, builder, firRef.token)
+            builder.typeBuilder.buildKtType(arrayElementType)
         } else {
-            firRef.returnTypeAndAnnotations(FirResolvePhase.TYPES, builder)
+            firRef.returnType(FirResolvePhase.TYPES, builder)
         }
     }
 
     override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
-    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
-    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firRef, resolveState.rootModuleSession, token) }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

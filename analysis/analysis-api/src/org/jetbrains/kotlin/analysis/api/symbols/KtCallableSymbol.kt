@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 
 public abstract class KtCallableSymbol : KtSymbol, KtSymbolWithKind {
     public abstract val callableIdIfNonLocal: CallableId?
-    public abstract val annotatedType: KtTypeAndAnnotations
+    public abstract val type: KtType
 
-    public abstract val receiverType: KtTypeAndAnnotations?
+    public abstract val receiverType: KtType?
     public abstract val isExtension: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>
@@ -25,5 +25,5 @@ public abstract class KtCallableSymbol : KtSymbol, KtSymbolWithKind {
  * `String` receiver parameter is such a symbol.
  */
 public abstract class KtReceiverParameterSymbol : KtSymbol {
-    public abstract val type: KtTypeAndAnnotations
+    public abstract val type: KtType
 }

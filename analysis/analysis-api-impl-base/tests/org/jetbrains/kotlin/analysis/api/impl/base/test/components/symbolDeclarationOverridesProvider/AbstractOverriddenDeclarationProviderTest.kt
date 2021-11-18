@@ -51,7 +51,7 @@ abstract class AbstractOverriddenDeclarationProviderTest(
             symbol.valueParameters.forEachIndexed { index, parameter ->
                 append(parameter.name.identifier)
                 append(": ")
-                append(parameter.annotatedType.type.render(KtTypeRendererOptions.SHORT_NAMES))
+                append(parameter.type.render(KtTypeRendererOptions.SHORT_NAMES))
                 if (index != symbol.valueParameters.lastIndex) {
                     append(", ")
                 }
@@ -59,7 +59,7 @@ abstract class AbstractOverriddenDeclarationProviderTest(
             append(")")
         }
         append(": ")
-        append(symbol.annotatedType.type.render(KtTypeRendererOptions.SHORT_NAMES))
+        append(symbol.type.render(KtTypeRendererOptions.SHORT_NAMES))
     }
 
     private fun getPath(symbol: KtCallableSymbol): String = when (symbol) {

@@ -3,12 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.symbols.annotations
+package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.resolved
@@ -19,23 +16,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
-
-internal fun FirAnnotation.getClassId(session: FirSession): ClassId? =
-    coneClassLikeType?.fullyExpandedType(session)?.classId
-
-internal fun FirRefWithValidityCheck<FirDeclaration>.toAnnotationsList() = withFir { fir ->
-    fir.annotations.map { KtFirAnnotationCall(this, it) }
-}
-
-internal fun FirRefWithValidityCheck<FirDeclaration>.containsAnnotation(classId: ClassId): Boolean =
-    withFirByType(ResolveType.AnnotationType) { fir ->
-        fir.annotations.any { it.getClassId(fir.moduleData.session) == classId }
-    }
-
-internal fun FirRefWithValidityCheck<FirDeclaration>.getAnnotationClassIds(): Collection<ClassId> =
-    withFirByType(ResolveType.AnnotationType) { fir ->
-        fir.annotations.mapNotNull { it.getClassId(fir.moduleData.session) }
-    }
 
 internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSession): Map<String, FirExpression> {
     if (annotation.resolved) return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name.identifier }
@@ -69,3 +49,6 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSess
 
     return resultMap
 }
+
+internal fun FirAnnotation.fullyExpandedClassId(useSiteSession: FirSession): ClassId? =
+    coneClassLikeType?.fullyExpandedType(useSiteSession)?.classId

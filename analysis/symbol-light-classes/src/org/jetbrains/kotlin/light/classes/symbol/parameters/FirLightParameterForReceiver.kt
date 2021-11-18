@@ -9,17 +9,18 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class FirLightParameterForReceiver private constructor(
-    private val receiverTypeAndAnnotations: KtTypeAndAnnotations,
+    private val receiverType: KtType,
     private val context: KtSymbol,
     methodName: String,
     method: FirLightMethod
@@ -37,7 +38,7 @@ internal class FirLightParameterForReceiver private constructor(
             val extensionTypeAndAnnotations = callableSymbol.receiverType ?: return null
 
             return FirLightParameterForReceiver(
-                receiverTypeAndAnnotations = extensionTypeAndAnnotations,
+                receiverType = extensionTypeAndAnnotations,
                 context = callableSymbol,
                 methodName = callableSymbol.name.asString(),
                 method = method
@@ -59,7 +60,7 @@ internal class FirLightParameterForReceiver private constructor(
     override val kotlinOrigin: KtParameter? = null
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        receiverTypeAndAnnotations.annotations.map {
+        receiverType.annotations.map {
             FirLightAnnotationForAnnotationCall(it, this)
         }
     }
@@ -71,7 +72,7 @@ internal class FirLightParameterForReceiver private constructor(
 
     private val _type: PsiType by lazyPub {
         analyzeWithSymbolAsContext(context) {
-            receiverTypeAndAnnotations.type.asPsiType(this@FirLightParameterForReceiver)
+            receiverType.asPsiType(this@FirLightParameterForReceiver)
         } ?: nonExistentType()
     }
 
@@ -80,7 +81,7 @@ internal class FirLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is FirLightParameterForReceiver &&
-                        receiverTypeAndAnnotations == other.receiverTypeAndAnnotations)
+                        receiverType == other.receiverType)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 

@@ -15,22 +15,18 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.containsAnnotation
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.getAnnotationClassIds
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.toAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -68,9 +64,7 @@ internal class KtFirNamedClassOrObjectSymbol(
             else -> possiblyRawVisibility
         }
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
-    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
-    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firRef, resolveState.rootModuleSession, token) }
 
     override val isInner: Boolean get() = firRef.withFir { it.isInner }
     override val isData: Boolean get() = firRef.withFir { it.isData }
@@ -82,7 +76,7 @@ internal class KtFirNamedClassOrObjectSymbol(
         fir.companionObject?.let { builder.classifierBuilder.buildNamedClassOrObjectSymbol(it) }
     }
 
-    override val superTypes: List<KtTypeAndAnnotations> by cached {
+    override val superTypes: List<KtType> by cached {
         firRef.superTypesAndAnnotationsListForRegularClass(builder)
     }
 

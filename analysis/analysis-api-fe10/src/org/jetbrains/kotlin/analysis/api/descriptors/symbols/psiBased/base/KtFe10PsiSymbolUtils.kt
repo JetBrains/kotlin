@@ -9,9 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -148,19 +147,6 @@ internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): Lexi
     return null
 }
 
-internal fun KtFe10Symbol.createErrorTypeAndAnnotations(): KtTypeAndAnnotations {
-    val errorType = createErrorType()
-
-    return object : KtTypeAndAnnotations() {
-        override val type: KtType
-            get() = withValidityAssertion { errorType }
-        override val annotations: List<KtAnnotationCall>
-            get() = withValidityAssertion { emptyList() }
-        override val token: ValidityToken
-            get() = this@createErrorTypeAndAnnotations.token
-
-    }
-}
 
 internal fun KtFe10Symbol.createErrorType(): KtType {
     val type = ErrorUtils.createErrorType("Type is unavailable for declaration $psi") as ErrorType

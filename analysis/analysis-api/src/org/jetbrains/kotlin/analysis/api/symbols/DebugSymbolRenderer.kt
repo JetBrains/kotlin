@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
@@ -124,19 +128,17 @@ public object DebugSymbolRenderer {
     }
 
     private fun Block.renderType(type: KtType) {
+        if (type.annotations.isNotEmpty()) {
+            renderList(type.annotations)
+            append(' ')
+        }
         when (type) {
             is KtClassErrorType -> append("ERROR_TYPE")
             else -> append(type.asStringForDebugging())
         }
     }
 
-    private fun Block.renderTypeAndAnnotations(type: KtTypeAndAnnotations) {
-        renderList(type.annotations)
-        append(' ')
-        renderType(type.type)
-    }
-
-    private fun Block.renderAnnotationCall(call: KtAnnotationCall) {
+    private fun Block.renderAnnotationApplication(call: KtAnnotationApplication) {
         renderValue(call.classId)
         append('(')
         call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
@@ -166,10 +168,10 @@ public object DebugSymbolRenderer {
             // Symbol-related values
             is KtSymbol -> renderSymbolTag(value)
             is KtType -> renderType(value)
-            is KtTypeAndAnnotations -> renderTypeAndAnnotations(value)
             is KtConstantValue -> renderConstantValue(value)
             is KtNamedConstantValue -> renderNamedConstantValue(value)
-            is KtAnnotationCall -> renderAnnotationCall(value)
+            is KtAnnotationApplication -> renderAnnotationApplication(value)
+            is KtAnnotationsList -> renderAnnotationsList(value)
             // Other custom values
             is Name -> append(value.asString())
             is FqName -> append(value.asString())
@@ -186,6 +188,10 @@ public object DebugSymbolRenderer {
             is List<*> -> renderList(value)
             else -> append(value.toString())
         }
+    }
+
+    private fun Block.renderAnnotationsList(value: KtAnnotationsList) {
+        renderList(value.annotations)
     }
 
     private fun getSymbolApiClass(symbol: KtSymbol): KClass<*> {

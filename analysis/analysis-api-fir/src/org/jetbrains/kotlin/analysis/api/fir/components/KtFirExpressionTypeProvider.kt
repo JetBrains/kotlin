@@ -149,7 +149,7 @@ internal class KtFirExpressionTypeProvider(
     private fun getExpectedTypeByReturnExpression(expression: PsiElement): KtType? {
         val returnParent = expression.getReturnExpressionWithThisType() ?: return null
         val targetSymbol = with(analysisSession) { returnParent.getReturnTargetSymbol() } ?: return null
-        return targetSymbol.annotatedType.type
+        return targetSymbol.type
     }
 
     private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? =
