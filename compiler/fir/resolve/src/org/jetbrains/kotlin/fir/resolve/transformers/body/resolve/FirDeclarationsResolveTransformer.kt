@@ -787,8 +787,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val implicitReturns = returnExpressionsExceptLast.filter {
             (it as? FirExpression)?.typeRef is FirImplicitUnitTypeRef
         }
+
         val returnType =
-            if (implicitReturns.isNotEmpty()) {
+            if (implicitReturns.isNotEmpty() || lambda.returnType?.isUnit == true) {
                 // i.e., early return, e.g., l@{ ... return@l ... }
                 // Note that the last statement will be coerced to Unit if needed.
                 session.builtinTypes.unitType.type

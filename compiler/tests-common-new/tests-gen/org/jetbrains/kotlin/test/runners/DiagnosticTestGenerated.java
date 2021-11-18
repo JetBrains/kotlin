@@ -14067,6 +14067,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("lambdaWithNullableUnitInElvis.kt")
+                public void testLambdaWithNullableUnitInElvis() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/lambdaWithNullableUnitInElvis.kt");
+                }
+
+                @Test
                 @TestMetadata("noCoercion.kt")
                 public void testNoCoercion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/noCoercion.kt");
