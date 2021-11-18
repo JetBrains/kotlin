@@ -81,6 +81,7 @@ fun IrExpression.safeCallOnDispatchReceiver(
         contextReceivers = emptyList(),
         dispatchReceiver = OnceExpressionValue(this),
         isStatement = false
-    ).call { dispatchReceiverValue, _, _ ->
+    ).call { dispatchReceiverValue, _, contextReceiverValues ->
+        assert(contextReceiverValues.isEmpty()) { "Context receivers in numeric promotion" }
         ifNotNull(dispatchReceiverValue!!.load())
     }
