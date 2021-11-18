@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilation.Companion.resultingArtifactPath
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
@@ -42,7 +43,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
         val friends = rootModules.flatMapToSet { it.allFriends }.map { moduleToKlib(it, freeCompilerArgs) }
 
         return cachedCompilations.computeIfAbsent(cacheKey) {
-            val entryPoint = testCases.singleOrNull()?.extras?.entryPoint
+            val entryPoint = testCases.singleOrNull()?.safeExtras<NoTestRunnerExtras>()?.entryPoint
 
             TestCompilationImpl(
                 environment = environment,

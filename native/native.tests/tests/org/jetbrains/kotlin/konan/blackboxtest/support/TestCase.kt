@@ -3,17 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("KDocUnresolvedReference")
+
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
 internal typealias PackageFQN = String
+internal typealias FunctionName = String
 
 /**
  * Helps to track the origin of every [TestCase], [TestCompilation] or [TestExecutable]. Used for issue reporting purposes.
@@ -23,6 +25,11 @@ internal interface TestOrigin {
         override fun toString(): String = testDataFile.path
     }
 }
+
+/**
+ * Represents a single test function (i.e. a function annotated with [kotlin.test.Test]) inside of a [TestFile].
+ */
+internal data class TestFunction(val packageName: PackageFQN, val functionName: FunctionName)
 
 /**
  * Represents a single file that will be supplied to the compiler.
@@ -37,11 +44,18 @@ internal class TestFile<M : TestModule> private constructor(
         class Uncommitted(var text: String) : State
     }
 
-    fun update(transformation: (String) -> String) {
-        when (val state = state) {
-            is State.Uncommitted -> state.text = transformation(state.text)
+    private val uncommittedState: State.Uncommitted
+        get() = when (val state = state) {
+            is State.Uncommitted -> state
             is State.Committed -> fail { "File $location is already committed." }
         }
+
+    val text: String
+        get() = uncommittedState.text
+
+    fun update(transformation: (String) -> String) {
+        val uncommittedState = uncommittedState
+        uncommittedState.text = transformation(uncommittedState.text)
     }
 
     // An optimization to release the memory occupied by numerous file texts.
@@ -156,9 +170,27 @@ internal class TestCase(
     val origin: TestOrigin.SingleTestDataFile,
     val nominalPackageName: PackageFQN,
     val expectedOutputDataFile: File?,
-    val extras: StandaloneNoTestRunnerExtras? = null
+    val extras: Extras
 ) {
-    // The set of module that have no incoming dependency arcs.
+    sealed interface Extras
+    class NoTestRunnerExtras(val entryPoint: String, val inputDataFile: File?) : Extras
+    class WithTestRunnerExtras(val testFunctions: Collection<TestFunction>) : Extras {
+        companion object {
+            val EMPTY = WithTestRunnerExtras(emptyList())
+        }
+    }
+
+    init {
+        when (kind) {
+            TestKind.STANDALONE_NO_TR -> assertTrue(extras is NoTestRunnerExtras)
+            TestKind.REGULAR, TestKind.STANDALONE -> assertTrue(extras is WithTestRunnerExtras)
+        }
+    }
+
+    inline fun <reified T : Extras> extras(): T = extras as T
+    inline fun <reified T : Extras> safeExtras(): T? = extras as? T
+
+    // The set of modules that have no incoming dependency arcs.
     val rootModules: Set<TestModule.Exclusive> by lazy {
         val allModules = hashSetOf<TestModule>()
         modules.forEach { module ->
@@ -180,12 +212,6 @@ internal class TestCase(
 
         @Suppress("UNCHECKED_CAST")
         rootModules as Set<TestModule.Exclusive>
-    }
-
-    class StandaloneNoTestRunnerExtras(val entryPoint: String, val inputDataFile: File?)
-
-    init {
-        assertEquals(extras != null, kind == TestKind.STANDALONE_NO_TR)
     }
 
     fun initialize(findSharedModule: ((moduleName: String) -> TestModule.Shared?)?) {
