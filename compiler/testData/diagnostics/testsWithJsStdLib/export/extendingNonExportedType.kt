@@ -20,7 +20,7 @@ open class ExportedGenericClass<T>
 class <!NON_EXPORTABLE_TYPE("super; ExportedGenericClass<NonExportedClass>")!>ExportedClass3<!> : ExportedGenericClass<NonExportedClass>()
 
 @JsExport
-interface <!WRONG_EXPORTED_DECLARATION!>ExportedGenericInterface<!><T>
+interface ExportedGenericInterface<T>
 
 @JsExport
 class <!NON_EXPORTABLE_TYPE("super; ExportedGenericInterface<NonExportedClass>")!>ExportedClass4<!> : ExportedGenericInterface<NonExportedClass>

@@ -12,6 +12,9 @@ interface NonExportedInterface
 open class NonExportedType(val value: Int)
 
 @JsExport
+interface ExportedInterface
+
+@JsExport
 fun producer(value: Int): NonExportedType {
     return NonExportedType(value)
 }
@@ -22,7 +25,7 @@ fun consumer(value: NonExportedType): Int {
 }
 
 @JsExport
-class A(var value: NonExportedType) {
+open class A(var value: NonExportedType) {
     fun <T: NonExportedType> increment(t: T): NonExportedType {
         return NonExportedType(value = t.value + 1)
     }
@@ -33,3 +36,12 @@ class B(v: Int) : NonExportedType(v)
 
 @JsExport
 class C : NonExportedInterface
+
+@JsExport
+class D : NonExportedInterface, ExportedInterface
+
+@JsExport
+class E : NonExportedType(42), ExportedInterface
+
+@JsExport
+class F : A(NonExportedType(42)), NonExportedInterface

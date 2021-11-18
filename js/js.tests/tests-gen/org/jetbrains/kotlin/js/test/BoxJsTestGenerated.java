@@ -2071,6 +2071,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportInterface.kt")
+        public void testExportInterface() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportInterface.kt");
+        }
+
+        @Test
         @TestMetadata("exportNestedClass.kt")
         public void testExportNestedClass() throws Exception {
             runTest("js/js.translator/testData/box/export/exportNestedClass.kt");

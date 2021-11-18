@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
+import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.inline.isInlineWithReified
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
@@ -109,12 +110,15 @@ object JsExportDeclarationChecker : DeclarationChecker {
                 }
 
                 val wrongDeclaration: String? = when (descriptor.kind) {
-                    INTERFACE -> if (descriptor.isExternal) null else "interface"
                     ANNOTATION_CLASS -> "annotation class"
-                    CLASS -> if (descriptor.isInlineClass()) {
-                        "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
+                    CLASS -> when {
+                        descriptor.isInsideInterface -> "nested class inside exported interface"
+                        descriptor.isInlineClass() -> "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
+                        else -> null
+                    }
+                    else -> if (descriptor.isInsideInterface) {
+                        "${if (descriptor.isCompanionObject) "companion object" else "nested/inner declaration"} inside exported interface"
                     } else null
-                    else -> null
                 }
 
                 if (wrongDeclaration != null) {

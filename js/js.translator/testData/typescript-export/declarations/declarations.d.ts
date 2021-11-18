@@ -1,5 +1,7 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    const __doNotImplementIt: unique symbol
+    type __doNotImplementIt = typeof __doNotImplementIt
     namespace foo {
         const _val: number;
         let _var: number;
@@ -123,5 +125,17 @@ declare namespace JS_TESTS {
                 readonly prop: string;
             }
         }
+        interface TestInterface {
+            readonly value: string;
+            getOwnerName(): string;
+            readonly __doNotUseIt: __doNotImplementIt;
+        }
+        class TestInterfaceImpl implements foo.TestInterface {
+            constructor(value: string);
+            readonly value: string;
+            getOwnerName(): string;
+            readonly __doNotUseIt: __doNotImplementIt;
+        }
+        function processInterface(test: foo.TestInterface): string;
     }
 }

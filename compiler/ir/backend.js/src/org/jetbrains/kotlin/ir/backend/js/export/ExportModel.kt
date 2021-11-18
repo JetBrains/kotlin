@@ -106,7 +106,7 @@ sealed class ExportedType {
         val returnType: ExportedType
     ) : ExportedType()
 
-    class ClassType(val name: String, val arguments: List<ExportedType>) : ExportedType()
+    class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass) : ExportedType()
     class TypeParameter(val name: String) : ExportedType()
     class Nullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()

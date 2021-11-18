@@ -136,6 +136,11 @@ val DeclarationDescriptor.isInsidePrivateClass: Boolean
         return parent != null && DescriptorVisibilities.isPrivate(parent.visibility)
     }
 
+val DeclarationDescriptor.isInsideInterface: Boolean
+    get() {
+        val parent = containingDeclaration as? ClassDescriptor
+        return parent != null && parent.kind.isInterface
+    }
 
 fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
     for (supertype in defaultType.constructor.supertypes) {

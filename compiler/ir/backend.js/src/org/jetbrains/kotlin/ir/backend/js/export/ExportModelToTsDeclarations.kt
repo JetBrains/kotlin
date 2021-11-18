@@ -19,7 +19,15 @@ fun ExportedModule.toTypeScript(): String {
 }
 
 fun wrapTypeScript(name: String, moduleKind: ModuleKind, dts: String): String {
-    val types = "${moduleKind.indent}type Nullable<T> = T | null | undefined\n"
+    val declareKeyword = when (moduleKind) {
+        ModuleKind.PLAIN -> ""
+        else -> "declare "
+    }
+    val types = """
+       type Nullable<T> = T | null | undefined  
+       ${declareKeyword}const __doNotImplementIt: unique symbol
+       type __doNotImplementIt = typeof __doNotImplementIt
+    """.trimIndent().prependIndent(moduleKind.indent) + "\n"
 
     val declarationsDts = types + dts
 
@@ -117,14 +125,16 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
         val superClassClause = superClass?.let { it.toExtendsClause(indent) } ?: ""
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
-        val members = members.map {
-            if (!ir.isInner || it !is ExportedFunction || !it.isStatic) {
-                it
-            } else {
-                // Remove $outer argument from secondary constructors of inner classes
-                it.copy(parameters = it.parameters.drop(1))
+        val members = members
+            .let { if (shouldNotBeImplemented()) it.withMagicProperty() else it }
+            .map {
+                if (!ir.isInner || it !is ExportedFunction || !it.isStatic) {
+                    it
+                } else {
+                    // Remove $outer argument from secondary constructors of inner classes
+                    it.copy(parameters = it.parameters.drop(1))
+                }
             }
-        }
 
         val (innerClasses, nonInnerClasses) = nestedClasses.partition { it.ir.isInner }
         val innerClassesProperties = innerClasses.map { it.toReadonlyProperty() }
@@ -177,6 +187,26 @@ fun List<ExportedType>.toImplementsClause(superInterfacesKeyword: String, indent
         }
         else -> ""
     }
+}
+
+fun ExportedClass.shouldNotBeImplemented(): Boolean {
+    return (isInterface && !ir.isExternal) || superInterfaces.any { it is ExportedType.ClassType && !it.ir.isExternal }
+}
+
+fun List<ExportedDeclaration>.withMagicProperty(): List<ExportedDeclaration> {
+    return plus(
+        ExportedProperty(
+            "__doNotUseIt",
+            ExportedType.TypeParameter("__doNotImplementIt"),
+            mutable = false,
+            isMember = true,
+            isStatic = false,
+            isAbstract = false,
+            isProtected = false,
+            irGetter = null,
+            irSetter = null
+        )
+    )
 }
 
 fun IrClass.asNestedClassAccess(): String {

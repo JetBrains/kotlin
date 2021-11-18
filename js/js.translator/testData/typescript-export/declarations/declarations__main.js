@@ -27,6 +27,8 @@ var TestSealed = JS_TESTS.foo.TestSealed;
 var TestAbstract = JS_TESTS.foo.TestAbstract;
 var TestDataClass = JS_TESTS.foo.TestDataClass;
 var TestEnumClass = JS_TESTS.foo.TestEnumClass;
+var TestInterfaceImpl = JS_TESTS.foo.TestInterfaceImpl;
+var processInterface = JS_TESTS.foo.processInterface;
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -112,5 +114,8 @@ function box() {
     assert(TestEnumClass.A.ordinal === 0);
     assert(TestEnumClass.B.ordinal === 1);
     assert(new TestEnumClass.Nested().prop == "hello2");
+    assert(processInterface(new TestInterfaceImpl("bar")) == "Owner TestInterfaceImpl has value 'bar'");
+    // @ts-expect-error "Just test that this code will throw compilation error for a user"
+    assert(processInterface({ value: "bar", getOwnerName: function () { return "RandomObject"; } }) == "Owner RandomObject has value 'bar'");
     return "OK";
 }

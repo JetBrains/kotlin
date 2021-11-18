@@ -26,12 +26,12 @@ var Impl = /** @class */ (function (_super) {
     };
     Object.defineProperty(Impl.prototype, "acAbstractProp", {
         get: function () { return "Impl"; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Impl.prototype, "y", {
         get: function () { return true; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return Impl;
