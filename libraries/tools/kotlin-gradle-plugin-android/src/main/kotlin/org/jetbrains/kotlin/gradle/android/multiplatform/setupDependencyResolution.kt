@@ -66,7 +66,7 @@ fun setUpDependencyResolution(
 internal fun Project.categoryByName(categoryName: String): Category =
     objects.named(Category::class.java, categoryName)
 
-private fun Configuration.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
+internal fun Configuration.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
     if (isGradleVersionAtLeast(7, 0)) {
         @Suppress("UNCHECKED_CAST")
         val attributeClass = Class.forName("org.gradle.api.attributes.java.TargetJvmEnvironment") as Class<out Named>

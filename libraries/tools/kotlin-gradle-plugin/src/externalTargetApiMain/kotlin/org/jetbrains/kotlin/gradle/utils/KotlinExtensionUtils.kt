@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.android.kpm
+package org.jetbrains.kotlin.gradle.utils
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 
-fun KotlinPm20ProjectExtension.android() {
-
-}
+val KotlinTopLevelExtension.project: Project get() = this.project
