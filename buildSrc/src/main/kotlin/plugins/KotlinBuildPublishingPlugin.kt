@@ -103,10 +103,10 @@ var Project.mainPublicationName: String
 private fun humanReadableName(name: String) =
     name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
 
-fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDescription: String? = null) {
+fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDescription: String? = null, packaging: String = "jar") {
     val publication = this
     pom {
-        packaging = "jar"
+        this.packaging = packaging
         name.set(humanReadableName(publication.artifactId))
         description.set(explicitDescription ?: project.description ?: humanReadableName(publication.artifactId))
         url.set("https://kotlinlang.org/")

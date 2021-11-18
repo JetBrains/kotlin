@@ -17,13 +17,15 @@ kotlin {
         nodejs()
     }
 
+    @Suppress("UNUSED_VARIABLE")
     sourceSets {
-        val commonMain by getting {
+         val commonMain by getting {
             dependencies {
                 api(project(":kotlin-stdlib-wasm"))
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
+
         val wasmMain by getting {
             dependencies {
                 api(project(":kotlin-stdlib-wasm"))
@@ -44,4 +46,11 @@ tasks.withType<KotlinCompile<*>>().configureEach {
 tasks.named("compileKotlinWasm") {
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin-test"
     dependsOn(commonMainSources)
+}
+
+tasks.register<Jar>("sourcesJar") {
+    dependsOn(commonMainSources)
+    archiveClassifier.set("sources")
+    from(kotlin.sourceSets["commonMain"].kotlin)
+    from(kotlin.sourceSets["wasmMain"].kotlin)
 }
