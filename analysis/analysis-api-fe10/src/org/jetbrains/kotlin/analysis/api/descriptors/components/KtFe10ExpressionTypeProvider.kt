@@ -99,6 +99,22 @@ class KtFe10ExpressionTypeProvider(
             return kotlinType.toKtType(analysisContext)
         }
 
+        // Manually handle custom setter parameter
+        if (declaration is KtParameter) {
+            val parameterList = declaration.parent as? KtParameterList
+            if (parameterList?.parameters?.singleOrNull() == declaration) {
+                val propertyAccessor = parameterList.parent as? KtPropertyAccessor
+                val property = propertyAccessor?.parent as? KtProperty
+                if (property != null && property.setter == propertyAccessor) {
+                    val bindingContext = analysisContext.analyze(property)
+                    val kotlinType = bindingContext[BindingContext.VARIABLE, property]?.returnType
+                        ?: ErrorUtils.createErrorType("Return type for property \"${declaration.name}\" cannot be resolved")
+
+                    return kotlinType.toKtType(analysisContext)
+                }
+            }
+        }
+
         return analysisContext.builtIns.unitType.toKtType(analysisContext)
     }
 

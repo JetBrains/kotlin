@@ -1,9 +1,0 @@
-i@(1,1) : kotlin.Int
-  KtPropertyAccessor@(2,5) : kotlin.Int
-  KtPropertyAccessor@(3,5) : kotlin.Unit
-    value@(3,9) : kotlin.Unit
-A@(5,1)
-  j@(6,5) : kotlin.Int
-    KtPropertyAccessor@(7,9) : kotlin.Int
-    KtPropertyAccessor@(8,9) : kotlin.Unit
-      value@(8,13) : kotlin.Unit
