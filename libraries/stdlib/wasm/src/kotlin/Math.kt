@@ -907,7 +907,7 @@ public actual fun Float.roundToLong(): Long = TODO("Wasm stdlib: Math")
  * @see absoluteValue extension property for [Int]
  */
 @SinceKotlin("1.2")
-public actual fun abs(n: Int): Int = TODO("Wasm stdlib: Math")
+public actual fun abs(n: Int): Int = if (n < 0) -n else n
 
 /**
  * Returns the smaller of two values.
