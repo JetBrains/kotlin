@@ -186,15 +186,15 @@ object ClassSnapshotter {
      */
     private fun getInaccessibleClasses(classesInfo: List<BasicClassInfo>): List<BasicClassInfo> {
         fun BasicClassInfo.isInaccessible(): Boolean {
-            if (this.isKotlinClass && this.kotlinClassHeader!!.kind != KotlinClassHeader.Kind.CLASS) {
-                // We're not sure about these kinds of Kotlin classes, so we assume it's accessible (see this method's kdoc)
-                return false
-            }
-            return if (isKotlinClass) {
-                // TODO: Is it safe to add isKotlinSynthetic to this lists?
-                isPrivate || isLocal || isAnonymous
+            return if (this.isKotlinClass) {
+                when (this.kotlinClassHeader!!.kind) {
+                    KotlinClassHeader.Kind.CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
+                    KotlinClassHeader.Kind.SYNTHETIC_CLASS -> true
+                    // We're not sure about the other kinds of Kotlin classes, so we assume it's accessible (see this method's kdoc)
+                    else -> false
+                }
             } else {
-                isPrivate || isLocal || isAnonymous || isJavaSynthetic
+                isPrivate || isLocal || isAnonymous || isSynthetic
             }
         }
 
