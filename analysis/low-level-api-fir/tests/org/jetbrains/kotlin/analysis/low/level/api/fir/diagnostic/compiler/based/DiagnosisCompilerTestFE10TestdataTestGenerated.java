@@ -10727,6 +10727,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("typeParameterAsContextReceiver.kt")
+                public void testTypeParameterAsContextReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/typeParameterAsContextReceiver.kt");
+                }
+
+                @Test
                 @TestMetadata("typeParameterized.kt")
                 public void testTypeParameterized() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/typeParameterized.kt");
