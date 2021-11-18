@@ -48,12 +48,21 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completio
   RETURN_RESULT_OF(Kotlin_ObjCExport_createContinuationArgumentImpl, completionHolder, exceptionTypes);
 }
 
+extern "C" OBJ_GETTER(Kotlin_ObjCExport_createUnitContinuationArgument, id completion, const TypeInfo** exceptionTypes) {
+  void (^typedCompletion)(NSError * _Nullable) = completion;
+  Completion twoArgumentCompletion = ^(_Nullable id result, NSError* _Nullable error) {
+    // typedCompletion will be retained by the containing block when the latter is copied
+    // from stack to heap via objc_retainBlock.
+    typedCompletion(error);
+  };
+
+  RETURN_RESULT_OF(Kotlin_ObjCExport_createContinuationArgument, twoArgumentCompletion, exceptionTypes);
+}
+
 extern "C" void Kotlin_ObjCExport_resumeContinuationSuccess(KRef continuation, KRef result);
 extern "C" void Kotlin_ObjCExport_resumeContinuationFailure(KRef continuation, KRef exception);
 
-extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, id result, id error) {
-  ObjHolder holder;
-
+extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, KRef result, id error) {
   if (error != nullptr) {
     if (result != nullptr) {
       [NSException raise:NSGenericException
@@ -61,11 +70,12 @@ extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, id resul
           result, error];
     }
 
+    ObjHolder holder;
+
     KRef exception = Kotlin_ObjCExport_NSErrorAsException(error, holder.slot());
     Kotlin_ObjCExport_resumeContinuationFailure(continuation, exception);
   } else {
-    KRef kotlinResult = Kotlin_ObjCExport_refFromObjC(result, holder.slot());
-    Kotlin_ObjCExport_resumeContinuationSuccess(continuation, kotlinResult);
+    Kotlin_ObjCExport_resumeContinuationSuccess(continuation, result);
   }
 }
 

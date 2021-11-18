@@ -303,6 +303,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
         "Konan_main"
     }
+
+    internal val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
+        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.LEGACY
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

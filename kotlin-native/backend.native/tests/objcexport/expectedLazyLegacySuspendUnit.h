@@ -180,7 +180,7 @@ __attribute__((swift_name("SuspendBridge")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)unitValue:(id _Nullable)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+- (void)unitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
 
 /**
  @note This method converts instances of CancellationException to errors.
@@ -212,7 +212,7 @@ __attribute__((swift_name("SuspendBridge")))
 /**
  @note This method converts all Kotlin exceptions to errors.
 */
-- (void)nothingAsUnitValue:(id _Nullable)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
+- (void)nothingAsUnitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
 @end;
 
 __attribute__((swift_name("AbstractSuspendBridge")))
@@ -230,7 +230,7 @@ __attribute__((swift_name("AbstractSuspendBridge")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)unitValue:(KtInt *)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+- (void)unitValue:(KtInt *)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
 
 /**
  @note This method converts instances of CancellationException to errors.
@@ -257,7 +257,7 @@ __attribute__((swift_name("AbstractSuspendBridge")))
 /**
  @note This method converts all Kotlin exceptions to errors.
 */
-- (void)nothingAsUnitValue:(KtInt *)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
+- (void)nothingAsUnitValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
 @end;
 
 __attribute__((swift_name("ThrowCancellationException")))
@@ -276,7 +276,7 @@ __attribute__((swift_name("ThrowCancellationExceptionImpl")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)throwCancellationExceptionWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
+- (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -293,7 +293,7 @@ __attribute__((swift_name("CoroutinesKt")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)unitSuspendFunWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(completionHandler:)")));
++ (void)unitSuspendFunWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(completionHandler:)")));
 
 /**
  @note This method converts instances of CoroutineException, CancellationException to errors.
@@ -305,7 +305,7 @@ __attribute__((swift_name("CoroutinesKt")))
  @note This method converts instances of CoroutineException, CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)unitSuspendFunDoSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(doSuspend:doThrow:completionHandler:)")));
++ (void)unitSuspendFunDoSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(doSuspend:doThrow:completionHandler:)")));
 
 /**
  @note This method converts instances of CoroutineException, CancellationException to errors.
@@ -335,7 +335,7 @@ __attribute__((swift_name("CoroutinesKt")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)throwCancellationExceptionWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
++ (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 + (id<KtKotlinSuspendFunction0>)getSuspendLambda0 __attribute__((swift_name("getSuspendLambda0()")));
 + (id<KtKotlinSuspendFunction0>)getSuspendCallableReference0 __attribute__((swift_name("getSuspendCallableReference0()")));
 + (id<KtKotlinSuspendFunction1>)getSuspendLambda1 __attribute__((swift_name("getSuspendLambda1()")));
@@ -548,33 +548,14 @@ __attribute__((swift_name("TestGH3992.B")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
-
-/**
- * Summary class [KDocExport].
- *
- * @property xyzzy Doc for property xyzzy
- * @property zzz See below.
- */
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("KDocExport")))
 @interface KtKDocExport : KtBase
-
-/** Non-primary ctor KDoc: */
 - (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-
-/**
- * @param xyzzy is documented.
- *
- * This is multi-line KDoc. See a blank line above.
- */
 @property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
-
-/** @property xyzzy KDoc for foo? */
 @property (readonly) NSString *foo __attribute__((swift_name("foo")));
-
-/** @property foo KDoc for yxxyz? */
 @property int32_t yxxyz __attribute__((swift_name("yxxyz")));
 @end;
 
@@ -582,37 +563,6 @@ __attribute__((swift_name("SomeClassWithProperty")))
 @interface KtSomeClassWithProperty : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-
-/**
- * Returns dispatcher that executes coroutines immediately when it is already in the right context
- * (e.g. current looper is the same as this handler's looper) without an additional [re-dispatch][CoroutineDispatcher.dispatch].
- *
- * Immediate dispatcher is safe from stack overflows and in case of nested invocations forms event-loop similar to [Dispatchers.Unconfined].
- * The event loop is an advanced topic and its implications can be found in [Dispatchers.Unconfined] documentation.
- * The formed event-loop is shared with [Unconfined] and other immediate dispatchers, potentially overlapping tasks between them.
- *
- * Example of usage:
- * ```
- * suspend fun updateUiElement(val text: String) {
- *   **
- *    * If it is known that updateUiElement can be invoked both from the Main thread and from other threads,
- *    * `immediate` dispatcher is used as a performance optimization to avoid unnecessary dispatch.
- *    *
- *    * In that case, when `updateUiElement` is invoked from the Main thread, `uiElement.text` will be
- *    * invoked immediately without any dispatching, otherwise, the `Dispatchers.Main` dispatch cycle will be triggered.
- *    **
- *   withContext(Dispatchers.Main.immediate) {
- *     uiElement.text = text
- *   }
- *   // Do context-independent logic such as logging
- * }
- * ```
- *
- * Method may throw [UnsupportedOperationException] if immediate dispatching is not supported by current dispatcher,
- * please refer to specific dispatcher documentation.
- *
- * [Dispatchers.Main] supports immediate execution for Android, JavaFx and Swing platforms.
- */
 @property (readonly) KtSomeClassWithProperty *heavyFormattedKDocFoo __attribute__((swift_name("heavyFormattedKDocFoo")));
 @end;
 
@@ -620,14 +570,6 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("KdocExportKt")))
 @interface KtKdocExportKt : KtBase
 
-/**
- * Useless function [whatever]
- *
- * This kdoc has some additional formatting.
- * @param a keep intact and return
- * @return value of [a]
- * Check for additional comment (note) below
- */
 /**
  @note This method converts instances of IllegalArgumentException to errors.
  Other uncaught Kotlin exceptions are fatal.
@@ -1221,7 +1163,7 @@ __attribute__((swift_name("ThrowsThrowableAsErrorSuspend")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)throwErrorWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("throwError(completionHandler:)")));
+- (void)throwErrorWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwError(completionHandler:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))

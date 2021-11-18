@@ -23,6 +23,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val sourceInfoType by option<SourceInfoType>()
 
     val androidProgramType by option<AndroidProgramType>()
+
+    val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>()
 }
 
 open class BinaryOption<T : Any>(

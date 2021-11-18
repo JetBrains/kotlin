@@ -243,6 +243,10 @@ internal class ObjCExportCodeGenerator(
         generateContinuationToRetainedCompletionConverter(blockGenerator)
     }
 
+    internal val unitContinuationToRetainedCompletionConverter: LLVMValueRef by lazy {
+        generateUnitContinuationToRetainedCompletionConverter(blockGenerator)
+    }
+
     fun meaningfulBridgeNameOrNull(irFunction: IrFunction?): String? {
         if (!context.config.configuration.getBoolean(KonanConfigKeys.MEANINGFUL_BRIDGE_NAMES)) {
             return null
@@ -771,7 +775,31 @@ private fun ObjCExportCodeGenerator.generateContinuationToRetainedCompletionConv
             invokeName = "invokeCompletion"
     ) { continuation, arguments ->
         check(arguments.size == 2)
-        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation) + arguments)
+
+        val resultArgument = objCReferenceToKotlin(arguments[0], Lifetime.ARGUMENT)
+        val errorArgument = arguments[1]
+
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument, errorArgument))
+        ret(null)
+    }
+}
+
+private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletionConverter(
+        blockGenerator: BlockGenerator
+): LLVMValueRef = with(blockGenerator) {
+    generateWrapKotlinObjectToRetainedBlock(
+            BlockType(numberOfParameters = 1, returnsVoid = true),
+            convertName = "convertUnitContinuation",
+            invokeName = "invokeUnitCompletion"
+    ) { continuation, arguments ->
+        check(arguments.size == 1)
+
+        val errorArgument = arguments[0]
+        val resultArgument = ifThenElse(icmpNe(errorArgument, kNullInt8Ptr), kNullObjHeaderPtr) {
+            codegen.theUnitInstanceRef.llvm
+        }
+        
+        callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument, errorArgument))
         ret(null)
     }
 }
@@ -979,9 +1007,14 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 null
             }
 
-            MethodBridgeValueParameter.SuspendCompletion -> {
+            is MethodBridgeValueParameter.SuspendCompletion -> {
+                val createContinuationArgument = if (paramBridge.useUnitCompletion) {
+                    context.llvm.Kotlin_ObjCExport_createUnitContinuationArgument
+                } else {
+                    context.llvm.Kotlin_ObjCExport_createContinuationArgument
+                }
                 callFromBridge(
-                        context.llvm.Kotlin_ObjCExport_createContinuationArgument,
+                        createContinuationArgument,
                         listOf(parameter, generateExceptionTypeInfoArray(baseMethod!!)),
                         Lifetime.ARGUMENT
                 ).also {
@@ -1187,7 +1220,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                         errorOutPtr = it
                     }
 
-                MethodBridgeValueParameter.SuspendCompletion -> {
+                is MethodBridgeValueParameter.SuspendCompletion -> {
                     val continuation = param(irFunction.allParametersCount) // The last argument.
                     // TODO: consider placing interception into the converter to reduce code size.
                     val intercepted = callFromBridge(
@@ -1195,7 +1228,13 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             listOf(continuation),
                             Lifetime.ARGUMENT
                     )
-                    val retainedCompletion = callFromBridge(continuationToRetainedCompletionConverter, listOf(intercepted))
+
+                    val converter = if (bridge.useUnitCompletion) {
+                        unitContinuationToRetainedCompletionConverter
+                    } else {
+                        continuationToRetainedCompletionConverter
+                    }
+                    val retainedCompletion = callFromBridge(converter, listOf(intercepted))
                     callFromBridge(objcAutorelease, listOf(retainedCompletion)) // TODO: use stack-allocated block here instead.
                 }
             }
@@ -1771,7 +1810,7 @@ private fun MethodBridgeParameter.toLlvmParamType(): LlvmParamType = when (this)
     is MethodBridgeReceiver -> ReferenceBridge.toLlvmParamType()
     MethodBridgeSelector -> LlvmParamType(int8TypePtr)
     MethodBridgeValueParameter.ErrorOutParameter -> LlvmParamType(pointerType(ReferenceBridge.toLlvmParamType().llvmType))
-    MethodBridgeValueParameter.SuspendCompletion -> LlvmParamType(int8TypePtr)
+    is MethodBridgeValueParameter.SuspendCompletion -> LlvmParamType(int8TypePtr)
 }
 
 private fun MethodBridge.ReturnValue.toLlvmRetType(
@@ -1827,7 +1866,7 @@ private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
     is MethodBridgeReceiver -> ReferenceBridge.objCEncoding
     MethodBridgeSelector -> ":"
     MethodBridgeValueParameter.ErrorOutParameter -> "^${ReferenceBridge.objCEncoding}"
-    MethodBridgeValueParameter.SuspendCompletion -> "@"
+    is MethodBridgeValueParameter.SuspendCompletion -> "@"
 }
 
 private val TypeBridge.objCEncoding: String get() = when (this) {

@@ -644,7 +644,7 @@ internal class ObjCExportTranslatorImpl(
                         }
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
-                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
+                    is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 val uniqueName = unifyName(candidateName, usedNames)
@@ -655,14 +655,18 @@ internal class ObjCExportTranslatorImpl(
                     MethodBridgeValueParameter.ErrorOutParameter ->
                         ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
 
-                    MethodBridgeValueParameter.SuspendCompletion -> {
-                        val resultType = when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
-                            is ObjCNonNullReferenceType -> ObjCNullableReferenceType(it, isNullableResult = false)
-                            is ObjCNullableReferenceType -> ObjCNullableReferenceType(it.nonNullType, isNullableResult = true)
+                    is MethodBridgeValueParameter.SuspendCompletion -> {
+                        val resultType = if (bridge.useUnitCompletion) {
+                            null
+                        } else {
+                            when (val it = mapReferenceType(method.returnType!!, objCExportScope)) {
+                                is ObjCNonNullReferenceType -> ObjCNullableReferenceType(it, isNullableResult = false)
+                                is ObjCNullableReferenceType -> ObjCNullableReferenceType(it.nonNullType, isNullableResult = true)
+                            }
                         }
                         ObjCBlockPointerType(
                                 returnType = ObjCVoidType,
-                                parameterTypes = listOf(
+                                parameterTypes = listOfNotNull(
                                         resultType,
                                         ObjCNullableReferenceType(ObjCClassType("NSError"))
                                 )

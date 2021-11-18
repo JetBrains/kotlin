@@ -180,13 +180,19 @@ __attribute__((swift_name("SuspendBridge")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)unitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+- (void)unitValue:(id _Nullable)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
 
 /**
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
 - (void)unitAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)nullableUnitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("nullableUnit(value:completionHandler:)")));
 
 /**
  @note This method converts all Kotlin exceptions to errors.
@@ -206,7 +212,7 @@ __attribute__((swift_name("SuspendBridge")))
 /**
  @note This method converts all Kotlin exceptions to errors.
 */
-- (void)nothingAsUnitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
+- (void)nothingAsUnitValue:(id _Nullable)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
 @end;
 
 __attribute__((swift_name("AbstractSuspendBridge")))
@@ -224,7 +230,19 @@ __attribute__((swift_name("AbstractSuspendBridge")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
+- (void)unitValue:(KtInt *)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)unitAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)nullableUnitValue:(KtInt *)value completionHandler:(void (^)(KtKotlinUnit * _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("nullableUnit(value:completionHandler:)")));
 
 /**
  @note This method converts all Kotlin exceptions to errors.
@@ -239,7 +257,7 @@ __attribute__((swift_name("AbstractSuspendBridge")))
 /**
  @note This method converts all Kotlin exceptions to errors.
 */
-- (void)nothingAsUnitValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
+- (void)nothingAsUnitValue:(KtInt *)value completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
 @end;
 
 __attribute__((swift_name("ThrowCancellationException")))
@@ -258,7 +276,7 @@ __attribute__((swift_name("ThrowCancellationExceptionImpl")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
+- (void)throwCancellationExceptionWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -272,10 +290,22 @@ __attribute__((swift_name("CoroutinesKt")))
 + (void)suspendFunWithCompletionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(completionHandler:)")));
 
 /**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)unitSuspendFunWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(completionHandler:)")));
+
+/**
  @note This method converts instances of CoroutineException, CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
 + (void)suspendFunResult:(id _Nullable)result doSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(result:doSuspend:doThrow:completionHandler:)")));
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)unitSuspendFunDoSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("unitSuspendFun(doSuspend:doThrow:completionHandler:)")));
 
 /**
  @note This method converts instances of CoroutineException, CancellationException to errors.
@@ -305,7 +335,7 @@ __attribute__((swift_name("CoroutinesKt")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
++ (void)throwCancellationExceptionWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 + (id<KtKotlinSuspendFunction0>)getSuspendLambda0 __attribute__((swift_name("getSuspendLambda0()")));
 + (id<KtKotlinSuspendFunction0>)getSuspendCallableReference0 __attribute__((swift_name("getSuspendCallableReference0()")));
 + (id<KtKotlinSuspendFunction1>)getSuspendLambda1 __attribute__((swift_name("getSuspendLambda1()")));
@@ -1133,7 +1163,7 @@ __attribute__((swift_name("ThrowsThrowableAsErrorSuspend")))
  @note This method converts instances of CancellationException to errors.
  Other uncaught Kotlin exceptions are fatal.
 */
-- (void)throwErrorWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwError(completionHandler:)")));
+- (void)throwErrorWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("throwError(completionHandler:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))

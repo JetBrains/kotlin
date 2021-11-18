@@ -21,6 +21,33 @@ private func testCallSimple() throws {
     try assertNil(error)
 }
 
+private func testUnitCallSimple() throws {
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    var result: KotlinUnit? = nil
+#endif
+    var error: Error? = nil
+    var completionCalled = 0
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    CoroutinesKt.unitSuspendFun { _result, _error in
+        completionCalled += 1
+        result = _result
+        error = _error
+    }
+#else
+    CoroutinesKt.unitSuspendFun { _error in
+        completionCalled += 1
+        error = _error
+    }
+#endif
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    try assertSame(actual: result, expected: KotlinUnit.shared)
+#endif
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertNil(error)
+}
+
 private func testCallSuspendFun(doSuspend: Bool, doThrow: Bool) throws {
     class C {}
     let expectedResult = C()
@@ -42,6 +69,39 @@ private func testCallSuspendFun(doSuspend: Bool, doThrow: Bool) throws {
         try assertTrue(error?.kotlinException is CoroutineException)
     } else {
         try assertSame(actual: result, expected: expectedResult)
+        try assertNil(error)
+    }
+}
+
+private func testCallUnitSuspendFun(doSuspend: Bool, doThrow: Bool) throws {
+    var completionCalled = 0
+    var result: AnyObject? = nil
+    var error: Error? = nil
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    CoroutinesKt.unitSuspendFun(doSuspend: doSuspend, doThrow: doThrow) { _result, _error in
+        completionCalled += 1
+        result = _result as AnyObject?
+        error = _error
+    }
+#else
+    CoroutinesKt.unitSuspendFun(doSuspend: doSuspend, doThrow: doThrow) { _error in
+        completionCalled += 1
+        error = _error
+    }
+#endif
+
+    try assertEquals(actual: completionCalled, expected: 1)
+
+    if doThrow {
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+        try assertNil(result)
+#endif
+        try assertTrue(error?.kotlinException is CoroutineException)
+    } else {
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+        try assertSame(actual: result, expected: KotlinUnit.shared)
+#endif
         try assertNil(error)
     }
 }
@@ -90,6 +150,11 @@ private func testCall() throws {
     try testCallSuspendFun(doSuspend: false, doThrow: false)
     try testCallSuspendFun(doSuspend: true, doThrow: true)
     try testCallSuspendFun(doSuspend: false, doThrow: true)
+
+    try testCallUnitSuspendFun(doSuspend: true, doThrow: false)
+    try testCallUnitSuspendFun(doSuspend: false, doThrow: false)
+    try testCallUnitSuspendFun(doSuspend: true, doThrow: true)
+    try testCallUnitSuspendFun(doSuspend: false, doThrow: true)
 
     try testSuspendFuncAsync(doThrow: false)
     try testSuspendFuncAsync(doThrow: true)
@@ -237,7 +302,21 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(value, nil)
     }
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    override func unit(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
+        completionHandler(KotlinUnit(), nil)
+    }
+#else
+    override func unit(value: KotlinInt, completionHandler: @escaping (Error?) -> Void) {
+        completionHandler(nil)
+    }
+#endif
+
     override func unitAsAny(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
+        completionHandler(KotlinUnit(), nil)
+    }
+
+    override func nullableUnit(value: KotlinInt, completionHandler: @escaping (KotlinUnit?, Error?) -> Void) {
         completionHandler(KotlinUnit(), nil)
     }
 
@@ -249,9 +328,15 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
         completionHandler(nil, E())
     }
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
     override func nothingAsUnit(value: KotlinInt, completionHandler: @escaping (KotlinNothing?, Error?) -> Void) {
         completionHandler(nil, E())
     }
+#else
+    override func nothingAsUnit(value: KotlinInt, completionHandler: @escaping (Error?) -> Void) {
+        completionHandler(E())
+    }
+#endif
 }
 
 private func testBridges() throws {
@@ -268,9 +353,11 @@ private func testBridges() throws {
 }
 
 private func testImplicitThrows1() throws {
-    var result: KotlinUnit? = nil
     var error: Error? = nil
     var completionCalled = 0
+
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    var result: KotlinUnit? = nil
 
     CoroutinesKt.throwCancellationException { _result, _error in
         completionCalled += 1
@@ -278,24 +365,40 @@ private func testImplicitThrows1() throws {
         error = _error
     }
 
-    try assertEquals(actual: completionCalled, expected: 1)
     try assertNil(result)
+#else
+    CoroutinesKt.throwCancellationException { _error in
+        completionCalled += 1
+        error = _error
+    }
+#endif
+
+    try assertEquals(actual: completionCalled, expected: 1)
     try assertTrue(error?.kotlinException is KotlinCancellationException)
 }
 
 private func testImplicitThrows2() throws {
-    var result: KotlinUnit? = nil
     var error: Error? = nil
     var completionCalled = 0
 
+#if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
+    var result: KotlinUnit? = nil
+
     ThrowCancellationExceptionImpl().throwCancellationException { _result, _error in
-        completionCalled += 1
-        result = _result
-        error = _error
+            completionCalled += 1
+            result = _result
+            error = _error
     }
 
-    try assertEquals(actual: completionCalled, expected: 1)
     try assertNil(result)
+#else
+    ThrowCancellationExceptionImpl().throwCancellationException { _error in
+        completionCalled += 1
+        error = _error
+    }
+#endif
+
+    try assertEquals(actual: completionCalled, expected: 1)
     try assertTrue(error?.kotlinException is KotlinCancellationException)
 }
 
@@ -369,6 +472,7 @@ class CoroutinesTests : SimpleTestProvider {
         super.init()
 
         test("TestCallSimple", testCallSimple)
+        test("TestCallUnitSimple", testUnitCallSimple)
         test("TestCall", testCall)
         test("TestCallChain", testCallChain)
         test("TestOverride", testOverride)
