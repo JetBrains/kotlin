@@ -4859,6 +4859,18 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             public void testKt19246() throws Exception {
                 runTest("compiler/testData/codegen/box/checkcastOptimization/kt19246.kt");
             }
+
+            @Test
+            @TestMetadata("kt47851.kt")
+            public void testKt47851() throws Exception {
+                runTest("compiler/testData/codegen/box/checkcastOptimization/kt47851.kt");
+            }
+
+            @Test
+            @TestMetadata("kt47851a.kt")
+            public void testKt47851a() throws Exception {
+                runTest("compiler/testData/codegen/box/checkcastOptimization/kt47851a.kt");
+            }
         }
 
         @Nested
@@ -7954,6 +7966,18 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("inlineFunInLocalClassConstructorCall.kt")
             public void testInlineFunInLocalClassConstructorCall() throws Exception {
                 runTest("compiler/testData/codegen/box/constructorCall/inlineFunInLocalClassConstructorCall.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49615.kt")
+            public void testKt49615() throws Exception {
+                runTest("compiler/testData/codegen/box/constructorCall/kt49615.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49615a.kt")
+            public void testKt49615a() throws Exception {
+                runTest("compiler/testData/codegen/box/constructorCall/kt49615a.kt");
             }
 
             @Test

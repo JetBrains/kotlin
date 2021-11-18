@@ -37,7 +37,10 @@ package org.jetbrains.kotlin.codegen.optimization.common
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
-class InstructionLivenessAnalyzer(val method: MethodNode) {
+class InstructionLivenessAnalyzer(
+    val method: MethodNode,
+    val visitExceptionHandlers: Boolean = true
+) {
     private val instructions = method.instructions
     private val nInsns = instructions.size()
 
@@ -92,8 +95,10 @@ class InstructionLivenessAnalyzer(val method: MethodNode) {
                 }
             }
 
-            handlers[insn]?.forEach { tcb ->
-                visitControlFlowEdge(tcb.handler.indexOf)
+            if (visitExceptionHandlers) {
+                handlers[insn]?.forEach { tcb ->
+                    visitControlFlowEdge(tcb.handler.indexOf)
+                }
             }
         }
     }
@@ -151,6 +156,7 @@ class InstructionLivenessAnalyzer(val method: MethodNode) {
     }
 
     private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
+        if (!visitExceptionHandlers) return
         for (tcb in m.tryCatchBlocks) {
             val begin = tcb.start.indexOf
             val end = tcb.end.indexOf

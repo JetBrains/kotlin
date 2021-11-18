@@ -3489,6 +3489,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testKt19246() throws Exception {
             runTest("compiler/testData/codegen/box/checkcastOptimization/kt19246.kt");
         }
+
+        @Test
+        @TestMetadata("kt47851.kt")
+        public void testKt47851() throws Exception {
+            runTest("compiler/testData/codegen/box/checkcastOptimization/kt47851.kt");
+        }
     }
 
     @Nested
