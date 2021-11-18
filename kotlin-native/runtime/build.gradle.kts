@@ -425,7 +425,6 @@ konanArtifacts {
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.native.internal.InternalForKotlinNative",
-                "-opt-in=kotlin.native.SymbolNameIsDeprecated"
         )
 
         srcFiles(commonBuiltinsSrc)
