@@ -391,6 +391,18 @@ open class KonanCompileFrameworkTask: KonanCompileNativeBinary() {
 }
 
 open class KonanCompileLibraryTask: KonanCompileTask() {
+    override val artifact: File
+        @Internal get() = destinationDir.resolve(artifactFullName)
+
+    val artifactFile: File?
+        @Optional @OutputFile get() = if (!noPack) artifact else null
+
+    val artifactDirectory: File?
+        @Optional @OutputDirectory get() = if (noPack) artifact else null
+
+    override val artifactSuffix: String
+        @Internal get() = if (!noPack) produce.suffix(konanTarget) else ""
+
     override fun buildCommonArgs() = super.buildCommonArgs().apply {
         addKey("-nopack", noPack)
     }

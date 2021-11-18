@@ -439,7 +439,6 @@ konanArtifacts {
     stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
         configure {
             dependsOn(":kotlin-native:distCompiler")
-            outputs.dir(project.buildDir.resolve("stdlib/$hostName/stdlib"))
         }
     }
 }
