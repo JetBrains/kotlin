@@ -359,7 +359,20 @@ private fun RegExp.findNext(input: String, from: Int, nextPattern: RegExp): Matc
             }
 
         override fun next(): MatchResult? =
-            nextPattern.findNext(input, if (range.isEmpty()) range.start + 1 else range.endInclusive + 1, nextPattern)
+            nextPattern.findNext(input, if (range.isEmpty()) advanceToNextCharacter(range.start) else range.endInclusive + 1, nextPattern)
+
+        private fun advanceToNextCharacter(index: Int): Int {
+            if (index < input.lastIndex) {
+                val code1 = input.asDynamic().charCodeAt(index).unsafeCast<Int>()
+                if (code1 in 0xD800..0xDBFF) {
+                    val code2 = input.asDynamic().charCodeAt(index + 1).unsafeCast<Int>()
+                    if (code2 in 0xDC00..0xDFFF) {
+                        return index + 2
+                    }
+                }
+            }
+            return index + 1
+        }
     }
 }
 

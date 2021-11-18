@@ -7,6 +7,7 @@
 
 package test.text
 
+import test.regexSplitUnicodeCodePointHandling
 import test.supportsNamedCapturingGroup
 import kotlin.test.*
 
@@ -354,6 +355,11 @@ class RegexTest {
 
         testSplitEquals("".split(""), "", emptyMatch)
 
+        testSplitEquals(
+            if (regexSplitUnicodeCodePointHandling) listOf("", "\uD83D\uDE04", "\uD801", "") else listOf("", "\uD83D", "\uDE04", "\uD801", ""),
+            "\uD83D\uDE04\uD801", emptyMatch
+        )
+
         val emptyMatchBeforeT = "(?=t)".toRegex()
 
         testSplitEquals(listOf("", "tes", "t"), input, emptyMatchBeforeT)
@@ -395,6 +401,18 @@ class RegexTest {
 
         assertFailsWith<NoSuchElementException> { matches.next() }
         assertFailsWith<NoSuchElementException> { splits.next() }
+    }
+
+    @Test fun findAllEmoji() {
+        val input = "\uD83D\uDE04\uD801x"
+        val regex = ".".toRegex()
+
+        val matches = regex.findAll(input).toList()
+        val values = matches.map { it.value }
+        val ranges = matches.map { it.range }
+
+        assertEquals(listOf("\uD83D\uDE04", "\uD801", "x"), values)
+        assertEquals(listOf(0..1, 2..2, 3..3), ranges)
     }
 
 }

@@ -42,3 +42,5 @@ public actual val isFloat32RangeEnforced: Boolean = true
 public actual val supportsSuppressedExceptions: Boolean get() = !isJava6
 
 public actual val supportsNamedCapturingGroup: Boolean get() = !isJava6
+
+public actual val regexSplitUnicodeCodePointHandling: Boolean get() = false
