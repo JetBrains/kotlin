@@ -88,7 +88,6 @@ internal class KonanSymbols(
     }.toMap()
 
     val symbolName = topLevelClass(RuntimeNames.symbolNameAnnotation)
-    val gcUnsafeCall = topLevelClass(KonanFqNames.gcUnsafeCall)
     val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
 

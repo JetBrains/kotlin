@@ -581,7 +581,7 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
     )
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            symbols.gcUnsafeCall.owner, cFunctionName)
+            symbols.symbolName.owner, cFunctionName)
 
     if (isObjCMethod) {
         val methodInfo = signature.getObjCMethodInfo()!!

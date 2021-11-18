@@ -2590,8 +2590,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val result = context.memoryModel == MemoryModel.EXPERIMENTAL && origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE
             if (result) {
                 check(isExternal)
-                // TODO: this should be separate annotation
-                // check(!annotations.hasAnnotation(KonanFqNames.gcUnsafeCall))
+                check(!annotations.hasAnnotation(KonanFqNames.gcUnsafeCall))
                 check(annotations.hasAnnotation(RuntimeNames.filterExceptions))
             }
             return result
