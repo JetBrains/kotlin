@@ -61,6 +61,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         "-o", outputFileName,
         "-target", target.visibleName,
         "-manifest", manifest.path,
+        "-opt-in=kotlin.native.SymbolNameIsInternal",
         "-Xtemporary-files-dir=$temporaryFilesDir") +
         nativeStubs +
         cinteropArgsToCompiler +
