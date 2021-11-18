@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.math.abs
+
 actual class Regex {
     actual constructor(pattern: String) { TODO("Wasm stdlib: Text") }
     actual constructor(pattern: String, option: RegexOption) { TODO("Wasm stdlib: Text") }
@@ -900,7 +902,7 @@ public actual fun String.toDoubleOrNull(): Double? {
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-public actual fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
+public actual fun Byte.toString(radix: Int): String = this.toLong().toString(radix)
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -908,7 +910,7 @@ public actual fun Byte.toString(radix: Int): String = this.toInt().toString(radi
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-public actual fun Short.toString(radix: Int): String = this.toInt().toString(radix)
+public actual fun Short.toString(radix: Int): String = this.toLong().toString(radix)
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
@@ -916,7 +918,7 @@ public actual fun Short.toString(radix: Int): String = this.toInt().toString(rad
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-actual fun Int.toString(radix: Int): String = TODO("Wasm stdlib: Text")
+actual fun Int.toString(radix: Int): String = toLong().toString(radix)
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
@@ -924,7 +926,32 @@ actual fun Int.toString(radix: Int): String = TODO("Wasm stdlib: Text")
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-actual fun Long.toString(radix: Int): String = TODO("Wasm stdlib: Text")
+actual fun Long.toString(radix: Int): String {
+    checkRadix(radix)
+
+    fun Long.getChar() = toInt().let { if (it < 10) '0' + it else 'a' + (it - 10) }
+
+    if (radix == 10) return toString()
+    if (this in 0 until radix) return getChar().toString()
+
+    val isNegative = this < 0
+    val buffer = CharArray(Long.SIZE_BITS + 1)
+
+    var currentBufferIndex= buffer.lastIndex
+    var current: Long = this
+    while(current != 0L) {
+        buffer[currentBufferIndex] = abs(current % radix).getChar()
+        current /= radix
+        currentBufferIndex--
+    }
+
+    if (isNegative) {
+        buffer[currentBufferIndex] = '-'
+        currentBufferIndex--
+    }
+
+    return buffer.concatToString(currentBufferIndex + 1)
+}
 
 @PublishedApi
 internal actual fun checkRadix(radix: Int): Int {

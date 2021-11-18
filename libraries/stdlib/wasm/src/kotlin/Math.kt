@@ -939,9 +939,11 @@ public actual val Int.absoluteValue: Int get() = TODO("Wasm stdlib: Math")
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Int.sign: Int get() = TODO("Wasm stdlib: Math")
-
-
+public actual val Int.sign: Int get() = when {
+    this < 0 -> -1
+    this > 0 -> 1
+    else -> 0
+}
 
 /**
  * Returns the absolute value of the given value [n].
@@ -952,7 +954,7 @@ public actual val Int.sign: Int get() = TODO("Wasm stdlib: Math")
  * @see absoluteValue extension property for [Long]
  */
 @SinceKotlin("1.2")
-public actual fun abs(n: Long): Long = TODO("Wasm stdlib: Math")
+public actual fun abs(n: Long): Long = if (n >= 0) n else -n
 
 /**
  * Returns the smaller of two values.
@@ -984,7 +986,10 @@ public actual val Long.absoluteValue: Long get() = TODO("Wasm stdlib: Math")
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Long.sign: Int get() = TODO("Wasm stdlib: Math")
-
+public actual val Long.sign: Int get() = when {
+    this < 0 -> -1
+    this > 0 -> 1
+    else -> 0
+}
 
 // endregion
