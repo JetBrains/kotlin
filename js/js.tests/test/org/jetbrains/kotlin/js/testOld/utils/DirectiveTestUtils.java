@@ -224,6 +224,8 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_DEBUGGER = new CountNodesDirective<>("CHECK_DEBUGGER_COUNT", JsDebugger.class);
 
+    private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>("CHECK_STRING_LITERAL_COUNT", JsStringLiteral.class);
+
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -365,6 +367,7 @@ public class DirectiveTestUtils {
             COUNT_CASES,
             COUNT_IF,
             COUNT_DEBUGGER,
+            COUNT_STRING_LITERALS,
             NOT_REFERENCED,
             HAS_INLINE_METADATA,
             HAS_NO_INLINE_METADATA,

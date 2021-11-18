@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isEnumClass
@@ -68,7 +69,15 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, context: JsGenerationContext): JsExpression {
         // TODO revisit
-        return expression.arguments.fold<IrExpression, JsExpression>(JsStringLiteral("")) { jsExpr, irExpr ->
+
+        val firstArgument = expression.arguments.firstOrNull()
+        val (head, tail) = if (firstArgument?.type?.isString() == true) {
+            Pair(firstArgument.accept(this, context), expression.arguments.asSequence().drop(1))
+        } else {
+            Pair(JsStringLiteral(""), expression.arguments.asSequence())
+        }
+
+        return tail.fold(head) { jsExpr, irExpr ->
             JsBinaryOperation(
                 JsBinaryOperator.ADD,
                 jsExpr,
