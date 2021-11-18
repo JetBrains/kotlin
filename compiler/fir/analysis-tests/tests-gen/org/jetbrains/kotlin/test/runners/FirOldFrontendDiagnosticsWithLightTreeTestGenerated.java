@@ -10595,6 +10595,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("contextualFunctionalTypeConversion.kt")
+                public void testContextualFunctionalTypeConversion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextualFunctionalTypeConversion.kt");
+                }
+
+                @Test
                 @TestMetadata("functionalType.kt")
                 public void testFunctionalType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/functionalType.kt");
