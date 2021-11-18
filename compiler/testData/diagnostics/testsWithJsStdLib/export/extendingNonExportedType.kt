@@ -26,7 +26,7 @@ interface ExportedGenericInterface<T>
 class <!NON_EXPORTABLE_TYPE("super; ExportedGenericInterface<NonExportedClass>")!>ExportedClass4<!> : ExportedGenericInterface<NonExportedClass>
 
 @JsExport
-enum class <!NON_EXPORTABLE_TYPE("super; NonExportedInterface")!>ExportedEnum<!> : NonExportedInterface {
+enum class <!NON_EXPORTABLE_TYPE("super; NonExportedInterface")!>ExportedEnum<!> : ExportedGenericInterface<Any>, NonExportedInterface {
     EXPORTED_ENUM_1,
     EXPORTED_ENUM_2
 }

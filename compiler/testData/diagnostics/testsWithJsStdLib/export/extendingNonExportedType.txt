@@ -30,7 +30,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.js.JsExport public final enum class ExportedEnum : kotlin.Enum<foo.ExportedEnum>, foo.NonExportedInterface {
+    @kotlin.js.JsExport public final enum class ExportedEnum : kotlin.Enum<foo.ExportedEnum>, foo.ExportedGenericInterface<kotlin.Any>, foo.NonExportedInterface {
         enum entry EXPORTED_ENUM_1
 
         enum entry EXPORTED_ENUM_2
@@ -40,9 +40,9 @@ package foo {
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.ExportedEnum): kotlin.Int
-        public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        public final override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): foo.ExportedEnum
