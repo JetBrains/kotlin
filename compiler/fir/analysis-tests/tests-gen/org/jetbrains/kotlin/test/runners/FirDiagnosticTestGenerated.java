@@ -4950,6 +4950,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("annotationArgumentMapping.kt")
+            public void testAnnotationArgumentMapping() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/annotationArgumentMapping.kt");
+            }
+
+            @Test
             @TestMetadata("anonymousInDelegate.kt")
             public void testAnonymousInDelegate() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/anonymousInDelegate.kt");
@@ -4995,6 +5001,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             @TestMetadata("propertyWithFunctionalType.kt")
             public void testPropertyWithFunctionalType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/propertyWithFunctionalType.kt");
+            }
+
+            @Test
+            @TestMetadata("sequentialLazy.kt")
+            public void testSequentialLazy() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/sequentialLazy.kt");
             }
 
             @Test
