@@ -811,10 +811,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             context.llvm.initializersGenerationState.moduleThreadLocalInitializers.add(declaration)
         }
 
-        if (declaration.hasAnnotation(RuntimeNames.symbolNameAnnotation) && context.memoryModel == MemoryModel.EXPERIMENTAL) {
-            context.reportCompilationError("@SymbolName annotation on function ${declaration.kotlinFqName} can't be used with experimental memory model.")
-        }
-
         if ((declaration as? IrSimpleFunction)?.modality == Modality.ABSTRACT
                 || declaration.isExternal
                 || body == null)
