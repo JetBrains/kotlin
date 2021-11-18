@@ -592,10 +592,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = true,
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
-            )
+            buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
             useToolchainExtension(15)
 
@@ -618,10 +615,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = true,
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
-            )
+            buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
             //language=properties
             gradleProperties.append(

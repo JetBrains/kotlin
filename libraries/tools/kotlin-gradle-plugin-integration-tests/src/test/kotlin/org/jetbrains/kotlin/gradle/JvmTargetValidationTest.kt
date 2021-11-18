@@ -246,10 +246,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                configurationCache = true,
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
-            ),
+            buildOptions = defaultBuildOptions.withConfigurationCache,
             buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
         ) {
             // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
