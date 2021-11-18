@@ -401,7 +401,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
 
         val containerKClassValue = arguments[Name.identifier("value")] as? KClassValue ?: return false
         val normalClass = containerKClassValue.value as? KClassValue.Value.NormalClass ?: return false
-        val classId = normalClass.classId
+        return isImplicitRepeatableContainer(normalClass.classId)
+    }
+
+    protected fun isImplicitRepeatableContainer(classId: ClassId): Boolean {
         if (classId.outerClassId == null ||
             classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
         ) return false
