@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.native.interop.tool.*
  * @return null if there is no need in compiler invocation.
  * Otherwise returns array of compiler args.
  */
-fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
+fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): Array<String>? {
     val arguments = if (flavor == "native") CInteropArguments() else JSInteropArguments()
     arguments.argParser.parse(args)
     val outputFileName = arguments.output
@@ -46,7 +46,8 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
             InternalInteropOptions(generatedDir.absolutePath,
                     nativesDir.absolutePath,manifest.path,
                     cstubsName.takeIf { flavor == "native" }
-            )
+            ),
+            runFromDaemon
     ) ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
     val nativeStubs =

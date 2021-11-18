@@ -250,7 +250,7 @@ private fun generateLibrary(
                 *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.libraryName}") }.toTypedArray()
         )
         logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")
-        invokeInterop("native", cinteropArgs)?.let { K2Native.mainNoExit(it) }
+        invokeInterop("native", cinteropArgs, runFromDaemon = false)?.let { K2Native.mainNoExit(it) }
 
         if (rebuild) {
             outKlib.deleteAtomicallyIfPossible(tmpDirectory)

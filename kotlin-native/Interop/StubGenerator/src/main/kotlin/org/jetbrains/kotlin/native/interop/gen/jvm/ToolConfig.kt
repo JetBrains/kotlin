@@ -18,29 +18,17 @@ package  org.jetbrains.kotlin.native.interop.tool
 
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
-import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
+import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.Language
 
-class ToolConfig(userProvidedTargetName: String?, private val flavor: KotlinPlatform, private val propertyOverrides: Map<String, String>) {
-
-    private val konanHome = KonanHomeProvider.determineKonanHome()
-    private val distribution = Distribution(konanHome, propertyOverrides = propertyOverrides)
-    private val platformManager = PlatformManager(distribution)
-    private val targetManager = platformManager.targetManager(userProvidedTargetName)
-    private val host = HostManager.host
-    val target = targetManager.target
-
-    private val platform = platformManager.platform(target)
+class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform, propertyOverrides: Map<String, String>)
+    : AbstractToolConfig(KonanHomeProvider.determineKonanHome(), userProvidedTargetName, propertyOverrides) {
 
     val clang = when (flavor) {
         KotlinPlatform.JVM -> platform.clangForJni
         KotlinPlatform.NATIVE -> platform.clang
     }
-
-    val substitutions = defaultTargetSubstitutions(target)
-
-    fun downloadDependencies() = platform.downloadDependencies()
 
     fun getDefaultCompilerOptsForLanguage(language: Language): List<String> = when (language) {
         Language.C,
@@ -48,14 +36,10 @@ class ToolConfig(userProvidedTargetName: String?, private val flavor: KotlinPlat
         Language.CPP -> clang.libclangXXArgs.toList()
     }
 
-    val platformCompilerOpts = if (clang is ClangArgs.Jni)
-            clang.hostCompilerArgsForJni.toList() else emptyList()
+    val platformCompilerOpts =
+            if (clang is ClangArgs.Jni)
+                clang.hostCompilerArgsForJni.toList()
+            else emptyList()
 
-    val llvmHome = platform.absoluteLlvmHome
-    val sysRoot = platform.absoluteTargetSysRoot
-
-    val libclang = when (host) {
-        KonanTarget.MINGW_X64 -> "$llvmHome/bin/libclang.dll"
-        else -> "$llvmHome/lib/${System.mapLibraryName("clang")}"
-    }
+    override fun loadLibclang() { System.load(libclang) }
 }
