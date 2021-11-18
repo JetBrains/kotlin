@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.NativeBlackBoxTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.StandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*

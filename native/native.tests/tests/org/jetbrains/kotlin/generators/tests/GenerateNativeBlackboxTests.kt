@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.support.NativeBlackBoxTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.NativeBlackBoxTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.ExtTestCaseGroupProvider
 
 fun main() {

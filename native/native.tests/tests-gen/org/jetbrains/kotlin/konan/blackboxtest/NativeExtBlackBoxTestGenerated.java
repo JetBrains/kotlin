@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.blackboxtest.support.NativeBlackBoxTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.NativeBlackBoxTestCaseGroupProvider;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.ExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
