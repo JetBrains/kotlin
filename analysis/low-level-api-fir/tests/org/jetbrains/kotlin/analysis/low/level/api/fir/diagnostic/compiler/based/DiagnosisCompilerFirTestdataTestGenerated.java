@@ -4968,6 +4968,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("getClassLet.kt")
+            public void testGetClassLet() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/getClassLet.kt");
+            }
+
+            @Test
             @TestMetadata("kt41917.kt")
             public void testKt41917() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates/kt41917.kt");

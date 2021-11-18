@@ -1,0 +1,20 @@
+FILE: getClassLet.kt
+    public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline fun <reified K> foo(klass: R|kotlin/reflect/KClass<*>|): R|K| {
+        ^foo Null(null)!!
+    }
+    public final val some: R|kotlin/collections/Map<kotlin/String, kotlin/String>|by R|kotlin/lazy|<R|kotlin/collections/Map<kotlin/String, kotlin/String>|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/Map<kotlin/String, kotlin/String>| <inline=NoInline>  {
+        ^ <getClass>(Q|SomeClass|).R|kotlin/let|<R|kotlin/reflect/KClass<SomeClass>|, R|kotlin/collections/Map<kotlin/String, kotlin/String>|>(<L> = let@fun <anonymous>(it: R|kotlin/reflect/KClass<SomeClass>|): R|kotlin/collections/Map<kotlin/String, kotlin/String>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/foo|<R|kotlin/collections/Map<kotlin/String, kotlin/String>|>(R|<local>/it|)
+        }
+        )
+    }
+    )
+        public get(): R|kotlin/collections/Map<kotlin/String, kotlin/String>| {
+            ^ D|/some|.R|kotlin/getValue|<R|kotlin/collections/Map<kotlin/String, kotlin/String>|>(Null(null), ::R|/some|)
+        }
