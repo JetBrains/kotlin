@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirUnderscoredTypeArgum
 object CommonExpressionCheckers : ExpressionCheckers() {
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
         get() = setOf(
-            FirAnnotationArgumentChecker,
+            FirAnnotationExpressionChecker,
             FirOptInAnnotationCallChecker,
         )
 

@@ -790,6 +790,11 @@ internal class RepeatedAnnotationWarningImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RepeatedAnnotationWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class NotAClassImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NotAClass(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
