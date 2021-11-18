@@ -1,0 +1,10 @@
+lazy@(3,1) : Lazy<T>
+  initializer@(3,14) : () -> T
+Lazy@(5,1)
+  Lazy@(5,14) : kotlin.Unit
+    value@(5,15) : T
+getValue@(7,1) : T
+  thisRef@(7,42) : kotlin.Any?
+  property@(7,57) : kotlin.reflect.KProperty<*>
+A@(9,1)
+  i@(10,5) : kotlin.Int

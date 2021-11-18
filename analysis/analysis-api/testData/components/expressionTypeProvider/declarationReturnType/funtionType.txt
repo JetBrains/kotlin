@@ -1,0 +1,5 @@
+f1@(1,1) : () -> kotlin.Unit
+f2@(2,1) : () -> kotlin.Unit
+f3@(3,1) : kotlin.String.() -> kotlin.String
+f4@(4,1) : kotlin.Int.(T) -> kotlin.String
+  KtParameter@(4,20) : T

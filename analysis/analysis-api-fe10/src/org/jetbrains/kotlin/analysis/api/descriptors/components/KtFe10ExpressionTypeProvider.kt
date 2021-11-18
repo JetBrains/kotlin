@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtExpressionTypeProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken

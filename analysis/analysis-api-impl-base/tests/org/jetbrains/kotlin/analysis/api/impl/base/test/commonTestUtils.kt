@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -45,4 +46,8 @@ fun KtSymbol.getNameWithPositionString(): String {
 fun String.indented(indent: Int): String {
     val indentString = " ".repeat(indent)
     return indentString + replace("\n", "\n$indentString")
+}
+
+fun KtDeclaration.getNameWithPositionString(): String {
+    return (presentation?.presentableText ?: name ?: this::class.simpleName) + "@" + position()
 }
