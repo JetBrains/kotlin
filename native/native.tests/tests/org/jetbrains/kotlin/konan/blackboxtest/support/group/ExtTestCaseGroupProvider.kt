@@ -146,7 +146,7 @@ private class ExtTestDataFile(
                 testDataFile = testDataFile,
                 generatedSourcesBaseDir = environment.testSourcesDir
             ),
-            effectivePackageName = computePackageName(
+            nominalPackageName = computePackageName(
                 testDataBaseDir = environment.testRoots.baseDir,
                 testDataFile = testDataFile
             )
@@ -262,7 +262,7 @@ private class ExtTestDataFile(
     private fun patchPackageNames(isStandaloneTest: Boolean) = with(structure) {
         if (isStandaloneTest) return // Don't patch packages for standalone tests.
 
-        val basePackageName = FqName(settings.effectivePackageName)
+        val basePackageName = FqName(settings.nominalPackageName)
 
         val oldPackageNames: Set<FqName> = filesToTransform.mapToSet { it.packageFqName }
         val oldToNewPackageNameMapping: Map<FqName, FqName> = oldPackageNames.associateWith { oldPackageName ->
@@ -538,7 +538,7 @@ private class ExtTestDataFile(
             }
 
             if (!isStandaloneTest) {
-                append("package ").appendLine(settings.effectivePackageName)
+                append("package ").appendLine(settings.nominalPackageName)
                 appendLine()
             }
 
@@ -575,7 +575,7 @@ private class ExtTestDataFile(
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
             origin = TestOrigin.SingleTestDataFile(testDataFile),
-            nominalPackageName = settings.effectivePackageName,
+            nominalPackageName = settings.nominalPackageName,
             expectedOutputDataFile = null,
             extras = null
         )
@@ -633,7 +633,7 @@ private class ExtTestDataFileSettings(
     val optInsForCompiler: Set<String>,
     val expectActualLinker: Boolean,
     val generatedSourcesDir: File,
-    val effectivePackageName: PackageFQN
+    val nominalPackageName: PackageFQN
 )
 
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?

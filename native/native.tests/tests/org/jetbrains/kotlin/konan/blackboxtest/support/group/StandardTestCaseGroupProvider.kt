@@ -45,7 +45,7 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
             generatedSourcesBaseDir = environment.testSourcesDir
         )
 
-        val effectivePackageName = computePackageName(
+        val nominalPackageName = computePackageName(
             testDataBaseDir = environment.testRoots.baseDir,
             testDataFile = testDataFile
         )
@@ -178,7 +178,7 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
         if (testKind == TestKind.REGULAR) {
             // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.
             testModules.values.forEach { testModule ->
-                testModule.files.forEach { testFile -> fixPackageDeclaration(testFile, effectivePackageName, testDataFile) }
+                testModule.files.forEach { testFile -> fixPackageDeclaration(testFile, nominalPackageName, testDataFile) }
             }
         }
 
@@ -187,7 +187,7 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
             modules = testModules.values.toSet(),
             freeCompilerArgs = freeCompilerArgs,
             origin = TestOrigin.SingleTestDataFile(testDataFile),
-            nominalPackageName = effectivePackageName,
+            nominalPackageName = nominalPackageName,
             expectedOutputDataFile = expectedOutputDataFile,
             extras = if (testKind == TestKind.STANDALONE_NO_TR) {
                 TestCase.StandaloneNoTestRunnerExtras(
