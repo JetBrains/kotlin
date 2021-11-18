@@ -28,18 +28,14 @@ class BasicClassInfo(
     val isPrivate = flagEnabled(accessFlags, Opcodes.ACC_PRIVATE)
     val isLocal = classId.isLocal
 
-    /** Whether this is a synthetic Java class. */
-    val isJavaSynthetic = !isKotlinClass && flagEnabled(accessFlags, Opcodes.ACC_SYNTHETIC)
-
-    /**
-     * Whether this is a synthetic Kotlin class.
-     *
-     * Note that we use [KotlinClassHeader.Kind], not [accessFlags], to make this determination. For example,
-     * 'kotlin/Metadata.DefaultImpls' is synthetic according to its [KotlinClassHeader.Kind], but not synthetic according to its
-     * [accessFlags].
-     */
-    @Suppress("unused")
-    val isKotlinSynthetic = isKotlinClass && kotlinClassHeader!!.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS
+    val isSynthetic = if (isKotlinClass) {
+        // Note that this property is `true` if one of the two checks below is `true`.
+        // For example, `kotlin/Metadata.DefaultImpls` is synthetic according to its [KotlinClassHeader.Kind], but not synthetic according
+        // to its [accessFlags]. (It's unclear if there is an opposite example.)
+        (kotlinClassHeader!!.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) || flagEnabled(accessFlags, Opcodes.ACC_SYNTHETIC)
+    } else {
+        flagEnabled(accessFlags, Opcodes.ACC_SYNTHETIC)
+    }
 
     private fun flagEnabled(accessFlags: Int, flagToCheck: Int) = (accessFlags and flagToCheck) != 0
 
