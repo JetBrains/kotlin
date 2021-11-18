@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 // IGNORE_BACKEND_FIR: JVM_IR
 
