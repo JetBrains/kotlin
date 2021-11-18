@@ -645,6 +645,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/thisWithCustomLabel.kt");
             }
 
+            @TestMetadata("typeParameterAsContextReceiver.kt")
+            public void testTypeParameterAsContextReceiver() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/typeParameterAsContextReceiver.kt");
+            }
+
             @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

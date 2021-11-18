@@ -850,6 +850,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("typeParameterAsContextReceiver.kt")
+            public void testTypeParameterAsContextReceiver() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/typeParameterAsContextReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("unaryOperators.kt")
             public void testUnaryOperators() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/unaryOperators.kt");
