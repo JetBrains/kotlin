@@ -19,8 +19,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: X.Y
   classKind: CLASS
   companionObject: null
@@ -33,7 +32,7 @@ KtNamedClassOrObjectSymbol:
   name: Y
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
@@ -53,8 +52,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: X.Z
   classKind: CLASS
   companionObject: null
@@ -67,7 +65,7 @@ KtNamedClassOrObjectSymbol:
   name: Z
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
@@ -107,8 +105,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
@@ -121,7 +118,7 @@ KtNamedClassOrObjectSymbol:
   name: K
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: [
@@ -141,8 +138,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
@@ -155,7 +151,7 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: [
@@ -165,8 +161,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
@@ -179,7 +174,7 @@ KtNamedClassOrObjectSymbol:
   name: U
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: [
@@ -189,9 +184,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /X.foo
   hasStableParameterNames: true
   isExtension: false
@@ -207,6 +200,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Unit
   typeParameters: [
     KtTypeParameterSymbol(T3)
   ]
@@ -216,8 +210,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: X
   classKind: CLASS
   companionObject: null
@@ -230,7 +223,7 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [

@@ -1,7 +1,5 @@
 KtFunctionSymbol:
-  annotatedType: [] E
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.get
   hasStableParameterNames: true
   isExtension: false
@@ -17,6 +15,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: E
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)

@@ -1,7 +1,5 @@
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /Foo.i
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -22,6 +20,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
@@ -32,11 +31,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtPropertyGetterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: [
-    kotlin/jvm/JvmName
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/jvm/JvmName(name = getMyJ)
       psi: KtAnnotationEntry
   ]
@@ -51,15 +46,14 @@ KtPropertyGetterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: ACCESSOR
+  type: kotlin/Int
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -68,14 +62,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null
 
 KtPropertySetterSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: [
-    kotlin/jvm/JvmName
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/jvm/JvmName(name = setMyJ)
       psi: KtAnnotationEntry
   ]
@@ -91,6 +82,7 @@ KtPropertySetterSymbol:
   parameter: KtValueParameterSymbol(value)
   receiverType: null
   symbolKind: ACCESSOR
+  type: kotlin/Unit
   valueParameters: [
     KtValueParameterSymbol(value)
   ]
@@ -99,9 +91,7 @@ KtPropertySetterSymbol:
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /Foo.j
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
@@ -122,6 +112,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
@@ -132,8 +123,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: Foo
   classKind: CLASS
   companionObject: null
@@ -146,7 +136,7 @@ KtNamedClassOrObjectSymbol:
   name: Foo
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

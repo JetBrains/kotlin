@@ -1,7 +1,5 @@
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -10,12 +8,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -24,12 +21,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -38,12 +34,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] MyColor
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: MyColor
   hasStableParameterNames: true
@@ -52,6 +47,7 @@ KtConstructorSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: MyColor
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(x)
@@ -62,8 +58,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: MyColor
   classKind: CLASS
   companionObject: null
@@ -76,7 +71,7 @@ KtNamedClassOrObjectSymbol:
   name: MyColor
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -84,20 +79,18 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
-  annotatedType: [] MyColor
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: MyColor
   valueParameters: []
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] MyColor
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /Some.delegate
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
@@ -118,6 +111,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: MyColor
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
@@ -128,20 +122,18 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtAnonymousFunctionSymbol:
-  annotatedType: [] MyColor
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: MyColor
   valueParameters: []
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Lazy<MyColor>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /Some.lambda
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -162,6 +154,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Lazy<MyColor>
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
@@ -172,9 +165,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] MyColor
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /Some.nonLazy
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -195,6 +186,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: MyColor
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
@@ -205,8 +197,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: Some
   classKind: CLASS
   companionObject: null
@@ -219,7 +210,7 @@ KtNamedClassOrObjectSymbol:
   name: Some
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -1,5 +1,4 @@
 KtBackingFieldSymbol:
-  annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
   isExtension: false
   name: field
@@ -7,4 +6,5 @@ KtBackingFieldSymbol:
   owningProperty: KtKotlinPropertySymbol(/x)
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null

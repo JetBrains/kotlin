@@ -1,5 +1,4 @@
 KtEnumEntrySymbol:
-  annotatedType: [] X
   callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
   isExtension: false
@@ -7,10 +6,10 @@ KtEnumEntrySymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: X
   deprecationStatus: null
 
 KtEnumEntrySymbol:
-  annotatedType: [] X
   callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
   isExtension: false
@@ -18,11 +17,11 @@ KtEnumEntrySymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: X
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: X
   classKind: ENUM_CLASS
   companionObject: null
@@ -35,7 +34,7 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    [] kotlin/Enum<X>
+    kotlin/Enum<X>
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

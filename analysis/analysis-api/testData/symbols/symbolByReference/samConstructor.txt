@@ -1,5 +1,4 @@
 KtSamConstructorSymbol:
-  annotatedType: [] java/lang/Runnable
   callableIdIfNonLocal: java/lang/Runnable
   hasStableParameterNames: true
   isExtension: false
@@ -7,6 +6,7 @@ KtSamConstructorSymbol:
   origin: SAM_CONSTRUCTOR
   receiverType: null
   symbolKind: SAM_CONSTRUCTOR
+  type: java/lang/Runnable
   valueParameters: [
     KtValueParameterSymbol(function)
   ]

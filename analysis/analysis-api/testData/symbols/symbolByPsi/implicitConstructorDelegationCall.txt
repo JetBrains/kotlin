@@ -1,7 +1,5 @@
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -10,12 +8,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] A
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   hasStableParameterNames: true
@@ -24,6 +21,7 @@ KtConstructorSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: A
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(i)
@@ -32,8 +30,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
@@ -46,7 +43,7 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

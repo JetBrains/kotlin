@@ -1,7 +1,5 @@
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /A.x
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -22,6 +20,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): A
@@ -32,9 +31,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtPropertyGetterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasBody: true
   hasStableParameterNames: true
@@ -46,14 +43,13 @@ KtPropertyGetterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: ACCESSOR
+  type: kotlin/Int
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /A.y
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
@@ -71,9 +67,10 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: [] kotlin/Int
+  receiverType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): A
@@ -84,8 +81,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
@@ -98,7 +94,7 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

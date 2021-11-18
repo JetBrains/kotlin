@@ -1,7 +1,5 @@
 KtFunctionSymbol:
-  annotatedType: [] kotlin/collections/ListIterator<E>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   hasStableParameterNames: true
   isExtension: false
@@ -17,6 +15,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -24,9 +23,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/collections/ListIterator<E>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   hasStableParameterNames: true
   isExtension: false
@@ -42,6 +39,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)

@@ -1,6 +1,5 @@
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
   companionObject: null
@@ -13,7 +12,7 @@ KtNamedClassOrObjectSymbol:
   name: MutableEntry
   origin: LIBRARY
   superTypes: [
-    [] kotlin/collections/Map.Entry<K, V>
+    kotlin/collections/Map.Entry<K, V>
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [

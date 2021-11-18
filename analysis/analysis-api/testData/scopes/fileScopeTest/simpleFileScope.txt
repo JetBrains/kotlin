@@ -1,7 +1,6 @@
 FILE SYMBOL:
 KtFileSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   origin: SOURCE
   deprecationStatus: null
 
@@ -10,9 +9,7 @@ CALLABLE NAMES:
 
 CALLABLE SYMBOLS:
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /test
   hasStableParameterNames: true
   isExtension: false
@@ -28,15 +25,14 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /testVal
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -57,6 +53,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null
@@ -70,8 +67,7 @@ CLASSIFIER NAMES:
 
 CLASSIFIER SYMBOLS:
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: C
   classKind: CLASS
   companionObject: null
@@ -84,7 +80,7 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -92,8 +88,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: I
   classKind: INTERFACE
   companionObject: null
@@ -106,7 +101,7 @@ KtNamedClassOrObjectSymbol:
   name: I
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

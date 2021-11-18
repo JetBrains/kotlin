@@ -1,7 +1,5 @@
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -10,12 +8,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/String
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] Style
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: Style
   hasStableParameterNames: true
@@ -24,6 +21,7 @@ KtConstructorSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: Style
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(value)
@@ -32,9 +30,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtPropertyGetterSymbol:
-  annotatedType: [] kotlin/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasBody: true
   hasStableParameterNames: true
@@ -46,14 +42,13 @@ KtPropertyGetterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: ACCESSOR
+  type: kotlin/String
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
@@ -74,6 +69,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/String
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): <anonymous>
@@ -84,7 +80,6 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtEnumEntrySymbol:
-  annotatedType: [] Style
   callableIdIfNonLocal: /Style.SHEET
   containingEnumClassIdIfNonLocal: Style
   isExtension: false
@@ -92,12 +87,11 @@ KtEnumEntrySymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: Style
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /Style.exitAnimation
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
@@ -118,6 +112,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/String
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Style
@@ -128,8 +123,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: Style
   classKind: ENUM_CLASS
   companionObject: null
@@ -142,7 +136,7 @@ KtNamedClassOrObjectSymbol:
   name: Style
   origin: SOURCE
   superTypes: [
-    [] kotlin/Enum<Style>
+    kotlin/Enum<Style>
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -9,9 +9,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] X
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -20,12 +18,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: X
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /foo
   hasStableParameterNames: true
   isExtension: false
@@ -41,6 +38,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Unit
   typeParameters: [
     KtTypeParameterSymbol(X)
   ]

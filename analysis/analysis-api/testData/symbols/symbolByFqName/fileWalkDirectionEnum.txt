@@ -1,7 +1,5 @@
 KtFunctionSymbol:
-  annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
   hasStableParameterNames: true
   isExtension: false
@@ -17,6 +15,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/collections/List<T>
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]
@@ -27,11 +26,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: [
-    kotlin/internal/InlineOnly
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/internal/InlineOnly()
       psi: null
   ]
@@ -50,6 +45,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/collections/List<T>
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]
@@ -58,9 +54,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
   hasStableParameterNames: true
   isExtension: false
@@ -76,6 +70,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/collections/List<T>
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]

@@ -1,7 +1,5 @@
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -10,12 +8,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Int
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /primitive
   hasStableParameterNames: true
   isExtension: false
@@ -31,6 +28,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(a)
@@ -39,9 +37,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Float?
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -50,12 +46,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Float?
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /nullablePrimitive
   hasStableParameterNames: true
   isExtension: false
@@ -71,6 +66,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(b)
@@ -79,9 +75,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] kotlin/Any
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -90,12 +84,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: kotlin/Any
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /nonPrimitive
   hasStableParameterNames: true
   isExtension: false
@@ -111,6 +104,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(c)
@@ -119,9 +113,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [] ERROR_TYPE
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -130,12 +122,11 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: ERROR_TYPE
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /error
   hasStableParameterNames: true
   isExtension: false
@@ -151,6 +142,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(d)

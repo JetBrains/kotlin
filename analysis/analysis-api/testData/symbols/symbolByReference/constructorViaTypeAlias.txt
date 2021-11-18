@@ -1,7 +1,5 @@
 KtConstructorSymbol:
-  annotatedType: [] java/util/ArrayList<E>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/util/ArrayList
   hasStableParameterNames: false
@@ -10,6 +8,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/util/ArrayList<E>
   typeParameters: [
     KtTypeParameterSymbol(E)
   ]

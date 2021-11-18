@@ -1,7 +1,5 @@
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
@@ -17,6 +15,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -24,9 +23,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -47,6 +44,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): <no name provided>
@@ -57,22 +55,19 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtAnonymousObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: null
   classKind: ANONYMOUS_OBJECT
   name: null
   origin: SOURCE
   superTypes: [
-    [] java/lang/Runnable
+    java/lang/Runnable
   ]
   symbolKind: LOCAL
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] java/lang/Runnable
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /AnonymousContainer.anonymousObject
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -93,6 +88,7 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/Runnable
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): AnonymousContainer
@@ -103,8 +99,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: AnonymousContainer
   classKind: CLASS
   companionObject: null
@@ -117,7 +112,7 @@ KtNamedClassOrObjectSymbol:
   name: AnonymousContainer
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -1,6 +1,5 @@
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: java/lang/String
   classKind: CLASS
   companionObject: null
@@ -13,10 +12,10 @@ KtNamedClassOrObjectSymbol:
   name: String
   origin: JAVA
   superTypes: [
-    [] kotlin/Any
-    [] java/io/Serializable
-    [] kotlin/Comparable<ft<kotlin/String, kotlin/String?>>
-    [] kotlin/CharSequence
+    kotlin/Any
+    java/io/Serializable
+    kotlin/Comparable<ft<kotlin/String, kotlin/String?>>
+    kotlin/CharSequence
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

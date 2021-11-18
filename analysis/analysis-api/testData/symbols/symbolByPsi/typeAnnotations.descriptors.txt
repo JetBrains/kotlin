@@ -1,8 +1,5 @@
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: [
-    kotlin/annotation/Target
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/annotation/Target(allowedTargets = KtArrayConstantValue)
       psi: KtAnnotationEntry
   ]
@@ -18,7 +15,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno1
   origin: SOURCE
   superTypes: [
-    [] kotlin/Annotation
+    kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -26,10 +23,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: [
-    kotlin/annotation/Target
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/annotation/Target(allowedTargets = KtArrayConstantValue)
       psi: KtAnnotationEntry
   ]
@@ -45,7 +39,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno2
   origin: SOURCE
   superTypes: [
-    [] kotlin/Annotation
+    kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -53,10 +47,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: [
-    kotlin/annotation/Target
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/annotation/Target(allowedTargets = KtArrayConstantValue)
       psi: KtAnnotationEntry
   ]
@@ -72,7 +63,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno3
   origin: SOURCE
   superTypes: [
-    [] kotlin/Annotation
+    kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -80,10 +71,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: [
-    kotlin/annotation/Target
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/annotation/Target(allowedTargets = KtArrayConstantValue)
       psi: KtAnnotationEntry
   ]
@@ -99,7 +87,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno4
   origin: SOURCE
   superTypes: [
-    [] kotlin/Annotation
+    kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -107,8 +95,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: I
   classKind: INTERFACE
   companionObject: null
@@ -121,7 +108,7 @@ KtNamedClassOrObjectSymbol:
   name: I
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -129,12 +116,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtValueParameterSymbol:
-  annotatedType: [
-    Anno2()
-      psi: KtAnnotationEntry
-  ] @R|Anno2|()  I
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -143,15 +125,14 @@ KtValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  type: [
+    Anno2()
+      psi: KtAnnotationEntry
+  ] @R|Anno2|()  I
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [
-    Anno3()
-      psi: KtAnnotationEntry
-  ] @R|Anno3|()  I
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /X.f
   hasStableParameterNames: true
   isExtension: false
@@ -167,6 +148,10 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: [
+    Anno3()
+      psi: KtAnnotationEntry
+  ] @R|Anno3|()  I
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(arg)
@@ -176,12 +161,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [
-    Anno4()
-      psi: KtAnnotationEntry
-  ] @R|Anno4|()  I
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: /X.x
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -202,6 +182,10 @@ KtKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: [
+    Anno4()
+      psi: KtAnnotationEntry
+  ] @R|Anno4|()  I
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): X
@@ -212,8 +196,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: X
   classKind: CLASS
   companionObject: null
@@ -226,7 +209,7 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
     [
       Anno1()
         psi: KtAnnotationEntry

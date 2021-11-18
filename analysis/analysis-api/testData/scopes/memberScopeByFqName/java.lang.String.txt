@@ -1,5 +1,4 @@
 KtJavaFieldSymbol:
-  annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
   callableIdIfNonLocal: java/lang/String.value
   isExtension: false
   isStatic: false
@@ -9,11 +8,11 @@ KtJavaFieldSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/CharArray, kotlin/CharArray?>
   visibility: Private
   deprecationStatus: null
 
 KtJavaFieldSymbol:
-  annotatedType: [] kotlin/Int
   callableIdIfNonLocal: java/lang/String.hash
   isExtension: false
   isStatic: false
@@ -23,13 +22,12 @@ KtJavaFieldSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   visibility: Private
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.hash32
   hasStableParameterNames: false
   isExtension: false
@@ -45,6 +43,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility
@@ -52,7 +51,6 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtJavaFieldSymbol:
-  annotatedType: [] kotlin/Int
   callableIdIfNonLocal: java/lang/String.hash32
   isExtension: false
   isStatic: false
@@ -62,13 +60,12 @@ KtJavaFieldSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   visibility: Private
   deprecationStatus: null
 
 KtSyntheticJavaPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.length
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -89,6 +86,7 @@ KtSyntheticJavaPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -99,9 +97,7 @@ KtSyntheticJavaPropertySymbol:
   setterDeprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.isEmpty
   hasStableParameterNames: false
   isExtension: false
@@ -117,6 +113,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -124,9 +121,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointAt
   hasStableParameterNames: false
   isExtension: false
@@ -142,6 +137,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -151,9 +147,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointBefore
   hasStableParameterNames: false
   isExtension: false
@@ -169,6 +163,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -178,9 +173,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointCount
   hasStableParameterNames: false
   isExtension: false
@@ -196,6 +189,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -206,9 +200,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.offsetByCodePoints
   hasStableParameterNames: false
   isExtension: false
@@ -224,6 +216,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -234,9 +227,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
   hasStableParameterNames: false
   isExtension: false
@@ -252,6 +243,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -262,9 +254,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
   hasStableParameterNames: false
   isExtension: false
@@ -280,6 +270,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -292,11 +283,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: [
-    kotlin/Deprecated
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/Deprecated(message = Deprecated in Java)
       psi: null
   ]
@@ -315,6 +302,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -327,9 +315,7 @@ KtFunctionSymbol:
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   hasStableParameterNames: false
   isExtension: false
@@ -345,6 +331,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/ByteArray, kotlin/ByteArray?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -354,9 +341,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   hasStableParameterNames: false
   isExtension: false
@@ -372,6 +357,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/ByteArray, kotlin/ByteArray?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -381,9 +367,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   hasStableParameterNames: false
   isExtension: false
@@ -399,6 +383,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/ByteArray, kotlin/ByteArray?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -406,9 +391,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.equals
   hasStableParameterNames: false
   isExtension: false
@@ -424,6 +407,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -433,9 +417,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   hasStableParameterNames: false
   isExtension: false
@@ -451,6 +433,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -460,9 +443,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   hasStableParameterNames: false
   isExtension: false
@@ -478,6 +459,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -487,9 +469,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.equalsIgnoreCase
   hasStableParameterNames: false
   isExtension: false
@@ -505,6 +485,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -514,9 +495,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareTo
   hasStableParameterNames: false
   isExtension: false
@@ -532,6 +511,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -541,9 +521,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareToIgnoreCase
   hasStableParameterNames: false
   isExtension: false
@@ -559,6 +537,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -568,9 +547,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   hasStableParameterNames: false
   isExtension: false
@@ -586,6 +563,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -598,9 +576,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   hasStableParameterNames: false
   isExtension: false
@@ -616,6 +592,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -629,9 +606,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
   hasStableParameterNames: false
   isExtension: false
@@ -647,6 +622,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -657,9 +633,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
   hasStableParameterNames: false
   isExtension: false
@@ -675,6 +649,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -684,9 +659,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.endsWith
   hasStableParameterNames: false
   isExtension: false
@@ -702,6 +675,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -711,9 +685,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.hashCode
   hasStableParameterNames: false
   isExtension: false
@@ -729,6 +701,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -736,9 +709,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   hasStableParameterNames: false
   isExtension: false
@@ -754,6 +725,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -763,9 +735,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   hasStableParameterNames: false
   isExtension: false
@@ -781,61 +751,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol(p0)
-    KtValueParameterSymbol(p1)
-  ]
-  visibility: Public
-  getDispatchReceiver(): java/lang/String
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: java/lang/String.indexOf
-  hasStableParameterNames: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: indexOf
-  origin: JAVA
-  receiverType: null
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol(p0)
-  ]
-  visibility: Public
-  getDispatchReceiver(): java/lang/String
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: java/lang/String.indexOf
-  hasStableParameterNames: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: indexOf
-  origin: JAVA
-  receiverType: null
-  symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -846,9 +762,60 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
+  callableIdIfNonLocal: java/lang/String.indexOf
+  hasStableParameterNames: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(p0)
+  ]
+  visibility: Public
+  getDispatchReceiver(): java/lang/String
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: java/lang/String.indexOf
+  hasStableParameterNames: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(p0)
+    KtValueParameterSymbol(p1)
+  ]
+  visibility: Public
+  getDispatchReceiver(): java/lang/String
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOfSupplementary
   hasStableParameterNames: false
   isExtension: false
@@ -864,6 +831,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -874,9 +842,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   hasStableParameterNames: false
   isExtension: false
@@ -892,6 +858,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -901,9 +868,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   hasStableParameterNames: false
   isExtension: false
@@ -919,61 +884,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol(p0)
-    KtValueParameterSymbol(p1)
-  ]
-  visibility: Public
-  getDispatchReceiver(): java/lang/String
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOf
-  hasStableParameterNames: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: lastIndexOf
-  origin: JAVA
-  receiverType: null
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol(p0)
-  ]
-  visibility: Public
-  getDispatchReceiver(): java/lang/String
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOf
-  hasStableParameterNames: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: lastIndexOf
-  origin: JAVA
-  receiverType: null
-  symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -984,9 +895,60 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
+  callableIdIfNonLocal: java/lang/String.lastIndexOf
+  hasStableParameterNames: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(p0)
+  ]
+  visibility: Public
+  getDispatchReceiver(): java/lang/String
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: java/lang/String.lastIndexOf
+  hasStableParameterNames: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(p0)
+    KtValueParameterSymbol(p1)
+  ]
+  visibility: Public
+  getDispatchReceiver(): java/lang/String
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOfSupplementary
   hasStableParameterNames: false
   isExtension: false
@@ -1002,6 +964,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1012,9 +975,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
   hasStableParameterNames: false
   isExtension: false
@@ -1030,6 +991,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1039,9 +1001,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
   hasStableParameterNames: false
   isExtension: false
@@ -1057,6 +1017,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1067,9 +1028,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/CharSequence
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.subSequence
   hasStableParameterNames: false
   isExtension: false
@@ -1085,6 +1044,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: @EnhancedNullability kotlin/CharSequence
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1095,9 +1055,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.concat
   hasStableParameterNames: false
   isExtension: false
@@ -1113,6 +1071,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1122,9 +1081,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
   hasStableParameterNames: false
   isExtension: false
@@ -1140,6 +1097,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1150,9 +1108,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
   hasStableParameterNames: false
   isExtension: false
@@ -1168,6 +1124,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1178,9 +1135,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.matches
   hasStableParameterNames: false
   isExtension: false
@@ -1196,6 +1151,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1205,9 +1161,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.contains
   hasStableParameterNames: false
   isExtension: false
@@ -1223,6 +1177,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1232,9 +1187,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceFirst
   hasStableParameterNames: false
   isExtension: false
@@ -1250,6 +1203,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1260,9 +1214,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceAll
   hasStableParameterNames: false
   isExtension: false
@@ -1278,6 +1230,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1288,9 +1241,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
   hasStableParameterNames: false
   isExtension: false
@@ -1306,6 +1257,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1316,9 +1268,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
   hasStableParameterNames: false
   isExtension: false
@@ -1334,6 +1284,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1343,9 +1294,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   hasStableParameterNames: false
   isExtension: false
@@ -1361,6 +1310,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1370,9 +1320,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   hasStableParameterNames: false
   isExtension: false
@@ -1388,6 +1336,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1395,9 +1344,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   hasStableParameterNames: false
   isExtension: false
@@ -1413,6 +1360,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1422,9 +1370,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   hasStableParameterNames: false
   isExtension: false
@@ -1440,6 +1386,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1447,9 +1394,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.trim
   hasStableParameterNames: false
   isExtension: false
@@ -1465,6 +1410,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1472,9 +1418,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.toString
   hasStableParameterNames: false
   isExtension: false
@@ -1490,6 +1434,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1497,9 +1442,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.toCharArray
   hasStableParameterNames: false
   isExtension: false
@@ -1515,6 +1458,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/CharArray, kotlin/CharArray?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1522,9 +1466,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] ft<kotlin/String, kotlin/String?>
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.intern
   hasStableParameterNames: false
   isExtension: false
@@ -1540,6 +1482,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1547,9 +1490,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Char
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: java/lang/String.get
   hasStableParameterNames: false
   isExtension: false
@@ -1565,6 +1506,7 @@ KtFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Char
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1574,8 +1516,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
   companionObject: null
@@ -1588,9 +1529,9 @@ KtNamedClassOrObjectSymbol:
   name: CaseInsensitiveComparator
   origin: JAVA
   superTypes: [
-    [] kotlin/Any
-    [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>
-    [] java/io/Serializable
+    kotlin/Any
+    java/util/Comparator<ft<kotlin/String, kotlin/String?>>
+    java/io/Serializable
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1598,9 +1539,7 @@ KtNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1609,15 +1548,14 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1626,6 +1564,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1634,9 +1573,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1645,6 +1582,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1653,9 +1591,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1664,27 +1600,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol(p0)
-    KtValueParameterSymbol(p1)
-    KtValueParameterSymbol(p2)
-  ]
-  visibility: Public
-  deprecationStatus: null
-
-KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/lang/String
-  hasStableParameterNames: false
-  isExtension: false
-  isPrimary: false
-  origin: JAVA
-  receiverType: null
-  symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1695,11 +1611,27 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: [
-    kotlin/Deprecated
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: java/lang/String
+  hasStableParameterNames: false
+  isExtension: false
+  isPrimary: false
+  origin: JAVA
+  receiverType: null
+  symbolKind: CLASS_MEMBER
+  type: java/lang/String
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(p0)
+    KtValueParameterSymbol(p1)
+    KtValueParameterSymbol(p2)
   ]
-  annotations: [
+  visibility: Public
+  deprecationStatus: null
+
+KtConstructorSymbol:
+  annotationsList: [
     kotlin/Deprecated(message = Deprecated in Java)
       psi: null
   ]
@@ -1711,6 +1643,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1722,11 +1655,7 @@ KtConstructorSymbol:
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: [
-    kotlin/Deprecated
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/Deprecated(message = Deprecated in Java)
       psi: null
   ]
@@ -1738,6 +1667,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1747,9 +1677,7 @@ KtConstructorSymbol:
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1758,6 +1686,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1769,9 +1698,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1780,6 +1707,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1791,9 +1719,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1802,6 +1728,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1811,9 +1738,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1822,6 +1747,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1831,9 +1757,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1842,6 +1766,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1852,9 +1777,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1863,6 +1786,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1871,9 +1795,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1882,6 +1804,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1890,9 +1813,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1901,6 +1822,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1909,9 +1831,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   hasStableParameterNames: false
@@ -1920,6 +1840,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1929,11 +1850,7 @@ KtConstructorSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: [
-    kotlin/Deprecated
-  ]
-  annotations: [
+  annotationsList: [
     kotlin/Deprecated(message = Deprecated in Java)
       psi: null
   ]
@@ -1945,6 +1862,7 @@ KtConstructorSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)

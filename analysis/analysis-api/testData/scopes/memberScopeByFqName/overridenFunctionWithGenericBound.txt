@@ -1,7 +1,5 @@
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: test/MyClass.funWithOuterAndOwnGenericsAndBounds
   hasStableParameterNames: true
   isExtension: false
@@ -17,6 +15,7 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Unit
   typeParameters: [
     KtTypeParameterSymbol(TT1)
     KtTypeParameterSymbol(TT2)
@@ -30,9 +29,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotatedType: [] test/Foo?
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: test/MyClass.propWithOuterAndOwnGenericsAndBounds
   getter: null
   hasBackingField: false
@@ -50,9 +47,10 @@ KtKotlinPropertySymbol:
   modality: OPEN
   name: propWithOuterAndOwnGenericsAndBounds
   origin: SOURCE
-  receiverType: [] test/TwoParams<TT1, TT2>
+  receiverType: test/TwoParams<TT1, TT2>
   setter: null
   symbolKind: CLASS_MEMBER
+  type: test/Foo?
   typeParameters: [
     KtTypeParameterSymbol(TT1)
     KtTypeParameterSymbol(TT2)
@@ -66,9 +64,7 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Boolean
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   hasStableParameterNames: true
   isExtension: false
@@ -84,6 +80,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -93,9 +90,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   hasStableParameterNames: true
   isExtension: false
@@ -111,6 +106,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -118,9 +114,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtFunctionSymbol:
-  annotatedType: [] kotlin/String
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   hasStableParameterNames: true
   isExtension: false
@@ -136,6 +130,7 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -143,9 +138,7 @@ KtFunctionSymbol:
   deprecationStatus: null
 
 KtConstructorSymbol:
-  annotatedType: [] test/MyClass
-  annotationClassIds: []
-  annotations: []
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: test/MyClass
   hasStableParameterNames: true
@@ -154,6 +147,7 @@ KtConstructorSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverType: null
   symbolKind: CLASS_MEMBER
+  type: test/MyClass
   typeParameters: []
   valueParameters: []
   visibility: Public
