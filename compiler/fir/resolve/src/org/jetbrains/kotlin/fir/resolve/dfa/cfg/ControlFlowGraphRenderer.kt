@@ -156,7 +156,7 @@ class FirControlFlowGraphRenderVisitor(
                 renderEdges(kind)
             }
 
-            if (node is CFGNodeWithCfgOwner<*>) {
+            if (node is CFGNodeWithSubgraphs<*>) {
                 val subNodes = node.subGraphs
                 if (subNodes.isNotEmpty()) {
                     print(

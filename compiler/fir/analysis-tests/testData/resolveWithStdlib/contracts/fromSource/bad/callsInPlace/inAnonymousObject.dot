@@ -9,95 +9,100 @@ digraph inAnonymousObject_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            2 [label="Exit anonymous object"];
-            3 [label="Exit anonymous object expression"];
-            4 [label="Variable declaration: lval obj: R|<anonymous>|"];
-            5 [label="Access variable R|<local>/obj|"];
-            6 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()"];
-            7 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-            8 [label="Exit block"];
+            2 [label="Enter anonymous object"];
+            subgraph cluster_2 {
+                color=blue
+                11 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                12 [label="Part of class initialization"];
+                13 [label="Part of class initialization"];
+                14 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+            }
+            3 [label="Exit anonymous object"];
+            4 [label="Exit anonymous object expression"];
+            5 [label="Variable declaration: lval obj: R|<anonymous>|"];
+            6 [label="Access variable R|<local>/obj|"];
+            7 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()"];
+            8 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            9 [label="Exit block"];
         }
-        9 [label="Exit function foo" style="filled" fillcolor=red];
-    }
-    subgraph cluster_2 {
-        color=blue
-        10 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
-        11 [label="Part of class initialization"];
-        12 [label="Part of class initialization"];
-        13 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+        10 [label="Exit function foo" style="filled" fillcolor=red];
     }
     0 -> {1};
     1 -> {2};
-    1 -> {14 17 20 26} [color=red];
-    2 -> {3};
-    2 -> {14 26 10} [color=green];
-    2 -> {14 26 10} [style=dashed];
+    1 -> {15 18 21 27} [color=red];
+    2 -> {3} [color=red];
+    2 -> {11} [color=green];
+    2 -> {11} [style=dashed];
     3 -> {4};
+    3 -> {15 27} [color=green];
+    3 -> {15 27} [style=dashed];
     4 -> {5};
     5 -> {6};
     6 -> {7};
     7 -> {8};
     8 -> {9};
-    10 -> {11} [color=green];
-    11 -> {12} [style=dotted];
-    11 -> {17} [color=green];
-    11 -> {17} [style=dashed];
+    9 -> {10};
+    11 -> {12} [color=green];
     12 -> {13} [style=dotted];
-    12 -> {20} [color=green];
-    12 -> {20} [style=dashed];
+    12 -> {18} [color=green];
+    12 -> {18} [style=dashed];
+    13 -> {14} [style=dotted];
+    13 -> {21} [color=green];
+    13 -> {21} [style=dashed];
+    14 -> {3} [color=green];
 
     subgraph cluster_3 {
         color=red
-        14 [label="Enter function <init>" style="filled" fillcolor=red];
-        15 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        16 [label="Exit function <init>" style="filled" fillcolor=red];
+        15 [label="Enter function <init>" style="filled" fillcolor=red];
+        16 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        17 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    14 -> {15};
     15 -> {16};
+    16 -> {17};
 
     subgraph cluster_4 {
         color=red
-        17 [label="Enter property" style="filled" fillcolor=red];
-        18 [label="Access variable R|<local>/a|"];
-        19 [label="Exit property" style="filled" fillcolor=red];
+        18 [label="Enter property" style="filled" fillcolor=red];
+        19 [label="Access variable R|<local>/a|"];
+        20 [label="Exit property" style="filled" fillcolor=red];
     }
-    17 -> {18};
     18 -> {19};
-    19 -> {12} [color=green];
+    19 -> {20};
+    20 -> {13} [color=green];
 
     subgraph cluster_5 {
         color=red
-        20 [label="Enter init block" style="filled" fillcolor=red];
+        21 [label="Enter init block" style="filled" fillcolor=red];
         subgraph cluster_6 {
             color=blue
-            21 [label="Enter block"];
-            22 [label="Access variable R|<local>/b|"];
-            23 [label="Assignment: R|/<anonymous>.leaked|"];
-            24 [label="Exit block"];
+            22 [label="Enter block"];
+            23 [label="Access variable R|<local>/b|"];
+            24 [label="Assignment: R|/<anonymous>.leaked|"];
+            25 [label="Exit block"];
         }
-        25 [label="Exit init block" style="filled" fillcolor=red];
+        26 [label="Exit init block" style="filled" fillcolor=red];
     }
-    20 -> {21};
     21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {13} [color=green];
+    25 -> {26};
+    26 -> {14} [color=green];
 
     subgraph cluster_7 {
         color=red
-        26 [label="Enter function run" style="filled" fillcolor=red];
+        27 [label="Enter function run" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            27 [label="Enter block"];
-            28 [label="Function call: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-            29 [label="Exit block"];
+            28 [label="Enter block"];
+            29 [label="Function call: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            30 [label="Exit block"];
         }
-        30 [label="Exit function run" style="filled" fillcolor=red];
+        31 [label="Exit function run" style="filled" fillcolor=red];
     }
-    26 -> {27};
     27 -> {28};
     28 -> {29};
     29 -> {30};
+    30 -> {31};
 
 }

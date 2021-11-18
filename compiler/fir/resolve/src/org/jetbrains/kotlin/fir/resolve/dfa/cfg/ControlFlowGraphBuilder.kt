@@ -452,19 +452,41 @@ class ControlFlowGraphBuilder {
         return node to graph
     }
 
+    fun enterAnonymousObject(anonymousObject: FirAnonymousObject): AnonymousObjectEnterNode {
+        val enterNode = createAnonymousObjectEnterNode(anonymousObject)
+        // TODO: looks like there was some problem with enum initializers that causes `lastNodes` to be empty
+        lastNodes.popOrNull()?.let { addEdge(it, enterNode, preferredKind = EdgeKind.Forward) }
+        lastNodes.push(enterNode)
+        enterClass()
+        return enterNode
+    }
+
     fun exitAnonymousObject(anonymousObject: FirAnonymousObject): Pair<AnonymousObjectExitNode, ControlFlowGraph> {
         val graph = exitClass(anonymousObject).also {
             currentGraph.addSubGraph(it)
         }
-        val node = createAnonymousObjectExitNode(anonymousObject).also {
-            // TODO: looks like there was some problem with enum initializers
-            if (lastNodes.isNotEmpty) {
-                addNewSimpleNode(it)
-            }
+        val enterNode = lastNodes.popOrNull()
+        if (enterNode !is AnonymousObjectEnterNode) {
+            throw AssertionError("anonymous object exit should be preceded by anonymous object enter, but got $enterNode")
         }
-        visitLocalClassFunctions(anonymousObject, node)
-        addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
-        return node to graph
+        val exitNode = createAnonymousObjectExitNode(anonymousObject)
+        // TODO: Intentionally not using anonymous object init blocks for data flow? Might've been a FE1.0 bug.
+        addEdge(enterNode, graph.enterNode, preferredKind = EdgeKind.CfgForward)
+        if (!graph.exitNode.isDead) {
+            addEdge(graph.exitNode, exitNode, preferredKind = EdgeKind.CfgForward)
+        }
+        addEdge(enterNode, exitNode, preferredKind = EdgeKind.DfgForward)
+        // TODO: Here we're assuming that the methods are called after the object is constructed, which is really not true
+        //   (init blocks can call them). But FE1.0 did so too, hence the following code compiles and prints 0:
+        //     val x: Int
+        //     object {
+        //         fun bar() = x
+        //         init { x = bar() }
+        //     }
+        //     println(x)
+        visitLocalClassFunctions(anonymousObject, exitNode)
+        lastNodes.push(exitNode)
+        return exitNode to graph
     }
 
     fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode {
@@ -473,7 +495,7 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    fun visitLocalClassFunctions(klass: FirClass, node: CFGNodeWithCfgOwner<*>) {
+    private fun visitLocalClassFunctions(klass: FirClass, node: CFGNodeWithSubgraphs<*>) {
         klass.declarations.filterIsInstance<FirFunction>().forEach { function ->
             val functionGraph = function.controlFlowGraphReference?.controlFlowGraph
             if (functionGraph != null && functionGraph.owner == null) {

@@ -482,7 +482,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 transformer.firProviderInterceptor
             )
         }
-        dataFlowAnalyzer.enterClass()
+        if (!implicitTypeOnly && anonymousObject.controlFlowGraphReference == null) {
+            dataFlowAnalyzer.enterAnonymousObject(anonymousObject)
+        } else {
+            dataFlowAnalyzer.enterClass()
+        }
         val result = context.withAnonymousObject(anonymousObject, components) {
             transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
         }

@@ -23,8 +23,8 @@ fun test2() {
         }
     }
 
-    println(<!UNINITIALIZED_VARIABLE!>x<!>)
-    println(<!UNINITIALIZED_VARIABLE!>x<!>)
+    println(x)
+    println(x)
 }
 
 fun test3() {

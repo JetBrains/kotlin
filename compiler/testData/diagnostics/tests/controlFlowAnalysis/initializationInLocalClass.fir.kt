@@ -19,7 +19,7 @@ fun bar() {
         }
     }
     // Ok
-    <!UNINITIALIZED_VARIABLE!>x<!>.length
+    x.length
 }
 
 fun gav() {
@@ -53,7 +53,7 @@ fun gau() {
         }
     }
     // Ok
-    <!UNINITIALIZED_VARIABLE!>x<!>.length
+    x.length
     val y: String
     fun local() {
         object: Any() {
