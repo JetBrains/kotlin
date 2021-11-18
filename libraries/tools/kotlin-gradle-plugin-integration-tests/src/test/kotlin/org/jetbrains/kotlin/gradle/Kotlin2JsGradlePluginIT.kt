@@ -380,7 +380,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         jsCompilerType = if (irBackend) KotlinJsCompilerType.IR else KotlinJsCompilerType.LEGACY,
     )
 
-    override val defaultBuildOptions =
+    final override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
             warningMode = WarningMode.Summary
@@ -1015,6 +1015,38 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
+    @DisplayName("configuration cache is working for kotlin2js plugin")
+    @GradleTest
+    fun testConfigurationCache(gradleVersion: GradleVersion) {
+        project("instantExecutionToJs", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
+                "assemble",
+                buildOptions = defaultBuildOptions.withConfigurationCache,
+                executedTaskNames = listOf(":compileKotlinJs")
+            )
+        }
+    }
+
+    @DisplayName("configuration cache is working for kotlin/js browser project")
+    @GradleTest
+    fun testConfigurationCacheBrowser(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            assertSimpleConfigurationCacheScenarioWorks(
+                ":app:build",
+                buildOptions = defaultBuildOptions.withConfigurationCache,
+                executedTaskNames = listOf(
+                    ":app:packageJson",
+                    ":app:publicPackageJson",
+                    ":app:compileKotlinJs",
+                    if (irBackend) ":app:compileProductionExecutableKotlinJs" else ":app:processDceKotlinJs",
+                    ":app:browserProductionWebpack",
+                )
+            )
+        }
+    }
+
     private fun TestProject.getSubprojectPackageJson(subProject: String, projectName: String? = null) =
         projectPath.resolve("build/js/packages/${projectName ?: projectName}-$subProject")
             .resolve(NpmProject.PACKAGE_JSON)
@@ -1082,6 +1114,18 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
                         .readText() == projectPath.resolve("build/js/yarn.lock").readText()
                 )
             }
+        }
+    }
+
+    @DisplayName("KT-48241: configuration cache works with test dependencies")
+    @GradleTest
+    fun testConfigurationCacheJsWithTestDependencies(gradleVersion: GradleVersion) {
+        project("kotlin-js-project-with-test-dependencies", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
+                "assemble",
+                buildOptions = defaultBuildOptions.withConfigurationCache,
+                executedTaskNames = listOf(":kotlinNpmInstall")
+            )
         }
     }
 }

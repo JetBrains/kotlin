@@ -127,36 +127,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
-    @DisplayName("instant execution is working for JS project")
-    @GradleTest
-    fun testInstantExecutionForJs(gradleVersion: GradleVersion) {
-        project("instantExecutionToJs", gradleVersion) {
-            testConfigurationCacheOf(
-                "assemble",
-                executedTaskNames = listOf(":compileKotlinJs")
-            )
-        }
-    }
-
-    @DisplayName("is working for JS project")
-    @GradleTest
-    fun testConfigurationCacheJsPlugin(gradleVersion: GradleVersion) {
-        project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
-            testConfigurationCacheOf(
-                ":app:build",
-                executedTaskNames = listOf(
-                    ":app:packageJson",
-                    ":app:publicPackageJson",
-                    ":app:compileKotlinJs",
-                    ":app:processDceKotlinJs",
-                    ":app:browserProductionWebpack",
-                )
-            )
-        }
-    }
-
     @DisplayName("works with Dukat")
     @GradleTest
     fun testConfigurationCacheDukatSrc(gradleVersion: GradleVersion) {
@@ -198,19 +168,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             build("jar") {
                 assertOutputContains("Reusing configuration cache.")
             }
-        }
-    }
-
-    @DisplayName("KT-48241: works in JS with test dependencies")
-    @GradleTest
-    fun testConfigurationCacheJsWithTestDependencies(gradleVersion: GradleVersion) {
-        project("kotlin-js-project-with-test-dependencies", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
-            testConfigurationCacheOf(
-                "assemble",
-                executedTaskNames = listOf(":kotlinNpmInstall")
-            )
         }
     }
 }
