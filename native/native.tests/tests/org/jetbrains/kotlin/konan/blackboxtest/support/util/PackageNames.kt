@@ -65,3 +65,9 @@ internal fun Set<PackageFQN>.findCommonPackageName(): PackageFQN? = when (size) 
         }
     }.takeIf { it.isNotEmpty() }?.joinToString(".")
 }
+
+internal fun joinPackageNames(a: PackageFQN, b: PackageFQN): PackageFQN = when {
+    a.isEmpty() -> b
+    b.isEmpty() -> a
+    else -> "$a.$b"
+}

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -588,7 +589,7 @@ private class ExtTestDataFile(
             origin = TestOrigin.SingleTestDataFile(testDataFile),
             nominalPackageName = settings.nominalPackageName,
             expectedOutputDataFile = null,
-            extras = null
+            extras = WithTestRunnerExtras.EMPTY
         )
         testCase.initialize(sharedModules::get)
 
