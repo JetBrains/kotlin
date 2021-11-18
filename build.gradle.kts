@@ -421,9 +421,24 @@ allprojects {
         kotlinBuildLocalRepo(project)
         mirrorRepo?.let(::maven)
 
-        internalBootstrapRepo?.let(::maven)
-        bootstrapKotlinRepo?.let(::maven)
-        maven(protobufRepo)
+        internalBootstrapRepo?.let(::maven)?.apply {
+            content {
+                includeGroup("org.jetbrains.kotlin")
+            }
+        }
+
+        bootstrapKotlinRepo?.let(::maven)?.apply {
+            content {
+                includeGroup("org.jetbrains.kotlin")
+            }
+        }
+
+        maven(protobufRepo) {
+            content {
+                includeModule("org.jetbrains.kotlin", "protobuf-lite")
+                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
+            }
+        }
 
         maven(intellijRepo)
 
