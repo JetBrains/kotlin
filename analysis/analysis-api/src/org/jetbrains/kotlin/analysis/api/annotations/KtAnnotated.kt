@@ -7,18 +7,41 @@ package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.name.ClassId
 
+/**
+ * Entity which may have annotations applied inside. E.g, type or declaration
+ */
 public interface KtAnnotated {
     public val annotationsList: KtAnnotationsList
 }
 
+/**
+ * A list of annotations applied.
+ *
+ * @see [KtAnnotationsList.annotations]
+ */
 public val KtAnnotated.annotations: List<KtAnnotationApplication>
     get() = annotationsList.annotations
 
+/**
+ * Checks if entity contains annotation with specified [classId].
+ *
+ * @see [KtAnnotationsList.containsAnnotation]
+ */
 public fun KtAnnotated.containsAnnotation(classId: ClassId): Boolean =
     annotationsList.containsAnnotation(classId)
 
+/**
+ * A list of annotations applied with specified [classId].
+ *
+ * @see [KtAnnotationsList.annotationClassIds]
+ */
 public fun KtAnnotated.annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> =
     annotationsList.annotationsByClassId(classId)
 
+/**
+ * A list of annotations applied.
+ *
+ * @see [KtAnnotationsList.annotationClassIds]
+ */
 public val KtAnnotated.annotationClassIds: Collection<ClassId>
     get() = annotationsList.annotationClassIds

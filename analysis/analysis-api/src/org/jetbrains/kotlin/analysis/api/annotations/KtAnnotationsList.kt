@@ -8,10 +8,55 @@ package org.jetbrains.kotlin.analysis.api.annotations
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.name.ClassId
 
+/**
+ * A list of annotations applied for some entity.
+ *
+ * Annotation owners are usually implement [KtAnnotated]
+ */
 public abstract class KtAnnotationsList : ValidityTokenOwner {
+    /**
+     * A list of annotations applied.
+     *
+     * To check if annotation is present, please use [containsAnnotation].
+     *
+     * @see KtAnnotationApplication
+     */
     public abstract val annotations: List<KtAnnotationApplication>
+
+    /**
+     * Checks if entity contains annotation with specified [classId].
+     *
+     * The semantic is equivalent to
+     * ```
+     * annotationsList.containsAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
+     * ```
+     */
     public abstract fun containsAnnotation(classId: ClassId): Boolean
+
+    /**
+     * A list of annotations applied with specified [classId].
+     *
+     * To check if annotation is present, please use [containsAnnotation].
+     *
+     * The semantic is equivalent to
+     * ```
+     * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
+     * ```
+     *
+     * @see KtAnnotationApplication
+     */
     public abstract fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication>
+
+    /**
+     * A list of annotations [ClassId].
+     *
+     * To check if annotation is present, please use [containsAnnotation].
+     *
+     * The semantic is equivalent to
+     * ```
+     * annotationsList.annotationClassIds == annotationsList.annotations.map { it.classId }
+     * ```
+     */
     public abstract val annotationClassIds: Collection<ClassId>
 }
 
