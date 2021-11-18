@@ -52,7 +52,7 @@ abstract class PropertyLValueBase(
             val extensionReceiverValue2 = extensionReceiverVariable2?.let { VariableLValue(context, it) }
 
             val contextReceiverVariables2 = contextReceiverValues.mapIndexed { i, value ->
-                scope.createTemporaryVariable(value.load(), "additionalReceiver$i")
+                scope.createTemporaryVariable(value.load(), "contextReceiver$i")
             }
             val contextReceiversValues2 = contextReceiverVariables2.map { VariableLValue(context, it) }
 
