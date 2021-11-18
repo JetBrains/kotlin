@@ -29,7 +29,7 @@ internal abstract class AbstractRunner<R> {
         }
     }
 
-    interface AbstractRun {
+    fun interface AbstractRun {
         fun run(): RunResult
     }
 

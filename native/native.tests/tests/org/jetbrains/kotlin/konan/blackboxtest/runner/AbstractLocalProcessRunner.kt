@@ -14,21 +14,19 @@ internal abstract class AbstractLocalProcessRunner<R> : AbstractRunner<R>() {
 
     protected open fun customizeProcess(process: Process) = Unit
 
-    final override fun buildRun() = object : AbstractRun {
-        override fun run(): RunResult {
-            val startTimeMillis = System.currentTimeMillis()
+    final override fun buildRun() = AbstractRun {
+        val startTimeMillis = System.currentTimeMillis()
 
-            val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
-            customizeProcess(process)
+        val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
+        customizeProcess(process)
 
-            val exitCode = process.waitFor()
-            val finishTimeMillis = System.currentTimeMillis()
+        val exitCode = process.waitFor()
+        val finishTimeMillis = System.currentTimeMillis()
 
-            val stdOut = process.inputStream.bufferedReader().readText()
-            val stdErr = process.errorStream.bufferedReader().readText()
+        val stdOut = process.inputStream.bufferedReader().readText()
+        val stdErr = process.errorStream.bufferedReader().readText()
 
-            return RunResult(exitCode, finishTimeMillis - startTimeMillis, stdOut, stdErr)
-        }
+        RunResult(exitCode, finishTimeMillis - startTimeMillis, stdOut, stdErr)
     }
 
     abstract override fun buildResultHandler(runResult: RunResult): ResultHandler // Narrow returned type.
