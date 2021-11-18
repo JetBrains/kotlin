@@ -30,6 +30,7 @@ fun main(args: Array<String>) {
         testGroup("compiler/tests-java8/tests", "compiler/testData") {
             testClass<AbstractLoadJava8Test> {
                 model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+                model("loadJava8/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")
                 model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
             }
 

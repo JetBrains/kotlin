@@ -114,6 +114,12 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
                             arguments[name] = ConstantValueFactory.createArrayValue(elements.compact(), parameter.type)
+                        } else if (isImplicitRepeatableContainer(annotationClassId) && name.asString() == "value") {
+                            // In case this is an implicit repeatable annotation container, its class descriptor can't be resolved by the
+                            // frontend, so we'd like to flatten its value and add repeated annotations to the list.
+                            // E.g. if we see `@Foo.Container(@Foo(1), @Foo(2))` in the bytecode on some declaration where `Foo` is some
+                            // Kotlin-repeatable annotation, we want to read annotations on that declaration as a list `[@Foo(1), @Foo(2)]`.
+                            elements.filterIsInstance<AnnotationValue>().mapTo(result, AnnotationValue::value)
                         }
                     }
                 }
@@ -134,9 +140,13 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 // Do not load the @java.lang.annotation.Repeatable annotation instance generated automatically by the compiler for
                 // Kotlin-repeatable annotation classes. Otherwise the reference to the implicit nested "Container" class cannot be
                 // resolved, since that class is only generated in the backend, and is not visible to the frontend.
-                if (!isRepeatableWithImplicitContainer(annotationClassId, arguments)) {
-                    result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
-                }
+                if (isRepeatableWithImplicitContainer(annotationClassId, arguments)) return
+
+                // Do not load the implicit repeatable annotation container entry. The contents of its "value" argument have been flattened
+                // and added to the result already, see `visitArray`.
+                if (isImplicitRepeatableContainer(annotationClassId)) return
+
+                result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
