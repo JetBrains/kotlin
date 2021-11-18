@@ -19,7 +19,6 @@ class JsArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandl
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (JUnit5Assertions.isTeamCityBuild) return
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val allDirectives = testServices.moduleStructure.allDirectives
 

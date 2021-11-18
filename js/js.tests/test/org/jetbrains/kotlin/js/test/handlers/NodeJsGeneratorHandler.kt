@@ -36,7 +36,8 @@ class NodeJsGeneratorHandler(testServices: TestServices) : AbstractJsArtifactsCo
 
         val mainModuleName = getMainModuleName(testServices)
         val outputDir = File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).absolutePath)
-        val ignored = globalDirectives[CodegenTestDirectives.IGNORE_BACKEND].contains(TargetBackend.JS)
+        val ignored = globalDirectives[CodegenTestDirectives.IGNORE_BACKEND]
+            .contains(testServices.defaultsProvider.defaultTargetBackend)
         val testPackage = extractTestPackage(testServices)
         val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testPackage)
 

@@ -100,10 +100,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
             useHandlers(
-                ::JsBoxRunner,
                 ::NodeJsGeneratorHandler,
-                ::JsMinifierRunner,
                 ::JsArtifactsDumpHandler,
+                ::JsBoxRunner,
+                ::JsMinifierRunner,
                 ::JsAstHandler
             )
         }
