@@ -760,6 +760,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("contextualFunctionConversion.kt")
+            public void testContextualFunctionConversion() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextualFunctionConversion.kt");
+            }
+
+            @Test
             @TestMetadata("contextualPrimaryConstructorWithParams.kt")
             public void testContextualPrimaryConstructorWithParams() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextualPrimaryConstructorWithParams.kt");
@@ -817,6 +823,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             @TestMetadata("overloading.kt")
             public void testOverloading() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloading.kt");
+            }
+
+            @Test
+            @TestMetadata("passingLambdaToContextualParam.kt")
+            public void testPassingLambdaToContextualParam() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/passingLambdaToContextualParam.kt");
             }
 
             @Test
