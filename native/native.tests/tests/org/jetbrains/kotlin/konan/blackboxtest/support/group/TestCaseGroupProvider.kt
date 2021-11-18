@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.group
+package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
-import org.jetbrains.kotlin.konan.blackboxtest.*
-import org.jetbrains.kotlin.konan.blackboxtest.util.DEFAULT_FILE_NAME
-import org.jetbrains.kotlin.konan.blackboxtest.util.ThreadSafeFactory
-import org.jetbrains.kotlin.konan.blackboxtest.util.computeGeneratedSourcesDir
-import org.jetbrains.kotlin.konan.blackboxtest.util.computePackageName
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_FILE_NAME
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.computeGeneratedSourcesDir
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.computePackageName
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals

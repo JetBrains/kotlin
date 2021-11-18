@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest
+package org.jetbrains.kotlin.konan.blackboxtest.support
 
-import org.jetbrains.kotlin.generators.tests.CustomNativeBlackBoxTestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.group.StandardTestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.group.TestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.util.*
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.StandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -118,7 +118,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         }
 
         private fun Class<*>.createTestCaseGroupProvider(environment: TestEnvironment): TestCaseGroupProvider {
-            val providerClass = getAnnotation(CustomNativeBlackBoxTestCaseGroupProvider::class.java)?.value
+            val providerClass = getAnnotation(NativeBlackBoxTestCaseGroupProvider::class.java)?.value
                 ?: return StandardTestCaseGroupProvider(environment)
 
             val constructor = providerClass.constructors.firstOrNull { constructor ->

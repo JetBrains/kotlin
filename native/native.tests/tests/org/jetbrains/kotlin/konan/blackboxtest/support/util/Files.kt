@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.util
+package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory

@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest
+package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.konan.blackboxtest.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.blackboxtest.group.TestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.runner.AbstractRunner
-import org.jetbrains.kotlin.konan.blackboxtest.runner.LocalTestRunner
-import org.jetbrains.kotlin.konan.blackboxtest.util.ThreadSafeCache
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue

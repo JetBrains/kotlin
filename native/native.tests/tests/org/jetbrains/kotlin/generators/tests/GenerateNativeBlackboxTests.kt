@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.group.ExtTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.NativeBlackBoxTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.ExtTestCaseGroupProvider
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
@@ -18,9 +19,7 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeExtBlackBoxTestGenerated",
-                annotations = listOf(
-                    annotation(CustomNativeBlackBoxTestCaseGroupProvider::class.java, ExtTestCaseGroupProvider::class.java)
-                )
+                annotations = listOf(annotation(NativeBlackBoxTestCaseGroupProvider::class.java, ExtTestCaseGroupProvider::class.java))
             ) {
                 model("codegen/box")
                 model("codegen/boxInline")

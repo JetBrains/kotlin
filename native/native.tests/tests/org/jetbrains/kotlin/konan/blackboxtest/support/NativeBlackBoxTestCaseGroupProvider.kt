@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests
+package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
-annotation class CustomNativeBlackBoxTestCaseGroupProvider(val value: KClass<*>)
+annotation class NativeBlackBoxTestCaseGroupProvider(val value: KClass<*>)

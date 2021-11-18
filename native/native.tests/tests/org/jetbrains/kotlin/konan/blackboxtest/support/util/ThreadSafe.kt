@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.util
+package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.util.NullStorage.unwrap
-import org.jetbrains.kotlin.konan.blackboxtest.util.NullStorage.wrap
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.NullStorage.unwrap
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.NullStorage.wrap
 import java.util.concurrent.ConcurrentHashMap
 
 /**

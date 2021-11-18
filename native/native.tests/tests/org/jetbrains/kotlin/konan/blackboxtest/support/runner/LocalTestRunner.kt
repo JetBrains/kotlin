@@ -3,13 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.runner
+package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
-import org.jetbrains.kotlin.konan.blackboxtest.*
-import org.jetbrains.kotlin.konan.blackboxtest.LoggedData
-import org.jetbrains.kotlin.konan.blackboxtest.TestRun
-import org.jetbrains.kotlin.konan.blackboxtest.TestRunParameter
-import org.jetbrains.kotlin.konan.blackboxtest.get
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 
 internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProcessRunner<Unit>() {

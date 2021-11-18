@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.runner
+package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
-import org.jetbrains.kotlin.konan.blackboxtest.TestExecutable
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 
 internal abstract class AbstractLocalProcessRunner<R> : AbstractRunner<R>() {
     protected abstract val visibleProcessName: String

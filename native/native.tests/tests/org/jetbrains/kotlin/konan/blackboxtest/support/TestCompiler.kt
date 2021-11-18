@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest
+package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.konan.blackboxtest.TestCompilation.Companion.resultingArtifactPath
-import org.jetbrains.kotlin.konan.blackboxtest.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.blackboxtest.TestModule.Companion.allDependencies
-import org.jetbrains.kotlin.konan.blackboxtest.TestModule.Companion.allFriends
-import org.jetbrains.kotlin.konan.blackboxtest.util.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilation.Companion.resultingArtifactPath
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.*
 import kotlin.system.measureTimeMillis

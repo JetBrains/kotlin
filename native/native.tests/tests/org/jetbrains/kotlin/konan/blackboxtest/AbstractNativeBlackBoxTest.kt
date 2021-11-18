@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.blackboxtest.util.getAbsoluteFile
+import org.jetbrains.kotlin.konan.blackboxtest.support.NativeBlackBoxTestSupport
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(NativeBlackBoxTestSupport::class)

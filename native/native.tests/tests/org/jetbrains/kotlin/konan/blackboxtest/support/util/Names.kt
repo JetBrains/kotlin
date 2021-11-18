@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.util
+package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
 internal val Class<*>.sanitizedName: String
     get() = name.map { if (it.isLetterOrDigit() || it == '_') it else '_' }.joinToString("")

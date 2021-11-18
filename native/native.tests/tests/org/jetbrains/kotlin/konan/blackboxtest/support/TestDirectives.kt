@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest
+package org.jetbrains.kotlin.konan.blackboxtest.support
 
-import org.jetbrains.kotlin.konan.blackboxtest.TestCompilerArgs.Companion.EXPLICITLY_FORBIDDEN_COMPILER_ARGS
-import org.jetbrains.kotlin.konan.blackboxtest.TestDirectives.ENTRY_POINT
-import org.jetbrains.kotlin.konan.blackboxtest.TestDirectives.FREE_COMPILER_ARGS
-import org.jetbrains.kotlin.konan.blackboxtest.TestDirectives.INPUT_DATA_FILE
-import org.jetbrains.kotlin.konan.blackboxtest.TestDirectives.KIND
-import org.jetbrains.kotlin.konan.blackboxtest.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs.Companion.EXPLICITLY_FORBIDDEN_COMPILER_ARGS
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.ENTRY_POINT
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.FREE_COMPILER_ARGS
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.KIND
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
