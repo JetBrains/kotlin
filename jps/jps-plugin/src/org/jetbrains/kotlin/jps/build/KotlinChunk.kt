@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
+import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.writeText
 
 /**
  * Chunk of cyclically dependent [KotlinModuleBuildTarget]s
@@ -171,8 +171,8 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
 
         val serializedMetaInfo = representativeTarget.buildMetaInfoFactory.serializeToString(compilerArguments)
 
-        targets.forEach {
-            buildMetaInfoFile(it.jpsModuleBuildTarget).writeText(serializedMetaInfo)
+        targets.forEach { target ->
+            Files.newOutputStream(buildMetaInfoFile(target.jpsModuleBuildTarget)).bufferedWriter().use { it.append(serializedMetaInfo) }
         }
     }
 
