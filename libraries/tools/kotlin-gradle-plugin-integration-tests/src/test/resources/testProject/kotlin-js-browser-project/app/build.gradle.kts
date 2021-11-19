@@ -6,6 +6,7 @@ dependencies {
     implementation(kotlin("stdlib-js"))
     implementation(project(":lib"))
     implementation(npm(projectDir.resolve("src/main/css")))
+    testImplementation(kotlin("test-js"))
 }
 
 kotlin {
@@ -13,6 +14,13 @@ kotlin {
         browser {
             webpackTask {
                 cssSupport.enabled = true
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+                enabled = false // Task is disabled because it requires browser to be installed. That may be a problem on CI.
+                                // Disabled but configured task allows us to check at least a part of configuration cache correctness.
             }
         }
         binaries.executable()
