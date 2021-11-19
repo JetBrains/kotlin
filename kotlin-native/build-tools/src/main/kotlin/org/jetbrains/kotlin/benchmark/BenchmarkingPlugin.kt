@@ -50,6 +50,9 @@ internal val Project.jvmJson: String
 internal val Project.buildType: NativeBuildType
     get() = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: NativeBuildType.RELEASE
 
+internal val Project.crossTarget: String?
+    get() = findProperty("crossTarget") as String?
+
 internal val Project.commonBenchmarkProperties: Map<String, Any>
     get() = mapOf(
             "cpu" to System.getProperty("os.arch"),
@@ -111,9 +114,10 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected val mingwPath: String = System.getenv("MINGW64_DIR") ?: "c:/msys64/mingw64"
 
     protected open fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> =
+            (crossTarget?.let { targetHostPreset(this, it) } ?:
             defaultHostPreset(this).also { preset ->
                 logger.quiet("$project has been configured for ${preset.name} platform.")
-            } as AbstractKotlinNativeTargetPreset<*>
+            }) as AbstractKotlinNativeTargetPreset<*>
 
     protected abstract fun NamedDomainObjectContainer<KotlinSourceSet>.configureSources(project: Project)
 

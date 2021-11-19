@@ -13,6 +13,7 @@ import org.jetbrains.report.json.*
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -54,15 +55,26 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         argumentsList.addAll(arguments.toList())
     }
 
+    @Internal
+    val remoteHost = project.findProperty("remoteHost")?.toString()
+    @Internal
+    val remoteHostFolder = project.findProperty("remoteHostFolder")?.toString()
+
     private fun execBenchmarkOnce(benchmark: String, warmupCount: Int, repeatCount: Int) : String {
         val output = ByteArrayOutputStream()
         val useCset = project.findProperty("useCset")?.toString()?.toBoolean() ?: false
+
         project.exec {
-            if (useCset) {
-                executable = "cset"
-                args("shield", "--exec", "--", this@RunKotlinNativeTask.executable)
-            } else {
-                executable = this@RunKotlinNativeTask.executable
+            when {
+                useCset -> {
+                    executable = "cset"
+                    args("shield", "--exec", "--", this@RunKotlinNativeTask.executable)
+                }
+                remoteHost != null -> {
+                    executable = "ssh"
+                    args (remoteHost, "$remoteHostFolder/${this@RunKotlinNativeTask.executable}")
+                }
+                else -> executable = this@RunKotlinNativeTask.executable
             }
 
             args(argumentsList)
@@ -103,8 +115,19 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
     @TaskAction
     fun run() {
         val output = ByteArrayOutputStream()
+        remoteHost?.let {
+            project.exec {
+                executable = "scp"
+                args(this@RunKotlinNativeTask.executable, "$it:$remoteHostFolder")
+            }
+        }
         project.exec {
-            executable = this@RunKotlinNativeTask.executable
+            if (remoteHost != null) {
+                executable = "ssh"
+                args (remoteHost, "$remoteHostFolder/${this@RunKotlinNativeTask.executable}")
+            } else {
+                executable = this@RunKotlinNativeTask.executable
+            }
             args("list")
             standardOutput = output
         }

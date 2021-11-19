@@ -63,6 +63,17 @@ fun defaultHostPreset(
         throw Exception("Host OS '$hostOs' is not supported in Kotlin/Native ${subproject.displayName}.")
 }
 
+fun targetHostPreset(
+        subproject: Project,
+        crossTarget: String
+): KotlinTargetPreset<*> {
+    return when(crossTarget) {
+        "linuxArm64" -> subproject.kotlin.presets.linuxArm64
+        "linuxX64" -> subproject.kotlin.presets.linuxX64
+        else -> throw Exception("Running becnhmarks on target $crossTarget isn't supported yet.")
+    }
+}
+
 fun getNativeProgramExtension(): String = when {
     PlatformInfo.isMac() -> ".kexe"
     PlatformInfo.isLinux() -> ".kexe"
