@@ -211,7 +211,9 @@ open class KotlinAndroidTarget(
                         val value = configuration.attributes.getAttribute(it)
                         (value as? Named)?.name ?: value.toString()
                     }
-                    filterOutAndroidVariantAttribute(it) && filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType)
+                    filterOutAndroidVariantAttribute(it) &&
+                            filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType) &&
+                            filterOutAndroidAgpVersionAttribute(it)
                 }
             )
         }
@@ -238,4 +240,8 @@ open class KotlinAndroidTarget(
         isSinglePublishedVariant -> false
         else -> true
     }
+
+    private fun filterOutAndroidAgpVersionAttribute(
+        attribute: Attribute<*>
+    ): Boolean = attribute.name != "com.android.build.api.attributes.AgpVersionAttr"
 }
