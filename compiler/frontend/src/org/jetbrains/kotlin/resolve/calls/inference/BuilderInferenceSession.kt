@@ -325,14 +325,12 @@ class BuilderInferenceSession(
         shouldIntegrateAllConstraints: Boolean
     ) {
         storage.notFixedTypeVariables.values.forEach {
-            if (it.typeVariable.freshTypeConstructor(commonSystem.typeSystemContext) !in commonSystem.allTypeVariables) {
-                commonSystem.registerVariable(it.typeVariable)
-            }
+            commonSystem.registerTypeVariableIfNotPresent(it.typeVariable)
         }
 
         for (parentSession in findAllParentBuildInferenceSessions()) {
             for ((variable, stubType) in parentSession.stubsForPostponedVariables) {
-                commonSystem.registerVariable(variable)
+                commonSystem.registerTypeVariableIfNotPresent(variable)
                 commonSystem.addSubtypeConstraint(
                     variable.defaultType,
                     stubType,
@@ -378,7 +376,7 @@ class BuilderInferenceSession(
         if (shouldIntegrateAllConstraints) {
             for ((variableConstructor, type) in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
-                commonSystem.registerVariable(typeVariable)
+                commonSystem.registerTypeVariableIfNotPresent(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, BuilderInferencePosition)
             }
         }
