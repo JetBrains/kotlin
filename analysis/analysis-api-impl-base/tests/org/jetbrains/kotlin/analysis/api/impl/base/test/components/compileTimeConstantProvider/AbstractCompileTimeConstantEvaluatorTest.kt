@@ -20,8 +20,6 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val element = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
         val expression = when (element) {
             is KtExpression -> element

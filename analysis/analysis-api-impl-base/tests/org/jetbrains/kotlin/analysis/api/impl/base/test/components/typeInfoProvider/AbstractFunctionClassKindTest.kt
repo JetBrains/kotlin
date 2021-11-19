@@ -19,8 +19,6 @@ abstract class AbstractFunctionClassKindTest (
 ) : AbstractHLApiSingleFileTest(configurator) {
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtExpression
 
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {

@@ -165,7 +165,7 @@ abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfigur
         registerApplicationServices()
 
         val ktFiles = moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
-
+        configurator.prepareTestFiles(ktFiles, singleModule, testServices)
         doTestByFileStructure(ktFiles, moduleStructure, testServices)
         if (!enableTestInDependedMode || ktFiles.any {
                 InTextDirectivesUtils.isDirectiveDefined(it.text, DISABLE_DEPENDED_MODE_DIRECTIVE)

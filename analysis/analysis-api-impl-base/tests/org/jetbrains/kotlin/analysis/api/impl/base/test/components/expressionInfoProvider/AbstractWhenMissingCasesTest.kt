@@ -18,8 +18,6 @@ abstract class AbstractWhenMissingCasesTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val whenExpression = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtWhenExpression>(ktFile)
 
         val actual = executeOnPooledThreadInReadAction {

@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractRendererTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val options = KtDeclarationRendererOptions.DEFAULT.copy(
             approximateTypes = true,
             renderContainingDeclarations = true,

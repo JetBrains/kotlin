@@ -24,8 +24,6 @@ abstract class AbstractOverriddenDeclarationProviderTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractHLApiSingleModuleTest(configurator) {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFiles, module, testServices)
-
         val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFiles.first())
 
         val actual = executeOnPooledThreadInReadAction {

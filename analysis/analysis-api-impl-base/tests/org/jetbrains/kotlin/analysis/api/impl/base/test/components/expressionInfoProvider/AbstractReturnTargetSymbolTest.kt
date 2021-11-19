@@ -23,7 +23,6 @@ abstract class AbstractReturnTargetSymbolTest(
 ) : AbstractHLApiSingleFileTest(configurator) {
     val commentRegex = Regex("""/\* (.+@\(.+\)|null) \*/""")
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
         val original = ktFile.text
         val actual = buildString {
             ktFile.accept(object : KtTreeVisitorVoid() {

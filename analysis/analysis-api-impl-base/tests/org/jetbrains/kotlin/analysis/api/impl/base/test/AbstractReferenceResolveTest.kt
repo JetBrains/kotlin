@@ -40,8 +40,6 @@ abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfigu
     }
 
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFiles, module, testServices)
-
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
         val ktReferences = findReferencesAtCaret(mainKtFile, caretPosition)

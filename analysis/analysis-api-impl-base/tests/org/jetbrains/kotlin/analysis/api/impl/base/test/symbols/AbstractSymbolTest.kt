@@ -30,8 +30,6 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
     abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol>
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val createPointers = SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE !in module.directives
         val pointersWithRendered = analyseOnPooledThreadInReadAction(ktFile) {
             collectSymbols(ktFile, testServices).map { symbol ->

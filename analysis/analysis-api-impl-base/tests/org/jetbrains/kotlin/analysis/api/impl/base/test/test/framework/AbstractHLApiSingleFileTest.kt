@@ -16,7 +16,5 @@ abstract class AbstractHLApiSingleFileTest(configurator: FrontendApiTestConfigur
         doTestByFileStructure(singleFile, module, testServices)
     }
 
-    protected open fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        configurator.prepareTestFiles(listOf(ktFile), module, testServices)
-    }
+    protected abstract fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices)
 }

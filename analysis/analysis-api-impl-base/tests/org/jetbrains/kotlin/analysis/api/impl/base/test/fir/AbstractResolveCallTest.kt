@@ -30,8 +30,6 @@ import kotlin.reflect.jvm.javaGetter
 
 abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleModuleTest(configurator) {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFiles, module, testServices)
-
         val ktFile = ktFiles.first()
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 

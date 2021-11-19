@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractHLExpressionTypeTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expression) { expression.getKtType()?.render() }

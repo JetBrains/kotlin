@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractFileScopeTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(ktFile) {
                 val symbol = ktFile.getFileSymbol()

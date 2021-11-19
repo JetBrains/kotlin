@@ -24,8 +24,6 @@ import java.io.File
 
 abstract class AbstractHasCommonSubtypeTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val errors = mutableListOf<String>()
         val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()

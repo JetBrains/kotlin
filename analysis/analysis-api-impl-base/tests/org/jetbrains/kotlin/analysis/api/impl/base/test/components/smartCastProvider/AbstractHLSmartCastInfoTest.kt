@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractHLSmartCastInfoTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        super.doTestByFileStructure(ktFile, module, testServices)
-
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
