@@ -69,7 +69,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         if (binary !is TestExecutable) {
             tasks.named(binary.compilation.target.artifactsTaskName).configure { it.dependsOn(result) }
-            tasks.maybeCreate(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(result)
+            locateOrRegisterTask<Task>(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { it.dependsOn(result) }
         }
 
         if (binary is Framework) {
@@ -438,17 +438,19 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
             compilation.output.classesDirs.from(compileTaskProvider.flatMap { it.outputFile })
 
-            project.project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTaskProvider)
+            project.project.tasks.named(compilation.compileAllTaskName).configure {
+                it.dependsOn(compileTaskProvider)
+            }
 
             if (compilation.isMainCompilationData()) {
                 if (compilation is KotlinNativeCompilation) {
-                    project.project.tasks.getByName(compilation.target.artifactsTaskName).apply {
-                        dependsOn(compileTaskProvider)
+                    project.project.tasks.named(compilation.target.artifactsTaskName).configure {
+                        it.dependsOn(compileTaskProvider)
                     }
                 }
 
-                project.project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
-                    dependsOn(compileTaskProvider)
+                project.project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure {
+                    it.dependsOn(compileTaskProvider)
                 }
             }
             val shouldAddCompileOutputsToElements = compilation.owner is KotlinGradleVariant || compilation.isMainCompilationData()

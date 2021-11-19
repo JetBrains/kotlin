@@ -131,7 +131,9 @@ class Executable constructor(
         get() = super.baseName
         set(value) {
             super.baseName = value
-            runTask?.executable = outputFile.absolutePath
+            runTaskProvider?.configure {
+                it.executable = outputFile.absolutePath
+            }
         }
 
     var entryPoint: String? = null
@@ -155,8 +157,11 @@ class Executable constructor(
      * A task running this executable.
      * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
      */
+    val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
+        get() = runTaskName?.let { project.tasks.withType(AbstractExecTask::class.java).named(it) }
+
     val runTask: AbstractExecTask<*>?
-        get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }
+        get() = runTaskProvider?.get()
 }
 
 class TestExecutable(
