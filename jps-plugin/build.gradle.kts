@@ -50,7 +50,10 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        resources.srcDir("resources-en")
+    }
     "test" {
         Ide.IJ {
             java.srcDirs("jps-tests/test")
