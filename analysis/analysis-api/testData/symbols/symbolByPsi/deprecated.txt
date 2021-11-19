@@ -1,6 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: [
-    kotlin/Deprecated(message = don't use i)
+    kotlin/Deprecated(message = "don't use i")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /i
@@ -127,7 +127,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = don't use f)
+    kotlin/Deprecated(message = "don't use f")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /f
@@ -153,7 +153,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = don't use MyClass)
+    kotlin/Deprecated(message = "don't use MyClass")
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: MyClass
@@ -177,7 +177,7 @@ KtNamedClassOrObjectSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: [
-    kotlin/Deprecated(message = don't use i2)
+    kotlin/Deprecated(message = "don't use i2")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /Foo.i2
@@ -212,7 +212,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = don't use f2)
+    kotlin/Deprecated(message = "don't use f2")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /Foo.f2
@@ -260,7 +260,7 @@ KtNamedClassOrObjectSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: [
-    kotlin/Deprecated(level = KtEnumEntryConstantValue(kotlin/DeprecationLevel.ERROR), message = don't use j)
+    kotlin/Deprecated(level = kotlin.DeprecationLevel.ERROR, message = "don't use j")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j
@@ -294,7 +294,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: [
-    kotlin/Deprecated(level = KtEnumEntryConstantValue(kotlin/DeprecationLevel.HIDDEN), message = don't use j2)
+    kotlin/Deprecated(level = kotlin.DeprecationLevel.HIDDEN, message = "don't use j2")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j2

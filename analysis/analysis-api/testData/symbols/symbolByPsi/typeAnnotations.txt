@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
+    kotlin/annotation/Target(allowedTargets = kotlin.annotation.AnnotationTarget.TYPE)
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno1
@@ -24,7 +24,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
+    kotlin/annotation/Target(allowedTargets = kotlin.annotation.AnnotationTarget.TYPE)
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno2
@@ -48,7 +48,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
+    kotlin/annotation/Target(allowedTargets = kotlin.annotation.AnnotationTarget.TYPE)
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno3
@@ -72,7 +72,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    kotlin/annotation/Target(allowedTargets = KtEnumEntryConstantValue(kotlin/annotation/AnnotationTarget.TYPE))
+    kotlin/annotation/Target(allowedTargets = kotlin.annotation.AnnotationTarget.TYPE)
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno4

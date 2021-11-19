@@ -1,5 +1,5 @@
 KtDeclaration: KtNamedFunction foo
 annotations: [
-  kotlin/Deprecated(level = KtEnumEntryConstantValue(kotlin/DeprecationLevel.ERROR), message = deprecated)
+  kotlin/Deprecated(level = kotlin.DeprecationLevel.ERROR, message = "deprecated")
     psi: KtAnnotationEntry
 ]

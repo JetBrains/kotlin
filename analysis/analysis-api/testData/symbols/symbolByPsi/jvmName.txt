@@ -32,7 +32,7 @@ KtKotlinPropertySymbol:
 
 KtPropertyGetterSymbol:
   annotationsList: [
-    kotlin/jvm/JvmName(name = getMyJ)
+    kotlin/jvm/JvmName(name = "getMyJ")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null
@@ -66,7 +66,7 @@ KtValueParameterSymbol:
 
 KtPropertySetterSymbol:
   annotationsList: [
-    kotlin/jvm/JvmName(name = setMyJ)
+    kotlin/jvm/JvmName(name = "setMyJ")
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null

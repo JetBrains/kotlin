@@ -117,16 +117,7 @@ public object DebugSymbolRenderer {
     }
 
     private fun Block.renderConstantValue(value: KtConstantValue) {
-        when (value) {
-            is KtLiteralConstantValue<*> -> renderValue(value.value)
-            is KtEnumEntryConstantValue -> {
-                append(KtEnumEntryConstantValue::class.java.simpleName)
-                append("(")
-                renderValue(value.callableId)
-                append(")")
-            }
-            else -> append(value::class.java.simpleName)
-        }
+        append(KtConstantValueRenderer.render(value))
     }
 
     private fun Block.renderNamedConstantValue(value: KtNamedConstantValue) {

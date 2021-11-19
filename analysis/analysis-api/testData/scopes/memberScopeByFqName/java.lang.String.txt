@@ -284,7 +284,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = Deprecated in Java)
+    kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableIdIfNonLocal: java/lang/String.getBytes
@@ -1632,7 +1632,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = Deprecated in Java)
+    kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableIdIfNonLocal: null
@@ -1656,7 +1656,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = Deprecated in Java)
+    kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableIdIfNonLocal: null
@@ -1851,7 +1851,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: [
-    kotlin/Deprecated(message = Deprecated in Java)
+    kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableIdIfNonLocal: null

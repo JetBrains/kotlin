@@ -852,7 +852,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/SinceKotlin(version = 1.1)
+    kotlin/SinceKotlin(version = "1.1")
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -881,7 +881,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/SinceKotlin(version = 1.1)
+    kotlin/SinceKotlin(version = "1.1")
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -910,7 +910,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/SinceKotlin(version = 1.1)
+    kotlin/SinceKotlin(version = "1.1")
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -939,7 +939,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/SinceKotlin(version = 1.1)
+    kotlin/SinceKotlin(version = "1.1")
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -968,7 +968,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/SinceKotlin(version = 1.1)
+    kotlin/SinceKotlin(version = "1.1")
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
@@ -997,7 +997,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    kotlin/SinceKotlin(version = 1.1)
+    kotlin/SinceKotlin(version = "1.1")
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem

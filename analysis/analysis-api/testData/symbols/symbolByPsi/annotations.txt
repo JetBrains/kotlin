@@ -66,7 +66,7 @@ KtNamedClassOrObjectSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
-    Anno(param1 = funparam, param2 = 3)
+    Anno(param1 = "funparam", param2 = 3)
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /X.x
@@ -93,7 +93,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: [
-    Anno(param1 = param, param2 = 2)
+    Anno(param1 = "param", param2 = 2)
       psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: X
