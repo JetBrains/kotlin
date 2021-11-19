@@ -41,8 +41,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
-import kotlin.io.path.notExists
-import kotlin.io.path.readText
+import java.nio.file.Files
 
 /**
  * Properties and actions for Kotlin test / production module build target.
@@ -333,11 +332,11 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     fun isVersionChanged(chunk: KotlinChunk, buildMetaInfo: BuildMetaInfo): Boolean {
         val file = chunk.buildMetaInfoFile(jpsModuleBuildTarget)
-        if (file.notExists()) return false
+        if (Files.notExists(file)) return false
 
         val prevBuildMetaInfo =
             try {
-                buildMetaInfoFactory.deserializeFromString(file.readText()) ?: return false
+                buildMetaInfoFactory.deserializeFromString(Files.newInputStream(file).bufferedReader().use { it.readText() }) ?: return false
             } catch (e: Exception) {
                 KotlinBuilder.LOG.error("Could not deserialize build meta info", e)
                 return false
