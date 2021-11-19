@@ -56,8 +56,8 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     private fun computeSupertypesMap(
         subtypeLookupTag: ConeClassLikeLookupTag,
         state: TypeCheckerState
-    ): Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>? {
-        val resultingMap = HashMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>()
+    ): Map<ConeClassLikeLookupTag, MutableList<ConeClassLikeType>>? {
+        val resultingMap = HashMap<ConeClassLikeLookupTag, MutableList<ConeClassLikeType>>()
 
         val subtypeFirClass: FirClassLikeDeclaration = subtypeLookupTag.toSymbol(session)?.fir ?: return null
 
@@ -83,14 +83,15 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
     private fun computeSupertypePolicyAndPutInMap(
         supertype: SimpleTypeMarker,
-        resultingMap: MutableMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>,
+        resultingMap: MutableMap<ConeClassLikeLookupTag, MutableList<ConeClassLikeType>>,
         state: TypeCheckerState
     ): TypeCheckerState.SupertypesPolicy {
         val supertypeLookupTag = (supertype as ConeClassLikeType).lookupTag
         val captured =
             state.typeSystemContext.captureFromArguments(supertype, CaptureStatus.FOR_SUBTYPING) as ConeClassLikeType? ?: supertype
 
-        resultingMap[supertypeLookupTag] = listOf(captured)
+        val list = resultingMap.computeIfAbsent(supertypeLookupTag) { mutableListOf() }
+        list += captured
 
         return when {
             with(state.typeSystemContext) { captured.argumentsCount() } == 0 -> {
