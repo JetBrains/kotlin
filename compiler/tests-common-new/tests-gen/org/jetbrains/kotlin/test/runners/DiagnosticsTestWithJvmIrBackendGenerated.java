@@ -673,12 +673,6 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         }
 
         @Test
-        @TestMetadata("annotatedType.kt")
-        public void testAnnotatedType() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/annotatedType.kt");
-        }
-
-        @Test
         @TestMetadata("nonReifiedTypeParameterWithRecursiveBound.kt")
         public void testNonReifiedTypeParameterWithRecursiveBound() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/nonReifiedTypeParameterWithRecursiveBound.kt");
