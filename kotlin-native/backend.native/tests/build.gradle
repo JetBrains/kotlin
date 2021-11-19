@@ -5013,7 +5013,9 @@ standaloneTest("jsinterop_math") {
         def jsinteropScript = isWindows() ? "jsinterop.bat" : "jsinterop"
         def jsinterop = "$kotlinNativeDist/bin/$jsinteropScript"
         // TODO: We probably need a NativeInteropPlugin for jsinterop?
-        "$jsinterop -pkg kotlinx.interop.wasm.math -o $buildDir/jsmath -target wasm32".execute().waitFor()
+        exec {
+            commandLine jsinterop, "-pkg", "kotlinx.interop.wasm.math", "-o", "$buildDir/jsmath", "-target", "wasm32"
+        }
 
     }
     dependsOn ':kotlin-native:wasm32PlatformLibs'
