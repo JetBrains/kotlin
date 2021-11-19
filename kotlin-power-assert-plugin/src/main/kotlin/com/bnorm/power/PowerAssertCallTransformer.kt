@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
@@ -68,6 +69,8 @@ class PowerAssertCallTransformer(
   private val messageCollector: MessageCollector,
   private val functions: Set<FqName>
 ) : IrElementTransformerVoidWithContext() {
+  private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
+
   override fun visitCall(expression: IrCall): IrExpression {
     val function = expression.symbol.owner
     val fqName = function.kotlinFqName
@@ -200,12 +203,12 @@ class PowerAssertCallTransformer(
     argument is IrTypeProjection && isStringSupertype(argument.type)
 
   private fun isStringSupertype(type: IrType): Boolean =
-    context.irBuiltIns.stringType.isSubtypeOf(type, context.irBuiltIns)
+    context.irBuiltIns.stringType.isSubtypeOf(type, irTypeSystemContext)
 
   private fun IrType.isAssignableTo(type: IrType): Boolean {
-    if (isSubtypeOf(type, context.irBuiltIns)) return true
+    if (isSubtypeOf(type, irTypeSystemContext)) return true
     val superTypes = (type.classifierOrNull as? IrTypeParameterSymbol)?.owner?.superTypes
-    return superTypes != null && superTypes.all { isSubtypeOf(it, context.irBuiltIns) }
+    return superTypes != null && superTypes.all { isSubtypeOf(it, irTypeSystemContext) }
   }
 
   private fun MessageCollector.info(expression: IrElement, message: String) {

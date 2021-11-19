@@ -12,8 +12,8 @@ plugins {
 dependencies {
   compileOnly("org.jetbrains.kotlin:kotlin-compiler")
 
-  kapt("com.google.auto.service:auto-service:1.0-rc6")
-  compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
+  kapt("com.google.auto.service:auto-service:1.0.1")
+  compileOnly("com.google.auto.service:auto-service-annotations:1.0.1")
 }
 
 tasks.named("compileKotlin") { dependsOn("syncSource") }
