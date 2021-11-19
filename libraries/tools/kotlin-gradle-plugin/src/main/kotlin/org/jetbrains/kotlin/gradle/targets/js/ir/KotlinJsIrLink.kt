@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import javax.inject.Inject
@@ -179,12 +180,16 @@ abstract class KotlinJsIrLink @Inject constructor(
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
 
+    private val platformType by project.provider {
+        compilation.platformType
+    }
+
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
         freeCompilerArgs += additionalCompilerArgs.toList() +
                 PRODUCE_JS +
                 "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}"
 
-        if (compilation.platformType == KotlinPlatformType.wasm) {
+        if (platformType == KotlinPlatformType.wasm) {
             freeCompilerArgs += WASM_BACKEND
         }
     }
