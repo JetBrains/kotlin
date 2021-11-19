@@ -59,7 +59,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     @GradleTest
     fun testCleanOutputWithEmptySources(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
-            build("build") {
+            build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinJs")
 
                 assertFileInProjectExists("build/js/packages/kotlin-js-nodejs-project/kotlin/kotlin-js-nodejs-project.js")
@@ -783,7 +783,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 gradleProperties.appendText(jsCompilerType(KotlinJsCompilerType.IR))
             }
 
-            build("build") {
+            build("assemble") {
                 assertTasksExecuted(":app:browserProductionWebpack")
 
                 assertDirectoryInProjectExists("build/js/packages/kotlin-js-browser-base-js-ir")
@@ -1043,6 +1043,25 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     if (irBackend) ":app:compileProductionExecutableKotlinJs" else ":app:processDceKotlinJs",
                     ":app:browserProductionWebpack",
                 )
+            )
+        }
+    }
+
+    @DisplayName("configuration cache is working for kotlin/js node project")
+    @GradleTest
+    fun testConfigurationCacheNode(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            assertSimpleConfigurationCacheScenarioWorks(
+                ":build",
+                buildOptions = defaultBuildOptions.withConfigurationCache,
+                executedTaskNames = listOf(
+                    ":packageJson",
+                    ":publicPackageJson",
+                    ":rootPackageJson",
+                    ":kotlinNpmInstall",
+                    ":compileKotlinJs",
+                    ":nodeTest",
+                ) + if (irBackend) listOf(":compileProductionExecutableKotlinJs") else emptyList()
             )
         }
     }
