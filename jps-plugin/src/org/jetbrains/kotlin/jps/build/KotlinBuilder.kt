@@ -230,7 +230,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             ExpectActualTracker.DoNothing,
             chunk,
             messageCollector
-        )
+        ) ?: return
 
         val removedClasses = HashSet<String>()
         for (target in kotlinChunk.targets) {
@@ -404,7 +404,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             exceptActualTracer,
             chunk,
             messageCollector
-        )
+        ) ?: return ABORT
 
         context.testingContext?.buildLogger?.compilingFiles(
             kotlinDirtyFilesHolder.allDirtyFiles,
@@ -566,7 +566,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         exceptActualTracer: ExpectActualTracker,
         chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
-    ): JpsCompilerEnvironment {
+    ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
             kotlinModuleBuilderTarget.makeServices(this, incrementalCaches, lookupTracker, exceptActualTracer)
             build()
