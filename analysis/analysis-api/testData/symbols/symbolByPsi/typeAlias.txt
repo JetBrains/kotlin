@@ -42,6 +42,7 @@ KtTypeParameterSymbol:
   deprecationStatus: null
 
 KtTypeAliasSymbol:
+  annotationsList: []
   classIdIfNonLocal: Y
   expandedType: X<Z>
   name: Y
