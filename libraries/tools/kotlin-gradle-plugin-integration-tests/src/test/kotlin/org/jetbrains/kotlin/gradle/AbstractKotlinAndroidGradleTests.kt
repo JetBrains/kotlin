@@ -513,6 +513,29 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("7.2")
+
+    /**
+     * Starting from AGP version 7.1.0-alpha13, a new attribute com.android.build.api.attributes.AgpVersionAttr was added.
+     * This attribute is *not intended* to be published.
+     */
+    @Test
+    fun testKT49798AgpVersionAttrNotPublished() = with(Project("new-mpp-android")) {
+        build("publish") {
+            val debugPublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib-debug")
+            val releasePublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib")
+
+            listOf(debugPublicationDirectory, releasePublicationDirectory).forEach { publicationDirectory ->
+                assertTrue(publicationDirectory.exists(), "Missing publication directory: $publicationDirectory")
+                val moduleFiles = publicationDirectory.walkTopDown().filter { file -> file.extension == "module" }.toList()
+                assertTrue(moduleFiles.isNotEmpty(), "Missing .module file in $publicationDirectory")
+                assertTrue(moduleFiles.size <= 1, "Multiple .module files in $publicationDirectory: $moduleFiles")
+
+                val moduleFile = moduleFiles.single()
+                val moduleFileText = moduleFile.readText()
+                assertTrue("AgpVersionAttr" !in moduleFileText, ".module file $moduleFile leaks AgpVersionAttr")
+            }
+        }
+    }
 }
 
 open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
