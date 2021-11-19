@@ -116,6 +116,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
     fun run() {
         val output = ByteArrayOutputStream()
         remoteHost?.let {
+            requireNotNull(remoteHostFolder) {"Please provide folder on remote host with -PremoteHostFolder=<folder>"}
             project.exec {
                 executable = "scp"
                 args(this@RunKotlinNativeTask.executable, "$it:$remoteHostFolder")
