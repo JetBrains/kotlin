@@ -80,17 +80,20 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
             }
 
-            override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
+            override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
+                if (name == null) return
                 argumentMap[name] = buildGetClassCall {
                     argumentList = buildUnaryArgumentList(value.toFirClassReferenceExpression())
                 }
             }
 
-            override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
+            override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
+                if (name == null) return
                 argumentMap[name] = enumClassId.toEnumEntryReferenceExpression(enumEntryName)
             }
 
-            override fun visitArray(name: Name): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+            override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
+                if (name == null) return null
                 return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
                     private val elements = mutableListOf<FirExpression>()
 
@@ -131,7 +134,8 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
             }
 
-            override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+            override fun visitAnnotation(name: Name?, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                if (name == null) return null
                 val list = mutableListOf<FirAnnotation>()
                 val visitor = loadAnnotation(classId, list)
                 return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {

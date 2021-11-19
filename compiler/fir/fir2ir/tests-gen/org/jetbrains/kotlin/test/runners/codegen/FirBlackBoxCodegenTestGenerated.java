@@ -468,6 +468,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("multimoduleCreation.kt")
+            public void testMultimoduleCreation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/multimoduleCreation.kt");
+            }
+
+            @Test
             @TestMetadata("multimoduleInlining.kt")
             public void testMultimoduleInlining() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multimoduleInlining.kt");

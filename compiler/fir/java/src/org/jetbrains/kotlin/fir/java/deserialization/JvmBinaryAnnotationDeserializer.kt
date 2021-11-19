@@ -322,6 +322,11 @@ private fun FirSession.loadMemberAnnotations(
                 }
                 return annotationsLoader.loadAnnotationIfNotSpecial(classId, result)
             }
+
+            override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                // TODO: load annotation default values to properly support annotation instantiation feature
+                return null
+            }
         }
 
         open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {

@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -136,11 +136,16 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             }.also { it.parent = implClass }
 
             val parameter = generatedConstructor.addValueParameter(propName.asString(), propType)
-            // VALUE_FROM_PARAMETER
-            val originalParameter = ((property.backingField?.initializer?.expression as? IrGetValue)?.symbol?.owner as? IrValueParameter)
-            if (originalParameter?.defaultValue != null) {
-                parameter.defaultValue = originalParameter.defaultValue!!.deepCopyWithVariables().also { it.transformChildrenVoid() }
-            }
+
+            val defaultExpression = property.backingField?.initializer?.expression
+            val newDefaultValue: IrExpressionBody? =
+                if (defaultExpression is IrGetValue && defaultExpression.symbol.owner is IrValueParameter) {
+                    // INITIALIZE_PROPERTY_FROM_PARAMETER
+                    (defaultExpression.symbol.owner as IrValueParameter).defaultValue
+                } else if (defaultExpression != null) {
+                    property.backingField!!.initializer
+                } else null
+            parameter.defaultValue = newDefaultValue?.deepCopyWithVariables()?.also { it.transformChildrenVoid() }
 
             ctorBody.statements += IrSetFieldImpl(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, field.symbol,

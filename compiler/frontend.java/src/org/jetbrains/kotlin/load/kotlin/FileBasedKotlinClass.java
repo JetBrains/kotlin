@@ -173,17 +173,18 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         return new org.jetbrains.org.objectweb.asm.AnnotationVisitor(API_VERSION) {
             @Override
             public void visit(String name, @NotNull Object value) {
+                Name identifier = name == null ? null : Name.identifier(name);
                 if (value instanceof Type) {
-                    v.visitClassLiteral(Name.identifier(name), resolveKotlinNameByType((Type) value, innerClasses));
+                    v.visitClassLiteral(identifier, resolveKotlinNameByType((Type) value, innerClasses));
                 }
                 else {
-                    v.visit(name == null ? null : Name.identifier(name), value);
+                    v.visit(identifier, value);
                 }
             }
 
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(String name) {
-                AnnotationArrayArgumentVisitor arv = v.visitArray(Name.identifier(name));
+                AnnotationArrayArgumentVisitor arv = v.visitArray(name == null ? null : Name.identifier(name));
                 return arv == null ? null : new org.jetbrains.org.objectweb.asm.AnnotationVisitor(API_VERSION) {
                     @Override
                     public void visit(String name, @NotNull Object value) {
@@ -215,13 +216,14 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String name, @NotNull String desc) {
-                AnnotationArgumentVisitor arv = v.visitAnnotation(Name.identifier(name), resolveNameByDesc(desc, innerClasses));
+                AnnotationArgumentVisitor arv =
+                        v.visitAnnotation(name == null ? null : Name.identifier(name), resolveNameByDesc(desc, innerClasses));
                 return arv == null ? null : convertAnnotationVisitor(arv, innerClasses);
             }
 
             @Override
             public void visitEnum(String name, @NotNull String desc, @NotNull String value) {
-                v.visitEnum(Name.identifier(name), resolveNameByDesc(desc, innerClasses), Name.identifier(value));
+                v.visitEnum(name == null ? null : Name.identifier(name), resolveNameByDesc(desc, innerClasses), Name.identifier(value));
             }
 
             @Override
@@ -267,6 +269,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
                     @Override
                     public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
                         return convertAnnotationVisitor(v, desc, innerClasses);
+                    }
+
+                    @Override
+                    public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotationDefault() {
+                        AnnotationArgumentVisitor av = v.visitAnnotationMemberDefaultValue();
+                        return av == null ? null : convertAnnotationVisitor(av, innerClasses);
                     }
 
                     @Override

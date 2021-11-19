@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantL
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     storageManager: StorageManager,
@@ -47,6 +46,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
 
     protected abstract fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): A
+
+    protected abstract fun loadAnnotationMethodDefaultValue(
+        annotationClass: KotlinJvmBinaryClass,
+        methodSignature: MemberSignature,
+        visitResult: (C) -> Unit
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
 
     private fun loadAnnotationIfNotSpecial(
         annotationClassId: ClassId,
@@ -210,7 +215,30 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         return proto.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
+    override fun loadAnnotationDefaultValue(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property,
+        expectedType: KotlinType
+    ): C? {
+        return loadConstantFromProperty(
+            container,
+            proto,
+            AnnotatedCallableKind.PROPERTY_GETTER,
+            expectedType
+        ) { annotationParametersDefaultValues[it] }
+    }
+
     override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KotlinType): C? {
+        return loadConstantFromProperty(container, proto, AnnotatedCallableKind.PROPERTY, expectedType) { propertyConstants[it] }
+    }
+
+    private fun loadConstantFromProperty(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property,
+        annotatedCallableKind: AnnotatedCallableKind,
+        expectedType: KotlinType,
+        loader: Storage<A, C>.(MemberSignature) -> C?
+    ): C? {
         val specialCase = getSpecialCaseContainerClass(
             container,
             property = true,
@@ -225,11 +253,11 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         )
         val signature =
             getCallableSignature(
-                proto, container.nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY, requireHasFieldFlag
+                proto, container.nameResolver, container.typeTable, annotatedCallableKind, requireHasFieldFlag
             ) ?: return null
 
-        val constant = storage(kotlinClass).propertyConstants[signature] ?: return null
-        return if (UnsignedTypes.isUnsignedType(expectedType)) transformToUnsignedConstant(constant) else constant
+        val result = storage(kotlinClass).loader(signature) ?: return null
+        return if (UnsignedTypes.isUnsignedType(expectedType)) transformToUnsignedConstant(result) else result
     }
 
     private fun findClassWithAnnotationsAndInitializers(
@@ -291,6 +319,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
         val memberAnnotations = HashMap<MemberSignature, MutableList<A>>()
         val propertyConstants = HashMap<MemberSignature, C>()
+        val annotationParametersDefaultValues = HashMap<MemberSignature, C>()
 
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
@@ -323,6 +352,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
                     }
                     return loadAnnotationIfNotSpecial(classId, source, result)
                 }
+
+                override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    return loadAnnotationMethodDefaultValue(kotlinClass, signature) {
+                        annotationParametersDefaultValues[signature] = it
+                    }
+                }
             }
 
             open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
@@ -340,7 +375,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             }
         }, getCachedFileContent(kotlinClass))
 
-        return Storage(memberAnnotations, propertyConstants)
+        return Storage(memberAnnotations, propertyConstants, annotationParametersDefaultValues)
     }
 
     private fun getPropertySignature(
@@ -415,6 +450,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
 
     private class Storage<out A, out C>(
         val memberAnnotations: Map<MemberSignature, List<A>>,
-        val propertyConstants: Map<MemberSignature, C>
+        val propertyConstants: Map<MemberSignature, C>,
+        val annotationParametersDefaultValues: Map<MemberSignature, C>
     )
 }

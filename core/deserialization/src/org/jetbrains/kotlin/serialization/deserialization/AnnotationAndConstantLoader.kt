@@ -78,4 +78,10 @@ interface AnnotationAndConstantLoader<out A : Any, out C : Any> {
         proto: ProtoBuf.Property,
         expectedType: KotlinType
     ): C?
+
+    fun loadAnnotationDefaultValue(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property,
+        expectedType: KotlinType
+    ): C?
 }
