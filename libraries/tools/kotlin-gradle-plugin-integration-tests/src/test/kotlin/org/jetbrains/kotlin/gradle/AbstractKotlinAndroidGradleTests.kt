@@ -120,10 +120,10 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
                 compilerPluginArgsRegex.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
 
             compilerPluginOptionsBySourceSet.entries.forEach { (sourceSetName, argsString) ->
-                val shouldHaveAndroidExtensionArgs =
-                    sourceSetName.startsWith("androidApp") && (
-                            androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")
-                            )
+                val shouldHaveAndroidExtensionArgs = sourceSetName.startsWith("androidApp") &&
+                        (androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")) &&
+                        (androidGradlePluginVersion < AGPVersion.v7_1_0 || !sourceSetName.contains("androidAppTestFixtures"))
+
                 if (shouldHaveAndroidExtensionArgs)
                     assertTrue("$sourceSetName is an Android source set and should have Android Extensions in the args") {
                         "plugin:org.jetbrains.kotlin.android" in argsString
@@ -482,12 +482,14 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
 
         project.setupWorkingDir().also {
-            project.gradleBuildScript("libAndroid").appendText("""
+            project.gradleBuildScript("libAndroid").appendText(
+                """
 
                 android.kotlinOptions {
                     moduleName = "custom_path"
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         project.build("assembleDebug", options = options) {
@@ -503,6 +505,14 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
             assertCompiledKotlinSources(project.relativize(affectedSources))
         }
     }
+}
+
+open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v7_1_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("7.2")
 }
 
 open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
@@ -1057,14 +1067,16 @@ fun getSomething() = 10
             """.trimIndent() + it
         }
 
-        gradleBuildScript("Lib").appendText("\n" + """
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
             android { 
                 lintOptions.checkDependencies = true
             }
             dependencies {
                 implementation(project(":java-lib"))
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         gradleSettingsScript().appendText(
             "\n" + """
