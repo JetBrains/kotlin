@@ -200,6 +200,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.projectionKind.convertVariance()
     }
 
+    override fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker {
+        require(this is TypeProjection, this::errorMessage)
+        require(newType is KotlinType, this::errorMessage)
+        return this.replaceType(newType)
+    }
+
     override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
         require(this is TypeProjection, this::errorMessage)
         return this.type.unwrap()

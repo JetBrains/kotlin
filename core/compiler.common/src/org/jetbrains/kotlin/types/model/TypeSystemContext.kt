@@ -177,7 +177,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker
     fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker
 
-    fun KotlinTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker) =
+    fun KotlinTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): KotlinTypeMarker =
         when (this) {
             is SimpleTypeMarker -> replaceArguments(replacement)
             is FlexibleTypeMarker -> createFlexibleType(
@@ -186,6 +186,30 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
             )
             else -> error("sealed")
         }
+
+    fun SimpleTypeMarker.replaceArgumentsDeeply(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
+        return replaceArguments {
+            if (it.isStarProjection()) return@replaceArguments it
+
+            val type = it.getType()
+            val newProjection = if (type.argumentsCount() > 0) {
+                it.replaceType(type.replaceArgumentsDeeply(replacement))
+            } else it
+
+            replacement(newProjection)
+        }
+    }
+
+    fun KotlinTypeMarker.replaceArgumentsDeeply(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): KotlinTypeMarker {
+        return when (this) {
+            is SimpleTypeMarker -> replaceArgumentsDeeply(replacement)
+            is FlexibleTypeMarker -> createFlexibleType(
+                lowerBound().replaceArgumentsDeeply(replacement),
+                upperBound().replaceArgumentsDeeply(replacement)
+            )
+            else -> error("sealed")
+        }
+    }
 
     fun KotlinTypeMarker.hasExactAnnotation(): Boolean
     fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean
@@ -270,7 +294,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         val starProjection = createStarProjection(typeParameter)
         val superType = intersectTypes(
             typesForRecursiveTypeParameters.map { type ->
-                type.replaceArguments {
+                type.replaceArgumentsDeeply {
                     val constructor = it.getType().typeConstructor()
                     if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) starProjection else it
                 }
@@ -342,6 +366,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeArgumentMarker.isStarProjection(): Boolean
     fun TypeArgumentMarker.getVariance(): TypeVariance
     fun TypeArgumentMarker.getType(): KotlinTypeMarker
+    fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker
 
     fun TypeConstructorMarker.parametersCount(): Int
     fun TypeConstructorMarker.getParameter(index: Int): TypeParameterMarker

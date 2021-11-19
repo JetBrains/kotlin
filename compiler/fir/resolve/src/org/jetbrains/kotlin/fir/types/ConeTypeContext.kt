@@ -216,6 +216,18 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.type
     }
 
+    override fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker {
+        require(this is ConeKotlinTypeProjection)
+        require(newType is ConeKotlinType)
+        return when (this) {
+            is ConeKotlinType -> newType
+            is ConeStarProjection -> ConeStarProjection
+            is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
+            is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
+            is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
+        }
+    }
+
     override fun TypeConstructorMarker.parametersCount(): Int {
         return when (this) {
             is ConeTypeParameterLookupTag,
