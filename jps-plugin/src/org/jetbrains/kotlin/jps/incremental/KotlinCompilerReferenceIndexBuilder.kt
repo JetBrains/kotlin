@@ -6,7 +6,6 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.BuildTargetRegistry
 import org.jetbrains.jps.builders.DirtyFilesHolder
-import org.jetbrains.jps.builders.JpsBuildBundle
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.BuilderCategory
 import org.jetbrains.jps.incremental.CompileContext
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.config.SettingConstants
 class KotlinCompilerReferenceIndexBuilder : ModuleLevelBuilder(BuilderCategory.CLASS_POST_PROCESSOR) {
     private val compiledTargets = ContainerUtil.newConcurrentSet<ModuleBuildTarget>()
 
-    override fun getPresentableName(): String = JpsBuildBundle.message("builder.name.backward.references.indexer")
+    override fun getPresentableName(): String = "Backward references indexer"
 
     override fun build(
         context: CompileContext,
