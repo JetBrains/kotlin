@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
@@ -44,10 +44,10 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
     }
 
     override fun tearDown() {
-        runAll(
+        RunAll(
             ThrowableRunnable { enableICFixture.tearDown() },
             ThrowableRunnable { super.tearDown() }
-        )
+        ).run()
     }
 
     override fun doTest(testDataPath: String) {
