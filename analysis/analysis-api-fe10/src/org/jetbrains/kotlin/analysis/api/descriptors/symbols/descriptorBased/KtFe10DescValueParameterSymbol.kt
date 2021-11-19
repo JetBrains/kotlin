@@ -39,7 +39,7 @@ internal class KtFe10DescValueParameterSymbol(
     override val isVararg: Boolean
         get() = withValidityAssertion { descriptor.isVararg }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion {
             return (descriptor.varargElementType ?: descriptor.type).toKtType(analysisContext)
         }

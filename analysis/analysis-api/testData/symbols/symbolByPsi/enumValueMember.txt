@@ -7,8 +7,8 @@ KtValueParameterSymbol:
   name: value
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/String
   symbolKind: LOCAL
-  type: kotlin/String
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -20,8 +20,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverType: null
+  returnType: Style
   symbolKind: CLASS_MEMBER
-  type: Style
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(value)
@@ -41,8 +41,8 @@ KtPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/String
   symbolKind: ACCESSOR
-  type: kotlin/String
   valueParameters: []
   visibility: Public
   deprecationStatus: null
@@ -67,9 +67,9 @@ KtKotlinPropertySymbol:
   name: exitAnimation
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/String
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): <anonymous>
@@ -86,8 +86,8 @@ KtEnumEntrySymbol:
   name: SHEET
   origin: SOURCE
   receiverType: null
+  returnType: Style
   symbolKind: CLASS_MEMBER
-  type: Style
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -110,9 +110,9 @@ KtKotlinPropertySymbol:
   name: exitAnimation
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/String
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Style

@@ -26,7 +26,7 @@ internal class KtFirBackingFieldSymbol(
 ) : KtBackingFieldSymbol() {
     private val propertyFirRef = firRef(propertyFir, resolveState)
 
-    override val type: KtType by cached {
+    override val returnType: KtType by cached {
         propertyFirRef.returnType(FirResolvePhase.TYPES, builder)
     }
 

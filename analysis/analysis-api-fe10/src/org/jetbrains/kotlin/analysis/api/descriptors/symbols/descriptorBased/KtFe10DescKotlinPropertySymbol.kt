@@ -89,7 +89,7 @@ internal class KtFe10DescKotlinPropertySymbol(
             return KtFe10DescPropertySetterSymbol(setter, analysisContext)
         }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
     override val receiverType: KtType?

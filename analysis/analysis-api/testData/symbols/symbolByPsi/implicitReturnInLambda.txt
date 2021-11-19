@@ -7,8 +7,8 @@ KtValueParameterSymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtLocalVariableSymbol:
@@ -18,8 +18,8 @@ KtLocalVariableSymbol:
   name: b
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
@@ -28,8 +28,8 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   valueParameters: [
     KtValueParameterSymbol(a)
   ]
@@ -42,8 +42,8 @@ KtLocalVariableSymbol:
   name: lam1
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
-  type: kotlin/Function1<kotlin/Int, kotlin/Int>
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -55,8 +55,8 @@ KtValueParameterSymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtLocalVariableSymbol:
@@ -66,8 +66,8 @@ KtLocalVariableSymbol:
   name: c
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
@@ -76,8 +76,8 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   valueParameters: [
     KtValueParameterSymbol(a)
   ]
@@ -90,8 +90,8 @@ KtLocalVariableSymbol:
   name: lam2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
-  type: kotlin/Function1<kotlin/Int, kotlin/Int>
   deprecationStatus: null
 
 KtLocalVariableSymbol:
@@ -101,8 +101,8 @@ KtLocalVariableSymbol:
   name: b
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtAnonymousFunctionSymbol:
@@ -111,8 +111,8 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   valueParameters: [
     KtValueParameterSymbol(it)
   ]
@@ -134,8 +134,8 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -150,8 +150,8 @@ KtValueParameterSymbol:
   name: lmbd
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
-  type: kotlin/Function1<kotlin/Int, kotlin/Int>
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -170,8 +170,8 @@ KtFunctionSymbol:
   name: bar
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(lmbd)

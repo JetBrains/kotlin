@@ -37,7 +37,7 @@ internal abstract class FirLightParameterBaseForSymbol(
             return if (nullabilityApplicable) {
                 analyzeWithSymbolAsContext(parameterSymbol) {
                     getTypeNullability(
-                        parameterSymbol.type
+                        parameterSymbol.returnType
                     )
                 }
             } else NullabilityType.Unknown
@@ -47,7 +47,7 @@ internal abstract class FirLightParameterBaseForSymbol(
 
     private val _type by lazyPub {
         val convertedType = analyzeWithSymbolAsContext(parameterSymbol) {
-            val ktType = parameterSymbol.type
+            val ktType = parameterSymbol.returnType
             val typeMappingMode = when {
                 ktType.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
                 // TODO: extract type mapping mode from annotation?

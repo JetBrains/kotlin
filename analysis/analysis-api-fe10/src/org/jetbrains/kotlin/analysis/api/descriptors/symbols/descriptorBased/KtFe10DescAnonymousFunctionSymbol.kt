@@ -33,7 +33,7 @@ internal class KtFe10DescAnonymousFunctionSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }
 
     override val receiverType: KtType?

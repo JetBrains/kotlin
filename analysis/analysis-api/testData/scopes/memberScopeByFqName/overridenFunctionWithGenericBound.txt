@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: funWithOuterAndOwnGenericsAndBounds
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: [
     KtTypeParameterSymbol(TT1)
     KtTypeParameterSymbol(TT2)
@@ -48,9 +48,9 @@ KtKotlinPropertySymbol:
   name: propWithOuterAndOwnGenericsAndBounds
   origin: SOURCE
   receiverType: test/TwoParams<TT1, TT2>
+  returnType: test/Foo?
   setter: null
   symbolKind: CLASS_MEMBER
-  type: test/Foo?
   typeParameters: [
     KtTypeParameterSymbol(TT1)
     KtTypeParameterSymbol(TT2)
@@ -79,8 +79,8 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -105,8 +105,8 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -129,8 +129,8 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/String
   symbolKind: CLASS_MEMBER
-  type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -146,8 +146,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverType: null
+  returnType: test/MyClass
   symbolKind: CLASS_MEMBER
-  type: test/MyClass
   typeParameters: []
   valueParameters: []
   visibility: Public

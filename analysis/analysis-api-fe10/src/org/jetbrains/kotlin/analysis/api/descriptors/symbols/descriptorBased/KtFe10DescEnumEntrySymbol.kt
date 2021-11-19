@@ -41,7 +41,7 @@ internal class KtFe10DescEnumEntrySymbol(
             )
         }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { enumDescriptor.defaultType.toKtType(analysisContext) }
 
     override val name: Name

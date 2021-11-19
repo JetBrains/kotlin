@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: run
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -42,9 +42,9 @@ KtKotlinPropertySymbol:
   name: data
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): <anonymous>
@@ -86,9 +86,9 @@ KtKotlinPropertySymbol:
   name: anonymousObject
   origin: SOURCE
   receiverType: null
+  returnType: java/lang/Runnable
   setter: null
   symbolKind: CLASS_MEMBER
-  type: java/lang/Runnable
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): AnonymousContainer

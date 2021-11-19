@@ -39,7 +39,7 @@ internal class FirLightFieldForPropertySymbol(
                         it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
                     }
                 else -> {
-                    propertySymbol.type.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
+                    propertySymbol.returnType.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
                 }
             }
         } ?: nonExistentType()
@@ -93,7 +93,7 @@ internal class FirLightFieldForPropertySymbol(
 
         val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
             analyzeWithSymbolAsContext(propertySymbol) {
-                getTypeNullability(propertySymbol.type)
+                getTypeNullability(propertySymbol.returnType)
             }
         } else NullabilityType.Unknown
 

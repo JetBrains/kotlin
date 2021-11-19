@@ -35,7 +35,7 @@ internal class KtFe10DescConstructorSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.returnType.toKtType(analysisContext) }
 
     override val typeParameters: List<KtTypeParameterSymbol>

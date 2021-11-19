@@ -5,6 +5,6 @@ KtBackingFieldSymbol:
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KtKotlinPropertySymbol(/x)
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null

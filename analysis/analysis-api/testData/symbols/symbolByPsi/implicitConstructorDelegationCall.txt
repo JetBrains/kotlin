@@ -7,8 +7,8 @@ KtValueParameterSymbol:
   name: i
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -20,8 +20,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverType: null
+  returnType: A
   symbolKind: CLASS_MEMBER
-  type: A
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(i)

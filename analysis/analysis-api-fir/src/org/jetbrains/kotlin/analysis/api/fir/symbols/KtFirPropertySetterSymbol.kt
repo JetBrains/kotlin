@@ -69,7 +69,7 @@ internal class KtFirPropertySetterSymbol(
 
     override val valueParameters: List<KtValueParameterSymbol> by cached { listOf(parameter) }
 
-    override val type: KtType by cached {
+    override val returnType: KtType by cached {
         firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 

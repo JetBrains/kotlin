@@ -7,8 +7,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
-  type: java/util/ArrayList<E>
   typeParameters: [
     KtTypeParameterSymbol(E)
   ]

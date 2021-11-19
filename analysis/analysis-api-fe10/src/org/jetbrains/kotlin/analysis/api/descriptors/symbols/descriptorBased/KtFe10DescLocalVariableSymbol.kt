@@ -28,7 +28,7 @@ internal class KtFe10DescLocalVariableSymbol(
     override val isVal: Boolean
         get() = withValidityAssertion { !descriptor.isVar }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
     override val symbolKind: KtSymbolKind

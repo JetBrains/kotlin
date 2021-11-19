@@ -39,7 +39,7 @@ internal class KtFirConstructorSymbol(
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
 
-    override val type: KtType by cached {
+    override val returnType: KtType by cached {
         firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 

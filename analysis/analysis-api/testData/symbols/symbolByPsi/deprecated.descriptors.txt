@@ -21,9 +21,9 @@ KtKotlinPropertySymbol:
   name: i
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
@@ -52,9 +52,9 @@ KtKotlinPropertySymbol:
   name: i2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null
@@ -83,9 +83,9 @@ KtKotlinPropertySymbol:
   name: i3
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null
@@ -114,9 +114,9 @@ KtKotlinPropertySymbol:
   name: i4
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null
@@ -144,8 +144,8 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -198,9 +198,9 @@ KtKotlinPropertySymbol:
   name: i2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
@@ -229,8 +229,8 @@ KtFunctionSymbol:
   name: f2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -281,9 +281,9 @@ KtKotlinPropertySymbol:
   name: j
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
@@ -315,9 +315,9 @@ KtKotlinPropertySymbol:
   name: j2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
@@ -346,9 +346,9 @@ KtKotlinPropertySymbol:
   name: j2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

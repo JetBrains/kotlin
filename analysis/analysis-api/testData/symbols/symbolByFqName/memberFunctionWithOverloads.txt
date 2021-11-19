@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
-  type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -38,8 +38,8 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
-  type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)

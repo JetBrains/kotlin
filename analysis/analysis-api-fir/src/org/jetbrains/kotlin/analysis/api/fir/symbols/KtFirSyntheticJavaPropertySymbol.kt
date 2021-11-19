@@ -44,7 +44,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
-    override val type: KtType by cached {
+    override val returnType: KtType by cached {
         firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 

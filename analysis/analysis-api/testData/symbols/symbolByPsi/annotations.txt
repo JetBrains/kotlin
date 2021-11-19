@@ -7,8 +7,8 @@ KtValueParameterSymbol:
   name: param1
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/String
   symbolKind: LOCAL
-  type: kotlin/String
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -20,8 +20,8 @@ KtValueParameterSymbol:
   name: param2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -33,8 +33,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverType: null
+  returnType: Anno
   symbolKind: CLASS_MEMBER
-  type: Anno
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(param1)
@@ -83,8 +83,8 @@ KtFunctionSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public

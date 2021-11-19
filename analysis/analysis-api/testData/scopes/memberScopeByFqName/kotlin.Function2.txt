@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: invoke
   origin: LIBRARY
   receiverType: null
+  returnType: R
   symbolKind: CLASS_MEMBER
-  type: R
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p1)
@@ -41,8 +41,8 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -67,8 +67,8 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -91,8 +91,8 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/String
   symbolKind: CLASS_MEMBER
-  type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public

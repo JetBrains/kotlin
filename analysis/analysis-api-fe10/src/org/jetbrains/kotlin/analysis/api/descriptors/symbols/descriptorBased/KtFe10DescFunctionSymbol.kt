@@ -65,7 +65,7 @@ internal class KtFe10DescFunctionSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }
 
     override val receiverType: KtType?

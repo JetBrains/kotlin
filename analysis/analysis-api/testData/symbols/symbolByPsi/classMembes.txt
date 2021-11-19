@@ -18,9 +18,9 @@ KtKotlinPropertySymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): A
@@ -46,8 +46,8 @@ KtFunctionSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public

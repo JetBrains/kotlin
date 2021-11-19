@@ -18,9 +18,9 @@ KtKotlinPropertySymbol:
   name: i
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): A

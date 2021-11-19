@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
-  type: kotlin/collections/List<T>
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]
@@ -44,8 +44,8 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
-  type: kotlin/collections/List<T>
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]
@@ -69,8 +69,8 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
-  type: kotlin/collections/List<T>
   typeParameters: [
     KtTypeParameterSymbol(T)
   ]

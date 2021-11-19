@@ -35,7 +35,7 @@ internal class KtFe10DescSyntheticFieldSymbol(
             KtFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
         }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtType(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol> = withValidityAssertion {

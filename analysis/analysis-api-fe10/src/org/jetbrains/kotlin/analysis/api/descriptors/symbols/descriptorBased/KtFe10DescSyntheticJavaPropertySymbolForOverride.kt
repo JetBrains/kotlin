@@ -79,7 +79,7 @@ internal class KtFe10DescSyntheticJavaPropertySymbolForOverride(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
     override val receiverType: KtType?

@@ -199,8 +199,8 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: [
     KtTypeParameterSymbol(T3)
   ]

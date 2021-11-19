@@ -78,7 +78,7 @@ class KtFe10PsiDefaultPropertySetterSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { null }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion {
             return analysisContext.builtIns.unitType.toKtType(analysisContext)
         }
@@ -119,7 +119,7 @@ class KtFe10PsiDefaultPropertySetterSymbol(
         override val name: Name
             get() = withValidityAssertion { Name.identifier("value") }
 
-        override val type: KtType
+        override val returnType: KtType
             get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
         override val origin: KtSymbolOrigin

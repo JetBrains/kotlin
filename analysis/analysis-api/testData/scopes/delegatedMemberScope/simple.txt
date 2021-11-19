@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: foo
   origin: DELEGATED
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public

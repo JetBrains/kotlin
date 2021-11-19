@@ -35,7 +35,7 @@ internal class KtFirEnumEntrySymbol(
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
 
     override val name: Name get() = firRef.withFir { it.name }
-    override val type: KtType by cached {
+    override val returnType: KtType by cached {
         firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 

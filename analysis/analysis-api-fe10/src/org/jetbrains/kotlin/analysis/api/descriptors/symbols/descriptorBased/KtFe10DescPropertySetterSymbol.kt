@@ -22,7 +22,7 @@ internal class KtFe10DescPropertySetterSymbol(
     override val descriptor: PropertySetterDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertySetterSymbol(), KtFe10DescMemberSymbol<PropertySetterDescriptor> {
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
     override val isDefault: Boolean

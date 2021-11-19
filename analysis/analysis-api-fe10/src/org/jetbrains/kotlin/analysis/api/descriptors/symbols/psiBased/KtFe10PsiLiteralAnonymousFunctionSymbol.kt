@@ -45,7 +45,7 @@ internal class KtFe10PsiLiteralAnonymousFunctionSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion {
             descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType()
         }

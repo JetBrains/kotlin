@@ -5,6 +5,6 @@ KtEnumEntrySymbol:
   name: SYNCHRONIZED
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
-  type: kotlin/LazyThreadSafetyMode
   deprecationStatus: null

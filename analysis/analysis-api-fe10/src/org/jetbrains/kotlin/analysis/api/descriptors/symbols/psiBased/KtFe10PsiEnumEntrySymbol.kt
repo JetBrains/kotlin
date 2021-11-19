@@ -46,7 +46,7 @@ internal class KtFe10PsiEnumEntrySymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { psi.callableIdIfNonLocal }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion {
             val containingDescriptor = descriptor?.containingDeclaration
             if (containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.ENUM_CLASS) {

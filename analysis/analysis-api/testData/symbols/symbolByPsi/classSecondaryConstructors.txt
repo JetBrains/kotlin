@@ -7,8 +7,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverType: null
+  returnType: A
   symbolKind: CLASS_MEMBER
-  type: A
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -23,8 +23,8 @@ KtValueParameterSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -36,8 +36,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverType: null
+  returnType: A
   symbolKind: CLASS_MEMBER
-  type: A
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(x)
@@ -54,8 +54,8 @@ KtValueParameterSymbol:
   name: y
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -67,8 +67,8 @@ KtValueParameterSymbol:
   name: z
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/String
   symbolKind: LOCAL
-  type: kotlin/String
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -80,8 +80,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverType: null
+  returnType: A
   symbolKind: CLASS_MEMBER
-  type: A
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(y)

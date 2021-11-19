@@ -87,11 +87,11 @@ private fun KtAnalysisSession.stringRepresentation(call: KtCall): String {
             }
             valueParameters.joinTo(this) { it.stringValue() }
             append(")")
-            append(": ${type.render()}")
+            append(": ${returnType.render()}")
         }
-        is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${type.render()}"
+        is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
-        is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${type.render()}"
+        is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
         is KtSuccessCallTarget -> symbol.stringValue()
         is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()

@@ -17,8 +17,8 @@ KtValueParameterSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: X
   symbolKind: LOCAL
-  type: X
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -37,8 +37,8 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: [
     KtTypeParameterSymbol(X)
   ]

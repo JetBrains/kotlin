@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: add
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(element)
@@ -40,8 +40,8 @@ KtFunctionSymbol:
   name: add
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)
@@ -67,8 +67,8 @@ KtFunctionSymbol:
   name: addAll
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)
@@ -94,8 +94,8 @@ KtFunctionSymbol:
   name: addAll
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(elements)
@@ -120,8 +120,8 @@ KtFunctionSymbol:
   name: clear
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -144,8 +144,8 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/MutableListIterator<E>
   symbolKind: CLASS_MEMBER
-  type: kotlin/collections/MutableListIterator<E>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -168,8 +168,8 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/MutableListIterator<E>
   symbolKind: CLASS_MEMBER
-  type: kotlin/collections/MutableListIterator<E>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)
@@ -194,8 +194,8 @@ KtFunctionSymbol:
   name: remove
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(element)
@@ -220,8 +220,8 @@ KtFunctionSymbol:
   name: removeAll
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(elements)
@@ -246,8 +246,8 @@ KtFunctionSymbol:
   name: removeAt
   origin: LIBRARY
   receiverType: null
+  returnType: E
   symbolKind: CLASS_MEMBER
-  type: E
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)
@@ -272,8 +272,8 @@ KtFunctionSymbol:
   name: retainAll
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(elements)
@@ -298,8 +298,8 @@ KtFunctionSymbol:
   name: set
   origin: LIBRARY
   receiverType: null
+  returnType: E
   symbolKind: CLASS_MEMBER
-  type: E
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)
@@ -325,8 +325,8 @@ KtFunctionSymbol:
   name: subList
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/MutableList<E>
   symbolKind: CLASS_MEMBER
-  type: kotlin/collections/MutableList<E>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(fromIndex)
@@ -352,8 +352,8 @@ KtFunctionSymbol:
   name: contains
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(element)
@@ -378,8 +378,8 @@ KtFunctionSymbol:
   name: containsAll
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(elements)
@@ -404,8 +404,8 @@ KtFunctionSymbol:
   name: get
   origin: LIBRARY
   receiverType: null
+  returnType: E
   symbolKind: CLASS_MEMBER
-  type: E
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)
@@ -430,8 +430,8 @@ KtFunctionSymbol:
   name: indexOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(element)
@@ -456,8 +456,8 @@ KtFunctionSymbol:
   name: isEmpty
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -480,8 +480,8 @@ KtFunctionSymbol:
   name: iterator
   origin: INTERSECTION_OVERRIDE
   receiverType: null
+  returnType: kotlin/collections/MutableIterator<E>
   symbolKind: CLASS_MEMBER
-  type: kotlin/collections/MutableIterator<E>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -504,8 +504,8 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(element)
@@ -534,9 +534,9 @@ KtKotlinPropertySymbol:
   name: size
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/collections/MutableList<E>
@@ -562,8 +562,8 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -588,8 +588,8 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -612,8 +612,8 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/String
   symbolKind: CLASS_MEMBER
-  type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public

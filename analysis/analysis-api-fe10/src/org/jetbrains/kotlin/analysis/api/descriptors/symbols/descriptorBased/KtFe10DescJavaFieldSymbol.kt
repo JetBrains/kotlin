@@ -36,7 +36,7 @@ internal class KtFe10DescJavaFieldSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor.returnType.toKtType(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {

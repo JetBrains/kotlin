@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -37,8 +37,8 @@ KtFunctionSymbol:
   name: y
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public

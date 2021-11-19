@@ -7,8 +7,8 @@ KtValueParameterSymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -27,8 +27,8 @@ KtFunctionSymbol:
   name: primitive
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(a)
@@ -45,8 +45,8 @@ KtValueParameterSymbol:
   name: b
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Float?
   symbolKind: LOCAL
-  type: kotlin/Float?
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -65,8 +65,8 @@ KtFunctionSymbol:
   name: nullablePrimitive
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(b)
@@ -83,8 +83,8 @@ KtValueParameterSymbol:
   name: c
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Any
   symbolKind: LOCAL
-  type: kotlin/Any
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -103,8 +103,8 @@ KtFunctionSymbol:
   name: nonPrimitive
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(c)
@@ -121,8 +121,8 @@ KtValueParameterSymbol:
   name: d
   origin: SOURCE
   receiverType: null
+  returnType: ERROR_TYPE
   symbolKind: LOCAL
-  type: ERROR_TYPE
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -141,8 +141,8 @@ KtFunctionSymbol:
   name: error
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(d)

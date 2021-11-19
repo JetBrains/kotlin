@@ -66,7 +66,7 @@ internal class FirLightSimpleMethodForSymbol(
                         isVoidReturnType ->
                             return@l NullabilityType.Unknown
                         else ->
-                            functionSymbol.type
+                            functionSymbol.returnType
                     }
                 getTypeNullability(ktType)
             }
@@ -131,7 +131,7 @@ internal class FirLightSimpleMethodForSymbol(
     override fun isConstructor(): Boolean = false
 
     private val isVoidReturnType: Boolean
-        get() = functionSymbol.type.run {
+        get() = functionSymbol.returnType.run {
             isUnit && nullabilityType != NullabilityType.Nullable
         }
 
@@ -144,7 +144,7 @@ internal class FirLightSimpleMethodForSymbol(
                     isVoidReturnType ->
                         return@lazyPub PsiType.VOID
                     else ->
-                        functionSymbol.type
+                        functionSymbol.returnType
                 }
             ktType.asPsiType(
                 this@FirLightSimpleMethodForSymbol,

@@ -24,8 +24,8 @@ KtFunctionSymbol:
   name: test
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -51,9 +51,9 @@ KtKotlinPropertySymbol:
   name: testVal
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null

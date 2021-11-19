@@ -35,7 +35,7 @@ internal class FirLightSuspendContinuationParameter(
     private val _type by lazyPub {
         analyzeWithSymbolAsContext(functionSymbol) {
             buildClassType(StandardClassIds.Continuation) {
-                argument(functionSymbol.type)
+                argument(functionSymbol.returnType)
             }.asPsiType(this@FirLightSuspendContinuationParameter)
         } ?: nonExistentType()
     }

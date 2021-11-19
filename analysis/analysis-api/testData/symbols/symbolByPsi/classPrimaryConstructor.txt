@@ -7,8 +7,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverType: null
+  returnType: A
   symbolKind: CLASS_MEMBER
-  type: A
   typeParameters: []
   valueParameters: []
   visibility: Public

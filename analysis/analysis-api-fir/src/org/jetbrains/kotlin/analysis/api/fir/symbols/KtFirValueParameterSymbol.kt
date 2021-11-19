@@ -88,7 +88,7 @@ internal class KtFirValueParameterSymbol(
     }
 
     override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
-    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+    override val returnType: KtType by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
         if (fir.isVararg) {
             // There SHOULD always be an array element type (even if it is an error type, e.g., unresolved).
             val arrayElementType = fir.returnTypeRef.coneType.arrayElementType()

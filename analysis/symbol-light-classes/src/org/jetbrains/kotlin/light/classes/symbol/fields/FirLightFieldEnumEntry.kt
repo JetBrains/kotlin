@@ -66,7 +66,7 @@ internal class FirLightFieldForEnumEntry(
 
     private val _type: PsiType by lazyPub {
         analyzeWithSymbolAsContext(enumEntrySymbol) {
-            enumEntrySymbol.type.asPsiType(this@FirLightFieldForEnumEntry)
+            enumEntrySymbol.returnType.asPsiType(this@FirLightFieldForEnumEntry)
         } ?: nonExistentType()
     }
 

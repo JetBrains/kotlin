@@ -7,8 +7,8 @@ KtJavaFieldSymbol:
   name: value
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/CharArray, kotlin/CharArray?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/CharArray, kotlin/CharArray?>
   visibility: Private
   deprecationStatus: null
 
@@ -21,8 +21,8 @@ KtJavaFieldSymbol:
   name: hash
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   visibility: Private
   deprecationStatus: null
 
@@ -42,8 +42,8 @@ KtFunctionSymbol:
   name: hash32
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility
@@ -59,8 +59,8 @@ KtJavaFieldSymbol:
   name: hash32
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   visibility: Private
   deprecationStatus: null
 
@@ -84,9 +84,9 @@ KtSyntheticJavaPropertySymbol:
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): java/lang/String
@@ -112,8 +112,8 @@ KtFunctionSymbol:
   name: isEmpty
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -136,8 +136,8 @@ KtFunctionSymbol:
   name: codePointAt
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -162,8 +162,8 @@ KtFunctionSymbol:
   name: codePointBefore
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -188,8 +188,8 @@ KtFunctionSymbol:
   name: codePointCount
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -215,8 +215,8 @@ KtFunctionSymbol:
   name: offsetByCodePoints
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -242,8 +242,8 @@ KtFunctionSymbol:
   name: getChars
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -269,8 +269,8 @@ KtFunctionSymbol:
   name: getChars
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -301,8 +301,8 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -330,8 +330,8 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/ByteArray, kotlin/ByteArray?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/ByteArray, kotlin/ByteArray?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -356,8 +356,8 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/ByteArray, kotlin/ByteArray?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/ByteArray, kotlin/ByteArray?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -382,8 +382,8 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/ByteArray, kotlin/ByteArray?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/ByteArray, kotlin/ByteArray?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -406,8 +406,8 @@ KtFunctionSymbol:
   name: equals
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -432,8 +432,8 @@ KtFunctionSymbol:
   name: contentEquals
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -458,8 +458,8 @@ KtFunctionSymbol:
   name: contentEquals
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -484,8 +484,8 @@ KtFunctionSymbol:
   name: equalsIgnoreCase
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -510,8 +510,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -536,8 +536,8 @@ KtFunctionSymbol:
   name: compareToIgnoreCase
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -562,8 +562,8 @@ KtFunctionSymbol:
   name: regionMatches
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -591,8 +591,8 @@ KtFunctionSymbol:
   name: regionMatches
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -621,8 +621,8 @@ KtFunctionSymbol:
   name: startsWith
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -648,8 +648,8 @@ KtFunctionSymbol:
   name: startsWith
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -674,8 +674,8 @@ KtFunctionSymbol:
   name: endsWith
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -700,8 +700,8 @@ KtFunctionSymbol:
   name: hashCode
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -724,8 +724,8 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -750,8 +750,8 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -777,8 +777,8 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -803,8 +803,8 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -830,8 +830,8 @@ KtFunctionSymbol:
   name: indexOfSupplementary
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -857,8 +857,8 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -883,8 +883,8 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -910,8 +910,8 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -936,8 +936,8 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -963,8 +963,8 @@ KtFunctionSymbol:
   name: lastIndexOfSupplementary
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -990,8 +990,8 @@ KtFunctionSymbol:
   name: substring
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1016,8 +1016,8 @@ KtFunctionSymbol:
   name: substring
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1043,8 +1043,8 @@ KtFunctionSymbol:
   name: subSequence
   origin: JAVA
   receiverType: null
+  returnType: @EnhancedNullability kotlin/CharSequence
   symbolKind: CLASS_MEMBER
-  type: @EnhancedNullability kotlin/CharSequence
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1070,8 +1070,8 @@ KtFunctionSymbol:
   name: concat
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1096,8 +1096,8 @@ KtFunctionSymbol:
   name: replace
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1123,8 +1123,8 @@ KtFunctionSymbol:
   name: replace
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1150,8 +1150,8 @@ KtFunctionSymbol:
   name: matches
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1176,8 +1176,8 @@ KtFunctionSymbol:
   name: contains
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1202,8 +1202,8 @@ KtFunctionSymbol:
   name: replaceFirst
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1229,8 +1229,8 @@ KtFunctionSymbol:
   name: replaceAll
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1256,8 +1256,8 @@ KtFunctionSymbol:
   name: split
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1283,8 +1283,8 @@ KtFunctionSymbol:
   name: split
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1309,8 +1309,8 @@ KtFunctionSymbol:
   name: toLowerCase
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1335,8 +1335,8 @@ KtFunctionSymbol:
   name: toLowerCase
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1359,8 +1359,8 @@ KtFunctionSymbol:
   name: toUpperCase
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1385,8 +1385,8 @@ KtFunctionSymbol:
   name: toUpperCase
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1409,8 +1409,8 @@ KtFunctionSymbol:
   name: trim
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1433,8 +1433,8 @@ KtFunctionSymbol:
   name: toString
   origin: JAVA
   receiverType: null
+  returnType: @EnhancedNullability kotlin/String
   symbolKind: CLASS_MEMBER
-  type: @EnhancedNullability kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1457,8 +1457,8 @@ KtFunctionSymbol:
   name: toCharArray
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/CharArray, kotlin/CharArray?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/CharArray, kotlin/CharArray?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1481,8 +1481,8 @@ KtFunctionSymbol:
   name: intern
   origin: JAVA
   receiverType: null
+  returnType: ft<kotlin/String, kotlin/String?>
   symbolKind: CLASS_MEMBER
-  type: ft<kotlin/String, kotlin/String?>
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1505,8 +1505,8 @@ KtFunctionSymbol:
   name: get
   origin: JAVA
   receiverType: null
+  returnType: kotlin/Char
   symbolKind: CLASS_MEMBER
-  type: kotlin/Char
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1547,8 +1547,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1563,8 +1563,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1581,8 +1581,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1599,8 +1599,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1619,8 +1619,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1642,8 +1642,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1666,8 +1666,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1685,8 +1685,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1706,8 +1706,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1727,8 +1727,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1746,8 +1746,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1765,8 +1765,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1785,8 +1785,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1803,8 +1803,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1821,8 +1821,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1839,8 +1839,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1861,8 +1861,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/String
   symbolKind: CLASS_MEMBER
-  type: java/lang/String
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)

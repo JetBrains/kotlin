@@ -5,8 +5,8 @@ KtEnumEntrySymbol:
   name: Y
   origin: SOURCE
   receiverType: null
+  returnType: X
   symbolKind: CLASS_MEMBER
-  type: X
   deprecationStatus: null
 
 KtEnumEntrySymbol:
@@ -16,8 +16,8 @@ KtEnumEntrySymbol:
   name: Z
   origin: SOURCE
   receiverType: null
+  returnType: X
   symbolKind: CLASS_MEMBER
-  type: X
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:

@@ -36,7 +36,7 @@ internal class KtFe10PsiLocalVariableSymbol(
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
     override val isVal: Boolean

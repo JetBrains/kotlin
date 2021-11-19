@@ -7,8 +7,8 @@ KtValueParameterSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -20,8 +20,8 @@ KtValueParameterSymbol:
   name: y
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtValueParameterSymbol:
@@ -33,8 +33,8 @@ KtValueParameterSymbol:
   name: z
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtConstructorSymbol:
@@ -46,8 +46,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverType: null
+  returnType: MyColor
   symbolKind: CLASS_MEMBER
-  type: MyColor
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(x)
@@ -84,8 +84,8 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: MyColor
   symbolKind: LOCAL
-  type: MyColor
   valueParameters: []
   deprecationStatus: null
 
@@ -109,9 +109,9 @@ KtKotlinPropertySymbol:
   name: delegate
   origin: SOURCE
   receiverType: null
+  returnType: MyColor
   setter: null
   symbolKind: CLASS_MEMBER
-  type: MyColor
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
@@ -127,8 +127,8 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: MyColor
   symbolKind: LOCAL
-  type: MyColor
   valueParameters: []
   deprecationStatus: null
 
@@ -152,9 +152,9 @@ KtKotlinPropertySymbol:
   name: lambda
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Lazy<MyColor>
   setter: null
   symbolKind: CLASS_MEMBER
-  type: kotlin/Lazy<MyColor>
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some
@@ -184,9 +184,9 @@ KtKotlinPropertySymbol:
   name: nonLazy
   origin: SOURCE
   receiverType: null
+  returnType: MyColor
   setter: null
   symbolKind: CLASS_MEMBER
-  type: MyColor
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Some

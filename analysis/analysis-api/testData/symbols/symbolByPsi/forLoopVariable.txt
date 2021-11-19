@@ -5,8 +5,8 @@ KtLocalVariableSymbol:
   name: loopVariable
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -25,8 +25,8 @@ KtFunctionSymbol:
   name: usage
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: Public

@@ -67,7 +67,7 @@ internal class KtFe10PsiPropertyGetterSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { null }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion {
             descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType()
         }

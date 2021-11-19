@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: and
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -40,8 +40,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -66,8 +66,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -92,8 +92,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -118,8 +118,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -144,8 +144,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -170,8 +170,8 @@ KtFunctionSymbol:
   name: compareTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -196,8 +196,8 @@ KtFunctionSymbol:
   name: dec
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -220,8 +220,8 @@ KtFunctionSymbol:
   name: div
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -246,8 +246,8 @@ KtFunctionSymbol:
   name: div
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Double
   symbolKind: CLASS_MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -272,8 +272,8 @@ KtFunctionSymbol:
   name: div
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Float
   symbolKind: CLASS_MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -298,8 +298,8 @@ KtFunctionSymbol:
   name: div
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -324,8 +324,8 @@ KtFunctionSymbol:
   name: div
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Long
   symbolKind: CLASS_MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -350,8 +350,8 @@ KtFunctionSymbol:
   name: div
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -376,8 +376,8 @@ KtFunctionSymbol:
   name: inc
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -400,8 +400,8 @@ KtFunctionSymbol:
   name: inv
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -424,8 +424,8 @@ KtFunctionSymbol:
   name: minus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -450,8 +450,8 @@ KtFunctionSymbol:
   name: minus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Double
   symbolKind: CLASS_MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -476,8 +476,8 @@ KtFunctionSymbol:
   name: minus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Float
   symbolKind: CLASS_MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -502,8 +502,8 @@ KtFunctionSymbol:
   name: minus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -528,8 +528,8 @@ KtFunctionSymbol:
   name: minus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Long
   symbolKind: CLASS_MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -554,8 +554,8 @@ KtFunctionSymbol:
   name: minus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -580,8 +580,8 @@ KtFunctionSymbol:
   name: or
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -606,8 +606,8 @@ KtFunctionSymbol:
   name: plus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -632,8 +632,8 @@ KtFunctionSymbol:
   name: plus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Double
   symbolKind: CLASS_MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -658,8 +658,8 @@ KtFunctionSymbol:
   name: plus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Float
   symbolKind: CLASS_MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -684,8 +684,8 @@ KtFunctionSymbol:
   name: plus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -710,8 +710,8 @@ KtFunctionSymbol:
   name: plus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Long
   symbolKind: CLASS_MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -736,8 +736,8 @@ KtFunctionSymbol:
   name: plus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -762,8 +762,8 @@ KtFunctionSymbol:
   name: rangeTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
-  type: kotlin/ranges/IntRange
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -788,8 +788,8 @@ KtFunctionSymbol:
   name: rangeTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
-  type: kotlin/ranges/IntRange
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -814,8 +814,8 @@ KtFunctionSymbol:
   name: rangeTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/ranges/LongRange
   symbolKind: CLASS_MEMBER
-  type: kotlin/ranges/LongRange
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -840,8 +840,8 @@ KtFunctionSymbol:
   name: rangeTo
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
-  type: kotlin/ranges/IntRange
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -869,8 +869,8 @@ KtFunctionSymbol:
   name: rem
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -898,8 +898,8 @@ KtFunctionSymbol:
   name: rem
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Double
   symbolKind: CLASS_MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -927,8 +927,8 @@ KtFunctionSymbol:
   name: rem
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Float
   symbolKind: CLASS_MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -956,8 +956,8 @@ KtFunctionSymbol:
   name: rem
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -985,8 +985,8 @@ KtFunctionSymbol:
   name: rem
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Long
   symbolKind: CLASS_MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1014,8 +1014,8 @@ KtFunctionSymbol:
   name: rem
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1040,8 +1040,8 @@ KtFunctionSymbol:
   name: shl
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(bitCount)
@@ -1066,8 +1066,8 @@ KtFunctionSymbol:
   name: shr
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(bitCount)
@@ -1092,8 +1092,8 @@ KtFunctionSymbol:
   name: times
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1118,8 +1118,8 @@ KtFunctionSymbol:
   name: times
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Double
   symbolKind: CLASS_MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1144,8 +1144,8 @@ KtFunctionSymbol:
   name: times
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Float
   symbolKind: CLASS_MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1170,8 +1170,8 @@ KtFunctionSymbol:
   name: times
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1196,8 +1196,8 @@ KtFunctionSymbol:
   name: times
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Long
   symbolKind: CLASS_MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1222,8 +1222,8 @@ KtFunctionSymbol:
   name: times
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1248,8 +1248,8 @@ KtFunctionSymbol:
   name: toByte
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Byte
   symbolKind: CLASS_MEMBER
-  type: kotlin/Byte
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1272,8 +1272,8 @@ KtFunctionSymbol:
   name: toChar
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Char
   symbolKind: CLASS_MEMBER
-  type: kotlin/Char
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1296,8 +1296,8 @@ KtFunctionSymbol:
   name: toDouble
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Double
   symbolKind: CLASS_MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1320,8 +1320,8 @@ KtFunctionSymbol:
   name: toFloat
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Float
   symbolKind: CLASS_MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1344,8 +1344,8 @@ KtFunctionSymbol:
   name: toInt
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1368,8 +1368,8 @@ KtFunctionSymbol:
   name: toLong
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Long
   symbolKind: CLASS_MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1392,8 +1392,8 @@ KtFunctionSymbol:
   name: toShort
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Short
   symbolKind: CLASS_MEMBER
-  type: kotlin/Short
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1416,8 +1416,8 @@ KtFunctionSymbol:
   name: unaryMinus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1440,8 +1440,8 @@ KtFunctionSymbol:
   name: unaryPlus
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1464,8 +1464,8 @@ KtFunctionSymbol:
   name: ushr
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(bitCount)
@@ -1490,8 +1490,8 @@ KtFunctionSymbol:
   name: xor
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1516,8 +1516,8 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(other)
@@ -1542,8 +1542,8 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1566,8 +1566,8 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/String
   symbolKind: CLASS_MEMBER
-  type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -1604,8 +1604,8 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/lang/Integer
   symbolKind: CLASS_MEMBER
-  type: java/lang/Integer
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(p0)
@@ -1622,8 +1622,8 @@ KtConstructorSymbol:
   isPrimary: true
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: Private

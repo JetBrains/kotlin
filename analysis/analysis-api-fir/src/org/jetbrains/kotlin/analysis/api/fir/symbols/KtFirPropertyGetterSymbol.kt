@@ -47,7 +47,7 @@ internal class KtFirPropertyGetterSymbol(
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val hasBody: Boolean get() = firRef.withFir { it.body != null }
 
-    override val type: KtType by cached {
+    override val returnType: KtType by cached {
         firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
     override val modality: Modality get() = getModality()

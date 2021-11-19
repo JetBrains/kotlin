@@ -55,7 +55,7 @@ class KtFe10DescDefaultPropertyGetterSymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { propertyDescriptor.getterCallableIdIfNotLocal }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { propertyDescriptor.type.toKtType(analysisContext) }
 
     override val origin: KtSymbolOrigin

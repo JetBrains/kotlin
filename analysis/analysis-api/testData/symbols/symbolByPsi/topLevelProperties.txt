@@ -18,9 +18,9 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null
@@ -41,8 +41,8 @@ KtPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: ACCESSOR
-  type: kotlin/Int
   valueParameters: []
   visibility: Public
   deprecationStatus: null
@@ -67,9 +67,9 @@ KtKotlinPropertySymbol:
   name: y
   origin: SOURCE
   receiverType: kotlin/Int
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   deprecationStatus: null

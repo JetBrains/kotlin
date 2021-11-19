@@ -124,11 +124,11 @@ KtValueParameterSymbol:
   name: arg
   origin: SOURCE
   receiverType: null
-  symbolKind: LOCAL
-  type: [
+  returnType: [
     Anno2()
       psi: KtAnnotationEntry
   ] @R|Anno2|()  I
+  symbolKind: LOCAL
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -147,11 +147,11 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverType: null
-  symbolKind: CLASS_MEMBER
-  type: [
+  returnType: [
     Anno2()
       psi: KtAnnotationEntry
   ] @R|Anno2|()  I
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(arg)
@@ -180,12 +180,12 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverType: null
-  setter: null
-  symbolKind: CLASS_MEMBER
-  type: [
+  returnType: [
     Anno2()
       psi: KtAnnotationEntry
   ] @R|Anno2|()  I
+  setter: null
+  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): X

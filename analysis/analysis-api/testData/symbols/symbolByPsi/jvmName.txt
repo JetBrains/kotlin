@@ -18,9 +18,9 @@ KtKotlinPropertySymbol:
   name: i
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
@@ -45,8 +45,8 @@ KtPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: ACCESSOR
-  type: kotlin/Int
   valueParameters: []
   visibility: Public
   deprecationStatus: null
@@ -60,8 +60,8 @@ KtValueParameterSymbol:
   name: value
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
-  type: kotlin/Int
   deprecationStatus: null
 
 KtPropertySetterSymbol:
@@ -80,8 +80,8 @@ KtPropertySetterSymbol:
   origin: SOURCE
   parameter: KtValueParameterSymbol(value)
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: ACCESSOR
-  type: kotlin/Unit
   valueParameters: [
     KtValueParameterSymbol(value)
   ]
@@ -108,9 +108,9 @@ KtKotlinPropertySymbol:
   name: j
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
-  type: kotlin/Int
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): Foo

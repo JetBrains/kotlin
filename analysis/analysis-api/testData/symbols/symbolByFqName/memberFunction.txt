@@ -14,8 +14,8 @@ KtFunctionSymbol:
   name: get
   origin: LIBRARY
   receiverType: null
+  returnType: E
   symbolKind: CLASS_MEMBER
-  type: E
   typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(index)

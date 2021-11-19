@@ -46,7 +46,7 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val isVararg: Boolean
         get() = withValidityAssertion { false }
 
-    override val type: KtType
+    override val returnType: KtType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
     override val psi: PsiElement?
