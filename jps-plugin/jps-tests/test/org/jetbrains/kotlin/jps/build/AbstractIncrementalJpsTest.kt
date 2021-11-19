@@ -19,6 +19,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
@@ -160,11 +160,11 @@ abstract class AbstractIncrementalJpsTest(
             (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
             (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         } finally {
-            runAll(
+            RunAll(
                 ThrowableRunnable { lookupsDuringTest.clear() },
                 ThrowableRunnable { enableICFixture.tearDown() },
                 ThrowableRunnable { super.tearDown() }
-            )
+            ).run()
         }
     }
 

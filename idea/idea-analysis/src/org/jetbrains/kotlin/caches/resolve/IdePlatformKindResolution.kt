@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.storage.StorageManager
 
 interface IdePlatformKindResolution {
-    val kind: IdePlatformKind<*>
+    val kind: IdePlatformKind
 
     fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?, stdlibInfo: LibraryInfo?): BuiltInsCacheKey
     fun createBuiltIns(
@@ -89,11 +89,11 @@ interface IdePlatformKindResolution {
             groupedResolution
         }
 
-        fun getResolution(kind: IdePlatformKind<*>): IdePlatformKindResolution {
+        fun getResolution(kind: IdePlatformKind): IdePlatformKindResolution {
             return CACHED_RESOLUTION_SUPPORT[kind] ?: error("Unknown platform $this")
         }
     }
 }
 
-val IdePlatformKind<*>.resolution: IdePlatformKindResolution
+val IdePlatformKind.resolution: IdePlatformKindResolution
     get() = IdePlatformKindResolution.getResolution(this)

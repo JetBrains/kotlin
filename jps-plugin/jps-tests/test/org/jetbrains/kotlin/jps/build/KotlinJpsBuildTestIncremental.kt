@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
-import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
@@ -37,10 +37,10 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     }
 
     override fun tearDown() {
-        runAll(
+        RunAll(
             ThrowableRunnable { enableICFixture.tearDown() },
             ThrowableRunnable { super.tearDown() }
-        )
+        ).run()
     }
 
     fun testKotlinJavaScriptChangePackage() {

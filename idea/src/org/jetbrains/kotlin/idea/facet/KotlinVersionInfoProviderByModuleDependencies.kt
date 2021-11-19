@@ -18,7 +18,7 @@ class KotlinVersionInfoProviderByModuleDependencies : KotlinVersionInfoProvider 
 
     override fun getLibraryVersions(
         module: Module,
-        platformKind: IdePlatformKind<*>,
+        platformKind: IdePlatformKind,
         rootModel: ModuleRootModel?
     ): Collection<String> {
         if (module.isDisposed) {

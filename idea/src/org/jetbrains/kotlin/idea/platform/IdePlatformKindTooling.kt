@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import javax.swing.Icon
 
 abstract class IdePlatformKindTooling {
-    abstract val kind: IdePlatformKind<*>
+    abstract val kind: IdePlatformKind
 
     abstract fun compilerArgumentsForProject(project: Project): CommonCompilerArguments?
 
@@ -65,7 +65,7 @@ abstract class IdePlatformKindTooling {
             ALL_TOOLING_SUPPORT.flatMap { tooling -> tooling.gradlePlatformIds.map { it to tooling } }.toMap()
         }
 
-        fun getTooling(kind: IdePlatformKind<*>): IdePlatformKindTooling {
+        fun getTooling(kind: IdePlatformKind): IdePlatformKindTooling {
             return TOOLING_SUPPORT_BY_KIND[kind] ?: error("Unknown platform $kind")
         }
 
@@ -82,5 +82,5 @@ abstract class IdePlatformKindTooling {
     }
 }
 
-val IdePlatformKind<*>.tooling: IdePlatformKindTooling
+val IdePlatformKind.tooling: IdePlatformKindTooling
     get() = IdePlatformKindTooling.getTooling(this)

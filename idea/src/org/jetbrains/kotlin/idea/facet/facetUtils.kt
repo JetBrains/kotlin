@@ -104,7 +104,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
     }
 }
 
-val mavenLibraryIdToPlatform: Map<String, IdePlatformKind<*>> by lazy {
+val mavenLibraryIdToPlatform: Map<String, IdePlatformKind> by lazy {
     IdePlatformKind.ALL_KINDS
         .flatMap { platform -> platform.tooling.mavenLibraryIds.map { it to platform } }
         .sortedByDescending { it.first.length }

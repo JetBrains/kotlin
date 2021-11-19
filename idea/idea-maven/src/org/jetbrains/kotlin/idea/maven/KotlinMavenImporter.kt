@@ -277,7 +277,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     private fun detectPlatform(mavenProject: MavenProject) =
         detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
 
-    private fun detectPlatformByExecutions(mavenProject: MavenProject): IdePlatformKind<*>? {
+    private fun detectPlatformByExecutions(mavenProject: MavenProject): IdePlatformKind? {
         return mavenProject.findPlugin(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_ARTIFACT_ID)?.executions?.flatMap { it.goals }
             ?.mapNotNull { goal ->
                 when (goal) {
@@ -289,7 +289,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             }?.distinct()?.singleOrNull()
     }
 
-    private fun detectPlatformByLibraries(mavenProject: MavenProject): IdePlatformKind<*>? {
+    private fun detectPlatformByLibraries(mavenProject: MavenProject): IdePlatformKind? {
         for (kind in IdePlatformKind.ALL_KINDS) {
             val mavenLibraryIds = kind.tooling.mavenLibraryIds
             if (mavenLibraryIds.any { mavenProject.findDependencies(KOTLIN_PLUGIN_GROUP_ID, it).isNotEmpty() }) {

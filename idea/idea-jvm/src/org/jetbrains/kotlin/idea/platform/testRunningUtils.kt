@@ -79,7 +79,7 @@ fun DeclarationDescriptor.isKotlinTestDeclaration(): Boolean {
     return classDescriptor.declaredCallableMembers.any { it.isKotlinTestDeclaration() }
 }
 
-internal fun IdePlatformKind<*>.isCompatibleWith(platform: TargetPlatform): Boolean {
+internal fun IdePlatformKind.isCompatibleWith(platform: TargetPlatform): Boolean {
     return when (this) {
         is JvmIdePlatformKind -> platform.has(JvmPlatform::class)
         is NativeIdePlatformKind -> platform.has(NativePlatform::class)

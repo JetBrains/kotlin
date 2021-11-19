@@ -269,7 +269,7 @@ private fun parseArguments(
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSupport(
-    platformKind: IdePlatformKind<*>?,
+    platformKind: IdePlatformKind?,
     module: Module?
 ) {
     if (platformKind.isCommon || module?.implementsCommonModule == true) {
