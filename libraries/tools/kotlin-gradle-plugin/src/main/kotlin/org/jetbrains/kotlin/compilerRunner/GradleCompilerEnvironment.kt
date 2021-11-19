@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
@@ -15,7 +14,7 @@ internal class GradleCompilerEnvironment(
     val compilerClasspath: Iterable<File>,
     messageCollector: GradlePrintingMessageCollector,
     outputItemsCollector: OutputItemsCollector,
-    val outputFiles: FileCollection,
+    val outputFiles: List<File>,
     val reportingSettings: ReportingSettings,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null,
     val kotlinScriptExtensions: Array<String> = emptyArray()

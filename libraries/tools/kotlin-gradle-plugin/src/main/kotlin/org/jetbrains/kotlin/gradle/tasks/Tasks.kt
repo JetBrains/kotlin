@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
-import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -333,6 +332,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
 
+    /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup]'s kdoc for more info). */
+    @get:Internal
+    protected open val taskOutputsBackupExcludes: List<File> = emptyList()
+
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         KotlinBuildStatsService.applyIfInitialised {
@@ -356,7 +359,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                             fileSystemOperations,
                             layout.buildDirectory,
                             layout.buildDirectory.dir("snapshot/kotlin/$name"),
-                            allOutputFiles()
+                            allOutputFiles(),
+                            taskOutputsBackupExcludes
                         ).also {
                             it.createSnapshot()
                         }
@@ -364,9 +368,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                 else null
 
             if (!isIncrementalCompilationEnabled()) {
-                clearLocalState("IC is disabled")
+                cleanOutputsAndLocalState("IC is disabled")
             } else if (!inputChanges.isIncremental) {
-                clearLocalState("Task cannot run incrementally")
+                cleanOutputsAndLocalState("Task cannot run incrementally")
             }
 
             executeImpl(inputChanges, outputsBackup)
@@ -647,6 +651,13 @@ abstract class KotlinCompile @Inject constructor(
         abstract val classpathSnapshotDir: DirectoryProperty
     }
 
+    override val incrementalProps: List<FileCollection>
+        get() = listOf(stableSources, commonSourceSet, classpathSnapshotProperties.classpath, classpathSnapshotProperties.classpathSnapshot)
+
+    // Exclude classpathSnapshotDir from TaskOutputsBackup (see TaskOutputsBackup's kdoc for more info). */
+    override val taskOutputsBackupExcludes: List<File>
+        get() = classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { listOf(it) } ?: emptyList()
+
     @get:Internal
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objects
         .propertyWithNewInstance(
@@ -711,9 +722,6 @@ abstract class KotlinCompile @Inject constructor(
         KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
 
-    override val incrementalProps: List<FileCollection>
-        get() = listOf(stableSources, commonSourceSet, classpathSnapshotProperties.classpath, classpathSnapshotProperties.classpathSnapshot)
-
     override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
     override fun validateCompilerArguments(args: K2JVMCompilerArguments) {
@@ -744,9 +752,14 @@ abstract class KotlinCompile @Inject constructor(
             )
         } else null
 
+        @Suppress("ConvertArgumentToSet")
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
-            outputFiles = allOutputFiles(),
+            // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
+            // TaskOutputsBackup, we don't want classpathSnapshotDir to be cleaned immediately on rebuild, and therefore we exclude it from
+            // outputFiles here. (See TaskOutputsBackup's kdoc for more info.)
+            outputFiles = allOutputFiles()
+                    - (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { setOf(it) } ?: emptySet()),
             reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
@@ -1148,4 +1161,3 @@ data class KotlinCompilerPluginData(
         val outputFiles: Set<File>
     )
 }
-

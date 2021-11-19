@@ -129,7 +129,7 @@ class IncrementalJvmCompilerRunner(
     workingDir,
     "caches-jvm",
     reporter,
-    outputFiles = outputFiles,
+    additionalOutputFiles = outputFiles,
     buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
@@ -454,7 +454,7 @@ class IncrementalJvmCompilerRunner(
         return exitCode
     }
 
-    override fun performWorkAfterCompilation(caches: IncrementalJvmCachesManager) {
+    override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager) {
         if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
             reporter.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(classpathChanges, caches.lookupCache)

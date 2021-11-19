@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.GradleException
-import org.gradle.api.file.*
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -42,7 +44,7 @@ internal class GradleCompilerRunnerWithWorkers(
         workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)
             if (taskOutputsBackup != null) {
-                params.taskOutputs.from(taskOutputsBackup.outputs)
+                params.taskOutputs.set(taskOutputsBackup.outputs)
                 params.buildDir.set(taskOutputsBackup.buildDirectory)
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)
@@ -63,7 +65,7 @@ internal class GradleCompilerRunnerWithWorkers(
                     fileSystemOperations,
                     parameters.buildDir,
                     parameters.snapshotsDir,
-                    parameters.taskOutputs
+                    parameters.taskOutputs.get()
                 )
             } else {
                 null
@@ -93,7 +95,7 @@ internal class GradleCompilerRunnerWithWorkers(
 
     internal interface GradleKotlinCompilerWorkParameters : WorkParameters {
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
-        val taskOutputs: ConfigurableFileCollection
+        val taskOutputs: ListProperty<File>
         val snapshotsDir: DirectoryProperty
         val buildDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter>

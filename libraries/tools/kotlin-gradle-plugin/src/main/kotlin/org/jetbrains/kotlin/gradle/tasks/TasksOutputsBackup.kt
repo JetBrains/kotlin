@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import java.io.File
@@ -16,12 +15,28 @@ internal class TaskOutputsBackup(
     val fileSystemOperations: FileSystemOperations,
     val buildDirectory: DirectoryProperty,
     val snapshotsDir: Provider<Directory>,
-    val outputs: FileCollection
+
+    allOutputs: List<File>,
+
+    /**
+     * Task outputs that we don't want to back up for performance reasons (e.g., if (1) they are too big, and (2) they are usually updated
+     * only at the end of the task execution--in a failed task run, they are usually unchanged and therefore don't need to be restored).
+     *
+     * NOTE: In `IncrementalCompilerRunner`, if incremental compilation fails, it will try again by cleaning all the outputs and perform
+     * non-incremental compilation. It is important that `IncrementalCompilerRunner` do not clean [outputsToExclude] immediately but only
+     * right before [outputsToExclude] are updated (which is usually at the end of the task execution). This is so that if the fallback
+     * compilation fails, [outputsToExclude] will remain unchanged and the other outputs will be restored, and the next task run can be
+     * incremental.
+     */
+    outputsToExclude: List<File> = emptyList()
 ) {
+    /** The outputs to back up and restore. Note that this may be a subset of all the outputs of a task (see `outputsToExclude`). */
+    val outputs: List<File> = allOutputs - outputsToExclude.toSet()
+
     fun createSnapshot() {
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
-        outputs.files.toSortedSet().forEachIndexed { index, outputPath ->
+        outputs.toSortedSet().forEachIndexed { index, outputPath ->
             val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
             if (outputPath.isDirectory) {
                 fileSystemOperations.sync { spec ->
@@ -42,7 +57,7 @@ internal class TaskOutputsBackup(
             it.delete(outputs)
         }
 
-        outputs.files.toSortedSet().forEachIndexed { index, outputPath ->
+        outputs.toSortedSet().forEachIndexed { index, outputPath ->
             val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
             val fileInSnapshot = snapshotsDir.get().file(pathInSnapshot).asFile
             if (fileInSnapshot.isDirectory) {
