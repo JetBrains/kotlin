@@ -33233,6 +33233,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/sealed/delegatingConstructor.kt");
         }
 
+        @TestMetadata("kt49752.kt")
+        public void testKt49752() throws Exception {
+            runTest("compiler/testData/codegen/box/sealed/kt49752.kt");
+        }
+
         @TestMetadata("multipleFiles_enabled.kt")
         public void testMultipleFiles_enabled() throws Exception {
             runTest("compiler/testData/codegen/box/sealed/multipleFiles_enabled.kt");
