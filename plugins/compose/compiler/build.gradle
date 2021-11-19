@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import androidx.build.LibraryGroups
 import androidx.build.LibraryType
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
