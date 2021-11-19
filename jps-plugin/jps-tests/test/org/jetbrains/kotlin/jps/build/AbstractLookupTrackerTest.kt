@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.containers.StringInterner
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
-import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -204,10 +204,10 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     }
 
     override fun tearDown() {
-        runAll(
+        RunAll(
             ThrowableRunnable { enableICFixture.tearDown() },
             ThrowableRunnable { super.tearDown() }
-        )
+        ).run()
     }
 
     protected abstract fun markDirty(removedAndModifiedSources: Iterable<File>)
