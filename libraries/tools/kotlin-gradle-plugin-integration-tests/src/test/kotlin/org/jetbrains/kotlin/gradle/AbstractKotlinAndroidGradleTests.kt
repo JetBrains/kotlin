@@ -536,6 +536,51 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
             }
         }
     }
+
+    @Test
+    fun testAndroidMultiplatformPublicationAGPCompatibility() = with(Project("new-mpp-android-agp-compatibility")) {
+        /* Publish producer library with current version of AGP */
+        build(":producer:publishAllPublicationsToBuildDirRepository") {
+            assertSuccessful()
+
+            /* Check expected publication layout */
+            assertFileExists("build/repo/com/example/producer-android")
+            assertFileExists("build/repo/com/example/producer-android-debug")
+            assertFileExists("build/repo/com/example/producer-jvm")
+        }
+
+        val checkedConsumerAGPVersions = AGPVersion.testedVersions
+            // Special version added for testing KT-49798
+            .plus(AGPVersion.fromString("7.1.0-beta02"))
+            .filter { version -> version >= AGPVersion.v4_2_0 }
+
+        checkedConsumerAGPVersions.forEach { agpVersion ->
+
+            this.setupWorkingDir()
+            println("Testing compatibility for AGP consumer version $agpVersion")
+            val buildOptions = defaultBuildOptions().copy(androidGradlePluginVersion = agpVersion)
+
+            /*
+            Project: multiplatformAndroidConsumer is a mpp project with jvm and android targets.
+            This project depends on the previous publication as 'commonMainImplementation' dependency
+            */
+            build(":multiplatformAndroidConsumer:assemble", options = buildOptions) {
+                assertSuccessful(
+                    "multiplatformAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+
+            /*
+            Project: plainAndroidConsumer only uses the 'kotlin("android")' plugin
+            This project depends on the previous publication as 'implementation' dependency
+             */
+            build(":plainAndroidConsumer:assemble", options = buildOptions) {
+                assertSuccessful(
+                    "plainAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+        }
+    }
 }
 
 open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
