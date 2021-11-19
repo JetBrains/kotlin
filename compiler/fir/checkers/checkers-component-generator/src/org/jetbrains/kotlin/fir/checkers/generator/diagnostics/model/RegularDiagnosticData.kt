@@ -111,6 +111,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     PROPERTY_DELEGATE,
     IMPORT_ALIAS,
     DECLARATION_START_TO_NAME,
+    REDUNDANT_NULLABLE,
 
     ;
 

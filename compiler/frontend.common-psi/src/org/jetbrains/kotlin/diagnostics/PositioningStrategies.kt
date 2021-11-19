@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.tree.TokenSet
@@ -547,6 +548,30 @@ object PositioningStrategies {
                 is KtOperationExpression -> markElement(element.operationReference)
                 else -> error("Expression is not an if, when or operation expression: ${element.getElementTextWithContext()}")
             }
+    }
+
+    @JvmField
+    val REDUNDANT_NULLABLE: PositioningStrategy<KtTypeReference> = object : PositioningStrategy<KtTypeReference>() {
+        override fun mark(element: KtTypeReference): List<TextRange> {
+            var typeElement = element.typeElement
+            var question: ASTNode? = null
+            var prevQuestion: ASTNode? = null
+            var lastQuestion: ASTNode? = null
+            while (typeElement is KtNullableType) {
+                prevQuestion = question
+                question = typeElement.questionMarkNode
+                if (lastQuestion == null) {
+                    lastQuestion = question
+                }
+                typeElement = typeElement.innerType
+            }
+
+            if (lastQuestion != null) {
+                return markRange((prevQuestion ?: lastQuestion).psi, lastQuestion.psi)
+            }
+
+            return super.mark(element)
+        }
     }
 
     @JvmField

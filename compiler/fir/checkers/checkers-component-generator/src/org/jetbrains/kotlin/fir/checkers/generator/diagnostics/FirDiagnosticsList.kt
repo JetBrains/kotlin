@@ -655,6 +655,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("description")
             parameter<Boolean>("isCastToNotNull")
         }
+
+        val REDUNDANT_NULLABLE by warning<KtTypeReference>(PositioningStrategy.REDUNDANT_NULLABLE)
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

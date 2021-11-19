@@ -14,7 +14,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
@@ -827,6 +826,40 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val REDUNDANT_NULLABLE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val ref = Ref<Array<LighterASTNode?>>()
+            var child: LighterASTNode? = node
+            var lastQuest: LighterASTNode? = null
+            var prevQuest: LighterASTNode? = null
+            var quest: LighterASTNode? = null
+            while (child != null) {
+                child = getNullableChild(tree, child, ref)
+                prevQuest = quest
+                quest = ref.get().elementAtOrNull(1)
+                if (lastQuest == null) {
+                    lastQuest = quest
+                }
+            }
+            return markRange(prevQuest ?: lastQuest ?: node, lastQuest ?: node, startOffset, endOffset, tree, node)
+        }
+
+        private fun getNullableChild(
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+            node: LighterASTNode,
+            ref: Ref<Array<LighterASTNode?>>
+        ): LighterASTNode? {
+            tree.getChildren(node, ref)
+            val firstChild = ref.get().firstOrNull() ?: return null
+            return if (firstChild.tokenType != KtNodeTypes.NULLABLE_TYPE) null else firstChild
+        }
+    }
+
     val QUESTION_MARK_BY_TYPE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -1154,6 +1187,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     }
     return result
 }
+
 fun FlyweightCapableTreeStructure<LighterASTNode>.unwrapParenthesesLabelsAndAnnotations(node: LighterASTNode): LighterASTNode {
     var unwrapped = node
     while (true) {

@@ -1617,6 +1617,11 @@ internal class SmartcastImpossibleImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.SmartcastImpossible(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class RedundantNullableImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RedundantNullable(), KtAbstractFirDiagnostic<KtTypeReference>
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     override val firDiagnostic: KtPsiDiagnostic,

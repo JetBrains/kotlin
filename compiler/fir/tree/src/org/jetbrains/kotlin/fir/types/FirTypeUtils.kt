@@ -62,20 +62,20 @@ fun FirExpression.isStableSmartcast(): Boolean {
     return this is FirExpressionWithSmartcast && this.isStable
 }
 
-private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
+private val FirTypeRef.lookupTagBasedOrNull: ConeLookupTagBasedType?
     get() = when (this) {
         is FirImplicitBuiltinTypeRef -> type
-        is FirResolvedTypeRef -> type as? ConeClassLikeType
+        is FirResolvedTypeRef -> type as? ConeLookupTagBasedType
         else -> null
     }
 
 private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
-    val type = this.classLikeTypeOrNull ?: return false
-    return type.lookupTag.classId == classId && type.isNullable == isNullable
+    val type = this.lookupTagBasedOrNull ?: return false
+    return (type as? ConeClassLikeType)?.lookupTag?.classId == classId && type.isNullable == isNullable
 }
 
 val FirTypeRef.isMarkedNullable: Boolean?
-    get() = classLikeTypeOrNull?.isMarkedNullable
+    get() = if (this is FirTypeRefWithNullability) this.isMarkedNullable else lookupTagBasedOrNull?.isMarkedNullable
 
 val FirFunctionTypeRef.parametersCount: Int
     get() = if (receiverTypeRef != null)

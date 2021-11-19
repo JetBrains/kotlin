@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantNullableChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 
-object CommonTypeCheckers : TypeCheckers() {
+object ExtendedTypeCheckers : TypeCheckers() {
     override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
-        FirTypeAnnotationChecker,
-        FirSuspendModifierChecker,
-        FirDeprecatedTypeChecker,
-        FirOptInUsageTypeRefChecker
+        RedundantNullableChecker
     )
 }

@@ -90,7 +90,7 @@ private object CheckersFactory {
     }
 
     private fun createTypeCheckers(useExtendedCheckers: Boolean): TypeCheckers? =
-        if (useExtendedCheckers) null else CommonTypeCheckers
+        if (useExtendedCheckers) ExtendedTypeCheckers else CommonTypeCheckers
 
 
     @OptIn(ExperimentalStdlibApi::class)

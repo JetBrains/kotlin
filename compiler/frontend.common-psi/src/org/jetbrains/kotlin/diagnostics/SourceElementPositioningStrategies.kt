@@ -248,6 +248,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.NAME_IDENTIFIER
     )
 
+    val REDUNDANT_NULLABLE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REDUNDANT_NULLABLE,
+        PositioningStrategies.REDUNDANT_NULLABLE
+    )
+
     val QUESTION_MARK_BY_TYPE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.QUESTION_MARK_BY_TYPE,
         PositioningStrategies.QUESTION_MARK_BY_TYPE

@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.diagnostics.getAncestors
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
@@ -39,6 +37,8 @@ interface SourceNavigator {
     fun FirDeclaration.getRawName(): String?
 
     fun FirValueParameterSymbol.isCatchElementParameter(): Boolean
+
+    fun FirTypeRef.isRedundantNullable(): Boolean
 
     companion object {
 
@@ -90,6 +90,19 @@ open class LightTreeSourceNavigator : SourceNavigator {
         return source?.getParentOfParent()?.tokenType == KtNodeTypes.CATCH
     }
 
+    override fun FirTypeRef.isRedundantNullable(): Boolean {
+        val source = source ?: return false
+        val ref = Ref<Array<LighterASTNode?>>()
+        val firstChild = getNullableChild(source, source.lighterASTNode, ref) ?: return false
+        return getNullableChild(source, firstChild, ref) != null
+    }
+
+    private fun getNullableChild(source: KtSourceElement, node: LighterASTNode, ref: Ref<Array<LighterASTNode?>>): LighterASTNode? {
+        source.treeStructure.getChildren(node, ref)
+        val firstChild = ref.get().firstOrNull() ?: return null
+        return if (firstChild.tokenType != KtNodeTypes.NULLABLE_TYPE) null else firstChild
+    }
+
     private fun KtSourceElement?.getParentOfParent(): LighterASTNode? {
         val source = this ?: return null
         var parent = source.treeStructure.getParent(source.lighterASTNode)
@@ -130,5 +143,12 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     override fun FirValueParameterSymbol.isCatchElementParameter(): Boolean {
         return source?.psi<PsiElement>()?.parent?.parent is KtCatchClause
+    }
+
+    override fun FirTypeRef.isRedundantNullable(): Boolean {
+        val source = source ?: return false
+        val typeReference = (source.psi as? KtTypeReference) ?: return false
+        val typeElement = typeReference.typeElement as? KtNullableType ?: return false
+        return typeElement.innerType is KtNullableType
     }
 }

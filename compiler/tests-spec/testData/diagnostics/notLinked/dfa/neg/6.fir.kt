@@ -1,6 +1,7 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+// WITH_EXTENDED_CHECKERS
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
@@ -70,8 +71,8 @@ fun case_8(x: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?) {
-    if (!!!(x !is TypealiasNullableStringIndirect?)) else {
-        if (!(x !is TypealiasNullableStringIndirect?)) else {
+    if (!!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
+        if (!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>get<!>(0)
         }

@@ -19,6 +19,7 @@ fun FirSessionFactory.FirSessionConfigurator.registerCommonCheckers() {
 fun FirSessionFactory.FirSessionConfigurator.registerExtendedCommonCheckers() {
     useCheckers(ExtendedExpressionCheckers)
     useCheckers(ExtendedDeclarationCheckers)
+    useCheckers(ExtendedTypeCheckers)
 }
 
 fun FirSessionFactory.FirSessionConfigurator.registerJvmCheckers() {
