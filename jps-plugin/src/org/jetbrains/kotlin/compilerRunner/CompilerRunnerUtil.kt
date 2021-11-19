@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.utils.KotlinPathsFromBaseDirectory
 import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
-import kotlin.io.path.Path
-import kotlin.io.path.exists
-import kotlin.io.path.name
+import java.nio.file.Files
+import java.nio.file.Paths
 
 object CompilerRunnerUtil {
     private var ourClassLoaderRef = SoftReference<ClassLoader>(null)
@@ -38,16 +37,16 @@ object CompilerRunnerUtil {
             if (javaHomePath == null || javaHomePath.isEmpty()) {
                 return null
             }
-            val javaHome = Path(javaHomePath)
+            val javaHome = Paths.get(javaHomePath)
             var toolsJar = javaHome.resolve("lib/tools.jar")
-            if (toolsJar.exists()) {
+            if (Files.exists(toolsJar)) {
                 return toolsJar.toFile()
             }
 
             // We might be inside jre.
-            if (javaHome.name == "jre") {
+            if (javaHome.fileName?.toString() == "jre") {
                 toolsJar = javaHome.resolveSibling("lib/tools.jar")
-                if (toolsJar.exists()) {
+                if (Files.exists(toolsJar)) {
                     return toolsJar.toFile()
                 }
             }

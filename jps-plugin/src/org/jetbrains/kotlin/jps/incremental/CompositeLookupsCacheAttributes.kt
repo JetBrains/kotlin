@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
 import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
 
 /**
  * Attributes manager for global lookups cache that may contain lookups for several compilers (jvm, js).
@@ -34,10 +34,10 @@ class CompositeLookupsCacheAttributesManager(
     override fun loadActual(): CompositeLookupsCacheAttributes? {
         val version = versionManager.loadActual() ?: return null
 
-        if (actualComponentsFile.notExists()) return null
+        if (Files.notExists(actualComponentsFile)) return null
 
         val components = try {
-            actualComponentsFile.readLines().toSet()
+            Files.readAllLines(actualComponentsFile).toSet()
         } catch (e: IOException) {
             return null
         }
@@ -48,12 +48,12 @@ class CompositeLookupsCacheAttributesManager(
     override fun writeVersion(values: CompositeLookupsCacheAttributes?) {
         if (values == null) {
             versionManager.writeVersion(null)
-            actualComponentsFile.deleteIfExists()
+            Files.deleteIfExists(actualComponentsFile)
         } else {
             versionManager.writeVersion(CacheVersion(values.version))
 
-            actualComponentsFile.parent.createDirectories()
-            actualComponentsFile.writeText(values.components.joinToString("\n"))
+            Files.createDirectories(actualComponentsFile.parent)
+            Files.newOutputStream(actualComponentsFile).bufferedWriter().use { it.append(values.components.joinToString("\n")) }
         }
     }
 

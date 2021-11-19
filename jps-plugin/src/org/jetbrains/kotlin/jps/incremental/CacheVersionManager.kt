@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
 
 /**
  * Manages files with actual version [loadActual] and provides expected version [expected].
@@ -28,9 +28,9 @@ class CacheVersionManager(
         else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, JvmMetadataVersion.INSTANCE)
 
     override fun loadActual(): CacheVersion? =
-        if (versionFile.notExists()) null
+        if (Files.notExists(versionFile)) null
         else try {
-            CacheVersion(versionFile.readText().toInt())
+            CacheVersion(Files.newInputStream(versionFile).bufferedReader().use { it.readText() }.toInt())
         } catch (e: NumberFormatException) {
             null
         } catch (e: IOException) {
@@ -38,10 +38,10 @@ class CacheVersionManager(
         }
 
     override fun writeVersion(values: CacheVersion?) {
-        if (values == null) versionFile.deleteIfExists()
+        if (values == null) Files.deleteIfExists(versionFile)
         else {
-            versionFile.parent.createDirectories()
-            versionFile.writeText(values.intValue.toString())
+            Files.createDirectories(versionFile.parent)
+            Files.newOutputStream(versionFile).bufferedWriter().use { it.append(values.intValue.toString()) }
         }
     }
 
