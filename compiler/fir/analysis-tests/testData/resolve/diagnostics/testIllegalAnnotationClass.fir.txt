@@ -7,7 +7,7 @@ FILE: KotlinImporterComponent.kt
         }
 
         public final class State : R|kotlin/Any| {
-            public constructor(directories: R|kotlin/collections/List<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|ft<kotlin/String, kotlin/String?>|>()): R|simulation/KotlinImporterComponent.State| {
+            public constructor(directories: R|kotlin/collections/List<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()): R|simulation/KotlinImporterComponent.State| {
                 super<R|kotlin/Any|>()
             }
 

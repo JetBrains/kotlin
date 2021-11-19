@@ -118,30 +118,30 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
           CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf> [inline] declared in kotlin.collections.MapsKt' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
             <K>: kotlin.String
             <V>: kotlin.Int
-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> ($this:<root>.C) returnType:@[FlexibleNullability] kotlin.Int?
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-test8> (): @[FlexibleNullability] kotlin.Int? declared in <root>.C'
-            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.MapAccessorsKt.getValue [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=@[FlexibleNullability] kotlin.Int? origin=null
-              <V>: @[FlexibleNullability] kotlin.Int?
-              <V1>: @[FlexibleNullability] kotlin.Int?
+          RETURN type=kotlin.Nothing from='public final fun <get-test8> (): kotlin.Int declared in <root>.C'
+            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.MapAccessorsKt.getValue [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Int origin=null
+              <V>: kotlin.Int
+              <V1>: kotlin.Int
               $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=null
               thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=null
-              property: PROPERTY_REFERENCE 'public final test8: @[FlexibleNullability] kotlin.Int? [delegated,var]' field=null getter='public final fun <get-test8> (): @[FlexibleNullability] kotlin.Int? declared in <root>.C' setter='public final fun <set-test8> (<set-?>: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, @[FlexibleNullability] kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit
+              property: PROPERTY_REFERENCE 'public final test8: kotlin.Int [delegated,var]' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
-        VALUE_PARAMETER name:<set-?> index:0 type:@[FlexibleNullability] kotlin.Int?
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
           CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.MapAccessorsKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Unit origin=null
-            <V>: @[FlexibleNullability] kotlin.Int?
+            <V>: kotlin.Int
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
             thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null
-            property: PROPERTY_REFERENCE 'public final test8: @[FlexibleNullability] kotlin.Int? [delegated,var]' field=null getter='public final fun <get-test8> (): @[FlexibleNullability] kotlin.Int? declared in <root>.C' setter='public final fun <set-test8> (<set-?>: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, @[FlexibleNullability] kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-            value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.Int? declared in <root>.C.<set-test8>' type=@[FlexibleNullability] kotlin.Int? origin=null
+            property: PROPERTY_REFERENCE 'public final test8: kotlin.Int [delegated,var]' field=null getter='public final fun <get-test8> (): kotlin.Int declared in <root>.C' setter='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test8>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

@@ -38,11 +38,12 @@ class C {
 
 }
 
-var test4: @FlexibleNullability Any? /* by */
+var test4: Any /* by */
   field = hashMapOf<String, Any>()
-  get(): @FlexibleNullability Any? {
-    return #test4$delegate.getValue<@FlexibleNullability Any?, @FlexibleNullability Any?>(thisRef = null, property = ::test4)
+  get(): Any {
+    return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
   }
-  set(<set-?>: @FlexibleNullability Any?) {
-    #test4$delegate.setValue<@FlexibleNullability Any?>(thisRef = null, property = ::test4, value = <set-?>)
+  set(<set-?>: Any) {
+    #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }
+

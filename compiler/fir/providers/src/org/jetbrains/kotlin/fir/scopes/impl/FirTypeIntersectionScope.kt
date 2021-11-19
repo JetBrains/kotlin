@@ -159,8 +159,7 @@ class FirTypeIntersectionScope private constructor(
         }.withScope(scopeForMostSpecific)
     }
 
-    private fun <S : FirCallableSymbol<*>>
-            MutableList<MemberWithBaseScope<S>>.calcBaseMembersForIntersectionOverride(): List<MemberWithBaseScope<S>> {
+    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.calcBaseMembersForIntersectionOverride(): List<MemberWithBaseScope<S>> {
         if (size == 1) return this
         val unwrappedMemberSet = mutableSetOf<MemberWithBaseScope<S>>()
         for ((member, scope) in this) {
@@ -195,8 +194,9 @@ class FirTypeIntersectionScope private constructor(
                 }
             }
         }
-        removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
-        return this
+        val result = this.toMutableList()
+        result.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
+        return result
     }
 
     private fun <D : FirCallableSymbol<*>> chooseIntersectionOverrideModality(
@@ -514,7 +514,7 @@ class FirTypeIntersectionScope private constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<MemberWithBaseScope<S>> {
+    fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<MemberWithBaseScope<S>> {
         val intersectionOverride = intersectionOverrides.getValueIfComputed(symbol)
         val allDirectOverridden = overriddenSymbols[symbol].orEmpty() + intersectionOverride?.let {
             overriddenSymbols[it.member]

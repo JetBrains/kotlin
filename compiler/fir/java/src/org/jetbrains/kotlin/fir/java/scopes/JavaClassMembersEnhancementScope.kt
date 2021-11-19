@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -26,7 +27,7 @@ class JavaClassMembersEnhancementScope(
 
     private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableDeclaration>>>()
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
-        overriddenMembers(name)
+        overriddenMembersForEnhancement(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -62,6 +63,23 @@ class JavaClassMembersEnhancementScope(
         }
 
         return super.processFunctionsByName(name, processor)
+    }
+
+    private fun FirCallableDeclaration.overriddenMembersForEnhancement(name: Name): List<FirCallableDeclaration> {
+        val directlyOverriddensFromScopeFir = overriddenMembers(name)
+        val superTypesScope = useSiteMemberScope.superTypesScope as? FirTypeIntersectionScope ?: return directlyOverriddensFromScopeFir
+
+        val directlyOverriddensFromScope = directlyOverriddensFromScopeFir.map { it.symbol }
+        val result = mutableSetOf<FirCallableSymbol<*>>()
+        for (intersectedOverriddenSymbol in directlyOverriddensFromScope) {
+            val newOverriddens = superTypesScope.getDirectOverriddenSymbols(intersectedOverriddenSymbol).map { it.member }
+            if (newOverriddens.isNotEmpty()) {
+                result += newOverriddens
+            } else {
+                result += intersectedOverriddenSymbol
+            }
+        }
+        return result.map { it.fir }
     }
 
     private fun FirCallableDeclaration.overriddenMembers(name: Name): List<FirCallableDeclaration> {

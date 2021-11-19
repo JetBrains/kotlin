@@ -19,7 +19,7 @@ abstract class AbstractFirUseSiteMemberScope(
     val classId: ClassId,
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    protected val superTypesScope: FirTypeScope,
+    val superTypesScope: FirTypeScope,
     protected val declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 

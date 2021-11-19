@@ -6,7 +6,7 @@ public abstract interface Kt3302 : R|kotlin/Any| {
 
     }
     public abstract interface BasicBSONObject : R|test/Kt3302.LinkedHashMap<ft<kotlin/String, kotlin/String?>, ft<kotlin/Any, kotlin/Any?>>|, R|test/Kt3302.BSONObject| {
-        @R|java/lang/Override|() public abstract fun put(key: R|ft<kotlin/String, kotlin/String?>|, value: R|ft<kotlin/Any, kotlin/Any?>|): R|ft<kotlin/Any, kotlin/Any?>|
+        @R|java/lang/Override|() public abstract fun put(key: R|@EnhancedNullability kotlin/String|, value: R|@EnhancedNullability kotlin/Any|): R|ft<kotlin/Any, kotlin/Any?>|
 
     }
     public abstract interface LinkedHashMap<K : R|ft<kotlin/Any, kotlin/Any?>|, V : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {

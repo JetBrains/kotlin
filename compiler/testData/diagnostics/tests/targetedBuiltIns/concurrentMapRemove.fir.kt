@@ -16,6 +16,6 @@ fun foo() {
     concurrent.remove(null, null)
 
     // @PurelyImplements
-    concurrentHash.remove(null, 1)
-    concurrentHash.remove(null, null)
+    concurrentHash.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, 1)
+    concurrentHash.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 }

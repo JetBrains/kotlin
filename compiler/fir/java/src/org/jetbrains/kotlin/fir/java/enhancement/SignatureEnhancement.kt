@@ -384,9 +384,6 @@ class FirSignatureEnhancement(
         ownerParameter: FirJavaValueParameter,
         index: Int
     ): FirResolvedTypeRef {
-        if (ownerParameter.returnTypeRef is FirResolvedTypeRef) {
-            return ownerParameter.returnTypeRef as FirResolvedTypeRef
-        }
         return ownerFunction.enhanceValueParameter(
             overriddenMembers,
             ownerParameter,

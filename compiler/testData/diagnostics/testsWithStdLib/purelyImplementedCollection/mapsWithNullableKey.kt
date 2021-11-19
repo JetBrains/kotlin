@@ -17,6 +17,7 @@ fun hashMapTest() {
     x[bar()] = 1
     x[""] = <!TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
+    x[""] = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
     val b1: MutableMap<String?, Int?> = <!TYPE_MISMATCH!>x<!>
     val b2: MutableMap<String?, Int> = x

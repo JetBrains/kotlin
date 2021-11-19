@@ -44,13 +44,14 @@ class C {
       return <this>.#test7$delegate.getValue<Int>(thisRef = <this>, property = C::test7)
     }
 
-  var test8: @FlexibleNullability Int? /* by */
+  var test8: Int /* by */
     field = hashMapOf<String, Int>()
-    get(): @FlexibleNullability Int? {
-      return <this>.#test8$delegate.getValue<@FlexibleNullability Int?, @FlexibleNullability Int?>(thisRef = <this>, property = C::test8)
+    get(): Int {
+      return <this>.#test8$delegate.getValue<Int, Int>(thisRef = <this>, property = C::test8)
     }
-    set(<set-?>: @FlexibleNullability Int?) {
-      <this>.#test8$delegate.setValue<@FlexibleNullability Int?>(thisRef = <this>, property = C::test8, value = <set-?>)
+    set(<set-?>: Int) {
+      <this>.#test8$delegate.setValue<Int>(thisRef = <this>, property = C::test8, value = <set-?>)
     }
 
 }
+

@@ -17346,6 +17346,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("purelyImplementedSupertype.kt")
+            public void testPurelyImplementedSupertype() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/purelyImplementedSupertype.kt");
+            }
+
+            @Test
             @TestMetadata("rawOverride.kt")
             public void testRawOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/rawOverride.kt");
