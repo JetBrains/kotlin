@@ -6,10 +6,12 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
-import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.incremental.cleanDirectoryContents
+import org.jetbrains.kotlin.incremental.forceDeleteRecursively
 import java.io.File
 
 fun throwGradleExceptionIfError(exitCode: ExitCode) {
@@ -23,12 +25,12 @@ fun throwGradleExceptionIfError(exitCode: ExitCode) {
     }
 }
 
-internal fun TaskWithLocalState.clearLocalState(reason: String? = null) {
+internal fun TaskWithLocalState.cleanOutputsAndLocalState(reason: String? = null) {
     val log = GradleKotlinLogger(logger)
-    clearLocalState(allOutputFiles(), log, metrics.get(), reason)
+    cleanOutputsAndLocalState(allOutputFiles(), log, metrics.get(), reason)
 }
 
-internal fun clearLocalState(
+internal fun cleanOutputsAndLocalState(
     outputFiles: Iterable<File>,
     log: KotlinLogger,
     metrics: BuildMetricsReporter,
@@ -36,21 +38,19 @@ internal fun clearLocalState(
 ) {
     log.kotlinDebug {
         val suffix = reason?.let { " ($it)" }.orEmpty()
-        "Clearing output$suffix:"
+        "Cleaning output$suffix:"
     }
 
     metrics.measure(BuildTime.CLEAR_OUTPUT) {
         for (file in outputFiles) {
-            if (!file.exists()) continue
             when {
                 file.isDirectory -> {
-                    log.debug("Deleting output directory: $file")
-                    file.deleteRecursively()
-                    file.mkdirs()
+                    log.debug("Deleting contents of output directory: $file")
+                    file.cleanDirectoryContents()
                 }
                 file.isFile -> {
                     log.debug("Deleting output file: $file")
-                    file.delete()
+                    file.forceDeleteRecursively()
                 }
             }
         }

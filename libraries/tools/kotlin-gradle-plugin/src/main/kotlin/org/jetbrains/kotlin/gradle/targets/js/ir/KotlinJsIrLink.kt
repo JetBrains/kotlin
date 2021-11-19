@@ -348,7 +348,7 @@ internal class CacheBuilder(
             computedCompilerClasspath,
             messageCollector,
             outputItemCollector,
-            outputFiles = objectFiles,
+            outputFiles = objectFiles.files.toList(),
             reportingSettings = reportingSettings
         )
 

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionProperties.ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.gradle.tasks.clearLocalState
+import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -313,7 +313,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun compileOutOfProcess(): ExitCode {
         metrics.addAttribute(BuildAttribute.OUT_OF_PROCESS_EXECUTION)
-        clearLocalState(outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
+        cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
 
         return metrics.measure(BuildTime.NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS) {
             runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, buildDir)
@@ -322,7 +322,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun compileInProcess(messageCollector: MessageCollector): ExitCode {
         metrics.addAttribute(BuildAttribute.IN_PROCESS_EXECUTION)
-        clearLocalState(outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
+        cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
 
         metrics.startMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS, System.nanoTime())
         // in-process compiler should always be run in a different thread

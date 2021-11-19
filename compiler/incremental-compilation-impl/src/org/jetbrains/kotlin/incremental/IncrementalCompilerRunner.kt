@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
-import java.io.IOException
 
 abstract class IncrementalCompilerRunner<
         Args : CommonCompilerArguments,
@@ -50,7 +49,7 @@ abstract class IncrementalCompilerRunner<
     private val buildHistoryFile: File,
     // there might be some additional output directories (e.g. for generated java in kapt)
     // to remove them correctly on rebuild, we pass them as additional argument
-    private val outputFiles: Collection<File> = emptyList()
+    private val additionalOutputFiles: Collection<File> = emptyList()
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -106,7 +105,7 @@ abstract class IncrementalCompilerRunner<
             caches.close(false)
             // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
             reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
-                clearOutputsOnRebuild(args)
+                cleanOutputsAndLocalStateOnRebuild(args)
             }
             caches = createCacheManager(args, projectDir)
             if (providedChangedFiles == null) {
@@ -168,7 +167,9 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
-            performWorkAfterCompilation(caches)
+            if (exitCode == ExitCode.OK) {
+                performWorkAfterSuccessfulCompilation(caches)
+            }
 
             if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
             // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
@@ -193,41 +194,32 @@ abstract class IncrementalCompilerRunner<
             rebuild(BuildAttribute.CACHE_CORRUPTION)
         } finally {
             if (cachesMayBeCorrupted) {
-                clearOutputsOnRebuild(args)
+                cleanOutputsAndLocalStateOnRebuild(args)
             }
         }
     }
 
     /**
-     * Deletes output files and contents of output directories on rebuild (including `@LocalState` files/directories).
+     * Deletes output files and contents of output directories on rebuild, including `@LocalState` files/directories.
      *
-     * If the output directories do not yet exist, they will be created.
+     * If the directories do not yet exist, they will be created.
      */
-    private fun clearOutputsOnRebuild(args: Args) {
-        val destinationDir = destinationDir(args)
-        val (outputDirsThatExist, regularOrNonExistentOutputFiles) = outputFiles.partition { it.isDirectory }
-        val regularOutputFiles = regularOrNonExistentOutputFiles.filter { it.exists() }
+    private fun cleanOutputsAndLocalStateOnRebuild(args: Args) {
+        // Use Set as additionalOutputFiles may already contain destinationDir and workingDir
+        val outputFiles = setOf(destinationDir(args), workingDir) + additionalOutputFiles
 
-        // outputDirsThatExist may or may not contain destinationDir and workingDir.
-        // Collect all of them so that we don't miss any output directories.
-        // Use Set to avoid duplication.
-        val allOutputDirs = setOf(destinationDir, workingDir) + outputDirsThatExist
-
-        reporter.reportVerbose { "Clearing outputs on rebuild" }
-        allOutputDirs.forEach { dir ->
-            reporter.reportVerbose { "  Deleting contents of directory '${dir.path}'" }
-            dir.listFiles()?.forEach {
-                it.deleteRecursively()
-                if (it.exists()) throw IOException("Could not delete '${it.path}'")
+        reporter.reportVerbose { "Cleaning outputs on rebuild" }
+        outputFiles.forEach {
+            when {
+                it.isDirectory -> {
+                    reporter.reportVerbose { "  Deleting contents of directory '${it.path}'" }
+                    it.cleanDirectoryContents()
+                }
+                it.isFile -> {
+                    reporter.reportVerbose { "  Deleting file '${it.path}'" }
+                    it.forceDeleteRecursively()
+                }
             }
-
-            dir.mkdirs()
-            if (!dir.exists()) throw IOException("Could not create directory '${dir.path}'")
-        }
-        regularOutputFiles.forEach { file ->
-            reporter.reportVerbose { "  Deleting file '${file.path}'" }
-            file.delete()
-            if (file.exists()) throw IOException("Could not delete file '${file.path}'")
         }
     }
 
@@ -502,7 +494,12 @@ abstract class IncrementalCompilerRunner<
         BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
     }
 
-    protected open fun performWorkAfterCompilation(caches: CacheManager) {}
+    /**
+     * Performs some work after a compilation if the compilation completed successfully.
+     *
+     * This method MUST NOT be called when the compilation failed because the results produced by the work here would be incorrect.
+     */
+    protected open fun performWorkAfterSuccessfulCompilation(caches: CacheManager) {}
 
     companion object {
         const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"

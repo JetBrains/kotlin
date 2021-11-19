@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.GradleException
-import org.gradle.api.file.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -63,7 +66,8 @@ internal class GradleCompilerRunnerWithWorkers(
                     fileSystemOperations,
                     parameters.buildDir,
                     parameters.snapshotsDir,
-                    parameters.taskOutputs,
+                    parameters.taskOutputs.files.toList(),
+                    emptyList(),
                     logger
                 )
             } else {
