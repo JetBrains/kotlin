@@ -48,9 +48,6 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.exists
-import kotlin.io.path.extension
-import kotlin.io.path.notExists
 
 private const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
 
@@ -273,8 +270,9 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
     private fun findClassPathRoots(): Collection<File> = allDependencies.classes().roots.filter { file ->
         val path = file.toPath()
-        if (path.notExists()) {
-            val extension = path.extension
+
+        if (Files.notExists(path)) {
+            val extension = path.fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
             // Don't filter out files, we want to report warnings about absence through the common place
             if (extension != "class" && extension != "jar") {
@@ -303,7 +301,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         for (root in roots) {
             val file = root.rootFile
             val prefix = root.packagePrefix
-            if (file.toPath().exists()) {
+            if (Files.exists(file.toPath())) {
                 result.add(JvmSourceRoot(file, prefix.ifEmpty { null }))
             }
         }
