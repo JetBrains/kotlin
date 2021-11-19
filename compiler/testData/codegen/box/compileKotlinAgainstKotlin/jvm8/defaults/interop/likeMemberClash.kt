@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: fail
 // FULL_JDK
 // MODULE: lib
 // !JVM_DEFAULT_MODE: disable

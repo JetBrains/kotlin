@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: RETURN_TYPE_MISMATCH on toOptional: expected Optional<T>, actual @EN Optional<@EN T & Any>
 // IGNORE_BACKEND: ANDROID
 // JVM_TARGET: 1.8
 // FULL_JDK

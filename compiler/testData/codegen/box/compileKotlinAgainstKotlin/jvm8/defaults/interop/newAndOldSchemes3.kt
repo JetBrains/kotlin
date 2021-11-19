@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: AbstractMethodError: Foo.call()Ljava/util/List;
 // FULL_JDK
 // WITH_STDLIB
 

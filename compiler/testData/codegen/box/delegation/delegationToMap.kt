@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: Shouldn't be executed in 'remove'
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK

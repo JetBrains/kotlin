@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: ANDROID
 //  ^ uses API not implemented on minSdkVersion 19
 // IGNORE_BACKEND_FIR: JVM_IR
-//  ^ fir2ir creates an IrConst(value=2, type=@EnhancedNullability Int), which
+// FIR status: fir2ir creates an IrConst(value=2, type=@EnhancedNullability Int), which
 //    the backend generates as an int instead of Integer
 // WITH_STDLIB
 // JVM_TARGET: 1.8

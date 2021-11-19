@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // !LANGUAGE: +MultiPlatformProjects
 // FILE: common.kt
 

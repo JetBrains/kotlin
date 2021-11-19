@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: fail: method nonOverride was found in class DerivedClass
 // FULL_JDK
 // JVM_TARGET: 1.8
 // WITH_STDLIB

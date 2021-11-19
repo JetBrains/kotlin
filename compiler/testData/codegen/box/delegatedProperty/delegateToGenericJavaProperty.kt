@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
-// v-- fir2ir produces an IrFunctionReference of type KProperty0 instead of an IrPropertyReference
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: REPEATED_ANNOTATION at val y9; fir2ir produces an IrFunctionReference of type KProperty0 instead of an IrPropertyReference
 // WITH_REFLECT
 // WITH_STDLIB
 // FILE: J.java

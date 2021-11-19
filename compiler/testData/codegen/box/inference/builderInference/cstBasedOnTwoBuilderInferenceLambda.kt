@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: ARGUMENT_TYPE_MISMATCH at contribute arguments
 // TARGET_BACKEND: JVM
 
 import kotlin.experimental.ExperimentalTypeInference

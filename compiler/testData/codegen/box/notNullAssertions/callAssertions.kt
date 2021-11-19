@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: NPE expected on calling foo
 // DISABLE_PARAM_ASSERTIONS
 
 // MODULE: lib

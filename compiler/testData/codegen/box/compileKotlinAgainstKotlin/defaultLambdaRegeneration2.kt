@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: fail 1 : class test.AKt$test$1$1 ==  class test.AKt$test$1$1
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

@@ -5,6 +5,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: validation failed. TODO decide if we want to fix KT-42020 for FIR as well
 // MODULE: lib
 // FILE: lib.kt
 

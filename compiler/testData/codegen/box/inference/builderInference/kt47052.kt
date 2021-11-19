@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: in progress (delegate branch)
 
 public inline fun <R, C : MutableCollection<in R>> flatMapTo1(destination: C, transform: (List<String>) -> Iterable<R>) {}
 

@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
 // IGNORE_BACKEND_FIR: JVM_IR
-
+// FIR status: NONE_APPLICABLE at all equals calls
 import kotlin.experimental.ExperimentalTypeInference
 
 interface TestInterface<R> {

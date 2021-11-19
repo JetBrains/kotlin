@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: OVERLOAD_RESOLUTION_AMBIGUITY on sub.foo {}
 // WITH_STDLIB
 // MODULE: lib
 // FILE: Super.java

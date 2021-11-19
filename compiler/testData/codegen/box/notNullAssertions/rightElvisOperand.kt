@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: Fail: should have been an exception in 'bar()'
 // MODULE: lib
 // FILE: RightElvisOperand.java
 

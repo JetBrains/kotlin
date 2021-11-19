@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: assertEquals fails (something wrong with argument order/mapping)
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 package test

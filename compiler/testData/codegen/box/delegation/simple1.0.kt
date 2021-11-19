@@ -1,5 +1,6 @@
 // !LANGUAGE: -NoDelegationToJavaDefaultInterfaceMembers
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // FILE: Base.java

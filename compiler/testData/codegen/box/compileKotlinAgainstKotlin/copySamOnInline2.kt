@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: class should be regenerated, but test.AKt$sam$i$java_util_concurrent_Callable$0
 // FULL_JDK
 // WITH_STDLIB
 

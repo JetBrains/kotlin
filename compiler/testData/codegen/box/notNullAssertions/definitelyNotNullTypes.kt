@@ -1,7 +1,7 @@
 // !LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
-
+// FIR status: wrong NOTHING_TO_OVERRIDE at KDerived.foo
 // FILE: JClass.java
 
 import org.jetbrains.annotations.*;

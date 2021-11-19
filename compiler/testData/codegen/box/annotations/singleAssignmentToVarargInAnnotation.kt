@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 // !LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm
 // TARGET_BACKEND: JVM
 

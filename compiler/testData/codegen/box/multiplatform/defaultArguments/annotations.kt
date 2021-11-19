@@ -1,5 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: default argument mapping in MPP isn't designed yet
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: common.kt

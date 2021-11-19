@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: AE: Argument 1: expected R, but found I at INVOKEINTERFACE Sam.get
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 

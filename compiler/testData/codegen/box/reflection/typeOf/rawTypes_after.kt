@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: Fail 1: test.C<*, *>
 // WITH_REFLECT
 // FILE: box.kt
 

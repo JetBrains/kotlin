@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: IAE: tried to access class test.PX from class BoxKt$box$2
 // MODULE: lib
 // FILE: X.java
 package test;

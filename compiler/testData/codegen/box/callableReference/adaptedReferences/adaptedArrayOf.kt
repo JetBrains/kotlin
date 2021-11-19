@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: V
 //  java.lang.UnsupportedOperationException: This function has a reified type parameter and thus can only be inlined at compilation time,
 //  not called directly.
 //    at kotlin.jvm.internal.Intrinsics.throwUndefinedForReified(Intrinsics.java:207)
