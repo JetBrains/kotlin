@@ -5,14 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.createKtInitializerValue
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.*
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktModality
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktSymbolKind
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
@@ -95,23 +102,8 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val isStatic: Boolean
         get() = withValidityAssertion { false }
 
-    override val initializer: KtConstantValue?
-        get() = withValidityAssertion {
-            val initializer = psi.initializer ?: return null
-
-            val compileTimeInitializer = descriptor?.compileTimeInitializer
-            if (compileTimeInitializer != null) {
-                return compileTimeInitializer.toKtConstantValue()
-            }
-
-            val bindingContext = analysisContext.analyze(initializer)
-            val constantValue = ConstantExpressionEvaluator.getConstant(initializer, bindingContext)
-            if (constantValue != null) {
-                return constantValue.toConstantValue(descriptor?.type ?: TypeUtils.NO_EXPECTED_TYPE).toKtConstantValue()
-            }
-
-            return KtUnsupportedConstantValue
-        }
+    override val initializer: KtInitializerValue?
+        get() = withValidityAssertion { createKtInitializerValue(psi, descriptor, analysisContext) }
 
     override val isVal: Boolean
         get() = withValidityAssertion { !psi.isVar }

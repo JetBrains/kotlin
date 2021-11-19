@@ -8,7 +8,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 1
+  initializer: KtConstantInitializerValue(1)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -39,7 +39,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 1
+  initializer: KtConstantInitializerValue(1)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -70,7 +70,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: 1
+  initializer: KtConstantInitializerValue(1)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -101,7 +101,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: 1
+  initializer: KtConstantInitializerValue(1)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -185,7 +185,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 1
+  initializer: KtConstantInitializerValue(1)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -268,7 +268,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 2
+  initializer: KtConstantInitializerValue(2)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -302,7 +302,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 2
+  initializer: KtConstantInitializerValue(2)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -336,7 +336,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 2
+  initializer: KtConstantInitializerValue(2)
   isConst: false
   isDelegatedProperty: false
   isExtension: false

@@ -29,7 +29,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 123
+  initializer: KtConstantInitializerValue(123)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -73,7 +73,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtUnsupportedConstantValue
+  initializer: KtNonConstantInitializerValue(object : Runnable { ...)
   isConst: false
   isDelegatedProperty: false
   isExtension: false

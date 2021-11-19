@@ -167,7 +167,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtUnsupportedConstantValue
+  initializer: KtNonConstantInitializerValue(this)
   isConst: false
   isDelegatedProperty: false
   isExtension: false

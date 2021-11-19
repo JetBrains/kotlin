@@ -139,7 +139,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: null
+  initializer: KtNonConstantInitializerValue(lazy { MyColor(1, 2, 3) })
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -171,7 +171,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: null
+  initializer: KtNonConstantInitializerValue(MyColor(1, 2, 3))
   isConst: false
   isDelegatedProperty: false
   isExtension: false

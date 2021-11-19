@@ -5,7 +5,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 10
+  initializer: KtConstantInitializerValue(10)
   isConst: false
   isDelegatedProperty: false
   isExtension: false

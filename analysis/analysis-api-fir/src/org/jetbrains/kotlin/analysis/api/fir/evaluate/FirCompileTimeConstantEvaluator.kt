@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -35,6 +36,11 @@ internal object FirCompileTimeConstantEvaluator {
             is FirFunctionCall -> evaluate(expression)
             else -> null
         }
+
+    fun evaluateAsKtConstantExpression(expression: FirExpression): KtConstantValue? {
+        val evaluated = evaluate(expression) ?: return null
+        return KtFirConstantValueConverter.toConstantValue(evaluated)
+    }
 
     // TODO: Rework to handle nested expressions
     //  This is no longer used during FIR2IR where an inner expression is recursively rewritten to ConstExpression if possible.

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
-import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
-import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -33,9 +31,12 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
@@ -392,4 +393,31 @@ internal fun DeclarationDescriptor.render(analysisContext: Fe10AnalysisContext, 
 
 internal fun CallableMemberDescriptor.getSymbolPointerSignature(analysisContext: Fe10AnalysisContext): String {
     return render(analysisContext, KtDeclarationRendererOptions.DEFAULT)
+}
+
+internal fun createKtInitializerValue(
+    ktProperty: KtProperty?,
+    propertyDescriptor: PropertyDescriptor?,
+    analysisContext: Fe10AnalysisContext,
+): KtInitializerValue? {
+    require(ktProperty != null || propertyDescriptor != null)
+    if (ktProperty?.initializer == null && propertyDescriptor?.compileTimeInitializer == null) {
+        return null
+    }
+    val initializer = ktProperty?.initializer
+
+    val compileTimeInitializer = propertyDescriptor?.compileTimeInitializer
+    if (compileTimeInitializer != null) {
+        return KtConstantInitializerValue(compileTimeInitializer.toKtConstantValue(), initializer)
+    }
+    if (initializer != null) {
+        val bindingContext = analysisContext.analyze(initializer)
+        val constantValue = ConstantExpressionEvaluator.getConstant(initializer, bindingContext)
+        if (constantValue != null) {
+            val evaluated = constantValue.toConstantValue(propertyDescriptor?.type ?: TypeUtils.NO_EXPECTED_TYPE).toKtConstantValue()
+            return KtConstantInitializerValue(evaluated, initializer)
+        }
+    }
+
+    return KtNonConstantInitializerValue(initializer)
 }

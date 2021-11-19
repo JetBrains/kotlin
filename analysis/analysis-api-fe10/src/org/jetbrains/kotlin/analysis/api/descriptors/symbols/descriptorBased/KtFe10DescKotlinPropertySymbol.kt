@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -66,8 +70,8 @@ internal class KtFe10DescKotlinPropertySymbol(
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
-    override val initializer: KtConstantValue?
-        get() = withValidityAssertion { descriptor.compileTimeInitializer?.toKtConstantValue() }
+    override val initializer: KtInitializerValue?
+        get() = withValidityAssertion { createKtInitializerValue(source as? KtProperty, descriptor, analysisContext) }
 
     override val getter: KtPropertyGetterSymbol
         get() = withValidityAssertion {

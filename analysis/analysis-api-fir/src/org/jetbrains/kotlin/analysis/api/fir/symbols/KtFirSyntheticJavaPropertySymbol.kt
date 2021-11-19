@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.KtFirConstantValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirJavaSyntheticPropertySymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -54,8 +56,8 @@ internal class KtFirSyntheticJavaPropertySymbol(
         firRef.receiverType(builder)
     }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val initializer: KtConstantValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir ->
-        fir.initializer?.let { KtFirConstantValueConverter.toConstantValue(it, resolveState.rootModuleSession) }
+    override val initializer: KtInitializerValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir ->
+        fir.initializer?.asKtInitializerValue()
     }
 
     override val modality: Modality get() = getModality()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -111,7 +112,8 @@ internal class FirLightFieldForPropertySymbol(
         if (propertySymbol !is KtKotlinPropertySymbol) return@lazyPub null
         if (!propertySymbol.isConst) return@lazyPub null
         if (!propertySymbol.isVal) return@lazyPub null
-        (propertySymbol.initializer as? KtLiteralConstantValue<*>)?.createPsiLiteral(this)
+        val constInitializer = propertySymbol.initializer as? KtConstantInitializerValue ?: return@lazyPub null
+        (constInitializer.constant as? KtLiteralConstantValue<*>)?.createPsiLiteral(this)
     }
 
     override fun getInitializer(): PsiExpression? = _initializer

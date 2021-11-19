@@ -38,7 +38,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 2
+  initializer: KtConstantInitializerValue(2)
   isConst: false
   isDelegatedProperty: false
   isExtension: false

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtExpression
 
 public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
@@ -97,7 +99,16 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
     public abstract val isOverride: Boolean
     public abstract val isStatic: Boolean
 
-    public abstract val initializer: KtConstantValue?
+    /**
+     * Value which is provided for as property initializer.
+     *
+     * Possible values:
+     * - `null` - no initializer was provided
+     * - [KtConstantInitializerValue] - initializer value was provided, and it is a compile-time constant
+     * - [KtNonConstantInitializerValue] - initializer value was provided, and it is not a compile-time constant. In case of declaration from source it would include correponding [KtExpression]
+     *
+     */
+    public abstract val initializer: KtInitializerValue?
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }

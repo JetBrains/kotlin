@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
@@ -173,6 +177,7 @@ public object DebugSymbolRenderer {
             is KtType -> renderType(value)
             is KtConstantValue -> renderConstantValue(value)
             is KtNamedConstantValue -> renderNamedConstantValue(value)
+            is KtInitializerValue -> renderKtInitializerValue(value)
             is KtAnnotationApplication -> renderAnnotationApplication(value)
             is KtAnnotationsList -> renderAnnotationsList(value)
             // Other custom values
@@ -193,6 +198,21 @@ public object DebugSymbolRenderer {
         }
     }
 
+    private fun Block.renderKtInitializerValue(value: KtInitializerValue) {
+        when (value) {
+            is KtConstantInitializerValue -> {
+                append("KtConstantInitializerValue(")
+                renderConstantValue(value.constant)
+                append(")")
+            }
+            is KtNonConstantInitializerValue -> {
+                append("KtNonConstantInitializerValue(")
+                append(value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI")
+                append(")")
+            }
+        }
+    }
+
     private fun Block.renderAnnotationsList(value: KtAnnotationsList) {
         renderList(value.annotations)
     }
@@ -207,6 +227,13 @@ public object DebugSymbolRenderer {
             }
             current = current.superclass
         }
+    }
+
+    private fun PsiElement.firstLineOfPsi(): String {
+        val text = text
+        val lines = text.lines()
+        return if (lines.count() <= 1) text
+        else lines.first() + " ..."
     }
 
     private val ignoredPropertyNames = setOf("psi", "token")
