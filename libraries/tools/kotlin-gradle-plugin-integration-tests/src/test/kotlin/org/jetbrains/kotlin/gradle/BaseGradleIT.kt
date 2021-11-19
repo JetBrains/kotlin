@@ -455,11 +455,12 @@ abstract class BaseGradleIT {
         return model
     }
 
-    fun CompiledProject.assertSuccessful() {
+    fun CompiledProject.assertSuccessful(message: String? = null) {
         if (resultCode == 0) return
 
         val errors = "(?m)^.*\\[ERROR] \\[\\S+] (.*)$".toRegex().findAll(output)
         val errorMessage = buildString {
+            if (message != null) appendLine(message)
             appendLine("Gradle build failed")
             appendLine()
             if (errors.any()) {
