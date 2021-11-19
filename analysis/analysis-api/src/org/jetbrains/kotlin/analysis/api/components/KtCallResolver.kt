@@ -5,43 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.calls.KtCall
+import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.psi.*
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
-    public abstract fun resolveAccessorCall(call: KtSimpleNameExpression): KtCall?
-    public abstract fun resolveCall(call: KtCallElement): KtCall?
-    public abstract fun resolveCall(call: KtBinaryExpression): KtCall?
-    public abstract fun resolveCall(call: KtUnaryExpression): KtCall?
-    public abstract fun resolveCall(call: KtArrayAccessExpression): KtCall?
+    public abstract fun resolveCall(call: KtElement): KtCallInfo?
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
-    /**
-     * Resolves the given simple name expression to an accessor call if that name refers to a property.
-     *
-     * This spans both Kotlin property and synthetic Java property.
-     */
-    public fun KtSimpleNameExpression.resolveAccessorCall(): KtCall? =
-        analysisSession.callResolver.resolveAccessorCall(this)
 
-    public fun KtCallElement.resolveCall(): KtCall? =
+    public fun KtElement.resolveCall(): KtCallInfo? =
         analysisSession.callResolver.resolveCall(this)
 
-    public fun KtBinaryExpression.resolveCall(): KtCall? =
-        analysisSession.callResolver.resolveCall(this)
+    public fun KtCallElement.resolveCall(): KtCallInfo =
+        analysisSession.callResolver.resolveCall(this) ?: error("KtCallElement should always resolve to a KtCallInfo")
 
-    public fun KtUnaryExpression.resolveCall(): KtCall? =
-        analysisSession.callResolver.resolveCall(this)
+    public fun KtBinaryExpression.resolveCall(): KtCallInfo =
+        analysisSession.callResolver.resolveCall(this) ?: error("KtBinaryExpression should always resolve to a KtCallInfo")
 
-    public fun KtArrayAccessExpression.resolveCall(): KtCall? =
-        analysisSession.callResolver.resolveCall(this)
+    public fun KtUnaryExpression.resolveCall(): KtCallInfo =
+        analysisSession.callResolver.resolveCall(this) ?: error("KtUnaryExpression should always resolve to a KtCallInfo")
 
-    public fun KtElement.resolveCallIfPossible(): KtCall? = when (this) {
-        is KtCallElement -> resolveCall()
-        is KtBinaryExpression -> resolveCall()
-        is KtUnaryExpression -> resolveCall()
-        is KtArrayAccessExpression -> resolveCall()
-        else -> null
-    }
+    public fun KtArrayAccessExpression.resolveCall(): KtCallInfo =
+        analysisSession.callResolver.resolveCall(this) ?: error("KtArrayAccessExpression should always resolve to a KtCallInfo")
 }
