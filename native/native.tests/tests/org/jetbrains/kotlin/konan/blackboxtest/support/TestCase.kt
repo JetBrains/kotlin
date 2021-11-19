@@ -72,14 +72,15 @@ internal class TestFile<M : TestModule> private constructor(
 }
 
 /**
- * One or more [TestFile]s that are always compiled together.
+ * Represents a module in terms of Kotlin compiler. Includes one or more [TestFile]s. Can be compiled to executable file, KLIB
+ * or any other artifact supported by the Kotlin/Native compiler.
  *
- * Please note that [TestModule] is the minimal possible compilation unit, but not always the maximal possible compilation unit.
- * In certain test modes (ex: [TestMode.ONE_STAGE], [TestMode.TWO_STAGE]) modules represented by [TestModule] are ignored, and
- * all [TestFile]s are compiled together in one shot.
+ * Please note that in certain test modes (ex: [TestMode.ONE_STAGE], [TestMode.TWO_STAGE]) modules represented by [TestModule] entities
+ * are ignored, and all [TestFile]s are compiled together with just the single compiler invocation.
  *
  * [TestModule.Exclusive] represents a collection of [TestFile]s used exclusively for an individual [TestCase].
  * [TestModule.Shared] represents a "shared" module, i.e. the auxiliary module that can be used in multiple [TestCase]s.
+ *                     Such module is compiled to KLIB
  */
 internal sealed class TestModule {
     abstract val name: String
@@ -139,7 +140,7 @@ internal sealed class TestModule {
 }
 
 /**
- * A minimal testable unit.
+ * A collection of one or more [TestModule]s that results in testable executable file.
  *
  * [modules] - the collection of [TestModule.Exclusive] modules with [TestFile]s that need to be compiled to run this test.
  *             Note: There can also be [TestModule.Shared] modules as dependencies of either of [TestModule.Exclusive] modules.
@@ -214,7 +215,10 @@ internal class TestCase(
 }
 
 /**
- * A group of [TestCase]s that were obtained from a particular testData directory.
+ * A group of [TestCase]s that were obtained from the same origin (ex: same testData directory).
+ *
+ * [TestCase]s inside of the group with similar [TestCompilerArgs] can be compiled to the single
+ * executable file to reduce the time spent for compiling and speed-up overall test execution.
  */
 internal interface TestCaseGroup {
     fun isEnabled(testDataFileName: String): Boolean
