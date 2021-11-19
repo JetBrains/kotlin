@@ -53,6 +53,8 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     // https://mochajs.org/#-timeout-ms-t-ms
     var timeout: String = DEFAULT_TIMEOUT
 
+    private val platformType = compilation.platformType
+
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
@@ -95,7 +97,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             } else {
                 addAll(cliArg(TIMEOUT_ARG, timeout))
             }
-            if (compilation.platformType == KotlinPlatformType.wasm) {
+            if (platformType == KotlinPlatformType.wasm) {
                 addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
             }
         }
