@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFE10AnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.callResolver.AbstractKtFe10ResolveCallTest
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.fir.AbstractFirReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.fir.components.callResolver.AbstractFirResolveCallTest
 import org.jetbrains.kotlin.analysis.api.fir.components.compileTimeConstantProvider.AbstractFirCompileTimeConstantEvaluatorTest
@@ -117,9 +119,17 @@ private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
 
         test(
             fir = AbstractAnalysisApiFirAnnotationsOnDeclarationsTest::class,
-            fe10 = AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest::class
+            fe10 = AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest::class,
         ) {
             model("annotationsOnDeclaration")
+        }
+
+        test(
+            fir = AbstractAnalysisApiFirAnnotationsOnFilesTest::class,
+            fe10 = null // TODO "fails with Rewrite at slice ANNOTATION key"
+            /*AbstractAnalysisApiFE10AnnotationsOnFilesTest*/
+        ) {
+            model("annotationsOnFiles")
         }
     }
 }

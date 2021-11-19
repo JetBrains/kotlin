@@ -3,33 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeCreator
+package org.jetbrains.kotlin.analysis.api.impl.base.test.annotations
 
-import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractTypeParameterTypeTest(
+abstract class AbstractAnalysisApiAnnotationsOnFilesTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtTypeParameter
-
-        val actual = analyseForTest(expressionAtCaret) {
-            val symbol = expressionAtCaret.getTypeParameterSymbol()
-            val ktType = buildTypeParameterType(symbol)
-            buildString {
-                appendLine("expression: ${expressionAtCaret.text}")
-                appendLine("ktType: ${ktType.render()}")
-            }
+        val actual = analyseForTest(ktFile) {
+            val fileSymbol = ktFile.getFileSymbol()
+            TestAnnotationRenderer.renderAnnotations(fileSymbol.annotationsList)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 }
+

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.annotations
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.TestAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.indented
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
@@ -27,14 +28,9 @@ abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest(
             .getElementOfTypAtCaret<KtDeclaration>(ktFile)
         val actual = analyseForTest(ktFile) {
             val declarationSymbol = ktDeclaration.getSymbol() as KtAnnotatedSymbol
-            val annotations = declarationSymbol.annotations
             buildString {
                 appendLine("KtDeclaration: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")
-                appendLine("annotations: [")
-                for (annotation in annotations) {
-                    appendLine(DebugSymbolRenderer.renderAnnotationApplication(annotation).indented(indent = 2))
-                }
-                appendLine("]")
+                append(TestAnnotationRenderer.renderAnnotations(declarationSymbol.annotationsList))
             }
         }
 
