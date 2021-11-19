@@ -85,12 +85,6 @@ internal open class FirLightClassForSymbol(
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
-    private val _ownInnerClasses: List<FirLightClassBase> by lazyPub {
-        classOrObjectSymbol.createInnerClasses(manager)
-    }
-
-    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
-
     private val _extendsList by lazyPub { createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes) }
     private val _implementsList by lazyPub { createInheritanceList(forExtendsList = false, classOrObjectSymbol.superTypes) }
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
+import org.jetbrains.kotlin.light.classes.symbol.classes.createInnerClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -77,7 +78,11 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
     override fun getTypeParameters(): Array<PsiTypeParameter> =
         _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    abstract override fun getOwnInnerClasses(): List<PsiClass>
+    private val _ownInnerClasses: List<FirLightClassBase> by lazyPub {
+        classOrObjectSymbol.createInnerClasses(manager)
+    }
+
+    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
 
     override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: 0
     override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: 0
