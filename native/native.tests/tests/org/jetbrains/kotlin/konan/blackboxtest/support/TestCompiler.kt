@@ -283,6 +283,12 @@ private class TestCompilationImpl(
             else
                 TestCompilationResult.Success(expectedArtifactFile, loggedCompilerCall)
 
+            check(expectedArtifactFile.exists()) {
+                """
+                    ${expectedArtifactFile.absolutePath} doesn't exist
+                """.trimIndent()
+            }
+
             loggedCompilerCall to result
         } catch (unexpectedThrowable: Throwable) {
             val loggedFailure = LoggedData.CompilerCallUnexpectedFailure(loggedCompilerParameters, unexpectedThrowable)
