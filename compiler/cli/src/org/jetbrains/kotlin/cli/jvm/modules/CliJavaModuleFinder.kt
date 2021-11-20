@@ -52,22 +52,22 @@ class CliJavaModuleFinder(
     private val ctSymFile: VirtualFile? by lazy {
         if (jdkHome == null) return@lazy reportError("JDK_HOME path is not specified in compiler configuration")
 
-        val jdkRootFile = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL).findFileByPath(jdkHome.path)
+        val jdkRootFile = StandardFileSystems.local().findFileByPath(jdkHome.path)
             ?: return@lazy reportError("Can't create virtual file for JDK root under ${jdkHome.path}")
 
         val lib = jdkRootFile.findChild("lib") ?: return@lazy reportError("Can't find `lib` folder under JDK root: ${jdkHome.path}")
 
-        val ctSym = lib.findChild("ct.sym") ?: return@lazy reportError("Can't find `ct.sym` file in ${jdkHome.path}")
-
-        if (!ctSym.isValid) return@lazy reportError("`ct.sym` is invalid: ${ctSym.path}")
-
+        val ctSym = lib.findChild("ct.sym")
+            ?: return@lazy reportError(
+                "This JDK does not have the 'ct.sym' file required for the '-Xjdk-release=$releaseTarget' option: ${jdkHome.path}"
+            )
+        
         ctSym
     }
 
     private val ctSymRootFolder: VirtualFile? by lazy {
         if (ctSymFile != null) {
-            VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)
-                ?.findFileByPath(ctSymFile?.path + URLUtil.JAR_SEPARATOR)
+            StandardFileSystems.jar()?.findFileByPath(ctSymFile?.path + URLUtil.JAR_SEPARATOR)
                 ?: reportError("Can't open `ct.sym` as jar file, file path: ${ctSymFile?.path} ")
         } else {
             null
@@ -132,10 +132,8 @@ class CliJavaModuleFinder(
             if (isCompilationJDK12OrLater) emptyMap()
             else hashMapOf<String, Boolean>().also { parts ->
                 moduleInfo.exports.forEach {
-                    it.packageFqName.pathSegments().fold("") { acc, v ->
-                        val packagePart = if (acc.isEmpty()) v.asString() else "$acc.${v.asString()}"
-                        parts[packagePart] = false
-                        packagePart
+                    for (part in generateSequence(it.packageFqName) { part -> if (!part.isRoot) part.parent() else null }) {
+                        parts[part.asString()] = false
                     }
                 }
                 //Do it separately to avoid reset to false

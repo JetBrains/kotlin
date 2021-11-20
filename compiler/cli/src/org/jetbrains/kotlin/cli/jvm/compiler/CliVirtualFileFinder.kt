@@ -78,7 +78,8 @@ class CliVirtualFileFinder(
 
     private fun findBinaryOrSigClass(classId: ClassId, simpleName: String, rootType: Set<JavaRoot.RootType>) =
         index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
-            (dir.findChild("$simpleName.class") ?: findSigFileIfEnabled(dir, simpleName))?.takeIf(VirtualFile::isValid)
+            val file = dir.findChild("$simpleName.class") ?: findSigFileIfEnabled(dir, simpleName)
+            if (file != null && file.isValid) file else null
         }?.takeIf { it in scope }
 
     private fun findBinaryOrSigClass(classId: ClassId) =

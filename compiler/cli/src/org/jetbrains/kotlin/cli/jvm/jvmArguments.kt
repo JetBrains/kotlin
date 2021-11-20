@@ -29,30 +29,24 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     val jvmTargetArg = arguments.jvmTarget
     if (releaseTargetArg != null) {
         val value =
-            if (releaseTargetArg == "1.6" || releaseTargetArg == "1.8") releaseTargetArg.substringAfter("1.").toIntOrNull()
-            else releaseTargetArg.toIntOrNull()
-        if (value == null) {
-            messageCollector.report(
-                ERROR,
-                "Can't parse value passed for `-Xrelease`: $releaseTargetArg."
-            )
+            when (releaseTargetArg) {
+                "1.6" -> 6
+                "1.8" -> 8
+                else -> releaseTargetArg.toIntOrNull()
+            }
+        if (value == null || value < 6) {
+            messageCollector.report(ERROR, "Unknown JDK release version: $releaseTargetArg")
         } else {
-            if (value < 6) {
+            //don't use release flag if it equals to compilation JDK version
+            if (value != getJavaVersion() || arguments.jdkHome != null) {
+                put(JVMConfigurationKeys.JDK_RELEASE, value)
+            }
+            if (jvmTargetArg != null && jvmTargetArg != releaseTargetArg) {
                 messageCollector.report(
                     ERROR,
-                    "`$value` is not valid value for `-Xrelease` flag."
+                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. " +
+                            "Please remove the '-jvm-target' option"
                 )
-            } else {
-                //don't use release flag if it equals to compilation JDK version
-                if (value != getJavaVersion() || arguments.jdkHome != null) {
-                    put(JVMConfigurationKeys.JDK_RELEASE, value)
-                }
-                if (jvmTargetArg != null && jvmTargetArg != releaseTargetArg) {
-                    messageCollector.report(
-                        ERROR,
-                        "`-Xrelease=$releaseTargetArg` option conflicts with '-jvm-target=$jvmTargetArg'."
-                    )
-                }
             }
         }
     }
@@ -75,11 +69,6 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             )
         }
     }
-
-    if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
-        put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-    }
-
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
@@ -185,8 +174,8 @@ fun CompilerConfiguration.configureExplicitContentRoots(arguments: K2JVMCompiler
 }
 
 fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: K2JVMCompilerArguments) {
-    val releaseFlagValue = this.get(JVMConfigurationKeys.JDK_RELEASE, 0)
-    val isModularJava = isModularJava() && (releaseFlagValue <= 0 || releaseFlagValue >= 9)
+    val jdkRelease = get(JVMConfigurationKeys.JDK_RELEASE)
+    val isModularJava = isModularJava() && (jdkRelease == null || jdkRelease >= 9)
 
     fun addRoot(moduleName: String, libraryName: String, getLibrary: (KotlinPaths) -> File, noLibraryArgument: String) {
         addModularRootIfNotNull(
