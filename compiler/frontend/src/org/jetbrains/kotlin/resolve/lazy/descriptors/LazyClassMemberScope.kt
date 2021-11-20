@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.getValue
@@ -60,36 +61,58 @@ open class LazyClassMemberScope(
 ) {
 
     private val allDescriptors = storageManager.createLazyValue {
+        doDescriptors(ALL_NAME_FILTER)
+    }
+
+    private fun doDescriptors(nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet(
             computeDescriptorsFromDeclaredElements(
                 DescriptorKindFilter.ALL,
-                MemberScope.ALL_NAME_FILTER,
+                nameFilter,
                 NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
             )
         )
         result.addAll(computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED))
-        result.toList()
+        return result.toList()
     }
 
     private val allClassifierDescriptors = storageManager.createLazyValue {
+        doClassifierDescriptors(ALL_NAME_FILTER)
+    }
+
+    private fun doClassifierDescriptors(nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val result = LinkedHashSet(
             computeDescriptorsFromDeclaredElements(
                 DescriptorKindFilter.CLASSIFIERS,
-                MemberScope.ALL_NAME_FILTER,
+                nameFilter,
                 NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
             )
         )
         addSyntheticCompanionObject(result, NoLookupLocation.FOR_ALREADY_TRACKED)
         addSyntheticNestedClasses(result, NoLookupLocation.FOR_ALREADY_TRACKED)
-        result.toList()
+        return result.toList()
     }
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> = when (kindFilter) {
-        DescriptorKindFilter.CLASSIFIERS -> allClassifierDescriptors()
-        else -> allDescriptors()
+        DescriptorKindFilter.CLASSIFIERS ->
+            if (nameFilter == ALL_NAME_FILTER || allClassifierDescriptors.isComputed() || allClassifierDescriptors.isComputing()) {
+                allClassifierDescriptors()
+            } else {
+                storageManager.compute {
+                    doClassifierDescriptors(nameFilter)
+                }
+            }
+        else ->
+            if (nameFilter == ALL_NAME_FILTER || allDescriptors.isComputed() || allDescriptors.isComputing()) {
+                allDescriptors()
+            } else {
+                storageManager.compute {
+                    doDescriptors(nameFilter)
+                }
+            }
     }
 
     protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
