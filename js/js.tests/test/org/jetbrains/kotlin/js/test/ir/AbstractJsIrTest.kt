@@ -58,6 +58,7 @@ abstract class AbstractJsIrTest(
                 if (getBoolean("kotlin.js.ir.perModule")) +JsEnvironmentConfigurationDirectives.PER_MODULE
                 if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
                 if (getBoolean("kotlin.js.ir.newIr2Js", false)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
+                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
 
             configureJsArtifactsHandlersStep {
