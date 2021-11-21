@@ -1,7 +1,8 @@
 # kotlinx-metadata-jvm
 
-## Next
+## 0.4.0
 
+- Update to Kotlin 1.6 with metadata version 1.6, support reading/writing metadata of version 1.7 which will be used in Kotlin 1.7.
 - Add `JvmPropertyExtensionVisitor.visitSyntheticMethodForDelegate` for optimized delegated properties (KT-39055).
 - Add JVM-specific class flags:
   - `JvmClassExtensionVisitor.visitJvmFlags`
@@ -9,6 +10,7 @@
   - `JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE`
 - [`KT-48965`](https://youtrack.jetbrains.com/issue/KT-48965) Make the type of `KmValueParameter.type` non-null `KmType`
 - Remove unused `JvmTypeAliasExtensionVisitor` and `JvmValueParameterExtensionVisitor`
+- Fix type flags (suspend, definitely non-null) on underlying type of inline class available via `KmClass.inlineClassUnderlyingType`
 
 ## 0.3.0
 
