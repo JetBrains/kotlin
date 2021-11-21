@@ -65,14 +65,12 @@ open class LazyClassMemberScope(
     }
 
     private fun doDescriptors(nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
-        val result = LinkedHashSet(
-            computeDescriptorsFromDeclaredElements(
-                DescriptorKindFilter.ALL,
-                nameFilter,
-                NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
-            )
+        val result = computeDescriptorsFromDeclaredElements(
+            DescriptorKindFilter.ALL,
+            nameFilter,
+            NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
         )
-        result.addAll(computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED))
+        computeExtraDescriptors(result, NoLookupLocation.FOR_ALREADY_TRACKED)
         return result.toList()
     }
 
@@ -81,12 +79,10 @@ open class LazyClassMemberScope(
     }
 
     private fun doClassifierDescriptors(nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
-        val result = LinkedHashSet(
-            computeDescriptorsFromDeclaredElements(
-                DescriptorKindFilter.CLASSIFIERS,
-                nameFilter,
-                NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
-            )
+        val result = computeDescriptorsFromDeclaredElements(
+            DescriptorKindFilter.CLASSIFIERS,
+            nameFilter,
+            NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
         )
         addSyntheticCompanionObject(result, NoLookupLocation.FOR_ALREADY_TRACKED)
         addSyntheticNestedClasses(result, NoLookupLocation.FOR_ALREADY_TRACKED)
@@ -115,8 +111,7 @@ open class LazyClassMemberScope(
             }
     }
 
-    protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
-        val result = ArrayList<DeclarationDescriptor>()
+    protected open fun computeExtraDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         for (supertype in supertypes) {
             for (descriptor in supertype.memberScope.getContributedDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
@@ -133,9 +128,6 @@ open class LazyClassMemberScope(
         addSyntheticVariables(result, location)
         addSyntheticCompanionObject(result, location)
         addSyntheticNestedClasses(result, location)
-
-        result.trimToSize()
-        return result
     }
 
     val supertypes by storageManager.createLazyValue {

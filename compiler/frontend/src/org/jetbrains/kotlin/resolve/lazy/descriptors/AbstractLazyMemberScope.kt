@@ -225,7 +225,7 @@ protected constructor(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
         location: LookupLocation
-    ): List<DeclarationDescriptor> {
+    ): MutableSet<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = LinkedHashSet<DeclarationDescriptor>(declarations.size)
         for (declaration in declarations) {
@@ -272,7 +272,7 @@ protected constructor(
                 else -> throw IllegalArgumentException("Unsupported declaration kind: " + declaration)
             }
         }
-        return result.toList()
+        return result
     }
 
     // Do not change this, override in concrete subclasses:
