@@ -228,8 +228,7 @@ val Project.isDefaultNativeHome: Boolean
 private val Project.hasPlatformLibs: Boolean
     get() {
         if (!isDefaultNativeHome) {
-            return project.kotlinNativeDist
-                    .resolve("/klib/platform/${project.testTarget}")
+            return File(buildDistribution(project.kotlinNativeDist.absolutePath).platformLibs(project.testTarget))
                     .exists()
         }
         return false
@@ -238,8 +237,7 @@ private val Project.hasPlatformLibs: Boolean
 private val Project.isCrossDist: Boolean
     get() {
         if (!isDefaultNativeHome) {
-            return project.kotlinNativeDist
-                    .resolve("/klib/stdlib/default/targets/${project.testTarget}")
+            return File(buildDistribution(project.kotlinNativeDist.absolutePath).runtime(project.testTarget))
                     .exists()
         }
         return false
