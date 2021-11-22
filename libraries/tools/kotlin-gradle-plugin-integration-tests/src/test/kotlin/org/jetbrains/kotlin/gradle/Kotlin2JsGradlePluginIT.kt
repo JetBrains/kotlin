@@ -1075,7 +1075,7 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
                         }
                         """
             }
-            build("assemble")
+            build("kotlinNodeJsSetup", "kotlinYarnSetup")
         }
     }
 
