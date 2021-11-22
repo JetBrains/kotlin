@@ -1,7 +1,6 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.gradle.publish.PublishTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
@@ -17,6 +16,7 @@ import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.*
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
@@ -314,17 +314,27 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 
-fun Jar.setupPublicJar(baseName: String, classifier: String = "") {
+fun Jar.setupPublicJar(
+    baseName: String,
+    classifier: String = ""
+) = setupPublicJar(
+    project.provider { baseName },
+    project.provider { classifier }
+)
+
+fun Jar.setupPublicJar(
+    baseName: Provider<String>,
+    classifier: Provider<String> = project.provider { "" }
+) {
     val buildNumber = project.rootProject.extra["buildNumber"] as String
     this.archiveBaseName.set(baseName)
     this.archiveClassifier.set(classifier)
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")
-        put("Implementation-Title", baseName)
+        put("Implementation-Title", baseName.get())
         put("Implementation-Version", buildNumber)
     }
 }
-
 
 fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) {
     artifacts.add(configuration.name, artifactRef) {

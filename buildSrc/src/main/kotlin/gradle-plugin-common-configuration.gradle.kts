@@ -24,6 +24,7 @@ configure<PluginBundleExtension> {
 }
 
 configureGradlePluginCommonSettings()
+publishShadowedJar(sourceSets[SourceSet.MAIN_SOURCE_SET_NAME])
 
 publishing {
     publications {
