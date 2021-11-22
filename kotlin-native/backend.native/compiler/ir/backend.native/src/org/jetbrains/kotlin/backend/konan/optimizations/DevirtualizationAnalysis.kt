@@ -1372,21 +1372,12 @@ internal object DevirtualizationAnalysis {
                     callSite.origin,
                     actualCallee.parentAsClass.symbol
             )
-            if (actualCallee.explicitParametersCount == arguments.size) {
-                arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }
-                return call
-            }
-            assert(actualCallee.isSuspend && actualCallee.explicitParametersCount == arguments.size - 1) {
-                "Incorrect number of arguments: expected [${actualCallee.explicitParametersCount}] but was [${arguments.size - 1}]\n" +
+            assert(actualCallee.explicitParametersCount == arguments.size) {
+                "Incorrect number of arguments: expected [${actualCallee.explicitParametersCount}] but was [${arguments.size}]\n" +
                         actualCallee.dump()
             }
-            val continuation = arguments.last()
-            for (index in 0..arguments.size - 2)
-                call.putArgument(index, arguments[index])
-            return irCall(context.ir.symbols.coroutineLaunchpad, actualType).apply {
-                putValueArgument(0, call)
-                putValueArgument(1, continuation)
-            }
+            arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }
+            return call
         }
 
         fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: IrType,

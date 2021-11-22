@@ -613,7 +613,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         private fun mapReturnType(actualType: IrType, returnType: IrType) = mapWrappedType(actualType, returnType)
 
 
-        private fun getNode(expression: IrExpression): Scoped<DataFlowIR.Node> {
+        private fun getNode(expression: IrExpression, continuationOverride: DataFlowIR.Node? = null): Scoped<DataFlowIR.Node> {
             if (expression is IrGetValue) {
                 val valueDeclaration = expression.symbol.owner
                 if (valueDeclaration is IrValueParameter)
@@ -715,7 +715,12 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             }
 
                             is IrCall -> when (value.symbol) {
-                                getContinuationSymbol -> getContinuation().value
+                                getContinuationSymbol -> continuationOverride ?: getContinuation().value
+
+                                symbols.coroutineLaunchpad -> getNode(
+                                        value.getValueArgument(0)!!,
+                                        continuationOverride = expressionToEdge(value.getValueArgument(1)!!).node
+                                ).value
 
                                 in arrayGetSymbols -> {
                                     val actualCallee = value.actualCallee
@@ -765,7 +770,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                             .map { expressionToEdge(it.second) }
                                             .let {
                                                 if (callee.isSuspend)
-                                                    it + DataFlowIR.Edge(getContinuation().value, null)
+                                                    it + DataFlowIR.Edge(continuationOverride ?: getContinuation().value, null)
                                                 else
                                                     it
                                             }

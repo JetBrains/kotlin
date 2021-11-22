@@ -251,12 +251,10 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
                 val functionParameterTypes = unboundFunctionParameters.map { it.type }
-                val functionClass: IrClass
+                val functionClass: IrClass?
                 val suspendFunctionClass: IrClass?
                 if (isKSuspendFunction) {
-                    functionClass = symbols.functionN(numberOfParameters + 1).owner
-                    val continuationType = continuationClassSymbol.typeWith(referencedFunction.returnType)
-                    superTypes += functionClass.typeWith(functionParameterTypes + continuationType + irBuiltIns.anyNType)
+                    functionClass = null
                     suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
                     superTypes += suspendFunctionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
                 } else {
@@ -275,13 +273,10 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     }
                 }
 
-                if (!isKSuspendFunction)
+                if (functionClass != null)
                     buildInvokeMethod(functionClass.getInvokeFunction())
                 if (suspendFunctionClass != null) {
-                    buildInvokeMethod(suspendFunctionClass.getInvokeFunction()).also {
-                        if (isKSuspendFunction)
-                            it.overriddenSymbols += functionClass.getInvokeFunction().symbol
-                    }
+                    buildInvokeMethod(suspendFunctionClass.getInvokeFunction())
                 }
             }
 
