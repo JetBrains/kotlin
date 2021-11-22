@@ -359,7 +359,11 @@ class PostponedArgumentInputTypesResolver(
         )
 
         if (pathFromRelatedTopLevelVariable != null && relatedTopLevelVariable != null) {
-            getBuilder().putBuiltFunctionalExpectedTypeForPostponedArgument(relatedTopLevelVariable, pathFromRelatedTopLevelVariable, newExpectedType)
+            getBuilder().putBuiltFunctionalExpectedTypeForPostponedArgument(
+                relatedTopLevelVariable,
+                pathFromRelatedTopLevelVariable,
+                newExpectedType
+            )
         } else {
             getBuilder().putBuiltFunctionalExpectedTypeForPostponedArgument(expectedTypeConstructor, newExpectedType)
         }
@@ -395,7 +399,8 @@ class PostponedArgumentInputTypesResolver(
             val parameterTypesInfo =
                 c.extractParameterTypesInfo(argument, postponedArguments, dependencyProvider) ?: return@any false
             val newExpectedType =
-                c.buildNewFunctionalExpectedType(argument, parameterTypesInfo, dependencyProvider, topLevelTypeVariables) ?: return@any false
+                c.buildNewFunctionalExpectedType(argument, parameterTypesInfo, dependencyProvider, topLevelTypeVariables)
+                    ?: return@any false
 
             argument.reviseExpectedType(newExpectedType)
 
@@ -488,7 +493,11 @@ class PostponedArgumentInputTypesResolver(
         val relatedVariables = type.extractArgumentsForFunctionalTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this@fixNextReadyVariableForParameterType, relatedVariables, postponedArguments, ConstraintSystemCompletionMode.FULL, topLevelType
+            this@fixNextReadyVariableForParameterType,
+            relatedVariables,
+            postponedArguments,
+            ConstraintSystemCompletionMode.FULL,
+            topLevelType
         )
 
         if (variableForFixation == null || !variableForFixation.hasProperConstraint)
