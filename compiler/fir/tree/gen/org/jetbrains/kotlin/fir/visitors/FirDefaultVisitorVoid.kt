@@ -160,8 +160,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration)  = visitTypedDeclaration(callableDeclaration)
 
-    override fun visitField(field: FirField)  = visitVariable(field)
-
     override fun visitEnumEntry(enumEntry: FirEnumEntry)  = visitVariable(enumEntry)
 
     override fun visitFile(file: FirFile)  = visitDeclaration(file)

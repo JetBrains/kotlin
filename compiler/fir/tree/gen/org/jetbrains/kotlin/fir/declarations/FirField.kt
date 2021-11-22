@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirField : FirVariable() {
+abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -44,6 +45,7 @@ abstract class FirField : FirVariable() {
     abstract override val setter: FirPropertyAccessor?
     abstract override val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotation>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirFieldSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitField(this, data)
@@ -65,6 +67,8 @@ abstract class FirField : FirVariable() {
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
+
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField
 

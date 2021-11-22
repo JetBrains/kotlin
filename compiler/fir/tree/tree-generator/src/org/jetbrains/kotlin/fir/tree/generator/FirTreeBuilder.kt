@@ -39,7 +39,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val variable by sealedElement(Declaration, callableDeclaration, statement)
     val valueParameter by element(Declaration, variable, controlFlowGraphOwner)
     val property by element(Declaration, variable, typeParametersOwner, controlFlowGraphOwner)
-    val field by element(Declaration, variable)
+    val field by element(Declaration, variable, controlFlowGraphOwner)
     val enumEntry by element(Declaration, variable)
 
     val classLikeDeclaration by sealedElement(Declaration, memberDeclaration, statement)

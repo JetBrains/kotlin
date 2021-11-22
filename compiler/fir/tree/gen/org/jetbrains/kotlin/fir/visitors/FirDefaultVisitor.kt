@@ -160,8 +160,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitTypedDeclaration(callableDeclaration, data)
 
-    override fun visitField(field: FirField, data: D): R  = visitVariable(field, data)
-
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 
     override fun visitFile(file: FirFile, data: D): R  = visitDeclaration(file, data)
