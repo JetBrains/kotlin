@@ -1045,14 +1045,44 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
             build("checkDownloadedFolder")
 
             build("checkIfLastModifiedNotNow", "--rerun-tasks")
+
+            buildGradle.modify {
+                it + "\n" +
+                        """
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "unspecified"
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+                        }
+                        """
+            }
+        }
+    }
+
+    @DisplayName("Disable download should not download Node.JS and Yarn")
+    @GradleTest
+    fun testNodeJsAndYarnNotDownloaded(gradleVersion: GradleVersion) {
+        project("nodeJsDownload", gradleVersion) {
+            buildGradleKts.modify {
+                it + "\n" +
+                        """
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "unspecified"
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+                        }
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().version = "unspecified"
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().download = false
+                        }
+                        """
+            }
+            build("assemble")
         }
     }
 
     @DisplayName("Yarn.lock persistence")
     @GradleTest
     fun testYarnLockStore(gradleVersion: GradleVersion) {
-        project("cleanTask", gradleVersion) {
-            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
+        project("nodeJsDownload", gradleVersion) {
             build("assemble") {
                 assertFileExists(projectPath.resolve("kotlin-js-store").resolve("yarn.lock"))
                 assert(

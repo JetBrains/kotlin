@@ -62,25 +62,28 @@ open class YarnSetupTask : DefaultTask() {
     internal lateinit var configuration: Provider<Configuration>
 
     @get:Classpath
-    val yarnDist: File by lazy {
-        val repo = project.repositories.ivy { repo ->
-            repo.name = "Yarn Distributions at ${downloadUrl}"
-            repo.url = URI(downloadUrl)
-            repo.patternLayout {
-                it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
+    @get:Optional
+    val yarnDist: File? by lazy {
+        if (shouldDownload) {
+            val repo = project.repositories.ivy { repo ->
+                repo.name = "Yarn Distributions at ${downloadUrl}"
+                repo.url = URI(downloadUrl)
+                repo.patternLayout {
+                    it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
+                }
+                repo.metadataSources { it.artifact() }
+                repo.content { it.includeModule("com.yarnpkg", "yarn") }
             }
-            repo.metadataSources { it.artifact() }
-            repo.content { it.includeModule("com.yarnpkg", "yarn") }
-        }
-        val startDownloadTime = System.currentTimeMillis()
-        val dist = configuration.get().files.single()
-        val downloadDuration = System.currentTimeMillis() - startDownloadTime
-        if (downloadDuration > 0) {
-            KotlinBuildStatsService.getInstance()
-                ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
-        }
-        project.repositories.remove(repo)
-        dist
+            val startDownloadTime = System.currentTimeMillis()
+            val dist = configuration.get().files.single()
+            val downloadDuration = System.currentTimeMillis() - startDownloadTime
+            if (downloadDuration > 0) {
+                KotlinBuildStatsService.getInstance()
+                    ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
+            }
+            project.repositories.remove(repo)
+            dist
+        } else null
     }
 
     init {
@@ -91,6 +94,7 @@ open class YarnSetupTask : DefaultTask() {
 
     @TaskAction
     fun setup() {
+        if (!shouldDownload) return
         logger.kotlinInfo("Using yarn distribution from '$yarnDist'")
 
         var dirHash: String? = null
@@ -103,7 +107,7 @@ open class YarnSetupTask : DefaultTask() {
         }
 
         val tmpDir = temporaryDir
-        extract(yarnDist, tmpDir) // parent because archive contains name already
+        extract(yarnDist!!, tmpDir) // parent because archive contains name already
 
         if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) {
             tmpDir.deleteRecursively()
