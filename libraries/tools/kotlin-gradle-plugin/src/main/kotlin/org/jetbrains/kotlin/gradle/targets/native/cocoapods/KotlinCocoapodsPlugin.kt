@@ -397,6 +397,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Invokes `pod install` call within Podfile location directory"
             it.podfile.set(cocoapodsExtension.podfile)
+            it.podspec.set(podspecTaskProvider.map { podspecTask -> podspecTask.outputFile })
             it.frameworkName = project.provider { cocoapodsExtension.frameworkNameInternal }
             it.dependsOn(podspecTaskProvider)
         }
