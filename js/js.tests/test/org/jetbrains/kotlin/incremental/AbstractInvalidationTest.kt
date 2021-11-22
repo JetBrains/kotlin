@@ -14,11 +14,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
+import org.jetbrains.kotlin.ir.backend.js.ic.PersistentCacheConsumer
 import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -37,17 +42,28 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         return ModuleInfoParser(infoFile).parse(moduleName)
     }
 
+    @Suppress("UNUSED")
+    private fun emptyChecker(
+        currentModule: IrModuleFragment,
+        dependencies: Collection<IrModuleFragment>,
+        deserializer: JsIrLinker,
+        configuration: CompilerConfiguration,
+        dirtyFiles: Collection<String>?, // if null consider the whole module dirty
+        cacheConsumer: PersistentCacheConsumer,
+        exportedDeclarations: Set<FqName>,
+        mainArguments: List<String>?,
+    ) { }
+
     private fun initializeStdlibCache() {
-        return
         if (stdlibCacheDir != null) return
         val cacheDir = createTempDirectory().toFile()
+        cacheDir.deleteOnExit()
 
         val configuration = createConfiguration("stdlib")
 
-        actualizeCacheForModule(stdlibKlibPath, cacheDir.canonicalPath, configuration, emptyList(), emptyList(), IrFactoryImpl)
+        actualizeCacheForModule(stdlibKlibPath, cacheDir.canonicalPath, configuration, listOf(stdlibKlibPath), emptyList(), IrFactoryImpl, ::emptyChecker)
 
         stdlibCacheDir = cacheDir
-
     }
 
     protected fun doTest(testPath: String) {
@@ -114,40 +130,79 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val moduleSourceDir = File(sourceDir, module)
 //                val moduleBuildDir = File(buildDir, module)
                 val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
-                for (moduleStep in moduleInfo.steps) {
-                    for (modification in moduleStep.modifications) {
-                        modification.execute(moduleTestDir, moduleSourceDir)
-                    }
-
-
-                    val dependencies = moduleStep.dependencies.map { resolveModuleArtifact(it, buildDir) }
-
-                    val outputKlibFile = resolveModuleArtifact(module, buildDir)
-
-                    val configuration = createConfiguration(module)
-
-                    buildArtifact(configuration, module, sourceDir, dependencies, outputKlibFile)
-
-                    val dirtyFiles = moduleStep.dirtyFiles.map { File(moduleSourceDir, it) }
-                    val icCaches = emptyList<File>() // moduleStep.dependencies.map { resolveModuleCache(it, buildDir) }
-
-                    val moduleCacheDir = resolveModuleCache(module, buildDir)
-
-                    buildCachesAndCheck(configuration, outputKlibFile, moduleCacheDir, dependencies, icCaches, dirtyFiles)
+                val moduleStep = moduleInfo.steps[projStep.id]
+                for (modification in moduleStep.modifications) {
+                    modification.execute(moduleTestDir, moduleSourceDir)
                 }
+
+                val dependencies = moduleStep.dependencies.map { resolveModuleArtifact(it, buildDir) }
+
+                val outputKlibFile = resolveModuleArtifact(module, buildDir)
+
+                val configuration = createConfiguration(module)
+
+                buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
+
+                val dirtyFiles = moduleStep.dirtyFiles.map { File(moduleSourceDir, it) }
+                val icCaches = moduleStep.dependencies.map { resolveModuleCache(it, buildDir) }
+
+                val moduleCacheDir = resolveModuleCache(module, buildDir)
+
+                buildCachesAndCheck(moduleStep.id, configuration, moduleSourceDir, outputKlibFile, moduleCacheDir, dependencies, icCaches, dirtyFiles)
             }
         }
     }
 
+    private fun File.filteredKtFiles(): Collection<File> {
+        assert(isDirectory && exists())
+        return listFiles { _, name -> name.endsWith(".kt") }!!.toList()
+    }
+
     private fun buildCachesAndCheck(
+        stepId: Int,
         configuration: CompilerConfiguration,
-        outputKlibFile: File,
+        sourceDir: File,
+        moduleKlibFile: File,
         moduleCacheDir: File,
         dependencies: List<File>,
         icCaches: List<File>,
-        dirtyFiles: List<File>
+        expectedDirtyFiles: List<File>
     ) {
-        // TODO
+        @Suppress("UNUSED")
+        fun dirtyFilesChecker(
+            currentModule: IrModuleFragment,
+            dependencies: Collection<IrModuleFragment>,
+            deserializer: JsIrLinker,
+            configuration: CompilerConfiguration,
+            invalidatedDirtyFiles: Collection<String>?, // if null consider the whole module dirty
+            cacheConsumer: PersistentCacheConsumer,
+            exportedDeclarations: Set<FqName>,
+            mainArguments: List<String>?,
+        ) {
+            val actualDirtyFiles = invalidatedDirtyFiles?.map { File(it).canonicalPath } ?: sourceDir.filteredKtFiles().map { it.canonicalPath }
+            val expectedDirtyFilesCanonical = expectedDirtyFiles.map { it.canonicalPath }
+
+            JUnit5Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) { "For module $moduleKlibFile" }
+        }
+
+        val dependenciesPaths = mutableListOf<String>()
+        dependencies.mapTo(dependenciesPaths) { it.canonicalPath }
+        dependenciesPaths.add(moduleKlibFile.canonicalPath)
+
+        val upToDate = actualizeCacheForModule(
+            moduleKlibFile.canonicalPath,
+            moduleCacheDir.canonicalPath,
+            configuration,
+            dependenciesPaths,
+            icCaches.map { it.canonicalPath },// + moduleCacheDir.canonicalPath,
+            IrFactoryImpl,
+            ::dirtyFilesChecker
+        )
+
+        JUnit5Assertions.assertEquals(expectedDirtyFiles.isEmpty(), upToDate) {
+            val filePaths = expectedDirtyFiles.joinToString(",", "[", "]")
+            "Up to date is not expected for module $moduleKlibFile at step $stepId. Expected dirtyFiles are $filePaths"
+        }
     }
 
     private fun KotlinCoreEnvironment.createPsiFile(fileName: String): KtFile {
@@ -170,9 +225,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         val projectJs = environment.project
 
-        val sourceFiles = sourceDir.listFiles { _, name -> name.endsWith(".kt") }!!.map {
-            environment.createPsiFile(it!!.canonicalPath)
-        }
+        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it.canonicalPath) }
 
         val sourceModule = prepareAnalyzedSourceModule(
             projectJs,
