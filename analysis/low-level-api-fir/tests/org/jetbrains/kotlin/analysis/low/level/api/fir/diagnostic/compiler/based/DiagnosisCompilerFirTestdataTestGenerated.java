@@ -3528,6 +3528,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("smartcastInByClause.kt")
+            public void testSmartcastInByClause() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastInByClause.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastToNothing.kt")
             public void testSmartcastToNothing() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToNothing.kt");

@@ -3119,6 +3119,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartCastInInit.kt");
         }
 
+        @TestMetadata("smartcastInByClause.kt")
+        public void testSmartcastInByClause() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastInByClause.kt");
+        }
+
         @TestMetadata("smartcastToNothing.kt")
         public void testSmartcastToNothing() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToNothing.kt");

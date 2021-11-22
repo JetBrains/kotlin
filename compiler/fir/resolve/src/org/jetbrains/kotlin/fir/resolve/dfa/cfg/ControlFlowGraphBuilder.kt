@@ -408,6 +408,7 @@ class ControlFlowGraphBuilder {
         for (declaration in klass.declarations) {
             val graph = when (declaration) {
                 is FirProperty -> declaration.controlFlowGraphReference?.controlFlowGraph
+                is FirField -> declaration.controlFlowGraphReference?.controlFlowGraph
                 is FirAnonymousInitializer -> declaration.controlFlowGraphReference?.controlFlowGraph
                 else -> null
             } ?: continue
@@ -1556,7 +1557,7 @@ class ControlFlowGraphBuilder {
 
     private fun FirDeclaration.unwrap(): List<FirDeclaration> =
         when (this) {
-            is FirFunction, is FirAnonymousInitializer -> listOf(this)
+            is FirFunction, is FirAnonymousInitializer, is FirField -> listOf(this)
             is FirProperty -> listOfNotNull(this.getter, this.setter, this)
             else -> emptyList()
         }

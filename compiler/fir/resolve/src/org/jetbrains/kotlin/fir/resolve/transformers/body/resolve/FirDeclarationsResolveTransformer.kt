@@ -215,7 +215,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             if (field.initializer != null) {
                 storeVariableReturnType(field)
             }
-            dataFlowAnalyzer.exitField(field)
+            dataFlowAnalyzer.exitField(field)?.let {
+                field.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
+            }
             field
         }
     }

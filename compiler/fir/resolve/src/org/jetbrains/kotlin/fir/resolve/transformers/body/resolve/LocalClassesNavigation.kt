@@ -75,6 +75,10 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
         visitCallableDeclaration(property, null)
     }
 
+    override fun visitField(field: FirField, data: Any?) {
+        visitCallableDeclaration(field, null)
+    }
+
     override fun visitConstructor(constructor: FirConstructor, data: Any?) {
         visitCallableDeclaration(constructor, null)
     }
