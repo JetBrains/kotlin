@@ -172,7 +172,6 @@ include ":benchmarks",
         ":native:kotlin-klib-commonizer",
         ":native:kotlin-klib-commonizer-api",
         ":native:kotlin-klib-commonizer-embeddable",
-        ":native:native.tests",
         ":core:compiler.common",
         ":core:compiler.common.jvm",
         ":compiler:backend.common.jvm",
@@ -513,7 +512,8 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-test:kotlin-test-js",
             ":kotlin-test:kotlin-test-js-ir",
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
-            ":kotlin-test:kotlin-test-wasm"
+            ":kotlin-test:kotlin-test-wasm",
+            ":native:native.tests"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
@@ -534,6 +534,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
     project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
     project(':kotlin-test:kotlin-test-wasm').projectDir = "$rootDir/libraries/kotlin.test/wasm" as File
+    project(':native:native.tests').projectDir = "$rootDir/native/native.tests" as File
 }
 include ":compiler:android-tests"
 
@@ -590,7 +591,6 @@ project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
 project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-metadata" as File
 project(':native:kotlin-native-utils').projectDir = "$rootDir/native/utils" as File
 project(':native:frontend.native').projectDir = "$rootDir/native/frontend" as File
-project(':native:native.tests').projectDir = "$rootDir/native/native.tests" as File
 project(':native:kotlin-klib-commonizer').projectDir = "$rootDir/native/commonizer" as File
 project(":native:kotlin-klib-commonizer-api").projectDir = "$rootDir/native/commonizer-api" as File
 project(':native:kotlin-klib-commonizer-embeddable').projectDir = "$rootDir/native/commonizer-embeddable" as File
