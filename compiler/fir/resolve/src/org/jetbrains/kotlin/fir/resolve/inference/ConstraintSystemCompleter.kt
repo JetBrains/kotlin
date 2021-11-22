@@ -391,7 +391,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
             topLevel.collectAllTypeVariables()
         }
 
-        result.addAll(c.notFixedTypeVariables.filter { context.inferenceSession.isSyntheticTypeVariable(it.value.typeVariable) }.keys.asIterable().reversed())
+        result.addAll(c.notFixedTypeVariables.filter { context.inferenceSession.isSyntheticTypeVariable(it.value.typeVariable) }.keys.asIterable())
 
         require(result.size == c.notFixedTypeVariables.size) {
             val notFoundTypeVariables = c.notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
