@@ -10661,6 +10661,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("noLabelsByClassName.kt")
+                public void testNoLabelsByClassName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noLabelsByClassName.kt");
+                }
+
+                @Test
                 @TestMetadata("outerClass.kt")
                 public void testOuterClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/outerClass.kt");

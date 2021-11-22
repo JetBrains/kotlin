@@ -10667,6 +10667,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("noLabelsByClassName.kt")
+                public void testNoLabelsByClassName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noLabelsByClassName.kt");
+                }
+
+                @Test
                 @TestMetadata("outerClass.kt")
                 public void testOuterClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/outerClass.kt");
