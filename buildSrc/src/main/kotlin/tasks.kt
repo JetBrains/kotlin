@@ -27,6 +27,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
+    ":kotlin-lombok",
     ":kotlin-android-extensions",
     ":kotlin-android-extensions-runtime",
     ":kotlin-parcelize-compiler",

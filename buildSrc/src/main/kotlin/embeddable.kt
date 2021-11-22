@@ -131,8 +131,10 @@ fun Project.compilerDummyJar(task: TaskProvider<out Jar>, body: Jar.() -> Unit =
     }
 }
 
+const val EMBEDDABLE_COMPILER_TASK_NAME = "embeddable"
 fun Project.embeddableCompilerDummyForDependenciesRewriting(
-    taskName: String = "embeddable", body: Jar.() -> Unit = {}
+    taskName: String = EMBEDDABLE_COMPILER_TASK_NAME,
+    body: ShadowJar.() -> Unit = {}
 ): TaskProvider<ShadowJar> {
     val compilerDummyJar = configurations.getOrCreate("compilerDummyJar")
     dependencies.add(
