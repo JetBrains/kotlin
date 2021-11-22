@@ -8238,6 +8238,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt38925.kt");
             }
 
+            @TestMetadata("kt49834.kt")
+            public void testKt49834() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt49834.kt");
+            }
+
             @TestMetadata("lvtWithInlineOnly.kt")
             public void testLvtWithInlineOnly() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");

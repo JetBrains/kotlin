@@ -12730,6 +12730,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 }
 
                 @Test
+                @TestMetadata("ktXYZ.kt")
+                public void testKtXYZ() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/ktXYZ.kt");
+                }
+
+                @Test
                 @TestMetadata("lvtWithInlineOnly.kt")
                 public void testLvtWithInlineOnly() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
