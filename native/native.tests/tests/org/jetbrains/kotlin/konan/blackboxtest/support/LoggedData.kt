@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
 import java.io.File
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 /**
  * A piece of information that makes sense for the user, and that can be logged to a file or
@@ -18,6 +21,12 @@ internal abstract class LoggedData {
     private val text: String by lazy { computeText() }
     protected abstract fun computeText(): String
     final override fun toString() = text
+
+    fun withErrorMessageHeader(errorMessageHeader: String): String = buildString {
+        appendLine(errorMessageHeader)
+        appendLine()
+        appendLine(this@LoggedData)
+    }
 
     class CompilerParameters(
         private val compilerArgs: Array<String>,
@@ -42,7 +51,7 @@ internal abstract class LoggedData {
         private val exitCode: ExitCode,
         private val compilerOutput: String,
         private val compilerOutputHasErrors: Boolean,
-        private val durationMillis: Long
+        private val duration: Duration
     ) : LoggedData() {
         override fun computeText(): String {
             val problems = listOfNotNull(
@@ -59,7 +68,7 @@ internal abstract class LoggedData {
 
                 appendLine("COMPILER CALL:")
                 appendLine("- Exit code: ${exitCode.code} (${exitCode.name})")
-                appendDuration(durationMillis)
+                appendDuration(duration)
                 appendLine()
                 appendLine("========== BEGIN: RAW COMPILER OUTPUT ==========")
                 if (compilerOutput.isNotEmpty()) appendLine(compilerOutput.trimEnd())
@@ -100,22 +109,19 @@ internal abstract class LoggedData {
 
     class TestRun(
         private val parameters: TestRunParameters,
-        private val exitCode: Int,
-        private val stdOut: String,
-        private val stdErr: String,
-        private val durationMillis: Long
+        private val runResult: AbstractRunner.RunResult.Completed
     ) : LoggedData() {
         override fun computeText() = buildString {
             appendLine("TEST RUN:")
-            appendLine("- Exit code: $exitCode")
-            appendDuration(durationMillis)
+            appendLine("- Exit code: ${runResult.exitCode}")
+            appendDuration(runResult.duration)
             appendLine()
             appendLine("========== BEGIN: TEST STDOUT ==========")
-            if (stdOut.isNotEmpty()) appendLine(stdOut.trimEnd())
+            if (runResult.stdOut.isNotEmpty()) appendLine(runResult.stdOut.trimEnd())
             appendLine("========== END: TEST STDOUT ==========")
             appendLine()
             appendLine("========== BEGIN: TEST STDERR ==========")
-            if (stdErr.isNotEmpty()) appendLine(stdErr.trimEnd())
+            if (runResult.stdErr.isNotEmpty()) appendLine(runResult.stdErr.trimEnd())
             appendLine("========== END: TEST STDERR ==========")
             appendLine()
             appendLine(parameters)
@@ -139,15 +145,27 @@ internal abstract class LoggedData {
         }
     }
 
+    class TestRunTimeoutExceeded(parameters: TestRunParameters, timeout: Duration) : TimeoutExceeded(parameters, timeout)
+
+    abstract class TimeoutExceeded(
+        private val parameters: LoggedData,
+        private val timeout: Duration
+    ) : LoggedData() {
+        override fun computeText() = buildString {
+            appendLine("TIMED OUT:")
+            appendLine("- Max permitted duration: $timeout")
+            appendLine()
+            appendLine(parameters)
+        }
+    }
+
     companion object {
-        @JvmStatic
         protected fun StringBuilder.appendList(header: String, list: Iterable<Any?>): StringBuilder {
             appendLine(header)
             list.forEach(::appendLine)
             return this
         }
 
-        @JvmStatic
         protected fun StringBuilder.appendArguments(header: String, args: Iterable<String>): StringBuilder {
             appendLine(header)
 
@@ -171,7 +189,7 @@ internal abstract class LoggedData {
             return this
         }
 
-        protected fun StringBuilder.appendDuration(durationMillis: Long): StringBuilder =
-            append("- Duration: ").append(String.format("%.2f", durationMillis.toDouble() / 1000)).appendLine(" seconds")
+        protected fun StringBuilder.appendDuration(duration: Duration): StringBuilder =
+            append("- Duration: ").appendLine(duration.toString(DurationUnit.SECONDS, 2))
     }
 }

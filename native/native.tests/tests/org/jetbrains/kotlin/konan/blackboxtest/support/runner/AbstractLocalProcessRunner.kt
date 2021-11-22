@@ -6,32 +6,47 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner.AbstractRun
+import kotlin.time.*
 
-internal abstract class AbstractLocalProcessRunner<R> : AbstractRunner<R>() {
+internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeout: Duration) : AbstractRunner<R>() {
     protected abstract val visibleProcessName: String
     protected abstract val executable: TestExecutable
     protected abstract val programArgs: List<String>
 
     protected open fun customizeProcess(process: Process) = Unit
 
+    @OptIn(ExperimentalTime::class)
     final override fun buildRun() = AbstractRun {
-        val startTimeMillis = System.currentTimeMillis()
+        val exitCode: Int
 
-        val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
-        customizeProcess(process)
+        val stdOut: String
+        val stdErr: String
 
-        val exitCode = process.waitFor()
-        val finishTimeMillis = System.currentTimeMillis()
+        val duration = measureTime {
+            val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
+            customizeProcess(process)
 
-        val stdOut = process.inputStream.bufferedReader().readText()
-        val stdErr = process.errorStream.bufferedReader().readText()
+            val hasFinishedInTime = process.waitFor(
+                executionTimeout.toLong(DurationUnit.MILLISECONDS),
+                DurationUnit.MILLISECONDS.toTimeUnit()
+            )
 
-        RunResult(exitCode, finishTimeMillis - startTimeMillis, stdOut, stdErr)
+            if (!hasFinishedInTime)
+                return@AbstractRun RunResult.TimeoutExceeded(executionTimeout)
+
+            exitCode = process.exitValue()
+
+            stdOut = process.inputStream.bufferedReader().readText()
+            stdErr = process.errorStream.bufferedReader().readText()
+        }
+
+        RunResult.Completed(exitCode, duration, stdOut, stdErr)
     }
 
-    abstract override fun buildResultHandler(runResult: RunResult): ResultHandler // Narrow returned type.
+    abstract override fun buildResultHandler(runResult: RunResult.Completed): ResultHandler // Narrow returned type.
 
-    abstract inner class ResultHandler(runResult: RunResult) : AbstractRunner<R>.ResultHandler(runResult) {
+    abstract inner class ResultHandler(runResult: RunResult.Completed) : AbstractRunner<R>.ResultHandler(runResult) {
         override fun handle(): R {
             verifyExpectation(0, runResult.exitCode) { "$visibleProcessName exited with non-zero code." }
 

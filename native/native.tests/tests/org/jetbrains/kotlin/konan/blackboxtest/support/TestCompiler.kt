@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allF
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.*
-import kotlin.system.measureTimeMillis
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 internal class TestCompilationFactory(private val environment: TestEnvironment) {
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
@@ -175,14 +177,12 @@ internal sealed interface TestCompilationResult {
             is DependencyFailures -> fail { describeDependencyFailures() }
         }
 
-        private fun Failure.describeFailure() = buildString {
+        private fun Failure.describeFailure() = loggedData.withErrorMessageHeader(
             when (this@describeFailure) {
-                is CompilerFailure -> appendLine("Compilation failed.")
-                is UnexpectedFailure -> appendLine("Compilation failed with unexpected exception.")
+                is CompilerFailure -> "Compilation failed."
+                is UnexpectedFailure -> "Compilation failed with unexpected exception."
             }
-            appendLine()
-            appendLine(loggedData)
-        }
+        )
 
         private fun DependencyFailures.describeDependencyFailures() =
             buildString {
@@ -270,13 +270,13 @@ private class TestCompilationImpl(
         val loggedCompilerParameters = LoggedData.CompilerParameters(compilerArgs, sourceModules)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult) = try {
-            val (exitCode, compilerOutput, compilerOutputHasErrors, durationMillis) = callCompiler(
+            val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(
                 compilerArgs = compilerArgs,
                 lazyKotlinNativeClassLoader = environment.globalEnvironment.lazyKotlinNativeClassLoader
             )
 
             val loggedCompilerCall =
-                LoggedData.CompilerCall(loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, durationMillis)
+                LoggedData.CompilerCall(loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
 
             val result = if (exitCode != ExitCode.OK || compilerOutputHasErrors)
                 TestCompilationResult.CompilerFailure(loggedCompilerCall)
@@ -331,7 +331,8 @@ private fun callCompiler(compilerArgs: Array<String>, lazyKotlinNativeClassLoade
     val compilerXmlOutput: ByteArrayOutputStream
     val exitCode: ExitCode
 
-    val durationMillis = measureTimeMillis {
+    @OptIn(ExperimentalTime::class)
+    val duration = measureTime {
         val kotlinNativeClassLoader by lazyKotlinNativeClassLoader
 
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, kotlinNativeClassLoader)
@@ -372,14 +373,14 @@ private fun callCompiler(compilerArgs: Array<String>, lazyKotlinNativeClassLoade
         compilerOutput = outputStream.toString(Charsets.UTF_8.name())
     }
 
-    return CompilerCallResult(exitCode, compilerOutput, messageCollector.hasErrors(), durationMillis)
+    return CompilerCallResult(exitCode, compilerOutput, messageCollector.hasErrors(), duration)
 }
 
 private data class CompilerCallResult(
     val exitCode: ExitCode,
     val compilerOutput: String,
     val compilerOutputHasErrors: Boolean,
-    val durationMillis: Long
+    val duration: Duration
 )
 
 private fun getLogFile(expectedArtifactFile: File): File = expectedArtifactFile.resolveSibling(expectedArtifactFile.name + ".log")

@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestDisposable
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 import java.net.URLClassLoader
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class TestEnvironment(
     val globalEnvironment: GlobalTestEnvironment,
@@ -27,6 +30,7 @@ internal class GlobalTestEnvironment(
     val lazyKotlinNativeClassLoader: Lazy<ClassLoader> = defaultKotlinNativeClassLoader,
     val testMode: TestMode = defaultTestMode,
     val cacheSettings: TestCacheSettings = defaultCacheSettings,
+    val executionTimeout: Duration = defaultExecutionTimeout,
     val baseBuildDir: File = projectBuildDir
 ) {
     val hostTarget: KonanTarget = HostManager.host
@@ -73,6 +77,15 @@ internal class GlobalTestEnvironment(
             if (useCache) TestCacheSettings.WithCache else TestCacheSettings.WithoutCache
         }
 
+        private val defaultExecutionTimeout: Duration = run {
+            val executionTimeoutValue = System.getProperty(EXECUTION_TIMEOUT)
+            if (executionTimeoutValue != null) {
+                executionTimeoutValue.toLongOrNull()?.milliseconds
+                    ?: fail { "Invalid value for $EXECUTION_TIMEOUT system property: $executionTimeoutValue" }
+            } else
+                DEFAULT_EXECUTION_TIMEOUT
+        }
+
         private val projectBuildDir: File
             get() = System.getenv(PROJECT_BUILD_DIR)?.let(::File) ?: fail { "Non-specified $PROJECT_BUILD_DIR environment variable" }
 
@@ -80,7 +93,10 @@ internal class GlobalTestEnvironment(
         private const val COMPILER_CLASSPATH = "kotlin.internal.native.test.compilerClasspath"
         private const val TEST_MODE = "kotlin.internal.native.test.mode"
         private const val USE_CACHE = "kotlin.internal.native.test.useCache"
+        private const val EXECUTION_TIMEOUT = "kotlin.internal.native.test.executionTimeout"
         private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"
+
+        private val DEFAULT_EXECUTION_TIMEOUT get() = 10.seconds // Use no backing field to avoid null-initialized value.
     }
 }
 

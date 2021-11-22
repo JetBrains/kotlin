@@ -76,7 +76,7 @@ internal class TestRunProvider(
 
     // Currently, only local test runner is supported.
     fun createRunner(testRun: TestRun): AbstractRunner<*> = when (val target = environment.globalEnvironment.target) {
-        environment.globalEnvironment.hostTarget -> LocalTestRunner(testRun)
+        environment.globalEnvironment.hostTarget -> LocalTestRunner(testRun, environment.globalEnvironment.executionTimeout)
         else -> fail {
             """
                 Running at non-host target is not supported yet.
