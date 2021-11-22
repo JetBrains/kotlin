@@ -254,7 +254,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun TypeParameterMarker.representativeUpperBound(): ConeKotlinType {
         require(this is ConeTypeParameterLookupTag)
-        val bounds = this.typeParameterSymbol.fir.bounds.map { it.coneType }
+        val bounds = this.typeParameterSymbol.resolvedBounds.map { it.coneType }
         return bounds.firstOrNull {
             val classSymbol = it.safeAs<ConeClassLikeType>()?.fullyExpandedType(session)
                 ?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return@firstOrNull false
