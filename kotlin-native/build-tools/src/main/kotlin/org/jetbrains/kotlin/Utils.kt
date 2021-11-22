@@ -126,6 +126,7 @@ fun Task.dependsOnPlatformLibs() {
                 this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
             }
         }
+        this.dependsOnDist()
     } ?: error("unsupported task : $this")
 }
 
@@ -221,13 +222,42 @@ fun Task.isDependsOnPlatformLibs(): Boolean {
     }
 }
 
+val Project.isDefaultNativeHome: Boolean
+    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").file("dist").absolutePath
+
+private val Project.hasPlatformLibs: Boolean
+    get() {
+        if (!isDefaultNativeHome) {
+            return project.kotlinNativeDist
+                    .resolve("/klib/platform/${project.testTarget}")
+                    .exists()
+        }
+        return false
+    }
+
+private val Project.isCrossDist: Boolean
+    get() {
+        if (!isDefaultNativeHome) {
+            return project.kotlinNativeDist
+                    .resolve("/klib/stdlib/default/targets/${project.testTarget}")
+                    .exists()
+        }
+        return false
+    }
+
 fun Task.dependsOnDist() {
-    dependsOn(":kotlin-native:dist")
     val target = project.testTarget
-    if (target != HostManager.host) {
-        // if a test_target property is set then tests should depend on a crossDist
-        // otherwise, runtime components would not be build for a target.
-        dependsOn(":kotlin-native:${target.name}CrossDist")
+    if (project.isDefaultNativeHome) {
+        dependsOn(":kotlin-native:dist")
+        if (target != HostManager.host) {
+            // if a test_target property is set then tests should depend on a crossDist
+            // otherwise, runtime components would not be build for a target.
+            dependsOn(":kotlin-native:${target.name}CrossDist")
+        }
+    } else {
+        if (!project.isCrossDist) {
+            dependsOn(":kotlin-native:${target.name}CrossDist")
+        }
     }
 }
 
