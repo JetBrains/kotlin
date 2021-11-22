@@ -52,12 +52,16 @@ class FirDelegatedPropertyInferenceSession(
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to candidate
-        integrateResolvedCall(candidate.system.asReadOnlyStorage())
+        if (candidate.isSuccessful) {
+            integrateResolvedCall(candidate.system.asReadOnlyStorage())
+        }
     }
 
     override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
         super.addPartiallyResolvedCall(call)
-        integrateResolvedCall(call.candidate.system.currentStorage())
+        if (call.candidate.isSuccessful) {
+            integrateResolvedCall(call.candidate.system.currentStorage())
+        }
     }
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -167,12 +171,14 @@ class FirDelegatedPropertyInferenceSession(
         val stubToTypeVariableSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
         for ((call, candidate) in partiallyResolvedCalls) {
-            integrateConstraints(
-                commonSystem,
-                candidate.system.asReadOnlyStorage(),
-                stubToTypeVariableSubstitutor,
-                call.candidate() != null
-            )
+            if (candidate.isSuccessful) {
+                integrateConstraints(
+                    commonSystem,
+                    candidate.system.asReadOnlyStorage(),
+                    stubToTypeVariableSubstitutor,
+                    call.candidate() != null
+                )
+            }
         }
 
 
