@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -371,7 +372,7 @@ class NewResolutionOldInference(
             }
 
         override fun getNameForGivenImportAlias(name: Name): Name? =
-            resolutionContext.call.callElement.containingKtFile.getNameForGivenImportAlias(name)
+            (resolutionContext.call.callElement.containingFile as? KtFile)?.getNameForGivenImportAlias(name)
 
         override val lexicalScope: LexicalScope get() = resolutionContext.scope
 
