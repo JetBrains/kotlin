@@ -50,26 +50,29 @@ abstract class NodeJsSetupTask : DefaultTask() {
     internal lateinit var configuration: Provider<Configuration>
 
     @get:Classpath
-    val nodeJsDist: File by lazy {
-        val repo = project.repositories.ivy { repo ->
-            repo.name = "Node Distributions at ${downloadBaseUrl}"
-            repo.url = URI(downloadBaseUrl)
+    @get:Optional
+    val nodeJsDist: File? by lazy {
+        if (shouldDownload) {
+            val repo = project.repositories.ivy { repo ->
+                repo.name = "Node Distributions at ${downloadBaseUrl}"
+                repo.url = URI(downloadBaseUrl)
 
-            repo.patternLayout {
-                it.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                repo.patternLayout {
+                    it.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                }
+                repo.metadataSources { it.artifact() }
+                repo.content { it.includeModule("org.nodejs", "node") }
             }
-            repo.metadataSources { it.artifact() }
-            repo.content { it.includeModule("org.nodejs", "node") }
-        }
-        val startDownloadTime = System.currentTimeMillis()
-        val dist = configuration.get().files.single()
-        val downloadDuration = System.currentTimeMillis() - startDownloadTime
-        if (downloadDuration > 0) {
-            KotlinBuildStatsService.getInstance()
-                ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
-        }
-        project.repositories.remove(repo)
-        dist
+            val startDownloadTime = System.currentTimeMillis()
+            val dist = configuration.get().files.single()
+            val downloadDuration = System.currentTimeMillis() - startDownloadTime
+            if (downloadDuration > 0) {
+                KotlinBuildStatsService.getInstance()
+                    ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
+            }
+            project.repositories.remove(repo)
+            dist
+        } else null
     }
 
     init {
@@ -81,6 +84,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
     @Suppress("unused")
     @TaskAction
     fun exec() {
+        if (!shouldDownload) return
         logger.kotlinInfo("Using node distribution from '$nodeJsDist'")
 
         var dirHash: String? = null
@@ -93,7 +97,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
         }
 
         val tmpDir = temporaryDir
-        unpackNodeArchive(nodeJsDist, tmpDir)
+        unpackNodeArchive(nodeJsDist!!, tmpDir)
 
         if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
 

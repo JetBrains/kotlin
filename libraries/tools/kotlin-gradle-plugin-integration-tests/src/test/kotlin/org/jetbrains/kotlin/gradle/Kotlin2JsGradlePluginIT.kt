@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.project
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Assume.assumeFalse
 import org.junit.Test
+import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.FileFilter
 import java.util.zip.ZipFile
@@ -1034,12 +1036,34 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
-    fun testYarnLockStore(gradleVersion: GradleVersion) {
-        project("cleanTask", gradleVersion) {
-            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
+    fun testNodeJsAndYarnNotDownloaded(gradleVersion: GradleVersion) {
+        with(Project("nodeJsDownload")) {
+            gradleBuildScript().modify {
+                it + "\n" +
+                        """
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "unspecified"
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+                        }
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().version = "unspecified"
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().download = false
+                        }
+                        """
+            }
+            build("kotlinNodeJsSetup", "kotlinYarnSetup") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
+    fun testYarnLockStore() {
+        with(Project("nodeJsDownload")) {
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
             build("assemble") {
-                assertFileExists(projectPath.resolve("kotlin-js-store").resolve("yarn.lock"))
-                assert(projectPath.resolve("kotlin-js-store").resolve("yarn.lock").readText() == projectPath.resolve("build/js/yarn.lock").readText())
+                assertFileExists("kotlin-js-store/yarn.lock")
+                assert(fileInWorkingDir("kotlin-js-store").resolve("yarn.lock").readText() == fileInWorkingDir("build/js/yarn.lock").readText())
             }
         }
     }
