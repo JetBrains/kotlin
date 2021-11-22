@@ -148,7 +148,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 linkerOpts.add("-L${mingwPath}/lib")
             }
 
-            runTask!!.apply {
+            runTask?.apply {
                 group = ""
                 enabled = false
             }
