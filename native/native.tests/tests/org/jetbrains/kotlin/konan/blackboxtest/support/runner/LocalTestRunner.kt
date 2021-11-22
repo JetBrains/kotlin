@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
+import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 
@@ -100,7 +101,7 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
 
         private fun verifyOutputData(mergedOutput: String) {
             testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {
-                verifyExpectation(expectedOutputDataFile.readText(), mergedOutput) {
+                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()), convertLineSeparators(mergedOutput)) {
                     "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                 }
             }
