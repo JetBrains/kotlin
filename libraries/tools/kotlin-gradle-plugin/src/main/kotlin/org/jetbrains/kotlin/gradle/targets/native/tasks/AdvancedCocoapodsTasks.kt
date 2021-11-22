@@ -56,8 +56,14 @@ open class PodInstallTask : DefaultTask() {
     internal lateinit var frameworkName: Provider<String>
 
     @get:Optional
-    @get:Input
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
     internal val podfile = project.objects.property(File::class.java)
+
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
+    internal val podspec = project.objects.property(File::class.java)
 
     @get:Optional
     @get:OutputDirectory

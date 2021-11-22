@@ -56,6 +56,7 @@ class CocoaPodsIT : BaseGradleIT() {
         super.defaultBuildOptions().copy(customEnvironmentVariables = getPathEnvs())
 
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
+    val PODFILE_IMPORT_POD_PLACEHOLDER = "#import_pod_directive"
 
     private val cocoapodsSingleKtPod = "native-cocoapods-single"
     private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
@@ -929,6 +930,33 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testWithWrapper(":compileIosMainKotlinMetadata")
     }
 
+    @Test
+    fun testPodInstallUpToDateCheck() {
+        project = getProjectByName(cocoapodsSingleKtPod)
+        val subProjectName = "kotlin-library"
+        val subprojectPodImportTask = ":$subProjectName$podImportTaskName"
+        val subprojectPodspecTask = ":$subProjectName$podspecTaskName"
+        val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
+        with(project) {
+            preparePodfile("ios-app", ImportMode.FRAMEWORKS)
+            build(subprojectPodImportTask, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
+            }
+            gradleBuildScript(subProjectName).addPod(defaultPodName)
+            build(subprojectPodImportTask, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
+            }
+            build(subprojectPodImportTask, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                assertTasksNotExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
+            }
+            addPodToPodfile("ios-app", defaultPodName)
+            build(subprojectPodImportTask, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                assertTasksNotExecuted(listOf(subprojectPodspecTask))
+                assertTasksExecuted(listOf(subprojectPodInstallTask))
+            }
+        }
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")
@@ -1409,6 +1437,12 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    private fun Project.addPodToPodfile(iosAppLocation: String, pod: String) {
+        val iosAppDir = projectDir.resolve(iosAppLocation)
+        iosAppDir.resolve("Podfile").takeIf { it.exists() }?.modify {
+            it.replace(PODFILE_IMPORT_POD_PLACEHOLDER, "pod '$pod'")
+        }
+    }
 
     private fun kotlinLibraryPodspecContent(frameworkName: String? = null) = """
                 Pod::Spec.new do |spec|
