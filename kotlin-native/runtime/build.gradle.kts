@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 import org.jetbrains.kotlin.konan.file.File as KFile
 
+// These properties are used by the 'konan' plugin, thus we set them before applying it.
+val distDir: File by project
+val konanHome: String by extra(distDir.absolutePath)
+extra["org.jetbrains.kotlin.native.home"] = konanHome
+
 plugins {
     id("compile-to-bitcode")
     id("runtime-testing")
