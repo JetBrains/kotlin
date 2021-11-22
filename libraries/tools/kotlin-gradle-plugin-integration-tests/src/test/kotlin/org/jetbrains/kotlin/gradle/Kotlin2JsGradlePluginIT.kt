@@ -1045,16 +1045,6 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
             build("checkDownloadedFolder")
 
             build("checkIfLastModifiedNotNow", "--rerun-tasks")
-
-            buildGradle.modify {
-                it + "\n" +
-                        """
-                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().nodeVersion = "unspecified"
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
-                        }
-                        """
-            }
         }
     }
 
