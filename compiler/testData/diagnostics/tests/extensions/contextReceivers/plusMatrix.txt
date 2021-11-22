@@ -1,6 +1,6 @@
 package
 
-public fun Matrix.plus(/*0*/ other: Matrix): Matrix
+context(NumberOperations) public fun Matrix.plus(/*0*/ other: Matrix): Matrix
 public fun NumberOperations.plusMatrix(/*0*/ m1: Matrix, /*1*/ m2: Matrix): kotlin.Unit
 
 public final class Matrix {

@@ -1,9 +1,9 @@
 package
 
-public fun bar(/*0*/ receiver: Receiver, /*1*/ p: Param): kotlin.Unit
+context(Context) public fun bar(/*0*/ receiver: Receiver, /*1*/ p: Param): kotlin.Unit
 public fun foo(/*0*/ context: Context, /*1*/ receiver: Receiver, /*2*/ p: Param): kotlin.Unit
 public fun main(): kotlin.Unit
-public fun Receiver.baz(/*0*/ p: Param): kotlin.Unit
+context(Context) public fun Receiver.baz(/*0*/ p: Param): kotlin.Unit
 
 public final class Context {
     public constructor Context()

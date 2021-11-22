@@ -1,8 +1,8 @@
 package
 
-public val a: kotlin.Int = 1
-public var b: kotlin.Int
-public val c: kotlin.Int
+context(A) public val a: kotlin.Int = 1
+context(B, A) public var b: kotlin.Int
+context(B, A) public val c: kotlin.Int
 
 public interface A {
     public abstract fun a(): kotlin.Int

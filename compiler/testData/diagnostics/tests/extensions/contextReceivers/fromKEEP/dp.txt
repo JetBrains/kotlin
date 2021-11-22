@@ -1,6 +1,6 @@
 package
 
-public val kotlin.Int.dp: kotlin.Int
+context(View) public val kotlin.Int.dp: kotlin.Int
 public fun h(): kotlin.Unit
 public fun View.f(): kotlin.Unit
 public fun kotlin.Int.g(/*0*/ v: View): kotlin.Unit

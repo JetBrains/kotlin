@@ -1,6 +1,6 @@
 package
 
-public fun f(): kotlin.Unit
+context(A) public fun f(): kotlin.Unit
 
 public final class A {
     public constructor A(/*0*/ a: kotlin.String?)

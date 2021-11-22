@@ -168,6 +168,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 putTypeArguments(call.typeArguments) { it.toIrType() }
                 this.dispatchReceiver = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
+                contextReceiversCount = contextReceivers.size
             }
             addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType, contextReceivers.map { it.load() })
         }

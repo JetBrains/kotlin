@@ -1,7 +1,7 @@
 package
 
 public fun now(): kotlin.Any?
-public fun updateUserSession(): kotlin.Unit
+context(Transaction) public fun updateUserSession(): kotlin.Unit
 
 public final class Session {
     public constructor Session(/*0*/ lastAccess: kotlin.Any?)

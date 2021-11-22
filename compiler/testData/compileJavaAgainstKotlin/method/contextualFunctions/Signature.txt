@@ -1,6 +1,6 @@
 package test
 
-public fun test.R.f(/*0*/ test.P1, /*1*/ test.P2): kotlin.Unit
+context(test.C1, test.C2) public fun test.R.f(/*0*/ test.P1, /*1*/ test.P2): kotlin.Unit
 
 public interface C1 {
 }
