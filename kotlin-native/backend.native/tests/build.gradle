@@ -154,10 +154,10 @@ konanArtifacts {
     library('testLibrary') {
         srcDir 'testLibrary'
     }
-    def target = project.testTarget ?: 'host'
     library('baseTestClass', targets: [target]) {
         srcFiles 'testing/library.kt'
     }
+    UtilsKt.dependsOnDist(UtilsKt.findKonanBuildTask(project, "testLibrary", target))
 }
 configure(project.tasks.findByName("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}")) {
   UtilsKt.dependsOnDist(it)
@@ -207,8 +207,15 @@ run {
 }
 
 task sanity {
-    dependsOn(tasksOf(KonanTest))
-    dependsOn(tasksOf(FrameworkTest))
+    def platformLibsTasks =":distPlatformLibs" + ":kotlin-native:platformLibs"
+    dependsOn(tasksOf(KonanTest) { task ->
+        !UtilsKt.isDependsOnPlatformLibs(task) &&
+                task.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
+    })
+    // Add framework tests
+    dependsOn(tasksOf(FrameworkTest) { task ->
+        !UtilsKt.isDependsOnPlatformLibs(task)
+    })
     dependsOn(tasksOf(MetadataComparisonTest))
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))

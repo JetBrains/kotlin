@@ -121,6 +121,11 @@ fun Task.dependsOnPlatformLibs() {
             this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
             //this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-${it}Cache")
         }
+        if (this is KonanLinkTest) {
+            project.file(lib).dependencies().forEach {
+                this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
+            }
+        }
     } ?: error("unsupported task : $this")
 }
 
@@ -206,6 +211,13 @@ fun Project.dependsOnDist(taskName: String) {
 fun TaskProvider<Task>.dependsOnDist() {
     configure {
         dependsOnDist()
+    }
+}
+
+fun Task.isDependsOnPlatformLibs(): Boolean {
+    return dependsOn.any {
+        it.toString().contains(":kotlin-native:platformLibs") ||
+                it.toString().contains(":kotlin-native:distPlatformLibs")
     }
 }
 
