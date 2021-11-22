@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -19,10 +17,21 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 class IrConstTransformer(
-    private val interpreter: IrInterpreter, private val irFile: IrFile, private val mode: EvaluationMode
+    private val interpreter: IrInterpreter,
+    private val irFile: IrFile,
+    private val mode: EvaluationMode,
+    private val onError: (IrElement, IrErrorExpression) -> Unit = { _, _ -> }
 ) : IrElementTransformerVoid() {
     private fun IrExpression.replaceIfError(original: IrExpression): IrExpression {
         return if (this !is IrErrorExpression) this else original
+    }
+
+    private fun IrExpression.reportIfError(original: IrExpression): IrExpression {
+        if (this is IrErrorExpression) {
+            onError(original, this)
+            return original
+        }
+        return this
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -40,7 +49,8 @@ class IrConstTransformer(
         if (expression is IrConst<*>) return declaration
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
         if (isConst && expression.accept(IrCompileTimeChecker(declaration, mode), null)) {
-            initializer.expression = interpreter.interpret(expression, irFile).replaceIfError(expression)
+            val result = interpreter.interpret(expression, irFile)
+            initializer.expression = if (isConst) result.reportIfError(expression) else result.replaceIfError(expression)
         }
 
         return declaration
@@ -86,7 +96,7 @@ class IrConstTransformer(
 
     private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
         if (this.accept(IrCompileTimeChecker(mode = mode), null)) {
-            val const = interpreter.interpret(this, irFile).replaceIfError(this)
+            val const = interpreter.interpret(this, irFile).reportIfError(this)
             return const.convertToConstIfPossible(expectedType)
         } else if (this is IrConstructorCall) {
             transformAnnotation(this)

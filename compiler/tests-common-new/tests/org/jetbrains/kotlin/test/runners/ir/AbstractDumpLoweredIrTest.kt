@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
-import org.jetbrains.kotlin.backend.common.lower.constEvaluationPhase
+import org.jetbrains.kotlin.backend.jvm.lower.constEvaluationPhase
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler

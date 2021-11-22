@@ -26,6 +26,12 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Test
+    @TestMetadata("exceptionFromInterpreter_ir.kt")
+    public void testExceptionFromInterpreter_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/exceptionFromInterpreter_ir.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInlineCycle_ir.kt")
     public void testIndirectInlineCycle_ir() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle_ir.kt");

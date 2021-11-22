@@ -34,6 +34,8 @@ object JvmBackendErrors {
     val SCRIPT_CAPTURING_ENUM by error1<PsiElement, String>()
     val SCRIPT_CAPTURING_ENUM_ENTRY by error1<PsiElement, String>()
 
+    val EXCEPTION_IN_CONST_VAL_INITIALIZER by error1<PsiElement, String>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJvmErrorMessages)
     }
@@ -73,5 +75,7 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface {0} captures the script class instance. Try to use class instead", STRING)
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
+
+        map.put(JvmBackendErrors.EXCEPTION_IN_CONST_VAL_INITIALIZER, "An exception occur while evaluating const value initializer: {0}", STRING)
     }
 }
