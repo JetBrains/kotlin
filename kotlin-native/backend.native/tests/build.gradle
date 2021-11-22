@@ -157,7 +157,7 @@ konanArtifacts {
     library('baseTestClass', targets: [target]) {
         srcFiles 'testing/library.kt'
     }
-    UtilsKt.dependsOnDist(UtilsKt.findKonanBuildTask(project, "testLibrary", target))
+    UtilsKt.dependsOnDist(UtilsKt.findKonanBuildTask(project, "testLibrary", HostManager.@Companion.getHost()))
 }
 configure(project.tasks.findByName("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}")) {
   UtilsKt.dependsOnDist(it)
