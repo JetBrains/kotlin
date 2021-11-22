@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsKt;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartList;
@@ -632,13 +633,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 if (substitutedContextReceiverType == null) {
                     return null;
                 }
-                ReceiverParameterDescriptor substitutedContextReceiverParameter = new ReceiverParameterDescriptorImpl(
-                        substitutedDescriptor,
-                        new ExtensionReceiver(
-                                substitutedDescriptor, substitutedContextReceiverType, newContextReceiverParameter.getValue()
-                        ),
-                        newContextReceiverParameter.getAnnotations()
-                );
+                ReceiverParameterDescriptor substitutedContextReceiverParameter =
+                        DescriptorFactory.createContextReceiverParameterForCallable(substitutedDescriptor, substitutedContextReceiverType,
+                                                                                    newContextReceiverParameter.getAnnotations());
                 substitutedContextReceiverParameters.add(substitutedContextReceiverParameter);
 
                 wereChanges[0] |= substitutedContextReceiverType != newContextReceiverParameter.getType();
