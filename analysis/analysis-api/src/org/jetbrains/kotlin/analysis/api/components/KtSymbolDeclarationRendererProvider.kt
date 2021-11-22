@@ -33,11 +33,6 @@ public data class KtTypeRendererOptions(
     public val renderUnresolvedTypeAsResolved: Boolean = true,
 
     /**
-     * Whether to render type arguments.
-     */
-    public val renderTypeArguments: Boolean = true,
-
-    /**
      * Should annotations on types be rendered.
      */
     public val renderTypeAnnotations: Boolean = true

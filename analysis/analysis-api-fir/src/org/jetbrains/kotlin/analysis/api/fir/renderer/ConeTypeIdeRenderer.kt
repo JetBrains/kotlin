@@ -234,7 +234,7 @@ internal class ConeTypeIdeRenderer(
 
         if (classSymbolToRender !is FirRegularClassSymbol) {
             append(classSymbolToRender.classId.shortClassName)
-            if (options.renderTypeArguments && type.typeArguments.any()) {
+            if (type.typeArguments.any()) {
                 type.typeArguments.joinTo(this, ", ", prefix = "<", postfix = ">") {
                     renderTypeProjection(it)
                 }
@@ -261,7 +261,7 @@ internal class ConeTypeIdeRenderer(
             if (index != 0) append(".")
             append(currentClass.name)
 
-            if (options.renderTypeArguments && needToRenderTypeParameters(index)) {
+            if (needToRenderTypeParameters(index)) {
                 val typeParametersCount = currentClass.typeParameters.count { it is FirTypeParameter }
                 val begin = typeParametersLeft - typeParametersCount
                 val end = typeParametersLeft
