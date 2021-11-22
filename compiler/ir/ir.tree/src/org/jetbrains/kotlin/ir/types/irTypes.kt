@@ -71,6 +71,18 @@ fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType 
             this
     }
 
+fun IrType.removeAnnotations(): IrType =
+    when (this) {
+        is IrSimpleType ->
+            toBuilder().apply {
+                annotations = emptyList()
+            }.buildSimpleType()
+        is IrDynamicType ->
+            IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+        else ->
+            this
+    }
+
 val IrType.classifierOrFail: IrClassifierSymbol
     get() = cast<IrSimpleType>().classifier
 

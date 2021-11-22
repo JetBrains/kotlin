@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: AnalyzerException: Argument 1: expected R, but found I
 // TARGET_BACKEND: JVM
 
 // FILE: J.java

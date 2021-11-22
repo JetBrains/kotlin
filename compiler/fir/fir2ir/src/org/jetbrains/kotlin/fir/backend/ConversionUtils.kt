@@ -261,7 +261,8 @@ fun <T> FirConstExpression<T>.toIrConst(irType: IrType): IrConst<T> {
         } as T ?: value
         IrConstImpl(
             startOffset, endOffset,
-            irType,
+            // Strip all annotations (including special annotations such as @EnhancedNullability) from constant type
+            irType.removeAnnotations(),
             kind, value
         )
     }
