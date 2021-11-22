@@ -20064,6 +20064,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("enumConstName.kt")
+                public void testEnumConstName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumConstName.kt");
+                }
+
+                @Test
                 @TestMetadata("fromJava.kt")
                 public void testFromJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/fromJava.kt");
@@ -20076,6 +20082,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("ifConstVal.kt")
+                public void testIfConstVal() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal.kt");
+                }
+
+                @Test
+                @TestMetadata("kCallable.kt")
+                public void testKCallable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kCallable.kt");
+                }
+
+                @Test
                 @TestMetadata("kt12248.kt")
                 public void testKt12248() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/kt12248.kt");
@@ -20085,6 +20103,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("kt15913.kt")
                 public void testKt15913() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/kt15913.kt");
+                }
+
+                @Test
+                @TestMetadata("stdlibConstFun.kt")
+                public void testStdlibConstFun() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/stdlibConstFun.kt");
                 }
 
                 @Test
