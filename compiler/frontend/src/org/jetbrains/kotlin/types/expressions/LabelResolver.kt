@@ -57,7 +57,10 @@ object LabelResolver {
             is KtLambdaExpression -> result.addIfNotNull(getLabelForFunctionalExpression(element))
         }
         val functionOrProperty = when (element) {
-            is KtNamedFunction -> element
+            is KtNamedFunction -> {
+                result.addIfNotNull(element.nameAsName ?: getLabelForFunctionalExpression(element))
+                element
+            }
             is KtPropertyAccessor -> element.property
             else -> return result
         }
@@ -66,8 +69,6 @@ object LabelResolver {
             functionOrProperty.contextReceivers
                 .mapNotNullTo(result) { it.name()?.let { s -> Name.identifier(s) } }
         }
-        val name = functionOrProperty.nameAsName ?: getLabelForFunctionalExpression(functionOrProperty)
-        result.addIfNotNull(name)
         return result
     }
 
