@@ -219,7 +219,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val start = System.currentTimeMillis()
 
             val updated = if (perFileCache) {
-                actualizeCacheForModule(includes, outputFilePath, configurationJs, libraries, icCaches, IrFactoryImpl)
+                actualizeCacheForModule(includes, outputFilePath, configurationJs, libraries, icCaches, IrFactoryImpl, ::buildCacheForModuleFiles)
             } else {
                 buildCache(
                     cachePath = outputFilePath,
