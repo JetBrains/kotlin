@@ -301,7 +301,7 @@ class PostponedArgumentInputTypesResolver(
          *
          * TODO: regarding anonymous functions: see info about need for analysis in partial mode in `collectParameterTypesAndBuildNewExpectedTypes`
          */
-        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isAnonymousFunction())
+        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isFunctionExpression())
             return null
 
         val allParameterTypes =
@@ -389,7 +389,7 @@ class PostponedArgumentInputTypesResolver(
              *
              * TODO: investigate why we can't do it for anonymous functions in full mode always (see `diagnostics/tests/resolve/resolveWithSpecifiedFunctionLiteralWithId.kt`)
              */
-            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !argument.isAnonymousFunction())
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !argument.isFunctionExpression())
                 return@any false
             if (argument.revisedExpectedType != null) return@any false
             val parameterTypesInfo =

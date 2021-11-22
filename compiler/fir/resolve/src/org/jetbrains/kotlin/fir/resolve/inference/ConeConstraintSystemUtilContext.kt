@@ -81,7 +81,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     private fun FirAnonymousFunction.collectDeclaredValueParameterTypes(): List<ConeKotlinType?> =
         valueParameters.map { it.returnTypeRef.coneTypeSafe() }
 
-    override fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean {
+    override fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean {
         require(this is PostponedResolvedAtom)
         return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.anonymousFunction.isLambda
     }

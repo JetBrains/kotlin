@@ -72,7 +72,7 @@ class ClassicConstraintSystemUtilContext(
         }
     }
 
-    override fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean {
+    override fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean {
         require(this is ResolvedAtom)
         return this.atom is FunctionExpression
     }
