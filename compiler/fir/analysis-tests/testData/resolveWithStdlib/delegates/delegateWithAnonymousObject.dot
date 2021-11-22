@@ -85,6 +85,38 @@ digraph delegateWithAnonymousObject_kt {
 
     subgraph cluster_9 {
         color=red
+        26 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+        subgraph cluster_10 {
+            color=blue
+            27 [label="Enter block"];
+            28 [label="Enter anonymous object"];
+            subgraph cluster_11 {
+                color=blue
+                33 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                34 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+            }
+            29 [label="Exit anonymous object"];
+            30 [label="Exit anonymous object expression"];
+            31 [label="Exit block"];
+        }
+        32 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    }
+    26 -> {27};
+    27 -> {28};
+    27 -> {35 38 45} [color=red];
+    28 -> {29} [color=red];
+    28 -> {33} [color=green];
+    28 -> {33} [style=dashed];
+    29 -> {30};
+    29 -> {35 38 45} [color=green];
+    29 -> {35 38 45} [style=dashed];
+    30 -> {31};
+    31 -> {32};
+    33 -> {34} [color=green];
+    34 -> {29} [color=green];
+
+    subgraph cluster_12 {
+        color=red
         35 [label="Enter function <init>" style="filled" fillcolor=red];
         36 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
         37 [label="Exit function <init>" style="filled" fillcolor=red];
@@ -190,70 +222,29 @@ digraph delegateWithAnonymousObject_kt {
         71 [label="Enter property" style="filled" fillcolor=red];
         72 [label="Postponed enter to lambda"];
         73 [label="Postponed exit from lambda"];
-        74 [label="Function call: R?C|/delegate|(...)"];
+        74 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
         75 [label="Access variable this@R|/IssuesListUserProfile|"];
-        76 [label="Function call: R?C|/delegate|(...).R?C|special/error|(...)"];
-        77 [label="Postponed enter to lambda"];
-        subgraph cluster_19 {
-            color=blue
-            26 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            subgraph cluster_20 {
-                color=blue
-                27 [label="Enter block"];
-                28 [label="Enter anonymous object"];
-                subgraph cluster_21 {
-                    color=blue
-                    33 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
-                    34 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
-                }
-                29 [label="Exit anonymous object"];
-                30 [label="Exit anonymous object expression"];
-                31 [label="Exit block"];
-            }
-            32 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
-        }
-        78 [label="Postponed exit from lambda"];
-        79 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
-        80 [label="Exit property" style="filled" fillcolor=red];
+        76 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
+        77 [label="Exit property" style="filled" fillcolor=red];
     }
-    70 -> {71};
-    71 -> {72};
-    71 -> {26} [style=dashed];
     71 -> {72};
     72 -> {73};
-    72 -> {} [style=dashed];
+    72 -> {26} [style=dashed];
     73 -> {74};
     74 -> {75};
     75 -> {76};
     76 -> {77};
-    77 -> {78 26};
-    77 -> {26} [style=dashed];
-    78 -> {79};
-    79 -> {80};
-    80 -> {83} [color=green];
-    26 -> {27};
-    27 -> {28};
-    27 -> {35 38 45} [color=red];
-    28 -> {29} [color=red];
-    28 -> {33} [color=green];
-    28 -> {33} [style=dashed];
-    29 -> {30};
-    29 -> {35 38 45} [color=green];
-    29 -> {35 38 45} [style=dashed];
-    30 -> {31};
-    31 -> {32};
-    33 -> {34} [color=green];
-    34 -> {29} [color=green];
+    77 -> {80} [color=green];
 
     subgraph cluster_22 {
         color=red
-        81 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
-        82 [label="Part of class initialization"];
-        83 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
+        78 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
+        79 [label="Part of class initialization"];
+        80 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
     }
-    81 -> {82} [color=green];
-    82 -> {83} [style=dotted];
-    82 -> {71} [color=green];
-    82 -> {71} [style=dashed];
+    78 -> {79} [color=green];
+    79 -> {80} [style=dotted];
+    79 -> {71} [color=green];
+    79 -> {71} [style=dashed];
 
 }
