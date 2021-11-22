@@ -9446,6 +9446,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("kt49834.kt")
+            public void testKt49834() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt49834.kt");
+            }
+
+            @Test
             @TestMetadata("lvtWithInlineOnly.kt")
             public void testLvtWithInlineOnly() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
