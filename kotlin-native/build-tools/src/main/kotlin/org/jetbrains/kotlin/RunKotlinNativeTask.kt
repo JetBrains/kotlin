@@ -72,7 +72,8 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
                 }
                 remoteHost != null -> {
                     executable = "ssh"
-                    args (remoteHost, "$remoteHostFolder/${this@RunKotlinNativeTask.executable}")
+                    val remoteExecutable = this@RunKotlinNativeTask.executable.split("/").last()
+                    args (remoteHost, "$remoteHostFolder/$remoteExecutable")
                 }
                 else -> executable = this@RunKotlinNativeTask.executable
             }
@@ -125,7 +126,8 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         project.exec {
             if (remoteHost != null) {
                 executable = "ssh"
-                args (remoteHost, "$remoteHostFolder/${this@RunKotlinNativeTask.executable}")
+                val remoteExecutable = this@RunKotlinNativeTask.executable.split("/").last()
+                args (remoteHost, "$remoteHostFolder/$remoteExecutable")
             } else {
                 executable = this@RunKotlinNativeTask.executable
             }
