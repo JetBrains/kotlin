@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerPluginData
+import org.jetbrains.kotlin.gradle.utils.addGradlePluginMetadataAttributes
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import org.jetbrains.kotlin.project.model.*
 import java.io.File
@@ -94,6 +95,7 @@ internal class CompilerPluginOptionsBuilder(
                 isCanBeResolved = true
                 isVisible = false
                 reorderPluginClasspathDependencies()
+                addGradlePluginMetadataAttributes(project)
             }
         artifacts.forEach { project.dependencies.add(configurationName, it) }
 
