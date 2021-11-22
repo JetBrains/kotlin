@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isInlineOrValueClass
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -346,32 +345,5 @@ abstract class DeclarationStubGenerator(
                 this, typeTranslator
             )
         }
-    }
-
-    private fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
-        when (signature) {
-            is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
-            is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)
-            else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")
-        }
-
-    private fun findDescriptorForAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
-        val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor ?: return null
-        val shortName = signature.accessorSignature.shortName
-        return propertyDescriptor.accessors.singleOrNull { it.name.asString() == shortName }
-    }
-
-    private fun findDescriptorForPublicSignature(signature: IdSignature.CommonSignature): DeclarationDescriptor? {
-        val packageDescriptor = moduleDescriptor.getPackage(signature.packageFqName())
-        val nameSegments = signature.nameSegments
-        val toplevelDescriptors = packageDescriptor.memberScope.getDescriptorsFiltered { name -> name.asString() == nameSegments.first() }
-        val candidates = nameSegments.drop(1).fold(toplevelDescriptors) { acc, current ->
-            acc.flatMap { container ->
-                val classDescriptor = container as? ClassDescriptor ?: return@flatMap emptyList()
-                classDescriptor.constructors.filter { it.name.asString() == current } +
-                        classDescriptor.unsubstitutedMemberScope.getDescriptorsFiltered { name -> name.asString() == current }
-            }
-        }
-        return candidates.firstOrNull { symbolTable.signaturer.composeSignature(it) == signature }
     }
 }

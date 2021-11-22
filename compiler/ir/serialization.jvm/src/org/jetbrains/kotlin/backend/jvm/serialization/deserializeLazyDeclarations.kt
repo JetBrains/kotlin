@@ -138,33 +138,17 @@ private fun referencePublicSymbol(
     symbolKind: BinarySymbolData.SymbolKind
 ): IrSymbol {
     with(symbolTable) {
-        val descriptor = descriptorFinder.findDescriptorBySignature(idSig)
-        return if (descriptor != null && false) {
-            when (symbolKind) {
-                BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(descriptor as ClassDescriptor)
-                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(descriptor as ClassConstructorDescriptor)
-                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(descriptor as ClassDescriptor)
-                BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL, BinarySymbolData.SymbolKind.FIELD_SYMBOL
-                    -> referenceField(descriptor as PropertyDescriptor)
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(descriptor as FunctionDescriptor)
-                BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(descriptor as TypeAliasDescriptor)
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(descriptor as PropertyDescriptor)
-                BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(descriptor as TypeParameterDescriptor)
-                else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
-            }
-        } else {
-            when (symbolKind) {
-                BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(idSig)
-                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(idSig)
-                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(idSig)
-                BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL, BinarySymbolData.SymbolKind.FIELD_SYMBOL
-                    -> referenceField(idSig)
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(idSig)
-                BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(idSig)
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(idSig)
-                BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(idSig)
-                else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
-            }
+        return when (symbolKind) {
+            BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(idSig)
+            BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(idSig)
+            BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(idSig)
+            BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL, BinarySymbolData.SymbolKind.FIELD_SYMBOL
+                -> referenceField(idSig)
+            BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(idSig)
+            BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(idSig)
+            BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(idSig)
+            BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(idSig)
+            else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
         }
     }
 }
