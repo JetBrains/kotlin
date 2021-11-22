@@ -1,6 +1,6 @@
 package
 
-public fun userInfo(/*0*/ name: kotlin.String): Storage<User>.Info?
+context(Logger, Storage<User>) public fun userInfo(/*0*/ name: kotlin.String): Storage<User>.Info?
 
 public final class Logger {
     public constructor Logger()

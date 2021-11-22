@@ -3,7 +3,7 @@ package
 public fun </*0*/ T> listOf(/*0*/ vararg items: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
 public fun test(): kotlin.Unit
 public inline fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.fold(/*0*/ initial: R, /*1*/ operation: (acc: R, T) -> R): R
-public fun </*0*/ T> kotlin.collections.List<T>.sum(): T
+context(Monoid<T>) public fun </*0*/ T> kotlin.collections.List<T>.sum(): T
 
 public object IntMonoid : Monoid<kotlin.Int> {
     private constructor IntMonoid()

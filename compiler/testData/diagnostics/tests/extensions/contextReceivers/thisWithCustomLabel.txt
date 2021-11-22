@@ -1,7 +1,7 @@
 package
 
-public val C.p: kotlin.Int
-public fun f(): kotlin.Unit
+context(B, A<kotlin.String>, A<kotlin.Int>) public val C.p: kotlin.Int
+context(A<kotlin.Int>, A<kotlin.String>, B) public fun f(): kotlin.Unit
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>(/*0*/ a: T)

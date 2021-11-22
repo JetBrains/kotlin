@@ -1,7 +1,7 @@
 package
 
-public fun supertypeContextual(): kotlin.Unit
-public fun test(): kotlin.Unit
+context(Common) public fun supertypeContextual(): kotlin.Unit
+context(C1, C2) public fun test(): kotlin.Unit
 public fun Common.supertypeExtension(): kotlin.Unit
 public fun </*0*/ T : Common> T.supertypeExtensionGeneric(): kotlin.Unit
 

@@ -1,7 +1,7 @@
 package
 
+context(Context) public fun f(): kotlin.String
 public fun f(): kotlin.Any
-public fun f(): kotlin.String
 public fun test(): kotlin.Unit
 
 public final class Context {

@@ -1,6 +1,6 @@
 package
 
-public fun performSomeBusinessOperation(/*0*/ withParams: Params): kotlin.Unit
+context(LoggingContext) public fun performSomeBusinessOperation(/*0*/ withParams: Params): kotlin.Unit
 
 public interface Logger {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

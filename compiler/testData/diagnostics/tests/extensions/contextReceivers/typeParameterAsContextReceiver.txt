@@ -1,4 +1,4 @@
 package
 
 public fun test(): kotlin.Unit
-public fun </*0*/ T> useContext(/*0*/ block: (T) -> kotlin.Unit): kotlin.Unit
+context(T) public fun </*0*/ T> useContext(/*0*/ block: (T) -> kotlin.Unit): kotlin.Unit

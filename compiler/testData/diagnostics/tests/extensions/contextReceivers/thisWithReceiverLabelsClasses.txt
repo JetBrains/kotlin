@@ -8,7 +8,7 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class B {
+context(A) public final class B {
     public constructor B()
     public final val prop: [ERROR : Type for x + this@A.x]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

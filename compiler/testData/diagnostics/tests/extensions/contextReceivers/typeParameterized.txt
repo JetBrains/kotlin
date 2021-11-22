@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ T> T.f(/*0*/ t: B<T>): kotlin.Unit
+context(T) public fun </*0*/ T> T.f(/*0*/ t: B<T>): kotlin.Unit
 public fun kotlin.Int.main(/*0*/ a: A, /*1*/ b: B<kotlin.String>): kotlin.Unit
 
 public final class A {

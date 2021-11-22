@@ -10,7 +10,7 @@ public interface Canvas {
 
 public final class Circle : Shape {
     public constructor Circle()
-    public open override /*1*/ fun draw(): kotlin.Unit
+    context(Canvas) public open override /*1*/ fun draw(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -24,7 +24,7 @@ public object MyCanvas : Canvas {
 }
 
 public interface Shape {
-    public abstract fun draw(): kotlin.Unit
+    context(Canvas) public abstract fun draw(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

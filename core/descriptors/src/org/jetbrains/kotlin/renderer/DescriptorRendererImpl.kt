@@ -676,6 +676,7 @@ internal class DescriptorRendererImpl(
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
                 builder.renderAnnotations(function)
+                renderContextReceivers(function.contextReceiverParameters, builder)
                 renderVisibility(function.visibility, builder)
                 renderModalityForCallable(function, builder)
 
@@ -732,17 +733,39 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun KotlinType.renderForReceiver(): String {
+        var result = renderType(this)
+        if (shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) {
+            result = "($result)"
+        }
+        return result
+    }
+
+    private fun renderContextReceivers(contextReceivers: List<ReceiverParameterDescriptor>, builder: StringBuilder) {
+        if (contextReceivers.isNotEmpty()) {
+            builder.append("context(")
+        } else {
+            return
+        }
+        for ((i, contextReceiver) in contextReceivers.withIndex()) {
+            builder.renderAnnotations(contextReceiver, AnnotationUseSiteTarget.RECEIVER)
+            val typeString = contextReceiver.type.renderForReceiver()
+            builder.append(typeString)
+            if (i == contextReceivers.lastIndex) {
+                builder.append(") ")
+            } else {
+                builder.append(", ")
+            }
+        }
+    }
+
     private fun renderReceiver(callableDescriptor: CallableDescriptor, builder: StringBuilder) {
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
             builder.renderAnnotations(receiver, AnnotationUseSiteTarget.RECEIVER)
 
-            val type = receiver.type
-            var result = renderType(type)
-            if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
-                result = "($result)"
-            }
-            builder.append(result).append(".")
+            val typeString = receiver.type.renderForReceiver()
+            builder.append(typeString).append(".")
         }
     }
 
@@ -904,6 +927,7 @@ internal class DescriptorRendererImpl(
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
                 renderPropertyAnnotations(property, builder)
+                renderContextReceivers(property.contextReceiverParameters, builder)
                 renderVisibility(property.visibility, builder)
                 renderModifier(builder, DescriptorRendererModifier.CONST in modifiers && property.isConst, "const")
                 renderMemberModifiers(property, builder)
@@ -988,6 +1012,7 @@ internal class DescriptorRendererImpl(
 
         if (!startFromName) {
             builder.renderAnnotations(klass)
+            renderContextReceivers(klass.contextReceivers, builder)
             if (!isEnumEntry) {
                 renderVisibility(klass.visibility, builder)
             }

@@ -1,7 +1,7 @@
 package
 
 public fun main(/*0*/ a: A, /*1*/ b: B, /*2*/ c: C): kotlin.Unit
-public fun C.f(): kotlin.Unit
+context(A, B) public fun C.f(): kotlin.Unit
 
 public final class A {
     public constructor A()

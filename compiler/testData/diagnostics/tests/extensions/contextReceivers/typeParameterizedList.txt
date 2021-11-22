@@ -2,7 +2,7 @@ package
 
 public fun </*0*/ T> listOf(/*0*/ vararg e: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
 public fun main(): kotlin.Unit
-public fun </*0*/ T> A<T>.f(): kotlin.Unit
+context(kotlin.collections.List<T>) public fun </*0*/ T> A<T>.f(): kotlin.Unit
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>()

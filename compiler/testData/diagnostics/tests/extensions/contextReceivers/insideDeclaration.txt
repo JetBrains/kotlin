@@ -1,6 +1,6 @@
 package
 
-public fun B.bar(): kotlin.Unit
+context(A) public fun B.bar(): kotlin.Unit
 public fun B.foo(): kotlin.Unit
 
 public final class A {

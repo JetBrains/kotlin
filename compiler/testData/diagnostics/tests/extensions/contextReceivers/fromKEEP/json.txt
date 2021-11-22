@@ -2,8 +2,8 @@ package
 
 public fun json(/*0*/ build: JSONObject.() -> kotlin.Unit): JSONObject
 public fun test(): kotlin.Unit
-public infix fun kotlin.String.by(/*0*/ build: JSONObject.() -> kotlin.Unit): kotlin.Unit
-public infix fun kotlin.String.by(/*0*/ value: kotlin.Any): kotlin.Unit
+context(JSONObject) public infix fun kotlin.String.by(/*0*/ build: JSONObject.() -> kotlin.Unit): kotlin.Unit
+context(JSONObject) public infix fun kotlin.String.by(/*0*/ value: kotlin.Any): kotlin.Unit
 
 public final class JSONObject {
     public constructor JSONObject()

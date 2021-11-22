@@ -2,7 +2,7 @@ package
 
 public fun test(): kotlin.Unit
 public fun withAutoClose(/*0*/ block: context(AutoCloseScope) () -> kotlin.Unit): kotlin.Unit
-public fun File.open(): InputStream
+context(AutoCloseScope) public fun File.open(): InputStream
 
 public interface AutoCloseScope {
     public abstract fun close(): kotlin.Unit
