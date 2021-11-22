@@ -1252,45 +1252,24 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 // No variable in LVT -> do not add one
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
                 if (lvtRecord.name == CONTINUATION_VARIABLE_NAME || lvtRecord.name == SUSPEND_CALL_RESULT_NAME) continue
-                // End the local when it is no longer live. Since it is not live, we will not spill and unspill it across
-                // suspension points. It is tempting to keep it alive until the next suspension point to leave it visible in
-                // the debugger for as long as possible. However, in the case of loops, the resumption after suspension can
-                // have a backwards edge targeting instruction between the point of death and the next suspension point.
-                //
-                // For example, code such as the following:
-                //
-                //    listOf<String>.forEach {
-                //       yield(it)
-                //    }
-                //
-                // Generates code of this form with a back edge after resumption that will lead to invalid locals tables
-                // if the local range is extended to the next suspension point.
-                //
-                //        iterator = iterable.iterator()
-                //    L1: (iterable dies here)
-                //        load iterator.next if there
-                //        yield suspension point
-                //
-                //    L2: (resumption point)
-                //        restore live variables (not including iterable)
-                //        goto L1 (iterator not restored here, so we cannot not have iterator live at L1)
+                // End the local when it is no longer live and then attempt to extend its range when safe.
                 val endLabel = nextLabel(insn.next)?.let { min(lvtRecord.end, it) } ?: lvtRecord.end
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
 
                 // Attempt to extend existing local variable node corresponding to the record in
-                // the original local variable table, if there is no back-edge
+                // the original local variable table if there are no control-flow merges.
                 val latest = oldLvtNodeToLatestNewLvtNode[lvtRecord]
-                // if we can extend the previous range to where the local variable dies, we do not need a
+                // If we can extend the previous range to where the local variable dies, we do not need a
                 // new entry, we know we cannot extend it to the lvt.endOffset, if we could we would have
                 // done so when we added it below.
-                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end) ?: false
+                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness) ?: false
                 if (!extended) {
                     val new = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
                     oldLvtNodeToLatestNewLvtNode[lvtRecord] = new
                     method.localVariables.add(new)
-                    // see if we can extend it all the way to the old end
-                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end)
+                    // See if we can extend it all the way to the old end.
+                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness)
                 }
             }
         }
@@ -1314,26 +1293,71 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     }
 }
 
-/* We cannot extend a record if there is STORE instruction or a back-edge.
- * STORE instructions can signify a unspilling operation, in which case, the variable will become visible before it unspilled,
- * back-edges occur in loops.
+/* We cannot extend a record if there is STORE instruction or a control-flow merge.
+ *
+ * STORE instructions can signify a unspilling operation, in which case, the variable will become visible before it unspilled.
+ *
+ * If there is a control-flow merge point in a range where a variable is dead, it might not have been restored on one of the paths
+ * and therefore it is not safe to extend the record across the control flow merge point.
+ *
+ * For example, code such as the following:
+ *
+ *    listOf<String>.forEach {
+ *       yield(it)
+ *    }
+ *
+ * Generates code of this form with a back edge after resumption that will lead to invalid locals tables
+ * if the local range is extended to the next suspension point. L1 is a merge point and therefore, we do
+ * not extend.
+ *
+ *        iterator = iterable.iterator()
+ *    L1: (iterable dies here)
+ *        load iterator.next if there
+ *        yield suspension point
+ *
+ *    L2: (resumption point)
+ *        restore live variables (not including iterable)
+ *        goto L1 (iterator not restored here, so we cannot not have iterator live at L1)
+ *
+ * Code such as:
+ *
+ *    val value = getValue()
+ *    return if (value == null) {
+ *        computeValueAsync()  // suspension point
+ *    } else {
+ *        value
+ *    } + "K"
+ *
+ * Generates code of this form, where it is not safe to extend the `value` local variable across the control-flow
+ * merge because it is dead and will not have been restored after the suspend point in one of the branches.
+ *
+ *      value = getValue()
+ *      if (value != null) goto L2
+ *  L1: (value dead here)
+ *      temp = computeValueAsync() // suspension point and resumption point, value NOT restored as it is dead
+ *      load temp
+ *      goto L3
+ *  L2: (value alive here)
+ *      load value
+ *  L3: (merge point, cannot extend `value` local across as it is not defined on one of the paths)
+ *      load "K"
+ *      add strings
+ *      return
  *
  * @return true if the range has been extended
  */
 private fun LocalVariableNode.extendRecordIfPossible(
     method: MethodNode,
     suspensionPoints: List<LabelNode>,
-    endLabel: LabelNode
+    endLabel: LabelNode,
+    liveness: List<VariableLivenessFrame>
 ): Boolean {
     val nextSuspensionPointLabel = suspensionPoints.find { it in InsnSequence(end, endLabel) } ?: endLabel
 
     var current: AbstractInsnNode? = end
+    var index = method.instructions.indexOf(current)
     while (current != null && current != nextSuspensionPointLabel) {
-        if (current is JumpInsnNode) {
-            if (method.instructions.indexOf(current.label) < method.instructions.indexOf(current)) {
-                return false
-            }
-        }
+        if (liveness[index].isControlFlowMerge()) return false
         // TODO: HACK
         // TODO: Find correct label, which is OK to be used as end label.
         if (current.opcode == Opcodes.ARETURN && nextSuspensionPointLabel != endLabel) return false
@@ -1341,6 +1365,7 @@ private fun LocalVariableNode.extendRecordIfPossible(
             return false
         }
         current = current.next
+        ++index
     }
     end = nextSuspensionPointLabel
     return true

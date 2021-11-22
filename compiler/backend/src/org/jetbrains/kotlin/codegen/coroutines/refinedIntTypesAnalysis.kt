@@ -194,6 +194,9 @@ private class VarExpectedTypeFrame(maxLocals: Int) : VarFrame<VarExpectedTypeFra
         }
     }
 
+    override fun markControlFlowMerge() {
+    }
+
     fun updateExpectedType(varIndex: Int, new: Type) {
         val was = expectedTypeByVarIndex[varIndex]
         // Widening to int is always allowed

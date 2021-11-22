@@ -8208,6 +8208,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt38925.kt");
             }
 
+            @TestMetadata("kt49834.kt")
+            public void testKt49834() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt49834.kt");
+            }
+
             @TestMetadata("lvtWithInlineOnly.kt")
             public void testLvtWithInlineOnly() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
@@ -10902,14 +10907,14 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
         }
 
-        @TestMetadata("kt49371.kt")
-        public void testKt49371() throws Exception {
-            runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
-        }
-
         @TestMetadata("internalFromFriendModule.kt")
         public void testInternalFromFriendModule() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/internalFromFriendModule.kt");
+        }
+
+        @TestMetadata("kt49371.kt")
+        public void testKt49371() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
         }
 
         @TestMetadata("privateFakeOverrides0.kt")
