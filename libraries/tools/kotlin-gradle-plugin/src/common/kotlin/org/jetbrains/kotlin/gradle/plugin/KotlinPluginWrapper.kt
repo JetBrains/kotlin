@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryEl
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.tooling.registerBuildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.utils.addGradlePluginMetadataAttributes
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
@@ -75,9 +76,17 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
         addKotlinCompilerConfiguration(project)
 
-        project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+        project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            isVisible = false
+            isCanBeConsumed = false
+            addGradlePluginMetadataAttributes(project)
+        }
+
         project.configurations.maybeCreate(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            isVisible = false
+            isCanBeConsumed = false
             isTransitive = false
+            addGradlePluginMetadataAttributes(project)
         }
         project.registerCommonizerClasspathConfigurationIfNecessary()
 

@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.COMPILE
-import org.jetbrains.kotlin.gradle.utils.RUNTIME
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
@@ -281,8 +278,11 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val configurations = target.project.configurations
 
             configurations.maybeCreate(compilation.pluginConfigurationName).apply {
+                addGradlePluginMetadataAttributes(project)
+
                 if (target.platformType == KotlinPlatformType.native) {
                     extendsFrom(configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
+
                     isTransitive = false
                 } else {
                     extendsFrom(target.project.commonKotlinPluginClasspath)
