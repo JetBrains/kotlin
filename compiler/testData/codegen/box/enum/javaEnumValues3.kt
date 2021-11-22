@@ -1,15 +1,15 @@
 // TARGET_BACKEND: JVM
 // FILE: E.java
 public enum E {
-    A();
-    public static void values(boolean b) {
-    }
+    OK(), A();
+    public static void values(boolean b) {}
 }
 
 // FILE: test.kt
 
 fun f(e: E) = when (e) {
-    E.A -> "OK"
+    E.A -> E.values()[0].toString()
+    else -> "?"
 }
 
 fun box(): String {

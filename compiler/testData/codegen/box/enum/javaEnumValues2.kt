@@ -2,14 +2,15 @@
 // FILE: E.java
 public enum E {
     A();
-    public static void values(boolean b) {
+    public static String values(String s) {
+        return s;
     }
 }
 
 // FILE: test.kt
 
 fun f(e: E) = when (e) {
-    E.A -> "OK"
+    E.A -> E.values("OK")
 }
 
 fun box(): String {

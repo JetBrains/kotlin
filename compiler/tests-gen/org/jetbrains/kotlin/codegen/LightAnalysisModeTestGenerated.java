@@ -12517,9 +12517,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/enum/javaClassWithNestedEnum.kt");
         }
 
+        @TestMetadata("javaEnumValueOf.kt")
+        public void testJavaEnumValueOf() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/javaEnumValueOf.kt");
+        }
+
         @TestMetadata("javaEnumValues.kt")
         public void testJavaEnumValues() throws Exception {
             runTest("compiler/testData/codegen/box/enum/javaEnumValues.kt");
+        }
+
+        @TestMetadata("javaEnumValues2.kt")
+        public void testJavaEnumValues2() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/javaEnumValues2.kt");
+        }
+
+        @TestMetadata("javaEnumValues3.kt")
+        public void testJavaEnumValues3() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/javaEnumValues3.kt");
         }
 
         @TestMetadata("kt1119.kt")

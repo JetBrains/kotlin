@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -154,15 +155,16 @@ class Fir2IrLazyClass(
         for (declaration in fir.declarations) {
             when (declaration) {
                 is FirSimpleFunction -> {
-                    if (declaration.name !in processedNames) {
+                    if (fir.classKind == ClassKind.ENUM_CLASS && declaration.isStatic &&
+                        (declaration.source == null || declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration)
+                    ) {
+                        // Handle generated methods for enum classes (values(), valueOf(String)).
+                        // TODO we also come here for all deserialized static enum members (with declaration.source == null).
+                        //  For such members we currently can't tell whether they are compiler-generated methods or not.
+                        result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
+                    } else if (declaration.name !in processedNames) {
                         processedNames += declaration.name
-                        if (fir.classKind == ClassKind.ENUM_CLASS && declaration.isStatic &&
-                            declaration.returnTypeRef is FirResolvedTypeRef
-                        ) {
-                            // Handle values() / valueOf() separately
-                            // TODO: handle other static functions / properties properly
-                            result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
-                        } else if (fir.classKind == ClassKind.ANNOTATION_CLASS && declaration.origin == FirDeclarationOrigin.Java) {
+                        if (fir.classKind == ClassKind.ANNOTATION_CLASS && declaration.origin == FirDeclarationOrigin.Java) {
                             // Java annotation values are exposed as properties.
                             scope.processPropertiesByName(declaration.name) {
                                 if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {

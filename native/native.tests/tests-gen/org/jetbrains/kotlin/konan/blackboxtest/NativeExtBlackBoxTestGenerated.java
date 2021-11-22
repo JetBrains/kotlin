@@ -15509,9 +15509,27 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("javaEnumValueOf.kt")
+            public void testJavaEnumValueOf() throws Exception {
+                runTest("compiler/testData/codegen/box/enum/javaEnumValueOf.kt");
+            }
+
+            @Test
             @TestMetadata("javaEnumValues.kt")
             public void testJavaEnumValues() throws Exception {
                 runTest("compiler/testData/codegen/box/enum/javaEnumValues.kt");
+            }
+
+            @Test
+            @TestMetadata("javaEnumValues2.kt")
+            public void testJavaEnumValues2() throws Exception {
+                runTest("compiler/testData/codegen/box/enum/javaEnumValues2.kt");
+            }
+
+            @Test
+            @TestMetadata("javaEnumValues3.kt")
+            public void testJavaEnumValues3() throws Exception {
+                runTest("compiler/testData/codegen/box/enum/javaEnumValues3.kt");
             }
 
             @Test
