@@ -249,7 +249,7 @@ class FirDelegatedPropertyInferenceSession(
     override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
 
         val bindings = mutableMapOf<TypeConstructorMarker, ConeStubType>()
-
+        registerSyntheticVariables(system.currentStorage())
         for (variable in system.postponedTypeVariables) {
             variable as ConeTypeVariable
 
