@@ -193,6 +193,15 @@ public final external class Date {
     }
 }
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY})
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.Deprecated(message = "This annotation is a temporal migration assistance and may be removed in the future releases, please consider filing an issue about the case where it is needed")
+public final annotation class EagerInitialization : kotlin.Annotation {
+    public constructor EagerInitialization()
+}
+
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
@@ -223,14 +232,6 @@ public external object JSON {
 
 public external interface JsClass<T : kotlin.Any> {
     public abstract val name: kotlin.String { get; }
-}
-
-@kotlin.ExperimentalStdlibApi
-@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY})
-@kotlin.SinceKotlin(version = "1.6")
-public final annotation class JsEagerInitialization : kotlin.Annotation {
-    public constructor JsEagerInitialization()
 }
 
 @kotlin.js.ExperimentalJsExport

@@ -17,7 +17,7 @@ fun raise(name: String): Nothing {
 // Adapter should be initialized eagerly
 @Suppress("INVISIBLE_MEMBER")
 @OptIn(kotlin.ExperimentalStdlibApi::class)
-@JsEagerInitialization
+@EagerInitialization
 private val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
         sortingContext.suite(name, ignored) { suiteFn() }

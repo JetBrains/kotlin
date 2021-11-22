@@ -64,13 +64,3 @@ public annotation class ExperimentalJsExport
 @SinceKotlin("1.4")
 @OptionalExpectation
 public expect annotation class JsExport()
-
-/**
- * Forces a top-level property to be initialized eagerly, opposed to lazily on the first access to file and/or property.
- */
-@ExperimentalStdlibApi
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.PROPERTY)
-@SinceKotlin("1.6")
-@OptionalExpectation
-public expect annotation class JsEagerInitialization
