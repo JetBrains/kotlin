@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering.Companion.tryToFold
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
@@ -181,7 +182,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                         endOffset,
                         type,
                         collectStringConcatenationArguments(this)
-                    )
+                    ).tryToFold(context, floatSpecial = false)
                 }
             else expression
 

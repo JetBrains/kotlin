@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.constants.evaluate.evaluateBinary
 import org.jetbrains.kotlin.resolve.constants.evaluate.evaluateUnary
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 val foldConstantLoweringPhase = makeIrFilePhase(
     { ctx: CommonBackendContext -> FoldConstantLowering(ctx) },
@@ -99,6 +101,71 @@ class FoldConstantLowering(
             registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
             registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.EQEQ) { a, b -> a == b }
         }
+
+        fun IrStringConcatenation.tryToFold(context: CommonBackendContext, floatSpecial: Boolean): IrExpression {
+            val folded = mutableListOf<IrExpression>()
+            for (next in this.arguments) {
+                val last = folded.lastOrNull()
+                when {
+                    next !is IrConst<*> -> folded += next
+                    last !is IrConst<*> -> folded += IrConstImpl.string(
+                        next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next, floatSpecial)
+                    )
+                    else -> folded[folded.size - 1] = IrConstImpl.string(
+                        // Inlined strings may have `last.startOffset > next.endOffset`
+                        min(last.startOffset, next.startOffset), max(last.endOffset, next.endOffset),
+                        context.irBuiltIns.stringType,
+                        constToString(last, floatSpecial) + constToString(next, floatSpecial)
+                    )
+                }
+            }
+            return folded.singleOrNull() as? IrConst<*>
+                ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, folded)
+        }
+
+        private fun constToString(const: IrConst<*>, floatSpecial: Boolean): String {
+            if (floatSpecial) {
+                when (val kind = const.kind) {
+                    is IrConstKind.Float -> {
+                        val f = kind.valueOf(const)
+                        if (!f.isInfinite()) {
+                            if (floor(f) == f) {
+                                return f.toInt().toString()
+                            }
+                        }
+                    }
+                    is IrConstKind.Double -> {
+                        val d = kind.valueOf(const)
+                        if (!d.isInfinite()) {
+                            if (floor(d) == d) {
+                                return d.toLong().toString()
+                            }
+                        }
+                    }
+                    else -> {}
+                }
+            }
+
+            return normalizeUnsignedValue(const).toString()
+        }
+
+        private fun normalizeUnsignedValue(const: IrConst<*>): Any? {
+            // Unsigned constants are represented through signed constants with a different IrType
+            if (const.type.isUnsigned()) {
+                when (val kind = const.kind) {
+                    is IrConstKind.Byte ->
+                        return kind.valueOf(const).toUByte()
+                    is IrConstKind.Short ->
+                        return kind.valueOf(const).toUShort()
+                    is IrConstKind.Int ->
+                        return kind.valueOf(const).toUInt()
+                    is IrConstKind.Long ->
+                        return kind.valueOf(const).toULong()
+                    else -> {}
+                }
+            }
+            return const.value
+        }
     }
 
     private fun fromFloatConstSafe(startOffset: Int, endOffset: Int, type: IrType, v: Any?): IrConst<*> =
@@ -132,7 +199,7 @@ class FoldConstantLowering(
 
         val evaluated = when {
             // Since there is no distinguish between signed and unsigned types a special handling for `toString` is required
-            operationName == "toString" -> constToString(operand)
+            operationName == "toString" -> constToString(operand, floatSpecial)
             // Disable toFloat folding on K/JS till `toFloat` is fixed (KT-35422)
             operationName == "toFloat" && floatSpecial -> return call
             operand.kind == IrConstKind.Null -> return call
@@ -210,50 +277,6 @@ class FoldConstantLowering(
         return buildIrConstant(call.startOffset, call.endOffset, call.type, evaluated)
     }
 
-    private fun normalizeUnsignedValue(const: IrConst<*>): Any? {
-        // Unsigned constants are represented through signed constants with a different IrType
-        if (const.type.isUnsigned()) {
-            when (val kind = const.kind) {
-                is IrConstKind.Byte ->
-                    return kind.valueOf(const).toUByte()
-                is IrConstKind.Short ->
-                    return kind.valueOf(const).toUShort()
-                is IrConstKind.Int ->
-                    return kind.valueOf(const).toUInt()
-                is IrConstKind.Long ->
-                    return kind.valueOf(const).toULong()
-                else -> {}
-            }
-        }
-        return const.value
-    }
-
-    private fun constToString(const: IrConst<*>): String {
-        if (floatSpecial) {
-            when (val kind = const.kind) {
-                is IrConstKind.Float -> {
-                    val f = kind.valueOf(const)
-                    if (!f.isInfinite()) {
-                        if (floor(f) == f) {
-                            return f.toInt().toString()
-                        }
-                    }
-                }
-                is IrConstKind.Double -> {
-                    val d = kind.valueOf(const)
-                    if (!d.isInfinite()) {
-                        if (floor(d) == d) {
-                            return d.toLong().toString()
-                        }
-                    }
-                }
-                else -> {}
-            }
-        }
-
-        return normalizeUnsignedValue(const).toString()
-    }
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -270,23 +293,7 @@ class FoldConstantLowering(
 
             override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
                 expression.transformChildrenVoid()
-                val folded = mutableListOf<IrExpression>()
-                for (next in expression.arguments) {
-                    val last = folded.lastOrNull()
-                    when {
-                        next !is IrConst<*> -> folded += next
-                        last !is IrConst<*> -> folded += IrConstImpl.string(
-                            next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next)
-                        )
-                        else -> folded[folded.size - 1] = IrConstImpl.string(
-                            // Inlined strings may have `last.startOffset > next.endOffset`
-                            Math.min(last.startOffset, next.startOffset), Math.max(last.endOffset, next.endOffset), context.irBuiltIns.stringType,
-                            constToString(last) + constToString(next)
-                        )
-                    }
-                }
-                return folded.singleOrNull() as? IrConst<*>
-                    ?: IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type, folded)
+                return expression.tryToFold(context, floatSpecial)
             }
 
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
