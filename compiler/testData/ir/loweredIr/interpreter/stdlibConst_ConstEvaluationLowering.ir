@@ -1,0 +1,30 @@
+// --- IR for <main> after Evaluate functions that are marked as `Foldable`
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/stdlibConst.kt
+    PROPERTY name:code visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=49
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-code> visibility:public modality:FINAL <> () returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:code visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-code> (): kotlin.Int declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:code type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+    PROPERTY name:floorDiv visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:floorDiv type:kotlin.Int visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=5
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-floorDiv> visibility:public modality:FINAL <> () returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:floorDiv visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-floorDiv> (): kotlin.Int declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:floorDiv type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+    PROPERTY name:mod visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:mod type:kotlin.Int visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mod> visibility:public modality:FINAL <> () returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:mod visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-mod> (): kotlin.Int declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mod type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null

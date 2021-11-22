@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
+import org.jetbrains.kotlin.test.runners.ir.AbstractDumpLoweredIrTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractLightTreeFir2IrTextTest
@@ -115,6 +116,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrTextTest> {
                 model("ir/irText")
+            }
+
+            testClass<AbstractDumpLoweredIrTest> {
+                model("ir/loweredIr")
             }
 
             testClass<AbstractBytecodeTextTest> {

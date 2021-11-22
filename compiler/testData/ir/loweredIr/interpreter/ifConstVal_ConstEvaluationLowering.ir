@@ -1,0 +1,66 @@
+// --- IR for <main> after Evaluate functions that are marked as `Foldable`
+MODULE_FRAGMENT name:<main>
+  FILE fqName:<root> fileName:/ifConstVal.kt
+    PROPERTY name:flag visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:flag type:kotlin.Boolean visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Boolean type=kotlin.Boolean value=true
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-flag> visibility:public modality:FINAL <> () returnType:kotlin.Boolean
+        correspondingProperty: PROPERTY name:flag visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-flag> (): kotlin.Boolean declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:flag type:kotlin.Boolean visibility:public [final,static]' type=kotlin.Boolean origin=null
+    PROPERTY name:value visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=10
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> () returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Int declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+    PROPERTY name:condition visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:condition type:kotlin.String visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="True"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-condition> visibility:public modality:FINAL <> () returnType:kotlin.String
+        correspondingProperty: PROPERTY name:condition visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-condition> (): kotlin.String declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:condition type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+    PROPERTY name:withWhen visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:withWhen type:kotlin.String visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="True"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-withWhen> visibility:public modality:FINAL <> () returnType:kotlin.String
+        correspondingProperty: PROPERTY name:withWhen visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-withWhen> (): kotlin.String declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:withWhen type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+    PROPERTY name:withWhen2 visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:withWhen2 type:kotlin.String visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="True"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-withWhen2> visibility:public modality:FINAL <> () returnType:kotlin.String
+        correspondingProperty: PROPERTY name:withWhen2 visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-withWhen2> (): kotlin.String declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:withWhen2 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+    PROPERTY name:withWhen3 visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:withWhen3 type:kotlin.String visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="1"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-withWhen3> visibility:public modality:FINAL <> () returnType:kotlin.String
+        correspondingProperty: PROPERTY name:withWhen3 visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-withWhen3> (): kotlin.String declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:withWhen3 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+    PROPERTY name:multibranchIf visibility:public modality:FINAL [const,val]
+      FIELD PROPERTY_BACKING_FIELD name:multibranchIf type:kotlin.Int visibility:public [final,static]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=3
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-multibranchIf> visibility:public modality:FINAL <> () returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:multibranchIf visibility:public modality:FINAL [const,val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-multibranchIf> (): kotlin.Int declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:multibranchIf type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null

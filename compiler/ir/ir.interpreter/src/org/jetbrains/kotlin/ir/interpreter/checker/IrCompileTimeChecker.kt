@@ -197,12 +197,16 @@ class IrCompileTimeChecker(
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): Boolean {
         val owner = expression.symbol.owner
-        if (!mode.canEvaluateFunction(owner)) return false
-
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
-        val bodyComputable = owner.asVisited { if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true }
 
+        if (mode == EvaluationMode.ONLY_INTRINSIC_CONST) {
+            return dispatchReceiverComputable && extensionReceiverComputable
+        } else if (!mode.canEvaluateFunction(owner)) {
+            return false
+        }
+
+        val bodyComputable = owner.asVisited { if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true }
         return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
 
@@ -269,7 +273,14 @@ class IrCompileTimeChecker(
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): Boolean {
-        return mode.canEvaluateFunction(expression.getter!!.owner)
+        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
+        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
+
+        if (mode == EvaluationMode.ONLY_INTRINSIC_CONST) {
+            return dispatchReceiverComputable && extensionReceiverComputable
+        }
+        val getterIsComputable = expression.getter?.let { mode.canEvaluateFunction(it.owner) } ?: false
+        return dispatchReceiverComputable && extensionReceiverComputable && getterIsComputable
     }
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): Boolean {
