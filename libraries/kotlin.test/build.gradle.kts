@@ -186,7 +186,7 @@ jvmTestFrameworks.forEach { framework ->
         apiElements("$group:kotlin-test:$version")
         when(framework) {
             "junit" -> {
-                apiElements("junit:junit:4.12")
+                apiElements("junit:junit:4.13.2")
             }
             "junit5" -> {
                 apiElements("org.junit.jupiter:junit-jupiter-api:5.6.0")
