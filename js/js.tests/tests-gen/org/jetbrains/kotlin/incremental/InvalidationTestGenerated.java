@@ -30,13 +30,13 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, true);
     }
 
-    @TestMetadata("complex")
-    public void testComplex() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/complex/");
-    }
-
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/simple/");
+    }
+
+    @TestMetadata("transitiveInlineFunction")
+    public void testTransitiveInlineFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
     }
 }
