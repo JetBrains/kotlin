@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirAnnotationListForDeclaration private constructor(
@@ -20,9 +22,9 @@ internal class KtFirAnnotationListForDeclaration private constructor(
     override val token: ValidityToken,
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
-        get() = firRef.withFir { fir ->
+        get() = firRef.withFir(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) { fir ->
             fir.annotations.map { annotation ->
-                KtFirAnnotationApplicationForDeclaration(firRef, useSiteSession, annotation, token)
+                annotation.toKtAnnotationApplication(useSiteSession)
             }
         }
 
@@ -33,12 +35,13 @@ internal class KtFirAnnotationListForDeclaration private constructor(
         }
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = firRef.withFir { fir ->
-        fir.annotations.mapNotNull { annotation ->
-            if (annotation.fullyExpandedClassId(useSiteSession) != classId) return@mapNotNull null
-            KtFirAnnotationApplicationForDeclaration(firRef, useSiteSession, annotation, token)
+    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> =
+        firRef.withFir(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) { fir ->
+            fir.annotations.mapNotNull { annotation ->
+                if (annotation.fullyExpandedClassId(useSiteSession) != classId) return@mapNotNull null
+                annotation.toKtAnnotationApplication(useSiteSession)
+            }
         }
-    }
 
     override val annotationClassIds: Collection<ClassId>
         get() = firRef.withFirByType(ResolveType.AnnotationType) { fir ->

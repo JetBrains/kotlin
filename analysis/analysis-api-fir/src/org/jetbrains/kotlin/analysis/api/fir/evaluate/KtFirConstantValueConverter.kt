@@ -25,9 +25,9 @@ internal object KtFirConstantValueConverter {
     fun toNamedConstantValue(
         argumentMapping: Map<String, FirExpression>,
         session: FirSession,
-    ): List<KtNamedConstantValue> =
+    ): List<KtNamedAnnotationValue> =
         argumentMapping.map { (name, expression) ->
-            KtNamedConstantValue(
+            KtNamedAnnotationValue(
                 name,
                 expression.convertConstantExpression(session) ?: KtUnsupportedAnnotationValue
             )
@@ -106,10 +106,13 @@ internal object KtFirConstantValueConverter {
                             argumentMapping?.entries?.forEach { (arg, param) ->
                                 resultMap[param.name.asString()] = arg
                             }
-                            KtAnnotationAnnotationValue(
-                                resolvedSymbol.callableId.classId,
-                                toNamedConstantValue(resultMap, session),
-                                psi as? KtCallElement
+                            KtAnnotationApplicationValue(
+                                KtAnnotationApplication(
+                                    resolvedSymbol.callableId.classId,
+                                    psi as? KtAnnotationEntry,
+                                    useSiteTarget = null,
+                                    toNamedConstantValue(resultMap, session),
+                                )
                             )
                         } else null
                     }

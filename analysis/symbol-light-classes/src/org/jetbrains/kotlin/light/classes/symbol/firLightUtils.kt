@@ -177,8 +177,13 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             FirPsiArrayInitializerMemberValue(sourcePsi, parent) { arrayLiteralParent ->
                 values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
             }
-        is KtAnnotationAnnotationValue ->
-            FirLightSimpleAnnotation(classId?.relativeClassName?.asString(), parent, arguments, sourcePsi)
+        is KtAnnotationApplicationValue ->
+            FirLightSimpleAnnotation(
+                annotationValue.classId?.relativeClassName?.asString(),
+                parent,
+                annotationValue.arguments,
+                annotationValue.psi
+            )
         else ->
             createPsiLiteral(parent)?.let {
                 when (it) {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 internal class FirAnnotationParameterList(
     parent: FirLightAbstractAnnotation,
-    private val arguments: List<KtNamedConstantValue>,
+    private val arguments: List<KtNamedAnnotationValue>,
 ) : KtLightElementBase(parent), PsiAnnotationParameterList {
 
     private val _attributes: Array<PsiNameValuePair> by lazyPub {
@@ -32,7 +32,7 @@ internal class FirAnnotationParameterList(
 }
 
 private class FirNameValuePairForAnnotationArgument(
-    private val constantValue: KtNamedConstantValue,
+    private val constantValue: KtNamedAnnotationValue,
     parent: PsiElement
 ) : KtLightElementBase(parent), PsiNameValuePair {
 

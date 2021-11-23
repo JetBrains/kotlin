@@ -88,11 +88,11 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
     }
 
     private fun KtFe10RendererConsumer.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
-        val namedValues = annotation.allValueArguments.map { KtNamedConstantValue(it.key.asString(), it.value.toKtConstantValue()) }
+        val namedValues = annotation.allValueArguments.map { KtNamedAnnotationValue(it.key.asString(), it.value.toKtConstantValue()) }
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues)
     }
 
-    private fun KtFe10RendererConsumer.renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedConstantValue>) {
+    private fun KtFe10RendererConsumer.renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedAnnotationValue>) {
         append("@")
 
         if (classId != null) {
@@ -111,7 +111,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
 
     private fun KtFe10RendererConsumer.renderConstantValueDebug(value: KtAnnotationValue) {
         when (value) {
-            is KtAnnotationAnnotationValue -> renderAnnotationDebug(value.classId, value.arguments)
+            is KtAnnotationApplicationValue -> renderAnnotationDebug(value.annotationValue.classId, value.annotationValue.arguments)
             is KtArrayAnnotationValue ->
                 renderList(value.values, separator = ", ", prefix = "[", postfix = "]") { renderConstantValueDebug(it) }
             is KtEnumEntryAnnotationValue -> append(value.callableId)

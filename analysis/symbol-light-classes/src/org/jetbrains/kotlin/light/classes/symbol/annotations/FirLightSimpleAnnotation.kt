@@ -9,14 +9,14 @@ import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiImplUtil
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class FirLightSimpleAnnotation(
     private val fqName: String?,
     parent: PsiElement,
-    private val arguments: List<KtNamedConstantValue> = listOf(),
+    private val arguments: List<KtNamedAnnotationValue> = listOf(),
     override val kotlinOrigin: KtCallElement? = null,
 ) : FirLightAbstractAnnotation(parent) {
 

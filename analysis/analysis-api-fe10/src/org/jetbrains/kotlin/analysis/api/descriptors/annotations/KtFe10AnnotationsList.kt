@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -21,7 +22,7 @@ internal class KtFe10AnnotationsList private constructor(
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
-            fe10Annotations.map { KtFe10DescAnnotationApplication(it, token) }
+            fe10Annotations.map { it.toKtAnnotationApplication() }
         }
 
     override val annotationClassIds: Collection<ClassId>
@@ -43,7 +44,7 @@ internal class KtFe10AnnotationsList private constructor(
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
         fe10Annotations.mapNotNull { annotation ->
             if (annotation.annotationClass?.maybeLocalClassId != classId) return@mapNotNull null
-            KtFe10DescAnnotationApplication(annotation, token)
+            annotation.toKtAnnotationApplication()
         }
     }
 

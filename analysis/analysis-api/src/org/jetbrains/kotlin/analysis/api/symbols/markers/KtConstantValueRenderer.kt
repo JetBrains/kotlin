@@ -15,7 +15,7 @@ public object KtConstantValueRenderer {
 
     private fun StringBuilder.renderConstantValue(value: KtAnnotationValue) {
         when (value) {
-            is KtAnnotationAnnotationValue -> {
+            is KtAnnotationApplicationValue -> {
                 renderAnnotationConstantValue(value)
             }
             is KtArrayAnnotationValue -> {
@@ -58,7 +58,11 @@ public object KtConstantValueRenderer {
         append(value.callableId?.asSingleFqName()?.asString())
     }
 
-    private fun StringBuilder.renderAnnotationConstantValue(value: KtAnnotationAnnotationValue) {
+    private fun StringBuilder.renderAnnotationConstantValue(application: KtAnnotationApplicationValue) {
+        renderAnnotationApplication(application.annotationValue)
+    }
+
+    private fun StringBuilder.renderAnnotationApplication(value: KtAnnotationApplication) {
         append(value.classId)
         if (value.arguments.isNotEmpty()) {
             append("(")
@@ -79,7 +83,7 @@ public object KtConstantValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderNamedConstantValueList(list: Collection<KtNamedConstantValue>) {
+    private fun StringBuilder.renderNamedConstantValueList(list: Collection<KtNamedAnnotationValue>) {
         renderWithSeparator(list, ", ") { namedValue ->
             append(namedValue.name)
             append(" = ")

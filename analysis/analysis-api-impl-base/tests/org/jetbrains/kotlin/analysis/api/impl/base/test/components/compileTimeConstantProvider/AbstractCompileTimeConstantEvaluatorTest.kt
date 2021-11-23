@@ -44,11 +44,11 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
                 appendLine(INDENT, values.joinToString(separator = "\n") { it.stringRepresentation() })
                 append("]")
             }
-            is KtAnnotationAnnotationValue -> buildString {
+            is KtAnnotationApplicationValue -> buildString {
                 append("KtAnnotationConstantValue(")
-                append(classId?.relativeClassName)
+                append(annotationValue.classId?.relativeClassName)
                 append(", ")
-                arguments.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
+                annotationValue.arguments.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
                     "${it.name} = ${it.expression.stringRepresentation()}"
                 }
                 append(")")

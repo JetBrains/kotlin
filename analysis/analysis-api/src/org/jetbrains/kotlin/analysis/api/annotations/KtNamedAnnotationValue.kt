@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-public data class KtNamedConstantValue(val name: String, val expression: KtAnnotationValue)
+public data class KtNamedAnnotationValue(val name: String, val expression: KtAnnotationValue)

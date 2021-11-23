@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallElement
 
-public abstract class KtAnnotationApplication : ValidityTokenOwner {
-    public abstract val classId: ClassId?
-    public abstract val useSiteTarget: AnnotationUseSiteTarget?
-    public abstract val psi: KtCallElement?
-    public abstract val arguments: List<KtNamedConstantValue>
-}
+public class KtAnnotationApplication(
+    public val classId: ClassId?,
+    public val psi: KtAnnotationEntry?,
+    public val useSiteTarget: AnnotationUseSiteTarget?,
+    public val arguments: List<KtNamedAnnotationValue>,
+)

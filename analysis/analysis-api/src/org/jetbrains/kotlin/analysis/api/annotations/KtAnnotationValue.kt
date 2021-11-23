@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -23,7 +21,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  *
  *  [KtLiteralAnnotationValue]  covers first two kinds;
  *  [KtEnumEntryAnnotationValue] corresponds to enum types;
- *  [KtAnnotationAnnotationValue] represents annotation types (with annotation fq name and arguments); and
+ *  [KtAnnotationApplicationValue] represents annotation types (with annotation fq name and arguments); and
  *  [KtArrayAnnotationValue] abstracts an array of [KtAnnotationValue]s.
  */
 public sealed class KtAnnotationValue(
@@ -47,10 +45,8 @@ public class KtArrayAnnotationValue(
     override val sourcePsi: KtElement?,
 ) : KtAnnotationValue()
 
-public class KtAnnotationAnnotationValue(
-    public val classId: ClassId?,
-    public val arguments: List<KtNamedConstantValue>,
-    override val sourcePsi: KtCallElement?,
+public class KtAnnotationApplicationValue(
+    public val annotationValue: KtAnnotationApplication,
 ) : KtAnnotationValue()
 
 public class KtEnumEntryAnnotationValue(

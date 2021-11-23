@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
@@ -37,7 +39,9 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
@@ -281,8 +285,15 @@ internal fun ConstantValue<*>.toKtConstantValue(): KtAnnotationValue {
         is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtConstantValue() }, null)
         is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), null)
         is AnnotationValue -> {
-            val arguments = value.allValueArguments.map { (name, v) -> KtNamedConstantValue(name.asString(), v.toKtConstantValue()) }
-            KtAnnotationAnnotationValue(value.annotationClass?.classId, arguments, null)
+            val arguments = value.allValueArguments.map { (name, v) -> KtNamedAnnotationValue(name.asString(), v.toKtConstantValue()) }
+            KtAnnotationApplicationValue(
+                KtAnnotationApplication(
+                    value.annotationClass?.classId,
+                    psi = null,
+                    useSiteTarget = null,
+                    arguments = arguments
+                )
+            )
         }
         is ErrorValue -> KtErrorValue(this.toString())
         else -> KtUnsupportedAnnotationValue
@@ -418,4 +429,13 @@ internal fun createKtInitializerValue(
     }
 
     return KtNonConstantInitializerValue(initializer)
+}
+
+internal fun AnnotationDescriptor.toKtAnnotationApplication(): KtAnnotationApplication {
+    return KtAnnotationApplication(
+        annotationClass?.maybeLocalClassId,
+        (source as? PsiSourceElement)?.psi as? KtAnnotationEntry,
+        (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget(),
+        allValueArguments.map { (name, value) -> KtNamedAnnotationValue(name.asString(), value.toKtConstantValue()) }
+    )
 }

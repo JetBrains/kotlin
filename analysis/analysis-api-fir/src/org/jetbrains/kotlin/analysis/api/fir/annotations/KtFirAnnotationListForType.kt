@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
@@ -21,7 +22,7 @@ internal class KtFirAnnotationListForType private constructor(
     override val token: ValidityToken,
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
-        get() = withValidityAssertion { coneType.customAnnotations.map { KtFirAnnotationApplicationImpl(it, useSiteSession, token) } }
+        get() = withValidityAssertion { coneType.customAnnotations.map { it.toKtAnnotationApplication(useSiteSession) } }
 
 
     override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
@@ -31,13 +32,12 @@ internal class KtFirAnnotationListForType private constructor(
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
         coneType.customAnnotations.mapNotNull { annotation ->
             if (annotation.fullyExpandedClassId(useSiteSession) != classId) return@mapNotNull null
-            KtFirAnnotationApplicationImpl(annotation, useSiteSession, token)
+            annotation.toKtAnnotationApplication(useSiteSession)
         }
     }
 
     override val annotationClassIds: Collection<ClassId>
         get() = withValidityAssertion { coneType.customAnnotations.mapNotNull { it.fullyExpandedClassId(useSiteSession) } }
-
 
     companion object {
         fun create(
