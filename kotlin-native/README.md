@@ -35,7 +35,7 @@ Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   macOS: Xcode 12.5 or newer
+*   macOS: Xcode 13.1 or newer
 *   Linux: glibc 2.23 or newer
 *   Windows:
     * Microsoft C++ build tools for Visual Studio 2019 14.29 or newer
