@@ -195,8 +195,15 @@ class FirDelegatedPropertyInferenceSession(
                 notCompletedCalls as List<FirStatement>,
                 unitType, resolutionContext
             ) { lambdaAtom ->
-                val containingCandidateForLambda = notCompletedCalls.first {
-                    it.candidate.postponedAtoms.contains(lambdaAtom)
+                // Reversed here bc we want top-most call to avoid exponential visit
+                val containingCandidateForLambda = notCompletedCalls.asReversed().first {
+                    var found = false
+                    it.processAllContainingCallCandidates(processBlocks = true) { subCandidate ->
+                        if (subCandidate.postponedAtoms.contains(lambdaAtom)) {
+                            found = true
+                        }
+                    }
+                    found
                 }.candidate
                 postponedArgumentsAnalyzer.analyze(
                     commonSystem.asPostponedArgumentsAnalyzerContext(),
