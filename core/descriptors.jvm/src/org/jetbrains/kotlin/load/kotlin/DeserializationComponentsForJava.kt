@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DefaultTypeAttributeTranslator
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslatorsForInjection
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
@@ -66,7 +66,7 @@ class DeserializationComponentsForJava(
     lookupTracker: LookupTracker,
     contractDeserializer: ContractDeserializer,
     kotlinTypeChecker: NewKotlinTypeChecker,
-    typeAttributeTranslators: TypeAttributeTranslatorsForInjection
+    typeAttributeTranslators: TypeAttributeTranslators
 ) {
     val components: DeserializationComponents
 
@@ -193,6 +193,6 @@ fun makeDeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
         binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
         errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default,
-        TypeAttributeTranslatorsForInjection(listOf(DefaultTypeAttributeTranslator))
+        TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator))
     )
 }

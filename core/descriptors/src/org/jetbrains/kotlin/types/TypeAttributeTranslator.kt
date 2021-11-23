@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
 
 interface TypeAttributeTranslator {
     fun toAttributes(
