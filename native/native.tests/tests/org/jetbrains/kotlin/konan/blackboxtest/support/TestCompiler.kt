@@ -99,7 +99,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
 
     private fun singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
         val artifactFileName = buildString {
-            append(module.testCase.nominalPackageName.replace('.', '_')).append('.')
+            append(module.testCase.nominalPackageName.compressedPackageName).append('.')
             if (extension == "klib") append(module.name).append('.')
             append(extension)
         }
@@ -129,7 +129,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
             append(prefix).append('-')
 
             if (commonPackageName != null)
-                append(commonPackageName.replace('.', '_')).append('-')
+                append(commonPackageName.compressedPackageName).append('-')
 
             append(prettyHash(hash))
 
@@ -141,7 +141,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
 
     private fun artifactDirForPackageName(packageName: PackageFQN?): File {
         val baseDir = environment.testBinariesDir
-        val outputDir = if (packageName != null) baseDir.resolve(packageName.replace('.', '_')) else baseDir
+        val outputDir = if (packageName != null) baseDir.resolve(packageName.compressedPackageName) else baseDir
 
         outputDir.mkdirs()
 

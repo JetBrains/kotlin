@@ -39,15 +39,19 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private val NAMESPACE = ExtensionContext.Namespace.create(NativeBlackBoxTestSupport::class.java.simpleName)
 
         /** Creates a single instance of [TestRunProvider] per test class. */
-        private fun ExtensionContext.getOrCreateTestRunProvider(): TestRunProvider =
-            root.getStore(NAMESPACE).getOrComputeIfAbsent(enclosingTestClass.sanitizedName) { sanitizedName ->
+        private fun ExtensionContext.getOrCreateTestRunProvider(): TestRunProvider {
+            val enclosingTestClass = enclosingTestClass
+
+            return root.getStore(NAMESPACE).getOrComputeIfAbsent(enclosingTestClass.sanitizedName) {
                 val globalEnvironment = getOrCreateGlobalEnvironment()
 
                 val testRoots = computeTestRoots()
 
+                val uniqueEnclosingClassDirName = globalEnvironment.target.compressedName + "_" + enclosingTestClass.compressedSimpleName
+
                 val testSourcesDir = globalEnvironment.baseBuildDir
-                    .resolve("blackbox-test-sources")
-                    .resolve(sanitizedName)
+                    .resolve("bbtest.src")
+                    .resolve(uniqueEnclosingClassDirName)
                     .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale generated sources.
 
                 val sharedSourcesDir = testSourcesDir
@@ -55,9 +59,8 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     .ensureExistsAndIsEmptyDirectory()
 
                 val testBinariesDir = globalEnvironment.baseBuildDir
-                    .resolve("blackbox-test-binaries")
-                    .resolve(globalEnvironment.target.name)
-                    .resolve(sanitizedName)
+                    .resolve("bbtest.bin")
+                    .resolve(uniqueEnclosingClassDirName)
                     .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
 
                 val sharedBinariesDir = testBinariesDir
@@ -77,6 +80,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
                 TestRunProvider(environment, testCaseGroupProvider)
             }.cast()
+        }
 
         private fun ExtensionContext.getOrCreateGlobalEnvironment(): GlobalTestEnvironment =
             root.getStore(NAMESPACE).getOrComputeIfAbsent(GlobalTestEnvironment::class.java.sanitizedName) {
