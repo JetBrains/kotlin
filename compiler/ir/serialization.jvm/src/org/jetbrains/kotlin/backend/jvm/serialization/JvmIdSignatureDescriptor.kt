@@ -108,11 +108,14 @@ class JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSig
             }
 
         private fun computeStoredFileSignature(descriptor: DeclarationDescriptorWithSource) {
-            storedFileSignature = IdSignature.FileSignature(
-                descriptor.source.containingFile,
-                descriptor.containingPackage() ?: FqName.ROOT,
-                descriptor.source.containingFile.name ?: "unknown"
-            )
+            // isTopLevelPrivate needs to be already set.
+            if (isTopLevelPrivate && externallyGivenFileSignature == null) {
+                storedFileSignature = IdSignature.FileSignature(
+                    descriptor.source.containingFile,
+                    descriptor.containingPackage() ?: FqName.ROOT,
+                    descriptor.source.containingFile.name ?: "unknown"
+                )
+            }
         }
 
         var storedFileSignature: IdSignature.FileSignature? = null
