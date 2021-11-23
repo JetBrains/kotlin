@@ -254,10 +254,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(errorTypeRef) {
-            withCopy()
-        }
-
         builder(functionTypeRef) {
             withCopy()
         }

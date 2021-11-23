@@ -217,6 +217,7 @@ fun ConeKotlinType.toFirResolvedTypeRef(
         buildErrorTypeRef {
             this.source = source
             diagnostic = this@toFirResolvedTypeRef.diagnostic
+            type = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
     } else {
@@ -275,6 +276,7 @@ fun FirTypeRef.withReplacedConeType(
     return if (newType is ConeKotlinErrorType) {
         buildErrorTypeRef {
             source = newSource
+            type = newType
             diagnostic = newType.diagnostic
         }
     } else {

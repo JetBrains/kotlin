@@ -117,6 +117,7 @@ fun FirTypeRef.resolvedTypeFromPrototype(
     return if (type is ConeKotlinErrorType) {
         buildErrorTypeRef {
             source = this@resolvedTypeFromPrototype.source
+            this.type = type
             diagnostic = type.diagnostic
         }
     } else {

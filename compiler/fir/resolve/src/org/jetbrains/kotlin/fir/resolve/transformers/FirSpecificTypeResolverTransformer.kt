@@ -116,6 +116,9 @@ class FirSpecificTypeResolverTransformer(
         } else {
             buildErrorTypeRef {
                 source = functionTypeRef.source
+                if (resolvedType != null) {
+                    type = resolvedType
+                }
                 diagnostic = (resolvedType as? ConeClassErrorType)?.diagnostic
                     ?: ConeSimpleDiagnostic("Unresolved functional type: ${functionTypeRef.render()}")
             }
@@ -146,9 +149,9 @@ class FirSpecificTypeResolverTransformer(
                     typeRef.source
                 }
 
-                delegatedTypeRef = typeRef
-
-                diagnostic = resolvedType.diagnostic
+                    delegatedTypeRef = typeRef
+                    type = resolvedType
+                    diagnostic = resolvedType.diagnostic
             }
         }
     }

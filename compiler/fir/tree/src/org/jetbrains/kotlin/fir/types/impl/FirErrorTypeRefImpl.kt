@@ -14,18 +14,19 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
-
 internal class FirErrorTypeRefImpl(
     override val source: KtSourceElement?,
+    override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorTypeRef() {
+    constructor(source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic) : this(
+        source,
+        ConeClassErrorType(diagnostic),
+        delegatedTypeRef, diagnostic
+    )
+
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val type: ConeKotlinType = ConeClassErrorType(diagnostic)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

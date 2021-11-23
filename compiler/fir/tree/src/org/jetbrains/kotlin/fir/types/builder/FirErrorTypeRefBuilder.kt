@@ -26,17 +26,27 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    var type: ConeKotlinType? = null
     var delegatedTypeRef: FirTypeRef? = null
     lateinit var diagnostic: ConeDiagnostic
 
     override fun build(): FirErrorTypeRef {
-        return FirErrorTypeRefImpl(
-            source,
-            delegatedTypeRef,
-            diagnostic,
-        )
+        val type = this.type
+        return if (type != null) {
+            FirErrorTypeRefImpl(
+                source,
+                type,
+                delegatedTypeRef,
+                diagnostic,
+            )
+        } else {
+            FirErrorTypeRefImpl(
+                source,
+                delegatedTypeRef,
+                diagnostic,
+            )
+        }
     }
-
 
     @Deprecated("Modification of 'annotations' has no impact for FirErrorTypeRefBuilder", level = DeprecationLevel.HIDDEN)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -57,6 +67,7 @@ inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRe
     }
     val copyBuilder = FirErrorTypeRefBuilder()
     copyBuilder.source = original.source
+    copyBuilder.type = original.type
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     copyBuilder.diagnostic = original.diagnostic
     return copyBuilder.apply(init).build()

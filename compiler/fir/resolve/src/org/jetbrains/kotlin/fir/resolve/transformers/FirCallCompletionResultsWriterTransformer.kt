@@ -107,6 +107,7 @@ class FirCallCompletionResultsWriterTransformer(
             } else {
                 buildErrorTypeRef {
                     source = calculated.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                    type = calculated.type
                     diagnostic = calculated.diagnostic
                 }
             }

@@ -98,4 +98,5 @@ val deprecationsPerUseSiteType = type("fir.declarations", "DeprecationsPerUseSit
 val emptyAnnotationArgumentMappingType = type("fir.expressions.impl", "FirEmptyAnnotationArgumentMapping")
 
 val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")
+val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl")
 
