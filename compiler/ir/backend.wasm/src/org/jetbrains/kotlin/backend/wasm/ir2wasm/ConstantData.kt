@@ -102,5 +102,5 @@ fun Int.toLittleEndianBytes(): ByteArray {
 }
 
 fun Char.toLittleEndianBytes(): ByteArray {
-    return byteArrayOf((this.code and 0xFF).toByte(), (this.code and 0xFF00).toByte())
+    return byteArrayOf((this.code and 0xFF).toByte(), (this.code ushr Byte.SIZE_BITS).toByte())
 }
