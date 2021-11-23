@@ -2345,6 +2345,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("specialBridgeForGet.kt")
+        public void testSpecialBridgeForGet() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/specialBridgeForGet.kt");
+        }
+
+        @Test
         @TestMetadata("unsignedArray.kt")
         public void testUnsignedArray() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/unsignedArray.kt");

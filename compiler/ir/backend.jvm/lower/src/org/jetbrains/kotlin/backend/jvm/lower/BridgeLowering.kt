@@ -219,7 +219,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         if (specialBridge != null) {
             // If the current function overrides a special bridge then it's possible that we already generated a final
             // bridge methods in a superclass.
-            blacklist += irFunction.overriddenFinalSpecialBridgeSignatures()
+            blacklist += irFunction.allOverridden().flatMapTo(arrayListOf()) { it.getSpecialBridgeSignatures() }
 
             fun getSpecialBridgeTargetAddingExtraBridges(): IrSimpleFunction {
                 // We only generate a special bridge method if it does not clash with a final method in a superclass or the current method
@@ -279,6 +279,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 // (where a Kotlin class implements a read-only collection interface and extends a Java collection class).
                 val unsubstitutedSpecialBridge = specialBridge.unsubstitutedSpecialBridge
                 if (unsubstitutedSpecialBridge != null &&
+                    unsubstitutedSpecialBridge.signature !in blacklist &&
                     irClass.functions.none { it.isClashingWithPotentialBridge(irFunction.name, unsubstitutedSpecialBridge.signature) }
                 ) {
                     blacklist += unsubstitutedSpecialBridge.signature
@@ -364,19 +365,29 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     private val IrSimpleFunction.specialBridgeOrNull: SpecialBridge?
         get() = context.bridgeLoweringCache.computeSpecialBridge(this)
 
-    private fun IrSimpleFunction.overriddenFinalSpecialBridgeSignatures(): List<Method> =
-        allOverridden().mapNotNullTo(mutableListOf()) {
-            // Ignore special bridges in interfaces or Java classes. While we never generate special bridges in Java
-            // classes, we may generate special bridges in interfaces for methods annotated with @JvmDefault.
-            // However, these bridges are not final and are thus safe to override.
-            //
-            // This matches the behavior of the JVM backend, but it's probably a bad idea since this is an
-            // opportunity for a Java and Kotlin implementation of the same interface to go out of sync.
-            if (it.parentAsClass.isInterface || it.isFromJava())
-                null
-            else
-                it.specialBridgeOrNull?.signature?.takeIf { bridgeSignature -> bridgeSignature != it.jvmMethod }
+    private fun IrSimpleFunction.getSpecialBridgeSignatures(): List<Method> {
+        // Ignore special bridges in interfaces or Java classes. While we never generate special bridges in Java
+        // classes, we may generate special bridges in interfaces for methods annotated with @JvmDefault.
+        // However, these bridges are not final and are thus safe to override.
+        // This matches the behavior of the JVM backend, but it's probably a bad idea since this is an
+        // opportunity for a Java and Kotlin implementation of the same interface to go out of sync.
+
+        if (this.parentAsClass.isInterface || this.isFromJava())
+            return emptyList()
+        val specialBridge = this.specialBridgeOrNull
+            ?: return emptyList()
+
+        val result = SmartList<Method>()
+        val jvmMethod = this.jvmMethod
+        if (specialBridge.signature != jvmMethod) {
+            result.add(specialBridge.signature)
         }
+        val unsubstitutedSpecialBridge = specialBridge.unsubstitutedSpecialBridge
+        if (unsubstitutedSpecialBridge != null && unsubstitutedSpecialBridge.signature != jvmMethod) {
+            result.add(unsubstitutedSpecialBridge.signature)
+        }
+        return result
+    }
 
     // List of special bridge methods which were not implemented in Kotlin superclasses.
     private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> {
