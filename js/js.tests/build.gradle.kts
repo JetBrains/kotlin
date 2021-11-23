@@ -349,7 +349,7 @@ projectTest("wasmTest", true) {
     setUpBoxTests()
 }
 
-projectTest("invalidationTest") {
+projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
 
     include("org/jetbrains/kotlin/incremental/*")

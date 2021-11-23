@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
+import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -128,7 +130,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             for (module in projStep.order) {
                 val moduleTestDir = File(testDir, module)
                 val moduleSourceDir = File(sourceDir, module)
-//                val moduleBuildDir = File(buildDir, module)
                 val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
                 val moduleStep = moduleInfo.steps[projStep.id]
                 for (modification in moduleStep.modifications) {
@@ -182,7 +183,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             val actualDirtyFiles = invalidatedDirtyFiles?.map { File(it).canonicalPath } ?: sourceDir.filteredKtFiles().map { it.canonicalPath }
             val expectedDirtyFilesCanonical = expectedDirtyFiles.map { it.canonicalPath }
 
-            JUnit5Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) { "For module $moduleKlibFile" }
+            JUnit5Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) { "For module $moduleKlibFile at step $stepId" }
         }
 
         val dependenciesPaths = mutableListOf<String>()
@@ -205,13 +206,15 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         }
     }
 
-    private fun KotlinCoreEnvironment.createPsiFile(fileName: String): KtFile {
+    private fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
         val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
 
-        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+        val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
 
-        return psiManager.findFile(file) as KtFile
+        return SingleRootFileViewProvider(psiManager, vFile).allFiles.find {
+            it is KtFile && it.virtualFile.canonicalPath == vFile.canonicalPath
+        } as KtFile
     }
 
     private fun buildArtifact(
@@ -225,7 +228,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         val projectJs = environment.project
 
-        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it.canonicalPath) }
+        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
 
         val sourceModule = prepareAnalyzedSourceModule(
             projectJs,
