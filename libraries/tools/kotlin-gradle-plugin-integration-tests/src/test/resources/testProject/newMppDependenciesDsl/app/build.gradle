@@ -14,7 +14,7 @@ kotlin {
 	sourceSets {
 		create("testNonTransitiveStringNotation") {
 			dependencies {
-				api("junit:junit:4.12") { setTransitive(false) }
+				api("junit:junit:4.13.2") { setTransitive(false) }
 			}
 		}
         create("testNonTransitiveDependencyNotation") {

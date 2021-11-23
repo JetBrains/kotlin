@@ -12,7 +12,7 @@ kotlin {
 	}
 
 	jvm("junit").compilations["main"].defaultSourceSet.dependencies {
-		api("junit:junit:4.12")
+		api("junit:junit:4.13.2")
 	}
 
 	jvm("testng").compilations["main"].defaultSourceSet.dependencies {

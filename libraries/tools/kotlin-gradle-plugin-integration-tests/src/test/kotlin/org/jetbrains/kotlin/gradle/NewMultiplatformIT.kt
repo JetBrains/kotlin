@@ -1456,7 +1456,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
         fun testDependencies() = testResolveAllConfigurations("app") {
-            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
+            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.13.2.jar")
             assertEquals(
                 1,
                 (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
@@ -1497,10 +1497,10 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
         testResolveAllConfigurations("app") {
             assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
-            assertContains(">> :app:junitCompileClasspath --> junit-4.12.jar")
+            assertContains(">> :app:junitCompileClasspath --> junit-4.13.2.jar")
 
             assertContains(">> :app:mixedJunitCompileClasspath --> lib-junit.jar")
-            assertContains(">> :app:mixedJunitCompileClasspath --> junit-4.12.jar")
+            assertContains(">> :app:mixedJunitCompileClasspath --> junit-4.13.2.jar")
 
             assertContains(">> :app:testngCompileClasspath --> lib-testng.jar")
             assertContains(">> :app:testngCompileClasspath --> testng-6.14.3.jar")
