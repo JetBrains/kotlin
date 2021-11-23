@@ -317,7 +317,7 @@ private fun findReceiverByLabelOrGetDefault(
     labelName: String
 ): ReceiverParameterDescriptor {
     val labelNameToReceiverMap = bindingContext.get(
-        BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS,
+        BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP,
         if (descriptorOfThisReceiver is PropertyAccessorDescriptor) descriptorOfThisReceiver.correspondingProperty else descriptorOfThisReceiver
     )
     return labelNameToReceiverMap?.get(labelName)?.singleOrNull()

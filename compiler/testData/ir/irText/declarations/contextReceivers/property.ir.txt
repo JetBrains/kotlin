@@ -34,16 +34,16 @@ FILE fqName:<root> fileName:/property.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:c visibility:public modality:FINAL [val]
-    FUN name:<get-c> visibility:public modality:FINAL <> (<this>:<root>.B, <this>:<root>.A) returnType:kotlin.Int
+    FUN name:<get-c> visibility:public modality:FINAL <> (<this>:<root>.A, <this>:<root>.B) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
       contextReceiverParametersCount: 2
-      VALUE_PARAMETER name:<this> index:0 type:<root>.B
-      VALUE_PARAMETER name:<this> index:1 type:<root>.A
+      VALUE_PARAMETER name:<this> index:0 type:<root>.A
+      VALUE_PARAMETER name:<this> index:1 type:<root>.B
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-c> (<this>: <root>.B, <this>: <root>.A): kotlin.Int declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-c> (<this>: <root>.A, <this>: <root>.B): kotlin.Int declared in <root>'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public abstract fun a (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-              $this: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
-                GET_VAR '<this>: <root>.A declared in <root>.<get-c>' type=<root>.B origin=null
+              $this: GET_VAR '<this>: <root>.A declared in <root>.<get-c>' type=<root>.A origin=null
             other: CALL 'public abstract fun b (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-              $this: GET_VAR '<this>: <root>.B declared in <root>.<get-c>' type=<root>.B origin=null
+              $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
+                GET_VAR '<this>: <root>.B declared in <root>.<get-c>' type=<root>.A origin=null

@@ -111,13 +111,13 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
         CALL 'public final fun <get-b> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
           $this: GET_VAR '<this>: <root>.B declared in <root>.f' type=<root>.B origin=null
   PROPERTY name:p visibility:public modality:FINAL [val]
-    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, <this>:<root>.B, <this>:<root>.A<kotlin.String>, <this>:<root>.A<kotlin.Int>) returnType:kotlin.Int
+    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, <this>:<root>.A<kotlin.Int>, <this>:<root>.A<kotlin.String>, <this>:<root>.B) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       contextReceiverParametersCount: 3
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C
-      VALUE_PARAMETER name:<this> index:0 type:<root>.B
+      VALUE_PARAMETER name:<this> index:0 type:<root>.A<kotlin.Int>
       VALUE_PARAMETER name:<this> index:1 type:<root>.A<kotlin.String>
-      VALUE_PARAMETER name:<this> index:2 type:<root>.A<kotlin.Int>
+      VALUE_PARAMETER name:<this> index:2 type:<root>.B
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
@@ -139,5 +139,5 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-c> (): kotlin.Any declared in <root>.C' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.C declared in <root>.<get-p>' type=<root>.C origin=null
-        RETURN type=kotlin.Nothing from='public final fun <get-p> (<this>: <root>.B, <this>: <root>.A<kotlin.String>, <this>: <root>.A<kotlin.Int>): kotlin.Int declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-p> (<this>: <root>.A<kotlin.Int>, <this>: <root>.A<kotlin.String>, <this>: <root>.B): kotlin.Int declared in <root>'
           CONST Int type=kotlin.Int value=1

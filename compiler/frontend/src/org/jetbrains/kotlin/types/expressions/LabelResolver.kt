@@ -185,7 +185,7 @@ object LabelResolver {
                 val declarationDescriptor = context.trace.bindingContext[DECLARATION_TO_DESCRIPTOR, element]
                 if (declarationDescriptor is FunctionDescriptor) {
                     val labelNameToReceiverMap = context.trace.bindingContext[
-                            DESCRIPTOR_TO_NAMED_RECEIVERS,
+                            DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP,
                             if (declarationDescriptor is PropertyAccessorDescriptor) declarationDescriptor.correspondingProperty else declarationDescriptor
                     ]
                     val thisReceivers = labelNameToReceiverMap?.get(labelName.identifier)

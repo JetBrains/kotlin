@@ -13,5 +13,5 @@ public interface B {
 @kotlin.Metadata
 public final class PropertyKt {
     // source: 'property.kt'
-    public final static method getC(@org.jetbrains.annotations.NotNull p0: B, @org.jetbrains.annotations.NotNull p1: A): int
+    public final static method getC(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: B): int
 }

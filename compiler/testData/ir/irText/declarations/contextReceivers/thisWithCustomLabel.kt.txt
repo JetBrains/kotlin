@@ -44,7 +44,7 @@ fun f(<this>: A<Int>, <this>: A<String>, <this>: B) {
 }
 
 val C.p: Int
-  get(<this>: B, <this>: A<String>, <this>: A<Int>): Int {
+  get(<this>: A<Int>, <this>: A<String>, <this>: B): Int {
     <this>.<get-a>().toFloat() /*~> Unit */
     <this>.<get-a>().<get-length>() /*~> Unit */
     <this>.<get-b>() /*~> Unit */
