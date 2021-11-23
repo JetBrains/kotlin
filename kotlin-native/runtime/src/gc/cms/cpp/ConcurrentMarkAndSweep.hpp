@@ -22,7 +22,7 @@ class ThreadData;
 namespace gc {
 
 // Stop-the-world Mark-and-Sweep that runs on mutator threads. Can support targets that do not have threads.
-class SameThreadMarkAndSweep : private Pinned {
+class ConcurrentMarkAndSweep : private Pinned {
 public:
     enum class SafepointFlag {
         kNone,
@@ -47,10 +47,10 @@ public:
 
     class ThreadData : private Pinned {
     public:
-        using ObjectData = SameThreadMarkAndSweep::ObjectData;
+        using ObjectData = ConcurrentMarkAndSweep::ObjectData;
         using Allocator = AllocatorWithGC<AlignedAllocator, ThreadData>;
 
-        explicit ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
 
         void SafePointFunctionPrologue() noexcept;
@@ -68,14 +68,14 @@ public:
         void SafePointRegular(size_t weight) noexcept;
         void SafePointSlowPath(SafepointFlag flag) noexcept;
 
-        SameThreadMarkAndSweep& gc_;
+        ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
     };
 
     using Allocator = ThreadData::Allocator;
 
-    SameThreadMarkAndSweep() noexcept;
-    ~SameThreadMarkAndSweep() = default;
+    ConcurrentMarkAndSweep() noexcept;
+    ~ConcurrentMarkAndSweep() = default;
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).

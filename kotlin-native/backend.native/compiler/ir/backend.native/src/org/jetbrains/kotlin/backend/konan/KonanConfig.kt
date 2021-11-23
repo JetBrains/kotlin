@@ -235,6 +235,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                         add("experimental_memory_manager_noop.bc")
                         add("noop_gc.bc")
                     }
+                    GC.CONCURRENT_MARK_AND_SWEEP -> {
+                        add("common_gc_cms.bc")
+                        add("experimental_memory_manager_cms.bc")
+                        add("concurrent_ms_gc.bc")
+                    }
                 }
             }
         }

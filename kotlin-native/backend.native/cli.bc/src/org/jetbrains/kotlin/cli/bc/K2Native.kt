@@ -315,6 +315,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         assertGcSupported()
                         GC.SAME_THREAD_MARK_AND_SWEEP
                     }
+                    "cms" -> {
+                        assertGcSupported()
+                        GC.CONCURRENT_MARK_AND_SWEEP
+                    }
                     else -> {
                         configuration.report(ERROR, "Unsupported GC ${arguments.gc}")
                         GC.SAME_THREAD_MARK_AND_SWEEP

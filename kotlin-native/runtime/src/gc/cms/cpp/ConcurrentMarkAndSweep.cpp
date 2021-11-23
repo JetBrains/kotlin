@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "SameThreadMarkAndSweep.hpp"
+#include "ConcurrentMarkAndSweep.hpp"
 
 #include <cinttypes>
 
@@ -24,55 +24,55 @@ namespace {
 
 struct MarkTraits {
     static bool IsMarked(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        return objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack;
+        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).GCObjectData();
+        return objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack;
     }
 
     static bool TryMark(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack) return false;
-        objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack);
+        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).GCObjectData();
+        if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack) return false;
+        objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack);
         return true;
     };
 };
 
 struct SweepTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
+    using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
     using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
 
     static bool IsMarkedByExtraObject(mm::ExtraObjectData &object) noexcept {
         auto *baseObject = object.GetBaseObject();
         if (!baseObject->heap()) return true;
-        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(baseObject).GCObjectData();
-        return objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack;
+        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(baseObject).GCObjectData();
+        return objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack;
     }
 
     static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
         auto& objectData = node.GCObjectData();
-        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kWhite) return false;
-        objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kWhite);
+        if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kWhite) return false;
+        objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kWhite);
         return true;
     }
 };
 
 struct FinalizeTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
+    using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
 };
 
 // Global, because it's accessed on a hot path: avoid memory load from `this`.
-std::atomic<gc::SameThreadMarkAndSweep::SafepointFlag> gSafepointFlag = gc::SameThreadMarkAndSweep::SafepointFlag::kNone;
+std::atomic<gc::ConcurrentMarkAndSweep::SafepointFlag> gSafepointFlag = gc::ConcurrentMarkAndSweep::SafepointFlag::kNone;
 
 } // namespace
 
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
+ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
     SafePointRegular(GCSchedulerThreadData::kFunctionPrologueWeight);
 }
 
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
+ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
     SafePointRegular(GCSchedulerThreadData::kLoopBodyWeight);
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
+void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     threadData_.gcScheduler().OnSafePointAllocation(size);
     SafepointFlag flag = gSafepointFlag.load();
     if (flag != SafepointFlag::kNone) {
@@ -80,7 +80,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
     }
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
+void gc::ConcurrentMarkAndSweep::ThreadData::PerformFullGC() noexcept {
     auto didGC = gc_.PerformFullGC();
 
     if (!didGC) {
@@ -89,12 +89,12 @@ void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
     }
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
+void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
     PerformFullGC();
 }
 
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
+ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
     threadData_.gcScheduler().OnSafePointRegular(weight);
     SafepointFlag flag = gSafepointFlag.load();
     if (flag != SafepointFlag::kNone) {
@@ -102,7 +102,7 @@ ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size
     }
 }
 
-NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(SafepointFlag flag) noexcept {
+NO_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointSlowPath(SafepointFlag flag) noexcept {
     RuntimeAssert(flag != SafepointFlag::kNone, "Must've been handled by the caller");
     // No need to check for kNeedsSuspend, because `suspendIfRequested` checks for its own atomic.
     threadData_.suspensionData().suspendIfRequested();
@@ -112,14 +112,14 @@ NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(Safepoi
     }
 }
 
-gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep() noexcept {
     mm::GlobalData::Instance().gcScheduler().SetScheduleGC([]() {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         gSafepointFlag = SafepointFlag::kNeedsGC;
     });
 }
 
-bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
+bool gc::ConcurrentMarkAndSweep::PerformFullGC() noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to suspend threads by thread %d", konan::currentThreadId());
     auto timeStartUs = konan::getTimeMicros();
     bool didSuspend = mm::RequestThreadsSuspension();
@@ -132,7 +132,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
     RuntimeLogDebug({kTagGC}, "Requested thread suspension by thread %d", konan::currentThreadId());
     gSafepointFlag = SafepointFlag::kNeedsSuspend;
 
-    mm::ObjectFactory<gc::SameThreadMarkAndSweep>::FinalizerQueue finalizerQueue;
+    mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::FinalizerQueue finalizerQueue;
     {
         // Switch state to native to simulate this thread being a GC thread.
         ThreadStateGuard guard(ThreadState::kNative);

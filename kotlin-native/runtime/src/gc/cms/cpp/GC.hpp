@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "SameThreadMarkAndSweep.hpp"
+#include "ConcurrentMarkAndSweep.hpp"
 
 namespace kotlin {
 namespace gc {
 
-using GC = kotlin::gc::SameThreadMarkAndSweep;
+using GC = kotlin::gc::ConcurrentMarkAndSweep;
 
 inline constexpr bool kSupportsMultipleMutators = true;
 
