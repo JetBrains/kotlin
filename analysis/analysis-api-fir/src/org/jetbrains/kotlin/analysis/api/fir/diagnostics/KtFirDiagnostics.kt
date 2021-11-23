@@ -1352,6 +1352,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantNullable::class
     }
 
+    abstract class PlatformClassMappedToKotlin : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = PlatformClassMappedToKotlin::class
+        abstract val kotlinClass: FqName
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

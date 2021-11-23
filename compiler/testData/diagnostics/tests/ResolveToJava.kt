@@ -1,6 +1,7 @@
 // !CHECK_TYPE
 // SKIP_JAVAC
 // FULL_JDK
+// WITH_EXTENDED_CHECKERS
 
 // FILE: a.kt
 

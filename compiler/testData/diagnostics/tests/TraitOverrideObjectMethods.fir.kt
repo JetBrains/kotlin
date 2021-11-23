@@ -1,6 +1,7 @@
 // JAVAC_EXPECTED_FILE
-interface MyTrait: <!INTERFACE_WITH_SUPERCLASS!>Object<!> {
+// WITH_EXTENDED_CHECKERS
+interface MyTrait: <!INTERFACE_WITH_SUPERCLASS, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!> {
     override fun toString(): String
     public override fun finalize()
-    public <!OVERRIDING_FINAL_MEMBER!>override<!> fun wait()
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!OVERRIDING_FINAL_MEMBER!>override<!> fun wait()
 }

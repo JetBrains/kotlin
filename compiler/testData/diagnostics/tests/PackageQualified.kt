@@ -1,5 +1,6 @@
-// FILE: a.kt
+// WITH_EXTENDED_CHECKERS
 
+// FILE: a.kt
 
 package foobar.a
     import java.*

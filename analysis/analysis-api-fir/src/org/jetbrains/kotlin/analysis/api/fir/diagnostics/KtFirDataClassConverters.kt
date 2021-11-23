@@ -1897,6 +1897,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) { firDiagnostic ->
+        PlatformClassMappedToKotlinImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED) { firDiagnostic ->
         ExtensionInClassReferenceNotAllowedImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a.fir),

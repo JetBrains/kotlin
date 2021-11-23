@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
+// WITH_EXTENDED_CHECKERS
+
 //FILE:a.kt
 package a
 
@@ -44,6 +46,6 @@ class Q {
 }
 
 //check that 'toString' can be invoked without specifying return type
-class NewClass : java.util.ArrayList<Integer>() {
-    public override fun toString() = "a"
+class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun toString() = "a"
 }

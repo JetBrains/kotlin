@@ -1622,6 +1622,12 @@ internal class RedundantNullableImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RedundantNullable(), KtAbstractFirDiagnostic<KtTypeReference>
 
+internal class PlatformClassMappedToKotlinImpl(
+    override val kotlinClass: FqName,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PlatformClassMappedToKotlin(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     override val firDiagnostic: KtPsiDiagnostic,

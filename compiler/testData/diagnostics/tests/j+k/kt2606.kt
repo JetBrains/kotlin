@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE
+// WITH_EXTENDED_CHECKERS
 //KT-2606 Filter java.util.* import
 package n
 

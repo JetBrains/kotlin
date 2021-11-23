@@ -657,6 +657,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val REDUNDANT_NULLABLE by warning<KtTypeReference>(PositioningStrategy.REDUNDANT_NULLABLE)
+
+        val PLATFORM_CLASS_MAPPED_TO_KOTLIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<FqName>("kotlinClass")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

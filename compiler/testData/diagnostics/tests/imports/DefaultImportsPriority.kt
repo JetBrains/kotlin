@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// WITH_EXTENDED_CHECKERS
+
 import java.lang.reflect.*
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<!>
 

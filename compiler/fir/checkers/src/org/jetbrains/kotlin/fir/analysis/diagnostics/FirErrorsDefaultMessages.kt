@@ -349,6 +349,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDE_BY_INLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDE_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE_IMPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
@@ -624,6 +625,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
         map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")
         map.put(REDUNDANT_NULLABLE, "Redundant '?'")
+        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn't be used in Kotlin. Use {0} instead.", TO_STRING)
         map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list")
         map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice")
         map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
