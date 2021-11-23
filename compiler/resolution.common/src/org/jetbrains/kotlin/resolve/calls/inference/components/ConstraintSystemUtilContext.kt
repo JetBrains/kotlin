@@ -29,6 +29,7 @@ interface ConstraintSystemUtilContext {
     fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
+    fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean
     fun createTypeVariableForLambdaReturnType(): TypeVariableMarker
     fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker
     fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker
@@ -36,4 +37,6 @@ interface ConstraintSystemUtilContext {
         argument: PostponedAtomWithRevisableExpectedType,
         index: Int
     ): TypeVariableMarker
+
+    val isForcedConsiderExtensionReceiverFromConstrainsInLambda get() = false
 }

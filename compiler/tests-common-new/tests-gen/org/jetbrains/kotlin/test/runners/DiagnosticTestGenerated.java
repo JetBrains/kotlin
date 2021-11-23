@@ -13460,9 +13460,33 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("selectOfLambdaWithExtension.kt")
+            public void testSelectOfLambdaWithExtension() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtension.kt");
+            }
+
+            @Test
+            @TestMetadata("selectOfLambdaWithExtensionDisabled.kt")
+            public void testSelectOfLambdaWithExtensionDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionDisabled.kt");
+            }
+
+            @Test
+            @TestMetadata("selectOfLambdaWithExtensionEnabled.kt")
+            public void testSelectOfLambdaWithExtensionEnabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/selectOfLambdaWithExtensionEnabled.kt");
+            }
+
+            @Test
             @TestMetadata("specialCallsWithCallableReferences.kt")
             public void testSpecialCallsWithCallableReferences() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/specialCallsWithCallableReferences.kt");
+            }
+
+            @Test
+            @TestMetadata("specialCallsWithLambdas.kt")
+            public void testSpecialCallsWithLambdas() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/specialCallsWithLambdas.kt");
             }
 
             @Test

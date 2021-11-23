@@ -91,6 +91,11 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.anonymousFunction.isLambda && this.atom.anonymousFunction.receiverTypeRef?.coneType != null
     }
 
+    override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
+        require(this is PostponedResolvedAtom)
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && this.atom.anonymousFunction.isLambda
+    }
+
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {
         return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
@@ -117,4 +122,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker {
         return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
+
+    override val isForcedConsiderExtensionReceiverFromConstrainsInLambda: Boolean
+        get() = true
 }
