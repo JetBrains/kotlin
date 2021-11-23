@@ -12,6 +12,7 @@
 #include "ObjectFactory.hpp"
 #include "Types.h"
 #include "Utils.hpp"
+#include "GCState.hpp"
 
 namespace kotlin {
 
@@ -21,14 +22,12 @@ class ThreadData;
 
 namespace gc {
 
-// Stop-the-world Mark-and-Sweep that runs on mutator threads. Can support targets that do not have threads.
+class FinalizerProcessor;
+
+// Stop-the-world mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
+// TODO: Also make mark concurrent.
 class ConcurrentMarkAndSweep : private Pinned {
 public:
-    enum class SafepointFlag {
-        kNone,
-        kNeedsSuspend,
-        kNeedsGC,
-    };
 
     class ObjectData {
     public:
@@ -58,7 +57,9 @@ public:
         void SafePointExceptionUnwind() noexcept;
         void SafePointAllocation(size_t size) noexcept;
 
-        void PerformFullGC() noexcept;
+        void ScheduleAndWaitFullGC() noexcept;
+        void ScheduleAndWaitFullGCWithFinalizers() noexcept;
+        void StopFinalizerThreadForTests() noexcept;
 
         void OnOOM(size_t size) noexcept;
 
@@ -66,7 +67,7 @@ public:
 
     private:
         void SafePointRegular(size_t weight) noexcept;
-        void SafePointSlowPath(SafepointFlag flag) noexcept;
+        void SafePointSlowPath() noexcept;
 
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
@@ -75,14 +76,18 @@ public:
     using Allocator = ThreadData::Allocator;
 
     ConcurrentMarkAndSweep() noexcept;
-    ~ConcurrentMarkAndSweep() = default;
+    ~ConcurrentMarkAndSweep();
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
-    bool PerformFullGC() noexcept;
+    bool PerformFullGC(int64_t epoch) noexcept;
+    void RequestThreadsSuspension() noexcept;
+    void ResumeThreads() noexcept;
 
-    size_t epoch_ = 0;
     uint64_t lastGCTimestampUs_ = 0;
+    GCStateHolder state_;
+    std::thread gcThread_;
+    KStdUniquePtr<FinalizerProcessor> finalizerProcessor_;
 };
 
 } // namespace gc

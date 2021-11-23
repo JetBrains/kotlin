@@ -80,7 +80,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
     }
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
+void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
     auto didGC = gc_.PerformFullGC();
 
     if (!didGC) {
@@ -91,7 +91,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
 
 void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    PerformFullGC();
+    ScheduleAndWaitFullGC();
 }
 
 ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
@@ -108,7 +108,7 @@ NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(Safepoi
     threadData_.suspensionData().suspendIfRequested();
     if (flag == SafepointFlag::kNeedsGC) {
         RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePoint");
-        PerformFullGC();
+        ScheduleAndWaitFullGC();
     }
 }
 

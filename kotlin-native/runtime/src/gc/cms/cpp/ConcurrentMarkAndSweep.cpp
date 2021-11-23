@@ -17,6 +17,8 @@
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
+#include "GCState.hpp"
+#include "FinalizerProcessor.hpp"
 
 using namespace kotlin;
 
@@ -55,13 +57,8 @@ struct SweepTraits {
     }
 };
 
-struct FinalizeTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
-};
-
 // Global, because it's accessed on a hot path: avoid memory load from `this`.
-std::atomic<gc::ConcurrentMarkAndSweep::SafepointFlag> gSafepointFlag = gc::ConcurrentMarkAndSweep::SafepointFlag::kNone;
-
+std::atomic<bool> gNeedSafepointSlowpath = false;
 } // namespace
 
 ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
@@ -74,130 +71,141 @@ ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointLoopBody() n
 
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     threadData_.gcScheduler().OnSafePointAllocation(size);
-    SafepointFlag flag = gSafepointFlag.load();
-    if (flag != SafepointFlag::kNone) {
-        SafePointSlowPath(flag);
+    if (gNeedSafepointSlowpath.load()) {
+        SafePointSlowPath();
     }
 }
+void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    ThreadStateGuard guard(ThreadState::kNative);
+    auto scheduled_epoch = gc_.state_.schedule();
+    gc_.state_.waitEpochFinished(scheduled_epoch);
+}
 
-void gc::ConcurrentMarkAndSweep::ThreadData::PerformFullGC() noexcept {
-    auto didGC = gc_.PerformFullGC();
+void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
+    ThreadStateGuard guard(ThreadState::kNative);
+    auto scheduled_epoch = gc_.state_.schedule();
+    gc_.state_.waitEpochFinalized(scheduled_epoch);
+}
 
-    if (!didGC) {
-        // If we failed to suspend threads, someone else might be asking to suspend them.
-        threadData_.suspensionData().suspendIfRequested();
-    }
+void gc::ConcurrentMarkAndSweep::ThreadData::StopFinalizerThreadForTests() noexcept {
+    gc_.finalizerProcessor_->StopFinalizerThread();
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    PerformFullGC();
+    ScheduleAndWaitFullGC();
 }
 
 ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
     threadData_.gcScheduler().OnSafePointRegular(weight);
-    SafepointFlag flag = gSafepointFlag.load();
-    if (flag != SafepointFlag::kNone) {
-        SafePointSlowPath(flag);
+    if (gNeedSafepointSlowpath.load()) {
+        SafePointSlowPath();
     }
 }
 
-NO_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointSlowPath(SafepointFlag flag) noexcept {
-    RuntimeAssert(flag != SafepointFlag::kNone, "Must've been handled by the caller");
-    // No need to check for kNeedsSuspend, because `suspendIfRequested` checks for its own atomic.
+NO_EXTERNAL_CALLS_CHECK NO_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointSlowPath() noexcept {
     threadData_.suspensionData().suspendIfRequested();
-    if (flag == SafepointFlag::kNeedsGC) {
-        RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePoint");
-        PerformFullGC();
-    }
 }
 
-gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep() noexcept {
-    mm::GlobalData::Instance().gcScheduler().SetScheduleGC([]() {
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep() noexcept :
+    finalizerProcessor_(make_unique<FinalizerProcessor>([this](int64_t epoch) { state_.finalized(epoch);})) {
+    mm::GlobalData::Instance().gcScheduler().SetScheduleGC([this]() NO_EXTERNAL_CALLS_CHECK NO_INLINE {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
-        gSafepointFlag = SafepointFlag::kNeedsGC;
+        state_.schedule();
+    });
+    gcThread_ = std::thread([this] {
+        while (true) {
+            auto epoch = state_.waitScheduled();
+            if (epoch.has_value()) {
+                PerformFullGC(*epoch);
+            } else {
+                break;
+            }
+        }
     });
 }
 
-bool gc::ConcurrentMarkAndSweep::PerformFullGC() noexcept {
+
+gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
+    state_.shutdown();
+    gcThread_.join();
+}
+
+
+void gc::ConcurrentMarkAndSweep::RequestThreadsSuspension() noexcept {
+    gNeedSafepointSlowpath = true;
+    bool didSuspend = mm::RequestThreadsSuspension();
+    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+}
+
+void gc::ConcurrentMarkAndSweep::ResumeThreads() noexcept {
+    mm::ResumeThreads();
+    gNeedSafepointSlowpath = false;
+}
+
+bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to suspend threads by thread %d", konan::currentThreadId());
     auto timeStartUs = konan::getTimeMicros();
-    bool didSuspend = mm::RequestThreadsSuspension();
-    if (!didSuspend) {
-        RuntimeLogDebug({kTagGC}, "Failed to suspend threads by thread %d", konan::currentThreadId());
-        // Somebody else suspended the threads, and so ran a GC.
-        // TODO: This breaks if suspension is used by something apart from GC.
-        return false;
-    }
+    RequestThreadsSuspension();
     RuntimeLogDebug({kTagGC}, "Requested thread suspension by thread %d", konan::currentThreadId());
-    gSafepointFlag = SafepointFlag::kNeedsSuspend;
 
-    mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::FinalizerQueue finalizerQueue;
-    {
-        // Switch state to native to simulate this thread being a GC thread.
-        ThreadStateGuard guard(ThreadState::kNative);
+    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Concurrent GC must run on unregistered thread");
 
-        mm::WaitForThreadsSuspension();
-        auto timeSuspendUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Suspended all threads in %" PRIu64 " microseconds", timeSuspendUs - timeStartUs);
+    mm::WaitForThreadsSuspension();
+    auto timeSuspendUs = konan::getTimeMicros();
+    RuntimeLogDebug({kTagGC}, "Suspended all threads in %" PRIu64 " microseconds", timeSuspendUs - timeStartUs);
 
-        auto& scheduler = mm::GlobalData::Instance().gcScheduler();
-        scheduler.gcData().OnPerformFullGC();
+    auto& scheduler = mm::GlobalData::Instance().gcScheduler();
+    scheduler.gcData().OnPerformFullGC();
 
-        RuntimeLogInfo(
-                {kTagGC}, "Started GC epoch %zu. Time since last GC %" PRIu64 " microseconds", epoch_, timeStartUs - lastGCTimestampUs_);
-        auto graySet = collectRootSet();
-        auto timeRootSetUs = konan::getTimeMicros();
-        // Can be unsafe, because we've stopped the world.
-        auto objectsCountBefore = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+    state_.start(epoch);
+    RuntimeLogInfo(
+            {kTagGC}, "Started GC epoch %" PRId64 ". Time since last GC %" PRIu64 " microseconds", epoch, timeStartUs - lastGCTimestampUs_);
+    auto graySet = collectRootSet();
+    auto timeRootSetUs = konan::getTimeMicros();
+    // Can be unsafe, because we've stopped the world.
 
-        RuntimeLogInfo(
-                {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", graySet.size(),
-                timeRootSetUs - timeSuspendUs);
-        auto markStats = gc::Mark<MarkTraits>(std::move(graySet));
-        auto timeMarkUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds. Processed %zu duplicate entries in the gray set", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs, markStats.duplicateEntries);
-        scheduler.gcData().UpdateAliveSetBytes(markStats.aliveHeapSetBytes);
-        gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
-        auto timeSweepExtraObjectsUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);
-        finalizerQueue = gc::Sweep<SweepTraits>(mm::GlobalData::Instance().objectFactory());
-        auto timeSweepUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Sweeped in %" PRIu64 " microseconds", timeSweepUs - timeSweepExtraObjectsUs);
+    auto objectsCountBefore = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+    RuntimeLogInfo(
+            {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", graySet.size(),
+            timeRootSetUs - timeSuspendUs);
+    auto markStats = gc::Mark<MarkTraits>(std::move(graySet));
+    auto timeMarkUs = konan::getTimeMicros();
+    RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds. Processed %zu duplicate entries in the gray set", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs, markStats.duplicateEntries);
+    scheduler.gcData().UpdateAliveSetBytes(markStats.aliveHeapSetBytes);
+    gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
+    auto timeSweepExtraObjectsUs = konan::getTimeMicros();
+    RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);
 
-        // Can be unsafe, because we've stopped the world.
-        auto objectsCountAfter = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
-        auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
+    auto objectFactoryIterable = mm::GlobalData::Instance().objectFactory().LockForIter();
 
-        gSafepointFlag = SafepointFlag::kNone;
-        mm::ResumeThreads();
-        auto timeResumeUs = konan::getTimeMicros();
+    ResumeThreads();
+    auto timeResumeUs = konan::getTimeMicros();
 
-        RuntimeLogDebug({kTagGC}, "Resumed threads in %" PRIu64 " microseconds.", timeResumeUs - timeSweepUs);
+    RuntimeLogDebug({kTagGC},
+                    "Resumed threads in %" PRIu64 " microseconds. Total pause for most threads is %"  PRIu64" microseconds",
+                    timeResumeUs - timeSweepExtraObjectsUs, timeResumeUs - timeStartUs);
 
-        auto finalizersCount = finalizerQueue.size();
-        auto collectedCount = objectsCountBefore - objectsCountAfter - finalizersCount;
+    auto finalizerQueue = gc::Sweep<SweepTraits>(objectFactoryIterable);
+    auto timeSweepUs = konan::getTimeMicros();
+    RuntimeLogDebug({kTagGC}, "Swept in %" PRIu64 " microseconds", timeSweepUs - timeResumeUs);
 
-        RuntimeLogInfo(
-                {kTagGC},
-                "Finished GC epoch %zu. Collected %zu objects, to be finalized %zu objects, %zu objects and %zd extra data objects remain. Total pause time %" PRIu64
-                " microseconds",
-                epoch_, collectedCount, finalizersCount, objectsCountAfter, extraObjectsCountAfter, timeResumeUs - timeStartUs);
-        ++epoch_;
-        lastGCTimestampUs_ = timeResumeUs;
-    }
+    // Can be unsafe, because we have a lock in objectFactoryIterable
+    auto objectsCountAfter = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+    auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
 
-    // Finalizers are run after threads are resumed, because finalizers may request GC themselves, which would
-    // try to suspend threads again. Also, we run finalizers in the runnable state, because they may be executing
-    // kotlin code.
+    auto finalizersCount = finalizerQueue.size();
+    auto collectedCount = objectsCountBefore - objectsCountAfter - finalizersCount;
 
-    // TODO: These will actually need to be run on a separate thread.
-    AssertThreadState(ThreadState::kRunnable);
-    RuntimeLogDebug({kTagGC}, "Starting to run finalizers");
-    auto timeBeforeUs = konan::getTimeMicros();
-    finalizerQueue.Finalize();
-    auto timeAfterUs = konan::getTimeMicros();
-    RuntimeLogInfo({kTagGC}, "Finished running finalizers in %" PRIu64 " microseconds", timeAfterUs - timeBeforeUs);
+    state_.finish(epoch);
+    finalizerProcessor_->ScheduleTasks(std::move(finalizerQueue), epoch);
 
+    RuntimeLogInfo(
+            {kTagGC},
+            "Finished GC epoch %" PRId64 ". Collected %zu objects, to be finalized %zu objects, %zu objects and %zd extra data objects remain. Total pause time %" PRIu64
+            " microseconds",
+            epoch, collectedCount, finalizersCount, objectsCountAfter, extraObjectsCountAfter, timeSweepUs - timeStartUs);
+    lastGCTimestampUs_ = timeResumeUs;
     return true;
 }
+

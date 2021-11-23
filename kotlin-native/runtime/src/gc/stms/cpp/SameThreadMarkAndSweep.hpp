@@ -59,7 +59,8 @@ public:
         void SafePointExceptionUnwind() noexcept;
         void SafePointAllocation(size_t size) noexcept;
 
-        void PerformFullGC() noexcept;
+        void ScheduleAndWaitFullGC() noexcept;
+        void ScheduleAndWaitFullGCWithFinalizers() noexcept { ScheduleAndWaitFullGC(); }
 
         void OnOOM(size_t size) noexcept;
 
@@ -77,6 +78,7 @@ public:
 
     SameThreadMarkAndSweep() noexcept;
     ~SameThreadMarkAndSweep() = default;
+    void StopFinalizerThreadForTests() noexcept {}
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).

@@ -257,6 +257,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.va_start",
         "llvm.x86.avx2.*",
         "llvm.x86.ssse3.*",
+        "llvm.x86.sse2.*",
         "llvm.uadd.sat.*",
         "llvm.aarch64.neon.*",
 

@@ -478,6 +478,91 @@ TEST(ObjectFactoryStorageTest, MoveAll) {
     EXPECT_THAT(consumer.size(), 3);
 }
 
+TEST(ObjectFactoryStorageTest, MergeWith) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer1;
+    Consumer<ObjectFactoryStorageRegular> consumer2;
+
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+    producer.Insert<int>(4);
+    producer.Insert<int>(5);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.LockForIter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            if (it->Data<int>() % 2 == 0) {
+                iter.MoveAndAdvance(consumer1, it);
+            } else {
+                ++it;
+            }
+        }
+    }
+    {
+        auto iter = storage.LockForIter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            iter.MoveAndAdvance(consumer2, it);
+        }
+    }
+
+    auto actual = Collect<int>(storage);
+    EXPECT_THAT(actual, testing::IsEmpty());
+    EXPECT_THAT(storage.GetSizeUnsafe(), 0);
+    EXPECT_THAT(producer.size(), 0);
+
+    {
+        auto actualConsumer1 = Collect<int, alignof(void*)>(consumer1);
+        auto actualConsumer2 = Collect<int, alignof(void*)>(consumer2);
+
+        EXPECT_THAT(actualConsumer1, testing::ElementsAre(2, 4));
+        EXPECT_THAT(consumer1.size(), 2);
+        EXPECT_THAT(actualConsumer2, testing::ElementsAre(1, 3, 5));
+        EXPECT_THAT(consumer2.size(), 3);
+    }
+
+    consumer1.MergeWith(std::move(consumer2));
+    {
+        auto actualConsumer1 = Collect<int, alignof(void*)>(consumer1);
+        auto actualConsumer2 = Collect<int, alignof(void*)>(consumer2);
+        EXPECT_THAT(actualConsumer1, testing::ElementsAre(2, 4, 1, 3, 5));
+        EXPECT_THAT(consumer1.size(), 5);
+        EXPECT_THAT(actualConsumer2, testing::ElementsAre());
+        EXPECT_THAT(consumer2.size(), 0);
+    }
+
+    Consumer<ObjectFactoryStorageRegular> consumer3;
+    consumer1.MergeWith(std::move(consumer3));
+    {
+        auto actualConsumer1 = Collect<int, alignof(void*)>(consumer1);
+        auto actualConsumer2 = Collect<int, alignof(void*)>(consumer2);
+        auto actualConsumer3 = Collect<int, alignof(void*)>(consumer3);
+        EXPECT_THAT(actualConsumer1, testing::ElementsAre(2, 4, 1, 3, 5));
+        EXPECT_THAT(consumer1.size(), 5);
+        EXPECT_THAT(actualConsumer2, testing::ElementsAre());
+        EXPECT_THAT(consumer2.size(), 0);
+        EXPECT_THAT(actualConsumer3, testing::ElementsAre());
+        EXPECT_THAT(consumer3.size(), 0);
+    }
+
+    consumer3.MergeWith(std::move(consumer1));
+    {
+        auto actualConsumer1 = Collect<int, alignof(void*)>(consumer1);
+        auto actualConsumer2 = Collect<int, alignof(void*)>(consumer2);
+        auto actualConsumer3 = Collect<int, alignof(void*)>(consumer3);
+        EXPECT_THAT(actualConsumer1, testing::ElementsAre());
+        EXPECT_THAT(consumer1.size(), 0);
+        EXPECT_THAT(actualConsumer2, testing::ElementsAre());
+        EXPECT_THAT(consumer2.size(), 0);
+        EXPECT_THAT(actualConsumer3, testing::ElementsAre(2, 4, 1, 3, 5));
+        EXPECT_THAT(consumer3.size(), 5);
+    }
+}
+
 TEST(ObjectFactoryStorageTest, MoveTheOnlyElement) {
     ObjectFactoryStorageRegular storage;
     Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());

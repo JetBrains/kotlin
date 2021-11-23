@@ -266,8 +266,20 @@ public:
 
         Consumer() noexcept = default;
 
-        Consumer(Consumer&&) noexcept = default;
-        Consumer& operator=(Consumer&&) noexcept = default;
+        Consumer(Consumer&& other) noexcept {
+            root_ = std::move(other.root_);
+            size_ = other.size_;
+            last_ = other.last_;
+            other.size_ = 0;
+            other.last_ = nullptr;
+        }
+        Consumer& operator=(Consumer&& other) noexcept {
+            Consumer temp = std::move(other);
+            std::swap(root_, temp.root_);
+            std::swap(size_, temp.size_);
+            std::swap(last_, temp.last_);
+            return *this;
+        }
 
         ~Consumer() {
             // Make sure not to blow up the stack by nested `~Node` calls.
@@ -279,6 +291,22 @@ public:
 
         Iterator begin() noexcept { return Iterator(root_.get()); }
         Iterator end() noexcept { return Iterator(nullptr); }
+
+        void MergeWith(Consumer &&other) {
+            AssertCorrect();
+            if (other.root_) {
+                if (!root_) {
+                    root_ = std::move(other.root_);
+                } else {
+                    last_->next_ = std::move(other.root_);
+                }
+                last_ = other.last_;
+                size_ += other.size_;
+                other.last_ = nullptr;
+                other.size_ = 0;
+            }
+            AssertCorrect();
+        }
 
     private:
         friend class ObjectFactoryStorage;
@@ -622,6 +650,10 @@ public:
             for (auto node : Iterable(*this)) {
                 RunFinalizers(node->IsArray() ? node->GetArrayHeader()->obj() : node->GetObjHeader());
             }
+        }
+
+        void MergeWith(FinalizerQueue &&other) {
+            consumer_.MergeWith(std::move(other.consumer_));
         }
 
         Iterable IterForTests() noexcept { return Iterable(*this); }

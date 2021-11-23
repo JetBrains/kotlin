@@ -40,7 +40,8 @@ public:
         void SafePointLoopBody() noexcept {}
         void SafePointAllocation(size_t size) noexcept {}
 
-        void PerformFullGC() noexcept {}
+        void ScheduleAndWaitFullGC() noexcept {}
+        void ScheduleAndWaitFullGCWithFinalizers() noexcept {}
 
         void OnOOM(size_t size) noexcept {}
 
@@ -53,6 +54,7 @@ public:
     ~NoOpGC() = default;
 
     GCScheduler& scheduler() noexcept { return scheduler_; }
+    void StopFinalizerThreadForTests() noexcept {}
 
 private:
     GCScheduler scheduler_;
