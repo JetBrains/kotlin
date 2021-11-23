@@ -1,0 +1,5 @@
+KT element: KtNameReferenceExpression
+FIR element: FirResolvedNamedReferenceImpl
+
+FIR element rendered:
+R|<local>/i|

@@ -54,6 +54,13 @@ internal class KtFirExpressionTypeProvider(
                     fir.typeRef.coneType.asKtType()
                 }
             }
+            is FirVariableAssignment -> {
+                if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
+                    fir.rValue.typeRef.coneType.asKtType()
+                } else {
+                    analysisSession.builtinTypes.UNIT
+                }
+            }
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType(firResolveState).asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }

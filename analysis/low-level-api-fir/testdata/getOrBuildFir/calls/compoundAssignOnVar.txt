@@ -1,0 +1,5 @@
+KT element: KtBinaryExpression
+FIR element: FirVariableAssignmentImpl
+
+FIR element rendered:
+R|<local>/i| = R|<local>/i|.R|kotlin/Int.plus|(Int(1))

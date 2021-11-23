@@ -98,6 +98,54 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("compoundAssignOnVal.kt")
+        public void testCompoundAssignOnVal() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignOnVal.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignOnVal_lhs.kt")
+        public void testCompoundAssignOnVal_lhs() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignOnVal_lhs.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignOnVar.kt")
+        public void testCompoundAssignOnVar() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignOnVar.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignOnVar_lhs.kt")
+        public void testCompoundAssignOnVar_lhs() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignOnVar_lhs.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignWithArrayAccessConvention.kt")
+        public void testCompoundAssignWithArrayAccessConvention() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignWithArrayAccessConvention_lhs.kt")
+        public void testCompoundAssignWithArrayAccessConvention_lhs() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention_lhs.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignWithArrayGetConvention.kt")
+        public void testCompoundAssignWithArrayGetConvention() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignWithArrayGetConvention.kt");
+        }
+
+        @Test
+        @TestMetadata("compoundAssignWithArrayGetConvention_lhs.kt")
+        public void testCompoundAssignWithArrayGetConvention_lhs() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignWithArrayGetConvention_lhs.kt");
+        }
+
+        @Test
         @TestMetadata("constructorDelegationSuperCall.kt")
         public void testConstructorDelegationSuperCall() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/constructorDelegationSuperCall.kt");

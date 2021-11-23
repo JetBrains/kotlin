@@ -121,6 +121,24 @@ public class KtFe10HLExpressionTypeTestGenerated extends AbstractKtFe10HLExpress
     }
 
     @Test
+    @TestMetadata("plusAssign.kt")
+    public void testPlusAssign() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/plusAssign.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixDec.kt")
+    public void testPostfixDec() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/postfixDec.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixInc.kt")
+    public void testPrefixInc() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/prefixInc.kt");
+    }
+
+    @Test
     @TestMetadata("property.kt")
     public void testProperty() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/property.kt");
