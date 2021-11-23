@@ -15,4 +15,4 @@ package p1
 import p2.*
 
 val x: X = X()
-val <!EXPOSED_PROPERTY_TYPE!>y<!>: Y = <!INVISIBLE_REFERENCE!>Y<!>()
+val <!EXPOSED_PROPERTY_TYPE!>y<!>: <!INVISIBLE_REFERENCE!>Y<!> = <!INVISIBLE_REFERENCE!>Y<!>()

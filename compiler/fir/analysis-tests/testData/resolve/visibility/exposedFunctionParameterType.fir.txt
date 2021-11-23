@@ -17,7 +17,7 @@ FILE: exposedFunctionParameterType.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun foo(value: R|A.AInner|): R|kotlin/Unit| {
+        public final fun foo(value: <ERROR TYPE REF: HIDDEN: A.AInner is invisible>): R|kotlin/Unit| {
         }
 
     }

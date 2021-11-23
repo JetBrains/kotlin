@@ -28,7 +28,7 @@ fun test() {
     y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : A = <!INVISIBLE_REFERENCE!>A<!>()
+    val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
 
     val z = <!INVISIBLE_REFERENCE!>x<!>
     <!INVISIBLE_REFERENCE!>x<!> = 30
@@ -36,7 +36,7 @@ fun test() {
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 }
 
-class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {

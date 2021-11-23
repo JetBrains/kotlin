@@ -17,7 +17,7 @@ FILE: exposedFunctionReturnType.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun foo(str: R|kotlin/String|): R|A.InnerA|
+        public final fun foo(str: R|kotlin/String|): <ERROR TYPE REF: HIDDEN: A.InnerA is invisible>
 
     }
     private final enum class Some : R|kotlin/Enum<Some>| {

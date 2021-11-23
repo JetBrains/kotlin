@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedQualifierError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDynamicType
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
@@ -101,18 +103,18 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         scopeClassDeclaration: ScopeClassDeclaration,
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier
-    ): Pair<FirBasedSymbol<*>?, ConeSubstitutor?> {
+    ): Triple<FirBasedSymbol<*>?, ConeSubstitutor?, ConeDiagnostic?> {
         return when (typeRef) {
             is FirResolvedTypeRef -> {
                 val resultSymbol = typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
-                resultSymbol to null
+                Triple(resultSymbol, null, null)
             }
 
             is FirUserTypeRef -> {
                 val qualifierResolver = session.qualifierResolver
                 var acceptedSymbol: FirBasedSymbol<*>? = null
-                var firstNonApplicable: FirBasedSymbol<*>? = null
                 var substitutor: ConeSubstitutor? = null
+                val notApplicableSymbols = mutableListOf<Pair<FirBasedSymbol<*>, ConeSubstitutor>>()
                 val qualifier = typeRef.qualifier
                 val scopes = scopeClassDeclaration.scopes
                 val containingDeclarations = scopeClassDeclaration.containingDeclarations
@@ -121,36 +123,48 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     if (acceptedSymbol != null) {
                         break
                     }
+                    val collectNonApplicable = notApplicableSymbols.isEmpty()
                     scope.processClassifiersByNameWithSubstitution(qualifier.first().name) { symbol, substitutorFromScope ->
-                        if (acceptedSymbol != null) {
-                            return@processClassifiersByNameWithSubstitution
-                        }
-
+                        if (acceptedSymbol != null) return@processClassifiersByNameWithSubstitution
                         val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
+                            ?: return@processClassifiersByNameWithSubstitution
 
                         if (resolvedSymbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
                             acceptedSymbol = resolvedSymbol
                             substitutor = substitutorFromScope
-                        } else {
-                            firstNonApplicable = resolvedSymbol
+                        } else if (collectNonApplicable) {
+                            resolvedSymbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)
+                            notApplicableSymbols += resolvedSymbol to substitutorFromScope
                         }
                     }
                 }
 
-                if (acceptedSymbol == null) {
-                    acceptedSymbol = firstNonApplicable
-                }
+                when {
+                    acceptedSymbol != null -> Triple(acceptedSymbol, substitutor, null)
 
-                // TODO: Imports
-                val resultSymbol: FirBasedSymbol<*>? = acceptedSymbol ?: qualifierResolver.resolveSymbol(qualifier)
-                resultSymbol to substitutor
+                    notApplicableSymbols.size == 1 -> {
+                        val (notApplicableSymbol, resultingSubstitutor) = notApplicableSymbols.single()
+                        Triple(notApplicableSymbol, resultingSubstitutor, ConeVisibilityError(notApplicableSymbol))
+                    }
+
+                    else -> {
+                        val symbolFromQualifier = qualifierResolver.resolveSymbol(qualifier)
+                        val diagnostic = runIf(
+                            symbolFromQualifier != null &&
+                                    !symbolFromQualifier.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)
+                        ) {
+                            ConeVisibilityError(symbolFromQualifier!!)
+                        }
+                        Triple(symbolFromQualifier, null, diagnostic)
+                    }
+                }
             }
 
             is FirImplicitBuiltinTypeRef -> {
-                resolveBuiltInQualified(typeRef.id, session) to null
+                Triple(resolveBuiltInQualified(typeRef.id, session), null, null)
             }
 
-            else -> null to null
+            else -> Triple(null, null, null)
         }
     }
 
@@ -455,11 +469,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         isOperandOfIsOperator: Boolean,
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier
-    ): ConeKotlinType {
+    ): Pair<ConeKotlinType, ConeDiagnostic?> {
         return when (typeRef) {
-            is FirResolvedTypeRef -> typeRef.type
+            is FirResolvedTypeRef -> typeRef.type to null
             is FirUserTypeRef -> {
-                val (symbol, substitutor) = resolveToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier)
+                val (symbol, substitutor, diagnostic) = resolveToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier)
                 resolveUserType(
                     typeRef,
                     symbol,
@@ -467,10 +481,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     areBareTypesAllowed,
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
                     isOperandOfIsOperator
-                )
+                ) to diagnostic
             }
-            is FirFunctionTypeRef -> createFunctionalType(typeRef)
-            is FirDynamicTypeRef -> ConeKotlinErrorType(ConeUnsupportedDynamicType())
+            is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
+            is FirDynamicTypeRef -> ConeKotlinErrorType(ConeUnsupportedDynamicType()) to null
             else -> error(typeRef.render())
         }
     }

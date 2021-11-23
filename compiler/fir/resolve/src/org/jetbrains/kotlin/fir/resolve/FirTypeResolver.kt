@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -20,7 +21,7 @@ abstract class FirTypeResolver : FirSessionComponent {
         isOperandOfIsOperator: Boolean,
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier
-    ): ConeKotlinType
+    ): Pair<ConeKotlinType, ConeDiagnostic?>
 }
 
 val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()

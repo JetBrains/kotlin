@@ -32,7 +32,7 @@ fun test() {
     y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : A = <!INVISIBLE_REFERENCE!>A<!>()
+    val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
 
     val z = <!INVISIBLE_REFERENCE!>x<!>
     <!INVISIBLE_REFERENCE!>x<!> = 30
@@ -43,7 +43,7 @@ fun test() {
     <!INVISIBLE_SETTER("xx; private; file")!>xx<!> = 40
 }
 
-class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {

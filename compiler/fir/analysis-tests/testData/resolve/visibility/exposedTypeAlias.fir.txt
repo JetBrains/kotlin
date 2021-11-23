@@ -17,7 +17,7 @@ FILE: exposedTypeAlias.kt
             super<R|kotlin/Any|>()
         }
 
-        public final typealias AInner = R|A.Inner|
+        public final typealias AInner = <ERROR TYPE REF: HIDDEN: A.Inner is invisible>
 
         public final inner class Inner : R|kotlin/Any| {
             public B.constructor(): R|B.Inner| {
@@ -35,7 +35,7 @@ FILE: exposedTypeAlias.kt
         public final typealias BInner = R|B.Inner|
 
     }
-    public final typealias AInner0 = R|A.Inner|
+    public final typealias AInner0 = <ERROR TYPE REF: HIDDEN: A.Inner is invisible>
     public final typealias BInner0 = R|B.Inner|
     private final typealias MyString = R|kotlin/String|
     public final fun foo(): R|MyString| {

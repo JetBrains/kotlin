@@ -11,5 +11,5 @@ import p.*
 
 interface I {
     val v1: FilteringSequence
-    val <!EXPOSED_PROPERTY_TYPE!>v2<!>: IndexingSequence<String>
+    val <!EXPOSED_PROPERTY_TYPE!>v2<!>: <!INVISIBLE_REFERENCE!>IndexingSequence<String><!>
 }

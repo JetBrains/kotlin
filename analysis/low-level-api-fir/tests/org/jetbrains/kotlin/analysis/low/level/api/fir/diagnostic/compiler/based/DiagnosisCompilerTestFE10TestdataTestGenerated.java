@@ -32276,6 +32276,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("privateDeclarationInAnotherFile.kt")
+            public void testPrivateDeclarationInAnotherFile() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/privateDeclarationInAnotherFile.kt");
+            }
+
+            @Test
             @TestMetadata("protectedInternal.kt")
             public void testProtectedInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
