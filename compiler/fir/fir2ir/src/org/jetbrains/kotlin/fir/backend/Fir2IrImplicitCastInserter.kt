@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class Fir2IrImplicitCastInserter(
@@ -232,7 +233,9 @@ class Fir2IrImplicitCastInserter(
         // Cast type massage 1. Remove @EnhancedNullability
         // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
         val castType = type.removeAnnotations {
-            it.symbol.owner.parentAsClass.classId == CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID
+            val classId = it.symbol.owner.parentAsClass.classId
+            classId == StandardClassIds.Annotations.EnhancedNullability ||
+                    classId == StandardClassIds.Annotations.FlexibleNullability
         }.withHasQuestionMark(false)
         return IrTypeOperatorCallImpl(
             this.startOffset,

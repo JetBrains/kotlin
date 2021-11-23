@@ -13,9 +13,10 @@ class Owner<out T : JCTree> {
     get(): String {
       var tree: JCTree = <this>.<get-tree>()
       when {
-        tree is JCTypeApply -> return tree /*as JCTypeApply */.#clazz /*!! @FlexibleNullability String */
+        tree is JCTypeApply -> return tree /*as JCTypeApply */.#clazz /*!! String */
       }
       return ""
     }
 
 }
+

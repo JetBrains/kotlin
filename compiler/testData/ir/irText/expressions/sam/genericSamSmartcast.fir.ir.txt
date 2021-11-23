@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/genericSamSmartcast.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.A<*>
             GET_VAR 'x: kotlin.Any declared in <root>.f' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun f (x: kotlin.Any): kotlin.String declared in <root>'
-            TYPE_OP type=@[FlexibleNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleNullability] kotlin.String
+            TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
               CALL 'public open fun call (block: @[FlexibleNullability] <root>.A.I<@[FlexibleNullability] T of <root>.A?>?): @[FlexibleNullability] kotlin.String? declared in <root>.A' type=@[FlexibleNullability] kotlin.String? origin=null
                 $this: TYPE_OP type=<root>.A<*> origin=IMPLICIT_CAST typeOperand=<root>.A<*>
                   GET_VAR 'x: kotlin.Any declared in <root>.f' type=kotlin.Any origin=null

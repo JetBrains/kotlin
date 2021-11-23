@@ -18,5 +18,5 @@ FILE fqName:<root> fileName:/implicitNotNullInDestructuringAssignment.kt
           $receiver: GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? [val] declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null
       VAR name:b type:kotlin.Int [val]
         CALL 'private final fun component2 (): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=2)
-          $receiver: TYPE_OP type=@[FlexibleNullability] <root>.J origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleNullability] <root>.J
+          $receiver: TYPE_OP type=<root>.J origin=IMPLICIT_NOTNULL typeOperand=<root>.J
             GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? [val] declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null

@@ -1,10 +1,10 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
-// FILE: stringVsTConstrained.kt
-fun <T> useTConstrained(xs: Array<T>, fn: () -> T) = fn()
+// FIR_IDENTICAL
+// FILE: stringVsAny.kt
+fun useAny(fn: () -> Any) = fn()
 
-fun testWithNullCheck(xs: Array<String>) {
-    useTConstrained(xs) { J.string() }
+fun testNullCheck() {
+    useAny { J.string() }
 }
 
 // FILE: J.java

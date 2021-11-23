@@ -12,7 +12,7 @@ fun <T : Any?> id(x: T): T {
 
 fun test1(): Any {
   return checkAny(fn = local fun <anonymous>(): Any {
-    return foo() /*!! @FlexibleNullability String */
+    return foo() /*!! String */
   }
 )
 }

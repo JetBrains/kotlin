@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/JCTreeUser.kt
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.JCTree.JCTypeApply
                 GET_VAR 'var tree: <root>.JCTree [var] declared in <root>.Owner.<get-foo>' type=<root>.JCTree origin=null
               then: RETURN type=kotlin.Nothing from='public final fun <get-foo> (): kotlin.String declared in <root>.Owner'
-                TYPE_OP type=@[FlexibleNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleNullability] kotlin.String
+                TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
                   GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:clazz type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
                     receiver: TYPE_OP type=<root>.JCTree.JCTypeApply origin=IMPLICIT_CAST typeOperand=<root>.JCTree.JCTypeApply
                       GET_VAR 'var tree: <root>.JCTree [var] declared in <root>.Owner.<get-foo>' type=<root>.JCTree origin=null

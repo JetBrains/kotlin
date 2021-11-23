@@ -77,48 +77,48 @@ fun checkAssertions(illegalStateExpected: Boolean) {
     val check = AssertionChecker(illegalStateExpected)
 
     // simple call
-    check("foo") { A().foo() }
+    check("A::foo") { A().foo() }
 
     // simple static call
-    check("staticFoo") { A.staticFoo() }
+    check("A::staticFoo") { A.staticFoo() }
 
-    // supercall
-    check("foo") { Derived().foo() }
+    // super call
+    check("Derived::foo") { Derived().foo() }
 
     // delegated call
-    check("foo") { Delegated().foo() }
+    check("Delegated::foo") { Delegated().foo() }
 
     // collection element
-    check("get") { A()[""] }
+    check("A::get") { A()[""] }
 
     // binary expression
-    check("plus") { A() + A() }
+    check("A::plus") { A() + A() }
 
     // field
-    check("NULL") { A().NULL }
+    check("A::NULL") { A().NULL }
 
     // static field
-    check("STATIC_NULL") { A.STATIC_NULL }
+    check("A::STATIC_NULL") { A.STATIC_NULL }
 
     // postfix expression
     // TODO:
-//    check("inc") { var a = A().a(); a++ }
+//    check("A::inc") { var a = A().a(); a++ }
 
     // prefix expression
-    check("inc-b") { var a = A.B.b(); a++ }
+    check("A::inc-b") { var a = A.B.b(); a++ }
 
     // prefix expression
-    check("inc-c") { var a = A.C.c(); a++ }
+    check("A::inc-c") { var a = A.C.c(); a++ }
 
     // prefix expression
-    check("inc") { var a = A().a(); ++a }
+    check("A::inc") { var a = A().a(); ++a }
 
     // prefix expression
-    check("inc-b") { var a = A.B.b(); ++a }
+    check("A::inc-b") { var a = A.B.b(); ++a }
 
     // prefix expression
     // TODO:
-//    check("inc-c") { var a = A.C.c(); ++a }
+//    check("A::inc-c") { var a = A.C.c(); ++a }
 }
 
 operator fun A.C.inc(): A.C = A.C()

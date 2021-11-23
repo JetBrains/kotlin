@@ -2902,6 +2902,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("nullCheckOnInterfaceDelegation.kt")
+            public void testNullCheckOnInterfaceDelegation() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnInterfaceDelegation.kt");
+            }
+
+            @Test
             @TestMetadata("nullabilityAssertionOnExtensionReceiver.kt")
             public void testNullabilityAssertionOnExtensionReceiver() throws Exception {
                 runTest("compiler/testData/ir/irText/types/nullChecks/nullabilityAssertionOnExtensionReceiver.kt");
@@ -2968,6 +2974,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 @TestMetadata("nnStringVsTXString.kt")
                 public void testNnStringVsTXString() throws Exception {
                     runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTXString.kt");
+                }
+
+                @Test
+                @TestMetadata("stringVsAny.kt")
+                public void testStringVsAny() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsAny.kt");
                 }
 
                 @Test
