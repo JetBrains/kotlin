@@ -959,8 +959,6 @@ public class DescriptorResolver {
             }
         }
 
-        Multimap<String, ReceiverParameterDescriptor> nameToReceiverMap = HashMultimap.create();
-
         KtTypeReference receiverTypeRef = variableDeclaration.getReceiverTypeReference();
         ReceiverParameterDescriptor receiverDescriptor = null;
         if (receiverTypeRef != null) {
@@ -969,16 +967,38 @@ public class DescriptorResolver {
             receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
                     propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
             );
-            String receiverName = receiverTypeRef.nameForReceiverLabel();
-            if (receiverName != null) {
-                nameToReceiverMap.put(receiverName, receiverDescriptor);
-            }
         }
 
         List<KtContextReceiver> contextReceivers = variableDeclaration.getContextReceivers();
-        List<ReceiverParameterDescriptor> contextReceiverDescriptors =
-                createReceiverDescriptorsForProperty(propertyDescriptor, scopeForDeclarationResolutionWithTypeParameters, trace,
-                                                     contextReceivers, nameToReceiverMap);
+        List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
+                .map(contextReceiver -> {
+                    KtTypeReference typeReference = contextReceiver.typeReference();
+                    if (typeReference == null) {
+                        return null;
+                    }
+                    KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
+                    AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
+                    return DescriptorFactory.createContextReceiverParameterForCallable(
+                            propertyDescriptor, type, splitter.getAnnotationsForTarget(RECEIVER)
+                    );
+                }).collect(Collectors.toList());
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            Multimap<String, ReceiverParameterDescriptor> nameToReceiverMap = HashMultimap.create();
+            if (receiverTypeRef != null) {
+                String receiverName = receiverTypeRef.nameForReceiverLabel();
+                if (receiverName != null) {
+                    nameToReceiverMap.put(receiverName, receiverDescriptor);
+                }
+            }
+            for (int i = 0; i < contextReceivers.size(); i++) {
+                String contextReceiverName = contextReceivers.get(i).name();
+                if (contextReceiverName != null) {
+                    nameToReceiverMap.put(contextReceiverName, contextReceiverDescriptors.get(i));
+                }
+            }
+            trace.record(DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, propertyDescriptor, nameToReceiverMap);
+        }
 
         LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeForInitializerResolutionWithTypeParameters, propertyDescriptor);
         KotlinType propertyType = propertyInfo.getVariableType();
@@ -1027,39 +1047,8 @@ public class DescriptorResolver {
                 new FieldDescriptorImpl(annotationSplitter.getAnnotationsForTarget(FIELD), propertyDescriptor),
                 new FieldDescriptorImpl(annotationSplitter.getAnnotationsForTarget(PROPERTY_DELEGATE_FIELD), propertyDescriptor)
         );
-        trace.record(DESCRIPTOR_TO_NAMED_RECEIVERS, propertyDescriptor, nameToReceiverMap);
         trace.record(BindingContext.VARIABLE, variableDeclaration, propertyDescriptor);
         return propertyDescriptor;
-    }
-
-    private List<ReceiverParameterDescriptor> createReceiverDescriptorsForProperty(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope scopeForResolution,
-            @NotNull BindingTrace trace,
-            @NotNull List<KtContextReceiver> contextReceivers,
-            @NotNull Multimap<String, ReceiverParameterDescriptor> labelNameToReceiverMap
-    ) {
-        Map<KtContextReceiver, KotlinType> contextReceiversToTypes = new LinkedHashMap<>();
-        for (KtContextReceiver contextReceiver: contextReceivers) {
-            KtTypeReference typeReference = contextReceiver.typeReference();
-            if (typeReference == null) {
-                continue;
-            }
-            KotlinType kotlinType = typeResolver.resolveType(scopeForResolution, typeReference, trace, true);
-            contextReceiversToTypes.put(contextReceiver, kotlinType);
-        }
-        return Lists.reverse(contextReceivers).stream().map(contextReceiver -> {
-            KotlinType receiverType = contextReceiversToTypes.get(contextReceiver);
-            AnnotationSplitter splitter = new AnnotationSplitter(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
-            ReceiverParameterDescriptor receiverDescriptor = DescriptorFactory.createContextReceiverParameterForCallable(
-                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
-            );
-            String contextReceiverName = contextReceiver.name();
-            if (contextReceiverName != null) {
-                labelNameToReceiverMap.put(contextReceiverName, receiverDescriptor);
-            }
-            return receiverDescriptor;
-        }).collect(Collectors.toList());
     }
 
     @NotNull

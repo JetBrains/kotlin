@@ -256,7 +256,7 @@ class FunctionDescriptorResolver(
                     }
                 }
 
-            trace.record(BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS, functionDescriptor, labelNameToReceiverMap)
+            trace.record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, functionDescriptor, labelNameToReceiverMap)
         }
 
         functionDescriptor.initialize(

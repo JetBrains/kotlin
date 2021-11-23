@@ -1,8 +1,8 @@
 package
 
-context(B, A<kotlin.String>) public var p: kotlin.Int
-context(B, A<kotlin.String>, A<kotlin.Int>) public var p: kotlin.Int
-context(B, A<kotlin.String>, A<kotlin.Int>) public val C.p: kotlin.Int
+context(A<kotlin.Int>, A<kotlin.String>, B) public var p: kotlin.Int
+context(A<kotlin.String>, B) public var p: kotlin.Int
+context(A<kotlin.Int>, A<kotlin.String>, B) public val C.p: kotlin.Int
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>(/*0*/ a: T)
