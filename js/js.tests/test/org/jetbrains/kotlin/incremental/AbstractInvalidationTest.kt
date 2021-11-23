@@ -69,7 +69,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     protected fun doTest(testPath: String) {
-        initializeConfiguration()
         val testDirectory = File(testPath)
         val testName = testDirectory.name
         val projectInfoFile = File(testDirectory, PROJECT_INFO_FILE)
@@ -84,11 +83,11 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             modulesInfos[module] = parseModuleInfo(module, moduleInfo)
         }
 
+        initializeStdlibCache()
+
         val workingDir = testWorkingDir(projectInfo.name)
         val sourceDir = File(workingDir, "sources").also { it.invalidateDir() }
         val buildDir = File(workingDir, "build").also { it.invalidateDir() }
-
-        initializeStdlibCache()
 
         initializeWorkingDir(projectInfo, testDirectory, sourceDir, buildDir)
 
@@ -98,10 +97,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     private val stdlibKlibPath = System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")
 
     private val String.artifactName: String get() = "$this.klib"
-
-    private fun initializeConfiguration() {
-
-    }
 
     private fun resolveModuleArtifact(moduleName: String, buildDir: File): File {
         if (moduleName == "stdlib") return File(stdlibKlibPath)
