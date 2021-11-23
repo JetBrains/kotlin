@@ -4,4 +4,4 @@ STEP 0:
 
 STEP 1:
     dependencies: stdlib, lib1
-    dirty: l2.kt
+    dirty:
