@@ -35,7 +35,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:ir.serialization.common"))
 
-    testImplementation "junit:junit:4.12"
+    testImplementation DependenciesKt.commonDep(project, "junit")
     testImplementation project(":kotlin-test:kotlin-test-junit")
 }
 

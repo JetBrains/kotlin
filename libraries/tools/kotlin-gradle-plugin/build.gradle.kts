@@ -96,7 +96,7 @@ dependencies {
     testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(project(":kotlin-test::kotlin-test-junit"))
-    testImplementation("junit:junit:4.12")
+    testImplementation(commonDep("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
