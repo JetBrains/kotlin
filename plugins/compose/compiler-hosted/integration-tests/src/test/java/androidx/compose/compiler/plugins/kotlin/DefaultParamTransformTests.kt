@@ -105,7 +105,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(foo))) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   foo = Foo(0)
                 }
@@ -175,7 +175,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             fun Bar(unused: Function2<Composer, Int, Unit> = { %composer: Composer?, %changed: Int ->
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C:Test.kt")
-              if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                 Unit
               } else {
                 %composer.skipToGroupEnd()
@@ -210,7 +210,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   if (%default and 0b0001 !== 0) {
@@ -260,7 +260,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b01110000 === 0) {
                 %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   if (%default and 0b0001 !== 0) {
@@ -525,7 +525,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else if (%changed3 and 0b1110 === 0) {
                 %dirty3 = %dirty3 or if (%composer.changed(a30)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty1 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty2 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty3 and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty1 and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty2 and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty3 and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   a00 = 0
                 }
@@ -903,7 +903,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else if (%changed3 and 0b01110000 === 0) {
                 %dirty3 = %dirty3 or if (%composer.changed(a31)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty1 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty2 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty3 and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty1 and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty2 and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty3 and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   a00 = 0
                 }
@@ -1282,7 +1282,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               if (%changed3 and 0b01110000 === 0) {
                 %dirty3 = %dirty3 or if (%default1 and 0b0001 === 0 && %composer.changed(a31)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty1 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty2 and 0b01011011011011011011011011011011 xor 0b00010010010010010010010010010010 !== 0 || %dirty3 and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty1 and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty2 and 0b01011011011011011011011011011011 !== 0b00010010010010010010010010010010 || %dirty3 and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   if (%default and 0b0001 !== 0) {

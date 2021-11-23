@@ -549,7 +549,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0010
               }
-              if (%default.inv() and 0b0001 !== 0 || %dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%default and 0b0001 !== 0b0001 || %dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   y = null
                 }
@@ -755,7 +755,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 A(Wrapper(value), %composer, Wrapper.%stable or 0b1000 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
@@ -794,7 +794,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 if (%changed and 0b1110 === 0) {
                   %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
                 }
-                if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
+                if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                   A(item, %composer, 0b1110 and %dirty)
                   A(Wrapper(item), %composer, Wrapper.%stable or 0)
                 } else {
