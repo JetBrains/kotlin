@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.CompareDistributionSignatures
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
+import java.util.concurrent.ConcurrentHashMap
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -95,6 +96,9 @@ ext {
 
     konanVersionFull = ext.kotlinNativeVersion
     gradlePluginVersion = konanVersionFull
+
+    // A separate map for each build for automatic cleaning the daemon after the build have finished.
+    toolClassLoadersMap = new ConcurrentHashMap<Object, URLClassLoader>()
 }
 
 allprojects {
