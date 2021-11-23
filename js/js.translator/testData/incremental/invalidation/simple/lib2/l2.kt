@@ -1,2 +1,2 @@
 
-fun qux() = "42"
+fun qux() = foo()
