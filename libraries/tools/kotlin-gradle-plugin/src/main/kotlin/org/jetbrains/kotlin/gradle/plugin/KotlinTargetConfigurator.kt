@@ -508,7 +508,18 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     when (target.platformType) {
         KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "standard-jvm")
         KotlinPlatformType.androidJvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "android")
-        else -> Unit
+        /**
+         *  We set this attribute even for non-JVM-like targets (JS, Native) to avoid issues with Gradle variant-aware dependency resolution
+         *  treating variants which don't have a particular attribute more preferable than those having it in those cases when Gradle failed
+         *  to choose the best match by biggest compatible attributes set (by inclusion). Having an attribute not
+         *  set on some variants might break if there appears one more third-party attribute such that:
+         *      * it is not set on some variants;
+         *      * according to the other attributes which are set on all variants, there are both compatible candidate variants
+         *        which have this attribute and those which don't;
+         *  Note that this attribute is not published to avoid issues with older Kotlin versions combined with newer Gradle
+         *  see [org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.filterOutNonPublishableAttributes]
+         */
+        else -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "non-jvm")
     }
 
     if (target is KotlinJsTarget) {
