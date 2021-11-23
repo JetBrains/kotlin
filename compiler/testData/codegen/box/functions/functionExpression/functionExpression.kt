@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: FUNCTION_EXPECTED after 1. . Questionable syntax
 val foo1 = fun Any.(): String {
 return  "239" + this
 }

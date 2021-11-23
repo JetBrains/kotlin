@@ -34,7 +34,7 @@ fun test4() {
 // should be an error on receiver, shouldn't be thrown away
 
 fun test5() {
-    1.(<!FUNCTION_EXPECTED!>fun String.()=1<!>)()
+    <!ARGUMENT_TYPE_MISMATCH!>1<!>.(fun String.()=1)()
 }
 
 fun <R: Any> R?.sure() : R = this!!

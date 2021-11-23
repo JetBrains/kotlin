@@ -7,7 +7,7 @@ class B
 val A.foo: B.() -> Unit get() = {}
 
 fun test(a: A, b: B) {
-    b.(<!UNRESOLVED_REFERENCE!>a.foo<!>)()
+    b.(a.foo)()
     (a.foo)(b)
     a.foo(b)
 
@@ -49,7 +49,7 @@ class A {
 class B
 
 fun test(a: A, b: B) {
-    b.(<!UNRESOLVED_REFERENCE!>a.foo<!>)()
+    b.(a.foo)()
     (a.foo)(b)
     a.foo(b)
 

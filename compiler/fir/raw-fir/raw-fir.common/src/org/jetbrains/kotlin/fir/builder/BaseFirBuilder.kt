@@ -1266,6 +1266,31 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
+    protected fun convertFirSelector(
+        firSelector: FirQualifiedAccess,
+        source: KtSourceElement?,
+        receiver: FirExpression
+    ): FirQualifiedAccess {
+        return if (firSelector is FirImplicitInvokeCall) {
+            buildImplicitInvokeCall {
+                this.source = source
+                annotations.addAll(firSelector.annotations)
+                typeArguments.addAll(firSelector.typeArguments)
+                explicitReceiver = firSelector.explicitReceiver
+                argumentList = buildArgumentList {
+                    arguments.add(receiver)
+                    arguments.addAll(firSelector.arguments)
+                }
+                calleeReference = firSelector.calleeReference
+            }
+        } else {
+            firSelector.replaceExplicitReceiver(receiver)
+            @OptIn(FirImplementationDetail::class)
+            firSelector.replaceSource(source)
+            firSelector
+        }
+    }
+
     protected fun convertValueParameterName(
         safeName: Name,
         rawName: String?,

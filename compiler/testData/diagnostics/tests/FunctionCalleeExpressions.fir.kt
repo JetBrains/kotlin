@@ -58,15 +58,15 @@ fun main(args : Array<String>) {
 fun f() :  Int.() -> Unit = {}
 
 fun main1() {
-    1.(<!FUNCTION_EXPECTED!>fun Int.() = 1<!>)();
+    1.(fun Int.() = 1)();
     {1}();
     (fun (x : Int) = x)(1)
-    1.(<!FUNCTION_EXPECTED!>fun Int.(x : Int) = x<!>)(1);
+    1.(fun Int.(x : Int) = x)(1);
     l@{1}()
-    1.((<!FUNCTION_EXPECTED!>fun Int.() = 1<!>))()
-    1.(<!FUNCTION_EXPECTED!>f()<!>)()
-    1.<!FUNCTION_EXPECTED!>if(true){f()}else{f()}<!>()
-    1.<!FUNCTION_EXPECTED!>if(true)(fun Int.() {})else{f()}<!>()
+    1.((fun Int.() = 1))()
+    1.(f())()
+    1.if(true){f()}else{f()}()
+    1.if(true)(fun Int.() {})else{f()}()
 
     1.<!FUNCTION_EXPECTED!>"sdf"<!>()
 
@@ -78,9 +78,9 @@ fun main1() {
 fun test() {
     {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    "sd".(<!FUNCTION_EXPECTED!>fun Int.() = 1<!>)()
+    <!ARGUMENT_TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
     val i : Int? = null
-    i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
+    <!ARGUMENT_TYPE_MISMATCH!>i<!>.(fun Int.() = 1)();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
     <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()<!>
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()

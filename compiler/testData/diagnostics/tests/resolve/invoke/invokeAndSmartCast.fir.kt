@@ -2,11 +2,11 @@ class A(val x: (String.() -> Unit)?)
 
 fun test(a: A) {
     if (a.x != null) {
-        "".(<!FUNCTION_EXPECTED!>a.x<!>)()
+        "".(a.x)()
         a.x("") // todo
         (a.x)("")
     }
-    "".(<!FUNCTION_EXPECTED!>a.x<!>)()
+    "".<!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>()
     a.<!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>("")
     <!UNSAFE_IMPLICIT_INVOKE_CALL!>(a.x)<!>("")
 

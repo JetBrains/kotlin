@@ -2374,10 +2374,7 @@ open class RawFirBuilder(
                     )
                 }
 
-                firSelector.replaceExplicitReceiver(receiver)
-
-                @OptIn(FirImplementationDetail::class)
-                firSelector.replaceSource(expression.toFirSourceElement())
+                return convertFirSelector(firSelector, expression.toFirSourceElement(), receiver)
             }
             return firSelector
         }
