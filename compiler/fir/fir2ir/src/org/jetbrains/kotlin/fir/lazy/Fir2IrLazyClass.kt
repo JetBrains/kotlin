@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -159,14 +160,14 @@ class Fir2IrLazyClass(
         }
 
         // Handle generated methods for enum classes (values(), valueOf(String)).
-        // TODO we also come here for all deserialized static enum members (with declaration.source == null).
-        //  For such members we currently can't tell whether they are compiler-generated methods or not.
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
-                if (
-                    declaration is FirSimpleFunction &&
-                    declaration.isStatic &&
-                    (declaration.source == null || declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration)
+                if (declaration !is FirSimpleFunction || !declaration.isStatic) continue
+                // TODO we also come here for all deserialized / enhanced static enum members (with declaration.source == null).
+                //  For such members we currently can't tell whether they are compiler-generated methods or not.
+                // Note: we must drop declarations from Java here to avoid FirJavaTypeRefs inside
+                if (declaration.source == null && declaration.origin != FirDeclarationOrigin.Java ||
+                    declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
                 ) {
                     result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
                 }
