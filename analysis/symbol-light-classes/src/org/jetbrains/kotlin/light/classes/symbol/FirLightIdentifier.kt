@@ -19,16 +19,16 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-open class FirLightIdentifier(
+internal class FirLightIdentifier(
     private val lightOwner: PsiElement,
-    private val firSymbol: KtSymbol
+    private val firSymbol: KtSymbol?
 ) : LightIdentifier(
     lightOwner.manager,
     (firSymbol as? KtNamedSymbol)?.name?.identifierOrNullIfSpecial
 ), PsiCompiledElement, PsiElementWithOrigin<PsiElement> {
 
     override val origin: PsiElement?
-        get() = when (val ktDeclaration = firSymbol.psi) {
+        get() = when (val ktDeclaration = firSymbol?.psi) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()
             is KtPrimaryConstructor -> ktDeclaration.getConstructorKeyword()
                 ?: ktDeclaration.valueParameterList

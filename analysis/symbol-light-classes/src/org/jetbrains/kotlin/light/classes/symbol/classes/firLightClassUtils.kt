@@ -6,19 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
-import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
@@ -26,10 +18,16 @@ import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOn
 import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -114,17 +112,68 @@ internal fun FirLightClassBase.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>
 ) {
-    for (declaration in declarations) {
-        if (declaration.isHiddenOrSynthetic(project)) continue
+    val constructors = declarations.toList()
+    if (constructors.isEmpty()) {
+        result.add(defaultConstructor())
+        return
+    }
+    for (constructor in constructors) {
+        if (constructor.isHiddenOrSynthetic(project)) continue
         result.add(
             FirLightConstructorForSymbol(
-                constructorSymbol = declaration,
+                constructorSymbol = constructor,
                 lightMemberOrigin = null,
                 containingClass = this@createConstructors,
                 methodIndex = METHOD_INDEX_BASE
             )
         )
     }
+    val primaryConstructor = constructors.singleOrNull { it.isPrimary }
+    if (primaryConstructor != null && shouldGenerateNoArgOverload(primaryConstructor, constructors)) {
+        result.add(
+            noArgConstructor(primaryConstructor.visibility.externalDisplayName, METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR)
+        )
+    }
+}
+
+private fun FirLightClassBase.shouldGenerateNoArgOverload(
+    primaryConstructor: KtConstructorSymbol,
+    constructors: Iterable<KtConstructorSymbol>,
+): Boolean {
+    val classOrObject = kotlinOrigin ?: return false
+    return !primaryConstructor.visibility.isPrivateOrPrivateToThis() &&
+            !classOrObject.hasModifier(INNER_KEYWORD) && !isEnum &&
+            !classOrObject.hasModifier(SEALED_KEYWORD) &&
+            primaryConstructor.valueParameters.isNotEmpty() &&
+            primaryConstructor.valueParameters.all { it.hasDefaultValue } &&
+            constructors.none { it.valueParameters.isEmpty() } &&
+            !primaryConstructor.hasJvmOverloadsAnnotation()
+}
+
+private fun FirLightClassBase.defaultConstructor(): KtLightMethod {
+    val classOrObject = kotlinOrigin
+    val visibility = when {
+        classOrObject is KtObjectDeclaration || classOrObject?.hasModifier(SEALED_KEYWORD) == true || isEnum -> PsiModifier.PRIVATE
+        classOrObject is KtEnumEntry -> PsiModifier.PACKAGE_LOCAL
+        else -> PsiModifier.PUBLIC
+    }
+    return noArgConstructor(visibility, METHOD_INDEX_FOR_DEFAULT_CTOR)
+}
+
+private fun FirLightClassBase.noArgConstructor(
+    visibility: String,
+    methodIndex: Int,
+): KtLightMethod {
+    return FirLightNoArgConstructor(
+        LightMemberOriginForDeclaration(
+            originalElement = kotlinOrigin!!,
+            originKind = JvmDeclarationOriginKind.OTHER,
+            auxiliaryOriginalElement = kotlinOrigin as? KtDeclaration
+        ),
+        this,
+        visibility,
+        methodIndex
+    )
 }
 
 internal fun FirLightClassBase.createMethods(

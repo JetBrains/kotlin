@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtParameterList
 
 internal class FirLightParameterList(
     private val parent: FirLightMethod,
-    private val callableSymbol: KtCallableSymbol,
+    private val callableSymbol: KtCallableSymbol?,
     parameterPopulator: (LightParameterListBuilder) -> Unit,
 ) : KtLightElement<KtParameterList, PsiParameterList>,
     // With this, a parent chain is properly built: from FirLightParameter through FirLightParameterList to FirLightMethod
@@ -31,8 +31,10 @@ internal class FirLightParameterList(
     override val clsDelegate: PsiParameterList by lazyPub {
         val builder = LightParameterListBuilder(manager, language)
 
-        FirLightParameterForReceiver.tryGet(callableSymbol, parent)?.let {
-            builder.addParameter(it)
+        callableSymbol?.let {
+            FirLightParameterForReceiver.tryGet(it, parent)?.let { receiver ->
+                builder.addParameter(receiver)
+            }
         }
 
         parameterPopulator.invoke(builder)
