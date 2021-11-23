@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
@@ -53,6 +55,11 @@ internal class CommonProxy private constructor(override val state: Common, overr
     }
 
     override fun toString(): String {
+        // TODO this check can be dropped after serialization introduction
+        // for now declarations in unsigned class don't have bodies and must be treated separately
+        if (state.irClass.defaultType.isUnsigned()) {
+            return state.unsignedToString()
+        }
         val valueArguments = mutableListOf<State>()
         val toStringFun = state.getToStringFunction()
         if (toStringFun.isFakeOverriddenFromAny() || toStringFun.wasAlreadyCalled()) return defaultToString()

@@ -358,13 +358,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                 // TODO this check can be dropped after serialization introduction
                 // for now declarations in unsigned class don't have bodies and must be treated separately
                 if (state.irClass.defaultType.isUnsigned()) {
-                    val result = when (val value = (state.fields.values.single() as Primitive<*>).value) {
-                        is Byte -> value.toUByte().toString()
-                        is Short -> value.toUShort().toString()
-                        is Int -> value.toUInt().toString()
-                        else -> (value as Number).toLong().toULong().toString()
-                    }
-                    return callStack.pushState(environment.convertToState(result, environment.irBuiltIns.stringType))
+                    return callStack.pushState(environment.convertToState(state.unsignedToString(), environment.irBuiltIns.stringType))
                 }
                 val toStringCall = state.createToStringIrCall()
                 callStack.pushSimpleInstruction(toStringCall)
@@ -398,14 +392,16 @@ private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: C
 }
 
 private fun unfoldPropertyReference(propertyReference: IrPropertyReference, callStack: CallStack) {
-    val getter = propertyReference.getter!!.owner
     callStack.pushSimpleInstruction(propertyReference)
 
-    propertyReference.dispatchReceiver?.let { callStack.pushSimpleInstruction(getter.dispatchReceiverParameter!!) }
-    propertyReference.extensionReceiver?.let { callStack.pushSimpleInstruction(getter.extensionReceiverParameter!!) }
+    val getter = propertyReference.getter?.owner
+    if (getter != null) {
+        propertyReference.dispatchReceiver?.let { callStack.pushSimpleInstruction(getter.dispatchReceiverParameter!!) }
+        propertyReference.extensionReceiver?.let { callStack.pushSimpleInstruction(getter.extensionReceiverParameter!!) }
 
-    propertyReference.extensionReceiver?.let { callStack.pushCompoundInstruction(it) }
-    propertyReference.dispatchReceiver?.let { callStack.pushCompoundInstruction(it) }
+        propertyReference.extensionReceiver?.let { callStack.pushCompoundInstruction(it) }
+        propertyReference.dispatchReceiver?.let { callStack.pushCompoundInstruction(it) }
+    }
 }
 
 private fun unfoldClassReference(classReference: IrClassReference, callStack: CallStack) {

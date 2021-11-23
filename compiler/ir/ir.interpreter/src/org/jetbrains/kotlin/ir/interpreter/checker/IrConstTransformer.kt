@@ -53,7 +53,7 @@ class IrConstTransformer(
             initializer.expression = if (isConst) result.reportIfError(expression) else result.replaceIfError(expression)
         }
 
-        return declaration
+        return super.visitField(declaration)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {

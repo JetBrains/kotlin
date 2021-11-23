@@ -305,3 +305,12 @@ internal fun IrGetValue.isAccessToObject(): Boolean {
 internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {
     return this is IrSimpleFunction && this.correspondingPropertySymbol?.owner?.backingField?.initializer != null
 }
+
+internal fun State.unsignedToString(): String {
+    return when (val value = (this.fields.values.single() as Primitive<*>).value) {
+        is Byte -> value.toUByte().toString()
+        is Short -> value.toUShort().toString()
+        is Int -> value.toUInt().toString()
+        else -> (value as Number).toLong().toULong().toString()
+    }
+}

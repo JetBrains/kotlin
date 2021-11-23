@@ -38,7 +38,7 @@ internal val TEMP_FUNCTION_FOR_INTERPRETER = object : IrDeclarationOriginImpl("T
 fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*>? {
     if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
 
-    val constType = irType.makeNotNull()
+    val constType = irType.makeNotNull().removeAnnotations()
     return when (irType.getPrimitiveType()) {
         PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
         PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
