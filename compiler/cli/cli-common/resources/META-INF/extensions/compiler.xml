@@ -11,8 +11,8 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.extensions.internal.typeResolutionInterceptorExtension"
                         interface="org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension"
                         area="IDEA_PROJECT"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.types.extensions.TypeAttributeTranslatorExtension"
-                        interface="org.jetbrains.kotlin.types.extensions.TypeAttributeTranslatorExtension"
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.extensions.typeAttributeTranslatorExtension"
+                        interface="org.jetbrains.kotlin.extensions.TypeAttributeTranslatorExtension"
                         area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"
