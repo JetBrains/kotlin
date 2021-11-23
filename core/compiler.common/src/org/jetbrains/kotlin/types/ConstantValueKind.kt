@@ -24,6 +24,8 @@ sealed class ConstantValueKind<T>(val asString: kotlin.String) {
     object Float : ConstantValueKind<kotlin.Float>("Float")
     object Double : ConstantValueKind<kotlin.Double>("Double")
 
+    object Error : ConstantValueKind<Nothing>("Error")
+
     object IntegerLiteral : ConstantValueKind<kotlin.Long>("IntegerLiteral")
     object UnsignedIntegerLiteral : ConstantValueKind<kotlin.Long>("UnsignedIntegerLiteral")
 

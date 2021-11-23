@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
@@ -184,36 +185,36 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
                 annotationValue.arguments,
                 annotationValue.psi
             )
-        else ->
-            createPsiLiteral(parent)?.let {
+        is KtConstantAnnotationValue -> {
+            this.constantValue.createPsiLiteral(parent)?.let {
                 when (it) {
                     is PsiLiteral -> FirPsiLiteral(sourcePsi, parent, it)
                     else -> FirPsiExpression(sourcePsi, parent, it)
                 }
             }
+        }
+        is KtEnumEntryAnnotationValue -> {
+            val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
+            val psiExpression = PsiElementFactory.getInstance(parent.project).createExpressionFromText(fqName, parent)
+            FirPsiExpression(sourcePsi, parent, psiExpression)
+        }
+        KtUnsupportedAnnotationValue -> null
     }
 }
 
-private fun KtAnnotationValue.asStringForPsiLiteral(): String? =
-    when (this) {
-        is KtEnumEntryAnnotationValue ->
-            "${callableId?.classId?.asSingleFqName()?.asString() ?: ""}.${callableId?.callableName}"
-        is KtLiteralAnnotationValue<*> -> {
-            when (val value = this.value) {
-                is String -> "\"${escapeString(value)}\""
-                is Long -> "${value}L"
-                is Float -> "${value}f"
-                else -> value?.toString() ?: "null"
-            }
-        }
-        else -> null
+private fun KtConstantValue.asStringForPsiLiteral(): String =
+    when (val value = value) {
+        is String -> "\"${escapeString(value)}\""
+        is Long -> "${value}L"
+        is Float -> "${value}f"
+        else -> value?.toString() ?: "null"
     }
 
-internal fun KtAnnotationValue.createPsiLiteral(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral() ?: return null
-    val instance = PsiElementFactory.getInstance(parent.project)
+
+internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiLiteral()
     return try {
-        instance.createExpressionFromText(asString, parent)
+        PsiElementFactory.getInstance(parent.project).createExpressionFromText(asString, parent)
     } catch (_: IncorrectOperationException) {
         null
     }

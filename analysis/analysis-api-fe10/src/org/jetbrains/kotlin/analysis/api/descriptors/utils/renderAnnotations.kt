@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValueRenderer
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationValue
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
@@ -31,7 +32,7 @@ internal fun KtFe10RendererConsumer.renderFe10Annotations(annotations: Annotatio
             renderList(valueArguments, separator = ", ", prefix = "(", postfix = ")", renderWhenEmpty = false) { (name, value) ->
                 append(name.render())
                 append(" = ")
-                append(KtConstantValueRenderer.render(value.toKtConstantValue()))
+                append(KtAnnotationValueRenderer.render(value.toKtAnnotationValue()))
             }
 
             append(' ')

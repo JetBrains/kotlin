@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider
 
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.annotations.render
+import org.jetbrains.kotlin.analysis.api.base.render
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
@@ -31,47 +32,10 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
-            appendLine("constant_value: ${analyseForTest(expression) { constantValue?.stringRepresentation() }}")
-            appendLine("constant: ${(constantValue as? KtLiteralAnnotationValue<*>)?.toConst()}")
+            appendLine("constant: ${constantValue?.render()}")
+            appendLine("constantValueKind: ${constantValue?.constantValueKind}")
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnnotationValue.stringRepresentation(): String {
-        return when (this) {
-            is KtArrayAnnotationValue -> buildString {
-                appendLine("KtArrayConstantValue [")
-                appendLine(INDENT, values.joinToString(separator = "\n") { it.stringRepresentation() })
-                append("]")
-            }
-            is KtAnnotationApplicationValue -> buildString {
-                append("KtAnnotationConstantValue(")
-                append(annotationValue.classId?.relativeClassName)
-                append(", ")
-                annotationValue.arguments.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
-                    "${it.name} = ${it.expression.stringRepresentation()}"
-                }
-                append(")")
-            }
-            is KtEnumEntryAnnotationValue -> buildString {
-                append("KtEnumEntryConstantValue(")
-                append("$callableId")
-                append(")")
-            }
-            is KtLiteralAnnotationValue<*> -> buildString {
-                append("KtLiteralConstantValue(")
-                append("constantValueKind=${constantValueKind}")
-                append(", ")
-                append("value=${value})")
-            }
-            is KtErrorValue -> "KtErrorValue($message)"
-            is KtUnsupportedAnnotationValue -> "KtUnsupportedConstantValue"
-        }
-    }
-
-    private fun StringBuilder.appendLine(indent: Int, value: String) {
-        appendLine(value.prependIndent(" ".repeat(indent)))
-    }
 }
-
-private const val INDENT = 2

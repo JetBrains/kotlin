@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -14,10 +15,12 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
@@ -28,7 +31,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * and the argument, are compile-time constant as well.
  */
 internal object FirCompileTimeConstantEvaluator {
-
     // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
     fun evaluate(expression: FirExpression): FirConstExpression<*>? =
         when (expression) {
@@ -37,9 +39,9 @@ internal object FirCompileTimeConstantEvaluator {
             else -> null
         }
 
-    fun evaluateAsKtConstantExpression(expression: FirExpression): KtAnnotationValue? {
+    fun evaluateAsKtConstantExpression(expression: FirExpression): KtConstantValue? {
         val evaluated = evaluate(expression) ?: return null
-        return KtFirConstantValueConverter.toConstantValue(evaluated)
+        return KtConstantValueFactory.createConstantValue(evaluated.value, evaluated.psi as? KtElement)
     }
 
     // TODO: Rework to handle nested expressions
@@ -106,7 +108,7 @@ internal object FirCompileTimeConstantEvaluator {
             kind.toCompileTimeType(),
             kind.convertToNumber(value as? Number)!!
         )?.let {
-            it.toConstantValueKind()?.toConstExpression(source, it)
+            it.toConstantValueKind().toConstExpression(source, it)
         }
     }
 
@@ -123,7 +125,7 @@ internal object FirCompileTimeConstantEvaluator {
             other.kind.toCompileTimeType(),
             other.kind.convertToNumber(other.value as? Number)!!
         )?.let {
-            it.toConstantValueKind()?.toConstExpression(source, it)
+            it.toConstantValueKind().toConstExpression(source, it)
         }
     }
 
@@ -176,7 +178,7 @@ internal object FirCompileTimeConstantEvaluator {
             else -> null
         }
 
-    private fun <T : Any> T.toConstantValueKind(): ConstantValueKind<*>? =
+    private fun <T> T.toConstantValueKind(): ConstantValueKind<*> =
         when (this) {
             is Byte -> ConstantValueKind.Byte
             is Double -> ConstantValueKind.Double
@@ -189,7 +191,8 @@ internal object FirCompileTimeConstantEvaluator {
             is String -> ConstantValueKind.String
             is Boolean -> ConstantValueKind.Boolean
 
-            else -> null
+            null -> ConstantValueKind.Null
+            else -> error("Unknown constant value")
         }
 
     private fun ConstantValueKind<*>.convertToNumber(value: Number?): Number? {

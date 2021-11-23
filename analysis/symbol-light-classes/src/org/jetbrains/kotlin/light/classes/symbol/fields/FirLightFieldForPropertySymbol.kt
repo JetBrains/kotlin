@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.annotations.KtLiteralAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
@@ -113,7 +114,7 @@ internal class FirLightFieldForPropertySymbol(
         if (!propertySymbol.isConst) return@lazyPub null
         if (!propertySymbol.isVal) return@lazyPub null
         val constInitializer = propertySymbol.initializer as? KtConstantInitializerValue ?: return@lazyPub null
-        (constInitializer.constant as? KtLiteralAnnotationValue<*>)?.createPsiLiteral(this)
+        (constInitializer.constant as? KtConstantValue)?.createPsiLiteral(this)
     }
 
     override fun getInitializer(): PsiExpression? = _initializer

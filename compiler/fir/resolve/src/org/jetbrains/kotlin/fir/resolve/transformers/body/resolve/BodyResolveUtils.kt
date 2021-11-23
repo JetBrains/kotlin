@@ -128,5 +128,6 @@ fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
 
         ConstantValueKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
         ConstantValueKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
+        ConstantValueKind.Error -> error("Unexpected error ConstantValueKind")
     }
 }

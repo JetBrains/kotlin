@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.utils
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getKtNamedAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -88,7 +89,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
     }
 
     private fun KtFe10RendererConsumer.renderTypeAnnotationDebug(annotation: AnnotationDescriptor) {
-        val namedValues = annotation.allValueArguments.map { KtNamedAnnotationValue(it.key.asString(), it.value.toKtConstantValue()) }
+        val namedValues = annotation.getKtNamedAnnotationArguments()
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues)
     }
 
@@ -115,9 +116,8 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             is KtArrayAnnotationValue ->
                 renderList(value.values, separator = ", ", prefix = "[", postfix = "]") { renderConstantValueDebug(it) }
             is KtEnumEntryAnnotationValue -> append(value.callableId)
-            is KtLiteralAnnotationValue<*> -> append(value.constantValueKind.asString).append("(").append(value.value).append(")")
+            is KtConstantAnnotationValue -> append(value.constantValue.constantValueKind.asString).append("(").append(value.constantValue.value).append(")")
             KtUnsupportedAnnotationValue -> append(KtUnsupportedAnnotationValue::class.java.simpleName)
-            is KtErrorValue -> append("<ERROR>")
         }
     }
 

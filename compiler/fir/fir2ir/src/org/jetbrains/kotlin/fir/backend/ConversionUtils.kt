@@ -290,6 +290,7 @@ private fun ConstantValueKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
     ConstantValueKind.Float -> IrConstKind.Float
     ConstantValueKind.Double -> IrConstKind.Double
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
+    ConstantValueKind.Error -> throw IllegalArgumentException()
 }
 
 

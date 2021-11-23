@@ -3,12 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.symbols.markers
+package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.types.ConstantValueKind
-
-public object KtConstantValueRenderer {
+public object KtAnnotationValueRenderer {
     public fun render(value: KtAnnotationValue): String = buildString {
         renderConstantValue(value)
     }
@@ -24,11 +21,8 @@ public object KtConstantValueRenderer {
             is KtEnumEntryAnnotationValue -> {
                 renderEnumEntryConstantValue(value)
             }
-            is KtErrorValue -> {
-                append("ERROR")
-            }
-            is KtLiteralAnnotationValue<*> -> {
-                renderLiteralConstantValue(value)
+            is KtConstantAnnotationValue -> {
+                renderConstantAnnotationValue(value)
             }
             KtUnsupportedAnnotationValue -> {
                 append("KtUnsupportedConstantValue")
@@ -36,22 +30,8 @@ public object KtConstantValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderLiteralConstantValue(value: KtLiteralAnnotationValue<*>) {
-        when (value.constantValueKind) {
-            ConstantValueKind.String -> {
-                append('"')
-                append(value.value)
-                append('"')
-            }
-            ConstantValueKind.Char -> {
-                append("'")
-                append(value.value)
-                append("'")
-            }
-            else -> {
-                append(value.value)
-            }
-        }
+    private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {
+        append(KtConstantValueRenderer.render(value.constantValue))
     }
 
     private fun StringBuilder.renderEnumEntryConstantValue(value: KtEnumEntryAnnotationValue) {

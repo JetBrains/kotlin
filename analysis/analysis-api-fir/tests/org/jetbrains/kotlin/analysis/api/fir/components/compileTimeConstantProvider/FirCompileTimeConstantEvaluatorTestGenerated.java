@@ -25,54 +25,6 @@ public class FirCompileTimeConstantEvaluatorTestGenerated extends AbstractFirCom
     }
 
     @Test
-    @TestMetadata("annotationInAnnotation_arrayOf.kt")
-    public void testAnnotationInAnnotation_arrayOf() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_arrayOf.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationInAnnotation_collectionLiteral.kt")
-    public void testAnnotationInAnnotation_collectionLiteral() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_collectionLiteral.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationInAnnotation_collectionLiteral_spread.kt")
-    public void testAnnotationInAnnotation_collectionLiteral_spread() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_collectionLiteral_spread.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationInAnnotation_multipleAnnotations_arrayOf.kt")
-    public void testAnnotationInAnnotation_multipleAnnotations_arrayOf() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_multipleAnnotations_arrayOf.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationInAnnotation_multipleAnnotations_collectionLiteral.kt")
-    public void testAnnotationInAnnotation_multipleAnnotations_collectionLiteral() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_multipleAnnotations_collectionLiteral.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationInAnnotation_single.kt")
-    public void testAnnotationInAnnotation_single() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_single.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationInAnnotation_vararg.kt")
-    public void testAnnotationInAnnotation_vararg() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/annotationInAnnotation_vararg.kt");
-    }
-
-    @Test
-    @TestMetadata("enumAsAnnotationValue.kt")
-    public void testEnumAsAnnotationValue() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/enumAsAnnotationValue.kt");
-    }
-
-    @Test
     @TestMetadata("propertyInit_Byte.kt")
     public void testPropertyInit_Byte() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");

@@ -824,6 +824,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +value.toString()
                 +">"
             }
+            ConstantValueKind.Error -> {
+                +"ERROR_CONSTANT"
+            }
         }
 
     }

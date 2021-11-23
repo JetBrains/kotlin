@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.ba
 
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
@@ -266,37 +268,34 @@ internal val MemberDescriptor.ktModality: Modality
         return this.modality
     }
 
-internal fun ConstantValue<*>.toKtConstantValue(): KtAnnotationValue {
+internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
     return when (this) {
-        is BooleanValue -> KtLiteralAnnotationValue(ConstantValueKind.Boolean, value, null)
-        is CharValue -> KtLiteralAnnotationValue(ConstantValueKind.Char, value, null)
-        is ByteValue -> KtLiteralAnnotationValue(ConstantValueKind.Byte, value, null)
-        is UByteValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedByte, value, null)
-        is ShortValue -> KtLiteralAnnotationValue(ConstantValueKind.Short, value, null)
-        is UShortValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedShort, value, null)
-        is IntValue -> KtLiteralAnnotationValue(ConstantValueKind.Int, value, null)
-        is UIntValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedInt, value, null)
-        is LongValue -> KtLiteralAnnotationValue(ConstantValueKind.Long, value, null)
-        is ULongValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedLong, value, null)
-        is FloatValue -> KtLiteralAnnotationValue(ConstantValueKind.Float, value, null)
-        is DoubleValue -> KtLiteralAnnotationValue(ConstantValueKind.Double, value, null)
-        is NullValue -> KtLiteralAnnotationValue(ConstantValueKind.Null, null, null)
-        is StringValue -> KtLiteralAnnotationValue(ConstantValueKind.String, value, null)
-        is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtConstantValue() }, null)
+        is ErrorValue.ErrorValueWithMessage -> KtConstantValue.KtErrorConstantValue(message, sourcePsi = null)
+        else -> {
+            KtConstantValueFactory.createConstantValue(value)
+                ?: error("Unexpected constant value $value")
+        }
+    }
+}
+
+internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
+    return when (this) {
+        is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtAnnotationValue() }, null)
         is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), null)
         is AnnotationValue -> {
-            val arguments = value.allValueArguments.map { (name, v) -> KtNamedAnnotationValue(name.asString(), v.toKtConstantValue()) }
             KtAnnotationApplicationValue(
                 KtAnnotationApplication(
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
-                    arguments = arguments
+                    arguments = arguments,
                 )
             )
         }
-        is ErrorValue -> KtErrorValue(this.toString())
-        else -> KtUnsupportedAnnotationValue
+        is KClassValue -> KtKClassValue(cl)
+        else -> {
+            KtConstantAnnotationValue(toKtConstantValue())
+        }
     }
 }
 
@@ -436,6 +435,11 @@ internal fun AnnotationDescriptor.toKtAnnotationApplication(): KtAnnotationAppli
         annotationClass?.maybeLocalClassId,
         (source as? PsiSourceElement)?.psi as? KtAnnotationEntry,
         (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget(),
-        allValueArguments.map { (name, value) -> KtNamedAnnotationValue(name.asString(), value.toKtConstantValue()) }
+        getKtNamedAnnotationArguments(),
     )
 }
+
+internal fun AnnotationDescriptor.getKtNamedAnnotationArguments() =
+    allValueArguments.map { (name, value) ->
+        KtNamedAnnotationValue(name.asString(), value.toKtAnnotationValue())
+    }

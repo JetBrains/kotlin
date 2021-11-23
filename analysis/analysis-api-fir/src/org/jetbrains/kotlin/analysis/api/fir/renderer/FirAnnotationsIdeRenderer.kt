@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.renderer
 
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
-import org.jetbrains.kotlin.analysis.api.fir.evaluate.KtFirConstantValueConverter
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValueRenderer
+import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.annotations.KtUnsupportedAnnotationValue
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
@@ -57,8 +57,8 @@ private fun renderAndSortAnnotationArguments(descriptor: FirAnnotation, session:
 
 private fun renderConstant(value: FirExpression, useSiteSession: FirSession): String {
     val evaluated = FirCompileTimeConstantEvaluator.evaluate(value)
-    val constantValue = KtFirConstantValueConverter.toConstantValue(evaluated ?: value, useSiteSession)
+    val constantValue = FirAnnotationValueConverter.toConstantValue(evaluated ?: value, useSiteSession)
         ?: KtUnsupportedAnnotationValue
 
-    return KtConstantValueRenderer.render(constantValue)
+    return KtAnnotationValueRenderer.render(constantValue)
 }

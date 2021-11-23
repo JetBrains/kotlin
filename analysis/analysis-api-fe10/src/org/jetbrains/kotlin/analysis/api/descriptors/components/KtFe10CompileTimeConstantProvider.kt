@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -21,7 +22,7 @@ internal class KtFe10CompileTimeConstantProvider(
     override val token: ValidityToken
         get() = analysisSession.token
 
-    override fun evaluate(expression: KtExpression): KtAnnotationValue? {
+    override fun evaluate(expression: KtExpression): KtConstantValue? {
         val bindingContext = analysisContext.analyze(expression)
         val constant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, bindingContext)
         return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKtConstantValue()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -20,8 +21,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
-internal object KtFirConstantValueConverter {
-
+internal object FirAnnotationValueConverter {
     fun toNamedConstantValue(
         argumentMapping: Map<String, FirExpression>,
         session: FirSession,
@@ -33,13 +33,10 @@ internal object KtFirConstantValueConverter {
             )
         }
 
-    fun <T> toConstantValue(
-        firConstExpression: FirConstExpression<T>,
-    ): KtLiteralAnnotationValue<T> =
-        firConstExpression.convertConstantExpression()
-
-    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtLiteralAnnotationValue<T> =
-        KtLiteralAnnotationValue(kind, value, psi as? KtElement)
+    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
+        val constantValue = KtConstantValueFactory.createConstantValue(value, psi as? KtElement) ?: return null
+        return KtConstantAnnotationValue(constantValue)
+    }
 
     private fun Collection<FirExpression>.convertConstantExpression(
         session: FirSession,
