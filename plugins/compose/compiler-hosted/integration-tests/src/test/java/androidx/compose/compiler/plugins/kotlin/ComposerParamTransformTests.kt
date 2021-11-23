@@ -330,7 +330,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
               Example({ %composer: Composer?, %changed: Int ->
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "C:Test.kt#2487m")
-                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                   Unit
                 } else {
                   %composer.skipToGroupEnd()
@@ -429,7 +429,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(block)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     block(%composer, 0b1110 and %dirty)
                   } else {
                     %composer.skipToGroupEnd()
@@ -446,7 +446,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     used(text)
                   } else {
                     %composer.skipToGroupEnd()
@@ -463,12 +463,12 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     %composer.startMovableGroup(<>, value)
                     sourceInformation(%composer, "<Wrappe...>")
                     Wrapper(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
                       sourceInformation(%composer, "C<Leaf("...>:Test.kt#2487m")
-                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                         Leaf("Value %value", %composer, 0)
                       } else {
                         %composer.skipToGroupEnd()
@@ -551,15 +551,15 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(composable)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     emit({ %composer: Composer?, %changed: Int ->
                       %composer.startReplaceableGroup(<>)
                       sourceInformation(%composer, "C<emit>:Test.kt#2487m")
-                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                         emit({ %composer: Composer?, %changed: Int ->
                           %composer.startReplaceableGroup(<>)
                           sourceInformation(%composer, "C<compos...>:Test.kt#2487m")
-                          if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                          if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                             composable(%composer, 0b1110 and %dirty)
                           } else {
                             %composer.skipToGroupEnd()

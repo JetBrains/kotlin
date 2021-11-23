@@ -67,7 +67,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
           if (%changed and 0b1110 === 0) {
             %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
           }
-          if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+          if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
             A(x, %composer, 0b1110 and %dirty)
             A(Foo(0), %composer, 0)
             A(remember({
