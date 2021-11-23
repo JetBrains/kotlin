@@ -364,14 +364,14 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
 
         // Version status
         //            1.0  1.1  1.2   1.3  1.4           1.5  1.6     1.7
-        // Language:  UNSUPPORTED -------> DEPRECATED -> STABLE ---> EXPERIMENTAL
+        // Language:  UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 
         @JvmField
         val FIRST_API_SUPPORTED = KOTLIN_1_3
 
         @JvmField
-        val FIRST_SUPPORTED = KOTLIN_1_4
+        val FIRST_SUPPORTED = KOTLIN_1_3
 
         @JvmField
         val FIRST_NON_DEPRECATED = KOTLIN_1_5
