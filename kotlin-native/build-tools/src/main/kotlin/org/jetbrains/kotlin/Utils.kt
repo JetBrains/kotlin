@@ -290,11 +290,11 @@ fun Task.sameDependenciesAs(task: Task) {
  */
 fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
     val buildTask = project.findKonanBuildTask(artifact, target)
-    buildTask.configure {
+    buildTask.get().apply {
         konanOldPluginTaskDependenciesWalker {
             dependsOnDist()
         }
-        sameDependenciesAs(this)
+        sameDependenciesAs(this@dependsOnKonanBuildingTask)
     }
     dependsOn(buildTask)
 }
