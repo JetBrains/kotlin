@@ -34,7 +34,7 @@ interface SourceNavigator {
 
     fun FirTypeRef.isInTypeConstraint(): Boolean
 
-    fun KtSourceElement.getRawIdentifier(): String?
+    fun KtSourceElement.getRawIdentifier(): CharSequence?
 
     fun FirDeclaration.getRawName(): String?
 
@@ -74,7 +74,7 @@ open class LightTreeSourceNavigator : SourceNavigator {
             ?.tokenType == KtNodeTypes.TYPE_CONSTRAINT
     }
 
-    override fun KtSourceElement.getRawIdentifier(): String? {
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
         return when (elementType) {
             is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> lighterASTNode.toString()
             is KtTypeProjectionElementType -> lighterASTNode.getChildren(treeStructure).last().toString()
@@ -111,14 +111,14 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     override fun FirTypeRef.isInConstructorCallee(): Boolean = psi<KtTypeReference>()?.parent is KtConstructorCalleeExpression
 
-    override fun KtSourceElement.getRawIdentifier(): String? {
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
         val psi = psi<PsiElement>()
         return if (psi is KtNameReferenceExpression) {
-            psi.getReferencedNameElement().node.text
+            psi.getReferencedNameElement().node.chars
         } else if (psi is KtTypeProjection) {
             psi.typeReference?.typeElement?.text
         } else if (psi is LeafPsiElement && psi.elementType == KtTokens.IDENTIFIER) {
-            psi.text
+            psi.chars
         } else {
             null
         }
