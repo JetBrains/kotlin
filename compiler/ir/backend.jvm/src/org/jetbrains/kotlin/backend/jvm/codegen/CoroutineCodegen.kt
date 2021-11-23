@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -147,7 +144,15 @@ private val BRIDGE_ORIGINS = setOf(
 // These functions contain a single `suspend` tail call, the value of which should be returned as is
 // (i.e. if it's an unboxed inline class value, it should remain unboxed).
 internal fun IrFunction.isNonBoxingSuspendDelegation(): Boolean =
-    origin in BRIDGE_ORIGINS || isMultifileBridge() || isBridgeToSuspendImplMethod()
+    origin in BRIDGE_ORIGINS ||
+            isMultifileBridge() ||
+            isBridgeToSuspendImplMethod() ||
+            isStaticInlineClassReplacementForDefaultInterfaceMethod()
+
+// Suspend static inline class replacements for fake overrides have to be for interface methods as inline classes cannot have a
+// non-Object super type.
+fun IrFunction.isStaticInlineClassReplacementForDefaultInterfaceMethod(): Boolean =
+    isStaticInlineClassReplacement && this is IrSimpleFunction && (attributeOwnerId as IrSimpleFunction).isFakeOverride
 
 fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
         // These functions also contain a single `suspend` tail call, but if it returns an unboxed inline class value,

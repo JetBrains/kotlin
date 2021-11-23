@@ -7638,6 +7638,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/kt46813.kt");
         }
 
+        @TestMetadata("kt49645.kt")
+        public void testKt49645() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt49645.kt");
+        }
+
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
