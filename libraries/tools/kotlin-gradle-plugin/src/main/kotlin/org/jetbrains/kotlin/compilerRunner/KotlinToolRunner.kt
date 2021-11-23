@@ -38,7 +38,9 @@ abstract class KotlinToolRunner(
     open fun checkClasspath(): Unit = check(classpath.isNotEmpty()) { "Classpath of the tool is empty: $displayName" }
 
     abstract val isolatedClassLoaderCacheKey: Any
-    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoadersMap.computeIfAbsent(isolatedClassLoaderCacheKey) {
+    protected open val isolatedClassLoaders: ConcurrentHashMap<Any, URLClassLoader> get() = isolatedClassLoadersMap
+
+    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
         URLClassLoader(arrayOfURLs, null).apply {
             setDefaultAssertionStatus(enableAssertions)
