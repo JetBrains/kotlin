@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtLiteralConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtLiteralAnnotationValue
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
@@ -31,7 +31,7 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     }
 
     return annotation?.let {
-        (it.arguments.firstOrNull()?.expression as? KtLiteralConstantValue<*>)?.value as? String
+        (it.arguments.firstOrNull()?.expression as? KtLiteralAnnotationValue<*>)?.value as? String
     }
 }
 

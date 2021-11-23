@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.symbols.markers
+package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -22,12 +21,12 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  *   * other annotation types, and
  *   * array of aforementioned types
  *
- *  [KtLiteralConstantValue] covers first two kinds;
- *  [KtEnumEntryConstantValue] corresponds to enum types;
- *  [KtAnnotationConstantValue] represents annotation types (with annotation fq name and arguments); and
- *  [KtArrayConstantValue] abstracts an array of [KtConstantValue]s.
+ *  [KtLiteralAnnotationValue]  covers first two kinds;
+ *  [KtEnumEntryAnnotationValue] corresponds to enum types;
+ *  [KtAnnotationAnnotationValue] represents annotation types (with annotation fq name and arguments); and
+ *  [KtArrayAnnotationValue] abstracts an array of [KtAnnotationValue]s.
  */
-public sealed class KtConstantValue(
+public sealed class KtAnnotationValue(
     public open val sourcePsi: KtElement? = null
 )
 
@@ -36,34 +35,34 @@ public sealed class KtConstantValue(
  */
 public class KtErrorValue(
     public val message: String
-) : KtConstantValue()
+) : KtAnnotationValue()
 
 /**
  * This represents an unsupported expression used as an annotation value.
  */
-public object KtUnsupportedConstantValue : KtConstantValue()
+public object KtUnsupportedAnnotationValue : KtAnnotationValue()
 
-public class KtArrayConstantValue(
-    public val values: Collection<KtConstantValue>,
+public class KtArrayAnnotationValue(
+    public val values: Collection<KtAnnotationValue>,
     override val sourcePsi: KtElement?,
-) : KtConstantValue()
+) : KtAnnotationValue()
 
-public class KtAnnotationConstantValue(
+public class KtAnnotationAnnotationValue(
     public val classId: ClassId?,
     public val arguments: List<KtNamedConstantValue>,
     override val sourcePsi: KtCallElement?,
-) : KtConstantValue()
+) : KtAnnotationValue()
 
-public class KtEnumEntryConstantValue(
+public class KtEnumEntryAnnotationValue(
     public val callableId: CallableId?,
     override val sourcePsi: KtElement?,
-) : KtConstantValue()
+) : KtAnnotationValue()
 
-public class KtLiteralConstantValue<T>(
+public class KtLiteralAnnotationValue<T>(
     public val constantValueKind: ConstantValueKind<T>,
     public val value: T,
     override val sourcePsi: KtElement?,
-) : KtConstantValue() {
+) : KtAnnotationValue() {
     public fun toConst(): Any? {
         return (value as? Long)?.let {
             when (constantValueKind) {

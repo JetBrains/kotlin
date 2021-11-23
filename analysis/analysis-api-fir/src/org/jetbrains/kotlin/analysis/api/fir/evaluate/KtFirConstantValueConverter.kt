@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -30,21 +29,21 @@ internal object KtFirConstantValueConverter {
         argumentMapping.map { (name, expression) ->
             KtNamedConstantValue(
                 name,
-                expression.convertConstantExpression(session) ?: KtUnsupportedConstantValue
+                expression.convertConstantExpression(session) ?: KtUnsupportedAnnotationValue
             )
         }
 
     fun <T> toConstantValue(
         firConstExpression: FirConstExpression<T>,
-    ): KtLiteralConstantValue<T> =
+    ): KtLiteralAnnotationValue<T> =
         firConstExpression.convertConstantExpression()
 
-    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtLiteralConstantValue<T> =
-        KtLiteralConstantValue(kind, value, psi as? KtElement)
+    private fun <T> FirConstExpression<T>.convertConstantExpression(): KtLiteralAnnotationValue<T> =
+        KtLiteralAnnotationValue(kind, value, psi as? KtElement)
 
     private fun Collection<FirExpression>.convertConstantExpression(
         session: FirSession,
-    ): Collection<KtConstantValue> =
+    ): Collection<KtAnnotationValue> =
         mapNotNull { it.convertConstantExpression(session) }
 
     // Refer to KtLightAnnotationParameterList#checkIfToArrayConversionExpected
@@ -62,12 +61,12 @@ internal object KtFirConstantValueConverter {
         }
     }
 
-    private fun Collection<KtConstantValue>.toArrayConstantValueIfNecessary(sourcePsi: KtElement?): KtConstantValue? {
+    private fun Collection<KtAnnotationValue>.toArrayConstantValueIfNecessary(sourcePsi: KtElement?): KtAnnotationValue? {
         val valueArgument = if (sourcePsi is ValueArgument) sourcePsi else
             (sourcePsi?.parents?.firstOrNull { it is ValueArgument } as? ValueArgument)
         val wrap = valueArgument?.arrayConversionExpected() ?: false
         return if (wrap) {
-            KtArrayConstantValue(this, sourcePsi)
+            KtArrayAnnotationValue(this, sourcePsi)
         } else {
             singleOrNull()
         }
@@ -76,12 +75,12 @@ internal object KtFirConstantValueConverter {
     fun toConstantValue(
         firExpression: FirExpression,
         session: FirSession,
-    ): KtConstantValue? =
+    ): KtAnnotationValue? =
         firExpression.convertConstantExpression(session)
 
     private fun FirExpression.convertConstantExpression(
         session: FirSession,
-    ): KtConstantValue? {
+    ): KtAnnotationValue? {
         return when (this) {
             is FirConstExpression<*> -> convertConstantExpression()
             is FirNamedArgumentExpression -> {
@@ -95,7 +94,7 @@ internal object KtFirConstantValueConverter {
             }
             is FirArrayOfCall -> {
                 // Desugared collection literals.
-                KtArrayConstantValue(argumentList.arguments.convertConstantExpression(session), psi as? KtElement)
+                KtArrayAnnotationValue(argumentList.arguments.convertConstantExpression(session), psi as? KtElement)
             }
             is FirFunctionCall -> {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
@@ -107,7 +106,7 @@ internal object KtFirConstantValueConverter {
                             argumentMapping?.entries?.forEach { (arg, param) ->
                                 resultMap[param.name.asString()] = arg
                             }
-                            KtAnnotationConstantValue(
+                            KtAnnotationAnnotationValue(
                                 resolvedSymbol.callableId.classId,
                                 toNamedConstantValue(resultMap, session),
                                 psi as? KtCallElement
@@ -127,7 +126,7 @@ internal object KtFirConstantValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirEnumEntrySymbol -> {
-                        KtEnumEntryConstantValue(resolvedSymbol.callableId, psi as? KtElement)
+                        KtEnumEntryAnnotationValue(resolvedSymbol.callableId, psi as? KtElement)
                     }
                     else -> null
                 }

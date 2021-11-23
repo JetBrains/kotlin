@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
 import org.jetbrains.kotlin.psi.KtExpression
 
 public abstract class KtCompileTimeConstantProvider : KtAnalysisSessionComponent() {
-    public abstract fun evaluate(expression: KtExpression): KtConstantValue?
+    public abstract fun evaluate(expression: KtExpression): KtAnnotationValue?
 }
 
 public interface KtCompileTimeConstantProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtExpression.evaluate(): KtConstantValue? =
+    public fun KtExpression.evaluate(): KtAnnotationValue? =
         analysisSession.compileTimeConstantProvider.evaluate(this)
 }

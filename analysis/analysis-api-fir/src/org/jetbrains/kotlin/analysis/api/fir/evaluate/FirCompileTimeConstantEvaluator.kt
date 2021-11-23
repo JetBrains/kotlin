@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -37,7 +37,7 @@ internal object FirCompileTimeConstantEvaluator {
             else -> null
         }
 
-    fun evaluateAsKtConstantExpression(expression: FirExpression): KtConstantValue? {
+    fun evaluateAsKtConstantExpression(expression: FirExpression): KtAnnotationValue? {
         val evaluated = evaluate(expression) ?: return null
         return KtFirConstantValueConverter.toConstantValue(evaluated)
     }

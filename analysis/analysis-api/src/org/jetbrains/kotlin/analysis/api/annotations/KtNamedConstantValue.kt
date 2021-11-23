@@ -5,6 +5,4 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
-
-public data class KtNamedConstantValue(val name: String, val expression: KtConstantValue)
+public data class KtNamedConstantValue(val name: String, val expression: KtAnnotationValue)

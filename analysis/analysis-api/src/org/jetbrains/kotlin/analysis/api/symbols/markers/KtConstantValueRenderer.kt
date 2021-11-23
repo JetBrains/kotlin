@@ -5,38 +5,38 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 public object KtConstantValueRenderer {
-    public fun render(value: KtConstantValue): String = buildString {
+    public fun render(value: KtAnnotationValue): String = buildString {
         renderConstantValue(value)
     }
 
-    private fun StringBuilder.renderConstantValue(value: KtConstantValue) {
+    private fun StringBuilder.renderConstantValue(value: KtAnnotationValue) {
         when (value) {
-            is KtAnnotationConstantValue -> {
+            is KtAnnotationAnnotationValue -> {
                 renderAnnotationConstantValue(value)
             }
-            is KtArrayConstantValue -> {
+            is KtArrayAnnotationValue -> {
                 renderArrayConstantValue(value)
             }
-            is KtEnumEntryConstantValue -> {
+            is KtEnumEntryAnnotationValue -> {
                 renderEnumEntryConstantValue(value)
             }
             is KtErrorValue -> {
                 append("ERROR")
             }
-            is KtLiteralConstantValue<*> -> {
+            is KtLiteralAnnotationValue<*> -> {
                 renderLiteralConstantValue(value)
             }
-            KtUnsupportedConstantValue -> {
+            KtUnsupportedAnnotationValue -> {
                 append("KtUnsupportedConstantValue")
             }
         }
     }
 
-    private fun StringBuilder.renderLiteralConstantValue(value: KtLiteralConstantValue<*>) {
+    private fun StringBuilder.renderLiteralConstantValue(value: KtLiteralAnnotationValue<*>) {
         when (value.constantValueKind) {
             ConstantValueKind.String -> {
                 append('"')
@@ -54,11 +54,11 @@ public object KtConstantValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderEnumEntryConstantValue(value: KtEnumEntryConstantValue) {
+    private fun StringBuilder.renderEnumEntryConstantValue(value: KtEnumEntryAnnotationValue) {
         append(value.callableId?.asSingleFqName()?.asString())
     }
 
-    private fun StringBuilder.renderAnnotationConstantValue(value: KtAnnotationConstantValue) {
+    private fun StringBuilder.renderAnnotationConstantValue(value: KtAnnotationAnnotationValue) {
         append(value.classId)
         if (value.arguments.isNotEmpty()) {
             append("(")
@@ -67,13 +67,13 @@ public object KtConstantValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderArrayConstantValue(value: KtArrayConstantValue) {
+    private fun StringBuilder.renderArrayConstantValue(value: KtArrayAnnotationValue) {
         append("[")
         renderConstantValueList(value.values)
         append("]")
     }
 
-    private fun StringBuilder.renderConstantValueList(list: Collection<KtConstantValue>) {
+    private fun StringBuilder.renderConstantValueList(list: Collection<KtAnnotationValue>) {
         renderWithSeparator(list, ", ") { constantValue ->
             renderConstantValue(constantValue)
         }

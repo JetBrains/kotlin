@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
 import org.jetbrains.kotlin.psi.KtExpression
 
 public sealed class KtInitializerValue {
@@ -13,7 +13,7 @@ public sealed class KtInitializerValue {
 }
 
 public class KtConstantInitializerValue(
-    public val constant: KtConstantValue,
+    public val constant: KtAnnotationValue,
     override val initializerPsi: KtExpression?
 ) : KtInitializerValue()
 

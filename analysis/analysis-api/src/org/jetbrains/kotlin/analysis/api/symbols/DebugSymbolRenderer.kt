@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
-import org.jetbrains.kotlin.analysis.api.annotations.annotations
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
@@ -141,7 +138,7 @@ public object DebugSymbolRenderer {
         append(")")
     }
 
-    private fun Block.renderConstantValue(value: KtConstantValue) {
+    private fun Block.renderConstantValue(value: KtAnnotationValue) {
         append(KtConstantValueRenderer.render(value))
     }
 
@@ -191,7 +188,7 @@ public object DebugSymbolRenderer {
             // Symbol-related values
             is KtSymbol -> renderSymbolTag(value)
             is KtType -> renderType(value)
-            is KtConstantValue -> renderConstantValue(value)
+            is KtAnnotationValue -> renderConstantValue(value)
             is KtNamedConstantValue -> renderNamedConstantValue(value)
             is KtInitializerValue -> renderKtInitializerValue(value)
             is KtAnnotationApplication -> renderAnnotationApplication(value)

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtErrorValue
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -12,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.api.components.KtCompileTimeConstantProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.KtFirConstantValueConverter
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -23,7 +24,7 @@ internal class KtFirCompileTimeConstantProvider(
     override val token: ValidityToken,
 ) : KtCompileTimeConstantProvider(), KtFirAnalysisSessionComponent {
 
-    override fun evaluate(expression: KtExpression): KtConstantValue? = withValidityAssertion {
+    override fun evaluate(expression: KtExpression): KtAnnotationValue? = withValidityAssertion {
         when (val fir = expression.getOrBuildFir(firResolveState)) {
             is FirExpression -> {
                 try {

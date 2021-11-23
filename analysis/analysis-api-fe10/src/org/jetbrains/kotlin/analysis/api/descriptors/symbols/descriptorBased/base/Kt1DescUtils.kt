@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
@@ -263,30 +262,30 @@ internal val MemberDescriptor.ktModality: Modality
         return this.modality
     }
 
-internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
+internal fun ConstantValue<*>.toKtConstantValue(): KtAnnotationValue {
     return when (this) {
-        is BooleanValue -> KtLiteralConstantValue(ConstantValueKind.Boolean, value, null)
-        is CharValue -> KtLiteralConstantValue(ConstantValueKind.Char, value, null)
-        is ByteValue -> KtLiteralConstantValue(ConstantValueKind.Byte, value, null)
-        is UByteValue -> KtLiteralConstantValue(ConstantValueKind.UnsignedByte, value, null)
-        is ShortValue -> KtLiteralConstantValue(ConstantValueKind.Short, value, null)
-        is UShortValue -> KtLiteralConstantValue(ConstantValueKind.UnsignedShort, value, null)
-        is IntValue -> KtLiteralConstantValue(ConstantValueKind.Int, value, null)
-        is UIntValue -> KtLiteralConstantValue(ConstantValueKind.UnsignedInt, value, null)
-        is LongValue -> KtLiteralConstantValue(ConstantValueKind.Long, value, null)
-        is ULongValue -> KtLiteralConstantValue(ConstantValueKind.UnsignedLong, value, null)
-        is FloatValue -> KtLiteralConstantValue(ConstantValueKind.Float, value, null)
-        is DoubleValue -> KtLiteralConstantValue(ConstantValueKind.Double, value, null)
-        is NullValue -> KtLiteralConstantValue(ConstantValueKind.Null, null, null)
-        is StringValue -> KtLiteralConstantValue(ConstantValueKind.String, value, null)
-        is ArrayValue -> KtArrayConstantValue(value.map { it.toKtConstantValue() }, null)
-        is EnumValue -> KtEnumEntryConstantValue(CallableId(enumClassId, enumEntryName), null)
+        is BooleanValue -> KtLiteralAnnotationValue(ConstantValueKind.Boolean, value, null)
+        is CharValue -> KtLiteralAnnotationValue(ConstantValueKind.Char, value, null)
+        is ByteValue -> KtLiteralAnnotationValue(ConstantValueKind.Byte, value, null)
+        is UByteValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedByte, value, null)
+        is ShortValue -> KtLiteralAnnotationValue(ConstantValueKind.Short, value, null)
+        is UShortValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedShort, value, null)
+        is IntValue -> KtLiteralAnnotationValue(ConstantValueKind.Int, value, null)
+        is UIntValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedInt, value, null)
+        is LongValue -> KtLiteralAnnotationValue(ConstantValueKind.Long, value, null)
+        is ULongValue -> KtLiteralAnnotationValue(ConstantValueKind.UnsignedLong, value, null)
+        is FloatValue -> KtLiteralAnnotationValue(ConstantValueKind.Float, value, null)
+        is DoubleValue -> KtLiteralAnnotationValue(ConstantValueKind.Double, value, null)
+        is NullValue -> KtLiteralAnnotationValue(ConstantValueKind.Null, null, null)
+        is StringValue -> KtLiteralAnnotationValue(ConstantValueKind.String, value, null)
+        is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtConstantValue() }, null)
+        is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), null)
         is AnnotationValue -> {
             val arguments = value.allValueArguments.map { (name, v) -> KtNamedConstantValue(name.asString(), v.toKtConstantValue()) }
-            KtAnnotationConstantValue(value.annotationClass?.classId, arguments, null)
+            KtAnnotationAnnotationValue(value.annotationClass?.classId, arguments, null)
         }
         is ErrorValue -> KtErrorValue(this.toString())
-        else -> KtUnsupportedConstantValue
+        else -> KtUnsupportedAnnotationValue
     }
 }
 

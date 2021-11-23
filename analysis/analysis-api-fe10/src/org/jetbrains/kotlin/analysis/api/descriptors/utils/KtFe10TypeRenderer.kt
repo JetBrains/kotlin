@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
@@ -110,14 +109,14 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         }
     }
 
-    private fun KtFe10RendererConsumer.renderConstantValueDebug(value: KtConstantValue) {
+    private fun KtFe10RendererConsumer.renderConstantValueDebug(value: KtAnnotationValue) {
         when (value) {
-            is KtAnnotationConstantValue -> renderAnnotationDebug(value.classId, value.arguments)
-            is KtArrayConstantValue ->
+            is KtAnnotationAnnotationValue -> renderAnnotationDebug(value.classId, value.arguments)
+            is KtArrayAnnotationValue ->
                 renderList(value.values, separator = ", ", prefix = "[", postfix = "]") { renderConstantValueDebug(it) }
-            is KtEnumEntryConstantValue -> append(value.callableId)
-            is KtLiteralConstantValue<*> -> append(value.constantValueKind.asString).append("(").append(value.value).append(")")
-            KtUnsupportedConstantValue -> append(KtUnsupportedConstantValue::class.java.simpleName)
+            is KtEnumEntryAnnotationValue -> append(value.callableId)
+            is KtLiteralAnnotationValue<*> -> append(value.constantValueKind.asString).append("(").append(value.value).append(")")
+            KtUnsupportedAnnotationValue -> append(KtUnsupportedAnnotationValue::class.java.simpleName)
             is KtErrorValue -> append("<ERROR>")
         }
     }
