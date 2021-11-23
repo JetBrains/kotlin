@@ -102,7 +102,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             when (op) {
                 "libs" -> {
                     val args = splitted[1]
-                    args.split(",").forEach { order.add(it.trim()) }
+                    args.split(",").filter { it.isNotBlank() }.forEach { order.add(it.trim()) }
                 }
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
@@ -135,7 +135,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             when {
                 op == MODULES_LIST -> {
                     val arguments = splitted[1]
-                    arguments.split(",").forEach { libraries.add(it.trim()) }
+                    arguments.split(",").filter { it.isNotBlank() }.forEach { libraries.add(it.trim()) }
                 }
                 op.matches(STEP_PATTERN.toRegex()) -> {
                     val m = STEP_PATTERN.matcher(op)
@@ -196,8 +196,8 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
             val op = line.substring(0, opIndex)
 
             when (op) {
-                "dependencies" -> line.substring(opIndex + 1).split(",").forEach { dependencies.add(it.trim()) }
-                "dirty" -> line.substring(opIndex + 1).split(",").forEach { dirtyFiles.add(it.trim()) }
+                "dependencies" -> line.substring(opIndex + 1).split(",").filter { it.isNotBlank() }.forEach { dependencies.add(it.trim()) }
+                "dirty" -> line.substring(opIndex + 1).split(",").filter { it.isNotBlank() }.forEach { dirtyFiles.add(it.trim()) }
                 "modifications" -> modifications.addAll(parseModifications())
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }

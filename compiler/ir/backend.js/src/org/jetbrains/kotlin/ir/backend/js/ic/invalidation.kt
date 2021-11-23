@@ -55,6 +55,8 @@ private fun invalidateCacheForModule(
 
     val dirtyFiles = mutableSetOf<String>()
 
+//    println("Invalidation Phase #0")
+
     for ((index, file) in libraryFiles.withIndex()) {
 
         // 1. get cached fingerprints
@@ -62,6 +64,8 @@ private fun invalidateCacheForModule(
 
         // 2. calculate new fingerprints
         val fileNewFingerprint = library.fingerprint(index)
+
+//        println("  Finger-prints: old = $fileOldFingerprint, new = $fileNewFingerprint for file $file")
 
         if (fileOldFingerprint != fileNewFingerprint) {
             fileFingerPrints[file] = fileNewFingerprint
@@ -71,6 +75,10 @@ private fun invalidateCacheForModule(
             dirtyFiles.add(file)
         }
     }
+
+    val p1 = dirtyFiles.size
+//    println("Phase #1 discovered ${dirtyFiles.size} dirty files")
+//    println("Dirty files #1: ${dirtyFiles.joinToString(",", "[", "]")}")
 
     // 4. extend dirty set with inline functions
 
@@ -104,8 +112,12 @@ private fun invalidateCacheForModule(
         }
     } while (oldSize != dirtyFiles.size)
 
+//    println("Phase #2 discovered ${dirtyFiles.size - p1} more dirty files")
+//    println("Dirty files #2: ${dirtyFiles.joinToString(",", "[", "]")}")
+
     // 5. invalidate file caches
     for (dirty in dirtyFiles) {
+//        println("   invalidate cache for file ${dirty}")
         cacheConsumer.invalidateForFile(dirty)
     }
 
@@ -383,6 +395,9 @@ private fun actualizeCacheForModule(
         fileCachedInlineHashes[filePath] =
             currentLibraryCacheProvider.inlineHashes(filePath) { s -> sigReader.deserializeIdSignature(s) }
     }
+
+//    println("Invalidate cache for library ${library.libraryName}")
+//    println("Files: ${libraryFiles.joinToString(",", "[", "]")}")
 
     val dirtySet = invalidateCacheForModule(
         library,

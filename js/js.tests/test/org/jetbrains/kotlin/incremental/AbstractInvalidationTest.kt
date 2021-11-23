@@ -117,6 +117,14 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         return copy
     }
 
+    private fun refreshFileSystem() {
+
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+        fileSystem.refresh(false /* sync */)
+//        System.out.flush()
+
+    }
+
     private fun executeProjectSteps(
         projectInfo: ProjectInfo,
         moduleInfos: Map<String, ModuleInfo>,
@@ -132,8 +140,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
                 val moduleStep = moduleInfo.steps[projStep.id]
                 for (modification in moduleStep.modifications) {
+//                    println("Execute step for module $module at step ${projStep.id}")
                     modification.execute(moduleTestDir, moduleSourceDir)
                 }
+                refreshFileSystem()
 
                 val dependencies = moduleStep.dependencies.map { resolveModuleArtifact(it, buildDir) }
 
@@ -182,8 +192,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             val actualDirtyFiles = invalidatedDirtyFiles?.map { File(it).canonicalPath } ?: sourceDir.filteredKtFiles().map { it.canonicalPath }
             val expectedDirtyFilesCanonical = expectedDirtyFiles.map { it.canonicalPath }
 
-            JUnit5Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) { "For module $moduleKlibFile" }
+            JUnit5Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) { "For module $moduleKlibFile at step $stepId" }
         }
+
+//        println("////-- === Process step $stepId for module ${moduleKlibFile.name} === --\\\\\\\\")
 
         val dependenciesPaths = mutableListOf<String>()
         dependencies.mapTo(dependenciesPaths) { it.canonicalPath }
@@ -203,15 +215,28 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             val filePaths = expectedDirtyFiles.joinToString(",", "[", "]")
             "Up to date is not expected for module $moduleKlibFile at step $stepId. Expected dirtyFiles are $filePaths"
         }
+
+//        println("\\\\\\\\-- === Processed step $stepId for module ${moduleKlibFile.name} === --////")
+
     }
 
     private fun KotlinCoreEnvironment.createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
+//        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+//        fileSystem.refresh(false)
+//        System.out.flush()
         val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
-
-        return psiManager.findFile(file) as KtFile
+//        file.refresh(false, true)
+//        psiManager.dropResolveCaches()
+        return (psiManager.findFile(file) as KtFile).also {
+            if (file.name.endsWith("l1.kt")) {
+                println(it.text)
+                val diskText = file.canonicalPath?.let { File(it).readText() } ?: "<NA>"
+                println(diskText)
+            }
+        }
     }
 
     private fun buildArtifact(
@@ -226,6 +251,12 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val projectJs = environment.project
 
         val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it.canonicalPath) }
+
+//        println("Compile files")
+//        for (sf in sourceFiles) {
+//            println("  ${sf.name}")
+//            println("${sf.text}")
+//        }
 
         val sourceModule = prepareAnalyzedSourceModule(
             projectJs,
