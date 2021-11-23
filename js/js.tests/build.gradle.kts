@@ -274,6 +274,8 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
 
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
+
     configureTestDistribution()
 }
 
@@ -347,4 +349,15 @@ projectTest("wasmTest", true) {
     systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/wasm/main")
 
     setUpBoxTests()
+}
+
+projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
+    workingDir = rootDir
+
+    include("org/jetbrains/kotlin/incremental/*")
+
+    dependsOn(":dist")
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
 }
