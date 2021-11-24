@@ -32,8 +32,10 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
                 DurationUnit.MILLISECONDS.toTimeUnit()
             )
 
-            if (!hasFinishedInTime)
+            if (!hasFinishedInTime) {
+                process.destroy()
                 return@AbstractRun RunResult.TimeoutExceeded(executionTimeout)
+            }
 
             exitCode = process.exitValue()
 
