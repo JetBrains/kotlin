@@ -101,7 +101,7 @@ class ExportModelToJsStatements(
                 val newNameSpace = if (namespace != null)
                     jsElementAccess(declaration.name, namespace)
                 else
-                    JsNameRef(Namer.PROTOTYPE_NAME, declaration.name)
+                    JsNameRef(Namer.PROTOTYPE_NAME, namer.getNameForClass(declaration.ir).makeRef())
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
                 val klassExport =
                     if (esModules) {

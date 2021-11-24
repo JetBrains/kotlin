@@ -16,8 +16,13 @@ fun box(): String {
     // DCE preventing
     val b = B()
 
-    assertEquals("function", js("typeof A['\$invalid inner']"))
-    assertEquals(js("undefined"), js("B['\$invalid inner']"))
+    val aCtor = A::class.js.asDynamic()
+    val bCtor = B::class.js.asDynamic()
+
+    assertEquals("function", typeOf(aCtor["\$invalid inner"]))
+    assertEquals(js("undefined"), bCtor["\$invalid inner"])
 
     return "OK"
 }
+
+private fun typeOf(t: Any): String = js("typeof t")

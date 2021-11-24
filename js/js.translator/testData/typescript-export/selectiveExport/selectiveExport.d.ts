@@ -7,15 +7,15 @@ declare namespace JS_TESTS {
         }
     }
     namespace foo {
-        interface FileLevelExportedExternalInterface {
-        }
-    }
-    namespace foo {
         const exportedVal: number;
         function exportedFun(): number;
         class ExportedClass {
             constructor();
             get value(): number;
+        }
+    }
+    namespace foo {
+        interface FileLevelExportedExternalInterface {
         }
     }
     namespace foo {

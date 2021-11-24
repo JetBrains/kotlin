@@ -33,7 +33,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
             val jsModule: String? = declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
             val fileJsModule: String? = maybeParentFile?.getJsModule()
-            val jsQualifier: String? = maybeParentFile?.getJsQualifier()
+            val jsQualifier: List<JsName>? = maybeParentFile?.getJsQualifier()?.split('.')?.map { JsName(it, false) }
 
             when {
                 jsModule != null -> {
@@ -44,19 +44,22 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
 
                 fileJsModule != null -> {
                     if (declaration !in nameMap) {
-                        val moduleName = JsName("\$module\$$jsModule", true)
+                        val moduleName = JsName(sanitizeName("\$module\$$fileJsModule"), true)
                         importedModules += JsImportedModule(fileJsModule, moduleName, null)
                         val qualifiedReference =
-                            if (jsQualifier == null) moduleName.makeRef() else JsNameRef(jsQualifier, moduleName.makeRef())
-                        imports[declaration] = JsNameRef(declaration.getJsNameOrKotlinName().identifier, qualifiedReference)
+                            if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
+                        imports[declaration] = jsElementAccess(declaration.getJsNameOrKotlinName().identifier, qualifiedReference)
                         return declaration.getName()
                     }
                 }
 
                 else -> {
-                    var name = declaration.getJsNameOrKotlinName().identifier
-                    if (jsQualifier != null)
-                        name = "$jsQualifier.$name"
+                    val name = declaration.getJsNameOrKotlinName().identifier
+
+                    if (jsQualifier != null) {
+                        imports[declaration] = jsElementAccess(name, jsQualifier.makeRef())
+                        return declaration.getName()
+                    }
 
                     return name.toJsName(temporary = false)
                 }
@@ -117,4 +120,12 @@ private fun IrField.safeName(): String {
     return sanitizeName(name.asString()).let {
         if (it.lastOrNull()!!.isDigit()) it + "_" else it // Avoid name clashes
     }
+}
+
+private fun List<JsName>.makeRef(): JsNameRef {
+    var result = this[0].makeRef()
+    for (i in 1 until this.size) {
+        result = JsNameRef(this[i], result)
+    }
+    return result
 }
