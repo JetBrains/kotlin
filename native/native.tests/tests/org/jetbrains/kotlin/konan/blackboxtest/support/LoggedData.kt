@@ -113,16 +113,7 @@ internal abstract class LoggedData {
     ) : LoggedData() {
         override fun computeText() = buildString {
             appendLine("TEST RUN:")
-            appendLine("- Exit code: ${runResult.exitCode}")
-            appendDuration(runResult.duration)
-            appendLine()
-            appendLine("========== BEGIN: TEST STDOUT ==========")
-            if (runResult.stdOut.isNotEmpty()) appendLine(runResult.stdOut.trimEnd())
-            appendLine("========== END: TEST STDOUT ==========")
-            appendLine()
-            appendLine("========== BEGIN: TEST STDERR ==========")
-            if (runResult.stdErr.isNotEmpty()) appendLine(runResult.stdErr.trimEnd())
-            appendLine("========== END: TEST STDERR ==========")
+            appendCommonRunResult(runResult)
             appendLine()
             appendLine(parameters)
         }
@@ -145,15 +136,14 @@ internal abstract class LoggedData {
         }
     }
 
-    class TestRunTimeoutExceeded(parameters: TestRunParameters, timeout: Duration) : TimeoutExceeded(parameters, timeout)
-
-    abstract class TimeoutExceeded(
-        private val parameters: LoggedData,
-        private val timeout: Duration
+    class TestRunTimeoutExceeded(
+        private val parameters: TestRunParameters,
+        private val runResult: RunResult.TimeoutExceeded
     ) : LoggedData() {
         override fun computeText() = buildString {
             appendLine("TIMED OUT:")
-            appendLine("- Max permitted duration: $timeout")
+            appendLine("- Max permitted duration: ${runResult.timeout}")
+            appendCommonRunResult(runResult)
             appendLine()
             appendLine(parameters)
         }
@@ -191,5 +181,19 @@ internal abstract class LoggedData {
 
         protected fun StringBuilder.appendDuration(duration: Duration): StringBuilder =
             append("- Duration: ").appendLine(duration.toString(DurationUnit.SECONDS, 2))
+
+        protected fun StringBuilder.appendCommonRunResult(runResult: RunResult): StringBuilder {
+            appendLine("- Exit code: ${runResult.exitCode ?: "<unknown>"}")
+            appendDuration(runResult.duration)
+            appendLine()
+            appendLine("========== BEGIN: TEST STDOUT ==========")
+            if (runResult.output.stdOut.isNotEmpty()) appendLine(runResult.output.stdOut.trimEnd())
+            appendLine("========== END: TEST STDOUT ==========")
+            appendLine()
+            appendLine("========== BEGIN: TEST STDERR ==========")
+            if (runResult.output.stdErr.isNotEmpty()) appendLine(runResult.output.stdErr.trimEnd())
+            appendLine("========== END: TEST STDERR ==========")
+            return this
+        }
     }
 }

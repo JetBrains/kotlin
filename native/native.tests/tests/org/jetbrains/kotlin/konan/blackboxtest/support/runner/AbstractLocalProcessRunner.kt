@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner.AbstractRun
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.readOutput
 import kotlin.time.*
 
 internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeout: Duration) : AbstractRunner<R>() {
@@ -18,32 +19,40 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
 
     @OptIn(ExperimentalTime::class)
     final override fun buildRun() = AbstractRun {
-        val exitCode: Int
-
-        val stdOut: String
-        val stdErr: String
-
-        val duration = measureTime {
+        val (result, duration) = measureTimedValue {
             val process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
             customizeProcess(process)
 
-            val hasFinishedInTime = process.waitFor(
+            val hasFinishedOnTime = process.waitFor(
                 executionTimeout.toLong(DurationUnit.MILLISECONDS),
                 DurationUnit.MILLISECONDS.toTimeUnit()
             )
 
-            if (!hasFinishedInTime) {
-                process.destroy()
-                return@AbstractRun RunResult.TimeoutExceeded(executionTimeout)
+            process to hasFinishedOnTime
+        }
+        val (process, hasFinishedOnTime) = result
+
+        // Don't use blocking read from stdout/stderr on non-finished process. If the process is hanging this would result in hanging test.
+        val output = process.readOutput(nonBlocking = !hasFinishedOnTime)
+
+        if (hasFinishedOnTime) {
+            val exitCode: Int = process.exitValue()
+
+            RunResult.Completed(exitCode, duration, output)
+        } else {
+            process.destroy() // Initiate destroy of non-finished process.
+            Thread.sleep(5) // And give it a white to become actually destroyed.
+
+            val exitCode: Int? = try {
+                // If we are lucky enough, the process is destroyed to this moment. And it's possible to fetch exit code.
+                process.exitValue()
+            } catch (_: IllegalThreadStateException) {
+                // Still not destroyed. Let's go further.
+                null
             }
 
-            exitCode = process.exitValue()
-
-            stdOut = process.inputStream.bufferedReader().readText()
-            stdErr = process.errorStream.bufferedReader().readText()
+            RunResult.TimeoutExceeded(executionTimeout, exitCode, duration, output)
         }
-
-        RunResult.Completed(exitCode, duration, stdOut, stdErr)
     }
 
     abstract override fun buildResultHandler(runResult: RunResult.Completed): ResultHandler // Narrow returned type.

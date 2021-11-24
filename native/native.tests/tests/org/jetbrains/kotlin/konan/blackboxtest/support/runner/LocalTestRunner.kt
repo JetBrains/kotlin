@@ -59,7 +59,7 @@ internal class LocalTestRunner(
             val cleanStdOut = StringBuilder()
 
             var expectStatusLine = false
-            runResult.stdOut.lines().forEach { line ->
+            runResult.output.stdOut.lines().forEach { line ->
                 when {
                     expectStatusLine -> {
                         val matcher = GTEST_STATUS_LINE_REGEX.matchEntire(line)
@@ -94,10 +94,10 @@ internal class LocalTestRunner(
             val failedTests = (testStatuses - GTEST_STATUS_OK).values.sumOf { it.size }
             verifyExpectation(0, failedTests) { "There are failed tests." }
 
-            verifyOutputData(mergedOutput = cleanStdOut.toString() + runResult.stdErr)
+            verifyOutputData(mergedOutput = cleanStdOut.toString() + runResult.output.stdErr)
         }
 
-        private fun verifyPlainTest() = verifyOutputData(mergedOutput = runResult.stdOut + runResult.stdErr)
+        private fun verifyPlainTest() = verifyOutputData(mergedOutput = runResult.output.stdOut + runResult.output.stdErr)
 
         private fun verifyOutputData(mergedOutput: String) {
             testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {

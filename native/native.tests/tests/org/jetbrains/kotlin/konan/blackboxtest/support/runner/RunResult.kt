@@ -7,7 +7,23 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import kotlin.time.Duration
 
-sealed interface RunResult {
-    data class Completed(val exitCode: Int, val duration: Duration, val stdOut: String, val stdErr: String) : RunResult
-    data class TimeoutExceeded(val timeout: Duration) : RunResult
+internal sealed interface RunResult {
+    val exitCode: Int?
+    val duration: Duration
+    val output: ProcessOutput
+
+    data class Completed(
+        override val exitCode: Int,
+        override val duration: Duration,
+        override val output: ProcessOutput
+    ) : RunResult
+
+    data class TimeoutExceeded(
+        val timeout: Duration,
+        override val exitCode: Int?,
+        override val duration: Duration,
+        override val output: ProcessOutput
+    ) : RunResult
 }
+
+internal class ProcessOutput(val stdOut: String, val stdErr: String)

@@ -21,7 +21,7 @@ internal abstract class AbstractRunner<R> {
 
         val resultHandler = when (val runResult = run.run()) {
             is RunResult.TimeoutExceeded -> fail {
-                LoggedData.TestRunTimeoutExceeded(getLoggedParameters(), runResult.timeout)
+                LoggedData.TestRunTimeoutExceeded(getLoggedParameters(), runResult)
                     .withErrorMessageHeader("Timeout exceeded during test execution.")
             }
             is RunResult.Completed -> buildResultHandler(runResult)
