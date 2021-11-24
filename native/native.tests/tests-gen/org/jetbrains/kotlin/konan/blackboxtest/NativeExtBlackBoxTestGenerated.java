@@ -21441,6 +21441,18 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 }
 
                 @Test
+                @TestMetadata("inlineClassInheritingDefaultMethod.kt")
+                public void testInlineClassInheritingDefaultMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethod.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineClassInheritingDefaultMethodAll.kt")
+                public void testInlineClassInheritingDefaultMethodAll() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodAll.kt");
+                }
+
+                @Test
                 @TestMetadata("javaDefaultMethod.kt")
                 public void testJavaDefaultMethod() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethod.kt");
