@@ -1,4 +1,13 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = <getter>(<dispatch receiver>: A): kotlin.Int
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          origin: SOURCE
+          type: A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val i: kotlin.Int
+    simpleAccess = Read:

@@ -1,4 +1,26 @@
-KtFunctionCall:
-argumentMapping = { Annotation("v1", "v2") -> (vararg elements: Annotation), Annotation(strings = arrayOf("v3", "v4")) -> (vararg elements: Annotation) }
-targetFunction = kotlin/arrayOf(vararg elements: Annotation): kotlin.Array<Annotation>
-substitutor = <map substitutor: {T = Annotation}>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Array<Annotation>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = Annotation
+            symbol = vararg elements: T
+        ]
+    argumentMapping = {
+      Annotation("v1", "v2") -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = vararg elements: T),
+      Annotation(strings = arrayOf("v3", "v4")) -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = vararg elements: T)
+    }

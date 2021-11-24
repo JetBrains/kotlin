@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.and
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -28,6 +29,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -54,6 +56,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -80,6 +83,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -106,6 +110,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -132,6 +137,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -158,6 +164,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -184,6 +191,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.dec
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -208,6 +216,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -234,6 +243,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -260,6 +270,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -286,6 +297,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -312,6 +324,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -338,6 +351,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.div
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -364,6 +378,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.inc
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -388,6 +403,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.inv
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -412,6 +428,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -438,6 +455,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -464,6 +482,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -490,6 +509,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -516,6 +536,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -542,6 +563,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.minus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -568,6 +590,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.or
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -594,6 +617,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -620,6 +644,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -646,6 +671,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -672,6 +698,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -698,6 +725,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -724,6 +752,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.plus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -750,6 +779,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -776,6 +806,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -802,6 +833,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -828,6 +860,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -857,6 +890,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -886,6 +920,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -915,6 +950,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -944,6 +980,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -973,6 +1010,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1002,6 +1040,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1028,6 +1067,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.shl
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1054,6 +1094,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.shr
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1080,6 +1121,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1106,6 +1148,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1132,6 +1175,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1158,6 +1202,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1184,6 +1229,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1210,6 +1256,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.times
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1236,6 +1283,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toByte
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1260,6 +1308,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toChar
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1284,6 +1333,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toDouble
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1308,6 +1358,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toFloat
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1332,6 +1383,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toInt
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1356,6 +1408,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toLong
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1380,6 +1433,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.toShort
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1404,6 +1458,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.unaryMinus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1428,6 +1483,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.unaryPlus
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1452,6 +1508,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.ushr
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1478,6 +1535,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.xor
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1504,6 +1562,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1530,6 +1589,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1554,6 +1614,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false

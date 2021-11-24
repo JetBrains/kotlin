@@ -1,3 +1,21 @@
-KtAnnotationCall:
-argumentMapping = { "s" -> (vararg names: kotlin.String) }
-targetFunction = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+KtSuccessCallInfo:
+  call = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Suppress
+        symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg names: kotlin.String
+        ]
+    argumentMapping = {
+      "s" -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg names: kotlin.String)
+    }

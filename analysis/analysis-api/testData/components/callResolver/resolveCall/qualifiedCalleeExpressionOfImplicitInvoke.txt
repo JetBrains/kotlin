@@ -1,0 +1,12 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.Unit>
+        symbol = val f: kotlin.Function0<kotlin.Unit>
+    simpleAccess = Read:

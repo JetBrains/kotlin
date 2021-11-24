@@ -1,4 +1,40 @@
-KtDelegatedConstructorCall:
-argumentMapping = {  }
-targetFunction = ERR<None of the following functions are applicable: [/Sub.Sub, /Sub.Sub], [<constructor>(p: kotlin.Int): Sub, <constructor>(i: kotlin.Int, j: kotlin.Int): Sub]>
-kind = THIS_CALL
+KtErrorCallInfo:
+  candidateCalls = [
+    KtDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = Sub
+          symbol = <constructor>(p: kotlin.Int): Sub
+          valueParameters = [
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p: kotlin.Int
+          ]
+      argumentMapping = {},
+    KtDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = Sub
+          symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
+          valueParameters = [
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int,
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = j: kotlin.Int
+          ]
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [/Sub.Sub, /Sub.Sub]>

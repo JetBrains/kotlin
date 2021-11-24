@@ -1,4 +1,13 @@
-KtFunctionCall:
-argumentMapping = { 42 -> (value: kotlin.Int) }
-targetFunction = <setter>(<dispatch receiver>: KtClass, value: kotlin.Int): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = ktClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+    simpleAccess = Write:
+      value = 42

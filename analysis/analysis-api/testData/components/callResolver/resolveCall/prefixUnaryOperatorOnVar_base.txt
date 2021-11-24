@@ -1,0 +1,10 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var i: kotlin.Int
+    simpleAccess = Read:

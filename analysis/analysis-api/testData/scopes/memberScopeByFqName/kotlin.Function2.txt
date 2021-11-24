@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Function2.invoke
   hasStableParameterNames: false
+  isBuiltinFunctionInvoke: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -29,6 +30,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -55,6 +57,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -79,6 +82,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false

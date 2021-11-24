@@ -15,6 +15,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /primitive
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -53,6 +54,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /nullablePrimitive
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -91,6 +93,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /nonPrimitive
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -129,6 +132,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /error
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false

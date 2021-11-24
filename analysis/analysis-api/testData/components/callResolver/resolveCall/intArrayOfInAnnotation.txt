@@ -1,4 +1,30 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (vararg elements: kotlin.Int), 2 -> (vararg elements: kotlin.Int), 3 -> (vararg elements: kotlin.Int) }
-targetFunction = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int),
+      2 -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int),
+      3 -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: kotlin.Int)
+    }

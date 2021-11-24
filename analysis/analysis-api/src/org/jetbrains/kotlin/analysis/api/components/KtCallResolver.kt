@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.psi.*
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
-    public abstract fun resolveCall(call: KtElement): KtCallInfo?
+    public abstract fun resolveCall(psi: KtElement): KtCallInfo?
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
@@ -19,9 +19,6 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 
     public fun KtCallElement.resolveCall(): KtCallInfo =
         analysisSession.callResolver.resolveCall(this) ?: error("KtCallElement should always resolve to a KtCallInfo")
-
-    public fun KtBinaryExpression.resolveCall(): KtCallInfo =
-        analysisSession.callResolver.resolveCall(this) ?: error("KtBinaryExpression should always resolve to a KtCallInfo")
 
     public fun KtUnaryExpression.resolveCall(): KtCallInfo =
         analysisSession.callResolver.resolveCall(this) ?: error("KtUnaryExpression should always resolve to a KtCallInfo")

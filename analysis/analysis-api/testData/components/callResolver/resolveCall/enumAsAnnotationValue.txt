@@ -1,3 +1,21 @@
-KtAnnotationCall:
-argumentMapping = { Color.R -> (color: Color) }
-targetFunction = <constructor>(color: Color): Annotation
+KtSuccessCallInfo:
+  call = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = <constructor>(color: Color): Annotation
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = Color
+            symbol = color: Color
+        ]
+    argumentMapping = {
+      Color.R -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = Color
+        symbol = color: Color)
+    }

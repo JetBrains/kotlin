@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.calls.calls
+import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -21,7 +23,7 @@ class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunct
         return expression.resolveCall().calls.mapNotNull { call ->
             (call as? KtSimpleFunctionCall)
                 ?.takeIf { it.isImplicitInvoke }
-                ?.boundSymbol
+                ?.partiallyAppliedSymbol
                 ?.symbol
                 ?.takeUnless { it is KtFunctionSymbol && it.isBuiltinFunctionInvoke }
         }

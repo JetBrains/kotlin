@@ -34,6 +34,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /A.x
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false

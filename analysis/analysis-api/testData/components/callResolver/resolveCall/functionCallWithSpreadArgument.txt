@@ -1,4 +1,22 @@
-KtFunctionCall:
-argumentMapping = { args -> (vararg a: kotlin.Int) }
-targetFunction = /function(vararg a: kotlin.Int): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(vararg a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg a: kotlin.Int
+        ]
+    argumentMapping = {
+      args -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg a: kotlin.Int)
+    }

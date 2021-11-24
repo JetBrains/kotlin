@@ -1,4 +1,12 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = /JavaClass.getFoo(<dispatch receiver>: JavaClass): kotlin.Int
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val foo: kotlin.Int
+    simpleAccess = Read:

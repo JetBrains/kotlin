@@ -1,4 +1,12 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = /JavaClass.getSub(<dispatch receiver>: JavaClass): ft<JavaSubClass, JavaSubClass?>
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = ft<JavaSubClass, JavaSubClass?>
+        symbol = val sub: ft<JavaSubClass, JavaSubClass?>
+    simpleAccess = Read:

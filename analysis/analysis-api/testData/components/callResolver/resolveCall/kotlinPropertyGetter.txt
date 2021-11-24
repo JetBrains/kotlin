@@ -1,4 +1,12 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = <getter>(): kotlin.Int
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = ktClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val foo: kotlin.Int
+    simpleAccess = Read:

@@ -163,6 +163,108 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     }
 
     @Test
+    @TestMetadata("calleeExpressionOfImplicitInvoke.kt")
+    public void testCalleeExpressionOfImplicitInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/calleeExpressionOfImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("checkNotNullCall.kt")
+    public void testCheckNotNullCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/checkNotNullCall.kt");
+    }
+
+    @Test
+    @TestMetadata("checkNotNullCallAsCallee.kt")
+    public void testCheckNotNullCallAsCallee() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/checkNotNullCallAsCallee.kt");
+    }
+
+    @Test
+    @TestMetadata("comparisonCall.kt")
+    public void testComparisonCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/comparisonCall.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignOnVal.kt")
+    public void testCompoundAssignOnVal() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignOnVal.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignOnVal_lhs.kt")
+    public void testCompoundAssignOnVal_lhs() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignOnVal_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignOnVar.kt")
+    public void testCompoundAssignOnVar() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignOnVar.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignOnVar_lhs.kt")
+    public void testCompoundAssignOnVar_lhs() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignOnVar_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignWithArrayAccessConvention.kt")
+    public void testCompoundAssignWithArrayAccessConvention() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignWithArrayAccessConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignWithArrayAccessConvention_complexReceivers.kt")
+    public void testCompoundAssignWithArrayAccessConvention_complexReceivers() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignWithArrayAccessConvention_complexReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignWithArrayAccessConvention_lhs.kt")
+    public void testCompoundAssignWithArrayAccessConvention_lhs() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignWithArrayAccessConvention_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignWithArrayGetConvention.kt")
+    public void testCompoundAssignWithArrayGetConvention() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignWithArrayGetConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("compoundAssignWithArrayGetConvention_lhs.kt")
+    public void testCompoundAssignWithArrayGetConvention_lhs() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignWithArrayGetConvention_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("consecutiveImplicitInvoke1.kt")
+    public void testConsecutiveImplicitInvoke1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/consecutiveImplicitInvoke1.kt");
+    }
+
+    @Test
+    @TestMetadata("consecutiveImplicitInvoke2.kt")
+    public void testConsecutiveImplicitInvoke2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/consecutiveImplicitInvoke2.kt");
+    }
+
+    @Test
+    @TestMetadata("consecutiveImplicitInvoke3.kt")
+    public void testConsecutiveImplicitInvoke3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/consecutiveImplicitInvoke3.kt");
+    }
+
+    @Test
+    @TestMetadata("consecutiveImplicitInvoke_callee.kt")
+    public void testConsecutiveImplicitInvoke_callee() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/consecutiveImplicitInvoke_callee.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedConstructorCall_super.kt")
     public void testDelegatedConstructorCall_super() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/delegatedConstructorCall_super.kt");
@@ -190,6 +292,24 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     @TestMetadata("enumAsAnnotationValue.kt")
     public void testEnumAsAnnotationValue() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/enumAsAnnotationValue.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromAny.kt")
+    public void testEqEqCall_fromAny() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromAny.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromSuperType.kt")
+    public void testEqEqCall_fromSuperType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromSuperType.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_overridden.kt")
+    public void testEqEqCall_overridden() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_overridden.kt");
     }
 
     @Test
@@ -241,6 +361,18 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     }
 
     @Test
+    @TestMetadata("functionTypeVariableCall_dispatchReceiver.kt")
+    public void testFunctionTypeVariableCall_dispatchReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionTypeVariableCall_dispatchReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeVariableCall_extensionReceiver.kt")
+    public void testFunctionTypeVariableCall_extensionReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionTypeVariableCall_extensionReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithReceiverCall.kt")
     public void testFunctionWithReceiverCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithReceiverCall.kt");
@@ -250,6 +382,18 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     @TestMetadata("functionWithReceiverSafeCall.kt")
     public void testFunctionWithReceiverSafeCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/functionWithReceiverSafeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("hiddenConstructor.kt")
+    public void testHiddenConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/hiddenConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("hiddenDeprecated.kt")
+    public void testHiddenDeprecated() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/hiddenDeprecated.kt");
     }
 
     @Test
@@ -391,6 +535,78 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     }
 
     @Test
+    @TestMetadata("postfixUnaryOperatorOnVar.kt")
+    public void testPostfixUnaryOperatorOnVar() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorOnVar.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixUnaryOperatorOnVar_base.kt")
+    public void testPostfixUnaryOperatorOnVar_base() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorOnVar_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixUnaryOperatorWithArrayAccessConvention.kt")
+    public void testPostfixUnaryOperatorWithArrayAccessConvention() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorWithArrayAccessConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixUnaryOperatorWithArrayAccessConvention_base.kt")
+    public void testPostfixUnaryOperatorWithArrayAccessConvention_base() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorWithArrayAccessConvention_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixUnaryOperatorWithArrayAccessConvention_complexDispatcher.kt")
+    public void testPostfixUnaryOperatorWithArrayAccessConvention_complexDispatcher() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorWithArrayAccessConvention_complexDispatcher.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorOnVar.kt")
+    public void testPrefixUnaryOperatorOnVar() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/prefixUnaryOperatorOnVar.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorOnVar_base.kt")
+    public void testPrefixUnaryOperatorOnVar_base() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/prefixUnaryOperatorOnVar_base.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorWithArrayAccessConvention.kt")
+    public void testPrefixUnaryOperatorWithArrayAccessConvention() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/prefixUnaryOperatorWithArrayAccessConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorWithArrayAccessConvention_base.kt")
+    public void testPrefixUnaryOperatorWithArrayAccessConvention_base() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/prefixUnaryOperatorWithArrayAccessConvention_base.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorWithArrayAccessConvention_complexDispatcher.kt")
+    public void testPrefixUnaryOperatorWithArrayAccessConvention_complexDispatcher() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/prefixUnaryOperatorWithArrayAccessConvention_complexDispatcher.kt");
+    }
+
+    @Test
+    @TestMetadata("privateMember.kt")
+    public void testPrivateMember() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/privateMember.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedCalleeExpressionOfImplicitInvoke.kt")
+    public void testQualifiedCalleeExpressionOfImplicitInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/qualifiedCalleeExpressionOfImplicitInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("resolveCallInSuperConstructorParam.kt")
     public void testResolveCallInSuperConstructorParam() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/resolveCallInSuperConstructorParam.kt");
@@ -406,6 +622,30 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     @TestMetadata("simpleCallWithNonMatchingArgs.kt")
     public void testSimpleCallWithNonMatchingArgs() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/simpleCallWithNonMatchingArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastExplicitDispatchReceiver.kt")
+    public void testSmartCastExplicitDispatchReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastExplicitDispatchReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastExplicitExtensionReceiver.kt")
+    public void testSmartCastExplicitExtensionReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastExplicitExtensionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastImplicitDispatchReceiver.kt")
+    public void testSmartCastImplicitDispatchReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastImplicitDispatchReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastImplicitExtensionReceiver.kt")
+    public void testSmartCastImplicitExtensionReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastImplicitExtensionReceiver.kt");
     }
 
     @Test
@@ -466,6 +706,18 @@ public class FirResolveCallTestGenerated extends AbstractFirResolveCallTest {
     @TestMetadata("variableWithExtensionInvoke.kt")
     public void testVariableWithExtensionInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableWithExtensionInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("variableWithInvokeFunctionCall_dispatchReceiver.kt")
+    public void testVariableWithInvokeFunctionCall_dispatchReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableWithInvokeFunctionCall_dispatchReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("variableWithInvokeFunctionCall_extensionReceiver.kt")
+    public void testVariableWithInvokeFunctionCall_extensionReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableWithInvokeFunctionCall_extensionReceiver.kt");
     }
 
     @Test

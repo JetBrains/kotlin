@@ -1,4 +1,12 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = <getter>(<dispatch receiver>: KtClass): KtSubClass
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = ktClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = KtSubClass
+        symbol = val instance: KtSubClass
+    simpleAccess = Read:

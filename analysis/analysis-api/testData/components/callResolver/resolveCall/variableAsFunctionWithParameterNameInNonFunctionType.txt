@@ -1,4 +1,30 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int), "" -> (b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String) }
-targetFunction = /call(a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /call(a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+            symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int,
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+            symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+        symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int),
+      "" -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+        symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String)
+    }

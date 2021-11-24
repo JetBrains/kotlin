@@ -1,4 +1,30 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (a: kotlin.Int), { s -> true } -> (b: kotlin.Function1<kotlin.String, kotlin.Boolean>) }
-targetFunction = /function(a: kotlin.Int, b: kotlin.Function1<kotlin.String, kotlin.Boolean>): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(a: kotlin.Int, b: kotlin.Function1<kotlin.String, kotlin.Boolean>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int,
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+            symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a: kotlin.Int),
+      { s -> true } -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+        symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>)
+    }

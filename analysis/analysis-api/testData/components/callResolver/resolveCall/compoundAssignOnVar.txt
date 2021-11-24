@@ -1,0 +1,27 @@
+KtSuccessCallInfo:
+  call = KtCompoundVariableAccessCall:
+    compoundAccess = CompoundAssign:
+      kind = PLUS_ASSIGN
+      operand = 1
+      operationPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+          ]
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var i: kotlin.Int

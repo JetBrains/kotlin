@@ -1,4 +1,14 @@
-KtFunctionCall:
-argumentMapping = { 42 -> (v: kotlin.Int) }
-targetFunction = /JavaClass.setFoo(<dispatch receiver>: JavaClass, v: kotlin.Int): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          origin: SOURCE
+          type: JavaClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+    simpleAccess = Write:
+      value = 42

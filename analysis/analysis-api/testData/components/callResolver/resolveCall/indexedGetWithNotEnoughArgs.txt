@@ -1,4 +1,31 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (a: kotlin.Int) }
-targetFunction = ERR<No value passed for parameter 'b', [/C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean]>
-substitutor = <empty substitutor>
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = c
+          isSafeNavigation = false
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
+          valueParameters = [
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int,
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: kotlin.String
+          ]
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int)
+      }
+  ]
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>

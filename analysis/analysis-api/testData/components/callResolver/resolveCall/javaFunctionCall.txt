@@ -1,4 +1,14 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
+        valueParameters = []
+    argumentMapping = {}

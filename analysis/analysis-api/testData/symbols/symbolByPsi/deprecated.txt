@@ -132,6 +132,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /f
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -217,6 +218,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /Foo.f2
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false

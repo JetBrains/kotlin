@@ -1,4 +1,22 @@
-KtDelegatedConstructorCall:
-argumentMapping = { s.length -> (p1: kotlin.Int) }
-targetFunction = <constructor>(p1: kotlin.Int): Sub
-kind = THIS_CALL
+KtSuccessCallInfo:
+  call = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Sub
+        symbol = <constructor>(p1: kotlin.Int): Sub
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: kotlin.Int
+        ]
+    argumentMapping = {
+      s.length -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = p1: kotlin.Int)
+    }

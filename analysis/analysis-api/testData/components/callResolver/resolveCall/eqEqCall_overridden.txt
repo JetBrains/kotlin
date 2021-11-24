@@ -1,0 +1,24 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a1
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+        ]
+    argumentMapping = {
+      a2 -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?)
+    }

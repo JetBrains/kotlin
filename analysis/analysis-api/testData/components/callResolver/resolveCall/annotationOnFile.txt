@@ -1,3 +1,21 @@
-KtAnnotationCall:
-argumentMapping = { "Foo" -> (name: kotlin.String) }
-targetFunction = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+KtSuccessCallInfo:
+  call = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.jvm.JvmName
+        symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = name: kotlin.String
+        ]
+    argumentMapping = {
+      "Foo" -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = name: kotlin.String)
+    }

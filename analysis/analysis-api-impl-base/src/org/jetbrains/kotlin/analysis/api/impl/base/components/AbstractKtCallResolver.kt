@@ -5,18 +5,45 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.calls.KtCompoundAccess
+import org.jetbrains.kotlin.analysis.api.calls.KtExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 
 abstract class AbstractKtCallResolver : KtCallResolver() {
-    protected companion object {
-        val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
-            listOf(
-                CallableId(StandardNames.getFunctionClassId(arity), OperatorNameConventions.INVOKE),
-                CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
-            )
+
+    protected fun KtBinaryExpression.getCompoundAssignKind(): KtCompoundAccess.CompoundAssign.Kind {
+        val compoundAssignKind = when (operationToken) {
+            KtTokens.PLUSEQ -> KtCompoundAccess.CompoundAssign.Kind.PLUS_ASSIGN
+            KtTokens.MINUSEQ -> KtCompoundAccess.CompoundAssign.Kind.MINUS_ASSIGN
+            KtTokens.MULTEQ -> KtCompoundAccess.CompoundAssign.Kind.TIMES_ASSIGN
+            KtTokens.PERCEQ -> KtCompoundAccess.CompoundAssign.Kind.REM_ASSIGN
+            KtTokens.DIVEQ -> KtCompoundAccess.CompoundAssign.Kind.DIV_ASSIGN
+            else -> error("unexpected operator $operationToken")
         }
+        return compoundAssignKind
+    }
+
+    protected fun KtUnaryExpression.getInOrDecOperationKind(): KtCompoundAccess.IncOrDecOperation.Kind {
+        val incOrDecOperationKind = when (operationToken) {
+            KtTokens.PLUSPLUS -> KtCompoundAccess.IncOrDecOperation.Kind.INC
+            KtTokens.MINUSMINUS -> KtCompoundAccess.IncOrDecOperation.Kind.DEC
+            else -> error("unexpected operator $operationToken")
+        }
+        return incOrDecOperationKind
+    }
+
+    protected fun KtExpression.toExplicitReceiverValue(): KtExplicitReceiverValue =
+        KtExplicitReceiverValue(this, isReceiverOfKtSafeQualifiedExpression(), token)
+
+    private fun KtExpression.isReceiverOfKtSafeQualifiedExpression(): Boolean {
+        val safeQualifiedExpression = parentOfType<KtSafeQualifiedExpression>() ?: return false
+        return KtPsiUtil.deparenthesize(safeQualifiedExpression.receiverExpression) == KtPsiUtil.deparenthesize(this)
+    }
+
+    protected companion object {
+        val nonCallBinaryOperator = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
     }
 }

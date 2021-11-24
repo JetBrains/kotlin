@@ -1,0 +1,24 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = A
+        symbol = /MyMap.get(<dispatch receiver>: MyMap<kotlin.String, A>, k: kotlin.String): A
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: kotlin.String
+        ]
+    argumentMapping = {
+      "a" -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = k: kotlin.String)
+    }

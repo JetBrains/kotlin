@@ -1,4 +1,22 @@
-KtFunctionCall:
-argumentMapping = { {x: Int, y: Int -> 1} -> (function: kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>) }
-targetFunction = java/util/Comparator(function: kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>): java.util.Comparator<ft<kotlin.Int, kotlin.Int?>>
-substitutor = <map substitutor: {T = ft<kotlin/Int, kotlin/Int?>}>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = java.util.Comparator<ft<kotlin.Int, kotlin.Int?>>
+        symbol = java/util/Comparator(function: kotlin.Function2<ft<T, T?>, ft<T, T?>, kotlin.Int>): java.util.Comparator<T>
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>
+            symbol = function: kotlin.Function2<ft<T, T?>, ft<T, T?>, kotlin.Int>
+        ]
+    argumentMapping = {
+      {x: Int, y: Int -> 1} -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>
+        symbol = function: kotlin.Function2<ft<T, T?>, ft<T, T?>, kotlin.Int>)
+    }

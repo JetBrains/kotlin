@@ -1,5 +1,23 @@
-KtFunctionalTypeVariableCall:
-target = x: kotlin.Function2<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b))  kotlin.String, kotlin.Unit>
-argumentMapping = { 1 -> (a: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int), "" -> (b: @R|kotlin.ParameterName|(name = String(b))  kotlin.String) }
-targetFunction = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b))  kotlin.String, kotlin.Unit>, a: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(b))  kotlin.String): kotlin.Unit
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b))  kotlin.String, kotlin.Unit>, a: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(b))  kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+            symbol = a: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int,
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(b))  kotlin.String
+            symbol = b: @R|kotlin.ParameterName|(name = String(b))  kotlin.String
+        ]
+    argumentMapping = {}

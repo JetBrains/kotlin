@@ -1,4 +1,22 @@
-KtFunctionCall:
-argumentMapping = { ["v1", "v2"] -> (vararg strings: kotlin.String) }
-targetFunction = <constructor>(vararg strings: kotlin.String): Annotation
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = <constructor>(vararg strings: kotlin.String): Annotation
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg strings: kotlin.String
+        ]
+    argumentMapping = {
+      ["v1", "v2"] -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg strings: kotlin.String)
+    }

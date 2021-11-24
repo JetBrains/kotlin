@@ -1,0 +1,15 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = Obj
+          symbol = <constructor>(): Obj
+          valueParameters = []
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol /Obj.Obj is invisible>

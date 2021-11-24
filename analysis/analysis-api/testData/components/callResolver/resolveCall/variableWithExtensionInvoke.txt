@@ -1,5 +1,24 @@
-KtVariableWithInvokeFunctionCall:
-target = f: Foo
-argumentMapping = { "" -> (t: kotlin.String) }
-targetFunction = /invoke(<extension receiver>: Foo, t: kotlin.String): kotlin.Unit
-substitutor = <map substitutor: {T = kotlin/String}>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+      signature = KtFunctionLikeSignature:
+        receiverType = Foo
+        returnType = kotlin.Unit
+        symbol = /invoke(<extension receiver>: Foo, t: T): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = t: T
+        ]
+    argumentMapping = {
+      "" -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = t: T)
+    }

@@ -1,3 +1,11 @@
-KtAnnotationCall:
-argumentMapping = {  }
-targetFunction = <constructor>(): Anno
+KtSuccessCallInfo:
+  call = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(): Anno
+        valueParameters = []
+    argumentMapping = {}

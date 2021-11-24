@@ -1,0 +1,14 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = i()
+        isSafeNavigation = false
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Long
+        returnType = kotlin.Double
+        symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
+        valueParameters = []
+    argumentMapping = {}

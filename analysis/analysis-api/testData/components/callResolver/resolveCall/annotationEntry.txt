@@ -1,3 +1,21 @@
-KtAnnotationCall:
-argumentMapping = { Annotation("v1", "v2") -> (value: Annotation) }
-targetFunction = <constructor>(value: Annotation): AnnotationInner
+KtSuccessCallInfo:
+  call = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = AnnotationInner
+        symbol = <constructor>(value: Annotation): AnnotationInner
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = Annotation
+            symbol = value: Annotation
+        ]
+    argumentMapping = {
+      Annotation("v1", "v2") -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = value: Annotation)
+    }

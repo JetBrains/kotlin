@@ -1,5 +1,14 @@
-KtVariableWithInvokeFunctionCall:
-target = x: kotlin.Int
-argumentMapping = {  }
-targetFunction = /invoke(<extension receiver>: kotlin.Int): kotlin.String
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.String
+        symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.String
+        valueParameters = []
+    argumentMapping = {}

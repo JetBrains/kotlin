@@ -1,4 +1,13 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = ERR<Setter value is missing, [/JavaClass.setFoo(<dispatch receiver>: JavaClass, v: kotlin.Int): kotlin.Unit]>
-substitutor = <empty substitutor>
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+    simpleAccess = Write:
+      value = null

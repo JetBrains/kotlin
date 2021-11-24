@@ -1,0 +1,17 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
+          valueParameters = []
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol /A.foo is invisible>

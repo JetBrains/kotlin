@@ -71,6 +71,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /X.x
   hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
   isExtension: false
   isExternal: false
   isInfix: false
