@@ -225,7 +225,10 @@ class Fir2IrDeclarationStorage(
 
     fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return fragmentCache.getOrPut(fqName) {
-            return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
+            // Make sure that external package fragments have a different module descriptor. The module descriptors are compared
+            // to determine if objects need regeneration because they are from different modules.
+            val externalFragmentModuleDescriptor = FirModuleDescriptor(session)
+            return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, externalFragmentModuleDescriptor))
         }
     }
 
