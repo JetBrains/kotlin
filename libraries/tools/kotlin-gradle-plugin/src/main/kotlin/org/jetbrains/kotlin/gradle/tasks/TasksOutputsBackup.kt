@@ -5,18 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.*
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import java.io.File
+import java.net.URI
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
+import java.util.zip.*
 
 internal class TaskOutputsBackup(
     val fileSystemOperations: FileSystemOperations,
     val buildDirectory: DirectoryProperty,
     val snapshotsDir: Provider<Directory>,
-    val outputs: FileCollection
+    val outputs: FileCollection,
+    val logger: Logger
 ) {
     fun createSnapshot() {
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
@@ -24,10 +29,16 @@ internal class TaskOutputsBackup(
         outputs.files.toSortedSet().forEachIndexed { index, outputPath ->
             val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
             if (outputPath.isDirectory) {
-                fileSystemOperations.sync { spec ->
-                    spec.from(outputPath)
-                    spec.into(snapshotsDir.map { it.dir(pathInSnapshot) })
-                }
+                snapshotsDir
+                    .map { it.file(pathInSnapshot) }
+                    .get()
+                    .asFile
+                    .run {
+                        compressDirectoryToZip(
+                            File(this, DIRECTORY_SNAPSHOT_ARCHIVE_FILE),
+                            outputPath
+                        )
+                    }
             } else {
                 fileSystemOperations.copy { spec ->
                     spec.from(outputPath)
@@ -46,10 +57,17 @@ internal class TaskOutputsBackup(
             val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
             val fileInSnapshot = snapshotsDir.get().file(pathInSnapshot).asFile
             if (fileInSnapshot.isDirectory) {
-                fileSystemOperations.sync { spec ->
-                    spec.from(snapshotsDir.map { it.dir(pathInSnapshot) })
-                    spec.into(outputPath)
+                val snapshotArchive = File(fileInSnapshot, DIRECTORY_SNAPSHOT_ARCHIVE_FILE)
+                if (!snapshotArchive.exists()) {
+                    logger.warn(
+                        """
+                        |Failed to restore task outputs as snapshot file ${snapshotArchive.absolutePath} does not exist!
+                        |On recompilation full rebuild will be performed.
+                        """.trimMargin()
+                    )
+                    return
                 }
+                uncompressZipIntoDirectory(snapshotArchive, outputPath)
             } else {
                 fileSystemOperations.copy { spec ->
                     spec.from(snapshotsDir.map { it.file(pathInSnapshot).asFile.parentFile })
@@ -63,9 +81,65 @@ internal class TaskOutputsBackup(
         fileSystemOperations.delete { it.delete(snapshotsDir) }
     }
 
+    /**
+     * Kotlin's compilation in a "fat" project may contain a lot of small files that is slow to copy
+     * So we speeding it up by archiving them into single zip file without compression. Such approach reduces snapshotting
+     * time up to half ot the time needed to copy similar files.
+     */
+    private fun compressDirectoryToZip(
+        snapshotFile: File,
+        outputPath: File
+    ) {
+        snapshotFile.parentFile.mkdirs()
+        snapshotFile.createNewFile()
+
+        ZipOutputStream(snapshotFile.outputStream().buffered()).use { zip ->
+            zip.setLevel(Deflater.NO_COMPRESSION)
+            outputPath
+                .walkTopDown()
+                .filter { !it.isDirectory }
+                .forEach { file ->
+                    val entry = ZipEntry(file.relativeTo(outputPath).invariantSeparatorsPath)
+                    zip.putNextEntry(entry)
+                    file.inputStream().buffered().use { it.copyTo(zip) }
+                    zip.closeEntry()
+                }
+            zip.flush()
+            zip.close()
+        }
+    }
+
+    private fun uncompressZipIntoDirectory(
+        snapshotFile: File,
+        outputDirectory: File
+    ) {
+        val outputPath = outputDirectory.toPath()
+        val snapshotUri = URI.create("jar:${snapshotFile.toURI()}")
+        FileSystems.newFileSystem(snapshotUri, emptyMap<String, Any>()).use { zipFs ->
+            zipFs.rootDirectories.forEach { rootDir ->
+                Files.walk(rootDir).use { paths ->
+                    paths.forEach {
+                        if (Files.isDirectory(it)) {
+                            Files.createDirectories(outputPath.resolve(it.normalizedToBeRelative))
+                        } else if (Files.isRegularFile(it)) {
+                            Files.copy(it, outputPath.resolve(it.normalizedToBeRelative), StandardCopyOption.REPLACE_EXISTING)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private val Path.normalizedToBeRelative: String
+        get() = if (toString() == "/") "." else toString().removePrefix("/")
+
     private val File.pathRelativeToBuildDirectory: String
         get() {
             val buildDir = buildDirectory.get().asFile
             return relativeTo(buildDir).path
         }
+
+    companion object {
+        private const val DIRECTORY_SNAPSHOT_ARCHIVE_FILE = "snapshot.zip"
+    }
 }

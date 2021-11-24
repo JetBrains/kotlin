@@ -63,7 +63,8 @@ internal class GradleCompilerRunnerWithWorkers(
                     fileSystemOperations,
                     parameters.buildDir,
                     parameters.snapshotsDir,
-                    parameters.taskOutputs
+                    parameters.taskOutputs,
+                    logger
                 )
             } else {
                 null

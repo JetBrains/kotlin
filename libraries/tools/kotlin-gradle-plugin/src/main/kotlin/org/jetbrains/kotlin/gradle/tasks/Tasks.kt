@@ -353,7 +353,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                             fileSystemOperations,
                             layout.buildDirectory,
                             layout.buildDirectory.dir("snapshot/kotlin/$name"),
-                            allOutputFiles()
+                            allOutputFiles(),
+                            logger
                         ).also {
                             it.createSnapshot()
                         }
