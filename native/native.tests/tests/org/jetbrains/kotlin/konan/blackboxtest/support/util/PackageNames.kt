@@ -71,3 +71,6 @@ internal fun joinPackageNames(a: PackageFQN, b: PackageFQN): PackageFQN = when {
     b.isEmpty() -> a
     else -> "$a.$b"
 }
+
+internal fun String.prependPackageName(packageName: PackageFQN): String =
+    if (packageName.isEmpty()) this else "$packageName.$this"
