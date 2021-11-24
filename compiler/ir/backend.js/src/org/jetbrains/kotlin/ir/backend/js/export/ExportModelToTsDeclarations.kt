@@ -93,9 +93,8 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
     }
 
     is ExportedConstructor -> {
-        val visibility = if (isProtected) "protected " else ""
         val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
-        "${visibility}constructor($renderedParameters);"
+        "${visibility.keyword}constructor($renderedParameters);"
     }
 
     is ExportedConstructSignature -> {
@@ -220,7 +219,7 @@ fun ExportedClass.withProtectedConstructors(): ExportedClass {
         if (it !is ExportedConstructor || it.isProtected) {
             it
         } else {
-            it.copy(isProtected = true)
+            it.copy(visibility = ExportedVisibility.PROTECTED)
         }
     })
 }

@@ -100,7 +100,7 @@ declare namespace JS_TESTS {
                 readonly prop: string;
             }
         }
-        class TestEnumClass {
+        abstract class TestEnumClass {
             private constructor();
             readonly constructorParameter: string;
             static readonly A: foo.TestEnumClass & {

@@ -29,6 +29,7 @@ enum class Bar {
         init {
             d = "d2"
         }
+        fun huh() = "huh"
     };
 
     val foo = ordinal
@@ -66,19 +67,20 @@ function box() {
     if (this["export_enum_class"].Bar.A.bay() !== "A") return "fail15"
     if (this["export_enum_class"].Bar.B.bay() !== "B") return "fail16"
 
-    if (this["export_enum_class"].Bar.B.constructor.prototype.hasOwnProperty('baz')) return "fail17"
+    if (this["export_enum_class"].Bar.B.constructor.prototype.hasOwnProperty('d')) return "fail17"
+    if (this["export_enum_class"].Bar.B.constructor.prototype.hasOwnProperty('huh')) return "fail18"
 
-    if (this["export_enum_class"].Foo.valueOf("A") !== this["export_enum_class"].Foo.A) return "fail18"
-    if (this["export_enum_class"].Foo.valueOf("B") !== this["export_enum_class"].Foo.B) return "fail19"
+    if (this["export_enum_class"].Foo.valueOf("A") !== this["export_enum_class"].Foo.A) return "fail19"
+    if (this["export_enum_class"].Foo.valueOf("B") !== this["export_enum_class"].Foo.B) return "fail20"
 
-    if (this["export_enum_class"].Foo.values().indexOf(this["export_enum_class"].Foo.A) === -1) return "fail20"
-    if (this["export_enum_class"].Foo.values().indexOf(this["export_enum_class"].Foo.B) === -1) return "fail21"
+    if (this["export_enum_class"].Foo.values().indexOf(this["export_enum_class"].Foo.A) === -1) return "fail21"
+    if (this["export_enum_class"].Foo.values().indexOf(this["export_enum_class"].Foo.B) === -1) return "fail22"
 
-    if (this["export_enum_class"].Foo.A.name !== "A") return "fail22"
-    if (this["export_enum_class"].Foo.B.name !== "B") return "fail23"
+    if (this["export_enum_class"].Foo.A.name !== "A") return "fail23"
+    if (this["export_enum_class"].Foo.B.name !== "B") return "fail24"
 
-    if (this["export_enum_class"].Foo.A.ordinal !== 0) return "fail24"
-    if (this["export_enum_class"].Foo.B.ordinal !== 1) return "fail23"
+    if (this["export_enum_class"].Foo.A.ordinal !== 0) return "fail25"
+    if (this["export_enum_class"].Foo.B.ordinal !== 1) return "fail26"
 
     return "OK"
 }

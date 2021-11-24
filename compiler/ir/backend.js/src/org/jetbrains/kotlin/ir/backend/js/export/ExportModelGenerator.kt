@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.isExportedInterface
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
@@ -71,8 +73,12 @@ class ExportModelGenerator(
         }
     }
 
-    private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? =
-        when (val exportability = functionExportability(function)) {
+    private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? {
+        if (function.origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION) {
+            return null
+        }
+
+        return when (val exportability = functionExportability(function)) {
             is Exportability.NotNeeded -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
@@ -90,6 +96,7 @@ class ExportModelGenerator(
                 )
             }
         }
+    }
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
@@ -97,7 +104,7 @@ class ExportModelGenerator(
                 constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
         return ExportedConstructor(
             parameters = allValueParameters.map { exportParameter(it) },
-            isProtected = constructor.visibility == DescriptorVisibilities.PROTECTED
+            visibility = constructor.visibility.toExportedVisibility()
         )
     }
 
@@ -115,7 +122,7 @@ class ExportModelGenerator(
             // TODO: Report a frontend error
             if (accessor.extensionReceiverParameter != null)
                 return null
-            if (accessor.isFakeOverride && !accessor.isEnumFakeOverriddenDeclaration(context)) {
+            if (accessor.isFakeOverride && !accessor.isAllowedFakeOverriddenDeclaration(context)) {
                 return null
             }
         }
@@ -254,11 +261,20 @@ class ExportModelGenerator(
             enumExportedMember
         }
 
+        val privateConstructor = ExportedConstructor(
+            parameters = emptyList(),
+            visibility = ExportedVisibility.PRIVATE
+        )
+
         return exportClass(
             klass,
-            members,
+            listOf(privateConstructor) + members,
             nestedClasses
-        )
+        ).let {
+            (it as ExportedClass).copy(
+                isAbstract = true,
+            )
+        }
     }
 
     private fun exportClassDeclarations(
@@ -382,7 +398,7 @@ class ExportModelGenerator(
         val enumEntries = enumEntriesToOrdinal.keys
         return when (candidate) {
             is IrProperty -> {
-                if (candidate.isEnumFakeOverriddenDeclaration(context)) {
+                if (candidate.isAllowedFakeOverriddenDeclaration(context)) {
                     val type: ExportedType? = when (candidate.getExportedIdentifier()) {
                         "name" -> enumEntries
                             .map { it.getExportedIdentifier() }
@@ -507,7 +523,7 @@ class ExportModelGenerator(
             return Exportability.Prohibited("Inline reified function")
         if (function.isSuspend)
             return Exportability.Prohibited("Suspend function")
-        if (function.isFakeOverride)
+        if (function.isFakeOverride && !function.isAllowedFakeOverriddenDeclaration(context))
             return Exportability.NotNeeded
         if (function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
             function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
@@ -523,9 +539,6 @@ class ExportModelGenerator(
         if (parentClass != null && context.mapping.enumClassToInitEntryInstancesFun[parentClass] == function) {
             return Exportability.NotNeeded
         }
-
-        if (function.isFakeOverriddenFromAny())
-            return Exportability.NotNeeded
 
         val nameString = function.name.asString()
         if (nameString.endsWith("-impl"))
@@ -605,7 +618,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
         if (overriddenNonEmpty) {
             return declaration.isOverriddenExported(context) ||
                     (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
-                    || declaration.isEnumFakeOverriddenDeclaration(context)
+                    || declaration.isAllowedFakeOverriddenDeclaration(context)
         }
     }
 
@@ -619,12 +632,17 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     }
 }
 
-fun IrOverridableDeclaration<*>.isEnumFakeOverriddenDeclaration(context: JsIrBackendContext?): Boolean {
+fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext?): Boolean {
+    if (this.resolveFakeOverride(allowAbstract = true)?.parentClassOrNull.isExportedInterface()) {
+        return true
+    }
+
     return context?.irBuiltIns?.enumClass?.let { enumClass ->
         overriddenSymbols
             .asSequence()
             .map { it.owner }
-            .filterIsInstance<IrDeclaration>()
+            .filterIsInstance<IrOverridableDeclaration<*>>()
+            .filter { it.overriddenSymbols.isEmpty() }
             .mapNotNull { it.parentClassOrNull }
             .map { it.symbol }
             .any { it == enumClass }
@@ -639,6 +657,12 @@ fun IrDeclaration.isExported(context: JsIrBackendContext?): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExported(candidate, context)
 }
+
+private fun DescriptorVisibility.toExportedVisibility() =
+    when (this) {
+        DescriptorVisibilities.PROTECTED -> ExportedVisibility.PROTECTED
+        else -> ExportedVisibility.DEFAULT
+    }
 
 private val reservedWords = setOf(
     "break",

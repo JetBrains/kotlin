@@ -18,4 +18,5 @@ interface JsStatementOrigins {
     object FACTORY_ORIGIN : IrDeclarationOriginImpl("FACTORY_ORIGIN")
     object COROUTINE_ROOT_LOOP : IrStatementOriginImpl("COROUTINE_ROOT_LOOP")
     object COROUTINE_SWITCH : IrStatementOriginImpl("COROUTINE_SWITCH")
+    object CLASS_REFERENCE : IrStatementOriginImpl("CLASS_REFERENCE")
 }

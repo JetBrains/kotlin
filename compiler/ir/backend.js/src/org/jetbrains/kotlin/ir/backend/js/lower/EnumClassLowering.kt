@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -445,7 +446,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
             context.irFactory.buildFun {
                 name = Name.identifier(createEntryAccessorName(irClass.name.identifier, enumEntry))
                 returnType = enumEntry.getType(irClass)
-                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+                origin = JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION
             }.apply {
                 parent = irClass
             }

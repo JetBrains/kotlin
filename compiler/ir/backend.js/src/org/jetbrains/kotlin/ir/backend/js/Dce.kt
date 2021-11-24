@@ -405,7 +405,7 @@ fun usefulDeclarations(
                             // https://youtrack.jetbrains.com/issue/KT-46672
                             // TODO: Possibly solution with origin is not so good
                             //  There is option with applying this hack to jsGetKClass
-                            if (expression.origin == JsLoweredDeclarationOrigin.CLASS_REFERENCE) {
+                            if (expression.origin == JsStatementOrigins.CLASS_REFERENCE) {
                                 // Maybe we need to filter primary constructor
                                 // Although at this time, we should have only primary constructor
                                 (ref as IrClass)

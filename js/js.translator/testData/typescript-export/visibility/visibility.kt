@@ -55,3 +55,8 @@ open class Class {
     public fun publicFun() = 10
     public class publicClass
 }
+
+enum class EnumClass {
+    EC1,
+    EC2
+}

@@ -142,7 +142,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
         JsIrBuilder.buildCall(
             reflectionSymbols.getClassData,
             typeArguments = listOf(type),
-            origin = JsLoweredDeclarationOrigin.CLASS_REFERENCE
+            origin = JsStatementOrigins.CLASS_REFERENCE
         )
 
     private fun buildCall(name: IrSimpleFunctionSymbol, vararg args: IrExpression): IrExpression =

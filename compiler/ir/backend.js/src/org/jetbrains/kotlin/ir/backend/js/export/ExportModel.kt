@@ -37,8 +37,11 @@ data class ExportedFunction(
 
 data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
+    val visibility: ExportedVisibility
+) : ExportedDeclaration() {
     val isProtected: Boolean
-) : ExportedDeclaration()
+        get() = visibility == ExportedVisibility.PROTECTED
+}
 
 data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
@@ -130,4 +133,10 @@ sealed class ExportedType {
 
     fun withImplicitlyExported(implicitlyExportedType: Boolean) =
         if (implicitlyExportedType) ImplicitlyExportedType(this) else this
+}
+
+enum class ExportedVisibility(val keyword: String) {
+    DEFAULT(""),
+    PRIVATE("private "),
+    PROTECTED("protected ")
 }

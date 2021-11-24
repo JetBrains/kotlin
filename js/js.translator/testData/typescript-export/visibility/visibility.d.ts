@@ -33,4 +33,19 @@ declare namespace JS_TESTS {
             constructor();
         }
     }
+    abstract class EnumClass {
+        private constructor();
+        static readonly EC1: EnumClass & {
+            readonly name: "EC1";
+            readonly ordinal: 0;
+        };
+        static readonly EC2: EnumClass & {
+            readonly name: "EC2";
+            readonly ordinal: 1;
+        };
+        static values(): Array<EnumClass>;
+        static valueOf(value: string): EnumClass;
+        readonly name: "EC1" | "EC2";
+        readonly ordinal: 0 | 1;
+    }
 }
