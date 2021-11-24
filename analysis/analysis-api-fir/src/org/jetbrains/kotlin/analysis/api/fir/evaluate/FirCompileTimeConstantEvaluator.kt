@@ -34,14 +34,26 @@ internal object FirCompileTimeConstantEvaluator {
     // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
     fun evaluate(expression: FirExpression): FirConstExpression<*>? =
         when (expression) {
-            is FirConstExpression<*> -> expression
+            is FirConstExpression<*> -> expression.adaptToConstKind()
             is FirFunctionCall -> evaluate(expression)
             else -> null
         }
 
     fun evaluateAsKtConstantExpression(expression: FirExpression): KtConstantValue? {
         val evaluated = evaluate(expression) ?: return null
-        return KtConstantValueFactory.createConstantValue(evaluated.value, evaluated.psi as? KtElement)
+
+        val ktConstantValue = KtConstantValueFactory.createConstantValue(evaluated.value, evaluated.psi as? KtElement) ?: return null
+        check(ktConstantValue.constantValueKind == evaluated.kind) {
+            "Expected ${evaluated.kind} for created KtConstantValue but ${ktConstantValue.constantValueKind} found"
+        }
+        return ktConstantValue
+    }
+
+    private fun FirConstExpression<*>.adaptToConstKind(): FirConstExpression<*> {
+        return kind.toConstExpression(
+            source,
+            kind.convertToNumber(value as? Number) ?: value
+        )
     }
 
     // TODO: Rework to handle nested expressions
@@ -81,7 +93,7 @@ internal object FirCompileTimeConstantEvaluator {
         // Lastly, we should preserve the resolved type of the original function call.
         return expression.apply {
             replaceTypeRef(expectedType)
-        } ?: this
+        }
     }
 
     private fun <T> ConstantValueKind<T>.toCompileTimeType(): CompileTimeType {
@@ -195,7 +207,7 @@ internal object FirCompileTimeConstantEvaluator {
             else -> error("Unknown constant value")
         }
 
-    private fun ConstantValueKind<*>.convertToNumber(value: Number?): Number? {
+    private fun ConstantValueKind<*>.convertToNumber(value: Number?): Any? {
         if (value == null) {
             return null
         }
@@ -206,14 +218,17 @@ internal object FirCompileTimeConstantEvaluator {
             this == ConstantValueKind.Int -> value.toInt()
             this == ConstantValueKind.Long -> value.toLong()
             this == ConstantValueKind.Short -> value.toShort()
+            this == ConstantValueKind.UnsignedByte -> value.toLong().toUByte()
+            this == ConstantValueKind.UnsignedShort -> value.toLong().toUShort()
+            this == ConstantValueKind.UnsignedInt -> value.toLong().toUInt()
+            this == ConstantValueKind.UnsignedLong -> value.toLong().toULong()
             else -> null
         }
     }
 
-    private fun <T> ConstantValueKind<T>?.toConstExpression(source: KtSourceElement?, value: Any): FirConstExpression<T>? =
-        if (this == null) null else
-            @Suppress("UNCHECKED_CAST")
-            buildConstExpression(source, this, value as T)
+    private fun <T> ConstantValueKind<T>.toConstExpression(source: KtSourceElement?, value: Any?): FirConstExpression<T> =
+        @Suppress("UNCHECKED_CAST")
+        buildConstExpression(source, this, value as T)
 
     private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
         val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
