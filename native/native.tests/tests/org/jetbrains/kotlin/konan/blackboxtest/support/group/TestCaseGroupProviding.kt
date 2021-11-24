@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import kotlin.reflect.KClass
 
-@Target(AnnotationTarget.CLASS)
-annotation class NativeBlackBoxTestCaseGroupProvider(val value: KClass<*>)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+internal annotation class TestCaseGroupProviding(val providerClass: KClass<out TestCaseGroupProvider>)
