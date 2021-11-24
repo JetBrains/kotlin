@@ -539,7 +539,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         private val KotlinNativeCompilationData<*>.apiElementsConfigurationName: String
             get() = when (val dataOwner = owner) {
-                is KotlinGradleVariant -> dataOwner.apiElementsConfigurationName
+                is KotlinGradleVariant -> dataOwner.apiElementsConfiguration.name
                 is KotlinTarget -> dataOwner.apiElementsConfigurationName
                 else -> error("unexpected owner of $this")
             }

@@ -161,7 +161,7 @@ internal class FragmentGranularMetadataResolver(
             // resolve the dependencies of that variant getting the host-specific metadata artifact
             relevantVariantResolution?.let { resolution ->
                 val configurationResolvingPlatformVariant =
-                    (resolution.requestingVariant as KotlinGradleVariant).compileDependencyConfiguration
+                    (resolution.requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration.get()
                 val hostSpecificArtifact = ResolvedMppVariantsProvider.get(project)
                     .getHostSpecificMetadataArtifactByRootModule(
                         dependencyModule.moduleIdentifier,

@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentModuleCapabilityConfigurator.setModuleCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.*

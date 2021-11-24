@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.refinesClosure
 
-interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Named {
+interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
 
     override val containingModule: KotlinGradleModule
@@ -38,16 +38,22 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Na
         const val COMMON_FRAGMENT_NAME = "common"
     }
 
-    /** This configuration includes the dependencies from the refines-parents */
-    val transitiveApiConfigurationName: String
+    override val apiConfigurationName: String
+        get() = apiConfiguration.name
 
-    /** This configuration includes the dependencies from the refines-parents */
-    val transitiveImplementationConfigurationName: String
+    override val implementationConfigurationName: String
+        get() = implementationConfiguration.name
+
+    override val compileOnlyConfigurationName: String
+        get() = compileOnlyConfiguration.name
+
+    override val runtimeOnlyConfigurationName: String
+        get() = runtimeOnlyConfiguration.name
 
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames +
                 // TODO: resolvable metadata configurations?
-                listOf(transitiveApiConfigurationName, transitiveImplementationConfigurationName)
+                listOf(transitiveApiConfiguration.name, transitiveImplementationConfiguration.name)
 }
 
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.project.model.KotlinModuleVariant
@@ -18,7 +18,7 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val platformType: KotlinPlatformType
 
     // TODO generalize with KotlinCompilation?
-    val compileDependencyConfigurationName: String
+    val compileDependenciesConfiguration: NamedDomainObjectProvider<Configuration>
 
     var compileDependencyFiles: FileCollection
 
@@ -29,30 +29,28 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val sourceArchiveTaskName: String
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
-    val apiElementsConfigurationName: String
+    val apiElementsConfiguration: NamedDomainObjectProvider<Configuration>
 
     val gradleVariantNames: Set<String>
 }
 
 interface KotlinGradleVariantWithRuntime : KotlinGradleVariant {
     // TODO deduplicate with KotlinCompilation?
-    val runtimeDependencyConfigurationName: String
+    val runtimeDependenciesConfiguration: NamedDomainObjectProvider<Configuration>
 
     var runtimeDependencyFiles: FileCollection
 
     val runtimeFiles: ConfigurableFileCollection
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
-    val runtimeElementsConfigurationName: String
+    val runtimeElementsConfiguration: NamedDomainObjectProvider<Configuration>
 }
 
 interface KotlinNativeVariant : KotlinGradleVariant {
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.native
 
-    /** A configuration name for the metadata of the host-specific fragments which this variant includes,
-     *  if applies to this Native variant; null otherwise */
-    val hostSpecificMetadataElementsConfigurationName: String?
+    val hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
 
     var enableEndorsedLibraries: Boolean
 }

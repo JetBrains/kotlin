@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.isHostSpecificKonanTargetsSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -18,18 +18,25 @@ import javax.inject.Inject
 abstract class KotlinNativeVariantInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    val konanTarget: KonanTarget
+    val konanTarget: KonanTarget,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    final override val hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
 ) : KotlinNativeVariant,
-    KotlinGradleVariantInternal(containingModule, fragmentName),
+    KotlinGradleVariantInternal(
+        containingModule = containingModule,
+        fragmentName = fragmentName,
+        dependencyConfigurations = dependencyConfigurations,
+        compileDependenciesConfiguration = compileDependencyConfiguration,
+        apiElementsConfiguration = apiElementsConfiguration
+    ),
     SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
-
-    final override val hostSpecificMetadataElementsConfigurationName: String?
-        get() = disambiguateName("hostSpecificMetadataElements").takeIf { includesHostSpecificMetadata }
 
     override var enableEndorsedLibraries: Boolean = false
 
     override val gradleVariantNames: Set<String>
-        get() = listOf(apiElementsConfigurationName).flatMap { listOf(it, publishedConfigurationName(it)) }.toSet()
+        get() = listOf(apiElementsConfiguration.name).flatMap { listOf(it, publishedConfigurationName(it)) }.toSet()
 
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
         DefaultCInteropSettings(project, cinteropName, compilationData)
@@ -38,24 +45,149 @@ abstract class KotlinNativeVariantInternal(
     override val compilationData by lazy { KotlinNativeVariantCompilationData(this) }
 }
 
-internal val KotlinNativeVariantInternal.includesHostSpecificMetadata: Boolean
-    get() = isHostSpecificKonanTargetsSet(setOf(konanTarget))
+class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
+    val konanTarget: KonanTarget,
+    val variantClass: Class<T>,
+    private val constructor: (
+        containingModule: KotlinGradleModule,
+        fragmentName: String,
+        dependencyConfigurations: KotlinDependencyConfigurations,
+        compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+        apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+        hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    ) -> T
+) {
+    operator fun invoke(
+        containingModule: KotlinGradleModule,
+        fragmentName: String,
+        dependencyConfigurations: KotlinDependencyConfigurations,
+        compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+        apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+        hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    ): T = constructor(
+        containingModule, fragmentName,
+        dependencyConfigurations,
+        compileDependencyConfiguration,
+        apiElementsConfiguration,
+        hostSpecificMetadataElementsConfiguration
+    )
+}
 
 // FIXME codegen
-open class KotlinLinuxX64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.LINUX_X64)
+open class KotlinLinuxX64Variant @Inject constructor(
+    containingModule: KotlinGradleModule,
+    fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+) : KotlinNativeVariantInternal(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    konanTarget = KonanTarget.LINUX_X64,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependencyConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
+) {
+    companion object {
+        val constructor = KotlinNativeVariantConstructor(
+            KonanTarget.LINUX_X64, KotlinLinuxX64Variant::class.java, ::KotlinLinuxX64Variant
+        )
+    }
+}
 
-open class KotlinMacosX64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.MACOS_X64)
+open class KotlinMacosX64Variant @Inject constructor(
+    containingModule: KotlinGradleModule,
+    fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+) : KotlinNativeVariantInternal(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    konanTarget = KonanTarget.MACOS_X64,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependencyConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
+) {
+    companion object {
+        val constructor = KotlinNativeVariantConstructor(
+            KonanTarget.MACOS_X64, KotlinMacosX64Variant::class.java, ::KotlinMacosX64Variant
+        )
+    }
+}
 
-open class KotlinMacosArm64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.MACOS_ARM64)
+open class KotlinMacosArm64Variant @Inject constructor(
+    containingModule: KotlinGradleModule, fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+) : KotlinNativeVariantInternal(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    konanTarget = KonanTarget.MACOS_ARM64,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependencyConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
+) {
+    companion object {
+        val constructor = KotlinNativeVariantConstructor(
+            KonanTarget.MACOS_ARM64, KotlinMacosArm64Variant::class.java, ::KotlinMacosArm64Variant
+        )
+    }
+}
 
-open class KotlinIosX64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.IOS_X64)
+open class KotlinIosX64Variant @Inject constructor(
+    containingModule: KotlinGradleModule,
+    fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+) : KotlinNativeVariantInternal(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    konanTarget = KonanTarget.IOS_X64,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependencyConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
+) {
+    companion object {
+        val constructor = KotlinNativeVariantConstructor(
+            KonanTarget.IOS_X64, KotlinIosX64Variant::class.java, ::KotlinIosX64Variant
+        )
+    }
+}
 
-open class KotlinIosArm64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.IOS_ARM64)
+open class KotlinIosArm64Variant @Inject constructor(
+    containingModule: KotlinGradleModule,
+    fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+) : KotlinNativeVariantInternal(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    konanTarget = KonanTarget.IOS_ARM64,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependencyConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
+) {
+    companion object {
+        val constructor = KotlinNativeVariantConstructor(
+            KonanTarget.IOS_ARM64, KotlinIosArm64Variant::class.java, ::KotlinIosArm64Variant
+        )
+    }
+}
+
 
 interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
     val konanTarget: KonanTarget

@@ -48,7 +48,7 @@ internal fun customizeKotlinDependencies(project: Project) {
 }
 
 private fun configureDefaultVersionsResolutionStrategy(project: Project) {
-    project.configurations.all { configuration ->
+    project.configurations.configureEach { configuration ->
         // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
         configuration.withDependencies { dependencySet ->
             val coreLibrariesVersion = project.topLevelExtension.coreLibrariesVersion

@@ -17,7 +17,9 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentModuleCapabilityConfigurator.setModuleCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -26,14 +28,14 @@ import javax.inject.Inject
 
 fun VariantPublishingConfigurator.configureNativeVariantPublication(variant: KotlinNativeVariantInternal) {
     val publishConfigurations = listOfNotNull(
-        variant.apiElementsConfigurationName,
-        variant.hostSpecificMetadataElementsConfigurationName // host-specific metadata may be absent
+        variant.apiElementsConfiguration.name,
+        variant.hostSpecificMetadataElementsConfiguration?.name // host-specific metadata may be absent
     )
     configurePublishing(variant, variant, publishConfigurations)
 }
 
 fun VariantPublishingConfigurator.configureSingleVariantPublication(variant: KotlinGradlePublishedVariantWithRuntime) {
-    val publishConfigurations = listOf(variant.apiElementsConfigurationName, variant.runtimeElementsConfigurationName)
+    val publishConfigurations = listOf(variant.apiElementsConfiguration.name, variant.runtimeElementsConfiguration.name)
     configurePublishing(variant, variant, publishConfigurations)
 }
 
@@ -50,8 +52,8 @@ open class VariantPublishingConfigurator @Inject constructor(
     open fun inferMavenScopes(variant: KotlinGradleVariant, configurationNames: Iterable<String>): Map<String, String?> =
         configurationNames.associateWith { configurationName ->
             when {
-                configurationName == variant.apiElementsConfigurationName -> "compile"
-                variant is KotlinGradleVariantWithRuntime && configurationName == variant.runtimeElementsConfigurationName -> "runtime"
+                configurationName == variant.apiElementsConfiguration.name -> "compile"
+                variant is KotlinGradleVariantWithRuntime && configurationName == variant.runtimeElementsConfiguration.name -> "runtime"
                 else -> null
             }
         }

@@ -5,14 +5,31 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.BasePluginConvention
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 
-open class KotlinJvmVariant(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinGradlePublishedVariantWithRuntime(containingModule, fragmentName) {
+open class KotlinJvmVariant(
+    containingModule: KotlinGradleModule,
+    fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations,
+    compileDependenciesConfiguration: NamedDomainObjectProvider<Configuration>,
+    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
+    runtimeDependenciesConfiguration: NamedDomainObjectProvider<Configuration>,
+    runtimeElementsConfiguration: NamedDomainObjectProvider<Configuration>
+) : KotlinGradlePublishedVariantWithRuntime(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependenciesConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    runtimeDependencyConfiguration = runtimeDependenciesConfiguration,
+    runtimeElementsConfiguration = runtimeElementsConfiguration
+) {
     override val compilationData: KotlinJvmVariantCompilationData by lazy { KotlinJvmVariantCompilationData(this) }
 
     override val platformType: KotlinPlatformType

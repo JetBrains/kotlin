@@ -10,6 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.getAllCompiledSourceSetMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
@@ -53,7 +54,7 @@ internal open class TransformKotlinGranularMetadataForFragment
         val participatingFragments = fragment.refinesClosure
         val participatingCompilations = participatingFragments.flatMap { it.containingModule.variantsContainingFragment(it) }
         participatingCompilations.associate { variant ->
-            variant.fragmentName to project.configurations.getByName(variant.compileDependencyConfigurationName)
+            variant.fragmentName to variant.compileDependenciesConfiguration.get()
                 .allDependencies.map { listOf(it.group, it.name, it.version) }.toSet()
         }
     }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecks
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
@@ -27,11 +26,12 @@ import org.jetbrains.kotlin.project.model.refinesClosure
 import javax.inject.Inject
 
 open class KotlinGradleFragmentInternal @Inject constructor(
-    override val containingModule: KotlinGradleModule,
-    override val fragmentName: String
-) : KotlinGradleFragment {
+    final override val containingModule: KotlinGradleModule,
+    final override val fragmentName: String,
+    dependencyConfigurations: KotlinDependencyConfigurations
+) : KotlinGradleFragment, KotlinDependencyConfigurations by dependencyConfigurations {
 
-    override fun getName(): String = fragmentName
+    final override fun getName(): String = fragmentName
 
     final override val project: Project // overriding with final to avoid warnings
         get() = super.project
@@ -49,12 +49,14 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     override fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
         _directRefinesDependencies.add(other)
         other.configure { checkCanRefine(it) }
-        listOf(
-            KotlinGradleFragment::transitiveApiConfigurationName,
-            KotlinGradleFragment::transitiveImplementationConfigurationName
-        ).forEach { getConfiguration ->
-            project.addExtendsFromRelation(getConfiguration(this), getConfiguration(other.get())) // todo eager instantiation; fix?
-        }
+
+        project.addExtendsFromRelation(
+            this.transitiveApiConfiguration.name, other.get().transitiveApiConfiguration.name
+        )
+
+        project.addExtendsFromRelation(
+            this.transitiveImplementationConfiguration.name, other.get().transitiveImplementationConfiguration.name
+        )
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
             kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KotlinGradleFragmentInternal, other.get())
@@ -71,6 +73,7 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
+    /*
     override val apiConfigurationName: String
         get() = disambiguateName("api")
 
@@ -82,6 +85,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
 
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName("runtimeOnly")
+
+     */
 
     private val _directRefinesDependencies = mutableSetOf<Provider<KotlinGradleFragment>>()
 
@@ -96,17 +101,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
             "$fragmentName.kotlin", "Kotlin sources for fragment $fragmentName"
         )
 
-    override val transitiveApiConfigurationName: String
-        get() = disambiguateName("transitiveApi")
-
-    override val transitiveImplementationConfigurationName: String
-        get() = disambiguateName("transitiveImplementation")
-
     override fun toString(): String = "fragment $fragmentName in $containingModule"
 }
-
-internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
-    lowerCamelCaseName(fragmentName, containingModule.moduleIdentifier.moduleClassifier ?: KotlinGradleModule.MAIN_MODULE_NAME, simpleName)
 
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
     get() = (this as KotlinModuleFragment).refinesClosure.map { it as KotlinGradleFragment }.toSet()
