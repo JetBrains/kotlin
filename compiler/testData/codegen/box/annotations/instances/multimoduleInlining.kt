@@ -1,8 +1,3 @@
-// With FIR the annotation implementation class is not regenerated as it
-// is seen as coming from the same module.
-// See IrSourceCompilerForInline.kt:isCallInsideSameModuleAsCallee.
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: assertion failed: assert(one.javaClass.getEnclosingClass().getName() == "test.C")
 // TARGET_BACKEND: JVM_IR
 // IGNORE_DEXING
 // WITH_STDLIB
