@@ -258,9 +258,21 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
     if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
+val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run Android Kotlin Gradle plugin tests"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("AndroidKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask)
+    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
@@ -314,7 +326,8 @@ tasks.withType<Test> {
         jsTestsTask.name,
         daemonsTestsTask.name,
         otherPluginsTestTask.name,
-        mppTestsTask.name
+        mppTestsTask.name,
+        androidTestsTask.name
     )
     if (shouldApplyJunitPlatform) {
         maxHeapSize = "512m"
