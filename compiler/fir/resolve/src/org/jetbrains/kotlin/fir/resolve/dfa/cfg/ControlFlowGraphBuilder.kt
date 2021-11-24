@@ -1178,6 +1178,9 @@ class ControlFlowGraphBuilder {
         return Pair(kind, unionNode)
     }
 
+    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression): WhenSubjectExpressionExitNode {
+        return createWhenSubjectExpressionExitNode(expression).also { addNewSimpleNode(it) }
+    }
 
     // ----------------------------------- Annotations -----------------------------------
 

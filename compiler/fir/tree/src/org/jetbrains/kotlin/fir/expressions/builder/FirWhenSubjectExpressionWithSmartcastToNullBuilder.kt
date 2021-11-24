@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcas
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionWithSmartcastToNullImpl
 
 class FirWhenSubjectExpressionWithSmartcastToNullBuilder : FirWrappedExpressionWithSmartcastToNullBuilder<FirWhenSubjectExpression>() {
-    fun build(): FirWhenSubjectExpressionWithSmartcastToNull {
+    override fun build(): FirWhenSubjectExpressionWithSmartcastToNull {
         return FirWhenSubjectExpressionWithSmartcastToNullImpl(
             originalExpression,
             smartcastType,

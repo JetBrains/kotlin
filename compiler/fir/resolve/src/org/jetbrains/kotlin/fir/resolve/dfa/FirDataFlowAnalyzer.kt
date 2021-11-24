@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -165,8 +162,24 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Requests -----------------------------------
 
-    fun isAccessToUnstableLocalVariable(qualifiedAccessExpression: FirQualifiedAccessExpression): Boolean {
+    fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean {
+        val qualifiedAccessExpression = when (expression) {
+            is FirQualifiedAccessExpression -> expression
+            is FirWhenSubjectExpression -> {
+                val whenExpression = expression.whenRef.value
+                when {
+                    whenExpression.subjectVariable != null -> return true
+                    else -> whenExpression.subject as? FirQualifiedAccessExpression
+                }
+            }
+            else -> null
+        }  ?: return false
         return context.firLocalVariableAssignmentAnalyzer?.isAccessToUnstableLocalVariable(qualifiedAccessExpression) == true
+    }
+
+    fun getTypeUsingSmartcastInfo(whenSubjectExpression: FirWhenSubjectExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
+        val symbol = whenSubjectExpression.symbol ?: return null
+        return getTypeUsingSmartcastInfo(symbol, whenSubjectExpression)
     }
 
     fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
@@ -175,8 +188,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
          * If there is no useful information there is no data flow variable also
          */
         val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.symbol ?: return null
+        return getTypeUsingSmartcastInfo(symbol, qualifiedAccessExpression)
+    }
+
+    private fun getTypeUsingSmartcastInfo(
+        symbol: FirBasedSymbol<*>,
+        expression: FirExpression
+    ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = graphBuilder.lastNode.flow
-        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, qualifiedAccessExpression, flow) ?: return null
+        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, expression, flow) ?: return null
         val stability = variable.stability
         val result = mutableListOf<ConeKotlinType>()
         flow.directAliasMap[variable]?.let {
@@ -738,6 +758,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
         whenExitNode.mergeIncomingFlow()
+    }
+
+    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression) {
+        graphBuilder.exitWhenSubjectExpression(expression).mergeIncomingFlow()
     }
 
     // ----------------------------------- While Loop -----------------------------------

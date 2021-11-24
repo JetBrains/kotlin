@@ -15,6 +15,8 @@ abstract class FirWrappedExpressionWithSmartcastBuilder<E : FirExpression> {
     lateinit var smartcastType: FirTypeRef
     lateinit var typesFromSmartCast: Collection<ConeKotlinType>
     lateinit var smartcastStability: SmartcastStability
+
+    abstract fun build(): E
 }
 
 abstract class FirWrappedExpressionWithSmartcastToNullBuilder<E : FirExpression> : FirWrappedExpressionWithSmartcastBuilder<E>() {

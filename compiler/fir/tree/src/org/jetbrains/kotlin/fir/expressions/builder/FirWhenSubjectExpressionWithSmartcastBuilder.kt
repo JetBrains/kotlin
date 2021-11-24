@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcas
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionWithSmartcastImpl
 
 class FirWhenSubjectExpressionWithSmartcastBuilder : FirWrappedExpressionWithSmartcastBuilder<FirWhenSubjectExpression>() {
-    fun build(): FirWhenSubjectExpressionWithSmartcast {
+    override fun build(): FirWhenSubjectExpressionWithSmartcast {
         return FirWhenSubjectExpressionWithSmartcastImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability)
     }
 }

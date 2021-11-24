@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 
 class FirExpressionWithSmartcastBuilder : FirWrappedExpressionWithSmartcastBuilder<FirQualifiedAccessExpression>() {
-    fun build(): FirExpressionWithSmartcast {
+    override fun build(): FirExpressionWithSmartcast {
         return FirExpressionWithSmartcastImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability)
     }
 }

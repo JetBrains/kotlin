@@ -3657,6 +3657,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 public void testWhen() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/when.kt");
                 }
+
+                @Test
+                @TestMetadata("whenSubjectExpression.kt")
+                public void testWhenSubjectExpression() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/whenSubjectExpression.kt");
+                }
             }
 
             @Nested

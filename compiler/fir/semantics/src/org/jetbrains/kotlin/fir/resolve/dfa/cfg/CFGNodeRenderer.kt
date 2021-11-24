@@ -99,6 +99,8 @@ fun CFGNode<*>.render(): String =
                 is EnterSafeCallNode -> "Enter safe call"
                 is ExitSafeCallNode -> "Exit safe call"
 
+                is WhenSubjectExpressionExitNode -> "Exit ${'$'}subj"
+
                 is PostponedLambdaEnterNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
 

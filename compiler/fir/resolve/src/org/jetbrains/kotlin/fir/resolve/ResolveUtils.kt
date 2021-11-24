@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -31,6 +30,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -291,26 +292,52 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
 ): FirQualifiedAccessExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
-        ?: return qualifiedAccessExpression
+    val builder = transformExpressionUsingSmartcastInfo(
+        qualifiedAccessExpression,
+        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
+        ::FirExpressionWithSmartcastBuilder,
+        ::FirExpressionWithSmartcastToNullBuilder
+    ) ?: return qualifiedAccessExpression
+    return builder.build()
+}
+
+fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
+    whenSubjectExpression: FirWhenSubjectExpression
+): FirWhenSubjectExpression {
+    val builder = transformExpressionUsingSmartcastInfo(
+        whenSubjectExpression,
+        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
+        ::FirWhenSubjectExpressionWithSmartcastBuilder,
+        ::FirWhenSubjectExpressionWithSmartcastToNullBuilder
+    ) ?: return whenSubjectExpression
+    return builder.build()
+}
+
+private inline fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
+    expression: T,
+    smartcastExtractor: (T) -> Pair<PropertyStability, MutableList<ConeKotlinType>>?,
+    smartcastBuilder: () -> FirWrappedExpressionWithSmartcastBuilder<T>,
+    smartcastToNullBuilder: () -> FirWrappedExpressionWithSmartcastToNullBuilder<T>
+): FirWrappedExpressionWithSmartcastBuilder<T>? {
+    val (stability, typesFromSmartCast) = smartcastExtractor(expression) ?: return null
     val smartcastStability = stability.impliedSmartcastStability
-        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(qualifiedAccessExpression)) {
+        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
             SmartcastStability.CAPTURED_VARIABLE
         } else {
             SmartcastStability.STABLE_VALUE
         }
 
-    val originalType = qualifiedAccessExpression.resultType.coneType
+    val originalType = expression.resultType.coneType
     val allTypes = typesFromSmartCast.also {
         it += originalType
     }
     val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
-    if (intersectedType == originalType) return qualifiedAccessExpression
+    if (intersectedType == originalType) return null
     val intersectedTypeRef = buildResolvedTypeRef {
-        source = qualifiedAccessExpression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
+        source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
-        annotations += qualifiedAccessExpression.resultType.annotations
-        delegatedTypeRef = qualifiedAccessExpression.resultType
+        annotations += expression.resultType.annotations
+        delegatedTypeRef = expression.resultType
     }
     // For example, if (x == null) { ... },
     //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
@@ -322,13 +349,13 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         val intersectedTypeWithoutNullableNothing =
             ConeTypeIntersector.intersectTypes(session.typeContext, typesFromSmartcastWithoutNullableNothing)
         val intersectedTypeRefWithoutNullableNothing = buildResolvedTypeRef {
-            source = qualifiedAccessExpression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
+            source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
             type = intersectedTypeWithoutNullableNothing
-            annotations += qualifiedAccessExpression.resultType.annotations
-            delegatedTypeRef = qualifiedAccessExpression.resultType
+            annotations += expression.resultType.annotations
+            delegatedTypeRef = expression.resultType
         }
-        return buildExpressionWithSmartcastToNull {
-            originalExpression = qualifiedAccessExpression
+        return smartcastToNullBuilder().apply {
+            originalExpression = expression
             smartcastType = intersectedTypeRef
             smartcastTypeWithoutNullableNothing = intersectedTypeRefWithoutNullableNothing
             this.typesFromSmartCast = typesFromSmartCast
@@ -336,8 +363,8 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         }
     }
 
-    return buildExpressionWithSmartcast {
-        originalExpression = qualifiedAccessExpression
+    return smartcastBuilder().apply {
+        originalExpression = expression
         smartcastType = intersectedTypeRef
         this.typesFromSmartCast = typesFromSmartCast
         this.smartcastStability = smartcastStability

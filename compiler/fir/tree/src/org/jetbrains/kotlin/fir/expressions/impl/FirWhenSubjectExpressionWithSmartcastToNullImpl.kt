@@ -45,7 +45,8 @@ class FirWhenSubjectExpressionWithSmartcastToNullImpl(
         originalExpression.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        throw IllegalStateException()
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNullImpl {
+        originalExpression = originalExpression.transform(transformer, data)
+        return this
     }
 }

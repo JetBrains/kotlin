@@ -3241,6 +3241,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             public void testWhen() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/when.kt");
             }
+
+            @TestMetadata("whenSubjectExpression.kt")
+            public void testWhenSubjectExpression() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/whenSubjectExpression.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas")

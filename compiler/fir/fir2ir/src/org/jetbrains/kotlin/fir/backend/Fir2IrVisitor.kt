@@ -478,6 +478,22 @@ class Fir2IrVisitor(
         return convertToIrExpression(expressionWithSmartcastToNull.originalExpression)
     }
 
+    override fun visitWhenSubjectExpressionWithSmartcast(
+        whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast,
+        data: Any?
+    ): IrElement {
+        val value = visitWhenSubjectExpression(whenSubjectExpressionWithSmartcast.originalExpression, data)
+        return implicitCastInserter.visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast, value)
+    }
+
+    override fun visitWhenSubjectExpressionWithSmartcastToNull(
+        whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull,
+        data: Any?
+    ): IrElement {
+        // This should not be materialized. Generate the expression with the original expression.
+        return visitWhenSubjectExpression(whenSubjectExpressionWithSmartcastToNull.originalExpression, data)
+    }
+
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             callableReferenceAccess.explicitReceiver, callableReferenceAccess.calleeReference, callableReferenceAccess

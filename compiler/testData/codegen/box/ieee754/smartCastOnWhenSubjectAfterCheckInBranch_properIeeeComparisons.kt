@@ -1,6 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: Fail 1: other
 
 fun testF(x: Any) =
     when (x) {
