@@ -272,10 +272,21 @@ internal val MemberDescriptor.ktModality: Modality
 internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
     return when (this) {
         is ErrorValue.ErrorValueWithMessage -> KtConstantValue.KtErrorConstantValue(message, sourcePsi = null)
-        else -> {
-            KtConstantValueFactory.createConstantValue(value)
-                ?: error("Unexpected constant value $value")
-        }
+        is BooleanValue -> KtConstantValue.KtBooleanConstantValue(value, sourcePsi = null)
+        is DoubleValue -> KtConstantValue.KtDoubleConstantValue(value, sourcePsi = null)
+        is FloatValue -> KtConstantValue.KtFloatConstantValue(value, sourcePsi = null)
+        is NullValue -> KtConstantValue.KtNullConstantValue(sourcePsi = null)
+        is StringValue -> KtConstantValue.KtStringConstantValue(value, sourcePsi = null)
+        is ByteValue -> KtConstantValue.KtByteConstantValue(value, sourcePsi = null)
+        is CharValue -> KtConstantValue.KtCharConstantValue(value, sourcePsi = null)
+        is IntValue -> KtConstantValue.KtIntConstantValue(value, sourcePsi = null)
+        is LongValue -> KtConstantValue.KtLongConstantValue(value, sourcePsi = null)
+        is ShortValue -> KtConstantValue.KtShortConstantValue(value, sourcePsi = null)
+        is UByteValue -> KtConstantValue.KtUnsignedByteConstantValue(value.toUByte(), sourcePsi = null)
+        is UIntValue -> KtConstantValue.KtUnsignedIntConstantValue(value.toUInt(), sourcePsi = null)
+        is ULongValue -> KtConstantValue.KtUnsignedLongConstantValue(value.toULong(), sourcePsi = null)
+        is UShortValue -> KtConstantValue.KtUnsignedShortConstantValue(value.toUShort(), sourcePsi = null)
+        else -> error("Unexpected constant value $value")
     }
 }
 
