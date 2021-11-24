@@ -17,12 +17,6 @@ open class ControlFlowInfo<K : Any?, V : Any?> : Map<K, V> {
     return <this>.#<$$delegate_0>.get(key = key)
   }
 
-  @SinceKotlin(version = "1.1")
-  @PlatformDependent
-  override fun getOrDefault(key: K, defaultValue: V): V {
-    return <this>.#<$$delegate_0>.getOrDefault(key = key, defaultValue = defaultValue)
-  }
-
   override fun isEmpty(): Boolean {
     return <this>.#<$$delegate_0>.isEmpty()
   }

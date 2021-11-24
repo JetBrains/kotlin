@@ -41,22 +41,6 @@ FILE fqName:<root> fileName:/kt43342.kt
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.get' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
             key: GET_VAR 'key: K of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.get' type=K of <root>.ControlFlowInfo origin=null
-    FUN DELEGATED_MEMBER name:getOrDefault visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo, defaultValue:V of <root>.ControlFlowInfo) returnType:V of <root>.ControlFlowInfo
-      annotations:
-        SinceKotlin(version = '1.1')
-        PlatformDependent
-      overridden:
-        public open fun getOrDefault (key: K of kotlin.collections.Map, defaultValue: V of kotlin.collections.Map): V of kotlin.collections.Map declared in kotlin.collections.Map
-      $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
-      VALUE_PARAMETER name:key index:0 type:K of <root>.ControlFlowInfo
-      VALUE_PARAMETER name:defaultValue index:1 type:V of <root>.ControlFlowInfo
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun getOrDefault (key: K of <root>.ControlFlowInfo, defaultValue: V of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo'
-          CALL 'public open fun getOrDefault (key: K of kotlin.collections.Map, defaultValue: V of kotlin.collections.Map): V of kotlin.collections.Map declared in kotlin.collections.Map' type=V of <root>.ControlFlowInfo origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
-              receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.getOrDefault' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
-            key: GET_VAR 'key: K of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.getOrDefault' type=K of <root>.ControlFlowInfo origin=null
-            defaultValue: GET_VAR 'defaultValue: V of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.getOrDefault' type=V of <root>.ControlFlowInfo origin=null
     FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.Boolean
       overridden:
         public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map

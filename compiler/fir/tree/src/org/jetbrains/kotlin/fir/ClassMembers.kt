@@ -59,12 +59,6 @@ inline val <reified D : FirCallableDeclaration> D.baseForIntersectionOverride: D
 inline val <reified S : FirCallableSymbol<*>> S.baseForIntersectionOverride: S?
     get() = fir.baseForIntersectionOverride?.symbol as S?
 
-val FirSimpleFunction.isJavaDefault: Boolean
-    get() {
-        if (isIntersectionOverride) return baseForIntersectionOverride!!.isJavaDefault
-        return origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
-    }
-
 inline fun <reified D : FirCallableDeclaration> D.originalIfFakeOverride(): D? =
     originalForSubstitutionOverride ?: baseForIntersectionOverride
 
