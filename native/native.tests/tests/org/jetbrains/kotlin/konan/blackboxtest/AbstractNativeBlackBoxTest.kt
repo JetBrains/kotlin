@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.joinPackageNames
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.prependPackageName
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
@@ -71,10 +72,7 @@ abstract class AbstractNativeBlackBoxTest {
             fun TreeNode<TestRun>.processItems(parentPackageSegment: String) {
                 val ownPackageSegment = joinPackageNames(parentPackageSegment, packageSegment)
                 items.mapTo(this@buildList) { testRun ->
-                    val displayName = if (ownPackageSegment.isNotEmpty())
-                        "$ownPackageSegment.${testRun.displayName}"
-                    else
-                        testRun.displayName
+                    val displayName = testRun.displayName.prependPackageName(ownPackageSegment)
                     dynamicTest(displayName) { runTest(testRun) }
                 }
 
