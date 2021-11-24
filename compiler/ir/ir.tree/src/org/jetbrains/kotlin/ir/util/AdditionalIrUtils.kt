@@ -147,6 +147,7 @@ val IrDeclaration.isLocal: Boolean
             }
 
             if (current.isAnonymousObject) return true
+            if (current is IrScript || (current is IrClass && current.origin == IrDeclarationOrigin.SCRIPT_CLASS)) return true
 
             current = current.parent
         }

@@ -35,7 +35,7 @@ open class IrClassImpl(
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
     override val isCompanion: Boolean = false,
-    override val isInner: Boolean = false,
+    override var isInner: Boolean = false,
     override val isData: Boolean = false,
     override val isExternal: Boolean = false,
     override val isInline: Boolean = false,

@@ -107,7 +107,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractScriptCodegenTest> {
-                model("codegen/script", extension = "kts")
+                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractCustomScriptCodegenTest> {

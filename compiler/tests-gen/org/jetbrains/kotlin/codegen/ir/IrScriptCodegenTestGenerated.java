@@ -184,4 +184,92 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
     public void testTopLevelTypealias() throws Exception {
         runTest("compiler/testData/codegen/script/topLevelTypealias.kts");
     }
+
+    @TestMetadata("compiler/testData/codegen/script/scriptInstanceCapturing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ScriptInstanceCapturing extends AbstractIrScriptCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInScriptInstanceCapturing() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.+)\\.kts$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("anonymousObjectCapturesProperty.kts")
+        public void testAnonymousObjectCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/anonymousObjectCapturesProperty.kts");
+        }
+
+        @TestMetadata("classCapturesExtensionIndirect.kts")
+        public void testClassCapturesExtensionIndirect() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesExtensionIndirect.kts");
+        }
+
+        @TestMetadata("classCapturesExtensionIndirect2x.kts")
+        public void testClassCapturesExtensionIndirect2x() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesExtensionIndirect2x.kts");
+        }
+
+        @TestMetadata("classCapturesFunction.kts")
+        public void testClassCapturesFunction() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesFunction.kts");
+        }
+
+        @TestMetadata("classCapturesProperty.kts")
+        public void testClassCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesProperty.kts");
+        }
+
+        @TestMetadata("classCapturesPropertyInStringTemplate.kts")
+        public void testClassCapturesPropertyInStringTemplate() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesPropertyInStringTemplate.kts");
+        }
+
+        @TestMetadata("classCapturesPropertyIndirect.kts")
+        public void testClassCapturesPropertyIndirect() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesPropertyIndirect.kts");
+        }
+
+        @TestMetadata("classCapturesPropertyIndirect2x.kts")
+        public void testClassCapturesPropertyIndirect2x() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/classCapturesPropertyIndirect2x.kts");
+        }
+
+        @TestMetadata("companionCapturesProperty.kts")
+        public void testCompanionCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/companionCapturesProperty.kts");
+        }
+
+        @TestMetadata("enumCapturesProperty.kts")
+        public void testEnumCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/enumCapturesProperty.kts");
+        }
+
+        @TestMetadata("enumEntryCapturesProperty.kts")
+        public void testEnumEntryCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/enumEntryCapturesProperty.kts");
+        }
+
+        @TestMetadata("interfaceCapturesProperty.kts")
+        public void testInterfaceCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/interfaceCapturesProperty.kts");
+        }
+
+        @TestMetadata("objectCapturesProperty.kts")
+        public void testObjectCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/objectCapturesProperty.kts");
+        }
+
+        @TestMetadata("objectCapturesPropertyIndirect.kts")
+        public void testObjectCapturesPropertyIndirect() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/objectCapturesPropertyIndirect.kts");
+        }
+
+        @TestMetadata("objectCapturesPropertyViaExtension.kts")
+        public void testObjectCapturesPropertyViaExtension() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/objectCapturesPropertyViaExtension.kts");
+        }
+    }
 }

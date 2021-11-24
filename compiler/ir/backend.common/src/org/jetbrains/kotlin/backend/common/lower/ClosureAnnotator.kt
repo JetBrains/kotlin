@@ -177,7 +177,12 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
             closureBuilder.declareVariable(this.thisReceiver)
             if (this.isInner) {
-                closureBuilder.declareVariable((this.parent as IrClass).thisReceiver)
+                val receiver = when (val parent = this.parent) {
+                    is IrClass -> parent.thisReceiver
+                    is IrScript -> parent.thisReceiver
+                    else -> error("unexpected parent $parent")
+                }
+                closureBuilder.declareVariable(receiver)
                 includeInParent(closureBuilder)
             }
 
