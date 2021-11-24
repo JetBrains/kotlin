@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 object CommonConfigurationKeys {
@@ -58,6 +58,14 @@ object CommonConfigurationKeys {
     @JvmField
     val PARALLEL_BACKEND_THREADS =
         CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
+
+    @JvmField
+    val KLIB_RELATIVE_PATH_BASES =
+        CompilerConfigurationKey.create<Collection<String>>("Provides a path from which relative paths in klib are being computed")
+
+    @JvmField
+    val KLIB_NORMALIZE_ABSOLUTE_PATH =
+        CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
