@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs.Companion.EXPLICITLY_FORBIDDEN_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA_FILE
@@ -90,8 +89,10 @@ internal class TestCompilerArgs(val compilerArgs: List<String>) {
     companion object {
         val EMPTY = TestCompilerArgs(emptyList())
 
+        fun findForbiddenArgs(compilerArgs: Iterable<String>): Set<String> = compilerArgs intersect EXPLICITLY_FORBIDDEN_COMPILER_ARGS
+
         /** The set of compiler args that are not permitted to be explicitly specified using [FREE_COMPILER_ARGS]. */
-        internal val EXPLICITLY_FORBIDDEN_COMPILER_ARGS = setOf(
+        private val EXPLICITLY_FORBIDDEN_COMPILER_ARGS = setOf(
             "-trn", "-generate-no-exit-test-runner",
             "-tr", "-generate-test-runner",
             "-trw", "-generate-worker-test-runner",
@@ -170,7 +171,7 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
         return TestCompilerArgs.EMPTY
 
     val freeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
-    val forbiddenCompilerArgs = freeCompilerArgs intersect EXPLICITLY_FORBIDDEN_COMPILER_ARGS
+    val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
     assertTrue(forbiddenCompilerArgs.isEmpty()) {
         """
             $location: Forbidden compiler arguments found in $FREE_COMPILER_ARGS directive: $forbiddenCompilerArgs

@@ -157,6 +157,11 @@ internal interface TestCaseId {
         override val testCaseGroupId = TestCaseGroupId.TestDataDir(file.parentFile) // The directory, containing testData file.
         override fun toString(): String = file.path
     }
+
+    data class Named(val uniqueName: String) : TestCaseId {
+        override val testCaseGroupId = TestCaseGroupId.Named(uniqueName) // The single test case inside the test group.
+        override fun toString() = "[$uniqueName]"
+    }
 }
 
 /**
@@ -247,6 +252,7 @@ internal class TestCase(
  */
 internal interface TestCaseGroupId {
     data class TestDataDir(val dir: File) : TestCaseGroupId
+    data class Named(val uniqueName: String) : TestCaseGroupId
 }
 
 /**
