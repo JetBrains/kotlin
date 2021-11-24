@@ -26,13 +26,7 @@ dependencies {
     
     compileOnly gradleApi()
 
-    compileOnly("kotlin.build:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
-        artifact {
-            name = 'intellij-core'
-            type = 'jar'
-            extension = 'jar'
-        }
-    }
+    compileOnly project(':dependencies:intellij-core')
 }
 
 // Relocate `com.intellij.*` and some other classes to match those in the `kotlin-compiler-embeddable`

@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:cli"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    compileOnly(intellijCore())
 
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler"))

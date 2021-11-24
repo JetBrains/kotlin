@@ -8,7 +8,7 @@ dependencies {
     api(project(":kotlin-script-runtime"))
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

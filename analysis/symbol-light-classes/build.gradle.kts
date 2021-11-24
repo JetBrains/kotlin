@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:project-structure"))
-    implementation(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    implementation(intellijCore())
 }
 
 sourceSets {

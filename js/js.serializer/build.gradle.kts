@@ -9,7 +9,7 @@ dependencies {
     api(project(":compiler:serialization"))
     api(project(":js:js.ast"))
     api(project(":js:js.config"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

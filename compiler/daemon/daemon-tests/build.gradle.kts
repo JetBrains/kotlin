@@ -25,7 +25,7 @@ dependencies {
         }
     }
     testImplementation(project(":kotlin-daemon"))
-    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(intellijCore())
 }
 
 sourceSets {

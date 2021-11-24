@@ -19,7 +19,7 @@ dependencies {
     api(project(":js:js.dce"))
     api(project(":js:js.sourcemap"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

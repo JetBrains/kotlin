@@ -10,7 +10,7 @@ dependencies {
     api(project(":compiler:ir.serialization.jvm"))
     implementation(project(":compiler:backend.jvm.lower"))
     implementation(project(":compiler:backend.jvm.codegen"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

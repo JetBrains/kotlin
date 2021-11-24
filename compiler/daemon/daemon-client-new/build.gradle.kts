@@ -29,7 +29,6 @@ dependencies {
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":daemon-common")) { isTransitive = false }
     compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }

@@ -13,7 +13,7 @@ dependencies {
     compileOnly(project(":plugins:parcelize:parcelize-runtime"))
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     compileOnly(commonDependency("com.google.android", "android"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 
     embedded(project(":plugins:parcelize:parcelize-compiler")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }

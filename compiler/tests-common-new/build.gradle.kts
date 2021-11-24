@@ -10,7 +10,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testImplementation(project(":compiler:ir.tree.impl"))
     testImplementation(project(":compiler:backend.jvm.entrypoint"))
-    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(intellijCore())
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
@@ -29,17 +29,12 @@ dependencies {
      *   declared as Api dependencies to propagate them to all modules
      *   which depend on current one
      */
-    testApi(intellijDep()) {
-        includeJars(
-            "intellij-deps-fastutil-8.4.1-4",
-            "idea_rt",
-            "jps-model",
-            "platform-impl",
-            "streamex",
-            "jna",
-            rootProject = rootProject
-        )
-    }
+    testApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testApi(commonDependency("one.util:streamex"))
+    testApi(commonDependency("net.java.dev.jna:jna"))
+    testApi(jpsModel()) { isTransitive = false }
+    testApi(jpsModelImpl()) { isTransitive = false }
+    testApi(intellijJavaRt())
 
     testApi(toolsJar())
 }

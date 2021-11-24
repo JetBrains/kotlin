@@ -19,7 +19,8 @@ dependencies {
     compileOnly(project(":compiler:backend.jvm"))
     api(project(":compiler:ir.serialization.common"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
 sourceSets {

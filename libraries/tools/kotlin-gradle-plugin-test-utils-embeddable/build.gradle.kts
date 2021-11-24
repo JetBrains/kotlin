@@ -21,8 +21,6 @@ dependencies {
         api(projectTests(projectName)) { isTransitive = false }
         embedded(projectTests(projectName)) { isTransitive = false }
     }
-
-    embedded(intellijDep()) { includeJars("idea_rt") }
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())

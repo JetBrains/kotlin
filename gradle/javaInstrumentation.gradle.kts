@@ -20,12 +20,7 @@ fun Project.configureJavaInstrumentation() {
     if (plugins.hasPlugin("org.gradle.java")) {
         val javaInstrumentator by configurations.creating
         dependencies {
-            javaInstrumentator(intellijDep()) {
-                includeJars("jdom", "asm-all", rootProject = rootProject)
-            }
-            javaInstrumentator(intellijPluginDep("java")) {
-                includeJars("javac2", rootProject = rootProject)
-            }
+            javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:${rootProject.extra["versions.intellijSdk"]}")
         }
         for (sourceSet in listOf(mainSourceSet, testSourceSet)) {
             tasks.named(sourceSet.compileJavaTaskName, InstrumentJava(javaInstrumentator, sourceSet))

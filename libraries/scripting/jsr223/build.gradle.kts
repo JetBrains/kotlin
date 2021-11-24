@@ -14,7 +14,7 @@ dependencies {
     api(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep())
+    compileOnly(intellijCore())
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-reflect"))
 }

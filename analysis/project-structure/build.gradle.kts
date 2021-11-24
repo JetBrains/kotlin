@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:psi"))
-    implementation(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    implementation(intellijCore())
 }
 
 kotlin {

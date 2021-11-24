@@ -10,17 +10,16 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(commonDependency("junit:junit"))
     testCompileOnly(project(":kotlin-compiler"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
     testApi(project(":kotlin-scripting-jvm-host-unshaded"))
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+    testRuntimeOnly(intellijCore())
 }
 
 sourceSets {

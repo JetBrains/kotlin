@@ -17,7 +17,7 @@ dependencies {
 
     implementation(project(":core:deserialization.common.jvm"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 

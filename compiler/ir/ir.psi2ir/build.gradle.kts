@@ -8,7 +8,7 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

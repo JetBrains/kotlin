@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-    testApi(intellijDep()) { includeJars("util") }
     testApi(project(":core:util.runtime"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(kotlinStdlib())

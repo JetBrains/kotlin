@@ -8,29 +8,24 @@ plugins {
 }
 
 val kotlinpAsmVersion = "9.0"
-
 val shadows by configurations.creating
-
-repositories {
-    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
-}
 
 dependencies {
     compileOnly(project(":kotlinx-metadata"))
     compileOnly(project(":kotlinx-metadata-jvm"))
+
     implementation("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
+
+    testApi(intellijCore())
 
     testCompileOnly(project(":kotlinx-metadata"))
     testCompileOnly(project(":kotlinx-metadata-jvm"))
+
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":generators:test-generator"))
 
     testRuntimeOnly(project(":kotlinx-metadata-jvm"))
-
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
-
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer", "idea_rt") }
 
     shadows(project(":kotlinx-metadata-jvm"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")

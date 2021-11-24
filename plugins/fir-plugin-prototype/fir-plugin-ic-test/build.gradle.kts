@@ -10,22 +10,18 @@ dependencies {
     testApi(project(":compiler:incremental-compilation-impl"))
     testApi(projectTests(":compiler:incremental-compilation-impl"))
 
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
     testCompileOnly(project(":kotlin-reflect-api"))
 
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
-    testRuntimeOnly(intellijDep()) {
-        includeJars(
-            "lz4-java",
-            "jna",
-            "jdom",
-            "trove4j",
-            "intellij-deps-fastutil-8.4.1-4",
-            rootProject = rootProject)
-    }
+    testRuntimeOnly(commonDependency("org.lz4:lz4-java"))
+    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
     testRuntimeOnly(toolsJar())
 }

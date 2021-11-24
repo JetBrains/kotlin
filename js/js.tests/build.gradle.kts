@@ -28,7 +28,6 @@ val testJsRuntime by configurations.creating {
 
 dependencies {
     testApiJUnit5(vintageEngine = true)
-    testRuntimeOnly(intellijDep())
 
     testApi(protobufFull())
     testApi(projectTests(":compiler:tests-common"))
@@ -41,8 +40,7 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
     testCompileOnly(project(":compiler:util"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util") }
+    testCompileOnly(intellijCore())
     testApi(project(":compiler:backend.js"))
     testApi(project(":compiler:backend.wasm"))
     testApi(project(":js:js.translator"))
@@ -54,14 +52,16 @@ dependencies {
     testApi(projectTests(":kotlin-build-common"))
     testApi(projectTests(":generators:test-generator"))
 
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:util"))
 
     testRuntimeOnly(project(":kotlin-reflect"))
 
-    testRuntimeOnly(intellijDep()) { includeJars("trove4j", "guava", "jdom", rootProject = rootProject) }
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    testRuntimeOnly(commonDependency("com.google.guava:guava"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
     testRuntimeOnly(kotlinStdlib())
     testJsRuntime(kotlinStdlib("js"))

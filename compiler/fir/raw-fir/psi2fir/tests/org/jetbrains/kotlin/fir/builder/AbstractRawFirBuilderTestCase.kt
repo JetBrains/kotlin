@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.FileTypeRegistry
-import com.intellij.openapi.util.Getter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiFile
@@ -177,12 +174,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             return element
         }
     }
-
-    override fun tearDown() {
-        super.tearDown()
-        FileTypeRegistry.ourInstanceGetter = Getter<FileTypeRegistry> { FileTypeManager.getInstance() }
-    }
-
 }
 
 private fun throwTwiceVisitingError(element: FirElement) {

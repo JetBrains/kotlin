@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -8,15 +6,14 @@ plugins {
 dependencies {
     testApi(project(":kotlin-scripting-compiler"))
     testApi(projectTests(":compiler:tests-common"))
-    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(intellijCore())
     testApi(projectTests(":generators:test-generator"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
 
-    testRuntimeOnly(intellijPluginDep("java"))
-
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync)
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    }
 }
 
 sourceSets {

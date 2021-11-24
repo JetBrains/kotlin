@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":compiler:psi"))
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

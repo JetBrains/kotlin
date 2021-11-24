@@ -16,7 +16,7 @@ dependencies {
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

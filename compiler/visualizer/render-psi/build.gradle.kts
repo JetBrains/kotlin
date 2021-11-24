@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:visualizer:common"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

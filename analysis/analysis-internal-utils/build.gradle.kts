@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi"))
-    implementation(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    implementation(intellijCore())
 }
 
 sourceSets {

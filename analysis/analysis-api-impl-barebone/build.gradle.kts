@@ -7,7 +7,7 @@ dependencies {
     api(project(":compiler:psi"))
     api(project(":analysis:analysis-api-providers"))
     api(project(":analysis:project-structure"))
-    api(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    api(intellijCore())
 
     testApiJUnit5()
     testApi(project(":kotlin-test:kotlin-test-junit"))

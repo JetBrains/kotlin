@@ -104,21 +104,9 @@ dependencies {
     compilerApi project(":kotlin-util-klib-metadata")
     compilerApi project(":compiler:ir.serialization.common")
     compilerApi project(":compiler:ir.psi2ir")
-    use(LocalDependenciesKt) {
-        compilerApi(intellijCoreDep()){
-            artifact {
-                name = "intellij-core"
-                type = "jar"
-            }
-        }
-        compilerApi(intellijDep()){
-            artifact {
-                name = "util"
-                type = "jar"
-                //extention = "jar"
-            }
-        }
-        compileOnly(jpsStandalone())
+    use(IntellijDependenciesKt) {
+        compilerApi(intellijCore())
+        compileOnly(jpsModel())
     }
 
     compilerApi kotlinNativeInterop['llvm'].configuration

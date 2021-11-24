@@ -15,9 +15,8 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(kotlinxCollectionsImmutable())
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
-
-    testImplementation(intellijDep()) { includeJars("platform-api", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
@@ -29,8 +28,8 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
+    testRuntimeOnly(intellijCore())
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

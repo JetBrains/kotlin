@@ -39,8 +39,8 @@ dependencies {
     compileOnly(project(":compiler:ir.tree.impl"))
 
     compileOnly(toolsJarApi())
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))

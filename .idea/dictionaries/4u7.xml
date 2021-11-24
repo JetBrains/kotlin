@@ -5,13 +5,16 @@
       <w>cacheability</w>
       <w>cacheable</w>
       <w>cidr</w>
+      <w>fastutil</w>
       <w>foldable</w>
       <w>instrumentator</w>
       <w>jdks</w>
+      <w>proguarded</w>
       <w>protobuf</w>
       <w>redirector</w>
       <w>remapper</w>
       <w>sonatype</w>
+      <w>streamex</w>
       <w>unpresent</w>
     </words>
   </dictionary>

@@ -150,7 +150,6 @@ dependencies {
             fatJarContents(project(it)) { isTransitive = false }
         }
 
-    libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
     libraries(kotlinStdlib("jdk8"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib("js", "distLibrary"))
@@ -158,6 +157,7 @@ dependencies {
     }
 
     librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    librariesStripVersion(commonDependency("org.jetbrains.intellij.deps:trove4j")) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
@@ -204,24 +204,20 @@ dependencies {
     fatJarContents(commonDependency("io.javaslang", "javaslang"))
     fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
-    fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
-    fatJarContents(intellijDep()) { includeJars("jna-platform") }
+    fatJarContents(intellijCore())
+    fatJarContents(commonDependency("net.java.dev.jna:jna-platform")) { isTransitive = false }
+    fatJarContents(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { isTransitive = false }
+    fatJarContents(commonDependency("org.lz4:lz4-java")) { isTransitive = false }
+    fatJarContents(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
+    fatJarContents(commonDependency("com.google.guava:guava")) { isTransitive = false }
+    fatJarContents(commonDependency("net.java.dev.jna:jna")) { isTransitive = false }
 
-    fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
-
-    fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
-
-    fatJarContents(intellijDep()) {
-        includeIntellijCoreJarDependencies(project) {
-            !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j") || it.startsWith("streamex"))
-        }
-    }
-
-    fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
-
-    fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
-
-    fatJarContentsStripVersions(intellijCoreDep()) { includeJars("streamex", rootProject = rootProject) }
+    fatJarContentsStripServices(jpsModel()) { isTransitive = false }
+    fatJarContentsStripServices(jpsModelImpl()) { isTransitive = false }
+    fatJarContentsStripMetadata(commonDependency("oro:oro")) { isTransitive = false }
+    fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:jdom")) { isTransitive = false }
+    fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
+    fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
 }
 
 publish()

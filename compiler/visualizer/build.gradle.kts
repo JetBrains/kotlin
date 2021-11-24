@@ -19,8 +19,8 @@ dependencies {
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testImplementation(projectTests(":generators:test-generator"))
 
-    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
-    testRuntimeOnly(intellijDep()) { includeJars("jna", rootProject = rootProject) }
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

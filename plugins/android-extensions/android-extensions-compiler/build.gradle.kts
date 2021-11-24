@@ -10,7 +10,7 @@ val robolectricClasspath by configurations.creating
 val androidExtensionsRuntimeForTests by configurations.creating
 
 dependencies {
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
@@ -21,8 +21,8 @@ dependencies {
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree.impl"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
     testApi(project(":compiler:util"))
     testApi(project(":compiler:backend"))
@@ -33,9 +33,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))
     testApi(commonDependency("junit:junit"))
-
-    testRuntimeOnly(intellijPluginDep("junit"))
-    testRuntimeOnly(intellijDep())
 
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")

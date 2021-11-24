@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -20,8 +18,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtElement
-
-internal fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
 
 internal fun FirElement.renderWithClassName(renderMode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =

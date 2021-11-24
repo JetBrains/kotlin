@@ -16,7 +16,7 @@ dependencies {
     compileOnly(project(":daemon-common"))
     compileOnly(project(":daemon-common-new"))
     compileOnly(project(":compiler:util"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

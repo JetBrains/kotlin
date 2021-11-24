@@ -17,7 +17,7 @@ dependencies {
     compileOnly(project(":compiler:ir.psi2ir"))
     compileOnly(project(":compiler:ir.backend.common"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
@@ -38,14 +38,15 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     testRuntimeOnly(project(":generators"))
 
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
+    testRuntimeOnly(intellijCore())
 
-    testRuntimeOnly(intellijDep()) {
-        includeJars("jna", rootProject = rootProject)
-    }
+    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(commonDependency("one.util:streamex"))
 
-    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4", "jps-model", "streamex", rootProject = rootProject) }
+    testRuntimeOnly(jpsModel())
+    testRuntimeOnly(jpsModelImpl())
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

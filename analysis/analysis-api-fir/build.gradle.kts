@@ -18,7 +18,7 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":compiler:light-classes"))
-    api(intellijCoreDep())
+    api(intellijCore())
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
 
@@ -33,26 +33,6 @@ dependencies {
     testApi(toolsJar())
     testApiJUnit5()
     testApi(project(":analysis:symbol-light-classes"))
-
-    testRuntimeOnly(intellijDep()) {
-        includeJars(
-            "jps-model",
-            "extensions",
-            "util",
-            "platform-api",
-            "platform-impl",
-            "idea",
-            "guava",
-            "trove4j",
-            "asm-all",
-            "log4j",
-            "jdom",
-            "streamex",
-            "bootstrap",
-            "jna",
-            rootProject = rootProject
-        )
-    }
 }
 
 sourceSets {

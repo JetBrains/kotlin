@@ -27,9 +27,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:jcabi-aether:1.0-dev-3")
     testImplementation("org.sonatype.aether:aether-api:1.13.1")
     testImplementation("org.apache.maven:maven-core:3.0.3")
-    compileOnly(intellijDep()) { includeJars("util") }
-    testApi(intellijDep()) { includeJars("platform-api", "util") }
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
 }
 
 configurations.all {

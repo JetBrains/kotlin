@@ -10,6 +10,6 @@ javadocJar()
 
 dependencies {
     implementation(kotlinStdlib())
-    implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    implementation(commonDependency("com.google.code.gson:gson"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
 }

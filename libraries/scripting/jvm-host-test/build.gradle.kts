@@ -12,12 +12,12 @@ val embeddableTestRuntime by configurations.creating {
 
 dependencies {
     allTestsRuntime(commonDependency("junit"))
-    allTestsRuntime(intellijCoreDep()) { includeJars("intellij-core") }
-    allTestsRuntime(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jna") }
+    allTestsRuntime(intellijCore())
     testApi(project(":kotlin-scripting-jvm-host-unshaded"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 
     testRuntimeOnly(project(":kotlin-compiler"))

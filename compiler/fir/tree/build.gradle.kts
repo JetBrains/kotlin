@@ -10,7 +10,7 @@ dependencies {
     api(project(":compiler:fir:cones"))
 
     // Necessary only to store bound PsiElement inside FirElement
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

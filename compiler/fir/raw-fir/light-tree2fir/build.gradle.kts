@@ -21,7 +21,8 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(kotlinxCollectionsImmutable())
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
@@ -38,8 +39,8 @@ dependencies {
     implementation("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
     implementation("org.openjdk.jmh", "jmh-generator-annprocess", jmhVersion)
 
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCore())
+    testRuntimeOnly(intellijCore())
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

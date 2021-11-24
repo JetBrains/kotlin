@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":core:util.runtime"))
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("guava", rootProject = rootProject) }
+    compileOnly(commonDependency("com.google.guava:guava"))
 }
 
 sourceSets {

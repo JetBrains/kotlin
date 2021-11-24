@@ -28,7 +28,7 @@ dependencies {
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
     testImplementation(project(":kotlin-compiler-embeddable"))
-    testImplementation(intellijCoreDep()) { includeJars("jdom") }
+    testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
@@ -43,7 +43,7 @@ dependencies {
 
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
-    testImplementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    testImplementation(commonDependency("com.google.code.gson:gson"))
     testApiJUnit5(vintageEngine = true, jupiterParams = true)
 
     testRuntimeOnly(project(":kotlin-android-extensions"))
@@ -52,7 +52,7 @@ dependencies {
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
-    testCompileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    testCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.

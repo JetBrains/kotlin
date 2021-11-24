@@ -6,7 +6,7 @@ plugins {
 dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:cli"))
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
@@ -14,9 +14,7 @@ dependencies {
 
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
 
-    testRuntimeOnly(intellijDep()) {
-        includeJars("jna", rootProject = rootProject)
-    }
+    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
 }
 
 sourceSets {

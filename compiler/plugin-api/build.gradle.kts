@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:frontend"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

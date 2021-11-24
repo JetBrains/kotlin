@@ -19,8 +19,10 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 configurations.getByName("testApi").extendsFrom(shadows)
 
 dependencies {
-    // Should come before compiler dependencies, see comment in "compiler/build.gradle.kts"
-    testRuntimeOnly(intellijDep())
+    // Should come before dependency on proguarded compiler because StringUtil methods are deleted from it
+    testRuntimeOnly(intellijPlatformUtil()) { isTransitive = false }
+
+    testRuntimeOnly(project(":kotlin-compiler"))
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli"))
@@ -36,11 +38,8 @@ dependencies {
     compileOnly(project(":kotlinx-metadata"))
     shadows(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-jvm"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
-
-    testApi(intellijDep()) { includeJars("platform-impl", rootProject = rootProject) }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(project(":kotlin-compiler"))
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))

@@ -18,7 +18,8 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-providers"))
 
-    api(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    api(intellijCore())
+    api(commonDependency("com.google.guava:guava"))
 }
 
 kotlin {

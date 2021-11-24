@@ -16,7 +16,7 @@ dependencies {
     api(project(":compiler:backend.js"))
     api(project(":wasm:wasm.ir"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

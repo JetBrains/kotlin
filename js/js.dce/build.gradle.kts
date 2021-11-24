@@ -9,8 +9,8 @@ dependencies {
     api(project(":js:js.ast"))
     api(project(":js:js.translator"))
     compileOnly(project(":js:js.sourcemap"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
 }
 
 sourceSets {

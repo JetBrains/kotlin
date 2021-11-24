@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     compileOnly(project(":kotlin-reflect-api"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

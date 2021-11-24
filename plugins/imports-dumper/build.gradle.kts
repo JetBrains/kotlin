@@ -13,7 +13,7 @@ dependencies {
     api(project(":compiler:plugin-api"))
     compileOnly("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 
     testApi(projectTests(":compiler:tests-common"))
 

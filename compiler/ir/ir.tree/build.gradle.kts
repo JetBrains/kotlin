@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:config"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

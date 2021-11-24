@@ -15,10 +15,11 @@ dependencies {
     implementation(project(":kotlin-reflect-api"))
 
     /*
-     We do not need guava in the generator, but because of a bug in the IJ project importing, we need to have a dependency on intellijCoreDep
+     We do not need guava in the generator, but because of a bug in the IJ project importing, we need to have a dependency on intellijCore
      the same as it is in `:fir:tree:tree-generator` module to the project be imported correctly
      */
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
 
     implementation(project(":compiler:psi"))
 }
