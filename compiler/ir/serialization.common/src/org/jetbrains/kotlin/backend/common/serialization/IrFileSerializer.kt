@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import java.io.File
+import java.nio.file.Path
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
@@ -127,7 +129,9 @@ open class IrFileSerializer(
     // required for JS IC caches
     private val skipMutableState: Boolean = false,
     private val allowErrorStatementOrigins: Boolean = false, // TODO: support InlinerExpressionLocationHint
-    private val addDebugInfo: Boolean = true
+    private val addDebugInfo: Boolean = true,
+    private val normalizeAbsolutePaths: Boolean = false,
+    private val sourceBaseDirs: Collection<String>
 ) {
     private val loopIndex = mutableMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
@@ -1435,7 +1439,7 @@ open class IrFileSerializer(
 // ---------- Top level ------------------------------------------------------
 
     private fun serializeFileEntry(entry: IrFileEntry): ProtoFileEntry = ProtoFileEntry.newBuilder()
-        .setName(entry.name)
+        .setName(entry.matchAndNormalizeFilePath())
         .addAllLineStartOffset(entry.lineStartOffsets.asIterable())
         .build()
 
@@ -1588,6 +1592,30 @@ open class IrFileSerializer(
             IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             if (addDebugInfo) IrMemoryStringWriter(protoDebugInfoArray).writeIntoMemory() else null
         )
+    }
+
+    private fun tryMatchPath(fileName: String): String? {
+        val file = File(fileName)
+        val path = file.toPath()
+
+        for (base in sourceBaseDirs) {
+            if (path.startsWith(base)) {
+                return file.toRelativeString(File(base))
+            }
+        }
+
+        return null
+    }
+
+    private fun IrFileEntry.matchAndNormalizeFilePath(): String {
+        tryMatchPath(name)?.let {
+            return it.replace(File.separatorChar, '/')
+        }
+
+        if (!normalizeAbsolutePaths) return name
+
+        return name.replace(File.separatorChar, '/')
+
     }
 
     private fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {

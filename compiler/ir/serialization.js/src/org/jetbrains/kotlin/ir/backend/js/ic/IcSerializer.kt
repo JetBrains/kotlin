@@ -86,7 +86,9 @@ class IcSerializer(
                 skipExpects = true,
                 icMode = true,
                 allowErrorStatementOrigins = true,
-                compatibilityMode = CompatibilityMode.CURRENT
+                compatibilityMode = CompatibilityMode.CURRENT,
+                normalizeAbsolutePaths = false,
+                sourceBaseDirs = emptyList()
             )
 
             icDeclarationTable.inFile(file) {

@@ -782,6 +782,8 @@ fun serializeModuleIntoKlib(
     assert(files.size == moduleFragment.files.size)
 
     val compatibilityMode = CompatibilityMode(abiVersion)
+    val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
+    val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
 
     val serializedIr =
         JsIrModuleSerializer(
@@ -789,7 +791,9 @@ fun serializeModuleIntoKlib(
             moduleFragment.irBuiltins,
             expectDescriptorToSymbol,
             compatibilityMode,
-            skipExpects = !configuration.expectActualLinker
+            skipExpects = !configuration.expectActualLinker,
+            normalizeAbsolutePaths = absolutePathNormalization,
+            sourceBaseDirs = sourceBaseDirs
         ).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor

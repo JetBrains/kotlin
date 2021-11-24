@@ -136,10 +136,15 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>, skipExpect: Boolean): String {
         val ktFiles = myFiles.psiFiles
-        val serializedIr =
-            JsIrModuleSerializer(IrMessageLogger.None, irModuleFragment.irBuiltins, expectActualSymbols, CompatibilityMode.CURRENT, skipExpect).serializedIrModule(
-                irModuleFragment
-            )
+        val serializedIr = JsIrModuleSerializer(
+                IrMessageLogger.None,
+                irModuleFragment.irBuiltins,
+                expectActualSymbols,
+                CompatibilityMode.CURRENT,
+                skipExpect,
+                false,
+                emptyList()
+            ).serializedIrModule(irModuleFragment)
 
         val moduleDescriptor = irModuleFragment.descriptor
         val metadataSerializer = klibMetadataIncrementalSerializer(myEnvironment.configuration, myEnvironment.project, containsErrorCode)
