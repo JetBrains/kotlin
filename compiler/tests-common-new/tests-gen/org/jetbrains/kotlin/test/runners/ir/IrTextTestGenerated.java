@@ -2902,6 +2902,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("nullCheckInElvisRhs.kt")
+            public void testNullCheckInElvisRhs() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckInElvisRhs.kt");
+            }
+
+            @Test
             @TestMetadata("nullCheckOnInterfaceDelegation.kt")
             public void testNullCheckOnInterfaceDelegation() throws Exception {
                 runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnInterfaceDelegation.kt");

@@ -292,13 +292,21 @@ class Fir2IrVisitor(
         )
         if (initializer != null) {
             irVariable.initializer =
-                with(implicitCastInserter) {
-                    convertToIrExpression(initializer).cast(initializer, initializer.typeRef, variable.returnTypeRef)
-                }
+                convertToIrExpression(initializer)
+                    .insertImplicitCast(initializer, initializer.typeRef, variable.returnTypeRef)
         }
         annotationGenerator.generate(irVariable, variable)
         return irVariable
     }
+
+    private fun IrExpression.insertImplicitCast(
+        baseExpression: FirExpression,
+        valueType: FirTypeRef,
+        expectedType: FirTypeRef
+    ) =
+        with(implicitCastInserter) {
+            this@insertImplicitCast.cast(baseExpression, valueType, expectedType)
+        }
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement {
         if (property.isLocal) return visitLocalVariable(property)
@@ -707,13 +715,15 @@ class Fir2IrVisitor(
             val notNullType = originalType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
             val irBranches = listOf(
                 IrBranchImpl(
-                    startOffset, endOffset, primitiveOp2(
+                    startOffset, endOffset,
+                    primitiveOp2(
                         startOffset, endOffset, irBuiltIns.eqeqSymbol,
                         irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
                         irGetLhsValue(),
                         IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
                     ),
                     convertToIrExpression(elvisExpression.rhs)
+                        .insertImplicitCast(elvisExpression, elvisExpression.rhs.typeRef, elvisExpression.typeRef)
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
@@ -815,9 +825,7 @@ class Fir2IrVisitor(
     private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: FirTypeRef): IrBranch {
         return convertWithOffsets { startOffset, endOffset ->
             val condition = condition
-            val irResult = with(implicitCastInserter) {
-                convertToIrExpression(result).cast(result, result.typeRef, whenExpressionType)
-            }
+            val irResult = convertToIrExpression(result).insertImplicitCast(result, result.typeRef, whenExpressionType)
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, irBuiltIns.booleanType, true), irResult)
             } else {
