@@ -65,6 +65,7 @@ dependencies {
     testApi(projectTests(":plugins:lombok:lombok-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
+    testApi(projectTests(":kotlinx-atomicfu-compiler-plugin"))
     testApi(projectTests(":plugins:fir:fir-plugin-prototype"))
     testApi(projectTests(":generators:test-generator"))
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -73,6 +74,7 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":js:js.tests"))
     testApiJUnit5()
 
     if (Ide.IJ()) {

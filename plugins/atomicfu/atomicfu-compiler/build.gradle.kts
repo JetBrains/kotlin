@@ -58,6 +58,12 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":generators:test-generator"))
+
     testImplementation(projectTests(":js:js.tests"))
     testApi(commonDep("junit:junit"))
 
@@ -92,7 +98,8 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
     workingDir = rootDir
     dependsOn(atomicfuRuntimeForTests)
     doFirst {
