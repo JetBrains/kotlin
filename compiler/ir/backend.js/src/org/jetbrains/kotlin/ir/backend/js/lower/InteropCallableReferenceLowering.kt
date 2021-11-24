@@ -336,13 +336,15 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val newDeclarations = mutableListOf<IrDeclaration>()
         val constructor = lambdaClass.declarations.single { it is IrConstructor } as IrConstructor
 
-        val factoryDeclaration = context.irFactory.buildFun {
-            startOffset = lambdaClass.startOffset
-            endOffset = lambdaClass.endOffset
-            visibility = lambdaClass.visibility
-            returnType = lambdaClass.defaultType
-            name = lambdaClass.name
-            origin = JsStatementOrigins.FACTORY_ORIGIN
+        val factoryDeclaration = context.irFactory.stageController.restrictTo(lambdaClass) {
+            context.irFactory.buildFun {
+                startOffset = lambdaClass.startOffset
+                endOffset = lambdaClass.endOffset
+                visibility = lambdaClass.visibility
+                returnType = lambdaClass.defaultType
+                name = lambdaClass.name
+                origin = JsStatementOrigins.FACTORY_ORIGIN
+            }
         }
 
         factoryDeclaration.valueParameters = constructor.valueParameters.map { it.copyTo(factoryDeclaration) }
