@@ -142,8 +142,6 @@ internal fun createInitialConfigurations(
         createInitialCompilerConfiguration(
             scriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState
         )
-    // TODO: replace the default when ready
-    kotlinCompilerConfiguration.put(JVMConfigurationKeys.IR, false)
 
     System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')?.let {
         kotlinCompilerConfiguration.updateWithCompilerOptions(it)
