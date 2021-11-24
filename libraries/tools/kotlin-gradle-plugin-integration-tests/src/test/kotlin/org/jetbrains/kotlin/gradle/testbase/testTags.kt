@@ -39,6 +39,14 @@ annotation class JvmGradlePluginTests
 @Tag("JsKGP")
 annotation class JsGradlePluginTests
 
+/**
+ * Add it to tests covering Kotlin Multiplatform Gradle plugin.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("MppKGP")
+annotation class MppGradlePluginTests
+
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("OtherKGP")
