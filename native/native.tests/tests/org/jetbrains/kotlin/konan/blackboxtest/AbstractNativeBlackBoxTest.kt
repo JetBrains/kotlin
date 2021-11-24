@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
-import org.junit.jupiter.api.DynamicContainer.dynamicContainer
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.joinPackageNames
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
@@ -53,15 +53,36 @@ abstract class AbstractNativeBlackBoxTest {
         return buildJUnitDynamicNodes(rootTestRunNode)
     }
 
-    private fun buildJUnitDynamicNodes(testRunNode: TreeNode<TestRun>): Collection<DynamicNode> = buildList {
-        testRunNode.items.mapTo(this) { testRun ->
-            dynamicTest(testRun.displayName) { runTest(testRun) }
-        }
+    // We have to use planar (one-level) tree of JUnit5 dynamic nodes, because Gradle does not support yet rendering
+    // tests with arbitrary nesting level in their test reports. As long as these reports are consumed by various CI (such as TeamCity)
+    // we have almost no chance to display test results in CI properly.
+    private fun buildJUnitDynamicNodes(testRunNode: TreeNode<TestRun>): Collection<DynamicNode> =
+    // This is the proper implementation that should be used instead:
+//        buildList {
+//            testRunNode.items.mapTo(this) { testRun ->
+//                dynamicTest(testRun.displayName) { runTest(testRun) }
+//            }
+//
+//            testRunNode.children.mapTo(this) { childTestRunNode ->
+//                dynamicContainer(childTestRunNode.packageSegment, buildJUnitDynamicNodes(childTestRunNode))
+//            }
+//        }
+        buildList {
+            fun TreeNode<TestRun>.processItems(parentPackageSegment: String) {
+                val ownPackageSegment = joinPackageNames(parentPackageSegment, packageSegment)
+                items.mapTo(this@buildList) { testRun ->
+                    val displayName = if (ownPackageSegment.isNotEmpty())
+                        "$ownPackageSegment.${testRun.displayName}"
+                    else
+                        testRun.displayName
+                    dynamicTest(displayName) { runTest(testRun) }
+                }
 
-        testRunNode.children.mapTo(this) { childTestRunNode ->
-            dynamicContainer(childTestRunNode.packageSegment, buildJUnitDynamicNodes(childTestRunNode))
+                children.forEach { it.processItems(ownPackageSegment) }
+            }
+
+            testRunNode.processItems("")
         }
-    }
 
     private fun runTest(testRun: TestRun) {
         val testRunner = testRunProvider.createRunner(testRun)
