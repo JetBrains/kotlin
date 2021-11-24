@@ -291,6 +291,7 @@ class ExpressionsConverter(
             if (firOperation in FirOperation.ASSIGNMENTS) {
                 return leftArgNode.generateAssignment(
                     binaryExpression.toFirSourceElement(),
+                    leftArgNode?.toFirSourceElement(),
                     rightArg,
                     rightArgAsFir,
                     firOperation,

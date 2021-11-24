@@ -2176,6 +2176,7 @@ open class RawFirBuilder(
                 if (firOperation in FirOperation.ASSIGNMENTS) {
                     return expression.left.generateAssignment(
                         source,
+                        expression.left?.toFirSourceElement(),
                         expression.right,
                         rightArgument,
                         firOperation,

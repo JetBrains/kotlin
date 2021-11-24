@@ -537,6 +537,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val assignment = unwrappedArgument.generateAssignment(
                 desugaredSource,
                 null,
+                null,
                 if (prefix && unwrappedArgument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
                 else
@@ -889,6 +890,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun T?.generateAssignment(
         baseSource: KtSourceElement?,
+        arrayAccessSource: KtSourceElement?,
         rhs: T?,
         value: FirExpression, // value is FIR for rhs
         operation: FirOperation,
@@ -909,7 +911,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 (result.annotations as MutableList<FirAnnotation>) += annotations
                 result
             } else {
-                generateAugmentedArraySetCall(unwrappedLhs, baseSource, operation, rhs, annotations, convert)
+                generateAugmentedArraySetCall(unwrappedLhs, baseSource, arrayAccessSource, operation, rhs, annotations, convert)
             }
         }
 
@@ -973,6 +975,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     private fun generateAugmentedArraySetCall(
         unwrappedReceiver: T,
         baseSource: KtSourceElement?,
+        arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
         rhs: T?,
         annotations: List<FirAnnotation>,
@@ -981,14 +984,16 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return buildAugmentedArraySetCall {
             source = baseSource
             this.operation = operation
-            assignCall = generateAugmentedCallForAugmentedArraySetCall(unwrappedReceiver, operation, rhs, convert)
-            setGetBlock = generateSetGetBlockForAugmentedArraySetCall(unwrappedReceiver, baseSource, operation, rhs, convert)
+            assignCall = generateAugmentedCallForAugmentedArraySetCall(unwrappedReceiver, baseSource, operation, rhs, convert)
+            setGetBlock =
+                generateSetGetBlockForAugmentedArraySetCall(unwrappedReceiver, baseSource, arrayAccessSource, operation, rhs, convert)
             this.annotations += annotations
         }
     }
 
     private fun generateAugmentedCallForAugmentedArraySetCall(
         unwrappedReceiver: T,
+        baseSource: KtSourceElement?,
         operation: FirOperation,
         rhs: T?,
         convert: T.() -> FirExpression
@@ -998,6 +1003,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
          * a.get(x, y).plusAssign(z)
          */
         return buildFunctionCall {
+            source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
             calleeReference = buildSimpleNamedReference {
                 name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
             }
@@ -1016,6 +1022,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     private fun generateSetGetBlockForAugmentedArraySetCall(
         unwrappedReceiver: T,
         baseSource: KtSourceElement?,
+        arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
         rhs: T?,
         convert: T.() -> FirExpression
@@ -1037,7 +1044,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 source = null,
                 specialName = "<array>",
                 initializer = baseCall.explicitReceiver ?: buildErrorExpression {
-                    source = baseSource
+                    source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
                     diagnostic = ConeSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
                 }
             )
@@ -1047,7 +1054,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
             statements += indexVariables
             statements += buildFunctionCall {
-                source = baseSource
+                source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
                 explicitReceiver = arrayVariable.toQualifiedAccess()
                 calleeReference = buildSimpleNamedReference {
                     name = OperatorNameConventions.SET
@@ -1059,6 +1066,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     }
 
                     val getCall = buildFunctionCall {
+                        source = arrayAccessSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
                         explicitReceiver = arrayVariable.toQualifiedAccess()
                         calleeReference = buildSimpleNamedReference {
                             name = OperatorNameConventions.GET
