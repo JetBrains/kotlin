@@ -72,9 +72,8 @@ class MemoizedInlineClassReplacements(
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
-                        it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ->
-                            null
-                        it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                        it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
+                                it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
                             createMethodReplacement(it)
                         else ->
                             createStaticReplacement(it)
