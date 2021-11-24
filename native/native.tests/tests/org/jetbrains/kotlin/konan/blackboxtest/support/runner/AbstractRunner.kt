@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import kotlin.time.Duration
 
 internal abstract class AbstractRunner<R> {
     protected abstract fun buildRun(): AbstractRun
@@ -40,11 +39,6 @@ internal abstract class AbstractRunner<R> {
 
     fun interface AbstractRun {
         fun run(): RunResult
-    }
-
-    sealed interface RunResult {
-        data class Completed(val exitCode: Int, val duration: Duration, val stdOut: String, val stdErr: String) : RunResult
-        data class TimeoutExceeded(val timeout: Duration) : RunResult
     }
 
     abstract inner class ResultHandler(protected val runResult: RunResult.Completed) {

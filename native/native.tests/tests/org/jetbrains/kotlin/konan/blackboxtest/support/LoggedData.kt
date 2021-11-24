@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.RunResult
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -109,7 +109,7 @@ internal abstract class LoggedData {
 
     class TestRun(
         private val parameters: TestRunParameters,
-        private val runResult: AbstractRunner.RunResult.Completed
+        private val runResult: RunResult.Completed
     ) : LoggedData() {
         override fun computeText() = buildString {
             appendLine("TEST RUN:")
