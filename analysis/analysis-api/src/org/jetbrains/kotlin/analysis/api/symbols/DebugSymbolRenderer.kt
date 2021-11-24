@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.render
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
@@ -216,7 +215,7 @@ public object DebugSymbolRenderer {
         when (value) {
             is KtConstantInitializerValue -> {
                 append("KtConstantInitializerValue(")
-                append(value.constant.render())
+                append(value.constant.renderAsKotlinConstant())
                 append(")")
             }
             is KtNonConstantInitializerValue -> {

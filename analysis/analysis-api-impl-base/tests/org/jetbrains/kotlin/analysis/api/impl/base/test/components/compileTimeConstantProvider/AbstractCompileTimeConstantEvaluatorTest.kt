@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider
 
-import org.jetbrains.kotlin.analysis.api.annotations.render
-import org.jetbrains.kotlin.analysis.api.base.render
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
@@ -32,8 +30,8 @@ abstract class AbstractCompileTimeConstantEvaluatorTest(
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
-            appendLine("constant: ${constantValue?.render()}")
-            appendLine("constantValueKind: ${constantValue?.constantValueKind}")
+            appendLine("constant: ${constantValue?.renderAsKotlinConstant() ?: "NOT_EVALUATED"}")
+            appendLine("constantValueKind: ${constantValue?.constantValueKind ?: "NOT_EVALUATED"}")
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }

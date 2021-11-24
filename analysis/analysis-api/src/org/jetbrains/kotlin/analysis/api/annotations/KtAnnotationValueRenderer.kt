@@ -45,7 +45,7 @@ public object KtAnnotationValueRenderer {
     }
 
     private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {
-        append(KtConstantValueRenderer.render(value.constantValue))
+        append(value.constantValue.renderAsKotlinConstant())
     }
 
     private fun StringBuilder.renderEnumEntryConstantValue(value: KtEnumEntryAnnotationValue) {
