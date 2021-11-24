@@ -15349,6 +15349,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("javaEnumValueOf2.kt")
+        public void testJavaEnumValueOf2() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/javaEnumValueOf2.kt");
+        }
+
+        @Test
         @TestMetadata("javaEnumValues.kt")
         public void testJavaEnumValues() throws Exception {
             runTest("compiler/testData/codegen/box/enum/javaEnumValues.kt");
