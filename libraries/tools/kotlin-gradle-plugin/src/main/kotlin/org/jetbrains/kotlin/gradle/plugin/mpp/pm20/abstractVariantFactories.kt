@@ -5,149 +5,82 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Bundling
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
-import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-
 abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
-    module: KotlinGradleModule
+    module: KotlinGradleModule,
+    private val compileTaskConfigurator: KotlinCompileTaskConfigurator<T>,
+
+    protected val compileDependenciesConfigurationFactory: KotlinCompileDependenciesConfigurationFactory =
+        DefaultKotlinCompileDependenciesConfigurationFactory,
+
+    private val compileDependenciesSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinCompileDependenciesSetup,
+
+    protected val apiElementsConfigurationFactory: KotlinApiElementsConfigurationFactory =
+        DefaultKotlinApiElementsConfigurationFactory,
+
+    private val apiElementsSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinApiElementsSetup,
+
+    private val sourceArchiveTaskConfigurator: KotlinSourceArchiveTaskConfigurator<T> =
+        DefaultKotlinSourceArchiveTaskConfigurator
 ) : AbstractKotlinGradleFragmentFactory<T>(module) {
 
     override fun create(name: String): T =
         super.create(name).also { fragment ->
-            createSourcesArchiveTask(fragment)
-            createElementsConfigurations(fragment)
-            configureKotlinCompilation(fragment)
-            // TODO configure resources processing
+            compileDependenciesSetup.configure(fragment, fragment.compileDependencyConfiguration)
+            apiElementsSetup.configure(fragment, fragment.apiElementsConfiguration)
+            sourceArchiveTaskConfigurator.registerSourceArchiveTask(fragment)
+            compileTaskConfigurator.registerCompileTasks(fragment)
         }
-
-    protected open fun setPlatformAttributesInConfiguration(fragment: T, configuration: Configuration) {
-        configuration.attributes.attribute(KotlinPlatformType.attribute, fragment.platformType)
-    }
-
-    open fun configureCompileResolvableConfiguration(fragment: T, configuration: Configuration) {
-        setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(project, fragment.platformType))
-    }
-
-    open fun configureApiElementsConfiguration(fragment: T, configuration: Configuration) {
-        setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.apply {
-            attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
-            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.LIBRARY))
-            attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
-        }
-    }
-
-    abstract fun configureKotlinCompilation(fragment: T)
-
-    open fun createSourcesArchiveTask(fragment: T) {
-        sourcesJarTaskNamed(
-            fragment.sourceArchiveTaskName,
-            project,
-            lazy { FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(fragment).entries.associate { it.key.fragmentName to it.value.get() } },
-            fragment.name
-        )
-    }
-
-    override fun createDependencyConfigurations(fragment: T) {
-        super.createDependencyConfigurations(fragment)
-
-        fragment.compileDependencyFiles = project.configurations.create(fragment.compileDependencyConfigurationName).apply {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            configureCompileResolvableConfiguration(fragment, this@apply)
-            project.addExtendsFromRelation(name, fragment.transitiveApiConfigurationName)
-            project.addExtendsFromRelation(name, fragment.transitiveImplementationConfigurationName)
-        }
-        // FIXME runtime classpath if supported
-    }
-
-    open fun createElementsConfigurations(fragment: T) {
-        project.configurations.maybeCreate(fragment.apiElementsConfigurationName).apply {
-            isCanBeResolved = false
-            isCanBeConsumed = false
-            module.ifMadePublic {
-                isCanBeConsumed = true
-            }
-            setModuleCapability(this, fragment.containingModule)
-            attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
-            extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
-            // FIXME + compileOnly
-            configureApiElementsConfiguration(fragment, this@apply)
-        }
-    }
 }
 
-abstract class AbstractKotlinGradleVariantWithRuntimeFactory<T : KotlinGradleVariantWithRuntime>(module: KotlinGradleModule) :
-    AbstractKotlinGradleVariantFactory<T>(module) {
+abstract class AbstractKotlinGradleVariantWithRuntimeFactory<T : KotlinGradleVariantWithRuntime>(
+    module: KotlinGradleModule,
+    compileTaskConfigurator: KotlinCompileTaskConfigurator<T>,
 
-    open fun configureRuntimeResolvableConfiguration(fragment: T, configuration: Configuration) {
-        setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(project, fragment.platformType))
-    }
+    compileDependenciesConfigurationFactory: KotlinCompileDependenciesConfigurationFactory =
+        DefaultKotlinCompileDependenciesConfigurationFactory,
 
-    open fun configureRuntimeElementsConfiguration(fragment: T, configuration: Configuration) {
-        setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.apply {
-            attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(project, fragment.platformType))
-            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.LIBRARY))
-            attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
-        }
-    }
+    compileDependenciesSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinCompileDependenciesSetup,
 
-    override fun createDependencyConfigurations(fragment: T) {
-        super.createDependencyConfigurations(fragment)
+    apiElementsConfigurationFactory: KotlinApiElementsConfigurationFactory =
+        DefaultKotlinApiElementsConfigurationFactory,
 
-        fragment.runtimeDependencyFiles = project.configurations.create(fragment.runtimeDependencyConfigurationName).apply {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            configureRuntimeResolvableConfiguration(fragment, this@apply)
-            project.addExtendsFromRelation(name, fragment.transitiveApiConfigurationName)
-            project.addExtendsFromRelation(name, fragment.transitiveImplementationConfigurationName)
-        }
-    }
+    apiElementsSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinApiElementsSetup,
 
-    override fun createElementsConfigurations(fragment: T) {
-        super.createElementsConfigurations(fragment)
+    sourceArchiveTaskConfigurator: KotlinSourceArchiveTaskConfigurator<T> =
+        DefaultKotlinSourceArchiveTaskConfigurator,
 
-        project.configurations.maybeCreate(fragment.runtimeElementsConfigurationName).apply {
-            isCanBeResolved = false
-            isCanBeConsumed = false
-            module.ifMadePublic {
-                isCanBeConsumed = true
-                setModuleCapability(this, fragment.containingModule)
-            }
-            configureRuntimeElementsConfiguration(fragment, this@apply)
-            extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
-            extendsFrom(project.configurations.getByName(fragment.transitiveImplementationConfigurationName))
-            // FIXME + runtimeOnly
-        }
-    }
-}
+    protected val runtimeDependenciesConfigurationFactory: KotlinRuntimeDependenciesConfigurationFactory =
+        DefaultKotlinRuntimeDependenciesConfigurationFactory,
 
-abstract class AbstractKotlinGradleRuntimePublishedVariantFactory<T : KotlinGradlePublishedVariantWithRuntime>(module: KotlinGradleModule) :
-    AbstractKotlinGradleVariantWithRuntimeFactory<T>(module) {
+    private val runtimeDependenciesConfigurationSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinRuntimeDependenciesSetup,
 
+    protected val runtimeElementsConfigurationFactory: KotlinRuntimeElementsConfigurationFactory =
+        DefaultKotlinRuntimeElementsConfigurationFactory,
+
+    private val runtimeElementsConfigurationSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinRuntimeElementsSetup,
+
+    private val publicationSetup: PublicationSetup<T> = PublicationSetup.NoPublication
+
+) : AbstractKotlinGradleVariantFactory<T>(
+    module = module,
+    compileTaskConfigurator = compileTaskConfigurator,
+    compileDependenciesConfigurationFactory = compileDependenciesConfigurationFactory,
+    compileDependenciesSetup = compileDependenciesSetup,
+    apiElementsConfigurationFactory = apiElementsConfigurationFactory,
+    apiElementsSetup = apiElementsSetup,
+    sourceArchiveTaskConfigurator = sourceArchiveTaskConfigurator
+) {
     override fun create(name: String): T {
-        val result = super.create(name)
-        configureVariantPublishing(result)
-        return result
-    }
-
-    open fun configureVariantPublishing(variant: T) {
-        VariantPublishingConfigurator.get(project).configureSingleVariantPublication(variant)
-    }
-}
-
-internal fun setModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
-    if (module.moduleClassifier != null) {
-        configuration.outgoing.capability(ComputedCapability.fromModule(module))
+        return super.create(name).also { variant ->
+            runtimeDependenciesConfigurationSetup.configure(variant, variant.runtimeDependencyConfiguration)
+            runtimeElementsConfigurationSetup.configure(variant, variant.runtimeElementsConfiguration)
+            publicationSetup(variant)
+        }
     }
 }

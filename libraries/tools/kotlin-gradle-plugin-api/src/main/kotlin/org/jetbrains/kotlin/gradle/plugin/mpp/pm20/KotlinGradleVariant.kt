@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.project.model.KotlinModuleVariant
@@ -18,7 +17,7 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val platformType: KotlinPlatformType
 
     // TODO generalize with KotlinCompilation?
-    val compileDependencyConfigurationName: String
+    val compileDependencyConfiguration: Configuration
 
     var compileDependencyFiles: FileCollection
 
@@ -29,21 +28,21 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val sourceArchiveTaskName: String
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
-    val apiElementsConfigurationName: String
+    val apiElementsConfiguration: Configuration
 
     val gradleVariantNames: Set<String>
 }
 
 interface KotlinGradleVariantWithRuntime : KotlinGradleVariant {
     // TODO deduplicate with KotlinCompilation?
-    val runtimeDependencyConfigurationName: String
+    val runtimeDependencyConfiguration: Configuration
 
     var runtimeDependencyFiles: FileCollection
 
     val runtimeFiles: ConfigurableFileCollection
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
-    val runtimeElementsConfigurationName: String
+    val runtimeElementsConfiguration: Configuration
 }
 
 interface KotlinNativeVariant : KotlinGradleVariant {

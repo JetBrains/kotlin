@@ -21,6 +21,8 @@ interface KotlinModuleFragment {
 
     // TODO: should this be source roots or source files?
     val kotlinSourceRoots: Iterable<File>
+
+    companion object
 }
 
 interface KotlinModuleVariant : KotlinModuleFragment {

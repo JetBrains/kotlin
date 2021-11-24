@@ -12,14 +12,19 @@ import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 
 open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
-    AbstractKotlinGradleRuntimePublishedVariantFactory<KotlinJvmVariant>(module) {
-    override fun instantiateFragment(name: String) = KotlinJvmVariant(module, name)
+    AbstractKotlinGradleVariantWithRuntimeFactory<KotlinJvmVariant>(module) {
 
+    override fun instantiateFragment(name: String) = KotlinJvmVariant(
+        module, name, dependencyConfigurationsFactory.create(module, name)
+    )
+
+    /*
     // FIXME expose the JAR with the artifacts API
     private fun getOrCreateJarTask(fragment: KotlinJvmVariant): TaskProvider<Jar> {
         val jarTaskName = fragment.disambiguateName("jar")
@@ -41,6 +46,7 @@ open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
         LifecycleTasksManager(project).registerClassesTask(compilationData)
         KotlinCompilationTaskConfigurator(project).createKotlinJvmCompilationTask(fragment, compilationData)
     }
+     */
 }
 
 //endregion Variant

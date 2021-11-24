@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import java.io.File
 
 abstract class AbstractKotlinGradleFragmentFactory<T : KotlinGradleFragment>(
-    protected val module: KotlinGradleModule
+    protected val module: KotlinGradleModule,
+    protected val dependencyConfigurationsFactory: KotlinDependencyConfigurations.Factory = DefaultKotlinDependencyConfigurationsFactory
 ) : NamedDomainObjectFactory<T> {
 
     protected val project: Project
@@ -24,29 +22,8 @@ abstract class AbstractKotlinGradleFragmentFactory<T : KotlinGradleFragment>(
 
     override fun create(name: String): T =
         instantiateFragment(name).apply {
-            createDependencyConfigurations(this)
             addDefaultSourceDirectories(this)
         }
-
-    protected open fun createDependencyConfigurations(fragment: T) {
-        with(project.configurations) {
-            fragment.relatedConfigurationNames.forEach { configurationName ->
-                maybeCreate(configurationName).apply {
-                    // FIXME add metadata configurations or API for IDE import?
-                    if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
-                        isCanBeResolved = false
-                    }
-                    isCanBeConsumed = false
-                }
-            }
-            listOf(
-                fragment.apiConfigurationName to fragment.transitiveApiConfigurationName,
-                fragment.implementationConfigurationName to fragment.transitiveImplementationConfigurationName
-            ).forEach { (configuration, transitiveConfiguration) ->
-                project.addExtendsFromRelation(transitiveConfiguration, configuration)
-            }
-        }
-    }
 
     protected open fun addDefaultSourceDirectories(fragment: KotlinGradleFragment) {
         fragment.kotlinSourceRoots.srcDir(defaultSourceFolder(project, module.name, fragment.fragmentName, "kotlin"))
