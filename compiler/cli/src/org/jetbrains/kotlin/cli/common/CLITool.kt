@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
-import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import java.io.PrintStream
@@ -149,8 +148,6 @@ abstract class CLITool<A : CommonToolArguments> {
             if (CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.value == null) {
                 CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.value = "true"
             }
-
-            setupIdeaStandaloneExecution()
 
             val exitCode = doMainNoExit(compiler, args)
             if (exitCode != ExitCode.OK) {

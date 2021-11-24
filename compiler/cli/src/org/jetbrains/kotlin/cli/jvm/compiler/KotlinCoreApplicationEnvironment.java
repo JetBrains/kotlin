@@ -10,6 +10,7 @@ import com.intellij.codeInsight.runner.JavaMainMethodProvider;
 import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.lang.MetaLanguage;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.FileContextProvider;
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem;
 
 public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnvironment {
     public static KotlinCoreApplicationEnvironment create(@NotNull Disposable parentDisposable, boolean unitTestMode) {
+        checkApplicationIsNotInitialized();
+        setupIdeaStandaloneExecution();
+
         KotlinCoreApplicationEnvironment environment = new KotlinCoreApplicationEnvironment(parentDisposable, unitTestMode);
         registerExtensionPoints();
         return environment;
@@ -29,6 +33,22 @@ public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnviron
 
     private KotlinCoreApplicationEnvironment(@NotNull Disposable parentDisposable, boolean unitTestMode) {
         super(parentDisposable, unitTestMode);
+    }
+
+    private static void checkApplicationIsNotInitialized() {
+        Application application = ApplicationManager.getApplication();
+
+        if (application != null) throw new RuntimeException("Application shouldn't be initialized. Application: " + application);
+    }
+
+    private static void setupIdeaStandaloneExecution() {
+        System.getProperties().setProperty("project.structure.add.tools.jar.to.new.jdk", "false");
+        System.getProperties().setProperty("psi.track.invalidation", "true");
+        System.getProperties().setProperty("psi.incremental.reparse.depth.limit", "1000");
+        System.getProperties().setProperty("ide.hide.excluded.files", "false");
+        System.getProperties().setProperty("ast.loading.filter", "false");
+        System.getProperties().setProperty("idea.ignore.disabled.plugins", "true");
+        System.getProperties().setProperty("idea.home.path", System.getProperty("java.io.tmpdir"));
     }
 
     private static void registerExtensionPoints() {
