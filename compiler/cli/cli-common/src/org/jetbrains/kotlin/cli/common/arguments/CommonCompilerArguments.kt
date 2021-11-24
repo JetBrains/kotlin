@@ -382,6 +382,18 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var contextReceivers: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xklib-relative-path-base",
+        description = "Provide a base paths to compute source's relative paths in klib (default is empty)"
+    )
+    var relativePathBases: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xklib-normalize-absolute-path",
+        description = "Normalize absolute paths in klibs"
+    )
+    var normalizeAbsolutePath: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)

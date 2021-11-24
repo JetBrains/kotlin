@@ -77,6 +77,7 @@ where advanced options include:
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
+  -Xklib-normalize-absolute-path Normalize absolute paths in klibs
   -Xopt-in=<fq.name>         Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
   -Xphases-to-dump           Dump backend state both before and after these phases
   -Xphases-to-dump-after     Dump backend state after these phases
@@ -88,6 +89,7 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
+  -Xklib-relative-path-base  Provide a base paths to compute source's relative paths in klib (default is empty)
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
   -Xself-upper-bound-inference Support inferring type arguments based on only self upper bounds of the corresponding type parameters
