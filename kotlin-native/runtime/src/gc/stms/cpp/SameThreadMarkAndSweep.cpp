@@ -146,53 +146,14 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         RuntimeLogInfo(
                 {kTagGC}, "Started GC epoch %zu. Time since last GC %" PRIu64 " microseconds", epoch_, timeStartUs - lastGCTimestampUs_);
-        KStdVector<ObjHeader*> graySet;
-        for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
-            // TODO: Maybe it's more efficient to do by the suspending thread?
-            thread.Publish();
-            thread.gcScheduler().OnStoppedForGC();
-            size_t stack = 0;
-            size_t tls = 0;
-            for (auto value : mm::ThreadRootSet(thread)) {
-                if (!isNullOrMarker(value.object)) {
-                    graySet.push_back(value.object);
-                    switch (value.source) {
-                        case mm::ThreadRootSet::Source::kStack:
-                            ++stack;
-                            break;
-                        case mm::ThreadRootSet::Source::kTLS:
-                            ++tls;
-                            break;
-                    }
-                }
-            }
-            RuntimeLogDebug({kTagGC}, "Collected root set for thread stack=%zu tls=%zu", stack, tls);
-        }
-        mm::StableRefRegistry::Instance().ProcessDeletions();
-        size_t global = 0;
-        size_t stableRef = 0;
-        for (auto value : mm::GlobalRootSet()) {
-            if (!isNullOrMarker(value.object)) {
-                graySet.push_back(value.object);
-                switch (value.source) {
-                    case mm::GlobalRootSet::Source::kGlobal:
-                        ++global;
-                        break;
-                    case mm::GlobalRootSet::Source::kStableRef:
-                        ++stableRef;
-                        break;
-                }
-            }
-        }
+        auto graySet = collectRootSet();
         auto timeRootSetUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Collected global root set global=%zu stableRef=%zu", global, stableRef);
-
         // Can be unsafe, because we've stopped the world.
         auto objectsCountBefore = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
 
         RuntimeLogInfo(
-                {kTagGC}, "Collected root set of size %zu of which %zu are stable refs in %" PRIu64 " microseconds", graySet.size(),
-                stableRef, timeRootSetUs - timeSuspendUs);
+                {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", graySet.size(),
+                timeRootSetUs - timeSuspendUs);
         auto markStats = gc::Mark<MarkTraits>(std::move(graySet));
         auto timeMarkUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds. Processed %zu duplicate entries in the gray set", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs, markStats.duplicateEntries);
