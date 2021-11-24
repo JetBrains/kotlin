@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunct
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
+import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -69,6 +70,9 @@ internal class KtFirFunctionSymbol(
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val isInfix: Boolean get() = firRef.withFir { it.isInfix }
     override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
+
+    override val isBuiltinFunctionInvoke: Boolean
+        get() = callableIdIfNonLocal in kotlinFunctionInvokeCallableIds
 
     override val receiverType: KtType? by cached {
         firRef.receiverType(builder)

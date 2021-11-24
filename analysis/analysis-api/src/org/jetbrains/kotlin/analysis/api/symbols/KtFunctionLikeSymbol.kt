@@ -53,6 +53,11 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     public abstract val isInfix: Boolean
     public abstract val isStatic: Boolean
 
+    /**
+     * Whether this symbol is the `invoke` method defined on the Kotlin builtin functional type.
+     */
+    public abstract val isBuiltinFunctionInvoke: Boolean
+
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }
 

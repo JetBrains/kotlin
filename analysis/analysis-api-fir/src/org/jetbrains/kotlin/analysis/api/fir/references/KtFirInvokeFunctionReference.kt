@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.idea.references
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtVariableWithInvokeFunctionCall
+import org.jetbrains.kotlin.analysis.api.calls.KtSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -17,10 +18,12 @@ class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunct
     }
 
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        val call = expression.resolveCall() ?: return emptyList()
-        if (call is KtVariableWithInvokeFunctionCall) {
-            return call.targetFunction.candidates
+        return expression.resolveCall().calls.mapNotNull { call ->
+            (call as? KtSimpleFunctionCall)
+                ?.takeIf { it.isImplicitInvoke }
+                ?.boundSymbol
+                ?.symbol
+                ?.takeUnless { it is KtFunctionSymbol && it.isBuiltinFunctionInvoke }
         }
-        return emptyList()
     }
 }
