@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
+abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression(), FirWrappedExpressionWithSmartcast<FirQualifiedAccessExpression> {
     abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
@@ -29,12 +29,12 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
-    abstract val originalExpression: FirQualifiedAccessExpression
-    abstract val typesFromSmartCast: Collection<ConeKotlinType>
-    abstract val originalType: FirTypeRef
-    abstract val smartcastType: FirTypeRef
-    abstract val isStable: Boolean
-    abstract val smartcastStability: SmartcastStability
+    abstract override val originalExpression: FirQualifiedAccessExpression
+    abstract override val typesFromSmartCast: Collection<ConeKotlinType>
+    abstract override val originalType: FirTypeRef
+    abstract override val smartcastType: FirTypeRef
+    abstract override val isStable: Boolean
+    abstract override val smartcastStability: SmartcastStability
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcast(this, data)
 

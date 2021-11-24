@@ -476,8 +476,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +intField("componentIndex")
         }
 
-        expressionWithSmartcast.configure {
-            +field("originalExpression", qualifiedAccessExpression)
+        wrappedExpressionWithSmartcast.configure {
+            withArg("E", expression)
+            +typeRefField
+            +field("originalExpression", "E", packageName = null)
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
             +field("originalType", typeRef)
             +field("smartcastType", typeRef)
@@ -485,13 +487,18 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +smartcastStability
         }
 
-        expressionWithSmartcastToNull.configure {
-            +field("originalExpression", qualifiedAccessExpression)
-            +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
-            +field("originalType", typeRef)
-            +field("smartcastType", typeRef)
+        wrappedExpressionWithSmartcastToNull.configure {
+            withArg("E", expression)
+            parentArg(wrappedExpressionWithSmartcast, "E", "E")
             +field("smartcastTypeWithoutNullableNothing", typeRef)
-            +smartcastStability
+        }
+
+        expressionWithSmartcast.configure {
+            parentArg(wrappedExpressionWithSmartcast, "E", qualifiedAccessExpression)
+        }
+
+        expressionWithSmartcastToNull.configure {
+            parentArg(wrappedExpressionWithSmartcastToNull, "E", qualifiedAccessExpression)
         }
 
         safeCallExpression.configure {
@@ -558,6 +565,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         whenSubjectExpression.configure {
             +field("whenRef", whenRefType)
+        }
+
+        whenSubjectExpressionWithSmartcast.configure {
+            parentArg(wrappedExpressionWithSmartcast, "E", whenSubjectExpression)
+        }
+
+        whenSubjectExpressionWithSmartcastToNull.configure {
+            parentArg(wrappedExpressionWithSmartcastToNull, "E", whenSubjectExpression)
         }
 
         wrappedExpression.configure {

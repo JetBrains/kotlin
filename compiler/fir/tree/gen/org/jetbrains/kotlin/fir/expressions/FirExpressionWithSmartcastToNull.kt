@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast() {
+abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast(), FirWrappedExpressionWithSmartcastToNull<FirQualifiedAccessExpression> {
     abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
@@ -29,13 +29,13 @@ abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
-    abstract override val isStable: Boolean
     abstract override val originalExpression: FirQualifiedAccessExpression
     abstract override val typesFromSmartCast: Collection<ConeKotlinType>
     abstract override val originalType: FirTypeRef
     abstract override val smartcastType: FirTypeRef
-    abstract val smartcastTypeWithoutNullableNothing: FirTypeRef
+    abstract override val isStable: Boolean
     abstract override val smartcastStability: SmartcastStability
+    abstract override val smartcastTypeWithoutNullableNothing: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcastToNull(this, data)
 

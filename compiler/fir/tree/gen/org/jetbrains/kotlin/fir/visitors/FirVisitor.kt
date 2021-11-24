@@ -96,6 +96,8 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -115,6 +117,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -326,6 +330,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R  = visitElement(thisReceiverExpression, data)
 
+    open fun <E : FirExpression> visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast: FirWrappedExpressionWithSmartcast<E>, data: D): R  = visitElement(wrappedExpressionWithSmartcast, data)
+
+    open fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNull(wrappedExpressionWithSmartcastToNull: FirWrappedExpressionWithSmartcastToNull<E>, data: D): R  = visitElement(wrappedExpressionWithSmartcastToNull, data)
+
     open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): R  = visitElement(expressionWithSmartcast, data)
 
     open fun visitExpressionWithSmartcastToNull(expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull, data: D): R  = visitElement(expressionWithSmartcastToNull, data)
@@ -363,6 +371,10 @@ abstract class FirVisitor<out R, in D> {
     open fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: D): R  = visitElement(variableAssignment, data)
 
     open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R  = visitElement(whenSubjectExpression, data)
+
+    open fun visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast, data: D): R  = visitElement(whenSubjectExpressionWithSmartcast, data)
+
+    open fun visitWhenSubjectExpressionWithSmartcastToNull(whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull, data: D): R  = visitElement(whenSubjectExpressionWithSmartcastToNull, data)
 
     open fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): R  = visitElement(wrappedDelegateExpression, data)
 

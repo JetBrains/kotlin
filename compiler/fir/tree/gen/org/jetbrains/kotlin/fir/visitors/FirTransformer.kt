@@ -96,6 +96,8 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -115,6 +117,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -507,6 +511,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(thisReceiverExpression, data)
     }
 
+    open fun <E : FirExpression> transformWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast: FirWrappedExpressionWithSmartcast<E>, data: D): FirWrappedExpressionWithSmartcast<E> {
+        return transformElement(wrappedExpressionWithSmartcast, data)
+    }
+
+    open fun <E : FirExpression> transformWrappedExpressionWithSmartcastToNull(wrappedExpressionWithSmartcastToNull: FirWrappedExpressionWithSmartcastToNull<E>, data: D): FirWrappedExpressionWithSmartcastToNull<E> {
+        return transformElement(wrappedExpressionWithSmartcastToNull, data)
+    }
+
     open fun transformExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): FirStatement {
         return transformElement(expressionWithSmartcast, data)
     }
@@ -581,6 +593,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
         return transformElement(whenSubjectExpression, data)
+    }
+
+    open fun transformWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast, data: D): FirStatement {
+        return transformElement(whenSubjectExpressionWithSmartcast, data)
+    }
+
+    open fun transformWhenSubjectExpressionWithSmartcastToNull(whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull, data: D): FirStatement {
+        return transformElement(whenSubjectExpressionWithSmartcastToNull, data)
     }
 
     open fun transformWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): FirStatement {
@@ -1035,6 +1055,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformThisReceiverExpression(thisReceiverExpression, data)
     }
 
+    final override fun <E : FirExpression> visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast: FirWrappedExpressionWithSmartcast<E>, data: D): FirWrappedExpressionWithSmartcast<E> {
+        return transformWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast, data)
+    }
+
+    final override fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNull(wrappedExpressionWithSmartcastToNull: FirWrappedExpressionWithSmartcastToNull<E>, data: D): FirWrappedExpressionWithSmartcastToNull<E> {
+        return transformWrappedExpressionWithSmartcastToNull(wrappedExpressionWithSmartcastToNull, data)
+    }
+
     final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): FirStatement {
         return transformExpressionWithSmartcast(expressionWithSmartcast, data)
     }
@@ -1109,6 +1137,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
         return transformWhenSubjectExpression(whenSubjectExpression, data)
+    }
+
+    final override fun visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast, data: D): FirStatement {
+        return transformWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast, data)
+    }
+
+    final override fun visitWhenSubjectExpressionWithSmartcastToNull(whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull, data: D): FirStatement {
+        return transformWhenSubjectExpressionWithSmartcastToNull(whenSubjectExpressionWithSmartcastToNull, data)
     }
 
     final override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): FirStatement {

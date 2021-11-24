@@ -116,8 +116,10 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val componentCall by element(Expression, functionCall)
     val callableReferenceAccess by element(Expression, qualifiedAccessExpression)
     val thisReceiverExpression by element(Expression, qualifiedAccessExpression)
-    val expressionWithSmartcast by element(Expression, qualifiedAccessExpression)
-    val expressionWithSmartcastToNull by element(Expression, expressionWithSmartcast)
+    val wrappedExpressionWithSmartcast by element(Expression)
+    val wrappedExpressionWithSmartcastToNull by element(Expression, wrappedExpressionWithSmartcast)
+    val expressionWithSmartcast by element(Expression, qualifiedAccessExpression, wrappedExpressionWithSmartcast)
+    val expressionWithSmartcastToNull by element(Expression, expressionWithSmartcast, wrappedExpressionWithSmartcastToNull)
     val safeCallExpression by element(Expression, expression)
     val checkedSafeCallSubject by element(Expression, expression)
     val getClassCall by element(Expression, expression, call)
@@ -136,6 +138,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val throwExpression by element(Expression, expression)
     val variableAssignment by element(Expression, qualifiedAccess)
     val whenSubjectExpression by element(Expression, expression)
+    val whenSubjectExpressionWithSmartcast by element(Expression, whenSubjectExpression, wrappedExpressionWithSmartcast)
+    val whenSubjectExpressionWithSmartcastToNull by element(Expression, whenSubjectExpression, wrappedExpressionWithSmartcastToNull)
 
     val wrappedDelegateExpression by element(Expression, wrappedExpression)
 

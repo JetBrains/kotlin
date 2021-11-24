@@ -193,6 +193,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(expressionWithSmartcast)
         noImpl(expressionWithSmartcastToNull)
 
+        noImpl(whenSubjectExpressionWithSmartcast)
+        noImpl(whenSubjectExpressionWithSmartcastToNull)
+
         impl(getClassCall) {
             default("argument") {
                 value = "argumentList.arguments.first()"
