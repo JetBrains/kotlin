@@ -154,23 +154,17 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             testSettings: TestSettings,
             testSettingsAnnotation: Annotation?
         ): TestCaseGroupProvider {
-            // First, try to find two-argument constructor.
+            // Try to find a constructor that accepts the annotation.
             if (testSettingsAnnotation != null) {
                 val testSettingsAnnotationClass = testSettingsAnnotation.annotationClass
-
                 testSettings.providerClass.constructors.asSequence()
                     .forEach { c ->
-                        val (p1, p2) = c.parameters.takeIf { it.size == 2 } ?: return@forEach
-                        @Suppress("Reformat") val provider = when {
-                            p1.hasTypeOf<Settings>() && p2.hasTypeOf(testSettingsAnnotationClass) -> c.call(settings, testSettingsAnnotation)
-                            p1.hasTypeOf(testSettingsAnnotationClass) && p2.hasTypeOf<Settings>() -> c.call(testSettingsAnnotation, settings)
-                            else -> return@forEach
-                        }
-                        return provider.cast()
+                        val p = c.parameters.singleOrNull() ?: return@forEach
+                        if (p.hasTypeOf(testSettingsAnnotationClass)) return c.call(testSettingsAnnotation).cast()
                     }
             }
 
-            // Next, try to find a single-argument constructor.
+            // ... or settings at least.
             testSettings.providerClass.constructors.asSequence()
                 .forEach { c ->
                     val p = c.parameters.singleOrNull() ?: return@forEach

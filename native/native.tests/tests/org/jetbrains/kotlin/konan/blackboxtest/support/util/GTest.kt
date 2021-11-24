@@ -48,8 +48,9 @@ internal fun parseGTestReport(stdOut: String): GTestReport {
     val cleanStdOut = StringBuilder()
 
     var expectStatusLine = false
-    stdOut.lineSequence().forEach { line ->
+    stdOut.lineSequence().forEachIndexed { index, line ->
         when {
+            index == 0 && line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) -> Unit
             expectStatusLine -> {
                 val matcher = STATUS_LINE_REGEX.matchEntire(line)
                 if (matcher != null) {
@@ -97,6 +98,7 @@ internal fun parseGTestListing(rawGTestListing: String): Collection<TestFunction
         }
 
         state = when {
+            index == 0 && line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) -> state
             line.isBlank() -> when (state) {
                 is NewTest, is End -> End
                 else -> parseError("Unexpected empty line")
@@ -127,6 +129,9 @@ internal fun parseGTestListing(rawGTestListing: String): Collection<TestFunction
 
 private val RUN_LINE_REGEX = Regex("""^\[\s+RUN\s+]\s+.*""")
 private val STATUS_LINE_REGEX = Regex("""^\[\s+([A-Z]+)\s+]\s+(\S+)\s+.*""")
+
+// The very first line of stdlib test output may contain seed of Random. Such line should be ignored.
+private const val STDLIB_TESTS_IGNORED_LINE_PREFIX = "Seed: "
 
 private sealed interface GTestListingParseState {
     object Begin : GTestListingParseState
