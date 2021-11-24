@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.NativeBlackBoxTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.StandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProviding
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -20,6 +20,8 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
 import java.io.File
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
+import kotlin.reflect.full.findAnnotation
 
 class NativeBlackBoxTestSupport : BeforeEachCallback {
     /**
@@ -124,16 +126,38 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         }
 
         private fun Class<*>.createTestCaseGroupProvider(environment: TestEnvironment): TestCaseGroupProvider {
-            val providerClass = getAnnotation(NativeBlackBoxTestCaseGroupProvider::class.java)?.value
-                ?: return StandardTestCaseGroupProvider(environment)
+            val (providerAnnotation, providerAnnotationClass, providerClass) = annotations.asSequence()
+                .mapNotNull { annotation ->
+                    val annotationClass = annotation.annotationClass
+                    val providerClass = annotationClass.findAnnotation<TestCaseGroupProviding>()?.providerClass ?: return@mapNotNull null
+                    Triple(annotation, annotationClass, providerClass)
+                }.firstOrNull()
+                ?: return StandardTestCaseGroupProvider(environment) // Fallback if there is no annotation.
 
-            val constructor = providerClass.constructors.firstOrNull { constructor ->
-                val singleParameter = constructor.parameters.singleOrNull() ?: return@firstOrNull false
-                (singleParameter.type.classifier as? KClass<*>)?.qualifiedName == TestEnvironment::class.qualifiedName
-            } ?: fail { "No suitable constructor for $providerClass" }
+            // First, try to find two-argument constructor.
+            providerClass.constructors.asSequence()
+                .forEach { c ->
+                    val (p1, p2) = c.parameters.takeIf { it.size == 2 } ?: return@forEach
+                    val provider = when {
+                        p1.hasTypeOf<TestEnvironment>() && p2.hasTypeOf(providerAnnotationClass) -> c.call(environment, providerAnnotation)
+                        p1.hasTypeOf(providerAnnotationClass) && p2.hasTypeOf<TestEnvironment>() -> c.call(providerAnnotation, environment)
+                        else -> return@forEach
+                    }
+                    return provider.cast()
+                }
 
-            return constructor.call(environment).cast()
+            // Next, try to find a single-argument constructor.
+            providerClass.constructors.asSequence()
+                .forEach { c ->
+                    val p = c.parameters.singleOrNull() ?: return@forEach
+                    if (p.hasTypeOf<TestEnvironment>()) return c.call(environment).cast()
+                }
+
+            fail { "No suitable constructor for $providerClass" }
         }
+
+        private inline fun <reified T : Any> KParameter.hasTypeOf(): Boolean = hasTypeOf(T::class)
+        private fun KParameter.hasTypeOf(clazz: KClass<*>): Boolean = (type.classifier as? KClass<*>)?.qualifiedName == clazz.qualifiedName
 
         private val TestMetadata.testRoot: File get() = getAbsoluteFile(localPath = value)
     }
