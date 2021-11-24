@@ -332,7 +332,22 @@ class FirCallCompletionResultsWriterTransformer(
             type = substitutedType ?: initialType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
         ) ?: substitutedType
 
-        return withReplacedConeType(finalType)
+        // This is probably a temporary hack, but it seems necessary because elvis has that attribute and it may leak further like
+        // fun <E> foo() = materializeNullable<E>() ?: materialize<E>() // `foo` return type unexpectedly gets inferred to @Exact E
+        //
+        // In FE1.0, it's not necessary since the annotation for elvis have some strange form (see org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsWithOnly)
+        // that is not propagated further.
+        val withRemovedExactAttribute = finalType?.removeExactAttribute()
+
+        return withReplacedConeType(withRemovedExactAttribute)
+    }
+
+    private fun ConeKotlinType.removeExactAttribute(): ConeKotlinType {
+        if (attributes.contains(CompilerConeAttributes.Exact)) {
+            return withAttributes(attributes.remove(CompilerConeAttributes.Exact), session.typeContext)
+        }
+
+        return this
     }
 
     override fun transformSafeCallExpression(
