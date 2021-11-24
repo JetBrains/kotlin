@@ -62,7 +62,8 @@ fun deserializeFromByteArray(
 
     // Only needed for local signature computation.
     val dummyIrFile = IrFileImpl(NaiveSourceBasedFileEntryImpl("<unknown>"), IrFileSymbolImpl(), toplevelParent.packageFqName!!)
-    val dummyFileSignature = IdSignature.FileSignature(Any(), toplevelParent.packageFqName!!, "<unknown>")
+    // On JVM, file-scope private declarations are uniquely identified by file facade's fq name.
+    val dummyFileSignature = IdSignature.FileSignature(irProto.fileFacadeFqName, toplevelParent.packageFqName!!, "<unknown>")
 
     val symbolDeserializer = IrSymbolDeserializer(
         symbolTable,

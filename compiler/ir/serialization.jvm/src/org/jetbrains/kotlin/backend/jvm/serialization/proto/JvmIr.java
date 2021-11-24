@@ -690,6 +690,20 @@ public final class JvmIr {
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getDebugInfoBytes(int index);
+
+    /**
+     * <code>required string file_facade_fq_name = 7;</code>
+     */
+    boolean hasFileFacadeFqName();
+    /**
+     * <code>required string file_facade_fq_name = 7;</code>
+     */
+    java.lang.String getFileFacadeFqName();
+    /**
+     * <code>required string file_facade_fq_name = 7;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getFileFacadeFqNameBytes();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.jvm.serialization.proto.ClassOrFile}
@@ -791,6 +805,12 @@ public final class JvmIr {
               debugInfo_.add(bs);
               break;
             }
+            case 58: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000001;
+              fileFacadeFqName_ = bs;
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -842,6 +862,7 @@ public final class JvmIr {
       return PARSER;
     }
 
+    private int bitField0_;
     public static final int DECLARATION_FIELD_NUMBER = 1;
     private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> declaration_;
     /**
@@ -1040,6 +1061,48 @@ public final class JvmIr {
       return debugInfo_.getByteString(index);
     }
 
+    public static final int FILE_FACADE_FQ_NAME_FIELD_NUMBER = 7;
+    private java.lang.Object fileFacadeFqName_;
+    /**
+     * <code>required string file_facade_fq_name = 7;</code>
+     */
+    public boolean hasFileFacadeFqName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string file_facade_fq_name = 7;</code>
+     */
+    public java.lang.String getFileFacadeFqName() {
+      java.lang.Object ref = fileFacadeFqName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          fileFacadeFqName_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string file_facade_fq_name = 7;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getFileFacadeFqNameBytes() {
+      java.lang.Object ref = fileFacadeFqName_;
+      if (ref instanceof java.lang.String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        fileFacadeFqName_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       declaration_ = java.util.Collections.emptyList();
       type_ = java.util.Collections.emptyList();
@@ -1047,6 +1110,7 @@ public final class JvmIr {
       string_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       body_ = java.util.Collections.emptyList();
       debugInfo_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      fileFacadeFqName_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1054,6 +1118,10 @@ public final class JvmIr {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (!hasFileFacadeFqName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       for (int i = 0; i < getDeclarationCount(); i++) {
         if (!getDeclaration(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -1103,6 +1171,9 @@ public final class JvmIr {
       for (int i = 0; i < debugInfo_.size(); i++) {
         output.writeBytes(6, debugInfo_.getByteString(i));
       }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(7, getFileFacadeFqNameBytes());
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -1145,6 +1216,10 @@ public final class JvmIr {
         }
         size += dataSize;
         size += 1 * getDebugInfoList().size();
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBytesSize(7, getFileFacadeFqNameBytes());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -1252,6 +1327,8 @@ public final class JvmIr {
         bitField0_ = (bitField0_ & ~0x00000010);
         debugInfo_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000020);
+        fileFacadeFqName_ = "";
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -1274,6 +1351,7 @@ public final class JvmIr {
       public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.ClassOrFile buildPartial() {
         org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.ClassOrFile result = new org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.ClassOrFile(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           declaration_ = java.util.Collections.unmodifiableList(declaration_);
           bitField0_ = (bitField0_ & ~0x00000001);
@@ -1304,6 +1382,11 @@ public final class JvmIr {
           bitField0_ = (bitField0_ & ~0x00000020);
         }
         result.debugInfo_ = debugInfo_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.fileFacadeFqName_ = fileFacadeFqName_;
+        result.bitField0_ = to_bitField0_;
         return result;
       }
 
@@ -1369,12 +1452,21 @@ public final class JvmIr {
           }
           
         }
+        if (other.hasFileFacadeFqName()) {
+          bitField0_ |= 0x00000040;
+          fileFacadeFqName_ = other.fileFacadeFqName_;
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
       public final boolean isInitialized() {
+        if (!hasFileFacadeFqName()) {
+          
+          return false;
+        }
         for (int i = 0; i < getDeclarationCount(); i++) {
           if (!getDeclaration(i).isInitialized()) {
             
@@ -2103,6 +2195,82 @@ public final class JvmIr {
   }
   ensureDebugInfoIsMutable();
         debugInfo_.add(value);
+        
+        return this;
+      }
+
+      private java.lang.Object fileFacadeFqName_ = "";
+      /**
+       * <code>required string file_facade_fq_name = 7;</code>
+       */
+      public boolean hasFileFacadeFqName() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>required string file_facade_fq_name = 7;</code>
+       */
+      public java.lang.String getFileFacadeFqName() {
+        java.lang.Object ref = fileFacadeFqName_;
+        if (!(ref instanceof java.lang.String)) {
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            fileFacadeFqName_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string file_facade_fq_name = 7;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getFileFacadeFqNameBytes() {
+        java.lang.Object ref = fileFacadeFqName_;
+        if (ref instanceof String) {
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          fileFacadeFqName_ = b;
+          return b;
+        } else {
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string file_facade_fq_name = 7;</code>
+       */
+      public Builder setFileFacadeFqName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000040;
+        fileFacadeFqName_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required string file_facade_fq_name = 7;</code>
+       */
+      public Builder clearFileFacadeFqName() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        fileFacadeFqName_ = getDefaultInstance().getFileFacadeFqName();
+        
+        return this;
+      }
+      /**
+       * <code>required string file_facade_fq_name = 7;</code>
+       */
+      public Builder setFileFacadeFqNameBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000040;
+        fileFacadeFqName_ = value;
         
         return this;
       }

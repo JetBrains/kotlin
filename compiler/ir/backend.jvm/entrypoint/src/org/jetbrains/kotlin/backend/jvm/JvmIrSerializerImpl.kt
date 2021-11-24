@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfo
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmGlobalDeclarationTable
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIrSerializerSession
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -14,25 +15,29 @@ import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.name.FqName
 
 class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : JvmIrSerializer {
 
     private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
 
     override fun serializeIrFile(irFile: IrFile): ByteArray? {
-        return makeSerializerSession().serializeJvmIrFile(irFile)?.toByteArray()
+        val fileClassFqName = irFile.getFileClassInfo().fileClassFqName
+        return makeSerializerSession(fileClassFqName).serializeJvmIrFile(irFile)?.toByteArray()
     }
 
     override fun serializeTopLevelIrClass(irClass: IrClass): ByteArray? {
         assert(irClass.parent is IrFile)
-        return makeSerializerSession().serializeTopLevelClass(irClass)?.toByteArray()
+        val fileClassFqName = (irClass.parent as IrFile).getFileClassInfo().fileClassFqName
+        return makeSerializerSession(fileClassFqName).serializeTopLevelClass(irClass)?.toByteArray()
     }
 
-    private fun makeSerializerSession() =
+    private fun makeSerializerSession(fileClassFqName: FqName) =
         JvmIrSerializerSession(
             configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             declarationTable,
             mutableMapOf(),
-            configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE
+            configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE,
+            fileClassFqName
         )
 }

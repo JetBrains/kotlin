@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 
 class JvmIrSerializerSession(
@@ -23,6 +24,7 @@ class JvmIrSerializerSession(
     private val declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val mode: JvmSerializeIrMode,
+    private val fileClassFqName: FqName,
     skipExpects: Boolean = false,
 ) : IrFileSerializer(
     messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT,
@@ -50,6 +52,7 @@ class JvmIrSerializerSession(
         if (!anySaved) return null
 
         serializeAuxTables(proto)
+        proto.fileFacadeFqName = fileClassFqName.asString()
 
         return proto.build()
     }
@@ -62,6 +65,8 @@ class JvmIrSerializerSession(
             }
         }
         serializeAuxTables(proto)
+        proto.fileFacadeFqName = fileClassFqName.asString()
+
         return proto.build()
     }
 

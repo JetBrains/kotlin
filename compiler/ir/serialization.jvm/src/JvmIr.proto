@@ -21,4 +21,5 @@ message ClassOrFile {
   repeated string string = 4;
   repeated XStatementOrExpression body = 5;
   repeated string debug_info = 6;
+  required string file_facade_fq_name = 7;
 }
