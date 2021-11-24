@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.*
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
@@ -17,7 +20,6 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
     @Inject private val softwareComponentFactory: SoftwareComponentFactory
@@ -42,22 +44,20 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
                 KotlinJvmVariantFactory(module)
             )
 
-            fun <T: KotlinNativeVariantInternal> registerNativeVariantFactory(variantClass: KClass<T>) {
-                module.fragments.registerFactory(
-                    variantClass.java,
-                    KotlinNativeVariantFactory(module, variantClass)
-                )
-            }
+            fun <T : KotlinNativeVariantInternal> registerNativeVariantFactory(
+                constructor: KotlinNativeVariantConstructor<T>
+            ) = module.fragments.registerFactory(
+                constructor.variantClass, KotlinNativeVariantFactory(KotlinNativeVariantInstantiator(module, constructor))
+            )
+
             listOf(
                 // FIXME codegen, add missing native targets
-                KotlinLinuxX64Variant::class,
-                KotlinMacosX64Variant::class,
-                KotlinMacosArm64Variant::class,
-                KotlinIosX64Variant::class,
-                KotlinIosArm64Variant::class
-            ).forEach { variantClass ->
-                registerNativeVariantFactory(variantClass)
-            }
+                KotlinLinuxX64Variant.constructor,
+                KotlinMacosX64Variant.constructor,
+                KotlinMacosArm64Variant.constructor,
+                KotlinIosX64Variant.constructor,
+                KotlinIosArm64Variant.constructor
+            ).forEach { constructor -> registerNativeVariantFactory(constructor) }
         }
     }
 

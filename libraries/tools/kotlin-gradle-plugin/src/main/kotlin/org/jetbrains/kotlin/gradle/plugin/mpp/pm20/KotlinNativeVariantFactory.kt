@@ -3,88 +3,91 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.attributes.Usage
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
-import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
-import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.project.model.refinesClosure
-import kotlin.reflect.KClass
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 
-open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
-    module: KotlinGradleModule,
-    val variantClass: KClass<out T>
-) :
-    AbstractKotlinGradleVariantFactory<T>(module) {
+fun <T : KotlinNativeVariantInternal> KotlinNativeVariantFactory(
+    nativeVariantInstantiator: KotlinNativeVariantInstantiator<T>,
+    nativeVariantConfigurator: KotlinNativeVariantConfigurator<T> = KotlinNativeVariantConfigurator()
+) = KotlinGradleFragmentFactory(
+    fragmentInstantiator = nativeVariantInstantiator,
+    fragmentConfigurator = nativeVariantConfigurator
+)
 
-    override fun instantiateFragment(name: String): T =
-        module.project.objects.newInstance(variantClass.java, module, name)
+class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
+    private val module: KotlinGradleModule,
 
-    override fun setPlatformAttributesInConfiguration(fragment: T, configuration: Configuration) {
-        super.setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.attribute(KotlinNativeTarget.konanTargetAttribute, fragment.konanTarget.name)
+    private val kotlinNativeVariantConstructor: KotlinNativeVariantConstructor<T>,
+
+    private val dependenciesConfigurationFactory: KotlinDependencyConfigurationsFactory =
+        DefaultKotlinDependencyConfigurationsFactory,
+
+    private val compileDependenciesConfigurationFactory: KotlinCompileDependenciesConfigurationFactory =
+        DefaultKotlinCompileDependenciesConfigurationFactory,
+
+    private val apiElementsConfigurationFactory: KotlinApiElementsConfigurationFactory =
+        DefaultKotlinApiElementsConfigurationFactory,
+
+    private val hostSpecificMetadataElementsConfigurationFactory: KotlinNativeHostSpecificMetadataElementsConfigurationFactory? =
+        DefaultKotlinNativeHostSpecificMetadataElementsConfigurationFactory(kotlinNativeVariantConstructor.konanTarget)
+
+) : KotlinGradleFragmentFactory.FragmentInstantiator<T> {
+
+    override fun create(name: String): T {
+        val names = FragmentNameDisambiguation(module, name)
+        val dependencies = dependenciesConfigurationFactory.create(module, names)
+        return kotlinNativeVariantConstructor.invoke(
+            containingModule = module,
+            fragmentName = name,
+            dependencyConfigurations = dependencies,
+            compileDependencyConfiguration = compileDependenciesConfigurationFactory.create(module, names, dependencies),
+            apiElementsConfiguration = apiElementsConfigurationFactory.create(module, names, dependencies),
+            hostSpecificMetadataElementsConfiguration =
+            hostSpecificMetadataElementsConfigurationFactory?.create(module, names, dependencies)
+        )
     }
+}
 
-    override fun create(name: String): T =
-        super.create(name).also { result ->
-            configureHostSpecificMetadata(result)
-            configureVariantPublishing(result)
+class KotlinNativeVariantConfigurator<T : KotlinNativeVariantInternal>(
+    private val compileTaskConfigurator: KotlinCompileTaskConfigurator<T> =
+        KotlinNativeCompileTaskConfigurator,
+
+    private val sourceArchiveTaskConfigurator: KotlinSourceArchiveTaskConfigurator<T> =
+        DefaultKotlinSourceArchiveTaskConfigurator,
+
+    private val sourceDirectoriesSetup: KotlinSourceDirectoriesSetup<T> =
+        DefaultKotlinSourceDirectoriesSetup,
+
+    private val compileDependenciesSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinCompileDependenciesSetup + KonanTargetAttributesSetup,
+
+    private val apiElementsSetup: KotlinConfigurationsSetup<T> =
+        DefaultKotlinApiElementsSetup + KonanTargetAttributesSetup,
+
+    private val hostSpecificMetadataElementsSetup: KotlinConfigurationsSetup<T> =
+        DefaultHostSpecificMetadataElementsSetup,
+
+    private val hostSpecificMetadataArtifactConfigurator: KotlinGradleFragmentFactory.FragmentConfigurator<T> =
+        KotlinHostSpecificMetadataArtifactConfigurator,
+
+    private val publicationSetup: PublicationSetup<KotlinNativeVariantInternal> = PublicationSetup.NativeVariantPublication
+) : KotlinGradleFragmentFactory.FragmentConfigurator<T> {
+
+    override fun configure(fragment: T) {
+        compileDependenciesSetup.configure(fragment, fragment.compileDependencyConfiguration)
+        apiElementsSetup.configure(fragment, fragment.apiElementsConfiguration)
+
+        fragment.hostSpecificMetadataElementsConfiguration?.let { hostSpecificMetadataElementsConfiguration ->
+            hostSpecificMetadataElementsSetup.configure(fragment, hostSpecificMetadataElementsConfiguration)
         }
 
-    override fun configureKotlinCompilation(fragment: T) {
-        val compilationData = fragment.compilationData
-        LifecycleTasksManager(project).registerClassesTask(compilationData)
-        KotlinCompilationTaskConfigurator(project).createKotlinNativeCompilationTask(fragment, compilationData)
-    }
-
-    private fun configureHostSpecificMetadata(variant: T) {
-        val hostSpecificConfigurationNameIfEnabled = variant.hostSpecificMetadataElementsConfigurationName
-            ?: return
-
-        val hostSpecificMetadataJar = project.registerTask<Jar>(variant.disambiguateName("hostSpecificMetadataJar")) { jar ->
-            jar.archiveClassifier.set("metadata")
-            jar.archiveAppendix.set(variant.disambiguateName(""))
-            project.pm20Extension.metadataCompilationRegistryByModuleId.getValue(variant.containingModule.moduleIdentifier)
-                .withAll { metadataCompilation ->
-                    val fragment = metadataCompilation.fragment
-                    if (metadataCompilation is KotlinNativeFragmentMetadataCompilationData) {
-                        jar.from(project.files(project.provider {
-                            if (fragment in variant.refinesClosure && fragment.isNativeHostSpecific())
-                                project.filesWithUnpackedArchives(metadataCompilation.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
-                            else emptyList<Any>()
-                        })) { spec -> spec.into(fragment.name) }
-                    }
-                }
-        }
-        val apiElements = project.configurations.getByName(variant.apiElementsConfigurationName)
-        project.configurations.create(hostSpecificConfigurationNameIfEnabled).apply {
-            isCanBeResolved = false
-            isCanBeConsumed = false
-            setPlatformAttributesAndMetadataUsage(variant)
-            project.artifacts.add(name, hostSpecificMetadataJar)
-            dependencies.addAllLater(project.objects.listProperty(Dependency::class.java).apply {
-                set(project.provider { apiElements.allDependencies })
-            })
-        }
-    }
-
-    open fun configureVariantPublishing(variant: T) {
-        VariantPublishingConfigurator.get(project).configureNativeVariantPublication(variant)
-    }
-
-    private fun Configuration.setPlatformAttributesAndMetadataUsage(variant: T) {
-        configureApiElementsConfiguration(variant, this) // then override the Usage attribute
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        compileTaskConfigurator.registerCompileTasks(fragment)
+        sourceArchiveTaskConfigurator.registerSourceArchiveTask(fragment)
+        sourceDirectoriesSetup.configure(fragment)
+        hostSpecificMetadataArtifactConfigurator.configure(fragment)
+        publicationSetup.configure(fragment)
     }
 }

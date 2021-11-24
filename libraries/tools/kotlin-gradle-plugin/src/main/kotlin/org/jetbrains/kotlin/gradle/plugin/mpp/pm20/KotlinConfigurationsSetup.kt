@@ -8,14 +8,17 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.consumerApiUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.consumerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerApiUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 
 val DefaultKotlinCompileDependenciesSetup = KotlinConfigurationsSetup(
     KotlinPlatformAttributesSetup, KotlinConsumerApiUsageAttributesSetup
@@ -31,6 +34,10 @@ val DefaultKotlinRuntimeDependenciesSetup = KotlinConfigurationsSetup(
 
 val DefaultKotlinRuntimeElementsSetup = KotlinConfigurationsSetup(
     KotlinPlatformAttributesSetup, KotlinProducerRuntimeUsageAttributesSetup
+)
+
+val DefaultHostSpecificMetadataElementsSetup = KotlinConfigurationsSetup(
+    KotlinPlatformAttributesSetup, KonanTargetAttributesSetup, KotlinMetadataUsageAttributeSetup
 )
 
 interface KotlinConfigurationsSetup<in T : KotlinGradleFragment> {
@@ -64,6 +71,12 @@ object KotlinConsumerRuntimeUsageAttributesSetup : KotlinConfigurationsSetup<Kot
 object KotlinProducerRuntimeUsageAttributesSetup : KotlinConfigurationsSetup<KotlinGradleVariant> {
     override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
         configuration.attributes.attribute(USAGE_ATTRIBUTE, producerRuntimeUsage(fragment.project, fragment.platformType))
+    }
+}
+
+object KotlinMetadataUsageAttributeSetup : KotlinConfigurationsSetup<KotlinGradleVariant> {
+    override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
+        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, fragment.project.usageByName(KotlinUsages.KOTLIN_METADATA))
     }
 }
 

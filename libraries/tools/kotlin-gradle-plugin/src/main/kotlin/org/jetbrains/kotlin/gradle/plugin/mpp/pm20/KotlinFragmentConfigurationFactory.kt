@@ -12,6 +12,6 @@ interface KotlinFragmentConfigurationFactory {
     fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencyConfigurations: KotlinDependencyConfigurations
+        dependencies: KotlinDependencyConfigurations
     ): Configuration
 }

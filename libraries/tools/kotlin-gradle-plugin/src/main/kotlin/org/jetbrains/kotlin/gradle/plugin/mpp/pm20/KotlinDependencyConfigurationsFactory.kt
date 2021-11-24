@@ -5,20 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 
-object DefaultKotlinDependencyConfigurationsFactory : KotlinDependencyConfigurations.Factory {
+interface KotlinDependencyConfigurationsFactory {
+    fun create(module: KotlinGradleModule, names: FragmentNameDisambiguation): KotlinDependencyConfigurations
+}
 
-    override fun create(module: KotlinGradleModule, fragmentName: String): KotlinDependencyConfigurations {
-        val apiConfiguration = maybeCreateConfiguration(module, fragmentName, "api")
-        val implementationConfiguration = maybeCreateConfiguration(module, fragmentName, "implementation")
-        val compileOnlyConfiguration = maybeCreateConfiguration(module, fragmentName, "compileOnly")
-        val runtimeOnlyConfiguration = maybeCreateConfiguration(module, fragmentName, "runtimeOnly")
-        val transitiveApiConfiguration = maybeCreateConfiguration(module, fragmentName, "transitiveApi")
-        val transitiveImplementationConfiguration = maybeCreateConfiguration(module, fragmentName, "transitiveImplementation")
+object DefaultKotlinDependencyConfigurationsFactory : KotlinDependencyConfigurationsFactory {
+
+    override fun create(module: KotlinGradleModule, names: FragmentNameDisambiguation): KotlinDependencyConfigurations {
+        val configurations = module.project.configurations
+        val apiConfiguration = configurations.maybeCreate(names.disambiguateName("api"))
+        val implementationConfiguration = configurations.maybeCreate(names.disambiguateName("implementation"))
+        val compileOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("compileOnly"))
+        val runtimeOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("runtimeOnly"))
+        val transitiveApiConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveApi"))
+        val transitiveImplementationConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveImplementation"))
 
         listOf(
             apiConfiguration,
@@ -49,10 +52,4 @@ object DefaultKotlinDependencyConfigurationsFactory : KotlinDependencyConfigurat
             transitiveImplementationConfiguration = transitiveImplementationConfiguration
         )
     }
-
-    private fun maybeCreateConfiguration(
-        module: KotlinGradleModule, fragmentName: String, simpleConfigurationName: String
-    ): Configuration = module.project.configurations.maybeCreate(
-        KotlinModuleFragment.disambiguateName(module, fragmentName, simpleConfigurationName)
-    )
 }

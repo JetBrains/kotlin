@@ -5,16 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-interface PublicationSetup<in T : KotlinGradleVariant> {
-    operator fun invoke(variant: T)
+interface PublicationSetup<in T : KotlinGradleVariant> : KotlinGradleFragmentFactory.FragmentConfigurator<T> {
 
     object NoPublication : PublicationSetup<KotlinGradleVariant> {
-        override fun invoke(variant: KotlinGradleVariant) = Unit
+        override fun configure(fragment: KotlinGradleVariant) = Unit
     }
 
     object SingleVariantPublication : PublicationSetup<KotlinGradlePublishedVariantWithRuntime> {
-        override fun invoke(variant: KotlinGradlePublishedVariantWithRuntime) {
-            VariantPublishingConfigurator.get(variant.project).configureSingleVariantPublication(variant)
+        override fun configure(fragment: KotlinGradlePublishedVariantWithRuntime) {
+            VariantPublishingConfigurator.get(fragment.project).configureSingleVariantPublication(fragment)
+        }
+    }
+
+    object NativeVariantPublication : PublicationSetup<KotlinNativeVariantInternal> {
+        override fun configure(fragment: KotlinNativeVariantInternal) {
+            VariantPublishingConfigurator.get(fragment.project).configureNativeVariantPublication(fragment)
         }
     }
 }

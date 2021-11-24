@@ -17,7 +17,7 @@ object DefaultKotlinRuntimeElementsConfigurationFactory : KotlinRuntimeElementsC
     override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencyConfigurations: KotlinDependencyConfigurations
+        dependencies: KotlinDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("runtimeElements")).apply {
             isCanBeResolved = false
@@ -26,8 +26,8 @@ object DefaultKotlinRuntimeElementsConfigurationFactory : KotlinRuntimeElementsC
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, module.project.objects.named(Category::class.java, Category.LIBRARY))
             attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, module.project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
 
-            extendsFrom(dependencyConfigurations.transitiveApiConfiguration)
-            extendsFrom(dependencyConfigurations.transitiveImplementationConfiguration)
+            extendsFrom(dependencies.transitiveApiConfiguration)
+            extendsFrom(dependencies.transitiveImplementationConfiguration)
             module.ifMadePublic {
                 isCanBeConsumed = true
                 setModuleCapability(this, module)

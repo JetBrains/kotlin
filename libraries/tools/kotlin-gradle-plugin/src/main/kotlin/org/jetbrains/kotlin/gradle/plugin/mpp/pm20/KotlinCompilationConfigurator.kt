@@ -24,6 +24,15 @@ object KotlinJvmCompileTaskConfigurator : KotlinCompileTaskConfigurator<KotlinJv
     }
 }
 
+object KotlinNativeCompileTaskConfigurator : KotlinCompileTaskConfigurator<KotlinNativeVariantInternal> {
+    override fun registerCompileTasks(variant: KotlinNativeVariantInternal): TaskProvider<*> {
+        val compilationData = variant.compilationData
+        LifecycleTasksManager(variant.project).registerClassesTask(compilationData)
+        return KotlinCompilationTaskConfigurator(variant.project).createKotlinNativeCompilationTask(variant, compilationData)
+    }
+}
+
+// TODO NOW: Find place
 object KotlinJarArtifactElementsSetup : KotlinConfigurationsSetup<KotlinGradleVariant> {
     override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
         val project = fragment.project
@@ -36,3 +45,5 @@ object KotlinJarArtifactElementsSetup : KotlinConfigurationsSetup<KotlinGradleVa
         project.artifacts.add(configuration.name, jarTask)
     }
 }
+
+

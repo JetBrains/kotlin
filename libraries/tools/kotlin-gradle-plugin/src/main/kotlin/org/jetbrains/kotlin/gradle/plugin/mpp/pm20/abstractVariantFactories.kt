@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+/*
 abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
     module: KotlinGradleModule,
     private val compileTaskConfigurator: KotlinCompileTaskConfigurator<T>,
@@ -80,7 +81,10 @@ abstract class AbstractKotlinGradleVariantWithRuntimeFactory<T : KotlinGradleVar
         return super.create(name).also { variant ->
             runtimeDependenciesConfigurationSetup.configure(variant, variant.runtimeDependencyConfiguration)
             runtimeElementsConfigurationSetup.configure(variant, variant.runtimeElementsConfiguration)
-            publicationSetup(variant)
+            publicationSetup.configure(variant)
         }
     }
 }
+
+
+ */

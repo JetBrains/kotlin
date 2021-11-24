@@ -22,12 +22,12 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
 
     kotlinVariant.compileDependencyFiles = androidVariant.compileConfiguration.apply {
         setJavaTargetEnvironmentAttributeIfSupported(kotlinVariant.project, "android")
-        extendsFrom(kotlinVariant.project.configurations.getByName(kotlinVariant.compileDependencyConfigurationName))
+        extendsFrom(kotlinVariant.compileDependencyConfiguration)
     }
 
     kotlinVariant.runtimeDependencyFiles = androidVariant.runtimeConfiguration.apply {
         setJavaTargetEnvironmentAttributeIfSupported(kotlinVariant.project, "android")
-        extendsFrom(kotlinVariant.project.configurations.getByName(kotlinVariant.runtimeDependencyConfigurationName))
+        extendsFrom(kotlinVariant.runtimeDependencyConfiguration)
     }
 
     val mainBytecodeKey = androidVariant.registerPreJavacGeneratedBytecode(
@@ -39,7 +39,7 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
         project.getAndroidRuntimeJars()
     )
 
-    project.configurations.getByName(kotlinVariant.apiElementsConfigurationName).apply {
+    kotlinVariant.apiElementsConfiguration.apply {
         setJavaTargetEnvironmentAttributeIfSupported(project, "android")
         val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, androidVariant.buildType.name)
         attributes.attribute(Attribute.of(BuildTypeAttr::class.java), buildTypeAttrValue)

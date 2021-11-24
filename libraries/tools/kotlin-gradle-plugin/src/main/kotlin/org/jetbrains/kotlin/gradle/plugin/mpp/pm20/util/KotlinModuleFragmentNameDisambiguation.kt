@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
@@ -12,7 +14,7 @@ import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 
 internal typealias FragmentNameDisambiguation = KotlinModuleFragmentNameDisambiguation
 
-fun KotlinModuleFragmentNameDisambiguation(module: KotlinModule, fragmentName: String): KotlinModuleFragmentNameDisambiguation {
+internal fun FragmentNameDisambiguation(module: KotlinModule, fragmentName: String): FragmentNameDisambiguation {
     return DefaultKotlinModuleFragmentNameDisambiguation(module, fragmentName)
 }
 

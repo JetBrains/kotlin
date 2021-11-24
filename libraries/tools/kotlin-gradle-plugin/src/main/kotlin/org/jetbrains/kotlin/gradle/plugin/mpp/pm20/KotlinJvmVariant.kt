@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 
 open class KotlinJvmVariant(
     containingModule: KotlinGradleModule, fragmentName: String, dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: Configuration, apiElementsConfiguration: Configuration, runtimeDependencyConfiguration: Configuration,
+    compileDependenciesConfiguration: Configuration, apiElementsConfiguration: Configuration,
+    runtimeDependenciesConfiguration: Configuration,
     runtimeElementsConfiguration: Configuration
 ) : KotlinGradlePublishedVariantWithRuntime(
     containingModule, fragmentName, dependencyConfigurations,
-    compileDependencyConfiguration = compileDependencyConfiguration,
+    compileDependencyConfiguration = compileDependenciesConfiguration,
     apiElementsConfiguration = apiElementsConfiguration,
-    runtimeDependencyConfiguration = runtimeDependencyConfiguration,
+    runtimeDependencyConfiguration = runtimeDependenciesConfiguration,
     runtimeElementsConfiguration = runtimeElementsConfiguration
 ) {
     override val compilationData: KotlinJvmVariantCompilationData by lazy { KotlinJvmVariantCompilationData(this) }

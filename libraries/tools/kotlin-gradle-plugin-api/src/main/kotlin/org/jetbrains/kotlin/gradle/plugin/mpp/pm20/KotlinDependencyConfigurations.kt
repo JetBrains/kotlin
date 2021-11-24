@@ -19,12 +19,6 @@ interface KotlinDependencyConfigurations {
     /** This configuration includes the dependencies from the refines-parents */
     val transitiveImplementationConfiguration: Configuration
 
-    interface Factory {
-        fun create(module: KotlinGradleModule, fragmentName: String): KotlinDependencyConfigurations
-
-        companion object
-    }
-
     private class Impl(
         override val apiConfiguration: Configuration,
         override val implementationConfiguration: Configuration,

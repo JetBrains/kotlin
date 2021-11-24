@@ -3,50 +3,93 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
-import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 
-open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
-    AbstractKotlinGradleVariantWithRuntimeFactory<KotlinJvmVariant>(module) {
+typealias KotlinJvmVariantFactory = KotlinGradleFragmentFactory<KotlinJvmVariant>
 
-    override fun instantiateFragment(name: String) = KotlinJvmVariant(
-        module, name, dependencyConfigurationsFactory.create(module, name)
-    )
+fun KotlinJvmVariantFactory(module: KotlinGradleModule): KotlinJvmVariantFactory =
+    KotlinJvmVariantFactory(KotlinJvmVariantInstantiator(module))
 
-    /*
-    // FIXME expose the JAR with the artifacts API
-    private fun getOrCreateJarTask(fragment: KotlinJvmVariant): TaskProvider<Jar> {
-        val jarTaskName = fragment.disambiguateName("jar")
-        return project.locateOrRegisterTask(jarTaskName) {
-            it.from(fragment.compilationOutputs.allOutputs)
-            it.archiveClassifier.set(dashSeparatedName(fragment.name, module.moduleClassifier))
-        }
+fun KotlinJvmVariantFactory(
+    jvmVariantInstantiator: KotlinJvmVariantInstantiator,
+    jvmVariantConfigurator: KotlinJvmVariantConfigurator = KotlinJvmVariantConfigurator()
+): KotlinJvmVariantFactory = KotlinGradleFragmentFactory(
+    fragmentInstantiator = jvmVariantInstantiator,
+    fragmentConfigurator = jvmVariantConfigurator
+)
+
+class KotlinJvmVariantInstantiator(
+    private val module: KotlinGradleModule,
+
+    private val dependenciesConfigurationFactory: KotlinDependencyConfigurationsFactory =
+        DefaultKotlinDependencyConfigurationsFactory,
+
+    private val compileDependenciesConfigurationFactory: KotlinCompileDependenciesConfigurationFactory =
+        DefaultKotlinCompileDependenciesConfigurationFactory,
+
+    private val apiElementsConfigurationFactory: KotlinApiElementsConfigurationFactory =
+        DefaultKotlinApiElementsConfigurationFactory,
+
+    private val runtimeDependenciesConfigurationFactory: KotlinRuntimeDependenciesConfigurationFactory =
+        DefaultKotlinRuntimeDependenciesConfigurationFactory,
+
+    private val runtimeElementsConfigurationFactory: KotlinRuntimeElementsConfigurationFactory =
+        DefaultKotlinRuntimeElementsConfigurationFactory,
+
+    ) : KotlinGradleFragmentFactory.FragmentInstantiator<KotlinJvmVariant> {
+
+    override fun create(name: String): KotlinJvmVariant {
+        val names = FragmentNameDisambiguation(module, name)
+        val dependencies = dependenciesConfigurationFactory.create(module, names)
+        return KotlinJvmVariant(
+            containingModule = module,
+            fragmentName = name,
+            dependencyConfigurations = dependencies,
+            compileDependenciesConfiguration = compileDependenciesConfigurationFactory.create(module, names, dependencies),
+            apiElementsConfiguration = apiElementsConfigurationFactory.create(module, names, dependencies),
+            runtimeDependenciesConfiguration = runtimeDependenciesConfigurationFactory.create(module, names, dependencies),
+            runtimeElementsConfiguration = runtimeElementsConfigurationFactory.create(module, names, dependencies)
+        )
     }
-
-    override fun createElementsConfigurations(fragment: KotlinJvmVariant) {
-        super.createElementsConfigurations(fragment)
-        listOf(fragment.apiElementsConfigurationName, fragment.runtimeElementsConfigurationName).forEach {
-            project.artifacts.add(it, getOrCreateJarTask(fragment))
-        }
-    }
-
-    override fun configureKotlinCompilation(fragment: KotlinJvmVariant) {
-        val compilationData = fragment.compilationData
-        LifecycleTasksManager(project).registerClassesTask(compilationData)
-        KotlinCompilationTaskConfigurator(project).createKotlinJvmCompilationTask(fragment, compilationData)
-    }
-     */
 }
 
-//endregion Variant
+class KotlinJvmVariantConfigurator(
+    private val compileTaskConfigurator: KotlinCompileTaskConfigurator<KotlinJvmVariant> =
+        KotlinJvmCompileTaskConfigurator,
+
+    private val sourceArchiveTaskConfigurator: KotlinSourceArchiveTaskConfigurator<KotlinJvmVariant> =
+        DefaultKotlinSourceArchiveTaskConfigurator,
+
+    private val sourceDirectoriesSetup: KotlinSourceDirectoriesSetup<KotlinJvmVariant> =
+        DefaultKotlinSourceDirectoriesSetup,
+
+    private val compileDependenciesSetup: KotlinConfigurationsSetup<KotlinJvmVariant> =
+        DefaultKotlinCompileDependenciesSetup,
+
+    private val runtimeDependenciesSetup: KotlinConfigurationsSetup<KotlinJvmVariant> =
+        DefaultKotlinRuntimeDependenciesSetup,
+
+    private val apiElementsSetup: KotlinConfigurationsSetup<KotlinJvmVariant> =
+        DefaultKotlinApiElementsSetup,
+
+    private val runtimeElementsSetup: KotlinConfigurationsSetup<KotlinJvmVariant> =
+        DefaultKotlinRuntimeElementsSetup,
+    private val publicationSetup: PublicationSetup<KotlinJvmVariant> = PublicationSetup.SingleVariantPublication
+) : KotlinGradleFragmentFactory.FragmentConfigurator<KotlinJvmVariant> {
+
+    override fun configure(fragment: KotlinJvmVariant) {
+        compileDependenciesSetup.configure(fragment, fragment.compileDependencyConfiguration)
+        runtimeDependenciesSetup.configure(fragment, fragment.runtimeDependencyConfiguration)
+        apiElementsSetup.configure(fragment, fragment.apiElementsConfiguration)
+        runtimeElementsSetup.configure(fragment, fragment.runtimeElementsConfiguration)
+
+        compileTaskConfigurator.registerCompileTasks(fragment)
+        sourceArchiveTaskConfigurator.registerSourceArchiveTask(fragment)
+        sourceDirectoriesSetup.configure(fragment)
+        publicationSetup.configure(fragment)
+    }
+}

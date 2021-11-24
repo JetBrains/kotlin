@@ -42,6 +42,6 @@ open class KotlinGradleModuleFactory(private val project: Project) : NamedDomain
     }
 
     protected open fun registerFragmentFactory(module: KotlinGradleModule) {
-        module.fragments.registerFactory(KotlinGradleFragment::class.java, CommonGradleFragmentFactory(module))
+        module.fragments.registerFactory(KotlinGradleFragment::class.java, KotlinCommonFragmentFactory(module))
     }
 }

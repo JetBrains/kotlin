@@ -15,13 +15,13 @@ object DefaultKotlinCompileDependenciesConfigurationFactory : KotlinCompileDepen
     override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencyConfigurations: KotlinDependencyConfigurations
+        dependencies: KotlinDependencyConfigurations
     ): Configuration {
         return module.project.configurations.create(names.disambiguateName("compileDependencies")).apply {
             isCanBeConsumed = false
             isCanBeResolved = true
-            module.project.addExtendsFromRelation(name, dependencyConfigurations.transitiveApiConfiguration.name)
-            module.project.addExtendsFromRelation(name, dependencyConfigurations.transitiveImplementationConfiguration.name)
+            module.project.addExtendsFromRelation(name, dependencies.transitiveApiConfiguration.name)
+            module.project.addExtendsFromRelation(name, dependencies.transitiveImplementationConfiguration.name)
         }
     }
 }

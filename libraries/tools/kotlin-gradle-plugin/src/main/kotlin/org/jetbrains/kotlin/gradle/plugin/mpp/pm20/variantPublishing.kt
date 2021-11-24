@@ -29,13 +29,13 @@ import javax.inject.Inject
 fun VariantPublishingConfigurator.configureNativeVariantPublication(variant: KotlinNativeVariantInternal) {
     val publishConfigurations = listOfNotNull(
         variant.apiElementsConfiguration.name,
-        variant.hostSpecificMetadataElementsConfigurationName // host-specific metadata may be absent
+        variant.hostSpecificMetadataElementsConfiguration?.name // host-specific metadata may be absent
     )
     configurePublishing(variant, variant, publishConfigurations)
 }
 
 fun VariantPublishingConfigurator.configureSingleVariantPublication(variant: KotlinGradlePublishedVariantWithRuntime) {
-    val publishConfigurations = listOf(variant.apiElementsConfiguration.name, variant.runtimeElementsConfigurationName)
+    val publishConfigurations = listOf(variant.apiElementsConfiguration.name, variant.runtimeElementsConfiguration.name)
     configurePublishing(variant, variant, publishConfigurations)
 }
 
