@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.annotations
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
@@ -46,6 +47,22 @@ public class KtAnnotationApplicationValue(
     override val sourcePsi: KtElement? get() = annotationValue.psi
 }
 
+
+public sealed class KtKClassAnnotationValue : KtAnnotationValue()
+
+public class KtNonLocalKClassAnnotationValue(
+    public val classId: ClassId,
+    override val sourcePsi: KtElement?,
+) : KtKClassAnnotationValue()
+
+public class KtLocalKClassAnnotationValue(
+    public val ktClass: KtClassOrObject,
+    override val sourcePsi: KtElement?,
+) : KtKClassAnnotationValue()
+
+public class KtErrorClassAnnotationValue(
+    override val sourcePsi: KtElement?,
+) : KtKClassAnnotationValue()
 
 public class KtEnumEntryAnnotationValue(
     public val callableId: CallableId?,

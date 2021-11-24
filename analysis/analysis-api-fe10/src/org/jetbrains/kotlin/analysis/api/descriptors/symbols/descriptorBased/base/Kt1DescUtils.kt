@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
@@ -280,8 +281,16 @@ internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
 
 internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
     return when (this) {
-        is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtAnnotationValue() }, null)
-        is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), null)
+        is ArrayValue -> KtArrayAnnotationValue(value.map { it.toKtAnnotationValue() }, sourcePsi = null)
+        is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null)
+        is KClassValue -> when (val value = value) {
+            is KClassValue.Value.LocalClass -> {
+                val descriptor = value.type.constructor.declarationDescriptor as ClassDescriptor
+                KtLocalKClassAnnotationValue(descriptor.source.getPsi() as KtClassOrObject, sourcePsi = null)
+            }
+            is KClassValue.Value.NormalClass -> KtNonLocalKClassAnnotationValue(value.classId, sourcePsi = null)
+        }
+
         is AnnotationValue -> {
             KtAnnotationApplicationValue(
                 KtAnnotationApplication(
@@ -292,7 +301,6 @@ internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
                 )
             )
         }
-        is KClassValue -> KtKClassValue(cl)
         else -> {
             KtConstantAnnotationValue(toKtConstantValue())
         }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
@@ -20,8 +21,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
@@ -199,6 +202,21 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             FirPsiExpression(sourcePsi, parent, psiExpression)
         }
         KtUnsupportedAnnotationValue -> null
+        is KtErrorClassAnnotationValue -> null
+        is KtLocalKClassAnnotationValue -> null
+        is KtNonLocalKClassAnnotationValue -> toAnnotationMemberValue(parent)
+    }
+}
+
+private fun KtNonLocalKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
+    val fqName = classId.asSingleFqName()
+    val canonicalText = psiType(
+        fqName.asString(), parent, boxPrimitiveType = false /* TODO value.arrayNestedness > 0*/,
+    ).let(TypeConversionUtil::erasure).getCanonicalText(false)
+    return try {
+        PsiElementFactory.getInstance(parent.project).createExpressionFromText("$canonicalText.class", parent)
+    } catch (_: IncorrectOperationException) {
+        null
     }
 }
 
@@ -219,5 +237,6 @@ internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression
         null
     }
 }
+
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet

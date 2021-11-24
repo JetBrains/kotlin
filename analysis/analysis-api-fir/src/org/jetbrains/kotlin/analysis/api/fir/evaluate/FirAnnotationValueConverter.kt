@@ -78,6 +78,7 @@ internal object FirAnnotationValueConverter {
     private fun FirExpression.convertConstantExpression(
         session: FirSession,
     ): KtAnnotationValue? {
+        val sourcePsi = psi as? KtElement
         return when (this) {
             is FirConstExpression<*> -> convertConstantExpression()
             is FirNamedArgumentExpression -> {
@@ -87,11 +88,11 @@ internal object FirAnnotationValueConverter {
                 expression.convertConstantExpression(session)
             }
             is FirVarargArgumentsExpression -> {
-                arguments.convertConstantExpression(session).toArrayConstantValueIfNecessary(psi as? KtElement)
+                arguments.convertConstantExpression(session).toArrayConstantValueIfNecessary(sourcePsi)
             }
             is FirArrayOfCall -> {
                 // Desugared collection literals.
-                KtArrayAnnotationValue(argumentList.arguments.convertConstantExpression(session), psi as? KtElement)
+                KtArrayAnnotationValue(argumentList.arguments.convertConstantExpression(session), sourcePsi)
             }
             is FirFunctionCall -> {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
@@ -126,9 +127,17 @@ internal object FirAnnotationValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirEnumEntrySymbol -> {
-                        KtEnumEntryAnnotationValue(resolvedSymbol.callableId, psi as? KtElement)
+                        KtEnumEntryAnnotationValue(resolvedSymbol.callableId, sourcePsi)
                     }
                     else -> null
+                }
+            }
+            is FirGetClassCall -> {
+                val symbol = (argument as FirResolvedQualifier).symbol
+                when {
+                    symbol == null -> KtErrorClassAnnotationValue(sourcePsi)
+                    symbol.classId.isLocal -> KtLocalKClassAnnotationValue(symbol.fir.psi as KtClassOrObject, sourcePsi)
+                    else -> KtNonLocalKClassAnnotationValue(symbol.classId, sourcePsi)
                 }
             }
             else -> null

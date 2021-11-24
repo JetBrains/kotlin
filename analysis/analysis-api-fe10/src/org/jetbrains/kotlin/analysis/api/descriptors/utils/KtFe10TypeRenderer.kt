@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import kotlin.reflect.KClass
 
 internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, private val isDebugText: Boolean = false) {
     private companion object {
@@ -118,6 +119,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             is KtEnumEntryAnnotationValue -> append(value.callableId)
             is KtConstantAnnotationValue -> append(value.constantValue.constantValueKind.asString).append("(").append(value.constantValue.value).append(")")
             KtUnsupportedAnnotationValue -> append(KtUnsupportedAnnotationValue::class.java.simpleName)
+            is KtKClassAnnotationValue -> append(value.render())
         }
     }
 

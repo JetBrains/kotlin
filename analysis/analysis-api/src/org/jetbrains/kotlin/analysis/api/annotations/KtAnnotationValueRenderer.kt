@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.renderer.render
+
 public object KtAnnotationValueRenderer {
     public fun render(value: KtAnnotationValue): String = buildString {
         renderConstantValue(value)
@@ -25,9 +27,21 @@ public object KtAnnotationValueRenderer {
                 renderConstantAnnotationValue(value)
             }
             KtUnsupportedAnnotationValue -> {
-                append("KtUnsupportedConstantValue")
+                append("error(\"non-annotation value\")")
+            }
+            is KtKClassAnnotationValue -> {
+                renderKClassAnnotationValue(value)
             }
         }
+    }
+
+    private fun StringBuilder.renderKClassAnnotationValue(value: KtKClassAnnotationValue) {
+        when (value) {
+            is KtErrorClassAnnotationValue -> append("UNRESOLVED_CLASS")
+            is KtLocalKClassAnnotationValue -> append(value.ktClass.nameAsName?.render())
+            is KtNonLocalKClassAnnotationValue -> append(value.classId.asSingleFqName().render())
+        }
+        append("::class")
     }
 
     private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {
