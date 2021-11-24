@@ -194,9 +194,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return files.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }
         }
 
-        fun incrementalEnabledFor(module: TestModule, testServices: TestServices): Boolean {
+        fun incrementalEnabled(testServices: TestServices): Boolean {
             return JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in testServices.moduleStructure.allDirectives &&
-                    module.hasFilesToRecompile()
+                    testServices.moduleStructure.modules.any { it.hasFilesToRecompile() }
         }
     }
 

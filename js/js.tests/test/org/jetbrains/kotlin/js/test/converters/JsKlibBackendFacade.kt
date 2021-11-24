@@ -90,7 +90,7 @@ class JsKlibBackendFacade(
         moduleDescriptor.setDependencies(dependencies + moduleDescriptor)
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
 
-        if (JsEnvironmentConfigurator.incrementalEnabledFor(module, testServices)) {
+        if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
         }
         testServices.jsLibraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)

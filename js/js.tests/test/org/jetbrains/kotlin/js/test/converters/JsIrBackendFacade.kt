@@ -88,7 +88,7 @@ class JsIrBackendFacade(
 
         if (skipRegularMode) return null
 
-        if (JsEnvironmentConfigurator.incrementalEnabledFor(module, testServices)) {
+        if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             val outputFile = if (firstTimeCompilation) {
                 File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + ".js")
             } else {

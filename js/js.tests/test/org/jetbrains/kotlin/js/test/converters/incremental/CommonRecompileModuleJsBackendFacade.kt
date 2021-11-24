@@ -78,6 +78,6 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.targetBackend == backendKind && JsEnvironmentConfigurator.incrementalEnabledFor(module, testServices)
+        return module.targetBackend == backendKind && JsEnvironmentConfigurator.run { incrementalEnabled(testServices) && module.hasFilesToRecompile()}
     }
 }
