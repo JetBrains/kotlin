@@ -109,7 +109,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             secondProject,
             listOf("build"),
             listOf(
-                ":compileKotlinMetadata",
+                ":compileCommonMainKotlinMetadata",
                 ":compileKotlinJvmWithJava",
                 ":compileTestKotlinJvmWithJava",
                 ":compileKotlinJs",

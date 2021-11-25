@@ -234,8 +234,8 @@ class HierarchicalMppIT : BaseGradleIT() {
         transformNativeTestProjectWithPluginDsl(projectName, gradleVersion, directoryPrefix).apply {
             beforePublishing()
 
-            if (withGranularMetadata) {
-                projectDir.resolve("gradle.properties").appendText("kotlin.mpp.enableGranularSourceSetsMetadata=true")
+            if (!withGranularMetadata) {
+                projectDir.resolve("gradle.properties").appendText("kotlin.internal.mpp.hierarchicalStructureByDefault=false")
             }
 
             build(

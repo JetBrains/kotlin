@@ -262,6 +262,8 @@ abstract class BaseGradleIT {
         val customEnvironmentVariables: Map<String, String> = mapOf(),
         val dryRun: Boolean = false,
         val abiSnapshot: Boolean = false,
+        val hierarchicalMPPStructureSupport: Boolean? = null,
+        val enableCompatibilityMetadataVariant: Boolean? = null,
     )
 
     enum class ConfigurationCacheProblems {
@@ -919,6 +921,14 @@ Finished executing task ':$taskName'|
             }
             if (options.abiSnapshot) {
                 add("-Dkotlin.incremental.classpath.snapshot.enabled=true")
+            }
+
+            if (options.hierarchicalMPPStructureSupport != null) {
+                add("-Pkotlin.mpp.hierarchicalStructureSupport=${options.hierarchicalMPPStructureSupport}")
+            }
+
+            if (options.enableCompatibilityMetadataVariant != null) {
+                add("-Pkotlin.mpp.enableCompatibilityMetadataVariant=${options.enableCompatibilityMetadataVariant}")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")

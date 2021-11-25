@@ -95,12 +95,12 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
                 ":lib:compileReleaseKotlinAndroidLib",
                 ":lib:compileKotlinJvmLib",
                 ":lib:compileKotlinJsLib",
-                ":lib:compileKotlinMetadata",
+                ":lib:compileCommonMainKotlinMetadata",
                 ":app:compileDebugKotlinAndroidApp",
                 ":app:compileReleaseKotlinAndroidApp",
                 ":app:compileKotlinJvmApp",
                 ":app:compileKotlinJsApp",
-                ":app:compileKotlinMetadata",
+                ":app:compileCommonMainKotlinMetadata",
                 ":lib:compileDebugUnitTestJavaWithJavac",
                 ":app:compileDebugUnitTestJavaWithJavac"
             )
