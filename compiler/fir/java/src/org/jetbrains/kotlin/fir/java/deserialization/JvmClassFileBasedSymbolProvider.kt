@@ -45,8 +45,8 @@ class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-    defaultDeseializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeseializationOrigin) {
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
