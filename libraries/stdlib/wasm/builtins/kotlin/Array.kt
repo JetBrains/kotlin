@@ -40,8 +40,10 @@ public class Array<T> constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @Suppress("UNCHECKED_CAST")
-    public operator fun get(index: Int): T =
-        storage.get(index) as T
+    public operator fun get(index: Int): T {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index) as T
+    }
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
@@ -54,6 +56,7 @@ public class Array<T> constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public operator fun set(index: Int, value: T) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 

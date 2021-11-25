@@ -14,10 +14,13 @@ public class ByteArray(size: Int) {
         storage.fill(size, init)
     }
 
-    public operator fun get(index: Int): Byte =
-        storage.get(index)
+    public operator fun get(index: Int): Byte {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Byte) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -41,10 +44,13 @@ public class CharArray(size: Int) {
         storage.fill(size) { init(it) }
     }
 
-    public operator fun get(index: Int): Char =
-        storage.get(index)
+    public operator fun get(index: Int): Char {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Char) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -69,10 +75,13 @@ public class ShortArray(size: Int) {
         storage.fill(size, init)
     }
 
-    public operator fun get(index: Int): Short =
-        storage.get(index)
+    public operator fun get(index: Int): Short {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Short) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -97,10 +106,13 @@ public class IntArray(size: Int) {
         storage.fill(size, init)
     }
 
-    public operator fun get(index: Int): Int =
-        storage.get(index)
+    public operator fun get(index: Int): Int {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Int) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -125,10 +137,13 @@ public class LongArray(size: Int) {
         storage.fill(size, init)
     }
 
-    public operator fun get(index: Int): Long =
-        storage.get(index)
+    public operator fun get(index: Int): Long {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Long) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -152,10 +167,13 @@ public class FloatArray(size: Int) {
         storage.fill(size, init)
     }
 
-    public operator fun get(index: Int): Float =
-        storage.get(index)
+    public operator fun get(index: Int): Float {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Float) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -179,10 +197,13 @@ public class DoubleArray(size: Int) {
         storage.fill(size, init)
     }
 
-    public operator fun get(index: Int): Double =
-        storage.get(index)
+    public operator fun get(index: Int): Double {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index)
+    }
 
     public operator fun set(index: Int, value: Double) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value)
     }
 
@@ -206,10 +227,13 @@ public class BooleanArray(size: Int) {
         storage.fill(size) { init(it).toInt().reinterpretAsByte() }
     }
 
-    public operator fun get(index: Int): Boolean =
-        storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
+    public operator fun get(index: Int): Boolean {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
+        return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
+    }
 
     public operator fun set(index: Int, value: Boolean) {
+        if (index < 0 || index >= storage.len()) throw IndexOutOfBoundsException()
         storage.set(index, value.toInt().reinterpretAsByte())
     }
 
