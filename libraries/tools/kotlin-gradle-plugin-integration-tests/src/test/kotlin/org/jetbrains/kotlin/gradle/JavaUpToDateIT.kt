@@ -9,7 +9,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
-@SimpleGradlePluginTests
+@DisplayName("Changes in Kotlin/Java sources are correctly recoginized")
+@JvmGradlePluginTests
 class JavaUpToDateIT : KGPBaseTest() {
 
     @DisplayName("On Kotlin method body change")
