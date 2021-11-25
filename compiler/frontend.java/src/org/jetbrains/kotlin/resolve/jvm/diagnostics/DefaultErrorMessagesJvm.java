@@ -186,7 +186,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is not allowed for @JvmRecord classes");
         MAP.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as @JvmRecord");
         MAP.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype");
-        MAP.put(JVM_RECORDS_ILLEGAL_BYTECODE_TARGET, "Using @JvmRecord is only allowed with -jvm-target 15 and -Xjvm-enable-preview flag enabled");
+        MAP.put(JVM_RECORDS_ILLEGAL_BYTECODE_TARGET, "Using @JvmRecord is only allowed with -jvm-target 16 or later (or -jvm-target 15 with the -Xjvm-enable-preview flag enabled)");
 
         String MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS =
                 "Method 'contains' from ConcurrentHashMap may have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
