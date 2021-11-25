@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.exists
 
 @DisplayName("Compiler plugin incremental compilation")
@@ -18,6 +20,7 @@ class CompilerPluginsIncrementalIT : KGPBaseTest() {
             incremental = true
         )
 
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Kotlin compiler holds an open file descriptor to plugin jar file")
     @DisplayName("KT-38570: After changing compiler plugin code, next incremental build picks it up")
     @GradleTest
     internal fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
