@@ -1036,8 +1036,8 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNodeJsAndYarnNotDownloaded(gradleVersion: GradleVersion) {
-        with(Project("nodeJsDownload")) {
+    fun testNodeJsAndYarnNotDownloaded() {
+        with(transformProjectWithPluginsDsl("nodeJsDownload")) {
             gradleBuildScript().modify {
                 it + "\n" +
                         """
@@ -1059,8 +1059,7 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testYarnLockStore() {
-        with(Project("nodeJsDownload")) {
-            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        with(transformProjectWithPluginsDsl("nodeJsDownload")) {
             build("assemble") {
                 assertFileExists("kotlin-js-store/yarn.lock")
                 assert(fileInWorkingDir("kotlin-js-store").resolve("yarn.lock").readText() == fileInWorkingDir("build/js/yarn.lock").readText())
