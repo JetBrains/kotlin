@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <E> SmartList(x: E) {}
 fun <E> SmartList(x: Collection<E>) {}

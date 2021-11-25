@@ -64,9 +64,6 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         var addRuntime = false
         var addReflect = false
         for (file in files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
-                addRuntime = true
-            }
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_STDLIB")) {
                 addRuntime = true
             }

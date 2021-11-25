@@ -1,5 +1,5 @@
 // !LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class AllCollection<T> {
     fun <K, T> addAll(vararg values: T, values2: Array<K>) = "OK" // 1

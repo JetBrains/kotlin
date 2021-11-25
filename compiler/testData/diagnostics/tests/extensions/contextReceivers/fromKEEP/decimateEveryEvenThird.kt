@@ -1,5 +1,5 @@
 // !LANGUAGE: +ContextReceivers
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun List<Int>.decimateEveryEvenThird() = sequence {
     var counter = 1

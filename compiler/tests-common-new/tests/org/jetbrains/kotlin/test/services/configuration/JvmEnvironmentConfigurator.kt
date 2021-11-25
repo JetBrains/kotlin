@@ -71,16 +71,15 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         private const val JAVA_BINARIES_JAR_NAME = "java-binaries"
 
         fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
-            val withRuntime = ConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
-                    ConfigurationDirectives.WITH_STDLIB in registeredDirectives
+            val withStdlib = ConfigurationDirectives.WITH_STDLIB in registeredDirectives
             val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives
             val noRuntime = JvmEnvironmentConfigurationDirectives.NO_RUNTIME in registeredDirectives
-            if (noRuntime && withRuntime) {
-                error("NO_RUNTIME and WITH_RUNTIME can not be used together")
+            if (noRuntime && withStdlib) {
+                error("NO_RUNTIME and WITH_STDLIB can not be used together")
             }
             return when {
-                withRuntime && !withReflect -> ConfigurationKind.NO_KOTLIN_REFLECT
-                withRuntime || withReflect -> ConfigurationKind.ALL
+                withStdlib && !withReflect -> ConfigurationKind.NO_KOTLIN_REFLECT
+                withStdlib || withReflect -> ConfigurationKind.ALL
                 noRuntime -> ConfigurationKind.JDK_NO_RUNTIME
                 else -> ConfigurationKind.JDK_ONLY
             }
