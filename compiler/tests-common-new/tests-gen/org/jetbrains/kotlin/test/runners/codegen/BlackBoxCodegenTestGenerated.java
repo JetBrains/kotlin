@@ -6839,6 +6839,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("internalLeakBug.kt")
+        public void testInternalLeakBug() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalLeakBug.kt");
+        }
+
+        @Test
         @TestMetadata("internalSetterOverridden.kt")
         public void testInternalSetterOverridden() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
