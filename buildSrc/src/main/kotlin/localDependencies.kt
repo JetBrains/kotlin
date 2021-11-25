@@ -97,7 +97,7 @@ fun Project.kotlinxCollectionsImmutable() = "org.jetbrains.kotlinx:kotlinx-colle
  * So, we are excluding `annotaions.jar` from all other `kotlin.build` and using this one for runtime only
  * to avoid accidentally including `annotations.jar` by calling `intellijDep()`.
  */
-fun Project.intellijRuntimeAnnotations() = "kotlin.build:intellij-runtime-annotations:${rootProject.extra["versions.intellijSdk"]}"
+fun Project.intellijRuntimeAnnotations() = "org.jetbrains:annotations:${rootProject.extra["versions.annotations"]}"
 
 fun Project.intellijPluginDep(plugin: String, forIde: Boolean = false) = intellijDep(plugin, forIde)
 
