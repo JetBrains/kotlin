@@ -766,6 +766,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/recordAsSingleFileRoot.args");
         }
 
+        @TestMetadata("requireKotlinCompilerVersion.args")
+        public void testRequireKotlinCompilerVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/requireKotlinCompilerVersion.args");
+        }
+
         @TestMetadata("resultInReturnTypeSupportedByDefault15.args")
         public void testResultInReturnTypeSupportedByDefault15() throws Exception {
             runTest("compiler/testData/cli/jvm/resultInReturnTypeSupportedByDefault15.args");

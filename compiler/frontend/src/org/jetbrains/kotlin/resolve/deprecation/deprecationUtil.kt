@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.resolve.deprecation
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
@@ -48,9 +50,14 @@ internal fun createDeprecationDiagnostic(
                 WARNING -> Errors.VERSION_REQUIREMENT_DEPRECATION
                 ERROR, HIDDEN -> Errors.VERSION_REQUIREMENT_DEPRECATION_ERROR
             }
+            val currentVersionString = when (deprecation.versionRequirement.kind) {
+                ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION -> KotlinCompilerVersion.VERSION
+                ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION -> languageVersionSettings.languageVersion.versionString
+                ProtoBuf.VersionRequirement.VersionKind.API_VERSION -> languageVersionSettings.apiVersion.versionString
+            }
             factory.on(
                 element, targetOriginal, deprecation.versionRequirement.version,
-                languageVersionSettings.languageVersion to deprecation.message
+                currentVersionString to deprecation.message
             )
         }
 

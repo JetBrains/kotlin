@@ -385,9 +385,9 @@ public class DefaultErrorMessages {
         MAP.put(TYPEALIAS_EXPANSION_DEPRECATION, "''{0}'' uses ''{1}'', which is deprecated. {2}", DEPRECATION_RENDERER, DEPRECATION_RENDERER, STRING);
         MAP.put(TYPEALIAS_EXPANSION_DEPRECATION_ERROR, "''{0}'' uses ''{1}'', which is an error. {2}", DEPRECATION_RENDERER, DEPRECATION_RENDERER, STRING);
 
-        DiagnosticParameterRenderer<Pair<LanguageVersion, String>> versionRequirementMessage = (pair, renderingContext) -> {
+        DiagnosticParameterRenderer<Pair<String, String>> versionRequirementMessage = (pair, renderingContext) -> {
             String message = pair.getSecond();
-            return pair.getFirst().getVersionString() + (message != null ? ". " + message : "");
+            return pair.getFirst() + (message != null ? ". " + message : "");
         };
         MAP.put(VERSION_REQUIREMENT_DEPRECATION, "''{0}''{1} should not be used in Kotlin {2}", DEPRECATION_RENDERER,
                 (obj, renderingContext) -> obj.equals(VersionRequirement.Version.INFINITY) ? "" : " is only supported since Kotlin " + obj.asString() + " and",
