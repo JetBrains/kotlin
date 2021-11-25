@@ -418,7 +418,10 @@ class Fir2IrConverter(
             val signatureComposer = FirBasedSignatureComposer(mangler)
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer)
             val converter = Fir2IrConverter(moduleDescriptor, components)
-            val classifierStorage = Fir2IrClassifierStorage(converter, components)
+
+            components.converter = converter
+
+            val classifierStorage = Fir2IrClassifierStorage(components)
             components.classifierStorage = classifierStorage
             components.delegatedMemberGenerator = DelegatedMemberGenerator(components)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
@@ -433,7 +436,7 @@ class Fir2IrConverter(
                 )
             components.irBuiltIns = irBuiltIns
             val conversionScope = Fir2IrConversionScope()
-            val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
+            val fir2irVisitor = Fir2IrVisitor(components, conversionScope)
             val builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
             val annotationGenerator = AnnotationGenerator(components)
             components.builtIns = builtIns

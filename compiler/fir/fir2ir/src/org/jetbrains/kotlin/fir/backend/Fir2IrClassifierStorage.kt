@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class Fir2IrClassifierStorage(
-    private val converter: Fir2IrConverter,
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
     private val firProvider = session.firProvider

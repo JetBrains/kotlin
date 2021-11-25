@@ -24,6 +24,9 @@ class Fir2IrComponentsStorage(
     override val irFactory: IrFactory,
     override val signatureComposer: FirBasedSignatureComposer
 ) : Fir2IrComponents {
+
+    override lateinit var converter: Fir2IrConverter
+
     override lateinit var classifierStorage: Fir2IrClassifierStorage
     override lateinit var declarationStorage: Fir2IrDeclarationStorage
 

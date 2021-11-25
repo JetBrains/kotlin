@@ -20,6 +20,8 @@ interface Fir2IrComponents {
     val session: FirSession
     val scopeSession: ScopeSession
 
+    val converter: Fir2IrConverter
+
     val symbolTable: SymbolTable
     val irBuiltIns: IrBuiltIns
     val builtIns: Fir2IrBuiltIns
