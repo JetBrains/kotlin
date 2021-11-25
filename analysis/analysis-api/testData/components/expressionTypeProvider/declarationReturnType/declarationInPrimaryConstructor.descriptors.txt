@@ -1,4 +1,0 @@
-Foo@(1,1)
-  Foo@(1,13) : kotlin.Unit
-    t@(1,14) : T
-    i@(1,24) : kotlin.Int

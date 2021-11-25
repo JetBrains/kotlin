@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
@@ -113,6 +110,13 @@ class KtFe10ExpressionTypeProvider(
                     return kotlinType.toKtType(analysisContext)
                 }
             }
+        }
+
+        if (declaration is KtConstructor<*>) {
+            val bindingContext = analysisContext.analyze(declaration)
+            val kotlinType = bindingContext[BindingContext.CONSTRUCTOR, declaration]?.returnType
+                ?: ErrorUtils.createErrorType("Return type for constructor \"${declaration.containingClass()?.name}\" cannot be resolved")
+            return kotlinType.toKtType(analysisContext)
         }
 
         return analysisContext.builtIns.unitType.toKtType(analysisContext)
