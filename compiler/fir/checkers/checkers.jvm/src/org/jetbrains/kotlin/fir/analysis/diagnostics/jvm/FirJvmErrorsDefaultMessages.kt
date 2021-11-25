@@ -134,7 +134,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of @JvmRecord may be a vararg")
         map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot inherit a class", RENDER_TYPE)
         map.put(INNER_JVM_RECORD, "@JvmRecord class should not be inner")
-        map.put(FIELD_IN_JVM_RECORD, "It's not allowed to have non-constructor properties with backing filed in @JvmRecord class")
+        map.put(FIELD_IN_JVM_RECORD, "It's not allowed to have non-constructor properties with backing field in @JvmRecord class")
         map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is not allowed for @JvmRecord classes")
         map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as @JvmRecord")
         map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype")
