@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: WASM
 
 import kotlin.test.assertEquals
 

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
 // WITH_STDLIB
 
 class S(val a: String, val b: String) {

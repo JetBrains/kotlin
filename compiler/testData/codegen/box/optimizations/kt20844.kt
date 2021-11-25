@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_GENERATED
 // WITH_STDLIB
 
 fun foo(x: String, ys: List<String>) =

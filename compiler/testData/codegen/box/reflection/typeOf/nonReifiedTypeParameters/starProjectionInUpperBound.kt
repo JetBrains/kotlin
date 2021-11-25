@@ -1,7 +1,5 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
