@@ -33,7 +33,7 @@ import java.util.*
 open class LookupStorage(
     targetDataDir: File,
     pathConverter: FileToPathConverter,
-    storeFullFqNames: Boolean
+    storeFullFqNames: Boolean = false
 ) : BasicMapsOwner(targetDataDir) {
     val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
 

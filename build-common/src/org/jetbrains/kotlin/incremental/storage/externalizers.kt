@@ -33,7 +33,7 @@ class LookupSymbolKeyDescriptor(
 ) : KeyDescriptor<LookupSymbolKey> {
 
     override fun read(input: DataInput): LookupSymbolKey {
-        val storeFullFqNames = input.readBoolean()
+        val storeFullFqNames = (input.readByte().toInt() == 1)
         return if (storeFullFqNames) {
             val name = input.readUTF()
             val scope = input.readUTF()
@@ -46,7 +46,7 @@ class LookupSymbolKeyDescriptor(
     }
 
     override fun save(output: DataOutput, value: LookupSymbolKey) {
-        output.writeBoolean(storeFullFqNames)
+        output.writeByte(if (storeFullFqNames) 1 else 0)
         if (storeFullFqNames) {
             output.writeUTF(value.name)
             output.writeUTF(value.scope)
