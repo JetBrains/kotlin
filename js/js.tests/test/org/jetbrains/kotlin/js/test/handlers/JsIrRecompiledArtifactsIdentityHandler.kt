@@ -34,18 +34,18 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
     @Suppress("UNUSED_PARAMETER")
     private fun compareIrArtifacts(originalArtifact: Js.JsIrArtifact, incrementalArtifact: Js.JsIrArtifact) {
         // TODO: enable asserts when binary stability is achieved
-//        val oldBinaryAsts = originalArtifact.icCache!!
-//        val newBinaryAsts = incrementalArtifact.icCache!!
-//
-//        for (file in newBinaryAsts.keys) {
-//            val oldBinaryAst = oldBinaryAsts[file]
-//            val newBinaryAst = newBinaryAsts[file]
-//
-//            testServices.assertions.assertTrue(oldBinaryAst.contentEquals(newBinaryAst)) {
-//                "Binary AST changed after recompilation for file $file"
-//            }
-//        }
-//
+        val oldBinaryAsts = originalArtifact.icCache!!
+        val newBinaryAsts = incrementalArtifact.icCache!!
+
+        for (file in newBinaryAsts.keys) {
+            val oldBinaryAst = oldBinaryAsts[file]
+            val newBinaryAst = newBinaryAsts[file]
+
+            testServices.assertions.assertTrue(oldBinaryAst.contentEquals(newBinaryAst)) {
+                "Binary AST changed after recompilation for file $file"
+            }
+        }
+
         val originalOutput = FileUtil.loadFile(originalArtifact.outputFile)
         val recompiledOutput = FileUtil.loadFile(incrementalArtifact.outputFile)
         testServices.assertions.assertEquals(originalOutput, recompiledOutput) { "Output file changed after recompilation" }

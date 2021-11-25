@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
@@ -221,24 +222,33 @@ class IrModuleToJsTransformerTmp(
 
         result.importedModules += nameGenerator.importedModules
 
-        fun computeTag(declaration: IrDeclaration): String {
-            return (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.toString()
-                ?: System.identityHashCode(declaration).toString()
-// TODO         ?: error("signature for ${declaration.render()} not found")
+        val definitionSet = file.declarations.toSet()
+
+        fun computeTag(declaration: IrDeclaration): String? {
+            val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.toString()
+
+            if (tag == null && declaration !in definitionSet) {
+                error("signature for ${declaration.render()} not found")
+            }
+
+            return tag
         }
 
         nameGenerator.nameMap.entries.forEach { (declaration, name) ->
-            val tag = computeTag(declaration)
-            result.nameBindings[tag] = name
+            computeTag(declaration)?.let { tag ->
+                result.nameBindings[tag] = name
+            }
         }
 
         nameGenerator.imports.entries.forEach { (declaration, importExpression) ->
-            val tag = computeTag(declaration)
+            val tag = computeTag(declaration) ?: error("No tag for imported declaration ${declaration.render()}")
             result.imports[tag] = importExpression
         }
 
         file.declarations.forEach {
-            result.definitions += computeTag(it)
+            computeTag(it)?.let { tag ->
+                result.definitions += tag
+            }
         }
 
         return result

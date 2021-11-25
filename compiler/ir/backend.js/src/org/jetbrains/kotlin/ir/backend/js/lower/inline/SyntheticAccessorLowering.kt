@@ -208,7 +208,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
         if (candidates.isEmpty()) return
 
         val fileHash = irFile.fileEntry.name.hashCode().toUInt().toString(Character.MAX_RADIX)
-        val accessors = candidates.map { it.createAccessor(fileHash) }
+        val accessors = candidates.map { context.irFactory.stageController.restrictTo(it) { it.createAccessor(fileHash) } }
         val candidatesMap = candidates.zip(accessors).toMap()
 
         irFile.transformChildrenVoid(CallSiteTransformer(candidatesMap))
