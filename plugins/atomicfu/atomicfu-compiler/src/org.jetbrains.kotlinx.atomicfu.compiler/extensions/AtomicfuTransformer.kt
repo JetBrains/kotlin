@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.platform.js.isJs
 
 private const val AFU_PKG = "kotlinx.atomicfu"
 private const val LOCKS = "locks"
@@ -47,10 +48,12 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     private val ATOMICFU_INLINE_FUNCTIONS = setOf("atomicfu_loop", "atomicfu_update", "atomicfu_getAndUpdate", "atomicfu_updateAndGet")
 
     fun transform(irFile: IrFile) {
-        irFile.transform(AtomicExtensionTransformer(), null)
-        irFile.transformChildren(AtomicTransformer(), null)
+        if (context.platform.isJs()) {
+            irFile.transform(AtomicExtensionTransformer(), null)
+            irFile.transformChildren(AtomicTransformer(), null)
 
-        irFile.patchDeclarationParents()
+            irFile.patchDeclarationParents()
+        }
     }
 
     private inner class AtomicExtensionTransformer : IrElementTransformerVoid() {
