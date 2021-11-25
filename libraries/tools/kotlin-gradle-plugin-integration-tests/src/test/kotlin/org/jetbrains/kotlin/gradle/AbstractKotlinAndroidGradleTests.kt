@@ -115,10 +115,10 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
                 compilerPluginArgsRegex.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
 
             compilerPluginOptionsBySourceSet.entries.forEach { (sourceSetName, argsString) ->
-                val shouldHaveAndroidExtensionArgs =
-                    sourceSetName.startsWith("androidApp") && (
-                            androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")
-                            )
+                val shouldHaveAndroidExtensionArgs = sourceSetName.startsWith("androidApp") &&
+                        (androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")) &&
+                        (androidGradlePluginVersion < AGPVersion.v7_1_0 || !sourceSetName.contains("androidAppTestFixtures"))
+
                 if (shouldHaveAndroidExtensionArgs)
                     assertTrue("$sourceSetName is an Android source set and should have Android Extensions in the args") {
                         "plugin:org.jetbrains.kotlin.android" in argsString
@@ -447,6 +447,82 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         val javaHome = File("/opt/openjdk-bin-11")
         Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
         return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
+    }
+}
+
+open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v7_1_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("7.2")
+
+    /**
+     * Starting from AGP version 7.1.0-alpha13, a new attribute com.android.build.api.attributes.AgpVersionAttr was added.
+     * This attribute is *not intended* to be published.
+     */
+    @Test
+    fun testKT49798AgpVersionAttrNotPublished() = with(Project("new-mpp-android")) {
+        build("publish") {
+            val debugPublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib-debug")
+            val releasePublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib")
+
+            listOf(debugPublicationDirectory, releasePublicationDirectory).forEach { publicationDirectory ->
+                assertTrue(publicationDirectory.exists(), "Missing publication directory: $publicationDirectory")
+                val moduleFiles = publicationDirectory.walkTopDown().filter { file -> file.extension == "module" }.toList()
+                assertTrue(moduleFiles.isNotEmpty(), "Missing .module file in $publicationDirectory")
+                assertTrue(moduleFiles.size <= 1, "Multiple .module files in $publicationDirectory: $moduleFiles")
+
+                val moduleFile = moduleFiles.single()
+                val moduleFileText = moduleFile.readText()
+                assertTrue("AgpVersionAttr" !in moduleFileText, ".module file $moduleFile leaks AgpVersionAttr")
+            }
+        }
+    }
+
+    @Test
+    fun testAndroidMultiplatformPublicationAGPCompatibility() = with(Project("new-mpp-android-agp-compatibility")) {
+        /* Publish producer library with current version of AGP */
+        build(":producer:publishAllPublicationsToBuildDirRepository") {
+            assertSuccessful()
+
+            /* Check expected publication layout */
+            assertFileExists("build/repo/com/example/producer-android")
+            assertFileExists("build/repo/com/example/producer-android-debug")
+            assertFileExists("build/repo/com/example/producer-jvm")
+        }
+
+        val checkedConsumerAGPVersions = AGPVersion.testedVersions
+            // Special version added for testing KT-49798
+            .plus(AGPVersion.fromString("7.1.0-beta02"))
+            .filter { version -> version >= AGPVersion.v4_2_0 }
+
+        checkedConsumerAGPVersions.forEach { agpVersion ->
+
+            this.setupWorkingDir()
+            println("Testing compatibility for AGP consumer version $agpVersion")
+            val buildOptions = defaultBuildOptions().copy(androidGradlePluginVersion = agpVersion)
+
+            /*
+            Project: multiplatformAndroidConsumer is a mpp project with jvm and android targets.
+            This project depends on the previous publication as 'commonMainImplementation' dependency
+            */
+            build(":multiplatformAndroidConsumer:assemble", options = buildOptions) {
+                assertSuccessful(
+                    "multiplatformAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+
+            /*
+            Project: plainAndroidConsumer only uses the 'kotlin("android")' plugin
+            This project depends on the previous publication as 'implementation' dependency
+             */
+            build(":plainAndroidConsumer:assemble", options = buildOptions) {
+                assertSuccessful(
+                    "plainAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+        }
     }
 }
 
