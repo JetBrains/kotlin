@@ -28,10 +28,7 @@ import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.zip.ZipFile
-import kotlin.io.path.appendText
-import kotlin.io.path.extension
-import kotlin.io.path.name
-import kotlin.io.path.readText
+import kotlin.io.path.*
 import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -1080,6 +1077,55 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
                         .resolve("kotlin-js-store")
                         .resolve("yarn.lock")
                         .readText() == projectPath.resolve("build/js/yarn.lock").readText()
+                )
+            }
+        }
+    }
+
+    @DisplayName("Yarn ignore scripts")
+    @GradleTest
+    fun testYarnIgnoreScripts(gradleVersion: GradleVersion) {
+        project("nodeJsDownload", gradleVersion) {
+            buildGradleKts.modify {
+                it + "\n" +
+                        """
+                        dependencies {
+                            implementation(npm("puppeteer", "11.0.0"))
+                        }
+                        """.trimIndent()
+            }
+            build("assemble") {
+                assert(
+                    projectPath
+                        .resolve("build")
+                        .resolve("js")
+                        .resolve("node_modules")
+                        .resolve("puppeteer")
+                        .resolve(".local-chromium")
+                        .notExists()
+                ) {
+                    "Chromium should not be installed with --ignore-scripts"
+                }
+            }
+            buildGradleKts.modify {
+                it + "\n" +
+                        """
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().ignoreScripts = false
+                        }
+                        """.trimIndent()
+            }
+
+            build("clean")
+
+            build("assemble") {
+                assertDirectoryExists(
+                    projectPath
+                        .resolve("build")
+                        .resolve("js")
+                        .resolve("node_modules")
+                        .resolve("puppeteer")
+                        .resolve(".local-chromium")
                 )
             }
         }

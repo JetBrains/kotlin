@@ -54,6 +54,7 @@ open class YarnPlugin : Plugin<Project> {
         kotlinNpmInstall.configure {
             it.dependsOn(rootPackageJson)
             it.dependsOn(setupTask)
+            it.inputs.property("ignoreScripts", { yarnRootExtension.ignoreScripts })
         }
 
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
