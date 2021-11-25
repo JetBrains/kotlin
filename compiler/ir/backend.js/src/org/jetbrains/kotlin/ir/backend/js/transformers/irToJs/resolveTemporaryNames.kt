@@ -37,12 +37,14 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
         // Outer `foo` resolves first, so when traversing inner scope, we should take it into account.
         occupiedNames += scope.usedNames.asSequence().mapNotNull { if (!it.isTemporary) it.ident else replacements[it]?.ident }
 
+        val nextSuffix = mutableMapOf<String, Int>()
         for (temporaryName in scope.declaredNames.asSequence().filter { it.isTemporary }) {
             var resolvedName = temporaryName.ident
-            var suffix = 0
+            var suffix = nextSuffix.getOrDefault(temporaryName.ident, 0)
             while (resolvedName in JsDeclarationScope.RESERVED_WORDS || !occupiedNames.add(resolvedName)) {
                 resolvedName = "${temporaryName.ident}_${suffix++}"
             }
+            nextSuffix[temporaryName.ident] = suffix
             replacements[temporaryName] = JsDynamicScope.declareName(resolvedName).apply { copyMetadataFrom(temporaryName) }
             occupiedNames += resolvedName
         }
