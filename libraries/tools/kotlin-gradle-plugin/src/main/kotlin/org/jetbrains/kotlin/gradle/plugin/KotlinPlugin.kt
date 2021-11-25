@@ -991,7 +991,12 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         val javaTask = variantData.getJavaTaskProvider()
         val kotlinTask = compilation.compileKotlinTaskProvider
-        compilation.androidVariant.forEachJavaSourceDir { sources -> kotlinTask.configure { it.source(sources.dir) } }
+        compilation.androidVariant.forEachJavaSourceDir { sources ->
+            kotlinTask.configure {
+                it.source(sources.dir)
+                it.dependsOn(sources)
+            }
+        }
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
     }
 }
