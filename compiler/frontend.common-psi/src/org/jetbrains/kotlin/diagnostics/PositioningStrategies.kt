@@ -399,12 +399,15 @@ object PositioningStrategies {
         }
     }
 
-    private class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
-        override fun mark(element: KtModifierListOwner): List<TextRange> {
-            val modifierList = element.modifierList
+    private open class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
+        protected fun markModifier(element: KtModifierListOwner?): List<TextRange>? =
+            modifierSet.types.mapNotNull {
+                element?.modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange
+            }.takeIf { it.isNotEmpty() }
 
-            val result = modifierSet.types.mapNotNull { modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange }
-            if (result.isNotEmpty()) return result
+        override fun mark(element: KtModifierListOwner): List<TextRange> {
+            val result = markModifier(element)
+            if (result != null) return result
 
             // Try to resolve situation when there's no visibility modifiers written before element
             if (element is PsiNameIdentifierOwner) {
@@ -426,6 +429,15 @@ object PositioningStrategies {
         }
     }
 
+    private class InlineFunPositioningStrategy : ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INLINE_KEYWORD)) {
+        override fun mark(element: KtModifierListOwner): List<TextRange> {
+            if (element is KtProperty) {
+                return markModifier(element.getter) ?: markModifier(element.setter) ?: super.mark(element)
+            }
+            return super.mark(element)
+        }
+    }
+
     @JvmField
     val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(VISIBILITY_MODIFIERS)
 
@@ -443,6 +455,9 @@ object PositioningStrategies {
     @JvmField
     val INLINE_PARAMETER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD))
+
+    @JvmField
+    val INLINE_FUN_MODIFIER: PositioningStrategy<KtModifierListOwner> = InlineFunPositioningStrategy()
 
     @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {

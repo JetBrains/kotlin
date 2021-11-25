@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
-import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
@@ -339,18 +338,33 @@ object LightTreePositioningStrategies {
                     false
             }
 
-    private class ModifierSetBasedLightTreePositioningStrategy(private val modifierSet: TokenSet) : LightTreePositioningStrategy() {
+    private open class ModifierSetBasedLightTreePositioningStrategy(private val modifierSet: TokenSet) : LightTreePositioningStrategy() {
+        protected fun markModifier(
+            node: LighterASTNode?,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+            baseNode: LighterASTNode
+        ): List<TextRange>? {
+            if (node == null) return null
+            val modifierList = tree.modifierList(node)
+            if (modifierList != null) {
+                tree.findChildByType(modifierList, modifierSet)?.let {
+                    return markElement(it, startOffset, endOffset, tree, baseNode)
+                }
+            }
+            return null
+        }
+
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            val modifierList = tree.modifierList(node)
-            if (modifierList != null) {
-                tree.findChildByType(modifierList, modifierSet)?.let {
-                    return markElement(it, startOffset, endOffset, tree, node)
-                }
+            val modifierListRange = markModifier(node, startOffset, endOffset, tree, node)
+            if (modifierListRange != null) {
+                return modifierListRange
             }
             tree.nameIdentifier(node)?.let {
                 return markElement(it, startOffset, endOffset, tree, node)
@@ -364,6 +378,22 @@ object LightTreePositioningStrategies {
                 }
                 else -> markElement(node, startOffset, endOffset, tree)
             }
+        }
+    }
+
+    private class InlineFunLightTreePositioningStrategy : ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(INLINE_KEYWORD)) {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.PROPERTY) {
+                return markModifier(tree.getter(node), startOffset, endOffset, tree, node)
+                    ?: markModifier(tree.setter(node), startOffset, endOffset, tree, node)
+                    ?: super.mark(node, startOffset, endOffset, tree)
+            }
+            return super.mark(node, startOffset, endOffset, tree)
         }
     }
 
@@ -402,7 +432,7 @@ object LightTreePositioningStrategies {
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.SUSPEND_KEYWORD, KtTokens.FUN_KEYWORD))
 
     val INLINE_OR_VALUE_MODIFIER: LightTreePositioningStrategy =
-        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
+        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
 
     val INNER_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.INNER_KEYWORD))
@@ -441,6 +471,8 @@ object LightTreePositioningStrategies {
 
     val INLINE_PARAMETER_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD))
+
+    val INLINE_FUN_MODIFIER: LightTreePositioningStrategy = InlineFunLightTreePositioningStrategy()
 
     val OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
@@ -1222,7 +1254,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: 
     modifierList(declaration)?.let { findChildByType(it, KtTokens.OVERRIDE_KEYWORD) }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: LighterASTNode): LighterASTNode? =
-    modifierList(declaration)?.let { findChildByType(it, KtTokens.INLINE_KEYWORD) }
+    modifierList(declaration)?.let { findChildByType(it, INLINE_KEYWORD) }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.typeParametersList(declaration: LighterASTNode): LighterASTNode? =
     findChildByType(declaration, KtNodeTypes.TYPE_PARAMETER_LIST)
@@ -1240,6 +1272,22 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.userType(node: LighterASTNode)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.supertypesList(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.SUPER_TYPE_LIST)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.getter(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull {
+        it != null && it.tokenType == KtNodeTypes.PROPERTY_ACCESSOR && findChildByType(it, GET_KEYWORD) != null
+    }
+}
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.setter(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull {
+        it != null && it.tokenType == KtNodeTypes.PROPERTY_ACCESSOR && findChildByType(it, SET_KEYWORD) != null
+    }
+}
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.accessorNamePlaceholder(node: LighterASTNode): LighterASTNode =
     findChildByType(node, KtTokens.GET_KEYWORD) ?: findChildByType(node, KtTokens.SET_KEYWORD)!!

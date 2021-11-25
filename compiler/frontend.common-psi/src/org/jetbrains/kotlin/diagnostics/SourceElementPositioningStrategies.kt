@@ -315,6 +315,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.INLINE_PARAMETER_MODIFIER
     )
 
+    val INLINE_FUN_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.INLINE_FUN_MODIFIER,
+        PositioningStrategies.INLINE_FUN_MODIFIER
+    )
+
     val OPERATOR_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR_MODIFIER,
         PositioningStrategies.OPERATOR_MODIFIER

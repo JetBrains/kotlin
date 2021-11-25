@@ -112,6 +112,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     IMPORT_ALIAS,
     DECLARATION_START_TO_NAME,
     REDUNDANT_NULLABLE,
+    INLINE_FUN_MODIFIER,
 
     ;
 
