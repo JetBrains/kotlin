@@ -617,6 +617,11 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             runTest("jps-plugin/testData/incremental/pureKotlin/secondaryConstructorInlined/");
         }
 
+        @TestMetadata("serializedSubClassAndChangedInterfaces")
+        public void testSerializedSubClassAndChangedInterfaces() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/serializedSubClassAndChangedInterfaces/");
+        }
+
         @TestMetadata("simpleClassDependency")
         public void testSimpleClassDependency() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/simpleClassDependency/");

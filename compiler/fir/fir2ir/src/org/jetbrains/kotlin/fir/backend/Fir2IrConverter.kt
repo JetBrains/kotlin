@@ -52,6 +52,9 @@ class Fir2IrConverter(
 
     private val generatorExtensions = session.extensionService.declarationGenerators
 
+    private var wereSourcesFakeOverridesBound = false
+    private val postponedDeclarationsForFakeOverridesBinding = mutableListOf<IrDeclaration>()
+
     fun runSourcesConversion(
         allFirFiles: List<FirFile>,
         irModuleFragment: IrModuleFragmentImpl,
@@ -90,6 +93,11 @@ class Fir2IrConverter(
         for (firFile in allFirFiles) {
             bindFakeOverridesInFile(firFile)
         }
+
+        wereSourcesFakeOverridesBound = true
+        fakeOverrideGenerator.bindOverriddenSymbols(postponedDeclarationsForFakeOverridesBinding)
+        postponedDeclarationsForFakeOverridesBinding.clear()
+
         //   Do (3) and (4) for local classes encountered during (3)
         classifierStorage.processMembersOfClassesCreatedOnTheFly()
 
@@ -118,6 +126,15 @@ class Fir2IrConverter(
             }
         }
 
+    }
+
+    fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
+        // Do not run binding for lazy classes until all sources declarations are processed
+        if (wereSourcesFakeOverridesBound) {
+            fakeOverrideGenerator.bindOverriddenSymbols(declarations)
+        } else {
+            postponedDeclarationsForFakeOverridesBinding += declarations
+        }
     }
 
     fun processLocalClassAndNestedClassesOnTheFly(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {

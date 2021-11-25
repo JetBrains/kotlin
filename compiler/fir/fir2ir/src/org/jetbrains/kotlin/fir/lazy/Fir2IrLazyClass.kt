@@ -141,7 +141,7 @@ class Fir2IrLazyClass(
 
     fun getFakeOverridesByName(name: Name): Collection<IrDeclaration> = fakeOverridesByName.getOrPut(name) {
         fakeOverrideGenerator.generateFakeOverridesForName(this@Fir2IrLazyClass, name, fir)
-            .also(fakeOverrideGenerator::bindOverriddenSymbols)
+            .also(converter::bindFakeOverridesOrPostpone)
     }
 
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
