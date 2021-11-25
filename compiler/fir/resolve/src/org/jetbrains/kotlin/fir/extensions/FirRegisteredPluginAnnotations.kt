@@ -21,7 +21,15 @@ abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSess
         }
     }
 
+    /**
+     * Contains all annotations that can be targeted by the plugins. It includes the annotations directly mentioned by the plugin,
+     * and all the user-defined annotations which are meta-annotated by the annotations from the [metaAnnotations] list.
+     */
     abstract val annotations: Set<AnnotationFqn>
+
+    /**
+     * Contains meta-annotations that can be targeted by the plugins.
+     */
     abstract val metaAnnotations: Set<AnnotationFqn>
 
     val hasRegisteredAnnotations: Boolean
