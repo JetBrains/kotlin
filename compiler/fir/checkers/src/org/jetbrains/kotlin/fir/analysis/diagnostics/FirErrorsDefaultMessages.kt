@@ -676,7 +676,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated")
         map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter")
         map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are forbidden for data classes")
-        map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must have only property (val / var) parameters")
+        map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must only have property (val / var) parameters")
 
         // Annotations
         map.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument")
@@ -1080,7 +1080,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter") // +
         map.put(
             VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-            "Value class primary constructor must have only final read-only (val) property parameter"
+            "Value class primary constructor must only have final read-only (val) property parameter"
         )
         map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields")
         map.put(DELEGATED_PROPERTY_INSIDE_VALUE_CLASS, "Value class cannot have delegated properties")
