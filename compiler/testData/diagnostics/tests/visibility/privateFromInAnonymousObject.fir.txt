@@ -1,0 +1,35 @@
+FILE: privateFromInAnonymousObject.kt
+    public final class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final class Private : R|kotlin/Any| {
+            public constructor(): R|Base.Private| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            object : R|kotlin/Any| {
+                private constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final val x: R|Base.Private| = R|/Base.Private.Private|()
+                    public get(): R|Base.Private|
+
+                init {
+                    lval y: R|Base.Private| = R|/Base.Private.Private|()
+                }
+
+                public final fun foo(): R|kotlin/Unit| {
+                    lval z: R|Base.Private| = R|/Base.Private.Private|()
+                }
+
+            }
+
+        }
+
+    }

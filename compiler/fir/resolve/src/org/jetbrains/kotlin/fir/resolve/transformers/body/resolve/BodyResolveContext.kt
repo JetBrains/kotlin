@@ -338,6 +338,8 @@ class BodyResolveContext(
             towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
             towerDataContextForCallableReferences.putAll(this@BodyResolveContext.towerDataContextForCallableReferences)
             containers = this@BodyResolveContext.containers
+            containingClassDeclarations = ArrayDeque(this@BodyResolveContext.containingClassDeclarations)
+            containingClass = this@BodyResolveContext.containingClass
             replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
             anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
         }

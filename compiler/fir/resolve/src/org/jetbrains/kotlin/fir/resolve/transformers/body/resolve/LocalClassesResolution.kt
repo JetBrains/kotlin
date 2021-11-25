@@ -44,7 +44,9 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     runTypeResolvePhaseForLocalClass(
         components.session,
         components.scopeSession,
-        components.createCurrentScopeList()
+        components.createCurrentScopeList(),
+        components.file,
+        components.containingDeclarations
     )
     runStatusResolveForLocalClass(
         components.session,

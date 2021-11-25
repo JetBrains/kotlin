@@ -33,8 +33,17 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
 ): F {
-    val transformer = FirTypeResolveTransformer(session, scopeSession, currentScopeList)
+    @Suppress("RemoveExplicitTypeArguments")
+    val transformer = FirTypeResolveTransformer(
+        session,
+        scopeSession,
+        currentScopeList,
+        initialCurrentFile = useSiteFile,
+        classDeclarationsStack = containingDeclarations.filterIsInstanceTo<FirClass, ArrayDeque<FirClass>>(ArrayDeque())
+    )
 
     return this.transform<F, Nothing?>(transformer, null)
 }
@@ -42,9 +51,10 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
 open class FirTypeResolveTransformer(
     final override val session: FirSession,
     private val scopeSession: ScopeSession,
-    initialScopes: List<FirScope> = emptyList()
+    initialScopes: List<FirScope> = emptyList(),
+    initialCurrentFile: FirFile? = null,
+    private val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
-    private val classDeclarationsStack = ArrayDeque<FirClass>()
     private val scopes = mutableListOf<FirScope>()
     private val towerScope = scopes.asReversed()
 
@@ -53,7 +63,7 @@ open class FirTypeResolveTransformer(
     }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
-    private var currentFile: FirFile? = null
+    private var currentFile: FirFile? = initialCurrentFile
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)

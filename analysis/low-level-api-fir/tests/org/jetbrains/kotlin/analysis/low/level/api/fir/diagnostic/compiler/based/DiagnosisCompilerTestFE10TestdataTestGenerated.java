@@ -32282,6 +32282,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("privateFromInAnonymousObject.kt")
+            public void testPrivateFromInAnonymousObject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/privateFromInAnonymousObject.kt");
+            }
+
+            @Test
             @TestMetadata("protectedInternal.kt")
             public void testProtectedInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
