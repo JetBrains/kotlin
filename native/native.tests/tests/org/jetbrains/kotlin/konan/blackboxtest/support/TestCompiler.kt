@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilation.Companion
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.*
@@ -22,7 +23,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-internal class TestCompilationFactory(private val environment: TestEnvironment) {
+internal class TestCompilationFactory(private val settings: Settings) {
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
     private sealed interface TestCompilationCacheKey {
@@ -46,7 +47,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
             val entryPoint = testCases.singleOrNull()?.safeExtras<NoTestRunnerExtras>()?.entryPoint
 
             TestCompilationImpl(
-                environment = environment,
+                settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = rootModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
@@ -54,7 +55,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
                 specificCompilerArgs = {
                     add("-produce", "program")
                     if (entryPoint != null) add("-entry", entryPoint) else add("-generate-test-runner")
-                    environment.globalEnvironment.getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
+                    settings.global.getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
                         add("-Xcache-directory=$rootCacheDir")
                     }
                 }
@@ -75,7 +76,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
 
         return cachedCompilations.computeIfAbsent(cacheKey) {
             TestCompilationImpl(
-                environment = environment,
+                settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = sourceModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
@@ -87,15 +88,15 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
 
     private fun artifactFileForExecutable(modules: Set<TestModule.Exclusive>) = when (modules.size) {
         1 -> artifactFileForExecutable(modules.first())
-        else -> multiModuleArtifactFile(modules, environment.globalEnvironment.target.family.exeSuffix)
+        else -> multiModuleArtifactFile(modules, settings.global.target.family.exeSuffix)
     }
 
     private fun artifactFileForExecutable(module: TestModule.Exclusive) =
-        singleModuleArtifactFile(module, environment.globalEnvironment.target.family.exeSuffix)
+        singleModuleArtifactFile(module, settings.global.target.family.exeSuffix)
 
     private fun artifactFileForKlib(module: TestModule, freeCompilerArgs: TestCompilerArgs) = when (module) {
         is TestModule.Exclusive -> singleModuleArtifactFile(module, "klib")
-        is TestModule.Shared -> environment.sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
+        is TestModule.Shared -> settings.sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
     }
 
     private fun singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
@@ -141,7 +142,7 @@ internal class TestCompilationFactory(private val environment: TestEnvironment) 
     }
 
     private fun artifactDirForPackageName(packageName: PackageFQN?): File {
-        val baseDir = environment.testBinariesDir
+        val baseDir = settings.testBinariesDir
         val outputDir = if (packageName != null) baseDir.resolve(packageName.compressedPackageName) else baseDir
 
         outputDir.mkdirs()
@@ -221,7 +222,7 @@ internal class TestCompilationDependencies(
 }
 
 private class TestCompilationImpl(
-    private val environment: TestEnvironment,
+    private val settings: Settings,
     private val freeCompilerArgs: TestCompilerArgs,
     private val sourceModules: Collection<TestModule>,
     private val dependencies: TestCompilationDependencies,
@@ -241,8 +242,8 @@ private class TestCompilationImpl(
         add(
             "-enable-assertions",
             "-g",
-            "-target", environment.globalEnvironment.target.name,
-            "-repo", environment.globalEnvironment.kotlinNativeHome.resolve("klib").path,
+            "-target", settings.global.target.name,
+            "-repo", settings.global.kotlinNativeHome.resolve("klib").path,
             "-output", expectedArtifactFile.path,
             "-Xskip-prerelease-check",
             "-Xverify-ir",
@@ -273,7 +274,7 @@ private class TestCompilationImpl(
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult) = try {
             val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(
                 compilerArgs = compilerArgs,
-                lazyKotlinNativeClassLoader = environment.globalEnvironment.lazyKotlinNativeClassLoader
+                lazyKotlinNativeClassLoader = settings.global.lazyKotlinNativeClassLoader
             )
 
             val loggedCompilerCall =

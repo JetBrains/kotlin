@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,8 +38,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
 internal class ExtTestCaseGroupProvider(
-    private val environment: TestEnvironment
-) : TestCaseGroupProvider, TestDisposable(parentDisposable = environment) {
+    private val settings: Settings
+) : TestCaseGroupProvider, TestDisposable(parentDisposable = settings) {
     private val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
@@ -58,7 +59,7 @@ internal class ExtTestCaseGroupProvider(
 
         testDataFiles.forEach { testDataFile ->
             val extTestDataFile = ExtTestDataFile(
-                environment, structureFactory, testDataFile, sourceTransformers[testDataFile.canonicalPath] ?: listOf()
+                settings, structureFactory, testDataFile, sourceTransformers[testDataFile.canonicalPath] ?: listOf()
             )
 
             if (extTestDataFile.isRelevant)
@@ -126,7 +127,7 @@ internal class ExtTestCaseGroupProvider(
 }
 
 private class ExtTestDataFile(
-    private val environment: TestEnvironment,
+    private val settings: Settings,
     structureFactory: ExtTestDataFileStructureFactory,
     private val testDataFile: File,
     sourceTransformers: List<(String) -> String>
@@ -139,7 +140,7 @@ private class ExtTestDataFile(
         }
     }
 
-    private val settings by lazy {
+    private val testDataFileSettings by lazy {
         val optIns = structure.directives.multiValues(OPT_IN_DIRECTIVE)
         val optInsForSourceCode = optIns subtract OPT_INS_PURELY_FOR_COMPILER
         val optInsForCompiler = optIns intersect OPT_INS_PURELY_FOR_COMPILER
@@ -154,12 +155,12 @@ private class ExtTestDataFile(
             optInsForCompiler = optInsForCompiler,
             expectActualLinker = EXPECT_ACTUAL_LINKER_DIRECTIVE in structure.directives,
             generatedSourcesDir = computeGeneratedSourcesDir(
-                testDataBaseDir = environment.testRoots.baseDir,
+                testDataBaseDir = settings.testRoots.baseDir,
                 testDataFile = testDataFile,
-                generatedSourcesBaseDir = environment.testSourcesDir
+                generatedSourcesBaseDir = settings.testSourcesDir
             ),
             nominalPackageName = computePackageName(
-                testDataBaseDir = environment.testRoots.baseDir,
+                testDataBaseDir = settings.testRoots.baseDir,
                 testDataFile = testDataFile
             )
         )
@@ -168,16 +169,16 @@ private class ExtTestDataFile(
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
                 && !isIgnoredTarget(TargetBackend.NATIVE, testDataFile) // Checks IGNORE_BACKEND directive.
-                && settings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
+                && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
-        settings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
-        settings.optInsForCompiler.sorted().mapTo(args) { "-Xopt-in=$it" }
-        if (settings.expectActualLinker) args += "-Xexpect-actual-linker"
+        testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
+        testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-Xopt-in=$it" }
+        if (testDataFileSettings.expectActualLinker) args += "-Xexpect-actual-linker"
         return TestCompilerArgs(args)
     }
 
@@ -274,7 +275,7 @@ private class ExtTestDataFile(
     private fun patchPackageNames(isStandaloneTest: Boolean) = with(structure) {
         if (isStandaloneTest) return // Don't patch packages for standalone tests.
 
-        val basePackageName = FqName(settings.nominalPackageName)
+        val basePackageName = FqName(testDataFileSettings.nominalPackageName)
 
         val oldPackageNames: Set<FqName> = filesToTransform.mapToSet { it.packageFqName }
         val oldToNewPackageNameMapping: Map<FqName, FqName> = oldPackageNames.associateWith { oldPackageName ->
@@ -450,7 +451,7 @@ private class ExtTestDataFile(
         fun getAnnotationText(fullyQualifiedName: String) = "@file:${OPT_IN_ANNOTATION_NAME.asString()}($fullyQualifiedName::class)"
 
         // Every OptIn specified in test directive should be represented as a file-level annotation.
-        settings.optInsForSourceCode.mapTo(allFileLevelAnnotations, ::getAnnotationText)
+        testDataFileSettings.optInsForSourceCode.mapTo(allFileLevelAnnotations, ::getAnnotationText)
 
         // Now, collect file-level annotations already present in test files.
         filesToTransform.forEach { handler ->
@@ -550,7 +551,7 @@ private class ExtTestDataFile(
             }
 
             if (!isStandaloneTest) {
-                append("package ").appendLine(settings.nominalPackageName)
+                append("package ").appendLine(testDataFileSettings.nominalPackageName)
                 appendLine()
             }
 
@@ -574,10 +575,10 @@ private class ExtTestDataFile(
         sharedModules: ThreadSafeCache<String, TestModule.Shared?>
     ): TestCase = with(structure) {
         val modules = generateModules(
-            testCaseDir = settings.generatedSourcesDir,
+            testCaseDir = testDataFileSettings.generatedSourcesDir,
             findOrGenerateSharedModule = { moduleName: String, generator: SharedModuleGenerator ->
                 sharedModules.computeIfAbsent(moduleName) {
-                    generator(environment.sharedSourcesDir)
+                    generator(settings.sharedSourcesDir)
                 }
             }
         )
@@ -587,7 +588,7 @@ private class ExtTestDataFile(
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
             origin = TestOrigin.SingleTestDataFile(testDataFile),
-            nominalPackageName = settings.nominalPackageName,
+            nominalPackageName = testDataFileSettings.nominalPackageName,
             expectedOutputDataFile = null,
             extras = WithTestRunnerExtras.EMPTY
         )

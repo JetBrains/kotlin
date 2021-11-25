@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_FILE_NAME
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.computeGeneratedSourcesDir
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import java.io.File
 
-internal class StandardTestCaseGroupProvider(private val environment: TestEnvironment) : TestCaseGroupProvider {
+internal class StandardTestCaseGroupProvider(private val settings: Settings) : TestCaseGroupProvider {
     val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
 
     // Load test cases in groups on demand.
@@ -51,13 +52,13 @@ internal class StandardTestCaseGroupProvider(private val environment: TestEnviro
 
     private fun createTestCase(testDataFile: File): TestCase {
         val generatedSourcesDir = computeGeneratedSourcesDir(
-            testDataBaseDir = environment.testRoots.baseDir,
+            testDataBaseDir = settings.testRoots.baseDir,
             testDataFile = testDataFile,
-            generatedSourcesBaseDir = environment.testSourcesDir
+            generatedSourcesBaseDir = settings.testSourcesDir
         )
 
         val nominalPackageName = computePackageName(
-            testDataBaseDir = environment.testRoots.baseDir,
+            testDataBaseDir = settings.testRoots.baseDir,
             testDataFile = testDataFile
         )
 

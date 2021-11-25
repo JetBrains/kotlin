@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
+
 @Target(AnnotationTarget.CLASS)
-@TestCaseGroupProviding(ExtTestCaseGroupProvider::class)
+@TestSettings(ExtTestCaseGroupProvider::class)
 annotation class UseExtTestCaseGroupProvider

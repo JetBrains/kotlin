@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.StandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProviding
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -35,7 +37,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         enclosingTestInstance.onRunProviderSet()
 
         // Set the essential compiler property.
-        System.setProperty("kotlin.native.home", getOrCreateGlobalEnvironment().kotlinNativeHome.path)
+        System.setProperty("kotlin.native.home", getOrCreateGlobalSettings().kotlinNativeHome.path)
     }
 
     companion object {
@@ -46,13 +48,14 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             val enclosingTestClass = enclosingTestClass
 
             return root.getStore(NAMESPACE).getOrComputeIfAbsent(enclosingTestClass.sanitizedName) {
-                val globalEnvironment = getOrCreateGlobalEnvironment()
+                val globalSettings = getOrCreateGlobalSettings()
+                val (testSettings, testSettingsAnnotation) = computeTestSettings(enclosingTestClass)
 
-                val testRoots = computeTestRoots()
+                val testRoots = computeTestRoots(enclosingTestClass)
 
-                val uniqueEnclosingClassDirName = globalEnvironment.target.compressedName + "_" + enclosingTestClass.compressedSimpleName
+                val uniqueEnclosingClassDirName = globalSettings.target.compressedName + "_" + enclosingTestClass.compressedSimpleName
 
-                val testSourcesDir = globalEnvironment.baseBuildDir
+                val testSourcesDir = globalSettings.baseBuildDir
                     .resolve("bbtest.src")
                     .resolve(uniqueEnclosingClassDirName)
                     .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale generated sources.
@@ -61,7 +64,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     .resolve("__shared_modules__")
                     .ensureExistsAndIsEmptyDirectory()
 
-                val testBinariesDir = globalEnvironment.baseBuildDir
+                val testBinariesDir = globalSettings.baseBuildDir
                     .resolve("bbtest.bin")
                     .resolve(uniqueEnclosingClassDirName)
                     .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
@@ -70,8 +73,8 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     .resolve("__shared_modules__")
                     .ensureExistsAndIsEmptyDirectory()
 
-                val environment = TestEnvironment(
-                    globalEnvironment = globalEnvironment,
+                val settings = Settings(
+                    global = globalSettings,
                     testRoots = testRoots,
                     testSourcesDir = testSourcesDir,
                     sharedSourcesDir = sharedSourcesDir,
@@ -79,16 +82,16 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     sharedBinariesDir = sharedBinariesDir
                 )
 
-                val testCaseGroupProvider = requiredTestClass.createTestCaseGroupProvider(environment)
+                val testCaseGroupProvider = createTestCaseGroupProvider(settings, testSettings, testSettingsAnnotation)
 
-                TestRunProvider(environment, testCaseGroupProvider)
+                TestRunProvider(settings, testCaseGroupProvider)
             }.cast()
         }
 
-        private fun ExtensionContext.getOrCreateGlobalEnvironment(): GlobalTestEnvironment =
-            root.getStore(NAMESPACE).getOrComputeIfAbsent(GlobalTestEnvironment::class.java.sanitizedName) {
+        private fun ExtensionContext.getOrCreateGlobalSettings(): GlobalSettings =
+            root.getStore(NAMESPACE).getOrComputeIfAbsent(GlobalSettings::class.java.sanitizedName) {
                 // Create with the default settings.
-                GlobalTestEnvironment()
+                GlobalSettings()
             }.cast()
 
         private val ExtensionContext.enclosingTestInstance: AbstractNativeBlackBoxTest
@@ -97,9 +100,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private val ExtensionContext.enclosingTestClass: Class<*>
             get() = generateSequence(requiredTestClass) { it.enclosingClass }.last()
 
-        private fun ExtensionContext.computeTestRoots(): TestRoots {
-            val enclosingTestClass = enclosingTestClass
-
+        private fun computeTestRoots(enclosingTestClass: Class<*>): TestRoots {
             val testRoots: Set<File> = when (val outermostTestMetadata = enclosingTestClass.getAnnotation(TestMetadata::class.java)) {
                 null -> {
                     enclosingTestClass.declaredClasses.mapNotNullToSet { nestedClass ->
@@ -125,35 +126,48 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             return TestRoots(testRoots, baseDir)
         }
 
-        private fun Class<*>.createTestCaseGroupProvider(environment: TestEnvironment): TestCaseGroupProvider {
-            val (providerAnnotation, providerAnnotationClass, providerClass) = annotations.asSequence()
-                .mapNotNull { annotation ->
-                    val annotationClass = annotation.annotationClass
-                    val providerClass = annotationClass.findAnnotation<TestCaseGroupProviding>()?.providerClass ?: return@mapNotNull null
-                    Triple(annotation, annotationClass, providerClass)
+        private fun computeTestSettings(enclosingTestClass: Class<*>): Pair<TestSettings, Annotation?> {
+            val findTestSettings: Class<*>.() -> Pair<TestSettings, Annotation>? = {
+                annotations.asSequence().mapNotNull { annotation ->
+                    val testSettings = annotation.annotationClass.findAnnotation<TestSettings>() ?: return@mapNotNull null
+                    testSettings to annotation
                 }.firstOrNull()
-                ?: return StandardTestCaseGroupProvider(environment) // Fallback if there is no annotation.
+            }
 
+            return enclosingTestClass.findTestSettings()
+                ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { it.findTestSettings() }
+                ?: (TestSettings.DEFAULT to null) // Fallback if there is no annotation.
+        }
+
+        private fun createTestCaseGroupProvider(
+            settings: Settings,
+            testSettings: TestSettings,
+            testSettingsAnnotation: Annotation?
+        ): TestCaseGroupProvider {
             // First, try to find two-argument constructor.
-            providerClass.constructors.asSequence()
-                .forEach { c ->
-                    val (p1, p2) = c.parameters.takeIf { it.size == 2 } ?: return@forEach
-                    val provider = when {
-                        p1.hasTypeOf<TestEnvironment>() && p2.hasTypeOf(providerAnnotationClass) -> c.call(environment, providerAnnotation)
-                        p1.hasTypeOf(providerAnnotationClass) && p2.hasTypeOf<TestEnvironment>() -> c.call(providerAnnotation, environment)
-                        else -> return@forEach
+            if (testSettingsAnnotation != null) {
+                val testSettingsAnnotationClass = testSettingsAnnotation.annotationClass
+
+                testSettings.providerClass.constructors.asSequence()
+                    .forEach { c ->
+                        val (p1, p2) = c.parameters.takeIf { it.size == 2 } ?: return@forEach
+                        @Suppress("Reformat") val provider = when {
+                            p1.hasTypeOf<Settings>() && p2.hasTypeOf(testSettingsAnnotationClass) -> c.call(settings, testSettingsAnnotation)
+                            p1.hasTypeOf(testSettingsAnnotationClass) && p2.hasTypeOf<Settings>() -> c.call(testSettingsAnnotation, settings)
+                            else -> return@forEach
+                        }
+                        return provider.cast()
                     }
-                    return provider.cast()
-                }
+            }
 
             // Next, try to find a single-argument constructor.
-            providerClass.constructors.asSequence()
+            testSettings.providerClass.constructors.asSequence()
                 .forEach { c ->
                     val p = c.parameters.singleOrNull() ?: return@forEach
-                    if (p.hasTypeOf<TestEnvironment>()) return c.call(environment).cast()
+                    if (p.hasTypeOf<Settings>()) return c.call(settings).cast()
                 }
 
-            fail { "No suitable constructor for $providerClass" }
+            fail { "No suitable constructor for ${testSettings.providerClass}" }
         }
 
         private inline fun <reified T : Any> KParameter.hasTypeOf(): Boolean = hasTypeOf(T::class)

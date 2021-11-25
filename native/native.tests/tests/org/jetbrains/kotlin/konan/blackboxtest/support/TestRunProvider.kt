@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Com
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildTree
@@ -24,10 +25,10 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
 
 internal class TestRunProvider(
-    private val environment: TestEnvironment,
+    private val settings: Settings,
     private val testCaseGroupProvider: TestCaseGroupProvider
 ) : ExtensionContext.Store.CloseableResource {
-    private val compilationFactory = TestCompilationFactory(environment)
+    private val compilationFactory = TestCompilationFactory(settings)
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
     fun setProcessors(testDataFile: File, sourceTransformers: List<(String) -> String>) {
@@ -114,7 +115,7 @@ internal class TestRunProvider(
     }
 
     private fun <T> withTestExecutable(testDataFile: File, action: (TestCase, TestExecutable) -> T): T {
-        environment.assertNotDisposed()
+        settings.assertNotDisposed()
 
         val testDataDir = testDataFile.parentFile
         val testDataFileName = testDataFile.name
@@ -173,19 +174,19 @@ internal class TestRunProvider(
     }
 
     // Currently, only local test runner is supported.
-    fun createRunner(testRun: TestRun): AbstractRunner<*> = when (val target = environment.globalEnvironment.target) {
-        environment.globalEnvironment.hostTarget -> LocalTestRunner(testRun, environment.globalEnvironment.executionTimeout)
+    fun createRunner(testRun: TestRun): AbstractRunner<*> = when (val target = settings.global.target) {
+        settings.global.hostTarget -> LocalTestRunner(testRun, settings.global.executionTimeout)
         else -> fail {
             """
                 Running at non-host target is not supported yet.
                 Compilation target: $target
-                Host target: ${environment.globalEnvironment.hostTarget}
+                Host target: ${settings.global.hostTarget}
             """.trimIndent()
         }
     }
 
     override fun close() {
-        Disposer.dispose(environment)
+        Disposer.dispose(settings)
     }
 
     private sealed class TestCompilationCacheKey {
