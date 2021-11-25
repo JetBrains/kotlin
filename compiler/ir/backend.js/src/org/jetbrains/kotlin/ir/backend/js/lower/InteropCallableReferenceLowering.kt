@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
@@ -61,7 +62,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        error("Unreachable")
+        compilationException("Unreachable", irBody)
     }
 
     private inner class CallableReferenceClassTransformer(private val ctorToFactoryMap: MutableMap<IrConstructorSymbol, IrSimpleFunctionSymbol>) : IrElementTransformerVoid() {
@@ -109,7 +110,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         invokeMapping: Map<IrValueParameterSymbol, IrValueParameterSymbol>,
         factoryMapping: Map<IrFieldSymbol, IrValueParameterSymbol>
     ): IrBlockBody {
-        val body = invokeFun.body ?: error("invoke() method has to have a body")
+        val body = invokeFun.body
+            ?: compilationException(
+                "invoke() method has to have a body",
+                invokeFun
+            )
 
         fun IrExpression.getValue(d: IrValueSymbol): IrExpression = IrGetValueImpl(startOffset, endOffset, d)
         fun IrExpression.getCastedValue(d: IrValueSymbol, toType: IrType): IrExpression =
@@ -180,7 +185,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     }
 
     private fun capturedFieldsToParametersMap(constructor: IrConstructor, factoryFunction: IrSimpleFunction): Map<IrFieldSymbol, IrValueParameterSymbol> {
-        val statements = constructor.body?.let { it.cast<IrBlockBody>().statements } ?: error("Expecting Body for function ref constructor")
+        val statements = constructor.body?.let { it.cast<IrBlockBody>().statements }
+            ?: compilationException(
+                "Expecting Body for function ref constructor",
+                constructor
+            )
 
         val fieldSetters = statements.filterIsInstance<IrSetField>()
             .filter { it.origin == LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
@@ -193,7 +202,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     }
 
     private fun extractReferenceReflectionName(getter: IrSimpleFunction): IrExpression {
-        val body = getter.body?.cast<IrBlockBody>() ?: error("Expected body for ${getter.render()}")
+        val body = getter.body?.cast<IrBlockBody>()
+            ?: compilationException(
+                "Expected body",
+                getter
+            )
         val statements = body.statements
 
         val returnStmt = statements[0] as IrReturn

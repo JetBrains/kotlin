@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -262,7 +263,11 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
                 val typeParameterSymbol =
-                    (toType.classifierOrNull as? IrTypeParameterSymbol) ?: error("expected type parameter, but $toType")
+                    (toType.classifierOrNull as? IrTypeParameterSymbol)
+                        ?: compilationException(
+                            "expected type parameter, but $toType",
+                            argument
+                        )
 
                 val typeParameter = typeParameterSymbol.owner
 
@@ -371,7 +376,10 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
                         putValueArgument(0, argument())
                     }
-                    else -> error("Unreachable execution (coercion to non-Integer type")
+                    else -> compilationException(
+                        "Unreachable execution (coercion to non-Integer type)",
+                        expression
+                    )
                 }
 
                 newStatements += if (isNullable) JsIrBuilder.buildIfElse(toType, nullCheck(argument()), litNull, casted) else casted

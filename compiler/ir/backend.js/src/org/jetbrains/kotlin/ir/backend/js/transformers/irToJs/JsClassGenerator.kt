@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
@@ -94,7 +95,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 is IrField -> {
                 }
                 else -> {
-                    error("Unexpected declaration in class: ${declaration.render()}")
+                    compilationException(
+                        "Unexpected declaration in class",
+                        declaration
+                    )
                 }
             }
         }

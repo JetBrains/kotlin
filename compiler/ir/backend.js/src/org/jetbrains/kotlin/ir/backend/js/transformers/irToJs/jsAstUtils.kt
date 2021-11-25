@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.ir.IrElement
@@ -159,7 +160,10 @@ fun translateCall(
             return when (function) {
                 property.getter -> nameRef
                 property.setter -> jsAssignment(nameRef, arguments.single())
-                else -> error("Function must be an accessor of corresponding property")
+                else -> compilationException(
+                    "Function must be an accessor of corresponding property",
+                    function
+                )
             }
         }
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -33,7 +34,7 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
 
         val replacement = container.transform(this, null) as IrDeclaration
 
-        if (container !== replacement) error("Declaration has changed: ${container}")
+        if (container !== replacement) compilationException("Declaration has changed", container)
 
         // TODO: Track & insert parents for temporary variables
         irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)

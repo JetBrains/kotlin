@@ -67,7 +67,22 @@ interface BodyAndScriptBodyLoweringPass : BodyLoweringPass {
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
+fun FileLoweringPass.lower(
+    moduleFragment: IrModuleFragment
+) = moduleFragment.files.forEach {
+    try {
+        lower(it)
+    } catch (e: CompilationException) {
+        e.file = it
+        throw e
+    } catch (e: Throwable) {
+        throw e.wrapWithCompilationException(
+            "Internal error in file lowering",
+            it,
+            null
+        )
+    }
+}
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(ClassLoweringVisitor(this))
@@ -128,7 +143,18 @@ fun BodyLoweringPass.runOnFilePostfix(
 ) {
     val visitor = BodyLoweringVisitor(this, withLocalDeclarations, allowDeclarationModification)
     for (declaration in ArrayList(irFile.declarations)) {
-        declaration.accept(visitor, null)
+        try {
+            declaration.accept(visitor, null)
+        } catch (e: CompilationException) {
+            e.file = irFile
+            throw e
+        } catch (e: Throwable) {
+            throw e.wrapWithCompilationException(
+                "Internal error in body lowering",
+                irFile,
+                declaration
+            )
+        }
     }
 }
 
@@ -214,8 +240,19 @@ interface DeclarationTransformer : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val visitor = Visitor(this)
         irFile.declarations.transformFlat { declaration ->
-            declaration.acceptVoid(visitor)
-            transformFlatRestricted(declaration)
+            try {
+                declaration.acceptVoid(visitor)
+                transformFlatRestricted(declaration)
+            } catch (e: CompilationException) {
+                e.file = irFile
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException(
+                    "Internal error in declaration transformer",
+                    irFile,
+                    declaration
+                )
+            }
         }
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
@@ -266,7 +267,10 @@ private val IrDeclaration.correspondingProperty: IrProperty?
             is IrField -> propertyWithPersistentSafe {
                 correspondingPropertySymbol?.owner
             }
-            else -> error("Can be only IrProperty, IrSimpleFunction or IrField")
+            else -> compilationException(
+                "Can be only IrProperty, IrSimpleFunction or IrField",
+                this
+            )
         }
     }
 

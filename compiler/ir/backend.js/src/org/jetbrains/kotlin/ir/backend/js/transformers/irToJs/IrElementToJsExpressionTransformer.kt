@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
@@ -58,8 +59,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
-            is IrConstKind.Long -> throw IllegalStateException("Long const should have been lowered at this point")
-            is IrConstKind.Char -> throw IllegalStateException("Char const should have been lowered at this point")
+            is IrConstKind.Long -> compilationException(
+                "Long const should have been lowered at this point",
+                expression
+            )
+            is IrConstKind.Char -> compilationException(
+                "Char const should have been lowered at this point",
+                expression
+            )
             is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(kind.valueOf(expression)))
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
         }.withSource(expression, context)
@@ -98,7 +105,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 "${field.render()} in non-external class ${fieldParent.render()}"
             }
 
-            val receiver = expression.receiver?.accept(this, context) ?: error("Expect expression.receiver to not be null")
+            val receiver = expression.receiver?.accept(this, context)
+                ?: compilationException(
+                    "Expect expression.receiver to not be null",
+                    expression
+                )
             return JsNameRef(field.getJsNameOrKotlinName().identifier, receiver).withSource(expression, context)
         }
 
@@ -204,9 +215,16 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
         if (context.checkIfJsCode(expression.symbol)) {
             val statements = translateJsCodeIntoStatementList(
-                expression.getValueArgument(0) ?: error("JsCode is expected"),
+                expression.getValueArgument(0)
+                    ?: compilationException(
+                        "JsCode is expected",
+                        expression
+                    ),
                 context.staticContext.backendContext
-            ) ?: error("Cannot compute js code for ${expression.render()}")
+            ) ?: compilationException(
+                "Cannot compute js code",
+                expression
+            )
 
             if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 
@@ -250,7 +268,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: JsGenerationContext): JsExpression {
         return when (expression.operator) {
             IrTypeOperator.REINTERPRET_CAST -> expression.argument.accept(this, data)
-            else -> error("All type operator calls except REINTERPRET_CAST should be lowered at this point: ${expression.operator}")
+            else -> compilationException(
+                "All type operator calls except REINTERPRET_CAST should be lowered at this point",
+                expression
+            )
         }.withSource(expression, data)
     }
 
@@ -305,14 +326,20 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     expression.arguments.map { it.accept(this, data) }
                 )
 
-            else -> error("Unexpected operator ${expression.operator}: ${expression.render()}")
+            else -> compilationException(
+                "Unexpected operator ${expression.operator}",
+                expression
+            )
         }.withSource(expression, data)
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {
         val name = when (val function = expression.symbol.owner) {
             is IrConstructor -> data.getNameForConstructor(function)
             is IrSimpleFunction -> data.getNameForStaticFunction(function)
-            else -> error("Unexpected function kind")
+            else -> compilationException(
+                "Unexpected function kind",
+                expression
+            )
         }
         return JsNameRef(name).withSource(expression, data)
     }

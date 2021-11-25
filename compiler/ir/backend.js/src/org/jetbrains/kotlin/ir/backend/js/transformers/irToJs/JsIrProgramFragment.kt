@@ -96,7 +96,7 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, va
             }.internalName
         }
 
-        val tagToName = module.fragments.flatMap { it.nameBindings.entries}.associate { it.key to it.value }
+        val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
 
         val resultImports = imports.associate {
 

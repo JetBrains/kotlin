@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.ir.copyTo
@@ -264,7 +265,11 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
             val factory = with(context) {
-                if (es6mode) mapping.secondaryConstructorToDelegate[target] ?: error("Not found IrFunction for secondary ctor")
+                if (es6mode) mapping.secondaryConstructorToDelegate[target]
+                    ?: compilationException(
+                        "Not found IrFunction for secondary ctor",
+                        expression
+                    )
                 else buildConstructorFactory(target, target.parentAsClass)
             }
             replaceSecondaryConstructorWithFactoryFunction(expression, factory.symbol)
@@ -279,7 +284,11 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
             val delegate = with(context) {
-                if (es6mode) mapping.secondaryConstructorToDelegate[target] ?: error("Not found IrFunction for secondary ctor")
+                if (es6mode) mapping.secondaryConstructorToDelegate[target]
+                    ?: compilationException(
+                        "Not found IrFunction for secondary ctor",
+                        expression
+                    )
                 else buildConstructorDelegate(target, klass)
             }
             val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)

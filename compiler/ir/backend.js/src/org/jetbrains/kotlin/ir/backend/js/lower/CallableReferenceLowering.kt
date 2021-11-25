@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
@@ -120,7 +121,11 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
         private val referenceType = reference.type as IrSimpleType
 
-        private val superFunctionInterface: IrClass = referenceType.classOrNull?.owner ?: error("Expected functional type")
+        private val superFunctionInterface: IrClass = referenceType.classOrNull?.owner
+            ?: compilationException(
+                "Expected functional type",
+                reference
+            )
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
 
         // If we implement KFunctionN we also need FunctionN
@@ -324,7 +329,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     else ->
-                        error("unknown function kind: ${callee.render()}")
+                        compilationException("unknown function kind", callee)
                 }
             }
 
@@ -411,7 +416,11 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 .filterIsInstance<IrProperty>()
                 .single { it.name == Name.identifier("name") }  // In K/Wasm interfaces can have fake overridden properties from Any
 
-            val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
+            val supperGetter = superProperty.getter
+                ?: compilationException(
+                    "Expected getter for KFunction.name property",
+                    superProperty
+                )
 
             val nameProperty = clazz.addProperty() {
                 visibility = superProperty.visibility

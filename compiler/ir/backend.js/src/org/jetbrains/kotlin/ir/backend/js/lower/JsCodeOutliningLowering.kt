@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -30,14 +27,12 @@ import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.lang.IllegalStateException
 
 // Outlines `kotlin.js.js(code: String)` calls where JS code references Kotlin locals.
 // Makes locals usages explicit.
@@ -96,7 +91,11 @@ private class JsCodeOutlineTransformer(
         val name = irValueDeclaration.name
         if (!name.isSpecial) {
             val identifier = name.identifier
-            val currentScope = localScopes.lastOrNull() ?: error("Expecting a scope")
+            val currentScope = localScopes.lastOrNull()
+                ?: compilationException(
+                    "Expecting a scope",
+                    irValueDeclaration
+                )
             currentScope[identifier] = irValueDeclaration
         }
     }
@@ -133,7 +132,11 @@ private class JsCodeOutlineTransformer(
         if (expression.symbol != backendContext.intrinsics.jsCode)
             return null
 
-        val jsCodeArg = expression.getValueArgument(0) ?: error("Expected js code string")
+        val jsCodeArg = expression.getValueArgument(0)
+            ?: compilationException(
+                "Expected js code string",
+                expression
+            )
         val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, backendContext) ?: return null
 
         // Collect used Kotlin local variables and parameters.
