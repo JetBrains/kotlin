@@ -1565,7 +1565,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         functionGenerationContext.condBr(condition, bbNull, bbInstanceOf)
 
         functionGenerationContext.positionAtEnd(bbNull)
-        val resultNull = if (type.containsNull()) kTrue else kFalse
+        val resultNull = if (type.isNullable()) kTrue else kFalse
         functionGenerationContext.br(bbExit)
 
         functionGenerationContext.positionAtEnd(bbInstanceOf)

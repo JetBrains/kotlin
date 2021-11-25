@@ -126,7 +126,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
         targetPtrParameter = callBuilder.passThroughBridge(
                 expression.extensionReceiver!!,
-                symbols.interopCPointer.typeWithStarProjections,
+                symbols.interopCPointer.starProjectedType,
                 CTypes.voidPtr
         ).name
         targetFunctionName = "targetPtr"
@@ -336,7 +336,7 @@ internal fun KotlinStubs.generateObjCCall(
 
     val targetPtrParameter = callBuilder.passThroughBridge(
             messenger,
-            symbols.interopCPointer.typeWithStarProjections,
+            symbols.interopCPointer.starProjectedType,
             CTypes.voidPtr
     ).name
     val targetFunctionName = "targetPtr"
@@ -402,7 +402,7 @@ internal fun KotlinStubs.generateObjCCall(
 internal fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
     val classDescriptor = symbol.descriptor
     require(!classDescriptor.isObjCMetaClass())
-    return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.typeWithStarProjections))
+    return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.starProjectedType))
 }
 
 private fun IrBuilderWithScope.irNullNativePtr(symbols: KonanSymbols) = irCall(symbols.getNativeNullPtr.owner)
@@ -708,7 +708,7 @@ private fun KotlinStubs.mapType(
     type.isFloat() -> TrivialValuePassing(irBuiltIns.floatType, CTypes.float)
     type.isDouble() -> TrivialValuePassing(irBuiltIns.doubleType, CTypes.double)
     type.isCPointer(symbols) -> TrivialValuePassing(type, CTypes.voidPtr)
-    type.isTypeOfNullLiteral() && variadic -> TrivialValuePassing(symbols.interopCPointer.typeWithStarProjections.makeNullable(), CTypes.voidPtr)
+    type.isTypeOfNullLiteral() && variadic -> TrivialValuePassing(symbols.interopCPointer.starProjectedType.makeNullable(), CTypes.voidPtr)
     type.isUByte() -> TrivialValuePassing(type, CTypes.unsignedChar)
     type.isUShort() -> TrivialValuePassing(type, CTypes.unsignedShort)
     type.isUInt() -> TrivialValuePassing(type, CTypes.unsignedInt)
@@ -867,7 +867,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
         val cBridgeValue = passThroughBridge(
                 cValuesRefToPointer(expression),
-                symbols.interopCPointer.typeWithStarProjections,
+                symbols.interopCPointer.starProjectedType,
                 CTypes.pointer(cType)
         ).name
 
@@ -1314,7 +1314,7 @@ private object CValuesRefArgumentPassing : KotlinToCArgumentPassing {
         val bridgeArgument = cValuesRefToPointer(expression)
         val cBridgeValue = passThroughBridge(
                 bridgeArgument,
-                symbols.interopCPointer.typeWithStarProjections.makeNullable(),
+                symbols.interopCPointer.starProjectedType.makeNullable(),
                 CTypes.voidPtr
         )
         return CExpression(cBridgeValue.name, cBridgeValue.type)

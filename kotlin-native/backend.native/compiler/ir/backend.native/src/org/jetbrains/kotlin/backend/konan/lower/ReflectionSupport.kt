@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -189,7 +188,7 @@ internal fun IrBuilderWithScope.irKClass(context: KonanBackendContext, symbol: I
         symbol.owner.isNativePointedChild() ->
             irKClassUnsupported(context, "KClass for interop types is not supported yet")
 
-        else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.typeWithStarProjections))
+        else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
     }
 }
 

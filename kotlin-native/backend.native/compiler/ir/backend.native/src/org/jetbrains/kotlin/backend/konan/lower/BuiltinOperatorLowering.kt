@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.containsNull
-import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
@@ -22,13 +20,11 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.defaultOrNullableType
 import org.jetbrains.kotlin.ir.util.isNullConst
@@ -208,8 +204,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
                         putValueArgument(0, rhs)
                     }
 
-        val lhsIsNotNullable = !lhs.type.containsNull()
-        val rhsIsNotNullable = !rhs.type.containsNull()
+        val lhsIsNotNullable = !lhs.type.isNullable()
+        val rhsIsNotNullable = !rhs.type.isNullable()
 
         return if (symbol in ieee754EqualsSymbols()) {
             if (lhsIsNotNullable && rhsIsNotNullable)
@@ -256,7 +252,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
             from.atMostOne {
                 val leftParamType = it.owner.valueParameters[0].type
                 val rightParamType = it.owner.valueParameters[1].type
-                (lhsType.isSubtypeOf(leftParamType) || (allowNullable && lhsType.isSubtypeOf(leftParamType.makeNullable())))
-                        && (rhsType.isSubtypeOf(rightParamType) || (allowNullable && rhsType.isSubtypeOf(rightParamType.makeNullable())))
+                (lhsType.isSubtypeOf(leftParamType, context.typeSystem) || (allowNullable && lhsType.isSubtypeOf(leftParamType.makeNullable(), context.typeSystem)))
+                        && (rhsType.isSubtypeOf(rightParamType, context.typeSystem) || (allowNullable && rhsType.isSubtypeOf(rightParamType.makeNullable(), context.typeSystem)))
             }
 }

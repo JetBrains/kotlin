@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -328,7 +329,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
         function.body = builder.irBlockBody(function) {
             val valueToBox = function.valueParameters[0]
-            if (valueToBox.type.containsNull()) {
+            if (valueToBox.type.isNullable()) {
                 +irIfThen(
                         condition = irIsNull(irGet(valueToBox)),
                         thenPart = irReturn(irNull())
@@ -371,7 +372,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
         function.body = builder.irBlockBody(function) {
             val boxParameter = function.valueParameters.single()
-            if (boxParameter.type.containsNull()) {
+            if (boxParameter.type.isNullable()) {
                 +irIfThen(
                         condition = irEqeqeq(irGet(boxParameter), irNull()),
                         thenPart = irReturn(irNullPointerOrReference(function.returnType))

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
-import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -271,7 +271,7 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
 
 internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
-    override fun isNullable(type: IrType): Boolean = type.containsNull()
+    override fun isNullable(type: IrType): Boolean = type.isNullable()
 
     override fun makeNullable(type: IrType): IrType = type.makeNullable()
 
