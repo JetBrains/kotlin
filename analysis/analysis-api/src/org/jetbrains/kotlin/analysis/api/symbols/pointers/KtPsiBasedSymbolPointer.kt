@@ -10,17 +10,27 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
-public class KtPsiBasedSymbolPointer<S : KtSymbol>(private val psiPointer: SmartPsiElementPointer<out KtDeclaration>) :
+public class KtPsiBasedSymbolPointer<S : KtSymbol>(private val psiPointer: SmartPsiElementPointer<out KtElement>) :
     KtSymbolPointer<S>() {
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         val psi = psiPointer.element ?: return null
 
         @Suppress("UNCHECKED_CAST")
-        return with(analysisSession) { psi.getSymbol() } as S?
+        return with(analysisSession) {
+            when (psi) {
+                is KtDeclaration -> psi.getSymbol()
+                is KtFile -> psi.getFileSymbol()
+                else -> {
+                    error("Unexpected declaration to restore: ${psi::class}, text:\n ${psi.text}")
+                }
+            }
+        } as S?
     }
 
     public companion object {
@@ -35,6 +45,7 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol>(private val psiPointer: Smart
 
             val psi = when (val psi = symbol.psi) {
                 is KtDeclaration -> psi
+                is KtFile -> psi
                 is KtObjectLiteralExpression -> psi.objectDeclaration
                 else -> null
             } ?: return null
