@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common
 
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.File
 import java.lang.management.GarbageCollectorMXBean
@@ -28,7 +26,6 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var irGenerationStart: Long = 0
 
     private var targetDescription: String? = null
-    private var sourceFiles: List<KtFile>? = null
     protected var files: Int? = null
     protected var lines: Int? = null
 
@@ -45,19 +42,12 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
 
-    private fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
-        sourceFiles.sumBy { sourceFile ->
-            val text = sourceFile.text
-            StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
-        }
-
-    open fun notifyCompilerInitialized(sourceFiles: List<KtFile>, targetDescription: String) {
+    open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
         if (!isEnabled) return
         recordInitializationTime()
 
-        this.sourceFiles = sourceFiles
-        this.files = sourceFiles.size
-        this.lines = countLinesOfCode(sourceFiles)
+        this.files = files
+        this.lines = lines
         this.targetDescription = targetDescription
     }
 
