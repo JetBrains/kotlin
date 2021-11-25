@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -134,6 +137,9 @@ class JvmClassFileBasedSymbolProvider(
             classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
         )
     }
+
+    override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
+        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
     override fun getPackage(fqName: FqName): FqName? =
         javaFacade.getPackage(fqName)

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: AbstractMethodError: KInterface.superCall()Ljava/util/List;
 // FULL_JDK
 // WITH_STDLIB
 // JVM_TARGET: 1.8

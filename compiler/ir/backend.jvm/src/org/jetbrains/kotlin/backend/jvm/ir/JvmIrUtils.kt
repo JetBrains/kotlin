@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -82,8 +83,11 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
     }
     if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
     if (hasJvmDefault()) return true
-    (parentAsClass as? IrLazyClass)?.classProto?.let {
-        return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
+    when (val klass = parentAsClass) {
+        is IrLazyClass -> klass.classProto?.let {
+            return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
+        }
+        is IrMaybeDeserializedClass -> return klass.isNewPlaceForBodyGeneration
     }
     return jvmDefaultMode.forAllMethodsWithBody
 }

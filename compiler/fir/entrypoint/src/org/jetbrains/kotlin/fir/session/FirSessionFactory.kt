@@ -153,7 +153,7 @@ object FirSessionFactory {
                     it.packagePartProvider,
                     projectEnvironment.getKotlinClassFinder(it.scope),
                     projectEnvironment.getFirJavaFacade(this, moduleData, it.scope),
-                    defaultDeseializationOrigin = FirDeclarationOrigin.Precompiled
+                    defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
                 )
             }
 

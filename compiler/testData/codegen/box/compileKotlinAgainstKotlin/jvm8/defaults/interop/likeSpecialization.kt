@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: AbstractMethodError: UnspecializedFromDerived.test(Ljava/lang/Object;)Ljava/lang/Object;
 // WITH_STDLIB
 // JVM_TARGET: 1.8
 // MODULE: lib

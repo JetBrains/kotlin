@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: NCDFE: Foo$DefaultImpls
 // FULL_JDK
 // JVM_TARGET: 1.8
 // WITH_STDLIB
