@@ -1,0 +1,13 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin-api"
+
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
