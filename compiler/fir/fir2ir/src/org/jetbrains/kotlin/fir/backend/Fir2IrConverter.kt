@@ -52,6 +52,74 @@ class Fir2IrConverter(
 
     private val generatorExtensions = session.extensionService.declarationGenerators
 
+    fun runSourcesConversion(
+        allFirFiles: List<FirFile>,
+        irModuleFragment: IrModuleFragmentImpl,
+        irGenerationExtensions: Collection<IrGenerationExtension>,
+        fir2irVisitor: Fir2IrVisitor,
+        languageVersionSettings: LanguageVersionSettings,
+        extensions: StubGeneratorExtensions,
+    ) {
+        for (firFile in allFirFiles) {
+            registerFileAndClasses(firFile, irModuleFragment)
+        }
+
+        val irProviders =
+            generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = extensions)
+        val externalDependenciesGenerator = ExternalDependenciesGenerator(
+            symbolTable,
+            irProviders
+        )
+
+        // Necessary call to generate built-in IR classes
+        externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
+        classifierStorage.preCacheBuiltinClasses()
+        // The file processing is performed phase-to-phase:
+        //   1. Creation of all non-local regular classes
+        //   2. Class header processing (type parameters, supertypes, this receiver)
+        for (firFile in allFirFiles) {
+            processClassHeaders(firFile)
+        }
+        //   3. Class member (functions/properties/constructors) processing. This doesn't involve bodies (only types).
+        //   If we encounter local class / anonymous object in signature, then (1) and (2) is performed immediately for this class,
+        //   and (3) and (4) a bit later
+        for (firFile in allFirFiles) {
+            processFileAndClassMembers(firFile)
+        }
+        //   4. Override processing which sets overridden symbols for everything inside non-local regular classes
+        for (firFile in allFirFiles) {
+            bindFakeOverridesInFile(firFile)
+        }
+        //   Do (3) and (4) for local classes encountered during (3)
+        classifierStorage.processMembersOfClassesCreatedOnTheFly()
+
+        //   5. Body processing
+        //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
+        for (firFile in allFirFiles) {
+            firFile.accept(fir2irVisitor, null)
+        }
+
+        externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
+        val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
+        irModuleFragment.acceptVoid(ExternalPackageParentPatcher(stubGenerator))
+
+        evaluateConstants(irModuleFragment)
+
+        if (irGenerationExtensions.isNotEmpty()) {
+            val pluginContext = Fir2IrPluginContext(
+                languageVersionSettings,
+                BuiltinSymbolsBase(irBuiltIns, symbolTable),
+                session.moduleData.platform,
+                irBuiltIns,
+                symbolTable
+            )
+            for (extension in irGenerationExtensions) {
+                extension.generate(irModuleFragment, pluginContext)
+            }
+        }
+
+    }
+
     fun processLocalClassAndNestedClassesOnTheFly(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
         val irClass = registerClassAndNestedClasses(regularClass, parent)
         processClassAndNestedClassHeaders(regularClass)
@@ -381,61 +449,10 @@ class Fir2IrConverter(
                 addAll(firFiles)
                 addAll(session.createFilesWithGeneratedDeclarations())
             }
-            for (firFile in allFirFiles) {
-                converter.registerFileAndClasses(firFile, irModuleFragment)
-            }
-            val irProviders =
-                generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
-            val externalDependenciesGenerator = ExternalDependenciesGenerator(
-                symbolTable,
-                irProviders
+
+            converter.runSourcesConversion(
+                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, languageVersionSettings, generatorExtensions
             )
-            // Necessary call to generate built-in IR classes
-            externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
-            classifierStorage.preCacheBuiltinClasses()
-            // The file processing is performed phase-to-phase:
-            //   1. Creation of all non-local regular classes
-            //   2. Class header processing (type parameters, supertypes, this receiver)
-            for (firFile in allFirFiles) {
-                converter.processClassHeaders(firFile)
-            }
-            //   3. Class member (functions/properties/constructors) processing. This doesn't involve bodies (only types).
-            //   If we encounter local class / anonymous object in signature, then (1) and (2) is performed immediately for this class,
-            //   and (3) and (4) a bit later
-            for (firFile in allFirFiles) {
-                converter.processFileAndClassMembers(firFile)
-            }
-            //   4. Override processing which sets overridden symbols for everything inside non-local regular classes
-            for (firFile in allFirFiles) {
-                converter.bindFakeOverridesInFile(firFile)
-            }
-            //   Do (3) and (4) for local classes encountered during (3)
-            classifierStorage.processMembersOfClassesCreatedOnTheFly()
-
-            //   5. Body processing
-            //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
-            for (firFile in allFirFiles) {
-                firFile.accept(fir2irVisitor, null)
-            }
-
-            externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
-            val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
-            irModuleFragment.acceptVoid(ExternalPackageParentPatcher(stubGenerator))
-
-            evaluateConstants(irModuleFragment)
-
-            if (irGenerationExtensions.isNotEmpty()) {
-                val pluginContext = Fir2IrPluginContext(
-                    languageVersionSettings,
-                    BuiltinSymbolsBase(irBuiltIns, symbolTable),
-                    session.moduleData.platform,
-                    irBuiltIns,
-                    symbolTable
-                )
-                for (extension in irGenerationExtensions) {
-                    extension.generate(irModuleFragment, pluginContext)
-                }
-            }
 
             return Fir2IrResult(irModuleFragment, symbolTable, components)
         }
