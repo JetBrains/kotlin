@@ -129,7 +129,10 @@ open class JvmGeneratorExtensionsImpl(
             else -> null
         } ?: return false
         deserializeFromByteArray(
-            serializedIr, stubGenerator, irClass, JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
+            serializedIr,
+            stubGenerator.irBuiltIns, stubGenerator.symbolTable, listOf(stubGenerator),
+            irClass,
+            JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
         )
         irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
         return true

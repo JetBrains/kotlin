@@ -164,7 +164,7 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         val nExpression = super.visitClassReference(expression) as IrClassReference
         val oldSymbol = nExpression.symbol as? IrClassSymbol ?: return nExpression
         if (!oldSymbol.owner.isExpect) return nExpression
-        
+
         val newSymbol = symbolTable.referenceClass(
             oldSymbol.descriptor.findActualForExpect() as? ClassDescriptor ?: return nExpression
         )
