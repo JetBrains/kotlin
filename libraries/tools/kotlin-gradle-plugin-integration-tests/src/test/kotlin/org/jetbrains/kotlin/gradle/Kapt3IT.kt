@@ -29,15 +29,13 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
-import java.util.regex.Pattern
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-@SimpleGradlePluginTests
+@OtherGradlePluginTests
 abstract class Kapt3BaseIT : KGPBaseTest() {
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
@@ -112,16 +110,20 @@ class Kapt3ClassLoadersCacheIT : Kapt3WorkersIT() {
     )
 
     @Disabled("classloaders cache is incompatible with AP discovery in classpath")
-    override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {}
+    override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
+    }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {}
+    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
+    }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {}
+    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {
+    }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {}
+    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
+    }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
         project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
