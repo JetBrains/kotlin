@@ -298,7 +298,7 @@ class ClassicFrontendFacade(
                 )
                 if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
                 dependencies += moduleDescriptor
-                moduleDescriptor.setDependencies(dependencies)
+                moduleDescriptor.setDependencies(ArrayList(dependencies))
 
                 Pair(moduleDescriptor, resolvedLibrary.library)
             }
