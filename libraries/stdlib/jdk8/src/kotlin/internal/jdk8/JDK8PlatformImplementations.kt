@@ -26,6 +26,19 @@ import kotlin.random.jdk8.PlatformThreadLocalRandom
 
 internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() {
 
+    // the same SDK version check as in the base class is duplicated here,
+    // to avoid having a non-public cross-module dependency
+    private object ReflectSdkVersion {
+        @JvmField
+        public val sdkVersion: Int? = try {
+            Class.forName("android.os.Build\$VERSION").getField("SDK_INT").get(null) as? Int
+        } catch (e: Throwable) {
+            null
+        }?.takeIf { it > 0 }
+    }
+
+    private fun sdkIsNullOrAtLeast(version: Int): Boolean = ReflectSdkVersion.sdkVersion == null || ReflectSdkVersion.sdkVersion >= version
+
     override fun getMatchResultNamedGroup(matchResult: MatchResult, name: String): MatchGroup? {
         val matcher = matchResult as? Matcher ?: throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
 
@@ -36,6 +49,9 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
             null
     }
 
-    override fun defaultPlatformRandom(): Random = PlatformThreadLocalRandom()
+    override fun defaultPlatformRandom(): Random =
+        // while ThreadLocalRandom is available since SDK 21 (as documented), it has bugs in the implementation,
+        // so we don't use it for the same reasons as why we don't use it in JDK7.
+        if (sdkIsNullOrAtLeast(24)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
 
 }
