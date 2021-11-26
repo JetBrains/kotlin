@@ -435,6 +435,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker {
         if (this !is ConeStubTypeConstructor) return this
         if (this.isTypeVariableInSubtyping) return this
+        if (this.isForFixation) return this
         return this.variable.typeConstructor
     }
 

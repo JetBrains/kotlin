@@ -112,15 +112,16 @@ class FirDelegatedPropertyInferenceSession(
     private fun createNonFixedTypeToVariableSubstitutor(): ConeSubstitutor {
         val typeContext = components.session.typeContext
 
-        val bindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
-        for ((variable, stubType) in stubTypesByTypeVariable) {
-            bindings[stubType.constructor] = variable.defaultType(typeContext) as ConeKotlinType
+        val bindings = mutableMapOf<TypeVariableMarker, ConeKotlinType>()
+        for ((variable, synthetic) in syntheticTypeVariableByTypeVariable) {
+            bindings[synthetic] = variable.defaultType(typeContext) as ConeKotlinType
         }
 
         return object : AbstractConeSubstitutor(typeContext) {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 if (type !is ConeStubType) return null
-                return bindings[type.constructor].updateNullabilityIfNeeded(type)
+                if (type.constructor.isTypeVariableInSubtyping) return null
+                return bindings[type.constructor.variable].updateNullabilityIfNeeded(type)
             }
         }
     }
@@ -151,9 +152,13 @@ class FirDelegatedPropertyInferenceSession(
         typeVariable: TypeVariableMarker,
         completionContext: ConstraintSystemCompletionContext
     ) {
+        typeVariable as ConeTypeVariable
         completionContext.fixVariable(
             typeVariable,
-            stubTypeBySyntheticTypeVariable[typeVariable]!!,
+            ConeStubTypeForFixation(
+                ConeStubTypeConstructor(typeVariable, isTypeVariableInSubtyping = false, isForFixation = true),
+                ConeNullability.create(typeVariable.defaultType.isMarkedNullable)
+            ),
             ConeFixVariableConstraintPosition(typeVariable)
         )
     }
