@@ -118,3 +118,60 @@ import kotlin.native.concurrent.*
         assertEquals(2, counter.value)
     }
 }
+
+// This test checks that when multiple `executeAfter` jobs are submitted to `targetWorker` and have the
+// same scheduled execution time (in micros since an epoch), nether of them gets lost.
+@Test fun testExecuteAfterScheduledTimeClash() = withWorker {
+    val targetWorker = this
+    val mainWorker = Worker.current
+
+    // Configuration of the test.
+    val numberOfSubmitters = 2
+    val numberOfTasks = 100
+    val delayInMicroseconds = 100L
+
+    val submitters = Array(numberOfSubmitters) { Worker.start() }
+    try {
+        val readySubmittersCounter = AtomicInt(0)
+        val executedTasksCounter = AtomicInt(0)
+        val finishedBatchesCounter = AtomicInt(0)
+
+        submitters.forEach {
+            it.executeAfter(0L, {
+                readySubmittersCounter.increment()
+                // Wait for other submitters, to make them all start at the same time:
+                while (readySubmittersCounter.value != numberOfSubmitters) {}
+
+                // Concurrently submit tasks with matching scheduled execution time:
+                repeat(numberOfTasks) {
+                    targetWorker.executeAfter(delayInMicroseconds, {
+                        executedTasksCounter.increment()
+                    }.freeze())
+                }
+
+                // Use larger delay for the task below, to make sure it gets executed after
+                // the tasks above submitted by the same worker.
+                // If the order is wrong, the test will fail as well.
+                // NOTE: the code below was affected by the same problem with clashing times, so despite all the effort
+                // the test still might hang without a fix.
+                targetWorker.executeAfter(delayInMicroseconds + 1, {
+                    mainWorker.executeAfter(0L, {
+                        finishedBatchesCounter.increment()
+                    }.freeze())
+                }.freeze())
+            }.freeze())
+        }
+
+        while (finishedBatchesCounter.value != numberOfSubmitters) {
+            // Wait and allow processing the `finishedBatchesCounter.increment()` tasks above:
+            Worker.current.park(delayInMicroseconds, process = true)
+        }
+
+        // Note: we could have just waited for the condition above to become true,
+        // but this would mean that the test would hang in case of failure, which is not quite convenient.
+
+        assertEquals(numberOfSubmitters * numberOfTasks, executedTasksCounter.value)
+    } finally {
+        submitters.forEach { it.requestTermination().result }
+    }
+}

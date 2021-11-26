@@ -130,7 +130,10 @@ struct JobCompare {
   }
 };
 
-typedef KStdOrderedSet<Job, JobCompare> DelayedJobSet;
+// Using multiset instead of regular set, because we compare the jobs only by `whenExecute`.
+// So if `whenExecute` of two different jobs is the same, the jobs are considered equivalent,
+// and set would simply drop one of them.
+typedef KStdOrderedMultiset<Job, JobCompare> DelayedJobSet;
 
 }  // namespace
 
@@ -966,6 +969,9 @@ KLong Worker::checkDelayedLocked() {
   RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed job");
   auto now = konan::getTimeMicros();
   if (job.executeAfter.whenExecute <= now) {
+    // Note: `delayed_` is multiset sorted only by `whenExecute`.
+    // So using erase(it) instead of erase(job) is crucial,
+    // because the latter would remove all the jobs with the same `whenExecute`.
     delayed_.erase(it);
     queue_.push_back(job);
     return 0;
