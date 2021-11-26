@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
@@ -15,9 +16,8 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.convertVariance
@@ -42,17 +41,17 @@ internal interface KtFirAnalysisSessionComponent {
 
     fun ConeKotlinType.asKtType() = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
-    fun FirPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
-        KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as FirDiagnostic)
+    fun KtPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
+        KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 
     fun ConeDiagnostic.asKtDiagnostic(
-        source: FirSourceElement,
-        qualifiedAccessSource: FirSourceElement?,
-        diagnosticCache: MutableList<FirDiagnostic>
+        source: KtSourceElement,
+        qualifiedAccessSource: KtSourceElement?,
+        diagnosticCache: MutableList<KtDiagnostic>
     ): KtDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostics(source, qualifiedAccessSource).firstOrNull() ?: return null
+        val firDiagnostic = toFirDiagnostics(analysisSession.rootModuleSession, source, qualifiedAccessSource).firstOrNull() ?: return null
         diagnosticCache += firDiagnostic
-        check(firDiagnostic is FirPsiDiagnostic)
+        check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }
 

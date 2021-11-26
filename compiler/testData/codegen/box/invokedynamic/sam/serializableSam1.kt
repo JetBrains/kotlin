@@ -5,7 +5,7 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 0 java/lang/invoke/LambdaMetafactory
+// 2 java/lang/invoke/LambdaMetafactory
 
 // FILE: serializableSam1.kt
 import java.io.ByteArrayInputStream

@@ -7,14 +7,20 @@ package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
-import java.security.MessageDigest
 import java.util.zip.ZipInputStream
 
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
-@Suppress("SpellCheckingInspection")
 object ClasspathEntrySnapshotter {
 
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
@@ -24,7 +30,7 @@ object ClasspathEntrySnapshotter {
                 && !unixStyleRelativePath.startsWith("meta-inf", ignoreCase = true)
     }
 
-    fun snapshot(classpathEntry: File): ClasspathEntrySnapshot {
+    fun snapshot(classpathEntry: File, protoBased: Boolean? = null): ClasspathEntrySnapshot {
         val classes =
             DirectoryOrJarContentsReader.read(classpathEntry, DEFAULT_CLASS_FILTER)
                 .map { (unixStyleRelativePath, contents) ->
@@ -32,7 +38,7 @@ object ClasspathEntrySnapshotter {
                 }
 
         val snapshots = try {
-            ClassSnapshotter.snapshot(classes)
+            ClassSnapshotter.snapshot(classes, protoBased)
         } catch (e: Throwable) {
             if (isKnownProblematicClasspathEntry(classpathEntry)) {
                 classes.map { ContentHashJavaClassSnapshot(it.contents.md5()) }
@@ -66,7 +72,6 @@ object ClasspathEntrySnapshotter {
 }
 
 /** Creates [ClassSnapshot]s of classes. */
-@Suppress("SpellCheckingInspection")
 object ClassSnapshotter {
 
     /**
@@ -75,7 +80,11 @@ object ClassSnapshotter {
      * Note that for Java (non-Kotlin) classes, creating a [ClassSnapshot] for a nested class will require accessing the outer class (and
      * possibly vice versa). Therefore, outer classes and nested classes must be passed together in one invocation of this method.
      */
-    fun snapshot(classes: List<ClassFileWithContents>): List<ClassSnapshot> {
+    fun snapshot(
+        classes: List<ClassFileWithContents>,
+        protoBased: Boolean? = null,
+        includeDebugInfoInSnapshot: Boolean? = null
+    ): List<ClassSnapshot> {
         // Snapshot Kotlin classes first
         val kotlinClassSnapshots: Map<ClassFileWithContents, KotlinClassSnapshot?> = classes.associateWith {
             trySnapshotKotlinClass(it)
@@ -83,7 +92,7 @@ object ClassSnapshotter {
 
         // Snapshot the remaining Java classes in one invocation
         val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it] == null }
-        val snapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses)
+        val snapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses, protoBased, includeDebugInfoInSnapshot)
         val javaClassSnapshots: Map<ClassFileWithContents, JavaClassSnapshot> = javaClasses.zipToMap(snapshots)
 
         return classes.map { kotlinClassSnapshots[it] ?: javaClassSnapshots[it]!! }
@@ -92,7 +101,33 @@ object ClassSnapshotter {
     /** Creates [KotlinClassSnapshot] of the given class, or returns `null` if the class is not a Kotlin class. */
     private fun trySnapshotKotlinClass(clazz: ClassFileWithContents): KotlinClassSnapshot? {
         return KotlinClassInfo.tryCreateFrom(clazz.contents)?.let {
-            KotlinClassSnapshot(it)
+            KotlinClassSnapshot(it, computeSupertypes(it, clazz.contents))
+        }
+    }
+
+    // TODO: Find a faster way to get supertypes without loading protos (e.g., attach to an existing ASM visitor)
+    private fun computeSupertypes(classInfo: KotlinClassInfo, classContents: ByteArray): List<JvmClassName> {
+        return try {
+            val (nameResolver, proto) = JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
+            val supertypeClassIds = proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
+            supertypeClassIds.map { JvmClassName.byClassId(it) }
+        } catch (e: Exception) {
+            // The above method call currently fails on a few classes for some reason:
+            //   - org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException: Message was missing required fields.
+            //     (Lite runtime could not determine which fields were missing) for SomeClassKt.class
+            //   - java.lang.NullPointerException: parseDelimitedFrom(this, EXTENSION_REGISTRY) must not be null for
+            //     kotlin-stdlib-1.6.255-SNAPSHOT.jar
+            // Fall back to ASM visitor to get the supertypes.
+            val supertypeClassNames = mutableListOf<String>()
+            ClassReader(classContents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visit(
+                    version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?
+                ) {
+                    superName?.let { supertypeClassNames.add(it) }
+                    interfaces?.let { supertypeClassNames.addAll(it) }
+                }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
+            supertypeClassNames.map { JvmClassName.byInternalName(it) }
         }
     }
 
@@ -102,9 +137,13 @@ object ClassSnapshotter {
      * Note that creating a [JavaClassSnapshot] for a nested class will require accessing the outer class (and possibly vice versa).
      * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
      */
-    private fun snapshotJavaClasses(classes: List<ClassFileWithContents>): List<JavaClassSnapshot> {
+    private fun snapshotJavaClasses(
+        classes: List<ClassFileWithContents>,
+        protoBased: Boolean? = null,
+        includeDebugInfoInSnapshot: Boolean? = null
+    ): List<JavaClassSnapshot> {
         val classNames: List<JavaClassName> = classes.map { JavaClassName.compute(it.contents) }
-        val classNameToClassFile: LinkedHashMap<JavaClassName, ClassFileWithContents> = classNames.zipToMap(classes)
+        val classNameToClassFile: Map<JavaClassName, ClassFileWithContents> = classNames.zipToMap(classes)
 
         // We divide classes into 2 categories:
         //   - Special classes, which includes local, anonymous, or synthetic classes, and their nested classes. These classes can't be
@@ -120,17 +159,34 @@ object ClassSnapshotter {
             } else null
         }
 
-        // Snapshot the remaining regular classes in one invocation
+        // Snapshot the remaining regular classes
         val regularClasses: List<JavaClassName> = classNames.filter { specialClassSnapshots[it] == null }
-        val regularClassIds: List<ClassId> = computeJavaClassIds(regularClasses)
-        val regularClassesContents: List<ByteArray> = regularClasses.map { classNameToClassFile[it]!!.contents }
+        val regularClassIds = computeJavaClassIds(regularClasses)
+        val regularClassFiles: List<ClassFileWithContents> = regularClasses.map { classNameToClassFile[it]!! }
 
-        val descriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(regularClassIds, regularClassesContents)
+        val snapshots: List<JavaClassSnapshot> = if (protoBased ?: protoBasedDefaultValue) {
+            snapshotJavaClassesProtoBased(regularClassIds, regularClassFiles)
+        } else {
+            regularClassIds.mapIndexed { index, classId ->
+                JavaClassSnapshotter.snapshot(classId, regularClassFiles[index].contents, includeDebugInfoInSnapshot)
+            }
+        }
+        val regularClassSnapshots: Map<JavaClassName, JavaClassSnapshot> = regularClasses.zipToMap(snapshots)
+
+        return classNames.map { specialClassSnapshots[it] ?: regularClassSnapshots[it]!! }
+    }
+
+    private fun snapshotJavaClassesProtoBased(
+        classIds: List<ClassId>,
+        classFilesWithContents: List<ClassFileWithContents>
+    ): List<JavaClassSnapshot> {
+        val classesContents = classFilesWithContents.map { it.contents }
+        val descriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(classIds, classesContents)
         val snapshots: List<JavaClassSnapshot> = descriptors.mapIndexed { index, descriptor ->
-            val classFileWithContents = classNameToClassFile[regularClasses[index]]!!
+            val classFileWithContents = classFilesWithContents[index]
             if (descriptor != null) {
                 try {
-                    RegularJavaClassSnapshot(descriptor.toSerializedJavaClass())
+                    ProtoBasedJavaClassSnapshot(descriptor.toSerializedJavaClass())
                 } catch (e: Throwable) {
                     if (isKnownExceptionWhenReadingDescriptor(e)) {
                         ContentHashJavaClassSnapshot(classFileWithContents.contents.md5())
@@ -147,9 +203,7 @@ object ClassSnapshotter {
                 }
             }
         }
-        val regularClassSnapshots: LinkedHashMap<JavaClassName, JavaClassSnapshot> = regularClasses.zipToMap(snapshots)
-
-        return classNames.map { specialClassSnapshots[it] ?: regularClassSnapshots[it]!! }
+        return snapshots
     }
 
     /** Returns local, anonymous, or synthetic classes, and their nested classes. */
@@ -300,4 +354,4 @@ private fun <K, V> List<K>.zipToMap(other: List<V>): LinkedHashMap<K, V> {
     return map
 }
 
-private fun ByteArray.md5(): ByteArray = MessageDigest.getInstance("MD5").digest(this)
+private const val protoBasedDefaultValue = false

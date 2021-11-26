@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
@@ -20,7 +21,6 @@ import java.io.FileDescriptor
 interface ParcelizeExtensionBase {
     companion object {
         val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
-        val CREATOR_NAME = Name.identifier("CREATOR")
         val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
     }
 

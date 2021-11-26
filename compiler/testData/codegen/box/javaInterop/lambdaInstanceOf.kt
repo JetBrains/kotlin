@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: J.java
 
 import kotlin.Function;

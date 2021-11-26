@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
@@ -21,9 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -120,8 +119,23 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val superClass = if (isSuspendLambda) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
         private var boundReceiverField: IrField? = null
 
-        private val superFunctionInterface = reference.type.classOrNull?.owner ?: error("Expected functional type")
+        private val referenceType = reference.type as IrSimpleType
+
+        private val superFunctionInterface: IrClass = referenceType.classOrNull?.owner
+            ?: compilationException(
+                "Expected functional type",
+                reference
+            )
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
+
+        // If we implement KFunctionN we also need FunctionN
+        private val secondFunctionInterface: IrClass? = if (isKReference) {
+            val arity = referenceType.arguments.size - 1
+            if (function.isSuspend)
+                context.ir.symbols.suspendFunctionN(arity).owner
+            else
+                context.ir.symbols.functionN(arity).owner
+        } else null
 
         private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
             val parent = d.parent
@@ -167,7 +181,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
                 name = makeContextDependentName()
             }.apply {
-                superTypes = listOf(superClass, reference.type)
+                superTypes = listOfNotNull(superClass, referenceType, secondFunctionInterface?.symbol?.typeWithArguments(referenceType.arguments))
 //                if (samSuperType == null)
 //                    superTypes += functionSuperClass.typeWith(parameterTypes)
 //                if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
@@ -241,7 +255,14 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isSuspend = superMethod.isSuspend
                 isOperator = superMethod.isOperator
             }.apply {
-                overriddenSymbols = listOf(superMethod.symbol)
+                val secondSuperMethods: List<IrSimpleFunction>? =
+                    secondFunctionInterface?.declarations?.filterIsInstance<IrSimpleFunction>()
+                val secondSuperMethod = secondSuperMethods?.single { it.name.asString() == "invoke" }
+
+                overriddenSymbols = listOfNotNull(
+                    superMethod.symbol,
+                    secondSuperMethod?.symbol
+                )
                 dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
 
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
@@ -308,7 +329,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     else ->
-                        error("unknown function kind: ${callee.render()}")
+                        compilationException("unknown function kind", callee)
                 }
             }
 
@@ -391,8 +412,15 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun createNameProperty(clazz: IrClass) {
             if (!isKReference) return
 
-            val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
-            val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
+            val superProperty = superFunctionInterface.declarations
+                .filterIsInstance<IrProperty>()
+                .single { it.name == Name.identifier("name") }  // In K/Wasm interfaces can have fake overridden properties from Any
+
+            val supperGetter = superProperty.getter
+                ?: compilationException(
+                    "Expected getter for KFunction.name property",
+                    superProperty
+                )
 
             val nameProperty = clazz.addProperty() {
                 visibility = superProperty.visibility

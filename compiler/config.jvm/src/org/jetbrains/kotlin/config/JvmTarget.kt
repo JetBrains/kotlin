@@ -36,6 +36,8 @@ enum class JvmTarget(
     JVM_17("17", Opcodes.V12 + 5),
     ;
 
+    override fun toString() = description
+
     companion object {
         @JvmField
         val DEFAULT = JVM_1_8

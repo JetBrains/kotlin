@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 interface IFoo {
     fun foo(): String
 }
 
-inline class Z(val z: Int) : IFoo {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val z: Int) : IFoo {
     override fun foo() = z.toString()
 }
 

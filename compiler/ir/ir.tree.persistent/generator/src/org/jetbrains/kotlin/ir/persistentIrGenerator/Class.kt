@@ -22,6 +22,7 @@ internal fun PersistentIrGenerator.generateClass() {
         descriptorType("InlineClassRepresentation") + "<" + import("IrSimpleType", "org.jetbrains.kotlin.ir.types") + ">?",
         inlineClassRepresentationProto
     )
+    val sealedSubclassesField = Field("sealedSubclasses", +"List<" + irSymbol("IrClassSymbol") + ">", sealedSubclassListProto)
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -79,6 +80,7 @@ internal fun PersistentIrGenerator.generateClass() {
                 modalityField.toPersistentField(+"modality"),
                 inlineClassRepresentationField.toPersistentField(+"null"),
                 +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
+                sealedSubclassesField.toPersistentField(+"emptyList()"),
             ),
             id,
         )()
@@ -93,6 +95,7 @@ internal fun PersistentIrGenerator.generateClass() {
             typeParametersField,
             superTypesField,
             inlineClassRepresentationField,
+            sealedSubclassesField,
         )()
     })
 
@@ -104,5 +107,6 @@ internal fun PersistentIrGenerator.generateClass() {
         typeParametersField,
         superTypesField,
         inlineClassRepresentationField,
+        sealedSubclassesField,
     )
 }

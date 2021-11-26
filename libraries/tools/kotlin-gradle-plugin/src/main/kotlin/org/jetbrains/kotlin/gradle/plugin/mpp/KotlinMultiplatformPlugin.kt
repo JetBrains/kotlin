@@ -108,7 +108,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         SingleActionPerBuild.run(project.rootProject, "cleanup-processed-metadata") {
             if (isConfigurationCacheAvailable(project.gradle)) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry!!.onTaskCompletion(
+                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(
                     project.gradle.sharedServices
                         .registerIfAbsent(
                             "cleanup-stale-sourceset-metadata",

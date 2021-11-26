@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspendableExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspensionPointImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -57,6 +58,20 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                     putValueArgument(0, irSuccess(irGetObject(symbols.unit)))
                 }
         )
+    }
+
+
+    override fun IrBuilderWithScope.launchSuspendFunctionWithGivenContinuation(
+            symbol: IrSimpleFunctionSymbol, dispatchReceiver: IrExpression,
+            arguments: List<IrExpression>, continuation: IrExpression
+    ) = irCall(this@NativeSuspendFunctionsLowering.context.ir.symbols.coroutineLaunchpad).apply {
+        putValueArgument(0, irCall(symbol).apply {
+            this.dispatchReceiver = dispatchReceiver
+            arguments.forEachIndexed { index, irExpression ->
+                putValueArgument(index, irExpression)
+            }
+        })
+        putValueArgument(1, continuation)
     }
 
     override fun buildStateMachine(stateMachineFunction: IrFunction,

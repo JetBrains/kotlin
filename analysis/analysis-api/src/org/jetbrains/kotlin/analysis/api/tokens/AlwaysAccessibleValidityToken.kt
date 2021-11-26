@@ -29,6 +29,8 @@ public class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {
     override fun getInaccessibilityReason(): String {
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
+
+    override val factory: ValidityTokenFactory = AlwaysAccessibleValidityTokenFactory
 }
 
 public object AlwaysAccessibleValidityTokenFactory : ValidityTokenFactory() {

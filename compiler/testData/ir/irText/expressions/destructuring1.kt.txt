@@ -31,4 +31,3 @@ fun B.test() {
   val y: Int = (<this>, tmp0_container).component2()
   // }
 }
-

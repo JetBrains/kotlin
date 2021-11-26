@@ -14,23 +14,11 @@ message XStatementOrExpression {
   }
 }
 
-message AuxTables {
-  // TODO: optimize the representation.
-  repeated common.serialization.proto.IrType type = 1;
-  repeated common.serialization.proto.IdSignature signature = 2;
-  repeated string string = 3;
-  repeated XStatementOrExpression body = 4;
-  repeated string debug_info = 5;
-}
-
-message JvmIrFile {
+message ClassOrFile {
   repeated common.serialization.proto.IrDeclaration declaration = 1;
-  repeated common.serialization.proto.IrConstructorCall annotation = 2;
-  repeated int32 facade_fq_name = 3;
-  required AuxTables aux_tables = 4;
-}
-
-message JvmIrClass {
-  required common.serialization.proto.IrClass ir_class = 1;
-  required AuxTables aux_tables = 2;
+  repeated common.serialization.proto.IrType type = 2;
+  repeated common.serialization.proto.IdSignature signature = 3;
+  repeated string string = 4;
+  repeated XStatementOrExpression body = 5;
+  repeated string debug_info = 6;
 }

@@ -1,6 +1,6 @@
 FILE: nestedClass.kt
     public? abstract class Base : R|kotlin/Any| {
-        public? [ContainingClassKey=Base] constructor(s: String): R|Base| {
+        public? [ContainingClassKey=Base] constructor([CorrespondingProperty=/Base.s] s: String): R|Base| {
             super<R|kotlin/Any|>()
         }
 

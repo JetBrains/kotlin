@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun foo(): String {
     val a = ArrayList<String>()

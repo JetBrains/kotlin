@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.util
 
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.relativeTo
 
 fun File.getFileByName(name: String): File =
     findFileByName(name) ?: throw AssertionError("Could not find file with name '$name' in $this")

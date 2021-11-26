@@ -13,7 +13,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
@@ -24,10 +23,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurati
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.io.Serializable
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -35,7 +36,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 open class ModuleDependencyIdentifier(
     open val groupId: String?,
     open val moduleId: String
-) {
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ModuleDependencyIdentifier) return false
@@ -54,6 +55,10 @@ open class ModuleDependencyIdentifier(
 
     operator fun component1(): String? = groupId
     operator fun component2(): String = moduleId
+
+    override fun toString(): String {
+        return "${groupId}-${moduleId}"
+    }
 }
 
 class ChangingModuleDependencyIdentifier(
@@ -71,7 +76,7 @@ sealed class SourceSetMetadataLayout(
     val name: String,
     @get:Internal
     val archiveExtension: String
-) {
+) : Serializable {
     object METADATA : SourceSetMetadataLayout("metadata", "jar")
     object KLIB : SourceSetMetadataLayout("klib", "klib")
 
@@ -102,14 +107,17 @@ data class KotlinProjectStructureMetadata(
     val sourceSetModuleDependencies: Map<String, Set<ModuleDependencyIdentifier>>,
 
     @Input
+    val sourceSetCInteropMetadataDirectory: Map<String, String>,
+
+    @Input
     val hostSpecificSourceSets: Set<String>,
 
     @get:Input
     val isPublishedAsRoot: Boolean,
 
     @Input
-    val formatVersion: String = FORMAT_VERSION_0_3_1
-) {
+    val formatVersion: String = FORMAT_VERSION_0_3_2
+) : Serializable {
     @Suppress("UNUSED") // Gradle input
     @get:Input
     internal val sourceSetModuleDependenciesInput: Map<String, Set<Pair<String, String>>>
@@ -126,6 +134,9 @@ data class KotlinProjectStructureMetadata(
 
         // + 'isPublishedInRootModule' top-level flag
         internal const val FORMAT_VERSION_0_3_1 = "0.3.1"
+
+        // + 'sourceSetCInteropMetadataDirectory' map
+        internal const val FORMAT_VERSION_0_3_2 = "0.3.2"
     }
 }
 
@@ -169,6 +180,9 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
             }
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },
+        sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
+            .filter { isSharedNativeSourceSet(project, it) }
+            .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
         hostSpecificSourceSets = getHostSpecificSourceSets(project)
             .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
             .toSet(),
@@ -202,11 +216,12 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         }
 
     return KotlinProjectStructureMetadata(
-        expandVariantKeys(kotlinFragmentsPerKotlinVariant),
-        fragmentRefinesRelation,
-        module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
-        fragmentDependencies,
-        getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
+        sourceSetNamesByVariantName = expandVariantKeys(kotlinFragmentsPerKotlinVariant),
+        sourceSetsDependsOnRelation = fragmentRefinesRelation,
+        sourceSetBinaryLayout = module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
+        sourceSetModuleDependencies = fragmentDependencies,
+        sourceSetCInteropMetadataDirectory = emptyMap(), // Not supported yet
+        hostSpecificSourceSets = getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
         isPublishedAsRoot = true
     )
 }
@@ -242,6 +257,9 @@ internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
                     multiValue(MODULE_DEPENDENCY_NODE_NAME, sourceSetModuleDependencies[sourceSet].orEmpty().map { moduleDependency ->
                         moduleDependency.groupId + ":" + moduleDependency.moduleId
                     })
+                    sourceSetCInteropMetadataDirectory[sourceSet]?.let { cinteropMetadataDirectory ->
+                        value(SOURCE_SET_CINTEROP_METADATA_NODE_NAME, cinteropMetadataDirectory)
+                    }
                     sourceSetBinaryLayout[sourceSet]?.let { binaryLayout ->
                         value(BINARY_LAYOUT_NODE_NAME, binaryLayout.name)
                     }
@@ -296,7 +314,7 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
     val nodeNamed: Element.(String) -> Element? = { name -> getElementsByTagName(name).elements.singleOrNull() }
     val valueNamed: Element.(String) -> String? =
         { name -> getElementsByTagName(name).run { if (length > 0) item(0).textContent else null } }
-    val multiObjects: Element.(String) -> Iterable<Element> = { name -> nodeNamed(name)?.childNodes?.elements ?: emptyList()}
+    val multiObjects: Element.(String) -> Iterable<Element> = { name -> nodeNamed(name)?.childNodes?.elements ?: emptyList() }
     val multiValues: Element.(String) -> Iterable<String> = { name -> getElementsByTagName(name).elements.map { it.textContent } }
 
     return parseKotlinSourceSetMetadata(
@@ -331,6 +349,7 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     val sourceSetDependsOnRelation = mutableMapOf<String, Set<String>>()
     val sourceSetModuleDependencies = mutableMapOf<String, Set<ModuleDependencyIdentifier>>()
     val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
+    val sourceSetCInteropMetadataDirectory = mutableMapOf<String, String>()
     val hostSpecificSourceSets = mutableSetOf<String>()
 
     val sourceSetsNode = projectStructureNode.multiObjects(SOURCE_SETS_NODE_NAME)
@@ -342,6 +361,10 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
         val moduleDependencies = sourceSetNode.multiValues(MODULE_DEPENDENCY_NODE_NAME).mapTo(mutableSetOf()) {
             val (groupId, moduleId) = it.split(":")
             ModuleDependencyIdentifier(groupId, moduleId)
+        }
+
+        sourceSetNode.valueNamed(SOURCE_SET_CINTEROP_METADATA_NODE_NAME)?.let { cinteropMetadataDirectory ->
+            sourceSetCInteropMetadataDirectory[sourceSetName] = cinteropMetadataDirectory
         }
 
         sourceSetNode.valueNamed(HOST_SPECIFIC_NODE_NAME)
@@ -356,13 +379,14 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     }
 
     return KotlinProjectStructureMetadata(
-        sourceSetsByVariant,
-        sourceSetDependsOnRelation,
-        sourceSetBinaryLayout,
-        sourceSetModuleDependencies,
-        hostSpecificSourceSets,
-        isPublishedAsRoot,
-        formatVersion
+        sourceSetNamesByVariantName = sourceSetsByVariant,
+        sourceSetsDependsOnRelation = sourceSetDependsOnRelation,
+        sourceSetBinaryLayout = sourceSetBinaryLayout,
+        sourceSetModuleDependencies = sourceSetModuleDependencies,
+        sourceSetCInteropMetadataDirectory = sourceSetCInteropMetadataDirectory,
+        hostSpecificSourceSets = hostSpecificSourceSets,
+        isPublishedAsRoot = isPublishedAsRoot,
+        formatVersion = formatVersion
     )
 }
 
@@ -399,6 +423,7 @@ private const val VARIANT_NODE_NAME = "variant"
 private const val NAME_NODE_NAME = "name"
 private const val SOURCE_SETS_NODE_NAME = "sourceSets"
 private const val SOURCE_SET_NODE_NAME = "sourceSet"
+private const val SOURCE_SET_CINTEROP_METADATA_NODE_NAME = "sourceSetCInteropMetadataDirectory"
 private const val DEPENDS_ON_NODE_NAME = "dependsOn"
 private const val MODULE_DEPENDENCY_NODE_NAME = "moduleDependency"
 private const val BINARY_LAYOUT_NODE_NAME = "binaryLayout"

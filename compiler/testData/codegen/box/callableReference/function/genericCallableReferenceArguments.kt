@@ -4,7 +4,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS, NATIVE
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_REFLECT
 
 import kotlin.test.assertEquals

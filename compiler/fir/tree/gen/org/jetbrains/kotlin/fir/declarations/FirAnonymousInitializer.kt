@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
@@ -19,7 +20,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOwner {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
+    abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
@@ -37,4 +39,6 @@ abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOw
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer
 }

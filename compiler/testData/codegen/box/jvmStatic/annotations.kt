@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Test.java
 
 import java.lang.annotation.Annotation;

@@ -11,23 +11,4 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-
-    public final enum class EnumClass : kotlin.Enum<foo.EnumClass> {
-        enum entry ENTRY1
-
-        enum entry ENTRY2
-
-        private constructor EnumClass()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
-        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.EnumClass): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-        // Static members
-        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): foo.EnumClass
-        public final /*synthesized*/ fun values(): kotlin.Array<foo.EnumClass>
-    }
 }

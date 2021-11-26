@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -78,7 +79,7 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
 
     override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable) = sharedVariableDeclaration
 
-    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression {
+    override fun getSharedValue(sharedVariableSymbol: IrValueSymbol, originalGet: IrGetValue): IrExpression {
         val getField = IrGetFieldImpl(
             originalGet.startOffset, originalGet.endOffset,
             closureBoxFieldDeclaration.symbol,
@@ -103,7 +104,7 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
         )
     }
 
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetValue): IrExpression =
+    override fun setSharedValue(sharedVariableSymbol: IrValueSymbol, originalSet: IrSetValue): IrExpression =
         IrSetFieldImpl(
             originalSet.startOffset,
             originalSet.endOffset,

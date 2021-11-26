@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation("junit:junit:4.12")
+    testImplementation(commonDep("junit:junit"))
 }
 
 sourceSets {

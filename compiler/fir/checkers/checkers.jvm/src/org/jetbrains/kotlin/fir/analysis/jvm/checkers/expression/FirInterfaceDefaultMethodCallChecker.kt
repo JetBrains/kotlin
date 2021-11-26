@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.ANONYMOUS_CLASS_ID
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isStatic
@@ -27,19 +27,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val supportsDefaults = !context.isJvm6()
-
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         val classId = symbol?.callableId?.classId ?: return
         if (classId.isLocal) return
-        val typeSymbol = context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return
 
-        if (!supportsDefaults &&
-            symbol.isStatic &&
-            typeSymbol.isInterface &&
-            typeSymbol.origin == FirDeclarationOrigin.Java
-        ) {
-            reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, context)
+        fun getTypeSymbol(): FirRegularClassSymbol? {
+            return context.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+        }
+
+        val supportsDefaults = !context.isJvm6()
+        var typeSymbol: FirRegularClassSymbol? = null
+        if (!supportsDefaults && symbol.isStatic) {
+            typeSymbol = getTypeSymbol() ?: return
+            if (typeSymbol.isInterface && typeSymbol.origin == FirDeclarationOrigin.Java) {
+                reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, context)
+            }
         }
 
         if (expression.explicitReceiver.safeAs<FirQualifiedAccessExpression>()
@@ -49,6 +51,8 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         }
 
         val containingDeclaration = context.findClosest<FirRegularClass>() ?: return
+
+        if (typeSymbol == null) typeSymbol = getTypeSymbol() ?: return
 
         val jvmDefaultMode = context.session.jvmDefaultModeState
         if (typeSymbol.isInterface && (typeSymbol.origin == FirDeclarationOrigin.Java || symbol.isCompiledToJvmDefault(jvmDefaultMode))) {

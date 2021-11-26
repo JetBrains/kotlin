@@ -17,14 +17,14 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "a", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: __X)
+                    fun x(x: __X) {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
                     typealias X = Int
-                    fun x(x: X)
+                    fun x(x: X) {}
                 """.trimIndent()
             )
         }
@@ -44,7 +44,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "a", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: __X)
+                    fun x(x: __X) {}
                 """.trimIndent()
             )
 
@@ -52,7 +52,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "b", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: X)
+                    fun x(x: X) {}
                 """.trimIndent()
             )
         }
@@ -74,7 +74,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "a", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: X)
+                    fun x(x: X) {}
                 """.trimIndent()
             )
 
@@ -82,7 +82,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "b", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: X)
+                    fun x(x: X) {}
                 """.trimIndent()
             )
         }
@@ -104,7 +104,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "a", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: __X)
+                    fun x(x: __X) {}
                 """.trimIndent()
             )
 
@@ -112,7 +112,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
                 "b", """
                     typealias X = Int
                     typealias __X = X
-                    fun x(x: __X)
+                    fun x(x: __X) {}
                 """.trimIndent()
             )
         }

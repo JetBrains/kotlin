@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirReferencePlaceholderForResolvedAnnotations : FirReference() {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

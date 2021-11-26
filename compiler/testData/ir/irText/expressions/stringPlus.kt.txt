@@ -9,4 +9,3 @@ fun test2(a: String, b: Int): String {
 fun test3(a: String, b: Int): String {
   return a.plus(other = "+").plus(other = b.plus(other = 1)).plus(other = a)
 }
-

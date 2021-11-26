@@ -1,6 +1,5 @@
-// !LANGUAGE: +NewInference
 // IGNORE_BACKEND: NATIVE
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 
 class MyReceiveChannel<out E>

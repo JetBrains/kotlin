@@ -43,7 +43,6 @@ interface WasmBaseCodegenContext {
     fun transformBoxedType(irType: IrType): WasmType
     fun transformValueParameterType(irValueParameter: IrValueParameter): WasmType
     fun transformResultType(irType: IrType): WasmType?
-    fun transformExportedResultType(irType: IrType): WasmType?
     fun transformBlockResultType(irType: IrType): WasmType?
 
 

@@ -63,9 +63,12 @@ internal fun TestConfigurationBuilder.configureForKotlinxSerialization(libraries
                 }
             }
         })
-    useCustomRuntimeClasspathProvider {
-        object : RuntimeClasspathProvider() {
-            override fun runtimeClassPaths(): List<File> = librariesPaths
+
+    useCustomRuntimeClasspathProviders(
+        {
+            object : RuntimeClasspathProvider(it) {
+                override fun runtimeClassPaths(module: TestModule): List<File> = librariesPaths
+            }
         }
-    }
+    )
 }

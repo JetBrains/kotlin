@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.collectEnumEntries
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirErrorImport
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -29,10 +32,11 @@ object FirImportsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.imports.forEach { import ->
             if (import is FirErrorImport) return@forEach
-            if (import.isAllUnder && import !is FirResolvedImport) {
-                checkAllUnderFromEnumEntry(import, context, reporter)
-            }
-            if (!import.isAllUnder) {
+            if (import.isAllUnder) {
+                if (import !is FirResolvedImport) {
+                    checkAllUnderFromEnumEntry(import, context, reporter)
+                }
+            } else {
                 checkCanBeImported(import, context, reporter)
                 if (import is FirResolvedImport) {
                     checkOperatorRename(import, context, reporter)

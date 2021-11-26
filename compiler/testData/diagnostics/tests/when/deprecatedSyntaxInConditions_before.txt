@@ -1,0 +1,41 @@
+package
+
+public fun testWithRange_bad_1(/*0*/ x: A): kotlin.Unit
+public fun testWithRange_bad_2(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun testWithRange_bad_3(/*0*/ a: kotlin.Array<kotlin.Any>): kotlin.Unit
+public fun testWithRange_bad_4(/*0*/ b: B): kotlin.Unit
+public fun testWithRange_ok(/*0*/ x: A, /*1*/ y: A?, /*2*/ any: kotlin.Any, /*3*/ z: B): kotlin.Unit
+public fun testWithSubject_bad_1(/*0*/ x: A): kotlin.Unit
+public fun testWithSubject_bad_2(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun testWithSubject_bad_3(/*0*/ a: kotlin.Array<kotlin.Any>): kotlin.Unit
+public fun testWithSubject_bad_4(/*0*/ b: B): kotlin.Unit
+public fun testWithSubject_ok(/*0*/ x: A, /*1*/ y: A?, /*2*/ any: kotlin.Any, /*3*/ z: B): kotlin.Unit
+public operator fun kotlin.Any?.contains(/*0*/ other: kotlin.Any): kotlin.Boolean
+
+public interface A {
+    public abstract operator fun compareTo(/*0*/ other: A): kotlin.Int
+    public abstract operator fun div(/*0*/ other: A): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun id(): A
+    public abstract operator fun minus(/*0*/ other: A): A
+    public abstract operator fun plus(/*0*/ other: A): A
+    public abstract operator fun rangeTo(/*0*/ other: A): A
+    public abstract operator fun rem(/*0*/ other: A): A
+    public abstract operator fun times(/*0*/ other: A): A
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B {
+    public abstract operator fun dec(): B
+    public abstract operator fun divAssign(/*0*/ other: B): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun inc(): B
+    public abstract operator fun minusAssign(/*0*/ other: B): kotlin.Unit
+    public abstract operator fun plusAssign(/*0*/ other: B): kotlin.Unit
+    public abstract operator fun remAssign(/*0*/ other: B): kotlin.Unit
+    public abstract operator fun timesAssign(/*0*/ other: B): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

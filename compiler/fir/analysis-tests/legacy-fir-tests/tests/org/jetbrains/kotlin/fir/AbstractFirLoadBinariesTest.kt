@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName

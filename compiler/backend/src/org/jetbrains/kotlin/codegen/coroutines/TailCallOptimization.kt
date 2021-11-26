@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
@@ -155,7 +152,7 @@ internal class MethodNodeExaminer(
             }
 
             if (!insn.isMeaningful || insn.opcode in SAFE_OPCODES || insn.isInvisibleInDebugVarInsn(methodNode) || isInlineMarker(insn)
-                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance()
+                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance() || insn.isCheckcastObject()
             ) {
                 setOf()
             } else null
@@ -186,6 +183,9 @@ internal class MethodNodeExaminer(
         return reachableReturnsIndices
     }
 }
+
+private fun AbstractInsnNode.isCheckcastObject(): Boolean =
+    opcode == Opcodes.CHECKCAST && (this as TypeInsnNode).desc == AsmTypes.OBJECT_TYPE.internalName
 
 private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {
     val insns = methodNode.instructions
@@ -225,6 +225,11 @@ private class TcoInterpreter(private val suspensionPoints: List<SuspensionPoint>
     }
 
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
+        // Assume, that CHECKCAST Object does not break tail-call optimization
+        // TODO: Investigate, whether any CHECKCAST is safe in terms of tail-call optimization
+        if (value is FromSuspensionPointValue && insn.isCheckcastObject()) {
+            return value
+        }
         return super.unaryOperation(insn, value).convert(insn)
     }
 

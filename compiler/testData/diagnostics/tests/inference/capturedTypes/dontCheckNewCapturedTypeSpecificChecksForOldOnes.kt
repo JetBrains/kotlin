@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-47143
 
 interface Container<PARAM: Any>

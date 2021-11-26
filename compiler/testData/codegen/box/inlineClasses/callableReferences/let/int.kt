@@ -1,4 +1,8 @@
-inline class Value(val value: Int)
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Value(val value: Int)
 
 object Foo {
     fun foo(value: Value) {

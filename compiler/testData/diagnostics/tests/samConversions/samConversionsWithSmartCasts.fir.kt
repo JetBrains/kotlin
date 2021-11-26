@@ -37,18 +37,18 @@ fun test5(a: Any) {
 
 fun test5x(a: Any) {
     if (a is Runnable) {
-        a as () -> Unit
+        a <!UNCHECKED_CAST!>as () -> Unit<!>
         J().run1(a)
     }
 }
 
 fun test6(a: Any) {
-    a as () -> Unit
+    a <!UNCHECKED_CAST!>as () -> Unit<!>
     J().run1(a)
 }
 
 fun test7(a: (Int) -> Int) {
-    a as () -> Unit
+    a <!UNCHECKED_CAST!>as () -> Unit<!>
     J().run1(a)
 }
 

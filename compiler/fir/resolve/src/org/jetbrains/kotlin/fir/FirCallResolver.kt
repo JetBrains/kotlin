@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
@@ -656,13 +657,20 @@ class FirCallResolver(
                         ConeResolutionToClassifierError(fir.symbol)
                     } else {
                         val coneType = explicitReceiver?.typeRef?.coneType
-                        if (coneType != null && !coneType.isUnit) {
-                            ConeFunctionExpectedError(
-                                name.asString(),
-                                (fir as? FirTypedDeclaration)?.returnTypeRef?.coneType ?: coneType
-                            )
-                        } else {
-                            ConeUnresolvedNameError(name)
+                        when {
+                            coneType != null && !coneType.isUnit -> {
+                                ConeFunctionExpectedError(
+                                    name.asString(),
+                                    (fir as? FirTypedDeclaration)?.returnTypeRef?.coneType ?: coneType
+                                )
+                            }
+                            singleExpectedCandidate != null && !singleExpectedCandidate.currentApplicability.isSuccess -> {
+                                createConeDiagnosticForCandidateWithError(
+                                    singleExpectedCandidate.currentApplicability,
+                                    singleExpectedCandidate
+                                )
+                            }
+                            else -> ConeUnresolvedNameError(name)
                         }
                     }
                 }
@@ -702,13 +710,7 @@ class FirCallResolver(
 
             !applicability.isSuccess -> {
                 val candidate = candidates.single()
-                val diagnostic = when (applicability) {
-                    CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)
-                    CandidateApplicability.VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
-                    CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate.symbol))
-                    CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate.symbol as FirRegularClassSymbol)
-                    else -> ConeInapplicableCandidateError(applicability, candidate)
-                }
+                val diagnostic = createConeDiagnosticForCandidateWithError(applicability, candidate)
                 createErrorReferenceWithExistingCandidate(
                     candidate,
                     diagnostic,
@@ -759,10 +761,23 @@ class FirCallResolver(
         }
     }
 
+    private fun createConeDiagnosticForCandidateWithError(
+        applicability: CandidateApplicability,
+        candidate: Candidate
+    ): ConeDiagnosticWithCandidates {
+        return when (applicability) {
+            CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)
+            CandidateApplicability.VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
+            CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate.symbol))
+            CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate.symbol as FirRegularClassSymbol)
+            else -> ConeInapplicableCandidateError(applicability, candidate)
+        }
+    }
+
     private fun buildErrorReference(
         callInfo: CallInfo,
         diagnostic: ConeDiagnostic,
-        source: FirSourceElement?
+        source: KtSourceElement?
     ): FirErrorReferenceWithCandidate {
         return createErrorReferenceWithErrorCandidate(
             callInfo,

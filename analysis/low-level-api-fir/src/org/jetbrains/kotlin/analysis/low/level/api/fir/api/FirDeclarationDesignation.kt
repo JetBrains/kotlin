@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -12,10 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 
 class FirDeclarationDesignationWithFile(
     path: List<FirDeclaration>,

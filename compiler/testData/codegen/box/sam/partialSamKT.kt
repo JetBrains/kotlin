@@ -1,6 +1,5 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Fn.java
 public interface Fn<T, R> {
     R run(String s, int i, T t);

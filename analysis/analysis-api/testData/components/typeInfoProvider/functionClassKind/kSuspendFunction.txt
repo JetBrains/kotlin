@@ -1,0 +1,3 @@
+expression: xy
+expected type: suspend () -> kotlin.Unit
+functionClassKind: KSuspendFunction

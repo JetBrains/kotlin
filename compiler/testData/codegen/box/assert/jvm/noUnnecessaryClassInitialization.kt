@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // ASSERTIONS_MODE: jvm
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // Reusing the $assertionsDisabled field in the Outer class might seem like a good idea,
 // but it would result in an error in this case.

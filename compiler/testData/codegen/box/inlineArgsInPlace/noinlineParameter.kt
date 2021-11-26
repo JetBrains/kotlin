@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // TODO separate bytecode text templates for FIR?
 // -- CHECK_BYTECODE_TEXT

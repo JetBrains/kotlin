@@ -31,7 +31,8 @@ class ClassifierResolver(private val javac: JavacWrapper) {
     private val beingResolved = hashSetOf<Tree>()
 
     fun resolve(tree: Tree, unit: CompilationUnitTree, containingElement: JavaElement): JavaClassifier? {
-        if (cache.containsKey(tree)) return cache[tree]
+        val result = cache[tree]
+        if (result != null) return result
         if (tree in beingResolved) return null
         beingResolved(tree)
 

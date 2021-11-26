@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Rgba(val value: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Rgba(val value: Int) {
     inline val r: Int get() = (value shr 0) and 0xFF
     inline val g: Int get() = (value shr 8) and 0xFF
     inline val b: Int get() = (value shr 16) and 0xFF
@@ -18,7 +20,9 @@ fun Rgba.withG(g: Int) = Rgba(r, g, b, a)
 fun Rgba.withB(b: Int) = Rgba(r, g, b, a)
 fun Rgba.withA(a: Int) = Rgba(r, g, b, a)
 
-inline class RgbaArray(val array: IntArray) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class RgbaArray(val array: IntArray) {
     constructor(size: Int) : this(IntArray(size))
     operator fun get(index: Int): Rgba = Rgba(array[index])
     operator fun set(index: Int, color: Rgba) {

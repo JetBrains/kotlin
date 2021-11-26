@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
 // FILE: javaNestedSamInterface.kt
 import test.A

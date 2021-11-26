@@ -1,10 +1,11 @@
-// FILE: a.kt
+// WITH_EXTENDED_CHECKERS
 
+// FILE: a.kt
 
 package foobar.a
     import java.*
 
-    val a : java.util.List<Int>? = null
+    val a : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>? = null
     val a2 : <!UNRESOLVED_REFERENCE!>util.List<Int><!>? = null
     val a3 : <!UNRESOLVED_REFERENCE!>LinkedList<Int><!>? = null
 

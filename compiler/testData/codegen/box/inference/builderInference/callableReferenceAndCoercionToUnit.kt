@@ -1,6 +1,5 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -OPT_IN_USAGE_ERROR -UNUSED_EXPRESSION
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @OptIn(ExperimentalStdlibApi::class)
 fun test(s: String?): Int {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 
 import java.io.FileWriter
+import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -68,7 +69,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             var artifact: String = name,
             var library: String? = null,
             var opts: List<String> = emptyList()
-    )
+    ) : Serializable // Required for Gradle when using Framework as task input.
 
     /**
      * Used for the framework configuration in the task's closure.

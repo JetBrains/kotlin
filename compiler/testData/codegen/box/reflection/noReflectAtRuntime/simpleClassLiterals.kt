@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: NATIVE
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertNotNull
 

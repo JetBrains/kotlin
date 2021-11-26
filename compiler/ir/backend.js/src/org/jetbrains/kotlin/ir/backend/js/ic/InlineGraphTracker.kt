@@ -173,8 +173,8 @@ class InlineFunctionHashBuilder(
                 edges.mapNotNull { callee ->
                     // TODO: use resolved FO
                     if (!callee.isFakeOverride) {
-                        val signature = callee.symbol.signature ?: error("Expecting signature for ${callee.render()}")
-                        if (signature.visibleCrossFile) {
+                        val signature = callee.symbol.signature // ?: error("Expecting signature for ${callee.render()}")
+                        if (signature?.visibleCrossFile == true) {
                             signature to (computedHashed[callee] ?: hashProvider.hashForExternalFunction(callee)
                             ?: error("Internal error: No has found for ${callee.render()}"))
                         } else null

@@ -12,4 +12,3 @@ fun test(b: Boolean, i: Int) {
     else -> null /*~> Unit */
   }
 }
-

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -24,17 +24,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirFileImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
+    override val annotations: MutableList<FirAnnotation>,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override val annotations: MutableList<FirAnnotation>,
     override var packageDirective: FirPackageDirective,
     override val imports: MutableList<FirImport>,
     override val declarations: MutableList<FirDeclaration>,
     override val name: String,
+    override val path: String?,
 ) : FirFile() {
     override val symbol: FirFileSymbol = FirFileSymbol()
 

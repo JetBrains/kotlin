@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization
 
-import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")

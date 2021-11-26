@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class AbstractDiagnosticCollectorComponent(

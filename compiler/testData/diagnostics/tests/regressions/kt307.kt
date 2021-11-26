@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-307 Unresolved reference
 
 open class AL {

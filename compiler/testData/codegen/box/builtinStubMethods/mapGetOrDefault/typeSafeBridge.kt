@@ -1,7 +1,7 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class A : MutableMap<String, String> {
     override val entries: MutableSet<MutableMap.MutableEntry<String, String>>

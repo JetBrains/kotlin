@@ -1,8 +1,12 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class Z(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val x: Int)
 
-inline class ZArrayMap(val storage: IntArray) : Map<Z, Z> {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ZArrayMap(val storage: IntArray) : Map<Z, Z> {
     override val size: Int
         get() = storage.size
 

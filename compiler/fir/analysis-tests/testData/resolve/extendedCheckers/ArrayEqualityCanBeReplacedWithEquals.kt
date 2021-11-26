@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo(p: Int) {
     val a = arrayOf(1, 2, 3)

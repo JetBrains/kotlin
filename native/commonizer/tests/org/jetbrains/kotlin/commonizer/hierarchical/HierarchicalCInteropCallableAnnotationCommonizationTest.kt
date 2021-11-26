@@ -22,7 +22,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "a", """
                     import kotlinx.cinterop.*
                     @ObjCMethod(0)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -30,7 +30,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "b", """
                     import kotlinx.cinterop.*
                     @ObjCMethod(1)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -38,7 +38,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "c", """
                     import kotlinx.cinterop.*
                     @ObjCMethod(2)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -46,7 +46,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "d", """
                     import kotlinx.cinterop.*
                     @ObjCMethod(2)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
         }
@@ -87,7 +87,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "a", """
                     import kotlin.commonizer.*
                     @ObjCCallable
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -95,7 +95,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "b", """
                     import kotlin.commonizer.*
                     @ObjCCallable
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
         }
@@ -120,7 +120,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "a", """
                     import kotlinx.cinterop.*
                     @ObjCMethod(0)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -128,7 +128,7 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "b", """
                     import kotlinx.cinterop.*
                     @ObjCConstructor(1)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -136,15 +136,15 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                 "c", """
                     import kotlinx.cinterop.*
                     @ObjCFactory(2)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "d", """
                     import kotlin.commonizer.*
-                    @ObjCCallable(2)
-                    fun x()
+                    @ObjCCallable
+                    fun x() {}
                 """.trimIndent()
             )
         }
@@ -184,13 +184,13 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                     import kotlinx.cinterop.*
                     
                     @ObjCMethod(0)
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
@@ -199,13 +199,13 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
                     import kotlin.commonizer.*
                     
                     @ObjCCallable
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "d", """
-                    fun x()
+                    fun x() {}
                 """.trimIndent()
             )
         }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -31,7 +31,7 @@ inline val FirAnnotation.coneClassLikeType: ConeClassLikeType?
 inline val FirAnnotation.classId: ClassId?
     get() = coneClassLikeType?.lookupTag?.classId
 
-fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
+fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
         buildConstExpression(source, kind, it)
     } ?: buildErrorExpression {
@@ -56,8 +56,12 @@ inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParamet
     }
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
+    return toReference() as? FirResolvedNamedReference
+}
+
+fun FirExpression.toReference(): FirReference? {
     if (this is FirWrappedArgumentExpression) return expression.toResolvedCallableReference()
-    return (this as? FirResolvable)?.calleeReference as? FirResolvedNamedReference
+    return (this as? FirResolvable)?.calleeReference
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
@@ -68,14 +72,14 @@ fun FirReference.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
     return (this as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>
 }
 
-fun buildErrorLoop(source: FirSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {
+fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {
     return buildErrorLoop {
         this.source = source
         this.diagnostic = diagnostic
     }
 }
 
-fun buildErrorExpression(source: FirSourceElement?, diagnostic: ConeDiagnostic): FirErrorExpression {
+fun buildErrorExpression(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorExpression {
     return buildErrorExpression {
         this.source = source
         this.diagnostic = diagnostic
@@ -90,17 +94,6 @@ fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, data
         }
     }
     return this
-}
-
-fun <D> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {
-    val threshold = statements.size - 1
-    return transformStatementsIndexed(transformer) { index ->
-        if (index < threshold) {
-            TransformData.Data(data)
-        } else {
-            TransformData.Nothing
-        }
-    }
 }
 
 fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {

@@ -1,7 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // IGNORE_BACKEND: NATIVE
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 import kotlin.contracts.*
 import kotlin.coroutines.*

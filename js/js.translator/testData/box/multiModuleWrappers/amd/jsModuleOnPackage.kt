@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1289
 // MODULE: lib
-// FILE: lib.kt
 // MODULE_KIND: AMD
+// FILE: lib.kt
 @file:JsModule("native-lib")
 package foo
 
@@ -24,8 +24,8 @@ external val bar: Int = definedExternally
 external var mbar: Int = definedExternally
 
 // MODULE: main(lib)
-// FILE: main.kt
 // MODULE_KIND: AMD
+// FILE: main.kt
 package foo
 
 fun box(): String {

@@ -368,6 +368,23 @@ enum class WasmOp(
 
     BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
 
+    BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb43, listOf(LABEL_IDX)),
+
+    REF_IS_FUNC("ref.is_func", 0xfb50),
+    REF_IS_DATA("ref.is_data", 0xfb51),
+    REF_IS_I31("ref.is_i31", 0xfb52),
+    REF_AS_FUNC("ref.as_func", 0xfb58),
+    REF_AS_DATA("ref.as_data", 0xfb59),
+    REF_AS_I31("ref.as_i31", 0xfb5a),
+
+    BR_ON_FUNC("br_on_func", 0xfb60, listOf(LABEL_IDX)),
+    BR_ON_DATA("br_on_data", 0xfb61, listOf(LABEL_IDX)),
+    BR_ON_I31("br_on_i31", 0xfb62, listOf(LABEL_IDX)),
+
+    BR_ON_NON_FUNC("br_on_non_func", 0xfb63, listOf(LABEL_IDX)),
+    BR_ON_NON_DATA("br_on_non_data", 0xfb64, listOf(LABEL_IDX)),
+    BR_ON_NON_I31("br_on_non_i31", 0xfb65, listOf(LABEL_IDX)),
+
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
     GET_UNIT("call", 0x10, FUNC_IDX)
     ;

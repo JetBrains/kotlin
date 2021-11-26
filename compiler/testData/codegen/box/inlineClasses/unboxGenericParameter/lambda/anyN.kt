@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 fun <T> underlying(a: IC): T = bar(a) {
     it.value as T
@@ -24,7 +24,9 @@ fun <T> IC.extensionValue(): T = value as T
 
 fun <T> normalValue(ic: IC): T = ic.value as T
 
-inline class IC(val value: Any?) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IC(val value: Any?) {
     fun <T> dispatchValue(): T = value as T
 }
 

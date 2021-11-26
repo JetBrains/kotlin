@@ -22,9 +22,9 @@ class BackwardsTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommoniz
                     typealias Y = X
                     typealias Z = Y
                 
-                    fun x(x: A)
-                    fun x1(x: A1)
-                    fun x2(x: X)
+                    fun x(x: A) {}
+                    fun x1(x: A1) {}
+                    fun x2(x: X) {}
                 """.trimIndent()
             )
 
@@ -37,9 +37,9 @@ class BackwardsTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommoniz
                     typealias Y = X
                     typealias Z = Y
                     
-                    fun x(x: B)
-                    fun x1(x: B1)
-                    fun x2(x: X)
+                    fun x(x: B) {}
+                    fun x1(x: B1) {}
+                    fun x2(x: X) {}
                 """.trimIndent()
             )
         }
@@ -69,9 +69,9 @@ class BackwardsTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommoniz
                     typealias Y = X
                     typealias Z = Y
                 
-                    fun x(x: A)
-                    fun x1(x: A1)
-                    fun x2(x: X)
+                    fun x(x: A) {}
+                    fun x1(x: A1) {}
+                    fun x2(x: X) {}
                 """.trimIndent()
             )
 
@@ -84,9 +84,9 @@ class BackwardsTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommoniz
                     typealias Y = X
                     typealias Z = Y
                     
-                    fun x(x: Z)
-                    fun x1(x: Z)
-                    fun x2(x: Z)
+                    fun x(x: Z) {}
+                    fun x1(x: Z) {}
+                    fun x2(x: Z) {}
                 """.trimIndent()
             )
         }

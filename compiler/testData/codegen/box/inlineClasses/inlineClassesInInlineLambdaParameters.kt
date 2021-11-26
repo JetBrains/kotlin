@@ -1,7 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Z(val int: Int)
-inline class L(val long: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val int: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(val long: Long)
 
 inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
 

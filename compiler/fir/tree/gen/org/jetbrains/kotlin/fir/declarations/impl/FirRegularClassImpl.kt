@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -30,22 +30,22 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirRegularClassImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var deprecation: DeprecationsPerUseSite?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
+    override var status: FirDeclarationStatus,
+    override var deprecation: DeprecationsPerUseSite?,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
     override val annotations: MutableList<FirAnnotation>,
     override val scopeProvider: FirScopeProvider,
-    override var status: FirDeclarationStatus,
     override val name: Name,
     override val symbol: FirRegularClassSymbol,
-    override var companionObject: FirRegularClass?,
+    override var companionObjectSymbol: FirRegularClassSymbol?,
     override val superTypeRefs: MutableList<FirTypeRef>,
 ) : FirRegularClass() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -57,26 +57,30 @@ internal class FirRegularClassImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         superTypeRefs.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         transformTypeParameters(transformer, data)
+        transformStatus(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
-        transformStatus(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         transformSuperTypeRefs(transformer, data)
         return this
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
@@ -87,16 +91,6 @@ internal class FirRegularClassImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        companionObject = companionObject?.transform(transformer, data)
         return this
     }
 
@@ -115,6 +109,10 @@ internal class FirRegularClassImpl(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {
+        companionObjectSymbol = newCompanionObjectSymbol
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

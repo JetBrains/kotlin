@@ -10,7 +10,7 @@ package kotlin.wasm.internal
 import kotlin.UnsupportedOperationException
 import kotlin.reflect.*
 
-internal open class KProperty0Impl<out R>(override val name: String, override val returnType: KType, val getter: () -> R) : KProperty0<R> {
+internal open class KProperty0Impl<out R>(override val name: String, val returnType: KType, val getter: () -> R) : KProperty0<R> {
     override fun get(): R {
         return getter()
     }
@@ -34,7 +34,7 @@ internal open class KProperty0Impl<out R>(override val name: String, override va
     }
 }
 
-internal open class KProperty1Impl<T, out R>(override val name: String, override val returnType: KType, val getter: (T) -> R) : KProperty1<T, R> {
+internal open class KProperty1Impl<T, out R>(override val name: String, val returnType: KType, val getter: (T) -> R) : KProperty1<T, R> {
     override fun get(receiver: T): R {
         return getter(receiver)
     }
@@ -58,7 +58,7 @@ internal open class KProperty1Impl<T, out R>(override val name: String, override
     }
 }
 
-internal open class KProperty2Impl<T1, T2, out R>(override val name: String, override val returnType: KType, val getter: (T1, T2) -> R) :
+internal open class KProperty2Impl<T1, T2, out R>(override val name: String, val returnType: KType, val getter: (T1, T2) -> R) :
     KProperty2<T1, T2, R> {
     override fun get(receiver1: T1, receiver2: T2): R {
         return getter(receiver1, receiver2)
@@ -146,7 +146,7 @@ internal class KMutableProperty2Impl<T1, T2, R>(name: String, returnType: KType,
     }
 }
 
-internal open class KLocalDelegatedPropertyImpl<out R>(override val name: String, override val returnType: KType) : KProperty0<R> {
+internal open class KLocalDelegatedPropertyImpl<out R>(override val name: String, val returnType: KType) : KProperty0<R> {
     override fun get(): R {
         throw UnsupportedOperationException("Not supported for local property reference.")
     }

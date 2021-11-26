@@ -1,5 +1,6 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_TEXT
+// WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
 import kotlin.coroutines.*

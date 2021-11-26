@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
+@ObsoleteDescriptorBasedAPI
 class ClassGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
@@ -115,6 +117,8 @@ class ClassGenerator(
             if (DescriptorUtils.isEnumClass(classDescriptor)) {
                 generateAdditionalMembersForEnumClass(irClass)
             }
+
+            irClass.sealedSubclasses = classDescriptor.sealedSubclasses.map { context.symbolTable.referenceClass(it) }
         }
     }
 
@@ -151,7 +155,7 @@ class ClassGenerator(
         context.extensions.getParentClassStaticScope(classDescriptor)?.run {
             for (parentStaticMember in getContributedDescriptors()) {
                 if (parentStaticMember is FunctionDescriptor &&
-                    DescriptorVisibilities.isVisibleIgnoringReceiver(parentStaticMember, classDescriptor)
+                    DescriptorVisibilityUtils.isVisibleIgnoringReceiver(parentStaticMember, classDescriptor, context.languageVersionSettings)
                 ) {
                     val fakeOverride = createFakeOverrideDescriptorForParentStaticMember(classDescriptor, parentStaticMember)
                     declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let {

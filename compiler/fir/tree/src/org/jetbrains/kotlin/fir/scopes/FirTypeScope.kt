@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirTypeScope : FirScope(), FirContainingNamesAwareScope {
+abstract class FirTypeScope : FirContainingNamesAwareScope() {
     // If the scope instance is the same as the one from which the symbol was originated, this function supplies
     // all direct overridden members (each of them comes a base scope where grand-parents [overridden of this overridden] may be obtained from)
     //

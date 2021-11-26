@@ -18,7 +18,7 @@ fun test3(): Runnable {
 
 fun test4(): Comparator<@FlexibleNullability Int?> {
   return local fun <anonymous>(a: @FlexibleNullability Int?, b: @FlexibleNullability Int?): Int {
-    return a.minus(other = b /*!! @FlexibleNullability Int */)
+    return a.minus(other = b /*!! Int */)
   }
  /*-> Comparator<@FlexibleNullability Int?> */
 }

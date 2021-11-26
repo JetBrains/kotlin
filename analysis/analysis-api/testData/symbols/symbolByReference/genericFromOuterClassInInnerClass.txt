@@ -1,0 +1,23 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: test/TopLevel.Base.withOuter
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: withOuter
+  origin: SOURCE
+  receiverType: null
+  returnType: Outer?
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): test/TopLevel.Base<T, Outer>
+  deprecationStatus: null

@@ -19,8 +19,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
-object IrFactoryImpl : IrFactory {
+object IrFactoryImpl : AbstractIrFactoryImpl() {
     override val stageController: StageController = StageController()
+}
+
+abstract class AbstractIrFactoryImpl : IrFactory {
 
     override fun createAnonymousInitializer(
         startOffset: Int,
@@ -29,7 +32,7 @@ object IrFactoryImpl : IrFactory {
         symbol: IrAnonymousInitializerSymbol,
         isStatic: Boolean,
     ): IrAnonymousInitializer =
-        IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol, isStatic)
+        IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol, isStatic, factory = this)
 
     override fun createClass(
         startOffset: Int,
@@ -52,6 +55,7 @@ object IrFactoryImpl : IrFactory {
         IrClassImpl(
             startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
             isCompanion, isInner, isData, isExternal, isInline, isExpect, isFun, source,
+            factory = this
         )
 
     override fun createConstructor(
@@ -70,7 +74,7 @@ object IrFactoryImpl : IrFactory {
     ): IrConstructor =
         IrConstructorImpl(
             startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect,
-            containerSource,
+            containerSource, factory = this
         )
 
     override fun createEnumEntry(
@@ -80,14 +84,14 @@ object IrFactoryImpl : IrFactory {
         symbol: IrEnumEntrySymbol,
         name: Name,
     ): IrEnumEntry =
-        IrEnumEntryImpl(startOffset, endOffset, origin, symbol, name)
+        IrEnumEntryImpl(startOffset, endOffset, origin, symbol, name, factory = this)
 
     override fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
         descriptor: DeclarationDescriptor?,
     ): IrErrorDeclaration =
-        IrErrorDeclarationImpl(startOffset, endOffset, descriptor)
+        IrErrorDeclarationImpl(startOffset, endOffset, descriptor, factory = this)
 
     override fun createField(
         startOffset: Int,
@@ -101,7 +105,7 @@ object IrFactoryImpl : IrFactory {
         isExternal: Boolean,
         isStatic: Boolean,
     ): IrField =
-        IrFieldImpl(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic)
+        IrFieldImpl(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic, factory = this)
 
     override fun createFunction(
         startOffset: Int,
@@ -125,7 +129,7 @@ object IrFactoryImpl : IrFactory {
         IrFunctionImpl(
             startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
-            containerSource
+            containerSource, factory = this
         )
 
     override fun createFakeOverrideFunction(
@@ -147,6 +151,7 @@ object IrFactoryImpl : IrFactory {
         IrFakeOverrideFunctionImpl(
             startOffset, endOffset, origin, name, visibility, modality, returnType,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+            factory = this
         )
 
     override fun createLocalDelegatedProperty(
@@ -158,7 +163,7 @@ object IrFactoryImpl : IrFactory {
         type: IrType,
         isVar: Boolean,
     ): IrLocalDelegatedProperty =
-        IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, symbol, name, type, isVar)
+        IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, symbol, name, type, isVar, factory = this)
 
     override fun createProperty(
         startOffset: Int,
@@ -180,7 +185,7 @@ object IrFactoryImpl : IrFactory {
         IrPropertyImpl(
             startOffset, endOffset, origin, symbol, name, visibility, modality,
             isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
-            containerSource,
+            containerSource, factory = this
         )
 
     override fun createFakeOverrideProperty(
@@ -200,6 +205,7 @@ object IrFactoryImpl : IrFactory {
         IrFakeOverridePropertyImpl(
             startOffset, endOffset, origin, name, visibility, modality,
             isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+            factory = this
         )
 
     override fun createTypeAlias(
@@ -212,7 +218,7 @@ object IrFactoryImpl : IrFactory {
         isActual: Boolean,
         origin: IrDeclarationOrigin,
     ): IrTypeAlias =
-        IrTypeAliasImpl(startOffset, endOffset, symbol, name, visibility, expandedType, isActual, origin)
+        IrTypeAliasImpl(startOffset, endOffset, symbol, name, visibility, expandedType, isActual, origin, factory = this)
 
     override fun createTypeParameter(
         startOffset: Int,
@@ -224,7 +230,7 @@ object IrFactoryImpl : IrFactory {
         isReified: Boolean,
         variance: Variance,
     ): IrTypeParameter =
-        IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance)
+        IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance, factory = this)
 
     override fun createValueParameter(
         startOffset: Int,
@@ -241,7 +247,8 @@ object IrFactoryImpl : IrFactory {
         isAssignable: Boolean,
     ): IrValueParameter =
         IrValueParameterImpl(
-            startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline, isHidden, isAssignable
+            startOffset, endOffset, origin, symbol, name, index, type, varargElementType,
+            isCrossinline, isNoinline, isHidden, isAssignable, factory = this
         )
 
     override fun createExpressionBody(

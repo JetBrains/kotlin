@@ -1,12 +1,16 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class AsAny(val a: Any?) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class AsAny(val a: Any?) {
     fun myEq(other: Any?): Boolean {
         return other is AsAny && other.a == a
     }
 }
 
-inline class AsInt(val a: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class AsInt(val a: Int) {
     fun myEq(other: Any?): Boolean {
         return other is AsInt && other.a == a
     }

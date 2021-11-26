@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -244,6 +245,7 @@ private fun createContainerToResolveCommonCode(
         if (shouldCheckExpectActual) {
             useImpl<ExpectedActualDeclarationChecker>()
         }
+        useInstance(InlineConstTracker.DoNothing)
     }
 
 fun StorageComponentContainer.configureCommonSpecificComponents() {

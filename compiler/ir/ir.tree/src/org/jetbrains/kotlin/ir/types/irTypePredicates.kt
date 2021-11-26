@@ -132,6 +132,10 @@ fun IrType.isULong(): Boolean = isNotNullClassType(IdSignatureValues.uLong)
 fun IrType.isFloat(): Boolean = isNotNullClassType(IdSignatureValues._float)
 fun IrType.isDouble(): Boolean = isNotNullClassType(IdSignatureValues._double)
 fun IrType.isNumber(): Boolean = isNotNullClassType(IdSignatureValues.number)
+fun IrType.isDoubleOrFloatWithoutNullability(): Boolean {
+    return isClassType(IdSignatureValues._double, hasQuestionMark = null) ||
+            isClassType(IdSignatureValues._float, hasQuestionMark = null)
+}
 
 fun IrType.isComparable(): Boolean = isNotNullClassType(IdSignatureValues.comparable)
 fun IrType.isCharSequence(): Boolean = isNotNullClassType(IdSignatureValues.charSequence)

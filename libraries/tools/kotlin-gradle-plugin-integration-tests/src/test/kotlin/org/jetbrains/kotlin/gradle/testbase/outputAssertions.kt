@@ -82,7 +82,7 @@ fun BuildResult.assertOutputDoesNotContain(
 ) {
     assert(!output.contains(regexToCheck)) {
         printBuildOutput()
-        
+
         val matchedStrings = regexToCheck
             .findAll(output)
             .map { it.value }

@@ -253,6 +253,7 @@ message Statement {
         ForIn for_in_statement = 36;
         Try try_statement = 37;
         Empty empty = 38;
+        SingleLineComment single_line_comment = 39;
     }
 }
 
@@ -372,6 +373,10 @@ message Catch {
 message Empty {
 }
 
+message SingleLineComment {
+    required string message = 1;
+}
+
 enum InlineStrategy {
     AS_FUNCTION = 0;
     IN_PLACE = 1;
@@ -395,6 +400,9 @@ message Fragment {
     optional Statement tests_invocation = 11;
     optional Statement main_invocation = 12;
     repeated InlinedLocalDeclarations inlined_local_declarations = 13;
+    repeated IrClassModel ir_class_model = 14;
+    optional string dts = 15;
+    optional int32 suite_function = 16;
 }
 
 message InlinedLocalDeclarations {
@@ -423,6 +431,13 @@ message ClassModel {
     optional int32 super_name_id = 2;
     repeated int32 interface_name_id = 4;
     optional GlobalBlock post_declaration_block = 3;
+}
+
+message IrClassModel {
+    required int32 name_id = 1;
+    repeated int32 super_classes = 2;
+    optional GlobalBlock pre_declaration_block = 3;
+    optional GlobalBlock post_declaration_block = 4;
 }
 
 message InlineModule {

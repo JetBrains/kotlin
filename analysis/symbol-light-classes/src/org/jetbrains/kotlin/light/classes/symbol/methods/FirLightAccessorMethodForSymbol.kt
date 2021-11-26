@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
@@ -17,8 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
-import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightSetterParameterForSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -42,7 +40,7 @@ internal class FirLightAccessorMethodForSymbol(
         if (isGetter) getterName(this) else setterName(this)
 
     private val _name: String by lazyPub {
-        propertyAccessorSymbol.getJvmNameFromAnnotation() ?: run {
+        propertyAccessorSymbol.getJvmNameFromAnnotation(accessorSite) ?: run {
             val defaultName = containingPropertySymbol.name.identifier.let {
                 if (containingClass.isAnnotationType) it else it.abiName()
             }
@@ -77,7 +75,7 @@ internal class FirLightAccessorMethodForSymbol(
         val nullabilityType = if (nullabilityApplicable) {
             analyzeWithSymbolAsContext(containingPropertySymbol) {
                 getTypeNullability(
-                    containingPropertySymbol.annotatedType.type
+                    containingPropertySymbol.returnType
                 )
             }
         } else NullabilityType.Unknown
@@ -92,7 +90,7 @@ internal class FirLightAccessorMethodForSymbol(
         val annotationsFromAccessor = propertyAccessorSymbol.computeAnnotations(
             parent = this,
             nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = null,
+            annotationUseSiteTarget = accessorSite,
         )
 
         return annotationsFromProperty + annotationsFromAccessor
@@ -153,9 +151,12 @@ internal class FirLightAccessorMethodForSymbol(
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
         analyzeWithSymbolAsContext(containingPropertySymbol) {
-            containingPropertySymbol.annotatedType.type.asPsiType(this@FirLightAccessorMethodForSymbol)
-                ?: this@FirLightAccessorMethodForSymbol.nonExistentType()
-        }
+            containingPropertySymbol.returnType.asPsiType(
+                this@FirLightAccessorMethodForSymbol,
+                KtTypeMappingMode.RETURN_TYPE,
+                containingClass.isAnnotationType
+            )
+        } ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType

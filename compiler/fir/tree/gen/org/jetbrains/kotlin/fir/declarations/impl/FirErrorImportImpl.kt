@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorImportImpl(
-    override val aliasSource: FirSourceElement?,
+    override val aliasSource: KtSourceElement?,
     override val diagnostic: ConeDiagnostic,
     override var delegate: FirImport,
 ) : FirErrorImport() {
-    override val source: FirSourceElement? get() = delegate.source
+    override val source: KtSourceElement? get() = delegate.source
     override val importedFqName: FqName? get() = delegate.importedFqName
     override val isAllUnder: Boolean get() = delegate.isAllUnder
     override val aliasName: Name? get() = delegate.aliasName

@@ -1,5 +1,5 @@
+// WITH_STDLIB
 // MODULE: lib
-// WITH_RUNTIME
 // FILE: lib.kt
 
 import kotlin.test.assertEquals

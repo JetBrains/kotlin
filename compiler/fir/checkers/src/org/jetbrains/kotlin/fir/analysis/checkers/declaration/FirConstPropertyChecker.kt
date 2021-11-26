@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -40,7 +40,7 @@ object FirConstPropertyChecker : FirPropertyChecker() {
         }
 
         val source = declaration.getter?.source
-        if (source != null && source.kind !is FirFakeSourceElementKind) {
+        if (source != null && source.kind !is KtFakeSourceElementKind) {
             reporter.reportOn(source, FirErrors.CONST_VAL_WITH_GETTER, context)
             return
         }

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
 
 fun interface FunIFace<T, R> {
     fun call(ic: T): R

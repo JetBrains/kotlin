@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun interface J {
     operator fun invoke(): String

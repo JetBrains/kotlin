@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.typeParametersList
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.psi.KtFunction
 
 object FirAnonymousFunctionSyntaxChecker : FirDeclarationSyntaxChecker<FirAnonymousFunction, KtFunction>() {
     override fun checkPsi(
         element: FirAnonymousFunction,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: KtFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -34,7 +34,7 @@ object FirAnonymousFunctionSyntaxChecker : FirDeclarationSyntaxChecker<FirAnonym
 
     override fun checkLightTree(
         element: FirAnonymousFunction,
-        source: FirSourceElement,
+        source: KtLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

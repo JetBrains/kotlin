@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Works already in M11
 
 fun test(c : Class<*>) {

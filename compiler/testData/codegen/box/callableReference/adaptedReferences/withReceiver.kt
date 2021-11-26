@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun MutableSet<CharSequence>.foo(s: CharSequence): Set<CharSequence> {
     s.also(::add)

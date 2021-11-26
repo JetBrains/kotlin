@@ -82,7 +82,8 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
     val jsFuns = mutableListOf<JsCodeSnippet>()
 
-    var startFunction: WasmFunction? = null
+    class FunWithPriority(val function: WasmFunction, val priority: String)
+    val initFunctions = mutableListOf<FunWithPriority>()
 
     val scratchMemAddr = WasmSymbol<Int>()
     val scratchMemSizeInBytes = 65_536
@@ -191,6 +192,16 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
                 println("  -- $index ${iface.owner.fqNameWhenAvailable}")
             }
 
+            println("Interfaces implementations: ")
+            for ((interfaceImpl, index: Int) in interfaceImplementationIds) {
+                println(
+                    "  -- $index" +
+                            " Interface: ${interfaceImpl.irInterface.owner.fqNameWhenAvailable}" +
+                            " Class: ${interfaceImpl.irClass.owner.fqNameWhenAvailable}"
+                )
+            }
+
+
             println("Virtual functions: ")
             for ((index, vf: IrSimpleFunctionSymbol) in virtualFunctions.withIndex()) {
                 println("  -- $index ${vf.owner.fqNameWhenAvailable}")
@@ -243,6 +254,15 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             )
         }
 
+        val masterInitFunctionType = WasmFunctionType("__init_t", emptyList(), emptyList())
+        val masterInitFunction = WasmFunction.Defined("__init", masterInitFunctionType)
+        with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
+            initFunctions.sortedBy { it.priority }.forEach {
+                buildCall(WasmSymbol(it.function))
+            }
+        }
+        exports += WasmExport.Function("__init", masterInitFunction)
+
         interfaceMethodTables.defined.forEach { (function, table) ->
             val size = interfaceTableElementsLists[function]!!.size.toUInt()
             table.limits = WasmLimits(size, size)
@@ -261,16 +281,16 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         val sortedRttGlobals = runtimeTypes.elements.sortedBy { (it.type as WasmRtt).depth }
 
         val module = WasmModule(
-            functionTypes = functionTypes.elements + tagFuncType,
+            functionTypes = functionTypes.elements + tagFuncType + masterInitFunctionType,
             gcTypes = gcTypes.elements,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
-            definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>(),
+            definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>() + masterInitFunction,
             tables = listOf(table) + interfaceMethodTables.elements,
             memories = listOf(memory),
             globals = globals.elements + sortedRttGlobals,
             exports = exports,
-            startFunction = startFunction!!,
+            startFunction = null,  // Module is initialized via export call
             elements = listOf(elements) + interfaceTableElements,
             data = data,
             tags = listOf(tag)

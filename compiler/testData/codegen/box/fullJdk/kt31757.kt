@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
 // SKIP_JDK6
 // FULL_JDK

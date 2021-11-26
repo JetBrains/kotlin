@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.StringWriter
 
 fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
@@ -399,9 +400,9 @@ fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.conditio
 
 fun IrFunction.isMethodOfAny(): Boolean =
     extensionReceiverParameter == null && dispatchReceiverParameter != null &&
-            when (name.asString()) {
-                "hashCode", "toString" -> valueParameters.isEmpty()
-                "equals" -> valueParameters.singleOrNull()?.type?.isNullableAny() == true
+            when (name) {
+                OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> valueParameters.isEmpty()
+                OperatorNameConventions.EQUALS -> valueParameters.singleOrNull()?.type?.isNullableAny() == true
                 else -> false
             }
 
@@ -458,7 +459,7 @@ val IrFunction.allParametersCount: Int
 // This is essentially the same as FakeOverrideBuilder,
 // but it bypasses SymbolTable.
 // TODO: merge it with FakeOverrideBuilder.
-private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy() {
+private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(emptyMap()) {
 
     override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean) {
         declaration.acquireSymbol(IrSimpleFunctionSymbolImpl())

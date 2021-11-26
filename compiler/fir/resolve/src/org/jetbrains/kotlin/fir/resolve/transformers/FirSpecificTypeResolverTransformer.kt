@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -18,7 +23,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
-    private val errorTypeAsResolved: Boolean = true
+    private val errorTypeAsResolved: Boolean = true,
+    private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
 ) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
@@ -26,9 +32,9 @@ class FirSpecificTypeResolverTransformer(
     var areBareTypesAllowed: Boolean = false
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withAllowedBareTypes(block: () -> R): R {
+    inline fun <R> withBareTypes(allowed: Boolean = true, block: () -> R): R {
         val oldValue = areBareTypesAllowed
-        areBareTypesAllowed = true
+        areBareTypesAllowed = allowed
         return try {
             block()
         } finally {
@@ -67,9 +73,20 @@ class FirSpecificTypeResolverTransformer(
 
     @OptIn(PrivateForInline::class)
     override fun transformTypeRef(typeRef: FirTypeRef, data: ScopeClassDeclaration): FirResolvedTypeRef {
-        session.lookupTracker?.recordTypeLookup(typeRef, data.scope.scopeOwnerLookupNames, currentFile?.source)
-        typeRef.transformChildren(this, data)
-        return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed, isOperandOfIsOperator))
+        val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
+        session.lookupTracker?.recordTypeLookup(typeRef, scopeOwnerLookupNames, currentFile?.source)
+        withBareTypes(allowed = false) {
+            typeRef.transformChildren(this, data)
+        }
+        val (resolvedType, diagnostic) = typeResolver.resolveType(
+            typeRef,
+            data,
+            areBareTypesAllowed,
+            isOperandOfIsOperator,
+            currentFile,
+            supertypeSupplier
+        )
+        return transformType(typeRef, resolvedType, diagnostic)
     }
 
     @OptIn(PrivateForInline::class)
@@ -78,9 +95,19 @@ class FirSpecificTypeResolverTransformer(
         data: ScopeClassDeclaration
     ): FirResolvedTypeRef {
         functionTypeRef.transformChildren(this, data)
-        session.lookupTracker?.recordTypeLookup(functionTypeRef, data.scope.scopeOwnerLookupNames, currentFile?.source)
-        val resolvedType = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed, isOperandOfIsOperator).takeIfAcceptable()
-        return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
+        val scopeOwnerLookupNames = data.scopes.flatMap { it.scopeOwnerLookupNames }
+        session.lookupTracker?.recordTypeLookup(functionTypeRef, scopeOwnerLookupNames, currentFile?.source)
+        val resolvedTypeWithDiagnostic = typeResolver.resolveType(
+            functionTypeRef,
+            data,
+            areBareTypesAllowed,
+            isOperandOfIsOperator,
+            currentFile,
+            supertypeSupplier
+        )
+        val resolvedType = resolvedTypeWithDiagnostic.first.takeIfAcceptable()
+        val diagnostic = resolvedTypeWithDiagnostic.second
+        return if (resolvedType != null && resolvedType !is ConeClassErrorType && diagnostic == null) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
                 type = resolvedType
@@ -90,39 +117,54 @@ class FirSpecificTypeResolverTransformer(
         } else {
             buildErrorTypeRef {
                 source = functionTypeRef.source
-                diagnostic = (resolvedType as? ConeClassErrorType)?.diagnostic
-                    ?: ConeSimpleDiagnostic("Unresolved functional type: ${functionTypeRef.render()}")
+                if (resolvedType != null) {
+                    type = resolvedType
+                }
+                this.diagnostic = diagnostic ?: (resolvedType as? ConeClassErrorType)?.diagnostic
+                        ?: ConeSimpleDiagnostic("Unresolved functional type: ${functionTypeRef.render()}")
             }
         }
     }
 
-    private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): FirResolvedTypeRef {
-        return if (resolvedType !is ConeClassErrorType) {
-            buildResolvedTypeRef {
-                source = typeRef.source
-                type = resolvedType
-                annotations += typeRef.annotations
-                delegatedTypeRef = typeRef
-            }
-        } else {
-            buildErrorTypeRef {
-                val typeRefSourceKind = typeRef.source?.kind
-                val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
-                    ?.source.safeAs<FirSourceElement>()
+    private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType, diagnostic: ConeDiagnostic?): FirResolvedTypeRef {
+        return when {
+            resolvedType is ConeClassErrorType -> {
+                buildErrorTypeRef {
+                    val typeRefSourceKind = typeRef.source?.kind
+                    val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
+                        ?.source.safeAs<KtSourceElement>()
 
-                source = if (diagnosticSource != null) {
-                    if (typeRefSourceKind is FirFakeSourceElementKind) {
-                        diagnosticSource.fakeElement(typeRefSourceKind)
+                    source = if (diagnosticSource != null) {
+                        if (typeRefSourceKind is KtFakeSourceElementKind) {
+                            diagnosticSource.fakeElement(typeRefSourceKind)
+                        } else {
+                            diagnosticSource
+                        }
                     } else {
-                        diagnosticSource
+                        typeRef.source
                     }
-                } else {
-                    typeRef.source
+
+                    delegatedTypeRef = typeRef
+                type = resolvedType
+
+                    this.diagnostic = resolvedType.diagnostic
                 }
-
-                delegatedTypeRef = typeRef
-
-                diagnostic = resolvedType.diagnostic
+            }
+            diagnostic != null -> {
+                buildErrorTypeRef {
+                    source = typeRef.source
+                    this.diagnostic = diagnostic
+                    type = resolvedType
+                    delegatedTypeRef = typeRef
+                }
+            }
+            else -> {
+                buildResolvedTypeRef {
+                    source = typeRef.source
+                    type = resolvedType
+                    annotations += typeRef.annotations
+                    delegatedTypeRef = typeRef
+                }
             }
         }
     }

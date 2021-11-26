@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
+import org.jetbrains.kotlin.fir.types.isFunctionalType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -185,7 +185,7 @@ object UnusedChecker : FirControlFlowChecker() {
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            if (node.fir.source?.kind is FirFakeSourceElementKind) return dataForNode
+            if (node.fir.source?.kind is KtFakeSourceElementKind) return dataForNode
             val symbol = node.fir.symbol
             return update(dataForNode, symbol) { prev ->
                 when (prev) {
@@ -322,6 +322,6 @@ object UnusedChecker : FirControlFlowChecker() {
     private val FirPropertySymbol.isLoopIterator: Boolean
         get() {
             @OptIn(SymbolInternals::class)
-            return fir.initializer?.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
+            return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
         }
 }

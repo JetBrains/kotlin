@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: MySettings.java
 
 import java.util.Collection;

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.getValue
@@ -60,40 +61,57 @@ open class LazyClassMemberScope(
 ) {
 
     private val allDescriptors = storageManager.createLazyValue {
-        val result = LinkedHashSet(
-            computeDescriptorsFromDeclaredElements(
-                DescriptorKindFilter.ALL,
-                MemberScope.ALL_NAME_FILTER,
-                NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
-            )
+        doDescriptors(ALL_NAME_FILTER)
+    }
+
+    private fun doDescriptors(nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
+        val result = computeDescriptorsFromDeclaredElements(
+            DescriptorKindFilter.ALL,
+            nameFilter,
+            NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
         )
-        result.addAll(computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED))
-        result.toList()
+        computeExtraDescriptors(result, NoLookupLocation.FOR_ALREADY_TRACKED)
+        return result.toList()
     }
 
     private val allClassifierDescriptors = storageManager.createLazyValue {
-        val result = LinkedHashSet(
-            computeDescriptorsFromDeclaredElements(
-                DescriptorKindFilter.CLASSIFIERS,
-                MemberScope.ALL_NAME_FILTER,
-                NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
-            )
+        doClassifierDescriptors(ALL_NAME_FILTER)
+    }
+
+    private fun doClassifierDescriptors(nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
+        val result = computeDescriptorsFromDeclaredElements(
+            DescriptorKindFilter.CLASSIFIERS,
+            nameFilter,
+            NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
         )
         addSyntheticCompanionObject(result, NoLookupLocation.FOR_ALREADY_TRACKED)
         addSyntheticNestedClasses(result, NoLookupLocation.FOR_ALREADY_TRACKED)
-        result.toList()
+        return result.toList()
     }
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> = when (kindFilter) {
-        DescriptorKindFilter.CLASSIFIERS -> allClassifierDescriptors()
-        else -> allDescriptors()
+        DescriptorKindFilter.CLASSIFIERS ->
+            if (nameFilter == ALL_NAME_FILTER || allClassifierDescriptors.isComputed() || allClassifierDescriptors.isComputing()) {
+                allClassifierDescriptors()
+            } else {
+                storageManager.compute {
+                    doClassifierDescriptors(nameFilter)
+                }
+            }
+        else ->
+            if (nameFilter == ALL_NAME_FILTER || allDescriptors.isComputed() || allDescriptors.isComputing()) {
+                allDescriptors()
+            } else {
+                storageManager.compute {
+                    doDescriptors(nameFilter)
+                }
+            }
     }
 
-    protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
-        val result = ArrayList<DeclarationDescriptor>()
+    protected open fun computeExtraDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         for (supertype in supertypes) {
             for (descriptor in supertype.memberScope.getContributedDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
@@ -110,9 +128,6 @@ open class LazyClassMemberScope(
         addSyntheticVariables(result, location)
         addSyntheticCompanionObject(result, location)
         addSyntheticNestedClasses(result, location)
-
-        result.trimToSize()
-        return result
     }
 
     val supertypes by storageManager.createLazyValue {

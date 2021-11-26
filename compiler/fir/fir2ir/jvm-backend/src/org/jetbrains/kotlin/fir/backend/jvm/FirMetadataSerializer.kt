@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -87,6 +86,7 @@ class FirMetadataSerializer(
             returnTypeRef = function.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             receiverTypeRef = function.receiverTypeRef?.approximated(toSuper = false, typeParameterSet)
             isLambda = (function as? FirAnonymousFunction)?.isLambda == true
+            hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
             valueParameters.addAll(function.valueParameters.map {
                 buildValueParameterCopy(it) {
                     returnTypeRef = it.returnTypeRef.approximated(toSuper = false, typeParameterSet)

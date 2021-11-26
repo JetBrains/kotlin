@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
-import org.jetbrains.kotlin.fir.checkers.generator.*
+import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
+import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
+import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
@@ -17,6 +19,7 @@ import kotlin.reflect.KTypeProjection
 
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     private const val BASE_PACKAGE = "org.jetbrains.kotlin.fir.analysis.diagnostics"
+    private const val DIAGNOSTICS_PACKAGE = "org.jetbrains.kotlin.diagnostics"
 
     override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
         file.writeToFileUsingSmartPrinterIfFileContentChanged {
@@ -38,6 +41,9 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()
+            }
+            inBracketsWithIndent("init") {
+                println("RootDiagnosticRendererFactory.registerFactory(${diagnosticList.objectName}DefaultMessages)")
             }
         }
     }
@@ -121,6 +127,9 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         if (packageName != BASE_PACKAGE) {
             add("$BASE_PACKAGE.*")
         }
+        if (packageName != DIAGNOSTICS_PACKAGE) {
+            add("$DIAGNOSTICS_PACKAGE.*")
+        }
         diagnosticList.allDiagnostics.forEach { diagnostic ->
             for (typeArgument in diagnostic.getAllTypeArguments()) {
                 typeArgument.collectClassNamesTo(this)
@@ -132,6 +141,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         for (deprecationDiagnostic in diagnosticList.allDiagnostics.filterIsInstance<DeprecationDiagnosticData>()) {
             add("org.jetbrains.kotlin.config.LanguageFeature.${deprecationDiagnostic.featureForError.name}")
         }
+        add("org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory")
     }
 
 

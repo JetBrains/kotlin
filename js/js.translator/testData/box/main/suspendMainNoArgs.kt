@@ -18,7 +18,7 @@ suspend fun main() {
 }
 
 fun box(): String {
-    assertEquals("fail", ok)
+    if ("fail" != ok) error("Fail")
     callback()
     return ok
 }

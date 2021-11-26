@@ -1,5 +1,5 @@
 // See https://issuetracker.google.com/174827004
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test

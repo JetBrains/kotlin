@@ -7,6 +7,8 @@ public final class Foo /* Foo*/ {
 }
 
 public final class Boo /* Boo*/ {
+  private final java.lang.Object doSomething(Foo, kotlin.coroutines.Continuation<? super Bar>);//  doSomething(Foo, kotlin.coroutines.Continuation<? super Bar>)
+
   public  Boo();//  .ctor()
 
 }

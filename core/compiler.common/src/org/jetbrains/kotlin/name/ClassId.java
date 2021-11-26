@@ -20,6 +20,8 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * A class name which is used to uniquely identify a Kotlin class.
  *
@@ -59,6 +61,12 @@ public final class ClassId {
     @NotNull
     public FqName getRelativeClassName() {
         return relativeClassName;
+    }
+
+    @Nullable
+    public ClassId getParentClassId() {
+        if (!isNestedClass()) return null;
+        return new ClassId(packageFqName, relativeClassName.parent(), isLocal());
     }
 
     @NotNull

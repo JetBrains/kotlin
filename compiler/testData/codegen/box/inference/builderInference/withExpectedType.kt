@@ -1,31 +1,32 @@
 // !LANGUAGE: +UnrestrictedBuilderInference -UseBuilderInferenceOnlyIfNeeded
-// WITH_RUNTIME
+// WITH_STDLIB
 // !DIAGNOSTICS: -OPT_IN_USAGE_ERROR -CAST_NEVER_SUCCEEDS
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: Initializer type mismatch at first val x = : expected kotlin/collections/MutableList<kotlin/CharSequence>, actual kotlin/collections/MutableList<kotlin/String>
 
 import kotlin.experimental.ExperimentalTypeInference
 
 fun <K> id(x: K): K = x
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K, V> build(@BuilderInference builderAction: MutableMap<K, V>.() -> V) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K, V> build2(@BuilderInference builderAction: MutableMap<K, V>.() -> K) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K, V> build3(@BuilderInference builderAction: MutableMap<K, V>.(K) -> Unit) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K, V> build4(@BuilderInference builderAction: MutableMap<K, V>.() -> MutableMap<String, Int>) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K : V, V : CharSequence> build5(@BuilderInference builderAction: MutableMap<K, V>.() -> MutableMap<String, V>) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K : V, V : CharSequence> build6(@BuilderInference builderAction: MutableMap<K, V>.() -> MutableMap<K, String>) {}
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <K : V, V : CharSequence> build7(@BuilderInference builderAction: MutableMap<K, V>.() -> MutableMap<String, V>) = mutableMapOf<String, V>()
 
 @ExperimentalStdlibApi

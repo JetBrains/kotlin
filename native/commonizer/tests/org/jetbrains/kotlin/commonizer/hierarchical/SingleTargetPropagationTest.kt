@@ -25,7 +25,7 @@ class SingleTargetPropagationTest : AbstractInlineSourcesCommonizationTest() {
             simpleSingleSourceTarget("a", """class A""")
         }
 
-        result.assertCommonized("(a,b)", "expect class A expect constructor()")
-        result.assertCommonized("((a, b), (c, d))", "expect class A expect constructor()")
+        result.assertCommonized("(a,b)", "expect class A()")
+        result.assertCommonized("((a, b), (c, d))", "expect class A()")
     }
 }

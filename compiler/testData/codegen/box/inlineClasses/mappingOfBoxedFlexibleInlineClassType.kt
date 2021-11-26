@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 // FILE: JavaClass.java
@@ -9,10 +9,18 @@ public class JavaClass {
 
 // FILE: test.kt
 
-inline class IcInt(val i: Int)
-inline class IcLong(val l: Long)
-inline class IcAny(val a: Any?)
-inline class IcOverIc(val o: IcInt)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcInt(val i: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcLong(val l: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcAny(val a: Any?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcOverIc(val o: IcInt)
 
 fun box(): String {
     val i = IcInt(1)

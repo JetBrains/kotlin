@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// FIR status: don't support legacy feature (see https://youtrack.jetbrains.com/issue/KT-37591). UNRESOLVED_REFERENCE at '+'
+// WITH_STDLIB
 // MODULE: lib
 // FILE: lib.kt
 

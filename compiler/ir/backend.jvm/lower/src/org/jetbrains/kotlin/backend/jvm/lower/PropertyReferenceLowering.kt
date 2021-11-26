@@ -327,7 +327,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             return createSpecializedKProperty(expression)
         }
         val referenceKind = propertyReferenceKindFor(expression)
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+        return context.createJvmIrBuilder(currentScope!!, expression).run {
             val arity = when {
                 boundReceiver != null -> 5 // (receiver, jClass, name, desc, flags)
                 useOptimizedSuperClass -> 4 // (jClass, name, desc, flags)

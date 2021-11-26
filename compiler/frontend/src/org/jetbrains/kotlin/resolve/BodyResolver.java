@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -583,7 +585,9 @@ public class BodyResolver {
             if (classDescriptor != null) {
                 if (ErrorUtils.isError(classDescriptor)) continue;
 
-                if (FunctionTypesKt.isExtensionFunctionType(supertype)) {
+                if (FunctionTypesKt.isExtensionFunctionType(supertype) &&
+                    !languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
+                ) {
                     trace.report(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.on(typeReference));
                 }
                 else if (FunctionTypesKt.isSuspendFunctionType(supertype) &&
@@ -666,7 +670,13 @@ public class BodyResolver {
                         }
                     }
                     else {
-                        trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
+                        String declarationName;
+                        if (supertypeOwner.getName() == SpecialNames.NO_NAME_PROVIDED) {
+                            declarationName = "Anonymous object";
+                        } else {
+                            declarationName = "Local class";
+                        }
+                        trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference, declarationName, classDescriptor.getKind()));
                     }
                 }
                 else if (ModalityUtilsKt.isFinalOrEnum(classDescriptor)) {
@@ -1011,7 +1021,8 @@ public class BodyResolver {
         if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null) {
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
             KtProperty property = (KtProperty) function.getParent();
-            SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
+            SourceElement propertySourceElement = KotlinSourceElementKt.toSourceElement(property);
+            SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, propertySourceElement);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               LexicalScopeKind.PROPERTY_ACCESSOR_BODY,
                                               LocalRedeclarationChecker.DO_NOTHING.INSTANCE, handler -> {

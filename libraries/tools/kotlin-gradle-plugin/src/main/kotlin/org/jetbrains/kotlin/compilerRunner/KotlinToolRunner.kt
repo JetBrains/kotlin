@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
 
-internal abstract class KotlinToolRunner(
+// Note: this class is public because it is used in the K/N build infrastructure.
+abstract class KotlinToolRunner(
     val project: Project
 ) {
     // name that will be used in logs
@@ -36,7 +38,9 @@ internal abstract class KotlinToolRunner(
     open fun checkClasspath(): Unit = check(classpath.isNotEmpty()) { "Classpath of the tool is empty: $displayName" }
 
     abstract val isolatedClassLoaderCacheKey: Any
-    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoadersMap.computeIfAbsent(isolatedClassLoaderCacheKey) {
+    protected open val isolatedClassLoaders: ConcurrentHashMap<Any, URLClassLoader> get() = isolatedClassLoadersMap
+
+    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
         URLClassLoader(arrayOfURLs, null).apply {
             setDefaultAssertionStatus(enableAssertions)
@@ -100,7 +104,9 @@ internal abstract class KotlinToolRunner(
         )
 
         project.javaexec { spec ->
-            spec.main = mainClass
+            @Suppress("DEPRECATION")
+            if (GradleVersion.current() >= GradleVersion.version("7.0")) spec.mainClass.set(mainClass)
+            else spec.main = mainClass
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
             spec.systemProperties(systemProperties)

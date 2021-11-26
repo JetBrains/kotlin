@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun contains(set: Set<Any>, x: Int): Boolean = when {
     set.size == 0 -> false

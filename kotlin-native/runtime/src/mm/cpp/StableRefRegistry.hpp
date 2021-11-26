@@ -15,16 +15,18 @@ namespace mm {
 
 // Registry for all objects that have references outside of Kotlin.
 class StableRefRegistry : Pinned {
+    using Mutex = SpinLock<MutexThreadStateHandling::kIgnore>;
+
 public:
-    class ThreadQueue : public MultiSourceQueue<ObjHeader*>::Producer {
+    class ThreadQueue : public MultiSourceQueue<ObjHeader*, Mutex>::Producer {
     public:
         explicit ThreadQueue(StableRefRegistry& registry) : Producer(registry.stableRefs_) {}
         // Do not add fields as this is just a wrapper and Producer does not have virtual destructor.
     };
 
-    using Iterable = MultiSourceQueue<ObjHeader*>::Iterable;
-    using Iterator = MultiSourceQueue<ObjHeader*>::Iterator;
-    using Node = MultiSourceQueue<ObjHeader*>::Node;
+    using Iterable = MultiSourceQueue<ObjHeader*, Mutex>::Iterable;
+    using Iterator = MultiSourceQueue<ObjHeader*, Mutex>::Iterator;
+    using Node = MultiSourceQueue<ObjHeader*, Mutex>::Node;
 
     StableRefRegistry();
     ~StableRefRegistry();
@@ -64,7 +66,7 @@ private:
     //   before posting queue to the global registry)
     //
     // TODO: Measure to understand, if this approach is problematic.
-    MultiSourceQueue<ObjHeader*> stableRefs_;
+    MultiSourceQueue<ObjHeader*, Mutex> stableRefs_;
 };
 
 } // namespace mm

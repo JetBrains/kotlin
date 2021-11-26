@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import java.util.*
@@ -28,14 +27,6 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
 
 
 internal fun KtAnalysisSession.mapSuperType(
-    type: KtTypeAndAnnotations,
-    psiContext: PsiElement,
-    kotlinCollectionAsIs: Boolean = false
-): PsiClassType? {
-    return mapSuperType(type.type, psiContext, kotlinCollectionAsIs)
-}
-
-internal fun KtAnalysisSession.mapSuperType(
     type: KtType,
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false
@@ -43,7 +34,7 @@ internal fun KtAnalysisSession.mapSuperType(
     if (type !is KtNonErrorClassType) return null
     val psiType = type.asPsiType(
         psiContext,
-        if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE,
+        if (kotlinCollectionAsIs) KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else KtTypeMappingMode.SUPER_TYPE,
     )
     return psiType as? PsiClassType
 }

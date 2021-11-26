@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: not supported in JVM IR
 // IGNORE_BACKEND: JVM_IR
 
 import kotlin.reflect.KProperty

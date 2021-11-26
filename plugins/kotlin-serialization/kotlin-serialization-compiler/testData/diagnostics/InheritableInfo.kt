@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
-// WITH_RUNTIME
+// WITH_STDLIB
 // SKIP_TXT
 // !USE_EXPERIMENTAL: kotlinx.serialization.ExperimentalSerializationApi
 // FILE: test.kt

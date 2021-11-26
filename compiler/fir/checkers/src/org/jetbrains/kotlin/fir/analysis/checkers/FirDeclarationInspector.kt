@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.types.*
@@ -221,7 +221,7 @@ private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 // - see tests with `fun () {}`.
 // you can't redeclare something that has no name.
 private fun FirDeclaration.isCollectable() = when (this) {
-    is FirSimpleFunction -> source?.kind !is FirFakeSourceElementKind && name != NO_NAME_PROVIDED
+    is FirSimpleFunction -> source?.kind !is KtFakeSourceElementKind && name != NO_NAME_PROVIDED
     is FirRegularClass -> name != NO_NAME_PROVIDED
     else -> true
 }

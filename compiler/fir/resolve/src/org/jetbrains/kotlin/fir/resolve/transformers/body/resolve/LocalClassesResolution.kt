@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.runStatusResolveForLocalClass
 import org.jetbrains.kotlin.fir.resolve.transformers.runSupertypeResolvePhaseForLocalClass
 import org.jetbrains.kotlin.fir.resolve.transformers.runTypeResolvePhaseForLocalClass
-import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 
 fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     transformer: FirAbstractBodyResolveTransformer,
@@ -20,9 +20,9 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     firTowerDataContextCollector: FirTowerDataContextCollector?,
     firProviderInterceptor: FirProviderInterceptor?,
 ): F {
-    if (this is FirMemberDeclaration && status is FirResolvedDeclarationStatus) return this
+    if (status is FirResolvedDeclarationStatus) return this
     if (this is FirRegularClass) {
-        components.context.storeClassIfNotNested(this)
+        components.context.storeClassIfNotNested(this, components.session)
     }
     this.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     val localClassesNavigationInfo = collectLocalClassesNavigationInfo()
@@ -37,12 +37,16 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
         components.scopeSession,
         components.createCurrentScopeList(),
         localClassesNavigationInfo,
-        firProviderInterceptor
+        firProviderInterceptor,
+        components.file,
+        components.containingDeclarations,
     )
     runTypeResolvePhaseForLocalClass(
         components.session,
         components.scopeSession,
-        components.createCurrentScopeList()
+        components.createCurrentScopeList(),
+        components.file,
+        components.containingDeclarations
     )
     runStatusResolveForLocalClass(
         components.session,

@@ -34,8 +34,9 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
     private val supersCache = hashMapOf<KtClassOrObject, List<ClassId>>()
 
     override fun resolveSupertypes(classOrObject: KtClassOrObject): List<ClassId> {
-        if (supersCache.containsKey(classOrObject)) {
-            return supersCache[classOrObject]!!
+        val cachedItem = supersCache[classOrObject]
+        if (cachedItem != null) {
+            return cachedItem
         }
 
         val classDescriptor =

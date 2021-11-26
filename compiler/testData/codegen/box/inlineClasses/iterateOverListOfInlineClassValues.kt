@@ -1,8 +1,8 @@
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class Foo(val arg: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val arg: String)
 
 fun box(): String {
     val ls = listOf(Foo("abc"), Foo("def"))

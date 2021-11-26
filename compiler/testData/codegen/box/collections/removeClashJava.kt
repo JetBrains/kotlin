@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: removeClashJava.kt
 class Queue<T>() : Collection<T> {
     override val size: Int = 1

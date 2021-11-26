@@ -1,6 +1,7 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNREACHABLE_CODE -CAN_BE_VAL
 // SKIP_TXT
+// WITH_EXTENDED_CHECKERS
 
 // FILE: other_package.kt
 
@@ -146,7 +147,7 @@ fun case_8(x: TypealiasString) {
 }
 
 // TESTCASE NUMBER: 9
-fun case_9(x: TypealiasNullableString?) {
+fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
     if (x === null && <!SENSELESS_COMPARISON!>x === null<!> || <!SENSELESS_COMPARISON!>x === null<!>) {
 
     } else if (<!SENSELESS_COMPARISON!>x === null<!> || <!SENSELESS_COMPARISON!>x === null<!>) {
@@ -185,7 +186,7 @@ fun case_10() {
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
+fun case_11(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNullableString) {
     val t: TypealiasNullableString = null
 
     if (x == null) {

@@ -4,6 +4,6 @@ fun main() {
 
     val command : Any = 1
 
-    command<!UNNECESSARY_SAFE_CALL!>?.<!>equals(null)
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>command<!UNNECESSARY_SAFE_CALL!>?.<!>equals(null)<!>
     command.equals(null)
 }

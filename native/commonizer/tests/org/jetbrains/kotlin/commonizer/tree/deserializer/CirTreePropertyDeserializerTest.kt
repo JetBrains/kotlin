@@ -40,7 +40,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test lateinit var property`() {
-        val module = createCirTreeFromSourceCode("lateinit var x: Int")
+        val module = createCirTreeFromSourceCode("lateinit var x: Unit")
         val property = module.assertSingleProperty()
 
         assertNotNull(property.getter, "Expected property has getter")
@@ -50,7 +50,13 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test generic var property`() {
-        val module = createCirTreeFromSourceCode("var <T> T.x: T get() = this")
+        val module = createCirTreeFromSourceCode(
+            """
+            var <T> T.x: T 
+                get() = this 
+                set(value) {}
+        """.trimIndent()
+        )
         val property = module.assertSingleProperty()
 
         assertNotNull(property.extensionReceiver, "Expected property has extension receiver")
@@ -66,7 +72,9 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
             val x: Int = 42
             val y: Float = 42f
             var z: String = "42"
-            var Any?.answer get() = if(this != null) 42 else null
+            var Any?.answer 
+                get() = if(this != null) 42 else null
+                set(value) {}
             """.trimIndent()
         )
 

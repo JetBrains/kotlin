@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class UInt(val value: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UInt(val value: Int)
 
 fun <T> last(vararg e: T): T = e[e.size - 1]
 fun <T> first(vararg e: T): T = e[0]

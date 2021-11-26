@@ -48,8 +48,12 @@ ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManag
 
 } // namespace
 
-ObjHeader** ObjHeader::GetWeakCounterLocation() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakCounterLocation();
+ObjHeader* ObjHeader::GetWeakCounter() {
+    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakReferenceCounter();
+}
+
+ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
+    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetOrSetWeakReferenceCounter(this, counter);
 }
 
 #ifdef KONAN_OBJC_INTEROP
@@ -232,6 +236,24 @@ extern "C" RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, in
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->shadowStack().LeaveFrame(start, parameters, count);
+}
+
+extern "C" RUNTIME_NOTHROW void SetCurrentFrame(ObjHeader** start) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->shadowStack().SetCurrentFrame(start);
+}
+
+extern "C" RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    return threadData->shadowStack().getCurrentFrame();
+}
+
+extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    return threadData->shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
 }
 
 extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
@@ -511,22 +533,16 @@ extern "C" void CheckGlobalsAccessible() {
     // Always accessible
 }
 
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointFunctionEpilogue() {
+extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointFunctionPrologue() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().SafePointFunctionEpilogue();
+    threadData->gc().SafePointFunctionPrologue();
 }
 
 extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointWhileLoopBody() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->gc().SafePointLoopBody();
-}
-
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointExceptionUnwind() {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().SafePointExceptionUnwind();
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {

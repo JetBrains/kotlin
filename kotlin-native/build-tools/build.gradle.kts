@@ -93,10 +93,9 @@ gradlePlugin {
 val compileKotlin: KotlinCompile by tasks
 val compileGroovy: GroovyCompile by tasks
 
-// https://youtrack.jetbrains.com/issue/KT-37435
 compileKotlin.apply {
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += listOf("-Xno-optimized-callable-references", "-Xskip-prerelease-check")
+    kotlinOptions.freeCompilerArgs += "-Xskip-prerelease-check"
 }
 
 // Add Kotlin classes to a classpath for the Groovy compiler

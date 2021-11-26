@@ -99,7 +99,7 @@ public abstract class AbstractMap {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge final method entrySet(): java.util.Set
     public bridge final method get(p0: java.lang.Object): java.lang.Number
-    public synthetic bridge method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public abstract method get(p0: java.lang.String): java.lang.Number
     public abstract method getEntries(): java.util.Set
     public abstract method getKeys(): java.util.Set

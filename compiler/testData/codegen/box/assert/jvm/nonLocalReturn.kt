@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // ASSERTIONS_MODE: jvm
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package nonLocalReturn
 

@@ -1,6 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
+// WITH_STDLIB
 
 object A {
     var result = "not ok"

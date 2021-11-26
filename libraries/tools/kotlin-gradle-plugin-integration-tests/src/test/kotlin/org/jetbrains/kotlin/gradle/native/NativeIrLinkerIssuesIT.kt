@@ -36,7 +36,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             useCache = true
         ) { kotlinNativeCompilerVersion ->
             """
-            |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrTypeAliasSymbol is expected.
+            |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrClassifierSymbol is expected.
             |
             |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
             |
@@ -175,7 +175,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             useCache = true
         ) { kotlinNativeCompilerVersion ->
             """
-            |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, sample.liba/B|null[0]. IrTypeAliasSymbol is expected.
+            |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, sample.liba/B|null[0]. IrClassifierSymbol is expected.
             |
             |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
             |

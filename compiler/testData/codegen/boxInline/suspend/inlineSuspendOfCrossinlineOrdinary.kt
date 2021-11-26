@@ -1,5 +1,5 @@
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 import kotlin.coroutines.*
 import helpers.*

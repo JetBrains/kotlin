@@ -1,9 +1,10 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 
-inline class S(val xs: Array<String>)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val xs: Array<String>)
 
 interface IFoo {
     var S.extVar: String

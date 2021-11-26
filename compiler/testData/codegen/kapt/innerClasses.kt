@@ -1,5 +1,5 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package test
 

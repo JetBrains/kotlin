@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -26,12 +26,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration is FirPropertyAccessor) return
         checkInternal(declaration, null, null, context, reporter)
     }
 
     private fun checkInternal(
         declaration: FirDeclaration,
-        reportSource: FirSourceElement?,
+        reportSource: KtSourceElement?,
         modality: Modality?,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -46,7 +47,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
 
         if (!declaration.isExternal) return
         val source = declaration.source ?: return
-        if (source.kind is FirFakeSourceElementKind) return
+        if (source.kind is KtFakeSourceElementKind) return
 
         // WRONG_MODIFIER_TARGET on external constructor is intentionally NOT covered in this checker.
         if (declaration !is FirFunction) {

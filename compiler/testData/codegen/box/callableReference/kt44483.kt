@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <K, V> f(vararg p: Pair<K, V>): K = p[0].first
 

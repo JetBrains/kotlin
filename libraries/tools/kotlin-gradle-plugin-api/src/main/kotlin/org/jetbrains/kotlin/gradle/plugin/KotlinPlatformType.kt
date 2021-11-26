@@ -29,14 +29,28 @@ enum class KotlinPlatformType: Named, Serializable {
 
     class DisambiguationRule : AttributeDisambiguationRule<KotlinPlatformType> {
         override fun execute(details: MultipleCandidatesDetails<KotlinPlatformType?>) = with(details) {
-            if (candidateValues == setOf(androidJvm, jvm))
-                closestMatch(androidJvm)
+            if (consumerValue in candidateValues) {
+                closestMatch(checkNotNull(consumerValue))
+                return@with
+            }
+
+            /**
+             * If the consumer doesn't request anything specific and matches both JVM and Android,
+             * then assume that it's an ordinary pure-Java consumer. If it's a pure-Android consumer, it will have
+             * other means of disambiguation that will take precedence
+             * (the buildType attribute, the target JVM environment = android)
+             */
+            if (consumerValue == null && androidJvm in candidateValues && jvm in candidateValues) {
+                closestMatch(jvm)
+                return@with
+            }
 
             if (common in candidateValues && jvm !in candidateValues && androidJvm !in candidateValues) {
                 // then the consumer requests common or requests no platform-specific artifacts,
                 // so common is the best match, KT-26834; apply this rule only when no JVM variant is available,
                 // as doing otherwise would conflict with Gradle java's disambiguation rules and lead to KT-32239
                 closestMatch(common)
+                return@with
             }
         }
     }

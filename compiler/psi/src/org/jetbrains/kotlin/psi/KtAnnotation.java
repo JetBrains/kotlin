@@ -24,6 +24,17 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
+/**
+ * A group of annotation entries applied to the same use-site target. Can be used to avoid writing use-site target multiple times.
+ * <p>
+ * Syntax examples:
+ * <ul>
+ *     <li>{@code @file:[Annotation1, Annotation2]}</li>
+ *     <li>{@code @set:[Inject, Autowire]}</li>
+ * </ul>
+ * <p>
+ * For a single annotation entry, see {@link KtAnnotationEntry}.
+ */
 public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnnotation>> {
 
     public KtAnnotation(@NotNull ASTNode node) {

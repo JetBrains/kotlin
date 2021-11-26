@@ -1,6 +1,10 @@
 package
 
 public val </*0*/ T> @x kotlin.collections.List<@x T>.f: kotlin.Int
+public fun badArgs(/*0*/ a: kotlin.collections.List<@TypeAnnWithArg kotlin.Int>): kotlin.Unit
+public fun badArgsInTypeAlias(/*0*/ a: BadArgsInTypeAlias /* = kotlin.collections.List<@TypeAnnWithArg kotlin.Int> */): kotlin.Unit
+public fun badArgsInTypeAliasInstance(/*0*/ a: T<@TypeAnnWithArg(arg = 123) kotlin.Int> /* = kotlin.collections.List<@TypeAnnWithArg(arg = 123) kotlin.Int> */): kotlin.Unit
+public fun badArgsWithProjection(/*0*/ a: kotlin.Array<out @TypeAnnWithArg kotlin.Int>): kotlin.Unit
 public fun </*0*/ T, /*1*/ U : T> kotlin.collections.List<@x T>.firstTyped(): U
 public fun @x A.foo(/*0*/ a: @x kotlin.Int): kotlin.Unit
 public fun </*0*/ T> @x kotlin.collections.List<@x T>.foo(/*0*/ l: kotlin.collections.List<@x T>): @x kotlin.collections.List<@x T>
@@ -12,9 +16,22 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class TypeAnnWithArg : kotlin.Annotation {
+    public constructor TypeAnnWithArg(/*0*/ arg: kotlin.String)
+    public final val arg: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class x : kotlin.Annotation {
     public constructor x()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias BadArgsInRecursive = kotlin.collections.List<kotlin.collections.Map<kotlin.collections.List<@TypeAnnWithArg kotlin.Int>, @TypeAnnWithArg kotlin.String>>
+public typealias BadArgsInTypeAlias = kotlin.collections.List<@TypeAnnWithArg kotlin.Int>
+public typealias BadArgsInTypeParameter</*0*/ @TypeAnnWithArg(arg = 123) X> = kotlin.collections.List<X>
+public typealias BadArgsMultiple = kotlin.collections.Map<@TypeAnnWithArg kotlin.Int, @TypeAnnWithArg(arg = 123) kotlin.Int>
+public typealias T</*0*/ X> = kotlin.collections.List<X>

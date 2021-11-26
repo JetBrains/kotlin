@@ -66,6 +66,13 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             if (it.shouldSkipTest()) return
         }
 
+        runTestPipeline(moduleStructure, services)
+    }
+
+    fun runTestPipeline(
+        moduleStructure: TestModuleStructure,
+        services: TestServices
+    ) {
         val globalMetadataInfoHandler = testConfiguration.testServices.globalMetadataInfoHandler
         globalMetadataInfoHandler.parseExistingMetadataInfosFromAllSources()
 
@@ -103,6 +110,10 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         }
 
+        reportFailures(services)
+    }
+
+    fun reportFailures(services: TestServices) {
         val filteredFailedAssertions = filterFailedExceptions(allFailedExceptions)
         filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
             throw it
@@ -113,7 +124,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     /*
      * Returns false if next modules should be not processed
      */
-    private fun processModule(
+    fun processModule(
         module: TestModule,
         dependencyProvider: DependencyProviderImpl
     ): Boolean {

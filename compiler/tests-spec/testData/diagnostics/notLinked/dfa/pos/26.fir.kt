@@ -10,9 +10,9 @@ open class Case1<K : Number> {
     open inner class Case1_1<L>: Case1<Int>() where L : CharSequence {
         inner class Case1_2<M>: Case1<K>.Case1_1<<!UPPER_BOUND_VIOLATED!>M<!>>() where M : Map<K, L> {
             inline fun <reified T>case_1(x: Any?) {
-                x as M
-                x as L
-                x as K
+                x <!UNCHECKED_CAST!>as M<!>
+                x <!UNCHECKED_CAST!>as L<!>
+                x <!UNCHECKED_CAST!>as K<!>
                 if (x is T) {
                     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.toByte()
@@ -51,9 +51,9 @@ inline fun <reified T : CharSequence>case_3(x: Any?) {
 inline fun <reified T : CharSequence>case_4(x: Any?) {
     (x as? T)!!
     if (x is T?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?")!>x<!><!UNSAFE_CALL!>.<!>length
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.get(0)
     }
 }
 

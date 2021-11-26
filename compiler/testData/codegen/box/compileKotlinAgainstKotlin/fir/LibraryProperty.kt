@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: A.kt
 
 package first.second
@@ -11,7 +11,7 @@ class FqName(val s: String)
 val VOLATILE_ANNOTATION_FQ_NAME = FqName("volatile")
 
 // MODULE: main(lib)
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: B.kt
 
 import first.second.VOLATILE_ANNOTATION_FQ_NAME

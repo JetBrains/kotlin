@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.containingClass
@@ -22,56 +22,51 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID
 
 object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val jvmDefaultMode = context.session.jvmDefaultModeState
-        var defaultAnnotation: FirAnnotation? = null
-        val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
+        val defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID)
 
-        if (declaration is FirAnnotatedDeclaration) {
-            val isJvm6 = context.isJvm6()
-            defaultAnnotation = declaration.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID)
-
-            if (defaultAnnotation != null) {
-                if (containingDeclaration !is FirClass || !containingDeclaration.isInterface) {
-                    reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE, context)
-                    return
-                } else if (isJvm6) {
-                    reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET, "JvmDefault", context)
+        if (defaultAnnotation != null) {
+            val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
+            if (containingDeclaration !is FirClass || !containingDeclaration.isInterface) {
+                reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE, context)
+                return
+            } else if (context.isJvm6()) {
+                reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET, "JvmDefault", context)
+                return
+            } else if (!jvmDefaultMode.isEnabled) {
+                reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefault", context)
+                return
+            }
+        } else {
+            val annotation = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID)
+            if (annotation != null) {
+                if (context.isJvm6()) {
+                    reporter.reportOn(
+                        annotation.source,
+                        FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
+                        "JvmDefaultWithoutCompatibility",
+                        context
+                    )
                     return
                 } else if (!jvmDefaultMode.isEnabled) {
-                    reporter.reportOn(defaultAnnotation.source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefault", context)
+                    reporter.reportOn(
+                        annotation.source,
+                        FirJvmErrors.JVM_DEFAULT_IN_DECLARATION,
+                        "JvmDefaultWithoutCompatibility",
+                        context
+                    )
                     return
-                }
-            } else {
-                val annotation = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID)
-                if (annotation != null) {
-                    if (isJvm6) {
-                        reporter.reportOn(
-                            annotation.source,
-                            FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
-                            "JvmDefaultWithoutCompatibility",
-                            context
-                        )
-                        return
-                    } else if (!jvmDefaultMode.isEnabled) {
-                        reporter.reportOn(
-                            annotation.source,
-                            FirJvmErrors.JVM_DEFAULT_IN_DECLARATION,
-                            "JvmDefaultWithoutCompatibility",
-                            context
-                        )
-                        return
-                    }
                 }
             }
         }
@@ -87,7 +82,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        checkNonJvmDefaultOverridesJavaDefault(defaultAnnotation, jvmDefaultMode, declaration, containingDeclaration, context, reporter)
+        checkNonJvmDefaultOverridesJavaDefault(defaultAnnotation, jvmDefaultMode, declaration, context, reporter)
     }
 
     private fun FirDeclaration.checkJvmDefaultsInHierarchy(jvmDefaultMode: JvmDefaultMode, context: CheckerContext): Boolean {
@@ -105,9 +100,9 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                 }
 
                 if (key.getOverriddenDeclarations().all {
-                        it.containingClass()?.toFirRegularClassSymbol(context.session)?.isInterface != true ||
+                        it.modality == Modality.ABSTRACT ||
                                 !it.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode) ||
-                                it.modality == Modality.ABSTRACT
+                                it.containingClass()?.toFirRegularClassSymbol(context.session)?.isInterface != true
                     }
                 ) {
                     continue
@@ -124,18 +119,15 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
         defaultAnnotation: FirAnnotation?,
         jvmDefaultMode: JvmDefaultMode,
         declaration: FirDeclaration,
-        containingDeclaration: FirClassLikeDeclaration?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (defaultAnnotation == null &&
-            !jvmDefaultMode.forAllMethodsWithBody &&
-            containingDeclaration is FirClass &&
-            containingDeclaration.isInterface
-        ) {
-            val member = declaration as? FirSimpleFunction ?: return
-            if (declaration is FirPropertyAccessor) return
+        if (defaultAnnotation != null || jvmDefaultMode.forAllMethodsWithBody) return
+        val member = declaration as? FirSimpleFunction ?: return
+        if (declaration is FirPropertyAccessor) return
 
+        val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
+        if (containingDeclaration is FirClass && containingDeclaration.isInterface) {
             val unsubstitutedScope = containingDeclaration.unsubstitutedScope(context)
             unsubstitutedScope.processFunctionsByName(member.name) {}
             val overriddenFunctions = unsubstitutedScope.getDirectOverriddenFunctions(member.symbol)
@@ -146,8 +138,8 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                 for (overriddenFunction in overriddenFunctions) {
                     val overriddenDeclarations = overriddenFunction.getOverriddenDeclarations()
                     for (overriddenDeclaration in overriddenDeclarations) {
-                        val containingClass = overriddenDeclaration.containingClass()?.toSymbol(context.session)
-                        if (containingClass?.origin is FirDeclarationOrigin.Java &&
+                        val containingClassSymbol = overriddenDeclaration.containingClass()?.toSymbol(context.session)
+                        if (containingClassSymbol?.origin is FirDeclarationOrigin.Java &&
                             overriddenDeclaration.modality != Modality.ABSTRACT
                         ) {
                             reporter.reportOn(declaration.source, FirJvmErrors.NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, context)
@@ -160,15 +152,11 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     }
 
     fun FirCallableSymbol<*>.getOverriddenDeclarations(): List<FirCallableSymbol<*>> {
-        val result = mutableListOf<FirCallableSymbol<*>>()
-
-        if (this is FirIntersectionCallableSymbol) {
-            result.addAll(this.intersections)
+        return if (this is FirIntersectionCallableSymbol) {
+            ArrayList(this.intersections)
         } else {
-            result.add(this)
+            ArrayList<FirCallableSymbol<*>>(1).also { it.add(this) }
         }
-
-        return result
     }
 
     fun FirCallableSymbol<*>.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode: JvmDefaultMode): Boolean {

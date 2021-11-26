@@ -1,21 +1,19 @@
-KtFirConstructorSymbol:
-  annotatedType: [] java/util/ArrayList<E>
-  annotationClassIds: []
-  annotations: []
+KtConstructorSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/util/ArrayList
-  dispatchType: java/util/ArrayList<E>
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
+  returnType: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtFirTypeParameterSymbol(E)
+    KtTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(p0)
+    KtValueParameterSymbol(p0)
   ]
   visibility: Public
   deprecationStatus: null

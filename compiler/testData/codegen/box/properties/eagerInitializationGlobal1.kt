@@ -9,7 +9,7 @@ var z2 = false
 // FILE: lib2.kt
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
-@JsEagerInitialization
+@EagerInitialization
 val x = foo()
 
 private fun foo(): Int {

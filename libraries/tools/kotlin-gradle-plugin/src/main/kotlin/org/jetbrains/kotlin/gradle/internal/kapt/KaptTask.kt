@@ -226,7 +226,7 @@ abstract class KaptTask @Inject constructor(
             if (logger.isInfoEnabled) {
                 logger.warn(
                     "Annotation processors discovery from compile classpath is deprecated."
-                            + "\nSet 'kapt.includeCompileClasspath = false' to disable discovery."
+                            + "\nSet 'kapt.include.compile.classpath=false' to disable discovery."
                             + "\nThe following files, containing annotation processors, are not present in KAPT classpath:\n"
                             + processorsAbsentInKaptClasspath.joinToString("\n") { "  '$it'" }
                             + "\nAdd corresponding dependencies to any of the following configurations:\n"
@@ -235,7 +235,7 @@ abstract class KaptTask @Inject constructor(
             } else {
                 logger.warn(
                     "Annotation processors discovery from compile classpath is deprecated."
-                            + "\nSet 'kapt.includeCompileClasspath = false' to disable discovery."
+                            + "\nSet 'kapt.include.compile.classpath=false' to disable discovery."
                             + "\nRun the build with '--info' for more details."
                 )
             }

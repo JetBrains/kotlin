@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: WASM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.coroutines.*
 

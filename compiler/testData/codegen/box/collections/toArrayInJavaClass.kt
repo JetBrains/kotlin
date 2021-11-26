@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: B.java
 public class B<E> extends A<E> {
     @Override

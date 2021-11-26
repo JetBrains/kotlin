@@ -16,6 +16,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
     )
@@ -40,6 +41,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckArguments,
         CheckCallModifiers,
         EagerResolveOfCallableReferences,
@@ -57,6 +59,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckArguments,
         EagerResolveOfCallableReferences,
     )
@@ -70,13 +73,14 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(
         MapArguments,
-        NoTypeArguments,
+        MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckArguments,

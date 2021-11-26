@@ -84,7 +84,7 @@ class O<T>(i: T) {
 // are there in the class file fro JVM, but there is no guarantee that there is an instruction to
 // step on and sometimes there is no step on the end brace.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:19 <init>
 // test.kt:4 box
@@ -98,78 +98,78 @@ class O<T>(i: T) {
 // test.kt:25 <init>
 // test.kt:7 box
 // test.kt:8 box
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:28 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:29 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:30 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 box
 // test.kt:9 box
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:33 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:34 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:35 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:9 box
 // test.kt:10 box
 // test.kt:37 <init>
 // test.kt:38 <init>
 // test.kt:39 <init>
 // test.kt:40 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:37 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:10 box
 // test.kt:11 box
 // test.kt:42 <init>
 // test.kt:43 <init>
 // test.kt:44 <init>
 // test.kt:45 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:42 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:11 box
 // test.kt:12 box
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:49 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:48 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:52 <init>
 // test.kt:53 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:54 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:49 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:50 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 box
 // test.kt:13 box
 // test.kt:57 <init>
 // test.kt:61 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:62 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:58 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:59 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 box
 // test.kt:14 box
 // test.kt:65 <init>
 // test.kt:69 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:70 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:66 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:67 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:14 box
 // test.kt:15 box
 // test.kt:72 <init>
@@ -177,10 +177,10 @@ class O<T>(i: T) {
 // test.kt:16 box
 // test.kt:73 <init>
 // test.kt:72 <init>
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:73 <init>
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:74 <init>
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:16 box
 // test.kt:17 box

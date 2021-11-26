@@ -8,7 +8,7 @@ fun box() {
          false
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:5 box
 // test.kt:2 cond
 // test.kt:5 box

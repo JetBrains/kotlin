@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -35,6 +36,11 @@ internal object FirCompileTimeConstantEvaluator {
             is FirFunctionCall -> evaluate(expression)
             else -> null
         }
+
+    fun evaluateAsKtConstantExpression(expression: FirExpression): KtConstantValue? {
+        val evaluated = evaluate(expression) ?: return null
+        return KtFirConstantValueConverter.toConstantValue(evaluated)
+    }
 
     // TODO: Rework to handle nested expressions
     //  This is no longer used during FIR2IR where an inner expression is recursively rewritten to ConstExpression if possible.
@@ -98,7 +104,7 @@ internal object FirCompileTimeConstantEvaluator {
         return evalUnaryOp(
             function.name.asString(),
             kind.toCompileTimeType(),
-            value!!
+            kind.convertToNumber(value as? Number)!!
         )?.let {
             it.toConstantValueKind()?.toConstExpression(source, it)
         }
@@ -113,9 +119,9 @@ internal object FirCompileTimeConstantEvaluator {
         return evalBinaryOp(
             function.name.asString(),
             kind.toCompileTimeType(),
-            value!!,
+            kind.convertToNumber(value as? Number)!!,
             other.kind.toCompileTimeType(),
-            other.value!!
+            other.kind.convertToNumber(other.value as? Number)!!
         )?.let {
             it.toConstantValueKind()?.toConstExpression(source, it)
         }
@@ -201,7 +207,7 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
-    private fun <T> ConstantValueKind<T>?.toConstExpression(source: FirSourceElement?, value: Any): FirConstExpression<T>? =
+    private fun <T> ConstantValueKind<T>?.toConstExpression(source: KtSourceElement?, value: Any): FirConstExpression<T>? =
         if (this == null) null else
             @Suppress("UNCHECKED_CAST")
             buildConstExpression(source, this, value as T)

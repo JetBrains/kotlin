@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: Fail J::prop == K::prop (these are different properties)
 // TARGET_BACKEND: JVM
 
 // WITH_REFLECT

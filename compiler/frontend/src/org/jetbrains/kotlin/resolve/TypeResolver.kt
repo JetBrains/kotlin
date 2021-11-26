@@ -118,7 +118,7 @@ class TypeResolver(
 
         val resolvedTypeSlice = if (c.abbreviated) BindingContext.ABBREVIATED_TYPE else BindingContext.TYPE
 
-        val annotations = resolveTypeAnnotations(c, typeReference)
+        val annotations = resolveTypeAnnotations(c.trace, c.scope, typeReference)
         val type = resolveTypeElement(c, annotations, typeReference.modifierList, typeReference.typeElement)
         c.trace.recordScope(c.scope, typeReference)
 
@@ -158,7 +158,7 @@ class TypeResolver(
         }
     }
 
-    private fun resolveTypeAnnotations(c: TypeResolutionContext, modifierListsOwner: KtElementImplStub<*>): Annotations {
+    fun resolveTypeAnnotations(trace: BindingTrace, scope: LexicalScope, modifierListsOwner: KtElementImplStub<*>): Annotations {
         val modifierLists = modifierListsOwner.getAllModifierLists()
 
         var result = Annotations.EMPTY
@@ -178,16 +178,16 @@ class TypeResolver(
 
             // `targetType.stub == null` means that we don't apply this check for files that are built with stubs (that aren't opened in IDE and not in compile time)
             if (targetType is KtFunctionType && targetType.stub == null && annotationEntries != null) {
-                checkNonParenthesizedAnnotationsOnFunctionalType(targetType, annotationEntries, c.trace)
+                checkNonParenthesizedAnnotationsOnFunctionalType(targetType, annotationEntries, trace)
             }
         }
 
         for (modifierList in modifierLists) {
             if (isSplitModifierList) {
-                c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(modifierList))
+                trace.report(MODIFIER_LIST_NOT_ALLOWED.on(modifierList))
             }
 
-            val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, modifierList.annotationEntries, c.trace)
+            val annotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList.annotationEntries, trace)
             result = composeAnnotations(result, annotations)
 
             isSplitModifierList = true
@@ -285,7 +285,10 @@ class TypeResolver(
                     c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(innerModifierList))
                 }
 
-                val innerAnnotations = composeAnnotations(annotations, resolveTypeAnnotations(c, typeElement as KtElementImplStub<*>))
+                val innerAnnotations = composeAnnotations(
+                    annotations,
+                    resolveTypeAnnotations(c.trace, c.scope, typeElement as KtElementImplStub<*>)
+                )
 
                 return resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
             }

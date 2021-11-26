@@ -1,9 +1,11 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    const __doNotImplementIt: unique symbol
+    type __doNotImplementIt = typeof __doNotImplementIt
     namespace foo.bar.baz {
         class C1 {
             constructor(value: string);
-            readonly value: string;
+            get value(): string;
             component1(): string;
             copy(value: string): foo.bar.baz.C1;
             toString(): string;
@@ -15,7 +17,7 @@ declare namespace JS_TESTS {
     namespace a.b {
         class C2 {
             constructor(value: string);
-            readonly value: string;
+            get value(): string;
             component1(): string;
             copy(value: string): a.b.C2;
             toString(): string;
@@ -26,7 +28,7 @@ declare namespace JS_TESTS {
     }
     class C3 {
         constructor(value: string);
-        readonly value: string;
+        get value(): string;
         component1(): string;
         copy(value: string): C3;
         toString(): string;

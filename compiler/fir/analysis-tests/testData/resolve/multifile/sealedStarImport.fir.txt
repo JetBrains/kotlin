@@ -1,4 +1,6 @@
 FILE: test.kt
+    package test
+
     public sealed class Test : R|kotlin/Any| {
         protected constructor(): R|test/Test| {
             super<R|kotlin/Any|>()
@@ -23,6 +25,8 @@ FILE: test.kt
 
     }
 FILE: main.kt
+    package other
+
     public abstract class Factory : R|kotlin/Any| {
         public constructor(): R|other/Factory| {
             super<R|kotlin/Any|>()

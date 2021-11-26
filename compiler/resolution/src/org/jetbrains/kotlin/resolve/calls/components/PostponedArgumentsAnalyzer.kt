@@ -211,6 +211,8 @@ class PostponedArgumentsAnalyzer(
                 // We add <inferred type> <: TypeVariable(T) to be able to contribute type info from several builder inference lambdas
                 c.getBuilder().addSubtypeConstraint(resultType, variable.defaultType(c), BuilderInferencePosition)
             }
+
+            c.removePostponedTypeVariablesFromConstraints(postponedVariables.keys)
         }
     }
 

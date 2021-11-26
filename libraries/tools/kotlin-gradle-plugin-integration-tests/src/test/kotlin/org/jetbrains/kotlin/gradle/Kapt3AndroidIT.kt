@@ -134,13 +134,26 @@ class Kapt3Android70IT : Kapt3AndroidIT() {
     }
 }
 
-class Kapt3Android42IT : Kapt3BaseIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.7.1")
+class Kapt3Android42IT : BaseGradleIT() {
+    companion object {
+        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete, errors: 0".toRegex()
+    }
+
+    private fun kaptOptions(): KaptOptions =
+        KaptOptions(verbose = true, useWorkers = false)
+
+    private fun CompiledProject.assertKaptSuccessful() {
+        KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
+    }
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
-
+        super.defaultBuildOptions().copy(
+            kaptOptions = kaptOptions(),
+            warningMode = WarningMode.Summary,
+            androidHome = KtTestUtil.findAndroidSdk(),
+            androidGradlePluginVersion = AGPVersion.v4_2_0
+        )
+    
     /** Regression test for https://youtrack.jetbrains.com/issue/KT-44020. */
     @Test
     fun testDatabindingWithAndroidX() {
@@ -153,11 +166,24 @@ class Kapt3Android42IT : Kapt3BaseIT() {
     }
 }
 
-abstract class Kapt3AndroidIT : Kapt3BaseIT() {
+abstract class Kapt3AndroidIT : BaseGradleIT() {
+    companion object {
+        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete, errors: 0".toRegex()
+    }
+
+    protected open fun kaptOptions(): KaptOptions =
+        KaptOptions(verbose = true, useWorkers = false)
+
+    fun CompiledProject.assertKaptSuccessful() {
+        KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
+    }
+
     protected abstract val androidGradlePluginVersion: AGPVersion
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
+            kaptOptions = kaptOptions(),
+            warningMode = WarningMode.Summary,
             androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion
         )

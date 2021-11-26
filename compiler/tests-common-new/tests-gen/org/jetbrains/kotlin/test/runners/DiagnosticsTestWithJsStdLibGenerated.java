@@ -638,6 +638,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("illegalNameIR.kt")
+        public void testIllegalNameIR() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalNameIR.kt");
+        }
+
+        @Test
         @TestMetadata("illegalPackageName.kt")
         public void testIllegalPackageName() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/illegalPackageName.kt");

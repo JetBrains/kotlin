@@ -13,7 +13,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.reflect.full.primaryConstructor
-import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrThrow
 import kotlin.script.experimental.dependencies.*
@@ -21,6 +20,7 @@ import kotlin.script.experimental.dependencies.impl.DependenciesResolverOptionsN
 import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesResolverOptionsParser
 import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
 import kotlin.script.experimental.dependencies.impl.set
+import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 
 @ExperimentalContracts
 class MavenResolverTest : ResolversTestBase() {
@@ -29,7 +29,7 @@ class MavenResolverTest : ResolversTestBase() {
         coordinates: String,
         options: ExternalDependenciesResolver.Options = ExternalDependenciesResolver.Options.Empty,
         checkBody: (Iterable<File>) -> Boolean = { true }
-    ) {
+    ): List<File> {
         contract {
             callsInPlace(checkBody, InvocationKind.EXACTLY_ONCE)
         }
@@ -42,7 +42,7 @@ class MavenResolverTest : ResolversTestBase() {
         if (!checkBody(files)) {
             Assert.fail("Unexpected resolving results:\n  ${files.joinToString("\n  ")}")
         }
-        files.forEach { it.delete() }
+        return files
     }
 
     private fun buildOptions(vararg options: Pair<DependenciesResolverOptionsName, String>): ExternalDependenciesResolver.Options {
@@ -51,32 +51,25 @@ class MavenResolverTest : ResolversTestBase() {
         })
     }
 
+    private val resolvedKotlinVersion = "1.5.31"
+
     fun testResolveSimple() {
-        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:1.3.50") { files ->
+        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:$resolvedKotlinVersion") { files ->
             files.any { it.name.startsWith("kotlin-annotations-jvm") }
         }
     }
 
     fun testResolveWithRuntime() {
-        val compileOnly = "compile"
-        val compileRuntime = "compile,runtime"
-        val resolvedFilesCount = mutableMapOf<String, Int>()
+        // Need a minimal library with an extra runtime dependency
+        val lib = "org.jetbrains.kotlin:kotlin-util-io:$resolvedKotlinVersion"
+        val compileOnlyFiles = resolveAndCheck(lib, buildOptions(DependenciesResolverOptionsName.SCOPE to "compile"))
+        val compileRuntimeFiles = resolveAndCheck(lib, buildOptions(DependenciesResolverOptionsName.SCOPE to "compile,runtime"))
 
-        listOf(compileOnly, compileRuntime).forEach { scopes ->
-            resolveAndCheck(
-                "org.uberfire:uberfire-io:7.39.0.Final",
-                buildOptions(DependenciesResolverOptionsName.SCOPE to scopes)
-            ) { files ->
-                resolvedFilesCount[scopes] = files.count()
-                files.any { it.name.startsWith("uberfire-commons") }
-            }
-        }
-
-        val compileOnlyCount = resolvedFilesCount[compileOnly]!!
-        val compileRuntimeCount = resolvedFilesCount[compileRuntime]!!
         assertTrue(
-            "Compile only ($compileOnlyCount) dependencies count should be less than compile/runtime ($compileRuntimeCount) one",
-            compileOnlyCount < compileRuntimeCount
+            "Compile only dependencies count should be less than compile + runtime\n" +
+                    "${compileOnlyFiles.joinToString(prefix = "Compile dependencies:\n\t", separator = "\n\t")}\n" +
+                    compileRuntimeFiles.joinToString(prefix = "Compile + Runtime dependencies:\n\t", separator = "\n\t"),
+            compileOnlyFiles.count() < compileRuntimeFiles.count()
         )
     }
 
@@ -106,7 +99,7 @@ class MavenResolverTest : ResolversTestBase() {
     }
 
     fun testResolveVersionsRange() {
-        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:(1.3.40,1.3.60)")
+        resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:(1.3.40,$resolvedKotlinVersion)")
     }
 
     fun testResolveDifferentType() {

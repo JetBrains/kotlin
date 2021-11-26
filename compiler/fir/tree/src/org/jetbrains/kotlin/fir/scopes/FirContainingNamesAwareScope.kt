@@ -5,36 +5,29 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-interface FirContainingNamesAwareScope {
-    fun getCallableNames(): Set<Name>
+abstract class FirContainingNamesAwareScope : FirScope() {
+    abstract fun getCallableNames(): Set<Name>
 
-    fun getClassifierNames(): Set<Name>
+    abstract fun getClassifierNames(): Set<Name>
 }
 
-fun FirScope.getContainingCallableNamesIfPresent(): Set<Name> =
-    if (this is FirContainingNamesAwareScope) getCallableNames() else emptySet()
-
-fun FirScope.getContainingClassifierNamesIfPresent(): Set<Name> =
-    if (this is FirContainingNamesAwareScope) getClassifierNames() else emptySet()
-
-fun <S> S.processAllFunctions(processor: (FirNamedFunctionSymbol) -> Unit) where S : FirScope, S : FirContainingNamesAwareScope {
+fun FirContainingNamesAwareScope.processAllFunctions(processor: (FirNamedFunctionSymbol) -> Unit) {
     for (name in getCallableNames()) {
         processFunctionsByName(name, processor)
     }
 }
 
-fun <S> S.processAllProperties(processor: (FirVariableSymbol<*>) -> Unit) where S : FirScope, S : FirContainingNamesAwareScope {
+fun FirContainingNamesAwareScope.processAllProperties(processor: (FirVariableSymbol<*>) -> Unit) {
     for (name in getCallableNames()) {
         processPropertiesByName(name, processor)
     }
 }
 
-fun <S> S.collectAllProperties(): Collection<FirVariableSymbol<*>> where S : FirScope, S : FirContainingNamesAwareScope {
+fun FirContainingNamesAwareScope.collectAllProperties(): Collection<FirVariableSymbol<*>> {
     return mutableListOf<FirVariableSymbol<*>>().apply {
         processAllProperties(this::add)
     }

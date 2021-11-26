@@ -98,6 +98,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     }
 
     @Test
+    @TestMetadata("deserializeLambdaMethod.kt")
+    public void testDeserializeLambdaMethod() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deserializeLambdaMethod.kt");
+    }
+
+    @Test
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/enum.kt");
@@ -2043,6 +2049,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("indySamConversionViaProxyFun.kt")
+        public void testIndySamConversionViaProxyFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/indySamConversionViaProxyFun.kt");
+        }
+
+        @Test
         @TestMetadata("kt16650.kt")
         public void testKt16650() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/kt16650.kt");
@@ -2143,6 +2155,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("permittedSubclasses_1_7.kt")
+        public void testPermittedSubclasses_1_7() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sealed/permittedSubclasses_1_7.kt");
+        }
+
+        @Test
         @TestMetadata("sealedClassConstructor_1_4.kt")
         public void testSealedClassConstructor_1_4() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sealed/sealedClassConstructor_1_4.kt");
@@ -2231,6 +2249,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("kt48945.kt")
+        public void testKt48945() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/kt48945.kt");
+        }
+
+        @Test
         @TestMetadata("mutableCollectionOfPrimitive.kt")
         public void testMutableCollectionOfPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/mutableCollectionOfPrimitive.kt");
@@ -2270,6 +2294,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("removeAtTwoSpecialBridges.kt")
         public void testRemoveAtTwoSpecialBridges() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/removeAtTwoSpecialBridges.kt");
+        }
+
+        @Test
+        @TestMetadata("specialBridgeForGet.kt")
+        public void testSpecialBridgeForGet() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/specialBridgeForGet.kt");
         }
 
         @Test

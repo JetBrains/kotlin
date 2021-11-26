@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameterBaseForSymbol(
@@ -36,20 +37,25 @@ internal abstract class FirLightParameterBaseForSymbol(
             return if (nullabilityApplicable) {
                 analyzeWithSymbolAsContext(parameterSymbol) {
                     getTypeNullability(
-                        parameterSymbol.annotatedType.type
+                        parameterSymbol.returnType
                     )
                 }
-            }
-            else NullabilityType.Unknown
+            } else NullabilityType.Unknown
         }
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     private val _type by lazyPub {
         val convertedType = analyzeWithSymbolAsContext(parameterSymbol) {
-            parameterSymbol.annotatedType.type.asPsiType(this@FirLightParameterBaseForSymbol)
-                ?: this@FirLightParameterBaseForSymbol.nonExistentType()
-        }
+            val ktType = parameterSymbol.returnType
+            val typeMappingMode = when {
+                ktType.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT
+                // TODO: extract type mapping mode from annotation?
+                // TODO: methods with declaration site wildcards?
+                else -> KtTypeMappingMode.VALUE_PARAMETER
+            }
+            ktType.asPsiType(this@FirLightParameterBaseForSymbol, typeMappingMode)
+        } ?: nonExistentType()
         if (parameterSymbol.isVararg) {
             PsiEllipsisType(convertedType, convertedType.annotationProvider)
         } else convertedType

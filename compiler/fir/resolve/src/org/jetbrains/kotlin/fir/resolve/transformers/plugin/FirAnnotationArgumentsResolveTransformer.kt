@@ -43,7 +43,6 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
                     .transformTypeParameters(transformer, data)
                     .transformSuperTypeRefs(transformer, data)
                     .transformDeclarations(transformer, data)
-                    .transformCompanionObject(transformer, data)
             }
         }
         return regularClass

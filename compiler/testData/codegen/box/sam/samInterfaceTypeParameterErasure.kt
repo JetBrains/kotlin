@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: ARGUMENT_TYPE_MISMATCH on J.foo { ... }
 // SAM_CONVERSIONS: CLASS
 //   ^ test checks reflection for synthetic classes
 // FILE: J.java

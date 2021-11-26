@@ -1,6 +1,6 @@
-// WITH_RUNTIME
-// FILE: 1.kt
+// WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
+// FILE: 1.kt
 package test
 
 inline fun myValues(): String {

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -35,7 +35,7 @@ class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationCon
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     lateinit var rValue: FirExpression
 
     override fun build(): FirVariableAssignment {

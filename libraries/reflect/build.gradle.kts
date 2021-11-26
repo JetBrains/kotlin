@@ -26,7 +26,6 @@ publish()
 
 val core = "$rootDir/core"
 val relocatedCoreSrc = "$buildDir/core-relocated"
-val libsDir = property("libsDir")
 
 val proguardDeps by configurations.creating
 val proguardAdditionalInJars by configurations.creating
@@ -120,7 +119,7 @@ val reflectShadowJar by task<ShadowJar> {
 val stripMetadata by tasks.registering {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
-    val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
+    val outputJar = fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-stripped.jar")
 
     inputs.file(inputJar).withNormalizer(ClasspathNormalizer::class.java)
 
@@ -138,14 +137,12 @@ val stripMetadata by tasks.registering {
     }
 }
 
-val proguardOutput = "$libsDir/${property("archivesBaseName")}-proguard.jar"
-
 val proguard by task<CacheableProguardTask> {
     dependsOn(stripMetadata)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.get().outputs.files)
     injars(mapOf("filter" to "!META-INF/**,!**/*.kotlin_builtins"), proguardAdditionalInJars)
-    outjars(proguardOutput)
+    outjars(fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-proguard.jar"))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_6))
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)

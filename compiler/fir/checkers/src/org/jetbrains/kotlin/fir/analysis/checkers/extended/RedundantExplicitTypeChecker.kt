@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -28,7 +28,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker() {
         val initializer = declaration.initializer ?: return
         val typeReference = declaration.returnTypeRef
 
-        if (typeReference.source?.kind is FirFakeSourceElementKind) return
+        if (typeReference.source?.kind is KtFakeSourceElementKind) return
 
         val type = declaration.returnTypeRef.coneType
 

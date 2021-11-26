@@ -21,9 +21,12 @@ class PropertyInitializationInfoCollector(
         node: CFGNode<*>,
         data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
     ): PathAwarePropertyInitializationInfo {
-        if (data.isEmpty()) return PathAwarePropertyInitializationInfo.EMPTY
-        return data.map { (label, info) -> info.applyLabel(node, label) }
-            .reduce(PathAwarePropertyInitializationInfo::merge)
+        var result: PathAwarePropertyInitializationInfo? = null
+        for ((label, info) in data) {
+            val resultItem = info.applyLabel(node, label)
+            result = result?.merge(resultItem) ?: resultItem
+        }
+        return result ?: PathAwarePropertyInitializationInfo.EMPTY
     }
 
     override fun visitVariableAssignmentNode(

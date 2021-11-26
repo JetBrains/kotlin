@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -35,7 +36,9 @@ internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
     private val asserts = symbols.asserts
     private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) = lower(irBody, container, container.file)
+
+    fun lower(irBody: IrBody, container: IrDeclaration, irFile: IrFile) {
         irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
@@ -53,7 +56,7 @@ internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
                         IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
                     }
                     Symbols.isTypeOfIntrinsic(expression.symbol) -> {
-                        with (KTypeGenerator(context, container.file, expression, needExactTypeParameters = true)) {
+                        with (KTypeGenerator(context, irFile, expression, needExactTypeParameters = true)) {
                             data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)
                         }
                     }

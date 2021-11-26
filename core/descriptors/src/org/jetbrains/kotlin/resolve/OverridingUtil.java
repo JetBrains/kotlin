@@ -504,9 +504,13 @@ public class OverridingUtil {
         createAndBindFakeOverrides(current, notOverridden, strategy);
     }
 
-    public static boolean isVisibleForOverride(@NotNull MemberDescriptor overriding, @NotNull MemberDescriptor fromSuper) {
+    public static boolean isVisibleForOverride(
+            @NotNull MemberDescriptor overriding,
+            @NotNull MemberDescriptor fromSuper,
+            boolean useSpecialRulesForPrivateSealedConstructors
+    ) {
         return !DescriptorVisibilities.isPrivate(fromSuper.getVisibility()) &&
-               DescriptorVisibilities.isVisibleIgnoringReceiver(fromSuper, overriding);
+               DescriptorVisibilities.isVisibleIgnoringReceiver(fromSuper, overriding, useSpecialRulesForPrivateSealedConstructors);
     }
 
     private Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
@@ -520,7 +524,7 @@ public class OverridingUtil {
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
-            boolean isVisibleForOverride = isVisibleForOverride(fromCurrent, fromSupertype);
+            boolean isVisibleForOverride = isVisibleForOverride(fromCurrent, fromSupertype, false);
 
             switch (result) {
                 case OVERRIDABLE:
@@ -810,7 +814,7 @@ public class OverridingUtil {
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
                 return !DescriptorVisibilities.isPrivate(descriptor.getVisibility()) &&
-                       DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, current);
+                       DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, current, false);
             }
         });
     }

@@ -1,15 +1,13 @@
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /A.a
-  dispatchType: A
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 10
+  initializer: KtConstantInitializerValue(10)
   isConst: false
+  isDelegatedProperty: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -20,21 +18,21 @@ KtFirKotlinPropertySymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
+  getDispatchReceiver(): A
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getA
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /A.x
-  dispatchType: A
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -48,15 +46,16 @@ KtFirFunctionSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): A
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
@@ -69,7 +68,7 @@ KtFirNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -48,6 +48,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_ON_ABSTRACT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_INLINE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_VALUE_CLASS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> SYNCHRONIZED_ON_SUSPEND = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
@@ -184,8 +185,6 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> JVM_INLINE_WITHOUT_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TYPEOF_SUSPEND_TYPE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> TYPEOF_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> TYPEOF_ANNOTATED_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND = DiagnosticFactory1.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")

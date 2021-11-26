@@ -552,4 +552,20 @@ class CharTest {
             assertFalse(circledLatinCapitalLetterZ.isLowerCase())
         }
     }
+
+    @Test
+    fun isHighSurrogate() {
+        assertTrue('\uD800'.isHighSurrogate())
+        assertTrue('\uDBFF'.isHighSurrogate())
+        assertFalse('\uDC00'.isHighSurrogate())
+        assertFalse('\uDFFF'.isHighSurrogate())
+    }
+
+    @Test
+    fun isLowSurrogate() {
+        assertFalse('\uD800'.isLowSurrogate())
+        assertFalse('\uDBFF'.isLowSurrogate())
+        assertTrue('\uDC00'.isLowSurrogate())
+        assertTrue('\uDFFF'.isLowSurrogate())
+    }
 }

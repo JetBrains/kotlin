@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -19,7 +20,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
         ) {
             build("compileDeployKotlin", "build") {
-                assertOutputContains("Finished executing kotlin compiler using daemon strategy")
+                assertOutputContains("Finished executing kotlin compiler using ${KotlinCompilerExecutionStrategy.DAEMON} strategy")
                 assertFileInProjectExists("build/reports/tests/test/classes/demo.TestSource.html")
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
             }
@@ -88,7 +89,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project("moduleName", gradleVersion) {
             build("build") {
                 assertFileInProjectExists("build/classes/kotlin/main/META-INF/FLAG.kotlin_module")
-                assertFileNotExists("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
+                assertFileInProjectNotExists("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
                 assertOutputDoesNotContain("Argument -module-name is passed multiple times")
             }
         }
@@ -121,13 +122,13 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             // Change the build directory in the end of the build script:
             val customBuildDirName = "customBuild"
-            appendToBuildFile(
+            buildGradle.append(
                 "buildDir = '$customBuildDirName'"
             )
 
             build("build") {
-                assertDirectoryExists("$customBuildDirName/classes")
-                assertFileNotExists("build")
+                assertDirectoryInProjectExists("$customBuildDirName/classes")
+                assertFileInProjectNotExists("build")
             }
         }
     }
@@ -150,7 +151,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     // https://sourceforge.net/p/proguard/bugs/735/
     // Gradle 7 compatibility issue: https://github.com/Guardsquare/proguard/issues/136
     @GradleTest
-    @GradleTestVersions(maxVersion = "6.8.3")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_6_8)
     @DisplayName("Should correctly interop with ProGuard")
     fun testInteropWithProguarded(gradleVersion: GradleVersion) {
         project(
@@ -222,7 +223,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Should be compatible with project isolation")
-    @GradleTestVersions(minVersion = "7.1.1", maxVersion = "7.1.1")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1, maxVersion = TestVersions.Gradle.G_7_1)
     fun testProjectIsolation(gradleVersion: GradleVersion) {
         project(
             projectName = "instantExecution",

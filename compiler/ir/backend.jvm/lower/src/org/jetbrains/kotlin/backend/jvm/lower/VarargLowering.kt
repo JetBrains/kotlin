@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.IrArrayBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -62,16 +61,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
             }
         }
 
-        return when {
-            // Lower `arrayOf` calls. When `isArrayOf` returns true we know that the function has exactly one
-            // vararg parameter. Meanwhile, the code above ensures that the corresponding argument is not null.
-            function.owner.isArrayOf() ->
-                expression.getValueArgument(0)!!
-            function.isEmptyArray ->
-                createBuilder(expression.startOffset, expression.endOffset).irArrayOf(expression.type)
-            else ->
-                expression
-        }
+        return expression
     }
 
     override fun visitVararg(expression: IrVararg): IrExpression =
@@ -99,11 +89,8 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
     }
 
     private fun createBuilder(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET) =
-        context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        context.createJvmIrBuilder(currentScope!!, startOffset, endOffset)
 
-    private val IrFunctionSymbol.isEmptyArray: Boolean
-        get() = owner.name.asString() == "emptyArray" &&
-                (owner.parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 }
 
 internal val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
@@ -126,3 +113,6 @@ internal fun IrFunction.isArrayOf(): Boolean {
             valueParameters[0].isVararg
 }
 
+internal fun IrFunction.isEmptyArray(): Boolean =
+    name.asString() == "emptyArray" &&
+            (parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME

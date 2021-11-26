@@ -24,7 +24,7 @@ FILE: exposedSupertype.kt
         }
 
         public final inner class BInner : R|kotlin/Any| {
-            public constructor(): R|B.BInner| {
+            public B.constructor(): R|B.BInner| {
                 super<R|kotlin/Any|>()
             }
 
@@ -74,7 +74,7 @@ FILE: exposedSupertype.kt
         }
 
     }
-    public final class Test4 : R|E|, R|A.AProtectedI| {
+    public final class Test4 : R|E|, <ERROR TYPE REF: HIDDEN: A.AProtectedI is invisible> {
         public constructor(): R|Test4| {
             super<R|kotlin/Any|>()
         }

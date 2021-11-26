@@ -12,7 +12,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 compileKotlin.kotlinOptions.allWarningsAsErrors = true

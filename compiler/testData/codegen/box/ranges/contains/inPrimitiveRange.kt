@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val range = 1 .. 3
 

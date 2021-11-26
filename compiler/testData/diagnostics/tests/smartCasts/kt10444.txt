@@ -11,6 +11,13 @@ public open class Bar</*0*/ T : Foo> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class Base</*0*/ in T> {
+    public constructor Base</*0*/ in T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public open class Foo {
     public constructor Foo()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -26,5 +33,7 @@ public final class Qwe</*0*/ T : kotlin.Any> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun test1(/*0*/ obj: Qwe<*>): kotlin.Unit
     public final fun test1(/*0*/ obj: kotlin.Any): kotlin.Unit
+    public final fun test2(/*0*/ b: Base<*>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

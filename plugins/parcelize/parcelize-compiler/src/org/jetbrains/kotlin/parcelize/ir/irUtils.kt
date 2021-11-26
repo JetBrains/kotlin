@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -24,13 +22,15 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.ANDROID_PARCELABLE_CLASS_FQNAME
-import org.jetbrains.kotlin.parcelize.ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME
-import org.jetbrains.kotlin.parcelize.PARCELER_FQNAME
-import org.jetbrains.kotlin.parcelize.PARCELIZE_CLASS_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
-import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase.Companion.CREATOR_NAME
 import org.jetbrains.kotlin.types.Variance
 
 // true if the class should be processed by the parcelize plugin
@@ -74,10 +74,10 @@ fun IrBuilderWithScope.parcelerCreate(parceler: IrClass, parcel: IrValueDeclarat
 
 // object P: Parceler<T> { fun newArray(size: Int): Array<T> }
 fun IrBuilderWithScope.parcelerNewArray(parceler: IrClass?, size: IrValueDeclaration): IrExpression? =
-    parceler?.parcelerSymbolByName("newArray")?.takeIf {
+    parceler?.parcelerSymbolByName(NEW_ARRAY_NAME.identifier)?.takeIf {
         // The `newArray` method in `kotlinx.parcelize.Parceler` is stubbed out and we
         // have to produce a new implementation, unless the user overrides it.
-        !it.owner.isFakeOverride || it.owner.resolveFakeOverride()?.parentClassOrNull?.fqNameWhenAvailable != PARCELER_FQNAME
+        !it.owner.isFakeOverride || it.owner.resolveFakeOverride()?.parentClassOrNull?.fqNameWhenAvailable != PARCELER_FQN
     }?.let { newArraySymbol ->
         irCall(newArraySymbol).apply {
             dispatchReceiver = irGetObject(parceler.symbol)
@@ -93,7 +93,7 @@ fun IrBuilderWithScope.parcelableWriteToParcel(
     flags: IrExpression
 ): IrExpression {
     val writeToParcel = parcelableClass.functions.first { function ->
-        function.name.asString() == "writeToParcel" && function.overridesFunctionIn(ANDROID_PARCELABLE_CLASS_FQNAME)
+        function.name == WRITE_TO_PARCEL_NAME && function.overridesFunctionIn(PARCELABLE_FQN)
     }
 
     return irCall(writeToParcel).apply {
@@ -106,7 +106,7 @@ fun IrBuilderWithScope.parcelableWriteToParcel(
 // class C : Parcelable.Creator<T> { fun createFromParcel(parcel: Parcel): T ...}
 fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, parcel: IrExpression): IrExpression {
     val createFromParcel = creator.type.getClass()!!.functions.first { function ->
-        function.name.asString() == "createFromParcel" && function.overridesFunctionIn(ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME)
+        function.name == CREATE_FROM_PARCEL_NAME && function.overridesFunctionIn(CREATOR_FQN)
     }
 
     return irCall(createFromParcel).apply {
@@ -150,7 +150,7 @@ fun AndroidIrBuilder.getParcelableCreator(irClass: IrClass): IrExpression {
 // has already done the work.
 private fun IrClass.parcelerSymbolByName(name: String): IrSimpleFunctionSymbol? =
     functions.firstOrNull { function ->
-        function.name.asString() == name && function.overridesFunctionIn(PARCELER_FQNAME)
+        function.name.asString() == name && function.overridesFunctionIn(PARCELER_FQN)
     }?.symbol
 
 fun IrSimpleFunction.overridesFunctionIn(fqName: FqName): Boolean =

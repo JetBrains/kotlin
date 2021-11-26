@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
@@ -267,6 +268,20 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     ): T = when (kind) {
         KotlinJsBinaryMode.PRODUCTION -> releaseValue
         KotlinJsBinaryMode.DEVELOPMENT -> debugValue
+    }
+
+    override fun addLinkOptions(compilation: KotlinJsIrCompilation) {
+        if (compilation.platformType != KotlinPlatformType.wasm)
+            return
+
+        // Wasm requires different kinds of launchers for browser and nodejs. This might change in the future.
+        compilation.binaries
+            .withType(JsIrBinary::class.java)
+            .all {
+                it.linkTask.configure { linkTask ->
+                    linkTask.kotlinOptions.freeCompilerArgs += "-Xwasm-launcher=esm"
+                }
+            }
     }
 
     companion object {

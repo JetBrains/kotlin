@@ -591,6 +591,10 @@ public class KtPsiUtil {
                ((KtBinaryExpression) element).getOperationToken().equals(KtTokens.EQ);
     }
 
+    public static boolean isCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
+        return isSafeCast(expression) || isUnsafeCast(expression);
+    }
+
     public static boolean isSafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
         return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_SAFE;
     }

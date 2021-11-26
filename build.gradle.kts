@@ -96,7 +96,6 @@ extra["ktorExcludesForDaemon"] = listOf(
 
 // TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
-extra["libsDir"] = project.file(distLibDir)
 extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
 extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
@@ -124,7 +123,7 @@ extra["versions.javax.inject"] = "1"
 extra["versions.jsr305"] = "1.3.9"
 extra["versions.jansi"] = "1.16"
 extra["versions.jline"] = "3.3.1"
-extra["versions.junit"] = "4.12"
+extra["versions.junit"] = "4.13.2"
 extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.10.7"
 extra["versions.android"] = "2.3.1"
@@ -148,7 +147,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.6.20-dev-320"
+    extra["versions.kotlin-native"] = "1.6.20-dev-5356"
 }
 
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
@@ -202,6 +201,8 @@ val commonCompilerModules = arrayOf(
 
 val firCompilerCoreModules = arrayOf(
     ":compiler:fir:cones",
+    ":compiler:fir:providers",
+    ":compiler:fir:semantics",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",
@@ -316,8 +317,12 @@ extra["compilerArtifactsForIde"] = listOf(
     ":prepare:ide-plugin-dependencies:kotlin-stdlib-minimal-for-test-for-ide",
     ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
+    ":prepare:ide-plugin-dependencies:high-level-api-impl-base-for-ide",
+    ":prepare:ide-plugin-dependencies:high-level-api-impl-base-tests-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:high-level-api-fe10-for-ide",
+    ":prepare:ide-plugin-dependencies:high-level-api-fe10-tests-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
@@ -332,6 +337,7 @@ extra["compilerArtifactsForIde"] = listOf(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-android-extensions-runtime",
+    ":plugins:parcelize:parcelize-runtime",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
     ":kotlin-stdlib-jdk7",
@@ -415,9 +421,24 @@ allprojects {
         kotlinBuildLocalRepo(project)
         mirrorRepo?.let(::maven)
 
-        internalBootstrapRepo?.let(::maven)
-        bootstrapKotlinRepo?.let(::maven)
-        maven(protobufRepo)
+        internalBootstrapRepo?.let(::maven)?.apply {
+            content {
+                includeGroup("org.jetbrains.kotlin")
+            }
+        }
+
+        bootstrapKotlinRepo?.let(::maven)?.apply {
+            content {
+                includeGroup("org.jetbrains.kotlin")
+            }
+        }
+
+        maven(protobufRepo) {
+            content {
+                includeModule("org.jetbrains.kotlin", "protobuf-lite")
+                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
+            }
+        }
 
         maven(intellijRepo)
 
@@ -711,6 +732,7 @@ tasks {
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
+        dependsOn(":plugins:fir:fir-plugin-prototype:test")
     }
 
     register("firAllTest") {
@@ -870,6 +892,7 @@ tasks {
         dependsOn(
             ":analysis:analysis-api:test",
             ":analysis:analysis-api-fir:test",
+            ":analysis:analysis-api-fe10:test",
             ":analysis:low-level-api-fir:test"
         )
     }
@@ -1144,7 +1167,7 @@ if (disableVerificationTasks) {
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        nodeVersion = "16.2.0"
+        nodeVersion = "16.13.0"
     }
 }
 

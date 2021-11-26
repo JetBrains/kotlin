@@ -1,7 +1,8 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class Wrapper(val id: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Wrapper(val id: Int)
 
 class DMap(private val map: Map<Wrapper, String>) :
         Map<Wrapper, String> by map

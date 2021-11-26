@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 val alist = arrayListOf(1, 2, 3) // : j.u.ArrayList<k.Int>
 
 fun box(): String {

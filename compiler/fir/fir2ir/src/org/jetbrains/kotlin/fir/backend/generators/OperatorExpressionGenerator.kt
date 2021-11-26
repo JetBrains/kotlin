@@ -7,19 +7,21 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 
 internal class OperatorExpressionGenerator(
@@ -69,9 +71,13 @@ internal class OperatorExpressionGenerator(
         val (symbol, origin) = getSymbolAndOriginForComparison(operation, comparisonIrType.classifierOrFail)
 
         return primitiveOp2(
-            startOffset, endOffset, symbol!!, irBuiltIns.booleanType, origin,
-            visitor.convertToIrExpression(comparisonExpression.left).asComparisonOperand(comparisonInfo.leftType, comparisonType),
-            visitor.convertToIrExpression(comparisonExpression.right).asComparisonOperand(comparisonInfo.rightType, comparisonType),
+            startOffset,
+            endOffset,
+            symbol!!,
+            irBuiltIns.booleanType,
+            origin,
+            comparisonExpression.left.convertToIrExpression(comparisonInfo, isLeftType = true),
+            comparisonExpression.right.convertToIrExpression(comparisonInfo, isLeftType = false)
         )
     }
 
@@ -108,10 +114,15 @@ internal class OperatorExpressionGenerator(
         val comparisonType = comparisonInfo?.comparisonType
         val eqeqSymbol = comparisonType?.let { typeConverter.classIdToSymbolMap[it.lookupTag.classId] }
             ?.let { irBuiltIns.ieee754equalsFunByOperandType[it] } ?: irBuiltIns.eqeqSymbol
+
         val equalsCall = primitiveOp2(
-            startOffset, endOffset, eqeqSymbol, irBuiltIns.booleanType, origin,
-            visitor.convertToIrExpression(arguments[0]).asComparisonOperand(comparisonInfo?.leftType, comparisonType),
-            visitor.convertToIrExpression(arguments[1]).asComparisonOperand(comparisonInfo?.rightType, comparisonType)
+            startOffset,
+            endOffset,
+            eqeqSymbol,
+            irBuiltIns.booleanType,
+            origin,
+            arguments[0].convertToIrExpression(comparisonInfo, isLeftType = true),
+            arguments[1].convertToIrExpression(comparisonInfo, isLeftType = false)
         )
         return if (operation == FirOperation.EQ) {
             equalsCall
@@ -129,7 +140,10 @@ internal class OperatorExpressionGenerator(
             else -> error("Not an identity operation: $operation")
         }
         val identityCall = primitiveOp2(
-            startOffset, endOffset, irBuiltIns.eqeqeqSymbol, irBuiltIns.booleanType, origin,
+            startOffset, endOffset,
+            irBuiltIns.eqeqeqSymbol,
+            irBuiltIns.booleanType,
+            origin,
             visitor.convertToIrExpression(arguments[0]),
             visitor.convertToIrExpression(arguments[1])
         )
@@ -143,35 +157,77 @@ internal class OperatorExpressionGenerator(
     private fun IrExpression.negate(origin: IrStatementOrigin) =
         primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, this)
 
-    private fun IrExpression.asComparisonOperand(
-        operandType: ConeClassLikeType?,
-        targetType: ConeClassLikeType?
+    private fun FirExpression.convertToIrExpression(
+        comparisonInfo: PrimitiveConeNumericComparisonInfo?,
+        isLeftType: Boolean
     ): IrExpression {
-        if (targetType == null) return this
+        val isOriginalNullable = (this as? FirExpressionWithSmartcast)?.originalExpression?.typeRef?.isMarkedNullable ?: false
+        val irExpression = visitor.convertToIrExpression(this)
+        val operandType = if (isLeftType) comparisonInfo?.leftType else comparisonInfo?.rightType
+        val targetType = comparisonInfo?.comparisonType
+        val noImplicitCast = comparisonInfo?.leftType == comparisonInfo?.rightType
+
+        fun eraseImplicitCast(): IrExpression {
+            if (irExpression is IrTypeOperatorCall) {
+                val isDoubleOrFloatWithoutNullability = irExpression.type.isDoubleOrFloatWithoutNullability()
+                if (noImplicitCast && !isDoubleOrFloatWithoutNullability && irExpression.operator == IrTypeOperator.IMPLICIT_CAST) {
+                    return irExpression.argument
+                } else {
+                    val simpleType = irExpression.type as? IrSimpleType
+                    if (isDoubleOrFloatWithoutNullability &&
+                        isOriginalNullable &&
+                        simpleType?.hasQuestionMark == false
+                    ) {
+                        // Make it compatible with IR lowering
+                        val nullableDoubleOrFloatType = IrSimpleTypeImpl(
+                            simpleType.classifier,
+                            true,
+                            simpleType.arguments,
+                            simpleType.annotations,
+                            simpleType.abbreviation
+                        )
+                        return IrTypeOperatorCallImpl(
+                            irExpression.startOffset,
+                            irExpression.endOffset,
+                            nullableDoubleOrFloatType,
+                            irExpression.operator,
+                            nullableDoubleOrFloatType,
+                            irExpression.argument
+                        )
+                    }
+                }
+            }
+
+            return irExpression
+        }
+
+        if (targetType == null) {
+            return eraseImplicitCast()
+        }
+
         if (operandType == null) error("operandType should be non-null if targetType is non-null")
 
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
-        if (operandClassId == targetClassId) return this
+        if (operandClassId == targetClassId) return eraseImplicitCast()
         val conversionFunction =
             typeConverter.classIdToSymbolMap[operandClassId]?.getSimpleFunction("to${targetType.lookupTag.classId.shortClassName.asString()}")
                 ?: error("No conversion function for $operandType ~> $targetType")
 
-        val dispatchReceiver = this@asComparisonOperand
         val unsafeIrCall = IrCallImpl(
-            startOffset, endOffset,
+            irExpression.startOffset, irExpression.endOffset,
             conversionFunction.owner.returnType,
             conversionFunction,
             valueArgumentsCount = 0,
             typeArgumentsCount = 0
         ).also {
-            it.dispatchReceiver = dispatchReceiver
+            it.dispatchReceiver = irExpression
         }
         return if (operandType.isNullable) {
             val (receiverVariable, receiverVariableSymbol) =
-                components.createTemporaryVariableForSafeCallConstruction(dispatchReceiver, conversionScope)
+                components.createTemporaryVariableForSafeCallConstruction(irExpression, conversionScope)
 
-            unsafeIrCall.dispatchReceiver = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+            unsafeIrCall.dispatchReceiver = IrGetValueImpl(irExpression.startOffset, irExpression.endOffset, receiverVariableSymbol)
 
             components.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall)
         } else {

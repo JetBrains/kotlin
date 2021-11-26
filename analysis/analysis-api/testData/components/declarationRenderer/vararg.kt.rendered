@@ -1,3 +1,0 @@
-@Target(allowedTargets = NOT_CONST_EXPRESSION) annotation class base
-fun foo1(vararg ints: Int)
-fun foo2(@base vararg ints: @base Int)

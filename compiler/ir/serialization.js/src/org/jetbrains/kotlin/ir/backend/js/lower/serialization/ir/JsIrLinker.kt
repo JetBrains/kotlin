@@ -30,9 +30,11 @@ class JsIrLinker(
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     private val loweredIcData: Map<ModuleDescriptor, SerializedIcData> = emptyMap(),
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
+    friendModules: Map<String, Collection<String>> = emptyMap(),
+    allowUnboundSymbols: Boolean = false
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList(), allowUnboundSymbols) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns))
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns), friendModules)
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule

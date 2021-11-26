@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -176,18 +178,30 @@ open class OverloadingConflictResolver<C : Any>(
                 }
 
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
+                // Attempt 1: general disambiguation
                 findMaximallySpecificCall(candidates, discriminateGenerics)
+
+                // Attempt 2: disambiguation excluding SAM converted candidates
                     ?: hasSAMConversion?.let { hasConversion ->
                         findMaximallySpecificCall(
-                            candidates.filterNotTo(mutableSetOf()) { hasConversion(it) },
+                            candidates.filterNotTo(mutableSetOf(), hasConversion),
                             discriminateGenerics
                         )
                     }
 
+                    // Attempt 3: disambiguation excluding synthetic candidates
                     ?: findMaximallySpecificCall(
                         candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
                         discriminateGenerics
                     )
+
+                    // Attempt 4: disambiguation on original SAM-types
+                    ?: hasSAMConversion?.let { hasConversion ->
+                        findMaximallySpecificCall(
+                            candidates.filterTo(mutableSetOf(), hasConversion),
+                            discriminateGenerics, useOriginalSamTypes = true
+                        )
+                    }
         }
 
     // null means ambiguity between variables
@@ -207,7 +221,7 @@ open class OverloadingConflictResolver<C : Any>(
         }
     }
 
-    private fun findMaximallySpecificCall(candidates: Set<C>, discriminateGenerics: Boolean): C? {
+    private fun findMaximallySpecificCall(candidates: Set<C>, discriminateGenerics: Boolean, useOriginalSamTypes: Boolean = false): C? {
         val filteredCandidates = uniquifyCandidatesSet(candidates)
 
         if (filteredCandidates.size <= 1) return filteredCandidates.singleOrNull()
@@ -219,7 +233,7 @@ open class OverloadingConflictResolver<C : Any>(
         val bestCandidatesByParameterTypes = conflictingCandidates.filter { candidate ->
             cancellationChecker.check()
             isMostSpecific(candidate, conflictingCandidates) { call1, call2 ->
-                isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics)
+                isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics, useOriginalSamTypes)
             }
         }
 
@@ -262,12 +276,14 @@ open class OverloadingConflictResolver<C : Any>(
     private fun isNotLessSpecificCallWithArgumentMapping(
         call1: FlatSignature<C>,
         call2: FlatSignature<C>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        useOriginalSamTypes: Boolean
     ): Boolean {
         return tryCompareDescriptorsFromScripts(call1.candidateDescriptor(), call2.candidateDescriptor()) ?: compareCallsByUsedArguments(
             call1,
             call2,
-            discriminateGenerics
+            discriminateGenerics,
+            useOriginalSamTypes
         )
     }
 
@@ -278,7 +294,8 @@ open class OverloadingConflictResolver<C : Any>(
     private fun compareCallsByUsedArguments(
         call1: FlatSignature<C>,
         call2: FlatSignature<C>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        useOriginalSamTypes: Boolean
     ): Boolean {
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
@@ -297,7 +314,8 @@ open class OverloadingConflictResolver<C : Any>(
             call1,
             call2,
             SpecificityComparisonWithNumerics,
-            specificityComparator
+            specificityComparator,
+            useOriginalSamTypes
         )
     }
 

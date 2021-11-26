@@ -3,9 +3,9 @@ interface IrType {
 }
 
 interface TypeRemapper {
-  abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) 
-  abstract fun remapType(type: IrType): IrType 
-  abstract fun leaveScope() 
+  abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
+  abstract fun remapType(type: IrType): IrType
+  abstract fun leaveScope()
 
 }
 
@@ -77,4 +77,3 @@ inline fun <T : Any?> TypeRemapper.withinScope(irTypeParametersContainer: IrType
   <this>.leaveScope()
   return result
 }
-

@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import java.io.File
 import java.io.Serializable
 
@@ -36,8 +37,7 @@ interface NpmApi : Serializable {
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NpmEnvironment,
-        command: String,
-        isStandalone: Boolean,
+        yarn: YarnEnv,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         cliArgs: List<String>
     )

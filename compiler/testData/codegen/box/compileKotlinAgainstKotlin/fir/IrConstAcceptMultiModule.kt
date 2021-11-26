@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: A.kt
 
 abstract class IrConst<T> : IrExpression(), IrExpressionWithCopy {
@@ -83,7 +83,7 @@ interface IrElementVisitor<out R, in D>
 interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D>
 
 // MODULE: main(lib)
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: B.kt
 
 fun foo(cases: Collection<IrConst<*>>, exprTransformer: IrElementTransformer<Any>, context: Any) {

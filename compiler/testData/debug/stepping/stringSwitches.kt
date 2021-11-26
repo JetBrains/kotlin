@@ -41,7 +41,7 @@ fun box() {
 // does not. So on JVM there are steps on each condition evaluation for
 // the first `when`.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:29 box
 // test.kt:4 stringSwitch
 // test.kt:5 stringSwitch
@@ -50,63 +50,63 @@ fun box() {
 // test.kt:12 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:19 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:18 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:21 stringSwitch
 // test.kt:18 stringSwitch
 // test.kt:26 stringSwitch
 // test.kt:30 box
 // test.kt:4 stringSwitch
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:6 stringSwitch
 // test.kt:4 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:13 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:19 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:18 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:22 stringSwitch
 // test.kt:18 stringSwitch
 // test.kt:26 stringSwitch
 // test.kt:31 box
 // test.kt:4 stringSwitch
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 stringSwitch
 // test.kt:4 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:14 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:19 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:18 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:23 stringSwitch
 // test.kt:18 stringSwitch
 // test.kt:26 stringSwitch
 // test.kt:32 box
 // test.kt:4 stringSwitch
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch
 // test.kt:7 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 stringSwitch
 // test.kt:4 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:15 stringSwitch
 // test.kt:11 stringSwitch
 // test.kt:19 stringSwitch
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:18 stringSwitch
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:24 stringSwitch
 // test.kt:18 stringSwitch
 // test.kt:26 stringSwitch

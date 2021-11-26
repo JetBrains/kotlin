@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 
@@ -19,7 +20,7 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents
     ): ConeCompositeConflictResolver {
-        val specificityComparator = JvmTypeSpecificityComparator(components.ctx)
+        val specificityComparator = JvmTypeSpecificityComparator(components.session.typeContext)
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components),
             ConeEquivalentCallConflictResolver(specificityComparator, components),

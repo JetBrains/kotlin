@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -29,23 +30,25 @@ interface KlibResolvedModuleDescriptorsFactory {
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        customAction: ((KotlinLibrary, ModuleDescriptorImpl) -> Unit)? = null,
+        friendModuleFiles: Set<File>,
+        includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>
     ): KotlinResolvedModuleDescriptors
 }
 
 class KotlinResolvedModuleDescriptors(
+    /**
+     * The list of modules each representing an individual Kotlin/Native library. All modules
+     * in this list have properly installed dependencies, i.e. module has all necessary dependencies
+     * on other modules plus a dependency on the [forwardDeclarationsModule].
+     */
+    val resolvedDescriptors: List<ModuleDescriptorImpl>,
 
-        /**
-         * The list of modules each representing an individual Kotlin/Native library. All modules
-         * in this list have properly installed dependencies, i.e. module has all necessary dependencies
-         * on other modules plus a dependency on the [forwardDeclarationsModule].
-         */
-        val resolvedDescriptors: List<ModuleDescriptorImpl>,
+    /**
+     * This is a module which "contains" forward declarations.
+     * Note: this module should be unique per compilation and should always be the last dependency of any module.
+     */
+    val forwardDeclarationsModule: ModuleDescriptorImpl,
 
-        /**
-         * This is a module which "contains" forward declarations.
-         * Note: this module should be unique per compilation and should always be the last dependency of any module.
-         */
-        val forwardDeclarationsModule: ModuleDescriptorImpl
+    val friendModules: Set<ModuleDescriptorImpl>
 )

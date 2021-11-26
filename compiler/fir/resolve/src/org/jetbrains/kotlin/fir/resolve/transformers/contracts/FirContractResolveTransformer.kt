@@ -71,7 +71,7 @@ open class FirContractResolveTransformer(
                 return simpleFunction
             }
             @Suppress("UNCHECKED_CAST")
-            return context.withSimpleFunction(simpleFunction) {
+            return context.withSimpleFunction(simpleFunction, session) {
                 context.forFunctionBody(simpleFunction, components) {
                     transformContractDescriptionOwner(simpleFunction)
                 }
@@ -129,7 +129,7 @@ open class FirContractResolveTransformer(
         ): T {
             val valueParameters = owner.valueParameters
             for (valueParameter in valueParameters) {
-                context.storeVariable(valueParameter)
+                context.storeVariable(valueParameter, session)
             }
             val contractCall = contractDescription.contractCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
             val resolvedId = contractCall.toResolvedCallableSymbol()?.callableId ?: return transformOwnerWithUnresolvedContract(owner)
@@ -167,6 +167,7 @@ open class FirContractResolveTransformer(
                 receiverTypeRef = buildImplicitTypeRef()
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = true
+                hasExplicitParameterList = true
 
                 body = buildBlock {
                     contractDescription.rawEffects.forEach {
@@ -222,7 +223,6 @@ open class FirContractResolveTransformer(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-            regularClass.transformCompanionObject(this, data)
             context.withRegularClass(regularClass, components, forContracts = true) {
                 transformDeclarationContent(regularClass, data)
             }

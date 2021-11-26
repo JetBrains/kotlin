@@ -1,5 +1,5 @@
 // !LANGUAGE: +NestedClassesInAnnotations
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // FILE: Foo.java
 

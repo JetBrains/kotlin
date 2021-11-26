@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.TestRunner
 import org.jetbrains.kotlin.test.builders.testConfiguration
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
@@ -46,7 +46,7 @@ abstract class AbstractVisualizerBlackBoxTest {
         }
 
         defaultDirectives {
-            +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+            +ConfigurationDirectives.WITH_STDLIB
         }
 
         useConfigurators(

@@ -50,22 +50,19 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
         override fun remapType(type: IrType): IrType {
             if (type !is IrSimpleType) return type
 
-            val substitutedType = typeArguments[type.classifier]
-
-            if (substitutedType is IrDynamicType) return substitutedType
-
-            if (substitutedType is IrSimpleType) {
-                return substitutedType.buildSimpleType {
+            return when (val substitutedType = typeArguments[type.classifier]) {
+                is IrDynamicType -> substitutedType
+                is IrDefinitelyNotNullType -> substitutedType
+                is IrSimpleType -> substitutedType.buildSimpleType {
                     kotlinType = null
                     hasQuestionMark = type.hasQuestionMark or substitutedType.isMarkedNullable()
                 }
-            }
-
-            return type.buildSimpleType {
-                kotlinType = null
-                classifier = symbolRemapper.getReferencedClassifier(type.classifier)
-                arguments = remapTypeArguments(type.arguments)
-                annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
+                else -> type.buildSimpleType {
+                    kotlinType = null
+                    classifier = symbolRemapper.getReferencedClassifier(type.classifier)
+                    arguments = remapTypeArguments(type.arguments)
+                    annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
+                }
             }
         }
     }

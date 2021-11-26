@@ -13,6 +13,7 @@
 #include "GC.hpp"
 #include "GCScheduler.hpp"
 #include "ObjectFactory.hpp"
+#include "ExtraObjectDataFactory.hpp"
 #include "ShadowStack.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
@@ -33,6 +34,7 @@ public:
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         stableRefThreadQueue_(StableRefRegistry::Instance()),
+        extraObjectDataThreadQueue_(ExtraObjectDataFactory::Instance()),
         gcScheduler_(GlobalData::Instance().gcScheduler().NewThreadData()),
         gc_(GlobalData::Instance().gc(), *this),
         objectFactoryThreadQueue_(GlobalData::Instance().objectFactory(), gc_),
@@ -47,6 +49,8 @@ public:
     ThreadLocalStorage& tls() noexcept { return tls_; }
 
     StableRefRegistry::ThreadQueue& stableRefThreadQueue() noexcept { return stableRefThreadQueue_; }
+
+    ExtraObjectDataFactory::ThreadQueue& extraObjectDataThreadQueue() noexcept { return extraObjectDataThreadQueue_; }
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
@@ -69,12 +73,14 @@ public:
         globalsThreadQueue_.Publish();
         stableRefThreadQueue_.Publish();
         objectFactoryThreadQueue_.Publish();
+        extraObjectDataThreadQueue_.Publish();
     }
 
     void ClearForTests() noexcept {
         globalsThreadQueue_.ClearForTests();
         stableRefThreadQueue_.ClearForTests();
         objectFactoryThreadQueue_.ClearForTests();
+        extraObjectDataThreadQueue_.ClearForTests();
     }
 
 private:
@@ -82,6 +88,7 @@ private:
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;
+    ExtraObjectDataFactory::ThreadQueue extraObjectDataThreadQueue_;
     ShadowStack shadowStack_;
     gc::GCSchedulerThreadData gcScheduler_;
     gc::GC::ThreadData gc_;

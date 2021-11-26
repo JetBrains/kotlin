@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -70,7 +70,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
              */
             private fun checkFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
                 val errorNamedReference = functionCall.calleeReference as? FirErrorNamedReference ?: return false
-                if (errorNamedReference.source?.kind != FirFakeSourceElementKind.DelegatedPropertyAccessor) return false
+                if (errorNamedReference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
                     (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.render() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"

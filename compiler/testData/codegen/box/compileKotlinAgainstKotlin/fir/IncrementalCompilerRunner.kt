@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: A.kt
 
 abstract class IncrementalCompilerRunner<T>(

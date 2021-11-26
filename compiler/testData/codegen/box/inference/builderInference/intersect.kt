@@ -1,5 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: WASM
 

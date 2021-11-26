@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:[JvmName("Foo") JvmMultifileClass]
 package test

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 class Foo<T : Enum<T>>(val values: Array<T>)

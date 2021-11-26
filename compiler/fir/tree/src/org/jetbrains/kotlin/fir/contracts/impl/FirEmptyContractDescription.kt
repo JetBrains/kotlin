@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.contracts.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirEmptyContractDescription : FirContractDescription() {
-    override val source: FirSourceElement? get() = null
+    override val source: KtSourceElement? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

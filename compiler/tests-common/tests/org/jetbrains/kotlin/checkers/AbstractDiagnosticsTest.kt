@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
@@ -422,8 +423,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
             moduleContentScope,
             moduleClassResolver,
-            CompilerEnvironment, LookupTracker.DO_NOTHING,
-            ExpectActualTracker.DoNothing,
+            CompilerEnvironment,
+            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             languageVersionSettings,
             useBuiltInsProvider = true

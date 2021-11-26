@@ -6,7 +6,7 @@ public open class OverrideMethod : R|kotlin/Any| {
 
         public/*package*/ open fun bar(): R|kotlin/Unit|
 
-        public/*package*/ constructor(): R|test/OverrideMethod.Base|
+        public/*package*/ test/OverrideMethod.constructor(): R|test/OverrideMethod.Base|
 
     }
     public/*package*/ open inner class Derived : R|test/OverrideMethod.Base| {
@@ -14,13 +14,13 @@ public open class OverrideMethod : R|kotlin/Any| {
 
         public/*package*/ open fun baz(): R|kotlin/Unit|
 
-        public/*package*/ constructor(): R|test/OverrideMethod.Derived|
+        public/*package*/ test/OverrideMethod.constructor(): R|test/OverrideMethod.Derived|
 
     }
     public/*package*/ open inner class SuperBase : R|kotlin/Any| {
         public/*package*/ open fun quux(x: R|kotlin/Int|): R|kotlin/Unit|
 
-        public/*package*/ constructor(): R|test/OverrideMethod.SuperBase|
+        public/*package*/ test/OverrideMethod.constructor(): R|test/OverrideMethod.SuperBase|
 
     }
 }

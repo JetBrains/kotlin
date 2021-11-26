@@ -18,7 +18,7 @@ import kotlin.test.fail
 
 class MppPublicationTest {
 
-    private val project = ProjectBuilder.builder().build() as ProjectInternal
+    private val project = ProjectBuilder.builder().build().also { addBuildEventsListenerRegistryMock(it) } as ProjectInternal
 
     init {
         project.plugins.apply("kotlin-multiplatform")

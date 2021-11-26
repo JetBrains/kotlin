@@ -17,7 +17,9 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
+import org.gradle.api.provider.Property
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.pill.model.POrderRoot.*
@@ -201,7 +203,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         val kotlinTasksBySourceSet = project.tasks.names
             .filter { it.startsWith("compile") && it.endsWith("Kotlin") }
             .map { project.tasks.getByName(it) }
-            .associateBy { it.invokeInternal("getSourceSetName") }
+            .associateBy { (it.invokeInternal("getSourceSetName") as Property<*>).get() as String }
 
         val gradleSourceSets = project.sourceSets?.toList() ?: emptyList()
         val sourceSets = mutableListOf<PSourceSet>()
@@ -268,16 +270,15 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
             method.invoke(kotlinCompileTask) as List<String>
         }
 
-        fun parseBoolean(name: String) = compileArguments.contains("-$name")
-        fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
-
-        val extraArguments = compileArguments.filter { it.startsWith("-X") && !it.startsWith("-Xplugin=") }
+        val extraArguments = getExtraArguments(compileArguments)
 
         val pluginClasspath = mutableListOf<String>()
-
         if (project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
             pluginClasspath += "\$KOTLIN_BUNDLED\$/lib/kotlinx-serialization-compiler-plugin.jar"
         }
+
+        fun parseBoolean(name: String) = compileArguments.contains("-$name")
+        fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
 
         return PSourceRootKotlinOptions(
             parseBoolean("no-stdlib"),
@@ -315,12 +316,41 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
             return@map PDependency.ModuleLibrary(library)
         }
     }
+
+    private companion object {
+        private val SKIPPED_STANDALONE_ARGUMENTS =
+            listOf("-no-stdlib", "-no-reflect", "-Xfriend-paths=", "-Xbuild-file=", "-Xplugin=")
+
+        private val SKIPPED_ARGUMENTS_WITH_VALUE =
+            listOf("-classpath", "-d", "-module-name", "-api-version", "-language-version", "-jvm-target", "-P")
+
+        private fun getExtraArguments(args: List<String>): List<String> {
+            val result = mutableListOf<String>()
+            var index = 0
+            while (index < args.size) {
+                val arg = args[index]
+
+                if (SKIPPED_STANDALONE_ARGUMENTS.any { arg.startsWith(it) }) {
+                    index += 1
+                    continue
+                } else if (SKIPPED_ARGUMENTS_WITH_VALUE.any { arg.startsWith(it) }) {
+                    index += 2 // Skip also the value
+                    continue
+                }
+
+                result += arg
+                index += 1
+            }
+            return result
+        }
+    }
 }
 
 private val SourceSet.isTestSourceSet: Boolean
     get() = name == SourceSet.TEST_SOURCE_SET_NAME
             || name.endsWith("Test")
             || name.endsWith("Tests")
+            || (extra.has("jpsKind") && extra.get("jpsKind") == SourceSet.TEST_SOURCE_SET_NAME)
 
 private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
     val method = javaClass.methods.single { it.name.startsWith(name) && it.parameterTypes.isEmpty() }

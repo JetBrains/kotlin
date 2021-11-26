@@ -54,10 +54,10 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
     )
 
     override fun visitReturn(expression: IrReturn): IrExpression {
+        val irFunction = context.staticDefaultStubs[expression.returnTargetSymbol]
         return super.visitReturn(
-            if (context.staticDefaultStubs.containsKey(expression.returnTargetSymbol)) {
+            if (irFunction != null) {
                 with(expression) {
-                    val irFunction = context.staticDefaultStubs[expression.returnTargetSymbol]!!
                     IrReturnImpl(startOffset, endOffset, type, irFunction.symbol, value)
                 }
             } else {

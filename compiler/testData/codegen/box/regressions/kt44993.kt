@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: kt44993.kt
 fun box(): String =
     f(KotlinBox(JavaBox()))

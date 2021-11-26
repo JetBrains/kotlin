@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -32,7 +33,7 @@ import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaField @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val symbol: FirFieldSymbol,
     override val name: Name,
@@ -56,7 +57,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
     override val backingField: FirBackingField? = null
-
+    override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
 
@@ -153,6 +154,8 @@ class FirJavaField @FirImplementationDetail constructor(
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 }
 
 @FirBuilderDsl

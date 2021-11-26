@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -75,8 +76,9 @@ class FirSignatureEnhancement(
     ): FirFunctionSymbol<*> {
         return enhancements.getOrPut(function) {
             enhance(function, name).also { enhancedVersion ->
-                (enhancedVersion.fir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                    enhancedVersion.fir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
+                val enhancedVersionFir = enhancedVersion.fir
+                (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
+                    enhancedVersionFir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
                 }
             }
         } as FirFunctionSymbol<*>
@@ -86,7 +88,7 @@ class FirSignatureEnhancement(
         return enhancements.getOrPut(property) { enhance(property, name) } as FirVariableSymbol<*>
     }
 
-    private fun FirAnnotatedDeclaration.computeDefaultQualifiers() =
+    private fun FirDeclaration.computeDefaultQualifiers() =
         typeQualifierResolver.extractAndMergeDefaultQualifiers(contextQualifiers, annotations)
 
     private fun enhance(
@@ -151,10 +153,11 @@ class FirSignatureEnhancement(
                 } else {
                     setterDelegate?.symbol
                 }
+                if (getterDelegate !is FirJavaMethod && setterDelegate !is FirJavaMethod) return original
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
-                    symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
+                    symbol = FirJavaOverriddenSyntheticPropertySymbol(accessorSymbol.callableId, accessorSymbol.getterId)
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                     status = firElement.status
@@ -162,7 +165,7 @@ class FirSignatureEnhancement(
                 }.symbol
             }
             else -> {
-                if (original is FirPropertySymbol || original is FirAccessorSymbol) return original
+                if (original is FirPropertySymbol || original is FirSyntheticPropertySymbol) return original
                 error("Can't make enhancement for $original: `${firElement.render()}`")
             }
         }
@@ -381,9 +384,6 @@ class FirSignatureEnhancement(
         ownerParameter: FirJavaValueParameter,
         index: Int
     ): FirResolvedTypeRef {
-        if (ownerParameter.returnTypeRef is FirResolvedTypeRef) {
-            return ownerParameter.returnTypeRef as FirResolvedTypeRef
-        }
         return ownerFunction.enhanceValueParameter(
             overriddenMembers,
             ownerParameter,

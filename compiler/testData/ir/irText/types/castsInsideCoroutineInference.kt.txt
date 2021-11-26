@@ -113,12 +113,12 @@ interface CoroutineScope {
 }
 
 interface Flow<out T : Any?> {
-  abstract suspend fun collect(collector: FlowCollector<T>) 
+  abstract suspend fun collect(collector: FlowCollector<T>)
 
 }
 
 interface FlowCollector<in T : Any?> {
-  abstract suspend fun emit(value: T) 
+  abstract suspend fun emit(value: T)
 
 }
 
@@ -138,7 +138,6 @@ interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {
 }
 
 interface SendChannel<in E : Any?> {
-  abstract suspend fun send(e: E) 
+  abstract suspend fun send(e: E)
 
 }
-

@@ -5,6 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.assertIsValidAndAccessible
+import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
+import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
+import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
+import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -20,14 +28,6 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.api.assertIsValidAndAccessible
-import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
-import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
-import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

@@ -1,3 +1,5 @@
+// TODO: Investigate ES modules issue
+
 // FILE: Outer.kt
 
 package another

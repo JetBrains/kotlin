@@ -1,11 +1,7 @@
-@file:JvmMultifileClass
-@file:JvmName("CoroutineUtilKt")
-
 package helpers
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlin.coroutines.jvm.internal.*
 
 fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
     override val context = EmptyCoroutineContext

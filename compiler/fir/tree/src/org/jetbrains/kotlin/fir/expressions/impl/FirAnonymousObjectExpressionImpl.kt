@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /*
  * This file was generated automatically
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirAnonymousObjectExpressionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override var anonymousObject: FirAnonymousObject,
 ) : FirAnonymousObjectExpression() {

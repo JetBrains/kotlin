@@ -151,6 +151,7 @@ public class KotlinJavaPsiFacade implements Disposable {
     }
 
     private void clearPackageCaches(boolean force) {
+        elementFinders = null;
         if (force) {
             packageCache = null;
         } else {

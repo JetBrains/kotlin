@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.RAW_VALUE_ANNOTATION_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.findAnyAnnotation
 import org.jetbrains.kotlin.parcelize.hasAnyAnnotation
 import org.jetbrains.kotlin.parcelize.isParcelize
@@ -448,7 +449,7 @@ interface ParcelSerializer {
     }
 }
 
-internal fun KotlinType.isParcelable() = matchesFqNameWithSupertypes("android.os.Parcelable")
+internal fun KotlinType.isParcelable() = matchesFqNameWithSupertypes(PARCELABLE_FQN.asString())
 
 private fun KotlinType.matchesFqName(fqName: String): Boolean {
     return this.constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName

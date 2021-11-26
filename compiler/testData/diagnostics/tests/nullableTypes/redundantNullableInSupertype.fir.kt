@@ -1,5 +1,6 @@
+// WITH_EXTENDED_CHECKERS
 interface A
-interface X: A?<!NULLABLE_SUPERTYPE!>?<!> {
+interface X: A?<!NULLABLE_SUPERTYPE, REDUNDANT_NULLABLE!>?<!> {
 
 }
 

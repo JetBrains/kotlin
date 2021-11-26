@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -26,7 +25,8 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal class ObjCExportMapper(
         internal val deprecationResolver: DeprecationResolver? = null,
-        private val local: Boolean = false
+        private val local: Boolean = false,
+        internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
 ) {
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
 
@@ -71,10 +71,12 @@ internal fun ObjCExportMapper.getClassIfCategory(extensionReceiverType: KotlinTy
     }
 }
 
+private fun isSealedClassConstructor(descriptor: ConstructorDescriptor) = descriptor.constructedClass.isSealed()
+
 // Note: partially duplicated in ObjCExportLazyImpl.translateTopLevels.
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.isEffectivelyPublicApi && !descriptor.isExpect &&
-                !isHiddenByDeprecation(descriptor)
+                !isHiddenByDeprecation(descriptor) && !(descriptor is ConstructorDescriptor && isSealedClassConstructor(descriptor))
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
         shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
@@ -330,7 +332,8 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
     val returnBridge = bridgeReturnType(descriptor, convertExceptionsToErrors)
 
     if (descriptor.isSuspend) {
-        valueParameters += MethodBridgeValueParameter.SuspendCompletion
+        val useUnitCompletion = (unitSuspendFunctionExport == UnitSuspendFunctionObjCExport.PROPER) && (descriptor.returnType!!.isUnit())
+        valueParameters += MethodBridgeValueParameter.SuspendCompletion(useUnitCompletion)
     } else if (convertExceptionsToErrors) {
         // Add error out parameter before tail block parameters. The convention allows this.
         // Placing it after would trigger https://bugs.swift.org/browse/SR-12201
@@ -348,7 +351,7 @@ private fun MethodBridgeValueParameter.isBlockPointer(): Boolean = when (this) {
         is BlockPointerBridge -> true
     }
     MethodBridgeValueParameter.ErrorOutParameter -> false
-    MethodBridgeValueParameter.SuspendCompletion -> true
+    is MethodBridgeValueParameter.SuspendCompletion -> true
 }
 
 internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor): TypeBridge {

@@ -1,0 +1,5 @@
+KtFunctionalTypeVariableCall:
+target = x: kotlin.Function2<@R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String, kotlin.Unit>
+argumentMapping = { 1 -> (a: @R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int), "" -> (b: @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String) }
+targetFunction = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<@R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String, kotlin.Unit>, a: @R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit
+substitutor = <empty substitutor>

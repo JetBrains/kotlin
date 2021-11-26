@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_LAZY
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <C : Any> diContext(context: C): DIContext<C> = DIContext(TypeToken(), context)
 fun <C : Any> diContext(getContext: () -> C): DIContext<C> = DIContext<C>(TypeToken()) { getContext() }

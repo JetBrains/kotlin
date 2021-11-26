@@ -1,8 +1,9 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
 
-inline class Result<T>(val isSuccess: Boolean)
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Result<T>(val isSuccess: Boolean)
 
 fun interface ResultHandler<T> {
     fun onResult(result: Result<T>)

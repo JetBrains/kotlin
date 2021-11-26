@@ -32,8 +32,8 @@ sealed class WhenMissingCase {
     }
 
     sealed class BooleanIsMissing(val value: Boolean) : WhenMissingCase() {
-        object True : BooleanIsMissing(true)
-        object False : BooleanIsMissing(false)
+        object TrueIsMissing : BooleanIsMissing(true)
+        object FalseIsMissing : BooleanIsMissing(false)
 
         override val branchConditionText: String = value.toString()
     }
@@ -45,7 +45,8 @@ sealed class WhenMissingCase {
         }
 
         override fun toString(): String {
-            val name = classId.shortClassName.identifier
+            val className = classId.shortClassName
+            val name = if (className.isSpecial) className.asString() else className.identifier
             return if (isSingleton) name else "is $name"
         }
     }

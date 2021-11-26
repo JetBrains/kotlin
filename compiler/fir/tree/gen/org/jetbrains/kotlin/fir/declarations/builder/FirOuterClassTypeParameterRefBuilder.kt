@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirOuterClassTypeParameterRefBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     lateinit var symbol: FirTypeParameterSymbol
 
     @OptIn(FirImplementationDetail::class)

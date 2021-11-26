@@ -1,4 +1,6 @@
 FILE: typeArgumentsNotAllowed.kt
+    package rest
+
     public abstract class Foo<T> : R|kotlin/Any| {
         public constructor<T>(): R|rest/Foo<T>| {
             super<R|kotlin/Any|>()

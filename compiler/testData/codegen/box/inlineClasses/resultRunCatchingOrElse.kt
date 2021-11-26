@@ -1,7 +1,11 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: TYPE_ISSUES
+// WITH_STDLIB
 
-inline class Result<out T>(val value: Any?) {
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
         when (value) {
             is Failure -> value.exception

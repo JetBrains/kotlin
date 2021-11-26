@@ -1,4 +1,8 @@
-inline class ResultOrClosed(val x: Any?)
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ResultOrClosed(val x: Any?)
 
 interface A<T> {
     fun foo(): T

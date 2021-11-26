@@ -4,4 +4,3 @@ fun test(x: Any?, y: Double): Boolean {
     else -> false
   }
 }
-

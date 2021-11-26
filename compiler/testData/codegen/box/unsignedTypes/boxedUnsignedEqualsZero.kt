@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun isZeroUInt(n: UInt?) = n!! == 0U
 fun isZeroUInt2(n: UInt?) = 0U == n!!

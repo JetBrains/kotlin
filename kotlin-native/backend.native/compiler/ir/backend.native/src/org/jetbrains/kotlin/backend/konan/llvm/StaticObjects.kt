@@ -75,32 +75,6 @@ internal fun StaticData.createConstKotlinObject(type: IrClass, vararg fields: Co
 internal fun StaticData.createInitializer(type: IrClass, vararg fields: ConstValue): ConstValue =
         Struct(objHeader(type.typeInfoPtr), *fields)
 
-/**
- * Creates static instance of `kotlin.collections.ArrayList<elementType>` with given values of fields.
- *
- * @param array value for `array: Array<E>` field.
- * @param length value for `length: Int` field.
- */
-internal fun StaticData.createConstArrayList(array: ConstPointer, length: Int): ConstPointer {
-    val arrayListClass = context.ir.symbols.arrayList.owner
-
-    val arrayListFields = mapOf(
-        "array" to array,
-        "offset" to Int32(0),
-        "length" to Int32(length),
-        "backing" to NullPointer(kObjHeader))
-
-    // Now sort these values according to the order of fields returned by getFields()
-    // to match the sorting order of the real ArrayList().
-    val sorted = mutableListOf<ConstValue>()
-    context.getLayoutBuilder(arrayListClass).fields.forEach {
-        require (it.parent == arrayListClass)
-        sorted.add(arrayListFields[it.name.asString()]!!)
-    }
-
-    return createConstKotlinObject(arrayListClass, *sorted.toTypedArray())
-}
-
 internal fun StaticData.createUniqueInstance(
         kind: UniqueKind, bodyType: LLVMTypeRef, typeInfo: ConstPointer): ConstPointer {
     assert (getStructElements(bodyType).size == 1) // ObjHeader only.

@@ -1,9 +1,6 @@
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/collections/ListIterator<E>
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
-  dispatchType: kotlin/collections/List<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -17,18 +14,17 @@ KtFirFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/collections/ListIterator<E>
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
-  dispatchType: kotlin/collections/List<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -42,10 +38,12 @@ KtFirFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
+    KtValueParameterSymbol(index)
   ]
   visibility: Public
+  getDispatchReceiver(): kotlin/collections/List<E>
   deprecationStatus: null

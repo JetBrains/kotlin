@@ -1,7 +1,7 @@
 // !JDK_KIND: MODIFIED_MOCK_JDK
 // !CHECK_TYPE
 // SKIP_TXT
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo(s: String) {
     s.isBlank()

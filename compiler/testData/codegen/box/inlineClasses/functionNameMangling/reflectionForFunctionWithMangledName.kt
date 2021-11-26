@@ -1,10 +1,9 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: BRIDGE_ISSUES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
-inline class S(val string: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val string: String)
 
 fun foo(s: S) = s
 

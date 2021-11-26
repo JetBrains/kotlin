@@ -1,6 +1,4 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
 
 import kotlin.coroutines.*
 

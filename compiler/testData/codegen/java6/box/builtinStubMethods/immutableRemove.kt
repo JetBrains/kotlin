@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: JS, NATIVE
 
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 interface ImmutableCollection<out E> : Collection<E> {
     fun add(element: @UnsafeVariance E): ImmutableCollection<E>
     fun addAll(elements: Collection<@UnsafeVariance E>): ImmutableCollection<E>

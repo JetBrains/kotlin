@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract override val declarations: List<FirDeclaration>
@@ -52,6 +53,8 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 

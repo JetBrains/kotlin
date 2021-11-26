@@ -65,4 +65,3 @@ fun test(b: Boolean) {
   mk /*as Mid */super.#f = 44
   mk /*as Mid */super.#f /*~> Unit */
 }
-

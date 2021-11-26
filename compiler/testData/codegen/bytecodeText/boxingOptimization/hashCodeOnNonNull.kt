@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 fun testBoolean(): Int {
     val b: Boolean? = true
     return b!!.hashCode()

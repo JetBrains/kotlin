@@ -341,7 +341,7 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
 
     val res = LLVMCreateMemoryBufferWithContentsOfFile(path, bufRef.ptr, errorRef.ptr)
     if (res != 0) {
-        throw Error(errorRef.value?.toKString())
+        throw Error("Error parsing file $path : ${errorRef.value?.toKString()}")
     }
 
     val memoryBuffer = bufRef.value

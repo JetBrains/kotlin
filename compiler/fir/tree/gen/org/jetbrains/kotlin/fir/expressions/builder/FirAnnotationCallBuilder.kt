@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     var useSiteTarget: AnnotationUseSiteTarget? = null
     var annotationTypeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override var argumentList: FirArgumentList = FirEmptyArgumentList

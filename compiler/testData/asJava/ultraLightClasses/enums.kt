@@ -1,3 +1,4 @@
+// CHECK_BY_JAVA_FILE
 
 import java.util.function.*
 

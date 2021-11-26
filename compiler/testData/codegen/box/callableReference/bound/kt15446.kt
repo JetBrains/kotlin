@@ -1,6 +1,5 @@
 
-// KJS_WITH_FULL_RUNTIME
-//WITH_RUNTIME
+// WITH_STDLIB
 fun box(): String {
     val a = intArrayOf(1, 2)
     val b = arrayOf("OK")

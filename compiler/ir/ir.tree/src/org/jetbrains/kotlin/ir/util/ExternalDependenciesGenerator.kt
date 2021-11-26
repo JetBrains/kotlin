@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -26,21 +25,19 @@ class ExternalDependenciesGenerator(
     val symbolTable: SymbolTable,
     private val irProviders: List<IrProvider>
 ) {
+
     fun generateUnboundSymbolsAsDependencies() {
         // There should be at most one DeclarationStubGenerator (none in closed world?)
         irProviders.singleOrNull { it is DeclarationStubGenerator }?.let {
             (it as DeclarationStubGenerator).unboundSymbolGeneration = true
         }
-        /*
-            Deserializing a reference may lead to new unbound references, so we loop until none are left.
-         */
-        var unbound = setOf<IrSymbol>()
-        lateinit var prevUnbound: Set<IrSymbol>
-        try {
-            do {
-                prevUnbound = unbound
-                unbound = symbolTable.allUnbound
 
+        // Deserializing a reference may lead to new unbound references, so we loop until none are left.
+        try {
+            var unbound = setOf<IrSymbol>()
+            do {
+                val prevUnbound = unbound
+                unbound = symbolTable.allUnbound
                 for (symbol in unbound) {
                     // Symbol could get bound as a side effect of deserializing other symbols.
                     if (!symbol.isBound) {

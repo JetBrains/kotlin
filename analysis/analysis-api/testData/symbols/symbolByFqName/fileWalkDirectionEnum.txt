@@ -1,9 +1,6 @@
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -17,27 +14,23 @@ KtFirFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(element)
+    KtValueParameterSymbol(element)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: [
-    kotlin/internal/InlineOnly
-  ]
-  annotations: [
+KtFunctionSymbol:
+  annotationsList: [
     kotlin/internal/InlineOnly()
       psi: null
   ]
   callableIdIfNonLocal: kotlin/collections/listOf
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -51,20 +44,18 @@ KtFirFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -78,12 +69,13 @@ KtFirFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverType: null
+  returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   valueParameters: [
-    KtFirValueParameterSymbol(elements)
+    KtValueParameterSymbol(elements)
   ]
   visibility: Public
   deprecationStatus: null

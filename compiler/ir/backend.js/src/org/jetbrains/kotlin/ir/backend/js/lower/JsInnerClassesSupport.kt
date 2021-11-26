@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 
 class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory) : InnerClassesSupport {
@@ -27,11 +27,17 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
     private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
-        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
+        if (!innerClass.isInner) compilationException(
+            "Class is not inner",
+            innerClass
+        )
         else {
             outerThisFieldSymbols.getOrPut(innerClass) {
                 val outerClass = innerClass.parent as? IrClass
-                    ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
+                    ?: compilationException(
+                        "No containing class for inner class",
+                        innerClass
+                    )
 
                 irFactory.buildField {
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
@@ -75,6 +81,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
             returnType = oldConstructor.returnType
         }.also {
             it.parent = oldConstructor.parent
+            it.annotations = oldConstructor.annotations
         }
 
         newConstructor.copyTypeParametersFrom(oldConstructor)

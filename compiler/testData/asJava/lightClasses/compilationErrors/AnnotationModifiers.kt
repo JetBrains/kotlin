@@ -1,5 +1,5 @@
 // A
-// WITH_RUNTIME
+// WITH_STDLIB
 class A {
     @Synchronized
     @Strictfp

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -13,7 +14,9 @@ import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtLiteralConstantValue
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
@@ -29,9 +32,17 @@ internal class FirLightFieldForPropertySymbol(
 
     private val _returnedType: PsiType by lazyPub {
         analyzeWithSymbolAsContext(propertySymbol) {
-            propertySymbol.annotatedType.type.asPsiType(this@FirLightFieldForPropertySymbol)
-                ?: this@FirLightFieldForPropertySymbol.nonExistentType()
-        }
+            val isDelegated = (propertySymbol as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
+            when {
+                isDelegated ->
+                    (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
+                        it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
+                    }
+                else -> {
+                    propertySymbol.returnType.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
+                }
+            }
+        } ?: nonExistentType()
     }
 
     private val _isDeprecated: Boolean by lazyPub {
@@ -82,7 +93,7 @@ internal class FirLightFieldForPropertySymbol(
 
         val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
             analyzeWithSymbolAsContext(propertySymbol) {
-                getTypeNullability(propertySymbol.annotatedType.type)
+                getTypeNullability(propertySymbol.returnType)
             }
         } else NullabilityType.Unknown
 
@@ -101,7 +112,8 @@ internal class FirLightFieldForPropertySymbol(
         if (propertySymbol !is KtKotlinPropertySymbol) return@lazyPub null
         if (!propertySymbol.isConst) return@lazyPub null
         if (!propertySymbol.isVal) return@lazyPub null
-        (propertySymbol.initializer as? KtLiteralConstantValue<*>)?.createPsiLiteral(this)
+        val constInitializer = propertySymbol.initializer as? KtConstantInitializerValue ?: return@lazyPub null
+        (constInitializer.constant as? KtLiteralConstantValue<*>)?.createPsiLiteral(this)
     }
 
     override fun getInitializer(): PsiExpression? = _initializer

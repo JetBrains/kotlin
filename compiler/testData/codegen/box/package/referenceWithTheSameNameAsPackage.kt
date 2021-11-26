@@ -1,7 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
-
+// WITH_STDLIB
 // FILE: messages/foo.kt
 
 package messages

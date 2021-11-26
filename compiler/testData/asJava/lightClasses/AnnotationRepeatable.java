@@ -7,7 +7,7 @@ public abstract @interface One /* simple.One*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.jvm.internal.RepeatableContainer()
-public @interface Container /* simple.One.Container*/ {
+public static abstract @interface Container /* simple.One.Container*/ {
   public abstract simple.One[] value();//  value()
 
 }}

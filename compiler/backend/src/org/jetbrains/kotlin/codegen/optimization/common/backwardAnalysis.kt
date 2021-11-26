@@ -21,6 +21,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 interface VarFrame<F : VarFrame<F>> {
     fun mergeFrom(other: F)
+    fun markControlFlowMerge()
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 }
@@ -48,6 +49,7 @@ fun <F : VarFrame<F>> analyze(node: MethodNode, interpreter: BackwardAnalysisInt
             for (successorIndex in graph.getSuccessorsIndices(insn)) {
                 newFrame.mergeFrom(frames[successorIndex])
             }
+            if (graph.getPredecessorsIndices(insn).size > 1) newFrame.markControlFlowMerge()
 
             interpreter.def(newFrame, insn)
             interpreter.use(newFrame, insn)

@@ -9,6 +9,8 @@ import kotlin.test.*
 
 @Test fun runTest() {
     println(foo(17))
+    val nonConst = 17
+    println(foo(nonConst))
 }
 
 fun <T : Int> foo(x: T): Int = x

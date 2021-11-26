@@ -1,4 +1,8 @@
-inline class A(val a: Int = 1) {
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val a: Int = 1) {
     companion object {
         val a: Int = 2
     }

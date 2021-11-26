@@ -42,8 +42,8 @@ FILE: exposedTypeParameters.kt
         }
 
     }
-    public final class Test3<T : R|E|, P : R|C.D|> : R|kotlin/Any| {
-        public constructor<T : R|E|, P : R|C.D|>(): R|Test3<T, P>| {
+    public final class Test3<T : R|E|, P : <ERROR TYPE REF: HIDDEN: C.D is invisible>> : R|kotlin/Any| {
+        public constructor<T : R|E|, P : <ERROR TYPE REF: HIDDEN: C.D is invisible>>(): R|Test3<T, P>| {
             super<R|kotlin/Any|>()
         }
 
@@ -80,5 +80,5 @@ FILE: exposedTypeParameters.kt
         }
 
     }
-    public abstract interface Test8<T : R|A|, P : R|B|, F : R|C|, N : R|C.D|, M : R|E|> : R|kotlin/Any| {
+    public abstract interface Test8<T : R|A|, P : R|B|, F : R|C|, N : <ERROR TYPE REF: HIDDEN: C.D is invisible>, M : R|E|> : R|kotlin/Any| {
     }

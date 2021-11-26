@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 1.kt
 inline fun Inline.calcExt(s: (Int) -> Int, p: Int) : Int {
     return s(p)

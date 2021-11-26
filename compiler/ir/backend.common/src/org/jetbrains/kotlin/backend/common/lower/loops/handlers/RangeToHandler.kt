@@ -63,7 +63,8 @@ internal class RangeToHandler(private val context: CommonBackendContext) :
 
     private fun IrExpression.convertToExclusiveUpperBound(progressionType: ProgressionType): IrExpression? {
         if (progressionType is UnsignedProgressionType) {
-            if (this.constLongValue == -1L) return null
+            // On JVM, prefer unsigned counter loop with inclusive bound
+            if (preferJavaLikeCounterLoop || this.constLongValue == -1L) return null
         }
 
         val irConst = this as? IrConst<*> ?: return null

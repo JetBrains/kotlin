@@ -13,6 +13,15 @@ fun foo(arg: Any) {
 
 @Test fun runTest() {
     foo(1)
+    foo(2u)
     foo(false)
     foo("Hello")
+    val nonConstInt = 1
+    val nonConstUInt = 2u
+    val nonConstBool = false
+    val nonConstString = "Hello"
+    foo(nonConstInt)
+    foo(nonConstUInt)
+    foo(nonConstBool)
+    foo(nonConstString)
 }

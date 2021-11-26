@@ -39,6 +39,9 @@ private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration.containingClassForStaticMemberAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
+private object IsNewPlaceForBodyGeneration : FirDeclarationDataKey()
+var FirRegularClass.isNewPlaceForBodyGeneration: Boolean? by FirDeclarationDataRegistry.data(IsNewPlaceForBodyGeneration)
+
 val FirCallableDeclaration.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableDeclaration.isSubstitutionOverride: Boolean get() = origin == FirDeclarationOrigin.SubstitutionOverride
 val FirCallableDeclaration.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
@@ -58,12 +61,6 @@ inline val <reified D : FirCallableDeclaration> D.baseForIntersectionOverride: D
 
 inline val <reified S : FirCallableSymbol<*>> S.baseForIntersectionOverride: S?
     get() = fir.baseForIntersectionOverride?.symbol as S?
-
-val FirSimpleFunction.isJavaDefault: Boolean
-    get() {
-        if (isIntersectionOverride) return baseForIntersectionOverride!!.isJavaDefault
-        return origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
-    }
 
 inline fun <reified D : FirCallableDeclaration> D.originalIfFakeOverride(): D? =
     originalForSubstitutionOverride ?: baseForIntersectionOverride
@@ -103,4 +100,30 @@ var <D : FirCallableDeclaration>
         D.originalForIntersectionOverrideAttr: D? by FirDeclarationDataRegistry.data(IntersectionOverrideOriginalKey)
 
 private object InitialSignatureKey : FirDeclarationDataKey()
+
 var FirCallableDeclaration.initialSignatureAttr: FirCallableDeclaration? by FirDeclarationDataRegistry.data(InitialSignatureKey)
+
+private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()
+
+/**
+ * Consider the following
+ * ```
+ * fun <T> run(block: @Foo T.() -> Unit) {...}
+ *
+ * fun test() {
+ *   run<String> {
+ *     <caret>
+ *   }
+ * }
+ * ```
+ * The original function type `@Foo T.() -> Unit` can be accessed with this property on the FirAnonymousFunction at caret.
+ */
+var <D : FirAnonymousFunction>
+        D.matchingParameterFunctionType: ConeKotlinType? by FirDeclarationDataRegistry.data(MatchingParameterFunctionTypeKey)
+
+private object CorrespondingProperty : FirDeclarationDataKey()
+
+/**
+ * The corresponding [FirProperty] if the current value parameter is a `val` or `var` declared inside the primary constructor.
+ */
+var FirValueParameter.correspondingProperty: FirProperty? by FirDeclarationDataRegistry.data(CorrespondingProperty)

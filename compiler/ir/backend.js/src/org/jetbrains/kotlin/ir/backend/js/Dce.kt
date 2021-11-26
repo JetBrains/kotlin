@@ -87,16 +87,17 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         }
     }
 
-    rootDeclarations += context.testRoots.values
+    rootDeclarations += context.testFunsPerFile.values
 
     val dceRuntimeDiagnostic = context.dceRuntimeDiagnostic
     if (dceRuntimeDiagnostic != null) {
         rootDeclarations += dceRuntimeDiagnostic.unreachableDeclarationMethod(context).owner
     }
 
-    JsMainFunctionDetector.getMainFunctionOrNull(modules.last())?.let { mainFunction ->
+    // TODO: Generate calls to main as IR->IR lowering and reference coroutineEmptyContinuation directly
+    JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())?.let { mainFunction ->
         rootDeclarations += mainFunction
-        if (mainFunction.isSuspend) {
+        if (mainFunction.isLoweredSuspendFunction(context)) {
             rootDeclarations += context.coroutineEmptyContinuation.owner
         }
     }
@@ -404,7 +405,7 @@ fun usefulDeclarations(
                             // https://youtrack.jetbrains.com/issue/KT-46672
                             // TODO: Possibly solution with origin is not so good
                             //  There is option with applying this hack to jsGetKClass
-                            if (expression.origin == JsLoweredDeclarationOrigin.CLASS_REFERENCE) {
+                            if (expression.origin == JsStatementOrigins.CLASS_REFERENCE) {
                                 // Maybe we need to filter primary constructor
                                 // Although at this time, we should have only primary constructor
                                 (ref as IrClass)
@@ -414,7 +415,7 @@ fun usefulDeclarations(
                                     }
                             }
                         }
-                        context.intrinsics.jsGetKClassFromExpression -> {
+                        context.reflectionSymbols.getKClassFromExpression -> {
                             val ref = expression.getTypeArgument(0)?.classOrNull ?: context.irBuiltIns.anyClass
                             referencedJsClassesFromExpressions += ref.owner
                         }

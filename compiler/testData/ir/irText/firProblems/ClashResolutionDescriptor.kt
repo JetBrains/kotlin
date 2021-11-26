@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import java.lang.reflect.Type
 

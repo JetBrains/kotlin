@@ -83,8 +83,15 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrDescriptorBasedFunctionFactory(
-    private val irBuiltIns: IrBuiltInsOverDescriptors, private val symbolTable: SymbolTable
+    private val irBuiltIns: IrBuiltInsOverDescriptors,
+    private val symbolTable: SymbolTable,
+    private val typeTranslator: TypeTranslator,
+    getPackageFragment: ((PackageFragmentDescriptor) -> IrPackageFragment)? = null,
+    // Needed for JS and Wasm backends to "preload" interfaces that can referenced during lowerings
+    private val referenceFunctionsWhenKFunctionAreReferenced: Boolean = false,
 ) : IrAbstractDescriptorBasedFunctionFactory() {
+    val getPackageFragment =
+        getPackageFragment ?: symbolTable::declareExternalPackageFragmentIfNotExists
 
     // TODO: Lazieness
 
@@ -135,6 +142,9 @@ class IrDescriptorBasedFunctionFactory(
     }
 
     override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+        if (referenceFunctionsWhenKFunctionAreReferenced)
+            functionN(arity)
+
         return kFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
                 val descriptor = symbol.descriptor as FunctionClassDescriptor
@@ -145,6 +155,9 @@ class IrDescriptorBasedFunctionFactory(
     }
 
     override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
+        if (referenceFunctionsWhenKFunctionAreReferenced)
+            suspendFunctionN(arity)
+
         return kSuspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
                 val descriptor = symbol.descriptor as FunctionClassDescriptor
@@ -230,44 +243,31 @@ class IrDescriptorBasedFunctionFactory(
 
     private val kotlinPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.builtIns.getFunction(0).let {
-            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
+            getPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
     private val kotlinCoroutinesPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.builtIns.getSuspendFunction(0).let {
-            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
+            getPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
 
     private val kotlinReflectPackageFragment: IrPackageFragment by lazy {
         irBuiltIns.kPropertyClass.descriptor.let {
-            symbolTable.declareExternalPackageFragmentIfNotExists(it.containingDeclaration as PackageFragmentDescriptor)
+            getPackageFragment(it.containingDeclaration as PackageFragmentDescriptor)
         }
     }
 
-    private fun IrClass.createThisReceiver(descriptorFactory: FunctionDescriptorFactory): IrValueParameter {
-        val vDescriptor = descriptorFactory.classReceiverParameterDescriptor()
-        val vSymbol = IrValueParameterSymbolImpl(vDescriptor)
-        val type = with(IrSimpleTypeBuilder()) {
-            classifier = symbol
-            arguments = typeParameters.run {
-                val builder = IrSimpleTypeBuilder()
-                mapTo(ArrayList(size)) {
-                    builder.classifier = it.symbol
-                    buildTypeProjection()
-                }
-            }
-            buildSimpleType()
-        }
-        val vDeclaration = irFactory.createValueParameter(
-            offset, offset, classOrigin, vSymbol, SpecialNames.THIS, -1, type, null,
+    private fun createThisReceiver(descriptorFactory: FunctionDescriptorFactory): IrValueParameter {
+        val descriptor = descriptorFactory.classReceiverParameterDescriptor()
+        return irFactory.createValueParameter(
+            offset, offset, classOrigin, IrValueParameterSymbolImpl(descriptor), SpecialNames.THIS, -1,
+            typeTranslator.translateType(descriptor.type), null,
             isCrossinline = false,
             isNoinline = false,
             isHidden = false,
             isAssignable = false
         )
-
-        return vDeclaration
     }
 
     private fun IrClass.createMembers(isK: Boolean, isSuspend: Boolean, descriptorFactory: FunctionDescriptorFactory) {
@@ -423,7 +423,7 @@ class IrDescriptorBasedFunctionFactory(
 
         val r = klass.createTypeParameters(n, descriptorFactory)
 
-        klass.thisReceiver = klass.createThisReceiver(descriptorFactory).also { it.parent = klass }
+        klass.thisReceiver = createThisReceiver(descriptorFactory).also { it.parent = klass }
 
         klass.superTypes = listOf(with(IrSimpleTypeBuilder()) {
             classifier = baseClass

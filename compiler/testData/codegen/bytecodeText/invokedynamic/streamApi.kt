@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 import java.util.stream.*
 

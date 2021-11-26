@@ -39,7 +39,7 @@ fun testSmartCastInWhenConditionInBranch(x: Any): Int {
     val tmp3_subject: Any = x
     when {
       tmp3_subject !is Double -> -1
-      EQEQ(arg0 = tmp3_subject, arg1 = 0.0) -> 0
+      ieee754equals(arg0 = tmp3_subject /*as Double */, arg1 = 0.0) -> 0
       else -> 1
     }
   }

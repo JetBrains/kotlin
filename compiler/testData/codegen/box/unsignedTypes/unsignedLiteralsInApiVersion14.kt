@@ -1,6 +1,5 @@
 // !API_VERSION: 1.4
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val x = 0u
 val y = 0uL

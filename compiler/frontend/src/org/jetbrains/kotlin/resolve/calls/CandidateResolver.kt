@@ -12,17 +12,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.Errors.EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED
+import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
-import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
-import org.jetbrains.kotlin.resolve.calls.util.getErasedReceiverType
-import org.jetbrains.kotlin.resolve.calls.util.isInvokeCallOnExpressionWithBothReceivers
-import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.SubstitutionFilteringInternalResolveAnnotations
@@ -33,7 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.util.*
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -44,7 +40,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import java.util.*
 import kotlin.math.min
 
 class CandidateResolver(
@@ -185,8 +180,11 @@ class CandidateResolver(
         receiverArgument: ReceiverValue?,
         smartCastType: KotlinType?
     ): ResolutionStatus {
-        val invisibleMember = DescriptorVisibilities.findInvisibleMember(
-            getReceiverValueWithSmartCast(receiverArgument, smartCastType), candidateDescriptor, scope.ownerDescriptor
+        val invisibleMember = DescriptorVisibilityUtils.findInvisibleMember(
+            getReceiverValueWithSmartCast(receiverArgument, smartCastType),
+            candidateDescriptor,
+            scope.ownerDescriptor,
+            languageVersionSettings
         )
         return if (invisibleMember != null) {
             tracing.invisibleMember(trace, invisibleMember)
@@ -205,9 +203,10 @@ class CandidateResolver(
     private fun CallCandidateResolutionContext<*>.isCandidateVisible(
         receiverArgument: ReceiverValue?,
         smartCastType: KotlinType?
-    ) = DescriptorVisibilities.findInvisibleMember(
+    ) = DescriptorVisibilityUtils.findInvisibleMember(
         getReceiverValueWithSmartCast(receiverArgument, smartCastType),
-        candidateDescriptor, scope.ownerDescriptor
+        candidateDescriptor, scope.ownerDescriptor,
+        languageVersionSettings
     ) == null
 
     private fun CallCandidateResolutionContext<*>.checkExtensionReceiver() = checkAndReport {

@@ -8,24 +8,19 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
-import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightFacade
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport() {
@@ -84,8 +79,10 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
             .getKotlinSubPackageFqNames(fqn)
             .map { fqn.child(it) }
 
-    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? =
-        getOrCreateFirLightClass(classOrObject)
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
+        if (!classOrObject.isFromSource()) return null
+        return getOrCreateFirLightClass(classOrObject)
+    }
 
     override fun getLightClassForScript(script: KtScript): KtLightClass =
         error("Should not be called")
@@ -93,7 +90,9 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
         //TODO Split by modules
         findFilesForFacade(facadeFqName, scope).ifNotEmpty {
-            listOfNotNull(getOrCreateFirLightFacade(this.toList(), facadeFqName))
+            listOfNotNull(
+                project.getService(SymbolLightClassFacadeCache::class.java).getOrCreateSymbolLightFacade(this.toList(), facadeFqName)
+            )
         } ?: emptyList()
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
@@ -105,21 +104,38 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
         project.createDeclarationProvider(scope)
             .getFacadeFilesInPackage(packageFqName)
+            .asSequence()
+            .filter { it.isFromSource() }
             .groupBy { it.javaFileFacadeFqName }
-            .mapNotNull { getOrCreateFirLightFacade(it.value, it.key) }
+            .mapNotNull {
+                project.getService(SymbolLightClassFacadeCache::class.java)
+                    .getOrCreateSymbolLightFacade(it.value, it.key)
+            }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> =
         project.createDeclarationProvider(scope)
             .getFacadeFilesInPackage(packageFqName)
+            .filter { it.isFromSource() }
             .mapTo(mutableSetOf()) { it.javaFileFacadeFqName.shortName().asString() }
 
-    override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> =
-        project.createDeclarationProvider(scope)
+    override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
+        return project.createDeclarationProvider(scope)
             .findFilesForFacade(facadeFqName)
+            .filter { it.isFromSource() }
+    }
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
         KtFirBasedFakeLightClass(classOrObject)
 
     override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass =
         TODO("Not implemented")
+}
+
+
+private fun KtElement.isFromSource(): Boolean {
+    if (this is KtFile && isCompiled) {
+        // small optimisation to not invoke expensive getKtModule
+        return false
+    }
+    return getKtModule(project) is KtSourceModule
 }

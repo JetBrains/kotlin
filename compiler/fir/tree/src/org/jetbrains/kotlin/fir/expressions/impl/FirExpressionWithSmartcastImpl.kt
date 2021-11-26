@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
@@ -32,7 +31,7 @@ internal class FirExpressionWithSmartcastImpl(
         assert(originalExpression.typeRef is FirResolvedTypeRef)
     }
 
-    override val source: FirSourceElement? get() = originalExpression.source
+    override val source: KtSourceElement? get() = originalExpression.source
     override val annotations: List<FirAnnotation> get() = originalExpression.annotations
     override val typeArguments: List<FirTypeProjection> get() = originalExpression.typeArguments
     override val explicitReceiver: FirExpression? get() = originalExpression.explicitReceiver
@@ -95,6 +94,6 @@ internal class FirExpressionWithSmartcastImpl(
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
     @FirImplementationDetail
-    override fun replaceSource(newSource: FirSourceElement?) {
+    override fun replaceSource(newSource: KtSourceElement?) {
     }
 }

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -31,11 +31,12 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     lateinit var calleeReference: FirThisReference
+    var isImplicit: Boolean = false
 
     override fun build(): FirThisReceiverExpression {
         return FirThisReceiverExpressionImpl(
@@ -44,6 +45,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
             annotations,
             typeArguments,
             calleeReference,
+            isImplicit,
         )
     }
 

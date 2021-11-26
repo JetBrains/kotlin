@@ -1,9 +1,13 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
-inline class UInt(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UInt(val x: Int)
 
-inline class UIntArray(private val storage: IntArray) : Collection<UInt> {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UIntArray(private val storage: IntArray) : Collection<UInt> {
     public override val size: Int get() = storage.size
 
     override operator fun iterator() = TODO()

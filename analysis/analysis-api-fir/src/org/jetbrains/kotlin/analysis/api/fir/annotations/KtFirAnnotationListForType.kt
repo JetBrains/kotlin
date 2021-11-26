@@ -1,0 +1,56 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.annotations
+
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.name.ClassId
+
+internal class KtFirAnnotationListForType private constructor(
+    val coneType: ConeKotlinType,
+    private val useSiteSession: FirSession,
+    override val token: ValidityToken,
+) : KtAnnotationsList() {
+    override val annotations: List<KtAnnotationApplication>
+        get() = withValidityAssertion { coneType.customAnnotations.map { KtFirAnnotationApplicationImpl(it, useSiteSession, token) } }
+
+
+    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+        coneType.customAnnotations.any { it.fullyExpandedClassId(useSiteSession) == classId }
+    }
+
+    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
+        coneType.customAnnotations.mapNotNull { annotation ->
+            if (annotation.fullyExpandedClassId(useSiteSession) != classId) return@mapNotNull null
+            KtFirAnnotationApplicationImpl(annotation, useSiteSession, token)
+        }
+    }
+
+    override val annotationClassIds: Collection<ClassId>
+        get() = withValidityAssertion { coneType.customAnnotations.mapNotNull { it.fullyExpandedClassId(useSiteSession) } }
+
+
+    companion object {
+        fun create(
+            coneType: ConeKotlinType,
+            useSiteSession: FirSession,
+            token: ValidityToken,
+        ): KtAnnotationsList {
+            return if (coneType.customAnnotations.isEmpty()) {
+                KtEmptyAnnotationsList(token)
+            } else {
+                KtFirAnnotationListForType(coneType, useSiteSession, token)
+            }
+        }
+    }
+}
+

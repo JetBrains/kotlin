@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class A(value: Int = 1)
 

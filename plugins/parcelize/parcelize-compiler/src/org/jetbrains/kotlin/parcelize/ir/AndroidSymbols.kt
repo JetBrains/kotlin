@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 
 // All of the IR declarations needed by the parcelize plugin. Note that the declarations are generated based on JVM descriptors and
 // hence contain just enough information to produce correct JVM bytecode for *calls*. In particular, we omit generic types and
@@ -165,12 +169,12 @@ class AndroidSymbols(
         val t = addTypeParameter("T", irBuiltIns.anyNType)
         parent = androidOsParcelable.owner
 
-        addFunction("createFromParcel", t.defaultType, Modality.ABSTRACT).apply {
+        addFunction(CREATE_FROM_PARCEL_NAME.identifier, t.defaultType, Modality.ABSTRACT).apply {
             addValueParameter("source", androidOsParcel.defaultType)
         }
 
         addFunction(
-            "newArray", irBuiltIns.arrayClass.typeWith(t.defaultType.makeNullable()),
+            NEW_ARRAY_NAME.identifier, irBuiltIns.arrayClass.typeWith(t.defaultType.makeNullable()),
             Modality.ABSTRACT
         ).apply {
             addValueParameter("size", irBuiltIns.intType)
@@ -434,7 +438,7 @@ class AndroidSymbols(
         }.symbol
 
     val textUtilsWriteToParcel: IrSimpleFunctionSymbol =
-        androidTextTextUtils.owner.addFunction("writeToParcel", irBuiltIns.unitType, isStatic = true).apply {
+        androidTextTextUtils.owner.addFunction(WRITE_TO_PARCEL_NAME.identifier, irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("cs", irBuiltIns.charSequenceClass.defaultType)
             addValueParameter("p", androidOsParcel.defaultType)
             addValueParameter("parcelableFlags", irBuiltIns.intType)

@@ -1,6 +1,6 @@
 FILE: derivedClass.kt
     public? open class Base<T> : R|kotlin/Any| {
-        public? [ContainingClassKey=Base] constructor<T>(x: T): R|Base<T>| {
+        public? [ContainingClassKey=Base] constructor<T>([CorrespondingProperty=/Base.x] x: T): R|Base<T>| {
             super<R|kotlin/Any|>()
         }
 

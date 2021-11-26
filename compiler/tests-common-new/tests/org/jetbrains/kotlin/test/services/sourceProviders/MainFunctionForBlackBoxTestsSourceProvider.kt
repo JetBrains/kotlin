@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -14,11 +15,13 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 
-class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
         private val PACKAGE_REGEXP = """package ([\w.]+)""".toRegex()
         private val START_BOX_METHOD_REGEX = """^fun box\(\)""".toRegex()
         private val MIDDLE_BOX_METHOD_REGEX = """\nfun box\(\)""".toRegex()
+        private val START_SUSPEND_BOX_METHOD_REGEX = """^suspend fun box\(\)""".toRegex()
+        private val MIDDLE_SUSPEND_BOX_METHOD_REGEX = """\nsuspend fun box\(\)""".toRegex()
 
         const val BOX_MAIN_FILE_NAME = "Generated_Box_Main.kt"
 
@@ -30,16 +33,37 @@ class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : A
             return containsBoxMethod(file.originalContent)
         }
 
+        fun containsSuspendBoxMethod(file: TestFile): Boolean {
+            return containsBoxMethod(file.originalContent)
+        }
+
         fun containsBoxMethod(fileContent: String): Boolean {
-            return START_BOX_METHOD_REGEX.containsMatchIn(fileContent) || MIDDLE_BOX_METHOD_REGEX.containsMatchIn(fileContent)
+            return START_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
+                    MIDDLE_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
+                    containsSuspendBoxMethod(fileContent)
+        }
+
+        fun containsSuspendBoxMethod(fileContent: String): Boolean {
+            return START_SUSPEND_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
+                    MIDDLE_SUSPEND_BOX_METHOD_REGEX.containsMatchIn(fileContent)
         }
     }
 
+    protected open fun generateMainBody(): String {
+        return """
+            val res = box()
+            if (res != "OK") throw AssertionError(res)
+        """.trimIndent()
+    }
+
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
-        val jdkKind = module.directives.singleOrZeroValue(JDK_KIND) ?: return emptyList()
-        if (!jdkKind.requiresSeparateProcess) return emptyList()
+        if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
+            return emptyList()
+        }
 
         val fileWithBox = module.files.firstOrNull { containsBoxMethod(it) } ?: return emptyList()
+        val suspendModifier = if (containsSuspendBoxMethod(fileWithBox)) "suspend " else ""
+        val mainBody = generateMainBody()
 
         val code = buildString {
             detectPackage(fileWithBox)?.let {
@@ -47,9 +71,8 @@ class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : A
             }
             appendLine(
                 """
-                    fun main() {
-                        val res = box()
-                        if (res != "OK") throw AssertionError(res)
+                    ${suspendModifier}fun main() {
+                        $mainBody
                     }
                 """.trimIndent()
             )

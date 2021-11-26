@@ -107,11 +107,11 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
                 assertTasksExecuted(":p3:commonizeCInterop")
 
                 /*
-                Commonized C-Interops are not published or forwarded to other Gradle projects.
-                The missing dependency will be ignored by the metadata compiler.
-                We still expect a warning being printed.
+                Before we published commonized cinterops, the compiler would emit a warning like
+                `"w: Could not find \"commonizeHierarchicallyMultiModule:p1-cinterop-withPosix\" in "`
+                Since commonized cinterops are published now, we expect no such 'Could not find' message anymore
                  */
-                assertContains("w: Could not find \"commonizeHierarchicallyMultiModule:p1-cinterop-withPosix\" in ")
+                assertNotContains("Could not find")
             }
         }
     }

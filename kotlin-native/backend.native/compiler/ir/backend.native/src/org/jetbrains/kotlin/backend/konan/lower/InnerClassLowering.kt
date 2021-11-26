@@ -119,14 +119,6 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         InnerClassTransformer(irClass).lowerInnerClass()
     }
 
-    companion object {
-        fun addOuterThisField(declarations: MutableList<IrDeclaration>, irClass: IrClass, context: Context): IrField {
-            val outerThisField = context.specialDeclarationsFactory.getOuterThisField(irClass)
-            declarations += outerThisField
-            return outerThisField
-        }
-    }
-
     private inner class InnerClassTransformer(val irClass: IrClass) {
         lateinit var outerThisFieldSymbol: IrFieldSymbol
 
@@ -138,7 +130,8 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            val outerThisField = addOuterThisField(irClass.declarations, irClass, context)
+            val outerThisField = context.specialDeclarationsFactory.getOuterThisField(irClass)
+            irClass.declarations += outerThisField
             outerThisFieldSymbol = outerThisField.symbol
         }
 

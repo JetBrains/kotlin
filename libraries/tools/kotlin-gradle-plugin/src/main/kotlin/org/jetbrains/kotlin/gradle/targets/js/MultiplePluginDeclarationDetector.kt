@@ -10,7 +10,6 @@ import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginInMultipleProjectsHolder
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 internal class MultiplePluginDeclarationDetector
 private constructor() {

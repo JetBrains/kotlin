@@ -16,8 +16,11 @@ dependencies {
     testApi(projectTests(":compiler:tests-spec"))
     testApi(projectTests("::analysis:low-level-api-fir"))
     testApi(projectTests(":analysis:analysis-api-fir"))
+    testApi(projectTests(":analysis:analysis-api-fe10"))
     testApi(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     testApiJUnit5()
 }
 
-val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateTestsKt")
+val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt")
+
+testsJar()

@@ -140,7 +140,11 @@ object Renderers {
     @JvmField
     val RENDER_CLASS_OR_OBJECT = Renderer { classOrObject: KtClassOrObject ->
         val name = classOrObject.name?.let { " ${it.wrapIntoQuotes()}" } ?: ""
-        if (classOrObject is KtClass) "Class" + name else "Object" + name
+        when {
+            classOrObject !is KtClass -> "Object$name"
+            classOrObject.isInterface() -> "Interface$name"
+            else -> "Class$name"
+        }
     }
 
     @JvmField

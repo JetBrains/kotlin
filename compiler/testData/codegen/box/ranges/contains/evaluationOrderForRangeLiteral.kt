@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_ASSERT
 // KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 var order = StringBuilder()

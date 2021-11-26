@@ -1,4 +1,3 @@
-// IGNORE_FIR_DIAGNOSTICS
 interface A {
     fun bar2(arg: Int = 239) : Int
 

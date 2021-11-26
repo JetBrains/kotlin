@@ -27,7 +27,7 @@ interface A2 : List<String> {
     override fun stream(): java.util.stream.Stream<String> = null!!
 }
 
-class B : <!NONE_APPLICABLE!>Throwable<!>("", null, false, false)
+class B : Throwable("", null, false, false)
 
 class B1 : RuntimeException() {
     override fun fillInStackTrace(): Throwable { // 'override' keyword must be prohibited, as it was in 1.0.x
@@ -45,7 +45,7 @@ fun foo(x: List<String>, y: Throwable, z: A3) {
 
     y.fillInStackTrace() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
 
-    HashMap<String, Int>().getOrDefault(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>, null)
+    HashMap<String, Int>().getOrDefault(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     // Falls back to extension in stdlib
     y.printStackTrace()

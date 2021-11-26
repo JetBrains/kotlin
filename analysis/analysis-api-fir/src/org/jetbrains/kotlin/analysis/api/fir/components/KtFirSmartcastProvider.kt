@@ -5,35 +5,38 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiverSmartCastKind
+import org.jetbrains.kotlin.analysis.api.components.KtSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.components.KtSmartCastProvider
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isStableSmartcast
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.analysis.api.ImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.ImplicitReceiverSmartcastKind
-import org.jetbrains.kotlin.analysis.api.components.KtSmartCastProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KtFirSmartcastProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
-    override fun getSmartCastedToType(expression: KtExpression): KtType? = withValidityAssertion {
-        expression.getOrBuildFirSafe<FirExpressionWithSmartcast>(analysisSession.firResolveState)
-            ?.takeIf { it.isStable }
-            ?.typeRef
-            ?.coneTypeSafe<ConeKotlinType>()
-            ?.asKtType()
+    override fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo? = withValidityAssertion {
+        val smartCastExpression =
+            expression.getOrBuildFirSafe<FirExpressionWithSmartcast>(analysisSession.firResolveState) ?: return@withValidityAssertion null
+        KtSmartCastInfo(
+            smartCastExpression.smartcastType.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@withValidityAssertion null,
+            smartCastExpression.isStable,
+            token,
+        )
+
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<ImplicitReceiverSmartCast> = withValidityAssertion {
+    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast> = withValidityAssertion {
         val qualifiedExpression =
             expression.getOrBuildFirSafe<FirQualifiedAccessExpression>(analysisSession.firResolveState) ?: return emptyList()
         val dispatchReceiver = qualifiedExpression.dispatchReceiver
@@ -43,15 +46,17 @@ internal class KtFirSmartcastProvider(
         ) return emptyList()
         buildList {
             dispatchReceiver.takeIf { it.isStableSmartcast() }?.let { smartCasted ->
-                ImplicitReceiverSmartCast(
+                KtImplicitReceiverSmartCast(
                     smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
-                    ImplicitReceiverSmartcastKind.DISPATCH
+                    KtImplicitReceiverSmartCastKind.DISPATCH,
+                    token,
                 )
             }?.let(::add)
             extensionReceiver.takeIf { it.isStableSmartcast() }?.let { smartCasted ->
-                ImplicitReceiverSmartCast(
+                KtImplicitReceiverSmartCast(
                     smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
-                    ImplicitReceiverSmartcastKind.EXTENSION
+                    KtImplicitReceiverSmartCastKind.EXTENSION,
+                    token,
                 )
             }?.let(::add)
         }

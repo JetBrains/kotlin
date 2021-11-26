@@ -34,12 +34,3 @@ fun Path.append(
         """.trimIndent()
     }
 }
-
-/**
- * Append [textToAppend] to the current [TestProject] 'build.gradle' file.
- */
-fun TestProject.appendToBuildFile(
-    textToAppend: String
-) {
-    projectPath.resolve("build.gradle").append(textToAppend)
-}

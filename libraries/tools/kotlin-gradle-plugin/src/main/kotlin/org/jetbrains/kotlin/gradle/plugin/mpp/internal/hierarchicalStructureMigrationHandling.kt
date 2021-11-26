@@ -18,7 +18,10 @@ internal fun handleHierarchicalStructureFlagsMigration(project: Project) {
         doHandleHierarchicalStructureFlagsMigration(project.rootProject)
     }
 
-    doHandleHierarchicalStructureFlagsMigration(project)
+    // rootProject will be handled with the SingleActionPerProject above
+    if (project.rootProject !== project) {
+        doHandleHierarchicalStructureFlagsMigration(project)
+    }
 }
 
 private fun doHandleHierarchicalStructureFlagsMigration(project: Project) {
@@ -39,7 +42,7 @@ private fun PropertiesProvider.checkHmppFeatureFlagsForConsistency(project: Proj
         if (hierarchicalStructureSupport) {
             if (project === project.rootProject) {
                 when (enableGranularSourceSetsMetadata) {
-                    true -> warnGranularMetadataTrueHasNoEffect(project)
+                    true -> if (!mpp13XFlagsSetByPlugin) warnGranularMetadataTrueHasNoEffect(project)
                     false -> errorGranularMetadataFalseUnsupported()
                     null -> Unit
                 }

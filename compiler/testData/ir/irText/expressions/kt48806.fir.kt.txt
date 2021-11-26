@@ -6,15 +6,24 @@ class A {
   }
 
   val test_1: Int
-    field = try throw RuntimeException()
-    catch (e: Exception)1
+    field = try { // BLOCK
+      throw RuntimeException()
+    }
+    catch (e: Exception){ // BLOCK
+      1
+    }
 
     get
 
   val test_2: Int
-    field = try 1
-    catch (e: Exception)throw RuntimeException()
+    field = try { // BLOCK
+      1
+    }
+    catch (e: Exception){ // BLOCK
+      throw RuntimeException()
+    }
 
     get
 
 }
+

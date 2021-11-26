@@ -58,13 +58,13 @@ fun case_4(value_1: Int, value_2: String, value_3: String) {
 fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     when (value_1) {
         1 -> when (value_3) {
-            value_2 > 1000 -> "1"
-            value_2 > 100 -> "2"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
             else -> "3"
         }
         2 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
-            value_2 > 1000 -> "1"
-            value_2 > 100 -> "2"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
         }
         3 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
         4 -> when (value_3) {
@@ -83,8 +83,8 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Int, value_2: Int, value_3: Boolean?) = when (value_1) {
     1 -> when (value_3) {
-        value_2 > 1000 -> 1
-        value_2 > 100 -> 2
+        <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> 1
+        <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> 2
         else -> 3
     }
     else -> when (value_3) {

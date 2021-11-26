@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 interface IBase {
     fun testDefault1() = if (this is B) this.foo() else "fail"
@@ -10,7 +10,9 @@ interface IFoo : IBase {
     fun testDefault2() = if (this is B) this.foo() else "fail"
 }
 
-inline class B(val x: String) : IFoo {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class B(val x: String) : IFoo {
     override fun foo() = x
 }
 

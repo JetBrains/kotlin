@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @JvmField public val publicField = "1";
 @JvmField internal val internalField = "23";

@@ -100,3 +100,9 @@ val TestFile.isKtsFile: Boolean
 
 val TestFile.isJavaFile: Boolean
     get() = name.endsWith(".java")
+
+val TestFile.isJsFile: Boolean
+    get() = name.endsWith(".js")
+
+val TestFile.isMjsFile: Boolean
+    get() = name.endsWith(".mjs")

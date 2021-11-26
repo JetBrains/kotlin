@@ -63,6 +63,49 @@ fun main() {
     // Check that generics doesn't break anything.
     checkEnumSubTyping(E.R)
     checkIntSubTyping(630090)
+
+    memScoped {
+        val SIZE = 10
+        val flex = alloc(sizeOf<WithFlexibleArray>() + sizeOf<IntVar>() * SIZE, alignOf<WithFlexibleArray>()).reinterpret<WithFlexibleArray>()
+        flex.size = SIZE
+        for (i in 0 until SIZE) {
+            flex.data[i] = i
+        }
+        assertEquals(SIZE, flex.size)
+        for (i in 0 until SIZE) {
+            assertEquals(i, flex.data[i])
+        }
+    }
+
+    memScoped {
+        val SIZE = 10
+        val flex = alloc(sizeOf<WithZeroSizedArray>() + sizeOf<IntVar>() * SIZE, alignOf<WithZeroSizedArray>()).reinterpret<WithZeroSizedArray>()
+        assertEquals(4, sizeOf<WithZeroSizedArray>())
+        assertEquals(4, alignOf<WithZeroSizedArray>())
+        flex.size = SIZE
+        for (i in 0 until SIZE) {
+            flex.data[i] = i
+        }
+        assertEquals(SIZE, flex.size)
+        for (i in 0 until SIZE) {
+            assertEquals(i, flex.data[i])
+        }
+    }
+
+    memScoped {
+        val SIZE = 10
+        assertEquals(8, sizeOf<WithFlexibleArrayWithPadding>())
+        assertEquals(8, alignOf<WithFlexibleArrayWithPadding>())
+        val flex = alloc(sizeOf<WithFlexibleArrayWithPadding>() + sizeOf<LongVar>() * SIZE, alignOf<WithFlexibleArrayWithPadding>())
+                .reinterpret<WithFlexibleArrayWithPadding>()
+        fillArray(flex.ptr, SIZE)
+        assertEquals(SIZE, flex.size)
+        assertEquals('!'.code.toByte(), flex.c);
+        for (i in 0 until SIZE) {
+            assertEquals((i.toLong() shl 32) or (i.toLong() * 100), flex.data[i])
+        }
+    }
+
 }
 
 fun <T : E> checkEnumSubTyping(e: T) = memScoped {

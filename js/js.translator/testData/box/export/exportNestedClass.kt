@@ -4,7 +4,7 @@
 // INFER_MAIN_MODULE
 // SKIP_DCE_DRIVEN
 
-// MODULE: export-nested-class
+// MODULE: export_nested_class
 // FILE: lib.kt
 
 abstract class A {
@@ -24,7 +24,25 @@ class B {
     }
 }
 
+@JsExport
+object MyObject {
+    class A {
+        fun valueA() = "OK"
+    }
+    class B {
+        fun valueB() = "OK"
+    }
+    class C {
+        fun valueC() = "OK"
+    }
+}
+
 // FILE: test.js
 function box() {
-    return new this["export-nested-class"].B.Foo().bar("K");
+    if (new this["export_nested_class"].B.Foo().bar("K") != "OK") return "fail 1";
+    if (new this["export_nested_class"].MyObject.A().valueA() != "OK") return "fail 2";
+    if (new this["export_nested_class"].MyObject.B().valueB() != "OK") return "fail 3";
+    if (new this["export_nested_class"].MyObject.C().valueC() != "OK") return "fail 4";
+
+    return "OK"
 }

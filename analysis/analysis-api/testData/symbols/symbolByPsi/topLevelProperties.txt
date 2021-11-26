@@ -1,15 +1,13 @@
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /x
-  dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 10
+  initializer: KtConstantInitializerValue(10)
   isConst: false
+  isDelegatedProperty: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -20,8 +18,10 @@ KtFirKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -29,12 +29,9 @@ KtFirKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirPropertyGetterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtPropertyGetterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -44,23 +41,22 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: ACCESSOR
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /y
-  dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
   hasSetter: false
   initializer: null
   isConst: false
+  isDelegatedProperty: false
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -70,9 +66,11 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: [] kotlin/Int
+  receiverType: kotlin/Int
+  returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null

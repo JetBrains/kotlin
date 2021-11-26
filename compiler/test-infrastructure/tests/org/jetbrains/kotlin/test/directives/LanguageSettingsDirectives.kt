@@ -59,6 +59,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )
 
+    val JVM_DEFAULT_ALLOW_NON_DEFAULT_INHERITANCE by directive(
+        description = "Configures corresponding analysis flag (JvmAnalysisFlags.jvmDefaultAllowNonDefaultInheritance)",
+    )
+
     val INHERIT_MULTIFILE_PARTS by directive(
         description = "Enables corresponding analysis flag (JvmAnalysisFlags.inheritMultifileParts)"
     )

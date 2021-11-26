@@ -178,7 +178,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     isFinal = false
                     visibility = if (it.index < 0) DescriptorVisibilities.PRIVATE else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 } else null
-                ParameterInfo(field, it.type, it.name)
+                ParameterInfo(field, it.type, it.name, it.origin)
             }
 
             context.continuationClassesVarsCountByType[attributeOwnerId] = varsCountByType
@@ -219,7 +219,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                         parent = this,
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
-                        origin = IrDeclarationOrigin.DEFINED,
+                        origin = param.origin,
                         name = param.name,
                         type = param.type
                     ).apply {
@@ -353,6 +353,6 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
         }
 }
 
-private data class ParameterInfo(val field: IrField?, val type: IrType, val name: Name) {
+private data class ParameterInfo(val field: IrField?, val type: IrType, val name: Name, val origin: IrDeclarationOrigin) {
     val isUsed = field != null
 }

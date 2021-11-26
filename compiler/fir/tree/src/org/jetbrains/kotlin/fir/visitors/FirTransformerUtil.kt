@@ -39,3 +39,11 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
         iterator.set(result)
     }
 }
+
+fun <R, D> List<FirElement>.acceptAllElements(visitor: FirVisitor<R, D>, data: D) {
+    forEach { it.accept(visitor, data) }
+}
+
+fun List<FirElement>.acceptAllElements(visitor: FirVisitorVoid) {
+    forEach { it.accept(visitor) }
+}

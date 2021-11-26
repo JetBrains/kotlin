@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
@@ -37,21 +37,21 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBuilder, FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var deprecation: DeprecationsPerUseSite? = null
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override lateinit var status: FirDeclarationStatus
+    override var deprecation: DeprecationsPerUseSite? = null
     override lateinit var classKind: ClassKind
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
-    open lateinit var status: FirDeclarationStatus
     open lateinit var name: Name
     open lateinit var symbol: FirRegularClassSymbol
-    open var companionObject: FirRegularClass? = null
+    open var companionObjectSymbol: FirRegularClassSymbol? = null
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
 
     override fun build(): FirRegularClass {
@@ -61,16 +61,16 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
             resolvePhase,
             origin,
             attributes,
-            deprecation,
             typeParameters,
+            status,
+            deprecation,
             classKind,
             declarations,
             annotations,
             scopeProvider,
-            status,
             name,
             symbol,
-            companionObject,
+            companionObjectSymbol,
             superTypeRefs,
         )
     }
@@ -96,16 +96,16 @@ inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClas
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.deprecation = original.deprecation
     copyBuilder.typeParameters.addAll(original.typeParameters)
+    copyBuilder.status = original.status
+    copyBuilder.deprecation = original.deprecation
     copyBuilder.classKind = original.classKind
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.scopeProvider = original.scopeProvider
-    copyBuilder.status = original.status
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol
-    copyBuilder.companionObject = original.companionObject
+    copyBuilder.companionObjectSymbol = original.companionObjectSymbol
     copyBuilder.superTypeRefs.addAll(original.superTypeRefs)
     return copyBuilder.apply(init).build()
 }

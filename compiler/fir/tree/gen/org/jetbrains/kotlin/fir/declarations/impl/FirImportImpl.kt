@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirImportImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
     override val aliasName: Name?,
-    override val aliasSource: FirSourceElement?,
+    override val aliasSource: KtSourceElement?,
 ) : FirPureAbstractElement(), FirImport {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

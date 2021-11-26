@@ -113,6 +113,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
 
             is IrErrorType -> "IrErrorType(${if (verboseErrorTypes) originalKotlinType else null})"
 
+            is IrDefinitelyNotNullType -> "{${original.render()} & Any}"
+
             is IrSimpleType -> buildTrimEnd {
                 append(classifier.renderClassifierFqn())
                 if (arguments.isNotEmpty()) {
@@ -726,6 +728,16 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
         "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
+
+    override fun visitConstantArray(expression: IrConstantArray, data: Nothing?): String =
+        "CONSTANT_ARRAY type=${expression.type.render()}"
+
+    override fun visitConstantObject(expression: IrConstantObject, data: Nothing?): String =
+        "CONSTANT_OBJECT type=${expression.type.render()} constructor=${expression.constructor.renderReference()}"
+
+    override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?): String =
+        "CONSTANT_PRIMITIVE type=${expression.type.render()}"
+
 
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }

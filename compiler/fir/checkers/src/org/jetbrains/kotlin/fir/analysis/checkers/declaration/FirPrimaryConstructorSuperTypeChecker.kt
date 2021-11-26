@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 /** Checker on super type declarations in the primary constructor of a class declaration. */
@@ -36,12 +36,12 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
             return
         }
 
-        val primaryConstructor = declaration.primaryConstructor
+        val primaryConstructorSymbol = declaration.primaryConstructorIfAny(context.session)
 
-        if (primaryConstructor == null) {
+        if (primaryConstructorSymbol == null) {
             checkSupertypeInitializedWithoutPrimaryConstructor(declaration, reporter, context)
         } else {
-            checkSuperTypeNotInitialized(primaryConstructor, declaration, context, reporter)
+            checkSuperTypeNotInitialized(primaryConstructorSymbol, declaration, context, reporter)
         }
     }
 
@@ -55,13 +55,13 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
      *  ```
      */
     private fun checkSuperTypeNotInitialized(
-        primaryConstructor: FirConstructor,
+        primaryConstructorSymbol: FirConstructorSymbol,
         regularClass: FirRegularClass,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>()
-        val delegatedConstructorCall = primaryConstructor.delegatedConstructor ?: return
+        val delegatedConstructorCall = primaryConstructorSymbol.resolvedDelegatedConstructorCall ?: return
         // No need to check implicit call to the constructor of `kotlin.Any`.
         val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
         if (constructedTypeRef is FirImplicitAnyTypeRef) return
@@ -74,7 +74,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
             return
         }
         val delegatedCallSource = delegatedConstructorCall.source ?: return
-        if (delegatedCallSource.kind !is FirFakeSourceElementKind) return
+        if (delegatedCallSource.kind !is KtFakeSourceElementKind) return
         if (superClassSymbol.classId == StandardClassIds.Enum) return
         if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
             reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED, context)

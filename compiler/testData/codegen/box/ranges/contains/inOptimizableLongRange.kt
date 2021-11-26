@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 fun check(x: Long, left: Long, right: Long): Boolean {

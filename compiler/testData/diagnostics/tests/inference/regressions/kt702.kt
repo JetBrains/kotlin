@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-702 Type inference failed
 package a
 //+JDK
@@ -9,7 +10,7 @@ public class Throwables() {
         public fun <X : Throwable?> propagateIfInstanceOf(throwable : Throwable?, declaredType : Class<X?>?) : Unit {
             if (((throwable != null) && declaredType?.isInstance(throwable)!!))
             {
-                throw declaredType<!UNNECESSARY_SAFE_CALL!>?.<!>cast(throwable)!!
+                throw <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>declaredType<!UNNECESSARY_SAFE_CALL!>?.<!>cast(throwable)<!>!!
             }
         }
         public fun propagateIfPossible(throwable : Throwable?) : Unit {

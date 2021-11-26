@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class CountingString(private val s: String) : CharSequence {
     var lengthCtr = 0

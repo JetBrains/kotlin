@@ -9,7 +9,7 @@ import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiImplUtil
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedConstantValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 

@@ -1,6 +1,6 @@
 interface IFooBar {
-  abstract fun foo() 
-  abstract fun bar() 
+  abstract fun foo()
+  abstract fun bar()
 
 }
 
@@ -35,4 +35,3 @@ class C : IFooBar {
   }
 
 }
-

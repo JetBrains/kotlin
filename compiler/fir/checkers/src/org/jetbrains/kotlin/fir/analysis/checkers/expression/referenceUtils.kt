@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 
-fun FirSuperReference.hadExplicitTypeInSource(): Boolean = superTypeRef.source?.kind != FirFakeSourceElementKind.SuperCallImplicitType
+fun FirSuperReference.hadExplicitTypeInSource(): Boolean = superTypeRef.source?.kind != KtFakeSourceElementKind.SuperCallImplicitType

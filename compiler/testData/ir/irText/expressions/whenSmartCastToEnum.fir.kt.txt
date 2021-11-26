@@ -21,7 +21,7 @@ fun test() {
   var r: String = ""
   val x: Any? = En.A
   when {
-    x /*as En */ is En -> { // BLOCK
+    x is En -> { // BLOCK
       val tmp0_subject: En = x /*as En */
       when {
         EQEQ(arg0 = tmp0_subject, arg1 = En.A) -> { // BLOCK
@@ -37,7 +37,7 @@ fun test() {
   }
   val y: Any = En.A
   when {
-    y /*as En */ is En -> { // BLOCK
+    y is En -> { // BLOCK
       val tmp1_subject: En = y /*as En */
       when {
         EQEQ(arg0 = tmp1_subject, arg1 = En.A) -> { // BLOCK

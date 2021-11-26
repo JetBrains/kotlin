@@ -1,6 +1,6 @@
 FILE: lambda.kt
     public? final? data class Tuple : R|kotlin/Any| {
-        public? [ContainingClassKey=Tuple] constructor(x: Int, y: Int): R|Tuple| {
+        public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.x] x: Int, [CorrespondingProperty=/Tuple.y] y: Int): R|Tuple| {
             super<R|kotlin/Any|>()
         }
 
@@ -67,6 +67,11 @@ FILE: lambda.kt
         )
     }
     public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        ^ Unit
+    }
+
+        public? get(): <implicit>
+    public? final? val simpleWithArrow: <implicit> = fun <implicit>.<anonymous>(<no-parameters>)(): <implicit> <inline=Unknown>  {
         ^ Unit
     }
 

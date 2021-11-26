@@ -113,7 +113,7 @@ class KotlinMetadataTargetConfigurator :
     override fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
         val project = compilation.target.project
 
-        /** See [createTransformedMetadataClasspath] and its usage. */
+        /** See [createMetadataDependencyTransformationClasspath] and its usage. */
         if (project.isKotlinGranularMetadataEnabled && compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME)
             compilation.compileDependencyFiles = project.files()
         else
@@ -308,6 +308,9 @@ class KotlinMetadataTargetConfigurator :
             if (!isHostSpecific) {
                 val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
                 allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
+                if (this is KotlinSharedNativeCompilation) {
+                    project.includeCommonizedCInteropMetadata(allMetadataJar, this)
+                }
             } else {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
@@ -329,10 +332,14 @@ class KotlinMetadataTargetConfigurator :
             listOf(sourceSet)
         ) { }
 
-        compilation.compileDependencyFiles += createTransformedMetadataClasspath(
+        compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
             project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
             compilation
         )
+
+        if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
+            compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
+        }
     }
 
     private fun setupDependencyTransformationForSourceSet(
@@ -415,7 +422,7 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun createTransformedMetadataClasspath(
+    private fun createMetadataDependencyTransformationClasspath(
         fromFiles: Configuration,
         compilation: AbstractKotlinCompilation<*>
     ): FileCollection {
@@ -437,7 +444,7 @@ class KotlinMetadataTargetConfigurator :
             transformationTaskHolders.map { SourceSetResolvedMetadataProvider(it) }
         }
 
-        return createTransformedMetadataClasspath(
+        return createMetadataDependencyTransformationClasspath(
             project,
             fromFiles,
             dependsOnCompilationOutputs,
@@ -450,7 +457,6 @@ class KotlinMetadataTargetConfigurator :
         project.configurations.create(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
             isCanBeConsumed = true
             isCanBeResolved = false
-            setupAsPublicConfigurationIfSupported(target)
             usesPlatformOf(target)
 
             attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
@@ -490,14 +496,14 @@ internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<
 internal interface ResolvedMetadataFilesProvider {
     val buildDependencies: Iterable<TaskProvider<*>>
     val metadataResolutions: Iterable<MetadataDependencyResolution>
-    val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection>
+    val metadataFilesByResolution: Map<out MetadataDependencyResolution, FileCollection>
 }
 
-internal fun createTransformedMetadataClasspath(
+internal fun createMetadataDependencyTransformationClasspath(
     project: Project,
     fromFiles: Configuration,
     parentCompiledMetadataFiles: Lazy<Iterable<FileCollection>>,
-    metadataResolutionProviders: Lazy<Iterable<ResolvedMetadataFilesProvider>>
+    metadataResolutionProviders: Lazy<Iterable<ResolvedMetadataFilesProvider>>,
 ): FileCollection {
     return project.files(
         Callable {
@@ -529,8 +535,7 @@ internal fun createTransformedMetadataClasspath(
                     if (resolutions == null) {
                         add(artifact.file)
                     } else {
-                        val chooseVisibleSourceSets =
-                            resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+                        val chooseVisibleSourceSets = resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
 
                         if (chooseVisibleSourceSets.isNotEmpty()) {
                             // Wrap the list into a FileCollection, as some older Gradle version failed to resolve the classpath
@@ -546,7 +551,7 @@ internal fun createTransformedMetadataClasspath(
 }
 
 internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSet): Boolean {
-    val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project)[sourceSet].orEmpty()
+    val compilations = compilationsBySourceSets(project)[sourceSet].orEmpty()
     return compilations.isNotEmpty() && compilations.all {
         it.platformType == KotlinPlatformType.common || it.platformType == KotlinPlatformType.native
     }

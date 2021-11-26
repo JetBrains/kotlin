@@ -1,8 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1283
 
 // MODULE: lib
-// FILE: a.kt
 // MODULE_KIND: AMD
+// FILE: a.kt
 @file:JsModule("foo")
 
 external fun fooF(): String
@@ -17,8 +17,8 @@ external fun barF(): String
 fun dummyF() = "dummy"
 
 // MODULE: main(lib)
-// FILE: main.kt
 // MODULE_KIND: AMD
+// FILE: main.kt
 
 fun box(): String {
     val foo = fooF()

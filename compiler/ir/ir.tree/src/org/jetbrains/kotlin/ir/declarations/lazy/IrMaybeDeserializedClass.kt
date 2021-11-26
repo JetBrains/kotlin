@@ -9,4 +9,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
 interface IrMaybeDeserializedClass : IrDeclaration {
     val moduleName: String?
+
+    val isNewPlaceForBodyGeneration: Boolean
 }

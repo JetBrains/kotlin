@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 
 abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest() {
@@ -35,7 +35,9 @@ abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest()
             check(resolveState is FirModuleResolveStateImpl)
             val firElement = LowLevelFirApiFacadeForResolveOnAir.onAirResolveElement(resolveState, place, onAir)
             val rendered = firElement.render(FirRenderer.RenderMode.WithResolvePhases)
-            KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".txt"), rendered)
+            testServices.assertions.assertEqualsToTestDataFileSibling(rendered)
         }
     }
+
+    override val enableTestInDependedMode: Boolean get() = false
 }

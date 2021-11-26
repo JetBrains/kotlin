@@ -20,7 +20,7 @@ constructor(
     override val considerGeneratingFlag: Boolean = false
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
-        setOf(nodeJs.versions.dukat)
+        emptySet()
     }
 
     @get:OutputDirectory

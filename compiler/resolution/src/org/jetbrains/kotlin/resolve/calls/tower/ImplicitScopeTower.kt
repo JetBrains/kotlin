@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -37,6 +39,8 @@ interface ImplicitScopeTower {
 
     fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo?
 
+    fun getNameForGivenImportAlias(name: Name): Name?
+
     val dynamicScope: MemberScope
 
     val syntheticScopes: SyntheticScopes
@@ -46,6 +50,8 @@ interface ImplicitScopeTower {
     val isDebuggerContext: Boolean
 
     val isNewInferenceEnabled: Boolean
+
+    val languageVersionSettings: LanguageVersionSettings
 
     val typeApproximator: TypeApproximator
 
@@ -108,6 +114,15 @@ abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicabili
 class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility) : ResolutionDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
+    }
+}
+
+class VisibilityErrorOnArgument(
+    val argument: KotlinCallArgument,
+    val invisibleMember: DeclarationDescriptorWithVisibility
+) : ResolutionDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
     }
 }
 

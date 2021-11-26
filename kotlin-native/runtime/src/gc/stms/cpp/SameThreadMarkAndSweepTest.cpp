@@ -208,7 +208,8 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
     mm::AllocateObject(&threadData, typeHolderWeakCounter.typeInfo(), location);
     auto& weakCounter = WeakCounter::FromObjHeader(*location);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
-    *extraObjectData.GetWeakCounterLocation() = weakCounter.header();
+    auto *setCounter = extraObjectData.GetOrSetWeakReferenceCounter(objHeader, weakCounter.header());
+    EXPECT_EQ(setCounter, weakCounter.header());
     weakCounter->referred = objHeader;
     return weakCounter;
 }
@@ -222,6 +223,7 @@ public:
 
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
+        mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
         mm::GlobalData::Instance().objectFactory().ClearForTests();
         mm::GlobalData::Instance().gcScheduler().ReplaceGCSchedulerDataForTests(
                 [](auto& config, auto scheduleGC) { return gc::internal::MakeGCSchedulerData(config, std::move(scheduleGC)); });
@@ -783,7 +785,7 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsCollect) {
 
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] =
-                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionPrologue(); });
     }
 
     for (auto& future : gcFutures) {
@@ -904,7 +906,7 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) {
             expandRootSet(threadData, mutator, i);
-            threadData.gc().SafePointFunctionEpilogue();
+            threadData.gc().SafePointFunctionPrologue();
         });
     }
 
@@ -968,7 +970,7 @@ TEST_F(SameThreadMarkAndSweepTest, CrossThreadReference) {
 
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] =
-                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionPrologue(); });
     }
 
     for (auto& future : gcFutures) {
@@ -1032,7 +1034,7 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsWeaks) {
 
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([weak](mm::ThreadData& threadData, Mutator& mutator) {
-            threadData.gc().SafePointFunctionEpilogue();
+            threadData.gc().SafePointFunctionPrologue();
             EXPECT_THAT((*weak)->referred, nullptr);
         });
     }
@@ -1090,7 +1092,7 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     // All the other threads are stopping at safe points.
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] =
-                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionEpilogue(); });
+                mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().SafePointFunctionPrologue(); });
     }
 
     // GC will be completed first
@@ -1125,4 +1127,45 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         aliveForThisThread.push_back(unreachables[kDefaultThreadCount + i]);
         EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
     }
+}
+
+
+TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
+    KStdVector<Mutator> mutators(2);
+    std::atomic<test_support::Object<Payload>*> object1 = nullptr;
+    std::atomic<WeakCounter*> weak = nullptr;
+    std::atomic<bool> done = false;
+    auto f0 = mutators[0].Execute([&](mm::ThreadData& threadData, Mutator &) {
+        GlobalObjectHolder global1{threadData};
+        auto& object1_local = AllocateObject(threadData);
+        object1 = &object1_local;
+        global1->field1 = object1_local.header();
+        while (weak.load() == nullptr);
+        threadData.gc().PerformFullGC();
+
+        ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1_local.header(), weak.load()->header(), global1.header()));
+        ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
+        ASSERT_THAT(GetColor(object1_local.header()), Color::kWhite);
+        ASSERT_THAT(GetColor(weak.load()->header()), Color::kWhite);
+        ASSERT_THAT((*weak.load())->referred, object1_local.header());
+
+        global1->field1 = nullptr;
+
+        threadData.gc().PerformFullGC();
+
+        EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header()));
+        done = true;
+    });
+    
+    auto f1 = mutators[1].Execute([&](mm::ThreadData& threadData, Mutator &) {
+        while (object1.load() == nullptr) {}
+        ObjHolder holder;
+        auto &weak_local = InstallWeakCounter(threadData, object1.load()->header(), holder.slot());
+        weak = &weak_local;
+        *holder.slot() = nullptr;
+        while (!done) threadData.gc().SafePointLoopBody();
+    });
+
+    f0.wait();
+    f1.wait();
 }

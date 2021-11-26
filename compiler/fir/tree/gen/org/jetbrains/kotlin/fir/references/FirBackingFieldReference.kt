@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.references
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.name.Name
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirBackingFieldReference : FirResolvedNamedReference() {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val candidateSymbol: FirBasedSymbol<*>?
     abstract override val resolvedSymbol: FirBackingFieldSymbol

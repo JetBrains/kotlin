@@ -35,12 +35,19 @@ internal class KtFirSymbolProvider(
 ) : KtSymbolProvider(), ValidityTokenOwner {
     private val firSymbolProvider by weakRef(firSymbolProvider)
 
-    override fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol = withValidityAssertion {
-        if (psi.isFunctionTypeParameter) {
-            error("Creating KtValueParameterSymbol for function type parameter is not possible. Please see the KDoc of getParameterSymbol")
-        }
-        psi.withFirDeclarationOfType<FirValueParameter, KtValueParameterSymbol>(resolveState) {
-            firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(it)
+    override fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol = withValidityAssertion {
+        when {
+            psi.isFunctionTypeParameter -> error(
+                "Creating KtValueParameterSymbol for function type parameter is not possible. Please see the KDoc of getParameterSymbol"
+            )
+
+            psi.isLoopParameter -> psi.withFirDeclarationOfType<FirProperty, KtLocalVariableSymbol>(resolveState) {
+                firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(it)
+            }
+
+            else -> psi.withFirDeclarationOfType<FirValueParameter, KtValueParameterSymbol>(resolveState) {
+                firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(it)
+            }
         }
     }
 

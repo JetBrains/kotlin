@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.types.Variance
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -30,6 +31,18 @@ object CommonRenderers {
             Variance.INVARIANT -> "invariant"
             Variance.IN_VARIANCE -> "in"
             Variance.OUT_VARIANCE -> "out"
+        }
+    }
+
+    @JvmField
+    val CLASS_KIND = Renderer { classKind: ClassKind ->
+        when (classKind) {
+            ClassKind.CLASS -> "class"
+            ClassKind.INTERFACE -> "interface"
+            ClassKind.ENUM_CLASS -> "enum class"
+            ClassKind.ENUM_ENTRY -> "enum entry"
+            ClassKind.ANNOTATION_CLASS -> "annotation class"
+            ClassKind.OBJECT -> "object"
         }
     }
 

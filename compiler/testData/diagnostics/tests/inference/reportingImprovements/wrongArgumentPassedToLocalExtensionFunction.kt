@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun Runnable.test(f: Runnable.(Int) -> Unit) {
     f(<!TYPE_MISMATCH!>""<!>)

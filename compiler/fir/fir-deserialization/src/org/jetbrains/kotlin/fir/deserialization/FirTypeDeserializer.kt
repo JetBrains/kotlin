@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -109,7 +107,7 @@ class FirTypeDeserializer(
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         val annotations = annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-        val attributes = annotations.computeTypeAttributes()
+        val attributes = annotations.computeTypeAttributes(moduleData.session)
         return type(proto, attributes)
     }
 
@@ -195,7 +193,7 @@ class FirTypeDeserializer(
         attributes: ConeAttributes
     ): ConeClassLikeType {
         val result =
-            when (functionTypeConstructor.toSymbol(moduleData.session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
+            when ((functionTypeConstructor.toSymbol(moduleData.session)?.fir as FirTypeParameterRefsOwner).typeParameters.size - arguments.size) {
                 0 -> createSuspendFunctionTypeForBasicCase(functionTypeConstructor, arguments, isNullable, attributes)
                 1 -> {
                     val arity = arguments.size - 1

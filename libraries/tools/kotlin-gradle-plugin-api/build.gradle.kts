@@ -11,7 +11,3 @@ dependencies {
 
     compileOnly("com.android.tools.build:gradle:3.4.0")
 }
-
-pill {
-    variant = PillExtension.Variant.FULL
-}

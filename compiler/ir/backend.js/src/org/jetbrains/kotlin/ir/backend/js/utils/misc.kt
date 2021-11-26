@@ -71,19 +71,6 @@ fun IrDeclaration.hasStaticDispatch() = when (this) {
     else -> true
 }
 
-fun List<IrExpression>.toJsArrayLiteral(context: JsIrBackendContext, arrayType: IrType, elementType: IrType): IrExpression {
-    val irVararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, elementType, this)
-
-    return IrCallImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType,
-        context.intrinsics.arrayLiteral,
-        valueArgumentsCount = 1,
-        typeArgumentsCount = 0
-    ).apply {
-        putValueArgument(0, irVararg)
-    }
-}
-
 val IrValueDeclaration.isDispatchReceiver: Boolean
     get() {
         val parent = this.parent
@@ -130,3 +117,5 @@ fun invokeFunForLambda(call: IrCall) =
         .declarations
         .filterIsInstance<IrSimpleFunction>()
         .single { it.name.asString() == "invoke" }
+
+fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }

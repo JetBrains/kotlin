@@ -31,6 +31,31 @@ object JvmFlag {
         val IS_MOVED_FROM_INTERFACE_COMPANION = booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION)
     }
 
+    /**
+     * JVM-specific class flags in addition to common class flags declared in [Flag.Class].
+     */
+    object Class {
+        /**
+         * Applied to an interface compiled with -Xjvm-default=all or all-compatibility.
+         *
+         * Without this flag or a `@JvmDefault` annotation on individual interface methods
+         * the Kotlin compiler moves all interface method bodies into a nested `DefaultImpls`
+         * class.
+         */
+        @JvmField
+        val HAS_METHOD_BODIES_IN_INTERFACE = booleanFlag(JF.ARE_INTERFACE_METHOD_BODIES_INSIDE)
+
+        /**
+         * Applied to an interface compiled with -Xjvm-default=all-compatibility.
+         *
+         * In compatibility mode we generate method bodies directly in the interface,
+         * but we also generate bridges in a nested `DefaultImpls` class for use by
+         * clients compiled without all-compatibility.
+         */
+        @JvmField
+        val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_ALL_COMPATIBILITY_MODE)
+    }
+
     private fun booleanFlag(f: F.BooleanFlagField): Flag =
         Flag(f.offset, f.bitWidth, 1)
 }

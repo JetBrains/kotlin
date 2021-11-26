@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: COROUTINES
 // !LANGUAGE: +SuspendConversion
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
 import kotlin.coroutines.*

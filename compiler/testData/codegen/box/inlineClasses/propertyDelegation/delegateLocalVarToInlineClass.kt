@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 var setterInvoked = 0
 
 var backing = 42
 
-inline class DelegateStr(val ignored: String) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class DelegateStr(val ignored: String) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         backing
@@ -15,7 +17,9 @@ inline class DelegateStr(val ignored: String) {
     }
 }
 
-inline class DelegateInt(val ignored: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class DelegateInt(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         backing
@@ -26,7 +30,9 @@ inline class DelegateInt(val ignored: Int) {
     }
 }
 
-inline class DelegateLong(val ignored: Long) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class DelegateLong(val ignored: Long) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         backing

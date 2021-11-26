@@ -51,12 +51,16 @@ public class StringSwitchCodegen extends SwitchCodegen {
         assert constant instanceof StringValue : "guaranteed by usage contract";
         int hashCode = constant.hashCode();
 
+        List<StringSwitchCodegen.Entry> hashCodesToEntry;
         if (!transitionsTable.containsKey(hashCode)) {
             transitionsTable.put(hashCode, new Label());
-            hashCodesToEntries.put(hashCode, new ArrayList<>());
+            hashCodesToEntry = new ArrayList<>();
+            hashCodesToEntries.put(hashCode, hashCodesToEntry);
+        } else {
+            hashCodesToEntry = hashCodesToEntries.get(hashCode);
         }
 
-        hashCodesToEntries.get(hashCode).add(new Entry(((StringValue) constant).getValue(), entryLabel, entry));
+        hashCodesToEntry.add(new Entry(((StringValue) constant).getValue(), entryLabel, entry));
     }
 
     @Override

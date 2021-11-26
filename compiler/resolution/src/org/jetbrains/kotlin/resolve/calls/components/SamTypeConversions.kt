@@ -104,7 +104,7 @@ object SamTypeConversions : ParameterTypeConversion {
 
         candidate.resolvedCall.registerArgumentWithSamConversion(
             argument,
-            SamConversionDescription(convertedTypeByOriginal!!, convertedTypeByCandidate)
+            SamConversionDescription(convertedTypeByOriginal!!, convertedTypeByCandidate, expectedParameterType)
         )
 
         if (needCompatibilityResolveForSAM(candidate, expectedParameterType)) {

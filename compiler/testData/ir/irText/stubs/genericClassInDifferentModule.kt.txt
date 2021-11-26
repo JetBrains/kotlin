@@ -50,4 +50,3 @@ class Derived1<T : Any?> : Base<T> {
     }
 
 }
-

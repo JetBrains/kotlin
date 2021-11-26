@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: Sample.java
 public class Sample {

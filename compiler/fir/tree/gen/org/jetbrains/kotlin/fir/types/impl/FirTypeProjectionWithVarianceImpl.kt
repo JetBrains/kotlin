@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.types.Variance
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirTypeProjectionWithVarianceImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override val variance: Variance,
 ) : FirTypeProjectionWithVariance() {

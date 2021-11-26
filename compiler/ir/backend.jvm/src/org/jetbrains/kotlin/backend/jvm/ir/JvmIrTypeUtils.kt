@@ -131,10 +131,15 @@ fun IrType.eraseToScope(scopeOwner: IrTypeParametersContainer): IrType =
 fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
     require(this is IrSimpleType) { error("Unexpected IrType kind: ${render()}") }
     return when (classifier) {
-        is IrClassSymbol -> IrSimpleTypeImpl(
-            classifier, hasQuestionMark, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations
-        )
-        is IrTypeParameterSymbol -> if (classifier.owner in visibleTypeParameters) this else upperBound
+        is IrClassSymbol ->
+            IrSimpleTypeImpl(
+                classifier, hasQuestionMark, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations
+            )
+        is IrTypeParameterSymbol ->
+            if (classifier.owner in visibleTypeParameters)
+                this
+            else
+                upperBound.withHasQuestionMark(this.hasQuestionMark)
         else -> error("unknown IrType classifier kind: ${classifier.owner.render()}")
     }
 }

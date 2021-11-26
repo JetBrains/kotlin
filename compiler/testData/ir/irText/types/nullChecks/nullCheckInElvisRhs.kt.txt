@@ -1,0 +1,18 @@
+// MODULE: lib
+// MODULE: main
+// FILE: nullCheckInElvisRhs.kt
+
+fun baz(): String? {
+  return null
+}
+
+fun test(): String {
+  return { // BLOCK
+    val tmp0_elvis_lhs: String? = baz()
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> foo() /*!! String */
+      else -> tmp0_elvis_lhs
+    }
+  }
+}
+

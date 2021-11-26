@@ -1,4 +1,6 @@
 FILE: k.kt
+    package k
+
     public final class A : R|kotlin/Any| {
         public constructor(): R|k/A| {
             super<R|kotlin/Any|>()
@@ -40,6 +42,8 @@ FILE: k.kt
 
     }
 FILE: j.kt
+    package j
+
     public final class C : R|kotlin/Any| {
         public constructor(): R|j/C| {
             super<R|kotlin/Any|>()

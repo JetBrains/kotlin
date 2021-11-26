@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -19,11 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -34,7 +30,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 fun BodyResolveComponents.findTypesForSuperCandidates(
     superTypeRefs: List<FirTypeRef>,
     containingCall: FirQualifiedAccess,
-): Collection<ConeKotlinType> {
+): List<ConeKotlinType> {
     val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).type }
     val isMethodOfAny = containingCall is FirFunctionCall && isCallingMethodOfAny(containingCall)
     if (supertypes.size <= 1 && !isMethodOfAny) return supertypes
@@ -65,7 +61,7 @@ private fun isCallingMethodOfAny(callExpression: FirFunctionCall): Boolean =
 private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
     supertypes: Collection<ConeKotlinType>,
     calleeName: Name
-): Collection<ConeKotlinType> {
+): List<ConeKotlinType> {
     val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) {
         getFunctionMembers(it, calleeName)
     }
@@ -75,13 +71,19 @@ private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
         listOf(session.builtinTypes.anyType.type)
 }
 
-private fun BodyResolveComponents.resolveSupertypesByCalleeName(supertypes: Collection<ConeKotlinType>, calleeName: Name): Collection<ConeKotlinType> =
+private fun BodyResolveComponents.resolveSupertypesByCalleeName(
+    supertypes: Collection<ConeKotlinType>,
+    calleeName: Name
+): List<ConeKotlinType> =
     resolveSupertypesByMembers(supertypes, true) {
         getFunctionMembers(it, calleeName) +
                 getPropertyMembers(it, calleeName)
     }
 
-private fun BodyResolveComponents.resolveSupertypesByPropertyName(supertypes: Collection<ConeKotlinType>, propertyName: Name): Collection<ConeKotlinType> =
+private fun BodyResolveComponents.resolveSupertypesByPropertyName(
+    supertypes: Collection<ConeKotlinType>,
+    propertyName: Name
+): List<ConeKotlinType> =
     resolveSupertypesByMembers(supertypes, true) {
         getPropertyMembers(it, propertyName)
     }
@@ -90,7 +92,7 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
     supertypes: Collection<ConeKotlinType>,
     allowNonConcreteMembers: Boolean,
     getMembers: (ConeKotlinType) -> Collection<FirCallableDeclaration>
-): Collection<ConeKotlinType> {
+): List<ConeKotlinType> {
     val typesWithConcreteMembers = SmartList<ConeKotlinType>()
     val typesWithNonConcreteMembers = SmartList<ConeKotlinType>()
 
@@ -132,7 +134,7 @@ private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name:
 private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
         type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)?.processPropertiesByName(name) {
-            addIfNotNull(it.fir as? FirProperty)
+            addIfNotNull(it.fir as? FirVariable)
         }
     }
 

@@ -5,22 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
- import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
@@ -43,7 +41,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         // If one of the type is already `Nothing?`, we skip reporting further comparison. This is to allow comparing with `null`, which has
         // type `Nothing?`
         if (lType.isNullableNothing || rType.isNullableNothing) return
-        val inferenceContext = context.session.inferenceComponents.ctx
+        val inferenceContext = context.session.typeContext
 
         val compatibility = try {
             inferenceContext.isCompatible(lType, rType)
@@ -57,7 +55,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
         if (compatibility != ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE) {
             when (expression.source?.kind) {
-                FirRealSourceElementKind -> {
+                KtRealSourceElementKind -> {
                     // Note: FE1.0 reports INCOMPATIBLE_ENUM_COMPARISON_ERROR only when TypeIntersector.isIntersectionEmpty() thinks the
                     // given types are compatible. Exactly mimicking the behavior of FE1.0 is difficult and does not seem to provide any
                     // value. So instead, we deterministically output INCOMPATIBLE_ENUM_COMPARISON_ERROR if at least one of the value is an

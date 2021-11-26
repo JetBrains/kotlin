@@ -226,6 +226,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker
 
+    fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker
+
     fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
 
     fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker

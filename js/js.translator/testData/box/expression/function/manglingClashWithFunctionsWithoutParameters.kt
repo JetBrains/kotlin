@@ -1,4 +1,7 @@
+// DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1303
+
 package foo
 
 fun foo(i: Int): String = "foo" + i

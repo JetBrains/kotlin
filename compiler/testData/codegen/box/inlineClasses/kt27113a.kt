@@ -1,9 +1,12 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class A(val a: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val a: Any)
 
-inline class NA(val b: Any?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class NA(val b: Any?)
 
 fun box(): String {
     val ns1 = NA(A("abc"))

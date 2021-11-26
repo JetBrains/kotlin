@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 fun foo(it: Int) = "O"[it]
 
 val Int.foo: Char

@@ -7,13 +7,13 @@ fun box() {
 // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 inline fun foo() = {
 }
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
-// test1.kt:3 box
-// test1.kt:4 box
-// LINENUMBERS JVM_IR
+// test1.kt:8 box
+// test1.kt:9 box
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
-// test1.kt:4 invoke
+// test1.kt:9 invoke
 // test.kt:4 box
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:5 box

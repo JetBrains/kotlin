@@ -2,6 +2,9 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_MINIFICATION
 // SKIP_NODE_JS
+// INFER_MAIN_MODULE
+// MODULE: JS_TESTS
+// FILE: declarations.kt
 
 package foo
 
@@ -160,4 +163,37 @@ data class TestDataClass(val name: String) {
     class Nested {
         val prop: String = "hello"
     }
+}
+
+@JsExport
+enum class TestEnumClass(val constructorParameter: String) {
+    A("aConstructorParameter"),
+    B("bConstructorParameter");
+
+    val foo = ordinal
+
+    fun bar(value: String) = value
+
+    fun bay() = name
+
+    class Nested {
+        val prop: String = "hello2"
+    }
+}
+
+
+@JsExport
+interface TestInterface {
+    val value: String
+    fun getOwnerName(): String
+}
+
+@JsExport
+class TestInterfaceImpl(override val value: String) : TestInterface {
+    override fun getOwnerName() = "TestInterfaceImpl"
+}
+
+@JsExport
+fun processInterface(test: TestInterface): String {
+    return "Owner ${test.getOwnerName()} has value '${test.value}'"
 }

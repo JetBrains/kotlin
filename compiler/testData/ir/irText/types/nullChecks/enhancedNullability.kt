@@ -21,6 +21,7 @@ val testGlobalValGetter get() = J.notNullString()
 fun testJUse() {
     J.use(J.nullString())
     J.use(J.notNullString())
+    J.use(42)
 }
 
 fun testLocalVarUse() {
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.*;
 
 public class J {
     public static void use(@NotNull String s) {}
+    public static void use(@NotNull Integer x) {}
     public static String nullString() { return null; }
     public static @NotNull String notNullString() { return null; }
 }

@@ -140,8 +140,8 @@ fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when {
         value_1 == 1 -> value_2 as List<Int>
         value_1 == 2 -> value_2 as? List<Int>
-        value_1 == 3 -> value_3 as? MutableMap<Int, Int>
-        value_1 == 4 -> (value_2 as? Map<Int, Int>) as MutableMap<Int, Int>
+        value_1 == 3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
+        value_1 == 4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
     }
 }
 

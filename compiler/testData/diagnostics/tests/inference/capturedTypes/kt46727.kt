@@ -1,5 +1,5 @@
 // !LANGUAGE: +RefineTypeCheckingOnAssignmentsToJavaFields
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: Foo.java
 public class Foo<T> {

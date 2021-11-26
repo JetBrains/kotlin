@@ -41,7 +41,7 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
             irIfThenElse(
                 toParameter.type,
                 irEqeqeq(
-                    irGet(toParameter),
+                    irGet(toParameter, context.irBuiltIns.anyNType),
                     irCall(this@ExportedDefaultParameterStub.context.intrinsics.jsUndefined)
                 ),
                 defaultValue.expression,

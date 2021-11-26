@@ -16,7 +16,7 @@
 namespace kotlin {
 
 // A queue that is constructed by collecting subqueues from several `Producer`s.
-template <typename T>
+template <typename T, typename Mutex>
 class MultiSourceQueue {
 public:
     class Producer;
@@ -25,9 +25,17 @@ public:
     // and to not store the iterator.
     class Node : private Pinned, public KonanAllocatorAware {
     public:
-        Node(const T& value, Producer* owner) noexcept : value_(value), owner_(owner) {}
+        Node(Producer* owner, const T& value) noexcept : value_(value), owner_(owner) {}
+
+        template <typename... Args, typename = std::enable_if_t<std::is_constructible_v<T, Args...>>>
+        explicit Node(Producer* owner, Args&& ...args) noexcept : value_(std::forward<Args>(args)...), owner_(owner) {}
 
         T& operator*() noexcept { return value_; }
+
+        static Node& fromValue(T& t) noexcept {
+            static_assert(std::is_base_of_v<Pinned, T>, "fromValue function only makes sense for non-movable object");
+            return *reinterpret_cast<Node*>(reinterpret_cast<uintptr_t>(&t) - offsetof(Node, value_));
+        }
 
     private:
         friend class MultiSourceQueue;
@@ -44,7 +52,15 @@ public:
         ~Producer() { Publish(); }
 
         Node* Insert(const T& value) noexcept {
-            queue_.emplace_back(value, this);
+            queue_.emplace_back(this, value);
+            auto& node = queue_.back();
+            node.position_ = std::prev(queue_.end());
+            return &node;
+        }
+
+        template <typename... Args, typename = std::enable_if_t<std::is_constructible_v<T, Args...>>>
+        Node* Emplace(Args&& ...value) noexcept {
+            queue_.emplace_back(this, std::forward<Args>(value)...);
             auto& node = queue_.back();
             node.position_ = std::prev(queue_.end());
             return &node;
@@ -66,7 +82,7 @@ public:
             for (auto& node : queue_) {
                 node.owner_ = nullptr;
             }
-            std::lock_guard<SpinLock> guard(owner_.mutex_);
+            std::lock_guard<Mutex> guard(owner_.mutex_);
             owner_.queue_.splice(owner_.queue_.end(), queue_);
             owner_.deletionQueue_.splice(owner_.deletionQueue_.end(), deletionQueue_);
         }
@@ -114,7 +130,7 @@ public:
         explicit Iterable(MultiSourceQueue& owner) noexcept : owner_(owner), guard_(owner_.mutex_) {}
 
         MultiSourceQueue& owner_; // weak
-        std::unique_lock<SpinLock> guard_;
+        std::unique_lock<Mutex> guard_;
     };
 
     // Lock `MultiSourceQueue` for safe iteration. If element was scheduled for deletion,
@@ -123,7 +139,7 @@ public:
 
     // Lock `MultiSourceQueue` and apply deletions. Only deletes elements that were published.
     void ApplyDeletions() noexcept {
-        std::lock_guard<SpinLock> guard(mutex_);
+        std::lock_guard<Mutex> guard(mutex_);
         KStdList<Node*> remainingDeletions;
 
         auto it = deletionQueue_.begin();
@@ -149,12 +165,16 @@ public:
         deletionQueue_.clear();
     }
 
+    size_t GetSizeUnsafe() noexcept {
+        return queue_.size();
+    }
+
 private:
     // Using `KStdList` as it allows to implement `Collect` without memory allocations,
     // which is important for GC mark phase.
     KStdList<Node> queue_;
     KStdList<Node*> deletionQueue_;
-    SpinLock mutex_;
+    Mutex mutex_;
 };
 
 } // namespace kotlin

@@ -19,6 +19,6 @@ var z: Int = 44
 fun user(): Int {
     <!OPT_IN_USAGE_ERROR!>x<!> = 10
     <!OPT_IN_USAGE_ERROR!>y<!> = 5
-    <!OPT_IN_USAGE_ERROR!>x<!> = 15
+    <!OPT_IN_USAGE_ERROR!>z<!> = 15
     return x + <!OPT_IN_USAGE_ERROR!>y<!> + z
 }

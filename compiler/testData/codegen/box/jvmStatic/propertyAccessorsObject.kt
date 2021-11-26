@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 var result = "fail 2"
 object Foo {

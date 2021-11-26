@@ -1,7 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // !OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE") // TODO: support common sources in the test infrastructure
 

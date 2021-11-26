@@ -1,10 +1,8 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_ASSERT
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS
 // ASSERTIONS_MODE: always-enable
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun checkTrue(): Boolean {
     var hit = false

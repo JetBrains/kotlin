@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 operator fun Int.component1(): String {
     return arrayListOf("zero", "one", "two", "three")[this]

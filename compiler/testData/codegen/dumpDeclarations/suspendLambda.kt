@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 public fun invokeCoroutineBuilder() {
     return buildCoroutine {
         println(this)

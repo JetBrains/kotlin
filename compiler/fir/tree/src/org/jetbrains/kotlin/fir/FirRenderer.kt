@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.Name
@@ -45,7 +42,7 @@ fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderM
 fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
     buildString { this@render.accept(FirRenderer(this, mode)) }
 
-class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
+open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
     companion object {
         private val visibilitiesToRenderEffectiveSet = setOf(
             Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
@@ -384,7 +381,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
                     memberDeclaration.typeParameters.renderTypeParameters()
                 }
             }
-            else -> {}
         }
     }
 
@@ -441,11 +437,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {
         is FirCallableSymbol<*> -> callableId.toString()
         is FirClassLikeSymbol<*> -> classId.asString()
+        is FirProperty -> symbol.callableId.toString()
         else -> toString()
     }
 
 
-    private fun List<FirDeclaration>.renderDeclarations() {
+    protected fun List<FirDeclaration>.renderDeclarations() {
         renderInBraces {
             for (declaration in this) {
                 declaration.accept(this@FirRenderer)
@@ -473,6 +470,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         regularClass.annotations.renderAnnotations()
         visitMemberDeclaration(regularClass)
         renderSupertypes(regularClass)
+        renderClassDeclarations(regularClass)
+    }
+
+    protected open fun renderClassDeclarations(regularClass: FirRegularClass) {
         regularClass.declarations.renderDeclarations()
     }
 
@@ -568,6 +569,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print("actual ")
         }
         constructor.renderDeclarationData()
+
+        constructor.dispatchReceiverType?.let {
+            print(it.render())
+            print(".")
+        }
         print("constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
@@ -620,6 +626,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print(".")
         }
         print("<anonymous>")
+        if (anonymousFunction.valueParameters.isEmpty() &&
+            anonymousFunction.hasExplicitParameterList &&
+            anonymousFunction.returnTypeRef is FirImplicitTypeRef
+        ) {
+            print("(<no-parameters>)")
+        }
         anonymousFunction.valueParameters.renderParameters()
         print(": ")
         anonymousFunction.returnTypeRef.accept(this)
@@ -1430,7 +1442,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitPackageDirective(packageDirective: FirPackageDirective) {
         if (mode.renderPackageDirective) {
-            println("package ${packageDirective.packageFqName.asString()}")
+            if (!packageDirective.packageFqName.isRoot) {
+                println("package ${packageDirective.packageFqName.asString()}")
+                println()
+            }
         }
     }
 }

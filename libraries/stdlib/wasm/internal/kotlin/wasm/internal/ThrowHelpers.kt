@@ -17,8 +17,8 @@ internal fun THROW_ISE(): Nothing {
     throw IllegalStateException()
 }
 
-internal fun THROW_IAE(): Nothing {
-    throw IllegalArgumentException()
+internal fun THROW_IAE(message: String): Nothing {
+    throw IllegalArgumentException(message)
 }
 
 internal fun throwNoBranchMatchedException(): Nothing {

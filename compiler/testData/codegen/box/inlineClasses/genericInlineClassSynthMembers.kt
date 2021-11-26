@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 // MODULE: lib1
 // FILE: lib1.kt
 
@@ -8,7 +10,9 @@ class C<T>(val t: T) {
 // MODULE: lib2(lib1)
 // FILE: lib2.kt
 
-inline class IC<TT>(val c: C<TT>) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IC<TT>(val c: C<TT>) {
     fun foo(): Int = c.hashCode()
 }
 

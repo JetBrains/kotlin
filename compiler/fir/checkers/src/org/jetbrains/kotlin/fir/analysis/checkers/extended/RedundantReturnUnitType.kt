@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.types.isUnit
@@ -20,7 +20,7 @@ object RedundantReturnUnitType : FirSimpleFunctionChecker() {
         if (declaration.body is FirSingleExpressionBlock) return
         val returnType = declaration.returnTypeRef
         if (returnType.source == null) return
-        if (declaration.source?.kind is FirFakeSourceElementKind) return
+        if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (returnType.annotations.isNotEmpty()) return
 
         if (returnType.isUnit) {

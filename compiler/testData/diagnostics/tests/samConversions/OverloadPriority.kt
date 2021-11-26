@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 // !CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
@@ -26,6 +26,5 @@ fun test(j: J) {
 
     j.bas({ it checkType { _<Any>() }; "" }, "") checkType { _<Int>() }
 
-    // NI: TODO
-    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!> { <!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any>() }; "" } <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    j.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }

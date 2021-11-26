@@ -1,5 +1,5 @@
 // Corresponds to KT-45166, KT-45320, KT-45490, and KT-45954.
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
 import kotlin.coroutines.*

@@ -14,5 +14,8 @@ class Box<T>(t: T) {
 @Test fun runTest() {
     val box: Box<Int> = Box<Int>(17)
     println(box.value)
+    val nonConst = 17
+    val box2: Box<Int> = Box<Int>(nonConst)
+    println(box2.value)
 }
 

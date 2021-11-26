@@ -8,4 +8,3 @@ fun testNoNullCheck() {
   }
 ) /*~> Unit */
 }
-

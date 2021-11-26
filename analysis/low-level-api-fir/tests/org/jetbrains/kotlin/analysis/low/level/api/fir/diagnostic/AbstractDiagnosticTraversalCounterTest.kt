@@ -5,8 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.renderWithClassName
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -15,16 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.renderWithClassName
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -82,11 +81,11 @@ abstract class AbstractDiagnosticTraversalCounterTest  : AbstractLowLevelApiSing
         val errorElements = mutableListOf<Pair<FirElement, Int>>()
         val nonDuplicatingElements = findNonDuplicatingFirElements(firFile).filter { element ->
             when {
-                element is FirTypeRef && element.source?.kind != FirRealSourceElementKind -> {
+                element is FirTypeRef && element.source?.kind != KtRealSourceElementKind -> {
                     // AbstractDiagnosticCollectorVisitor do not visit such elements
                     false
                 }
-                element.source?.kind == FirRealSourceElementKind -> true
+                element.source?.kind == KtRealSourceElementKind -> true
                 SingleNonLocalDeclarationDiagnosticRetriever.shouldDiagnosticsAlwaysBeCheckedOn(element) -> true
                 else -> false
             }

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
+    abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val annotations: List<FirAnnotation>
-    abstract override val returnTypeRef: FirTypeRef
     abstract override val status: FirDeclarationStatus
+    abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
@@ -45,6 +45,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
     abstract val invocationKind: EventOccurrencesRange?
     abstract val inlineStatus: InlineStatus
     abstract val isLambda: Boolean
+    abstract val hasExplicitParameterList: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
     abstract val typeRef: FirTypeRef
 
@@ -76,9 +77,9 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 

@@ -69,7 +69,10 @@ internal class UltraLightMembersCreator(
 
         val property = variable as? KtProperty
         val hasDelegate = property?.hasDelegate() == true
-        val fieldName = generateUniqueFieldName((variable.name ?: "") + (if (hasDelegate) "\$delegate" else ""), usedPropertyNames)
+        val fieldName = generateUniqueFieldName(
+            (variable.name ?: "") + (if (hasDelegate) JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX else ""),
+            usedPropertyNames
+        )
 
         val visibility = when {
             variable.hasModifier(PRIVATE_KEYWORD) -> PsiModifier.PRIVATE

@@ -93,11 +93,24 @@ public interface PirClassCarrierOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation();
 
   /**
-   * <code>optional int64 flags = 9 [default = 0];</code>
+   * <code>repeated int64 sealedSubclasses = 9;</code>
+   */
+  java.util.List<java.lang.Long> getSealedSubclassesList();
+  /**
+   * <code>repeated int64 sealedSubclasses = 9;</code>
+   */
+  int getSealedSubclassesCount();
+  /**
+   * <code>repeated int64 sealedSubclasses = 9;</code>
+   */
+  long getSealedSubclasses(int index);
+
+  /**
+   * <code>optional int64 flags = 10 [default = 0];</code>
    */
   boolean hasFlags();
   /**
-   * <code>optional int64 flags = 9 [default = 0];</code>
+   * <code>optional int64 flags = 10 [default = 0];</code>
    */
   long getFlags();
 }

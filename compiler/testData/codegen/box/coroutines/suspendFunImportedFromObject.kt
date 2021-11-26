@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // FILE: stuff.kt
 package stuff

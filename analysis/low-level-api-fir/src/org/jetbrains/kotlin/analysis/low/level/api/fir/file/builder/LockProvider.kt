@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
+import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.annotations.PrivateForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import java.util.concurrent.locks.ReentrantLock

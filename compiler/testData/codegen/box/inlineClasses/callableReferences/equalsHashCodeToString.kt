@@ -2,9 +2,13 @@
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, NATIVE
 // WITH_REFLECT
+// WITH_STDLIB
+
 import kotlin.test.*
 
-inline class Z(val s: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val s: String)
 
 fun box(): String {
     val a = Z("a")

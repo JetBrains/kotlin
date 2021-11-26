@@ -8,28 +8,37 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
+import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+import org.jetbrains.kotlin.analysis.api.components.ShortenOption
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.utils.addImportToFile
+import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -40,21 +49,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsOfType
-import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
-import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
-import org.jetbrains.kotlin.analysis.api.components.ShortenOption
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.addImportToFile
-import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -90,7 +85,9 @@ internal class KtFirReferenceShortener(
             towerContext,
             selection,
             classShortenOption = { classShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it.fir) as KtClassLikeSymbol) },
-            callableShortenOption = { callableShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it.fir) as KtCallableSymbol) })
+            callableShortenOption = { callableShortenOption(analysisSession.firSymbolBuilder.buildSymbol(it.fir) as KtCallableSymbol) },
+            firResolveState,
+        )
         firDeclaration.accept(collector)
 
         return ShortenCommandImpl(
@@ -279,12 +276,25 @@ private class ElementsToShortenCollector(
     private val selection: TextRange,
     private val classShortenOption: (FirClassLikeSymbol<*>) -> ShortenOption,
     private val callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
+    private val firResolveState: FirModuleResolveState,
 ) :
     FirVisitorVoid() {
     val namesToImport: MutableList<FqName> = mutableListOf()
     val namesToImportWithStar: MutableList<FqName> = mutableListOf()
     val typesToShorten: MutableList<KtUserType> = mutableListOf()
     val qualifiersToShorten: MutableList<KtDotQualifiedExpression> = mutableListOf()
+    private val visitedProperty = mutableSetOf<FirProperty>()
+
+    override fun visitValueParameter(valueParameter: FirValueParameter) {
+        super.visitValueParameter(valueParameter)
+        valueParameter.correspondingProperty?.let { visitProperty(it) }
+    }
+
+    override fun visitProperty(property: FirProperty) {
+        if (visitedProperty.add(property)) {
+            super.visitProperty(property)
+        }
+    }
 
     override fun visitElement(element: FirElement) {
         element.acceptChildren(this)

@@ -1,6 +1,0 @@
-expect class MyClass
-expect fun foo(): String
-expect val x: Int
-actual class MyClass
-actual fun foo(): String
-actual val x: Int

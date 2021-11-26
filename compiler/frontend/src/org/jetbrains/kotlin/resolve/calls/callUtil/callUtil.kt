@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.util.createLookupLocation
+import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
 import org.jetbrains.kotlin.types.KotlinType
 
 @Deprecated(
@@ -65,3 +66,10 @@ fun Call.createLookupLocation(): KotlinLookupLocation = createLookupLocation()
     level = DeprecationLevel.ERROR
 )
 fun KtExpression.createLookupLocation(): KotlinLookupLocation? = createLookupLocation()
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression instead.",
+    ReplaceWith("getValueArgumentForExpression", "org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression"),
+    level = DeprecationLevel.ERROR
+)
+fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? = getValueArgumentForExpression(expression)

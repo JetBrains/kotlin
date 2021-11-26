@@ -51,6 +51,9 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_ZSt17rethrow_exceptionNSt15__exception_ptr13exception_ptrE", // std::rethrow_exception(std::__exception_ptr::exception_ptr)
         "_ZSt28_Rb_tree_rebalance_for_erasePSt18_Rb_tree_node_baseRS_", // std::_Rb_tree_rebalance_for_erase(std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)
         "_ZN9__gnu_cxx27__verbose_terminate_handlerEv", // __gnu_cxx::__verbose_terminate_handler()
+        "_Znwm", // new
+        "_Znwy",
+        "_ZdlPv", // delete
         "__mingw_vsnprintf",
         "__cxa_allocate_exception",
         "__cxa_begin_catch",
@@ -109,6 +112,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "malloc",
         "memcmp",
         "memmem",
+        "munmap",
+        "\x01_munmap",
         "nextafter",
         "nextafterf",
         "pow",
@@ -180,6 +185,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "CFStringCreateCopy",
         "CFStringGetCharacters",
         "CFStringGetLength",
+        "_Block_object_assign",
         "class_addIvar",
         "class_addMethod",
         "class_addProtocol",
@@ -346,7 +352,8 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
 
     char buf[200];
     if (callee == nullptr) {
-        if (AddressToSymbol(calleePtr, buf, sizeof(buf))) {
+        ptrdiff_t unused;
+        if (AddressToSymbol(calleePtr, buf, sizeof(buf), unused)) {
             callee = buf;
         } else {
             callee = "unknown function";

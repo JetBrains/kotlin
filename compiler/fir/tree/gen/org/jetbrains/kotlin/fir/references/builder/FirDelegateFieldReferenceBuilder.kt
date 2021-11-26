@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirDelegateFieldReferenceBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     var candidateSymbol: FirBasedSymbol<*>? = null
     lateinit var resolvedSymbol: FirDelegateFieldSymbol
 

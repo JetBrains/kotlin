@@ -133,14 +133,17 @@ internal class KotlinRootNpmResolver internal constructor(
         rootProject_.gradle.sharedServices.registerIfAbsent(
             KotlinRootNpmResolverStateHolder::class.qualifiedName,
             KotlinRootNpmResolverStateHolder::class.java
-        ) {
-            it.parameters.plugins.set(plugins_)
-            it.parameters.projectResolvers.set(projectResolvers_)
-            it.parameters.packageManager.set(nodeJs_.packageManager)
-            it.parameters.yarnEnvironment.set(yarnEnvironment_?.get())
-            it.parameters.npmEnvironment.set(npmEnvironment_?.get())
-            it.parameters.yarnResolutions.set(yarnResolutions_?.get())
-            it.parameters.taskRequirements.set(taskRequirements_)
+        ) { service ->
+            service.parameters.plugins.set(plugins_)
+            service.parameters.projectResolvers.set(projectResolvers_)
+            service.parameters.packageManager.set(nodeJs_.packageManager)
+            service.parameters.yarnEnvironment.set(yarnEnvironment_?.get())
+            service.parameters.npmEnvironment.set(npmEnvironment_?.get())
+            service.parameters.yarnResolutions.set(yarnResolutions_?.get())
+            service.parameters.taskRequirements.set(taskRequirements_)
+            service.parameters.packageJsonHandlers.set(compilations.associate { compilation ->
+                "${compilation.project.path}:${compilation.disambiguatedName}" to compilation.packageJsonHandlers
+            }.filter { it.value.isNotEmpty() })
         }
     }
 
@@ -185,16 +188,20 @@ internal class KotlinRootNpmResolver internal constructor(
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
-    @Synchronized
     fun addProject(target: Project) {
-        check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
-        projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
+        synchronized(projectResolvers) {
+            check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
+            projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
+        }
     }
 
     operator fun get(projectPath: String) = projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
 
     val compilations: Collection<KotlinJsCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
+
+    internal fun getPackageJsonHandlers(projectPath: String, compilationDisambiguatedName: String): List<PackageJson.() -> Unit> =
+        resolverStateHolder.get().parameters.packageJsonHandlers.get()["$projectPath:$compilationDisambiguatedName"] ?: emptyList()
 
     fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
@@ -228,7 +235,7 @@ internal class KotlinRootNpmResolver internal constructor(
      * Don't use directly, use [KotlinNpmResolutionManager.installIfNeeded] instead.
      */
     internal fun prepareInstallation(logger: Logger): Installation {
-        synchronized(this@KotlinRootNpmResolver) {
+        synchronized(projectResolvers) {
             check(state == State.CONFIGURING) {
                 "Projects must be configuring"
             }
@@ -270,7 +277,7 @@ internal class KotlinRootNpmResolver internal constructor(
             services: ServiceRegistry,
             logger: Logger
         ): KotlinRootNpmResolution {
-            synchronized(this@KotlinRootNpmResolver) {
+            synchronized(projectResolvers) {
                 check(state == State.PROJECTS_CLOSED) {
                     "Projects must be closed"
                 }
@@ -284,8 +291,7 @@ internal class KotlinRootNpmResolver internal constructor(
                     services,
                     logger,
                     npmEnvironment,
-                    yarnEnvironment.executable,
-                    yarnEnvironment.standalone,
+                    yarnEnvironment,
                     allNpmPackages,
                     args
                 )

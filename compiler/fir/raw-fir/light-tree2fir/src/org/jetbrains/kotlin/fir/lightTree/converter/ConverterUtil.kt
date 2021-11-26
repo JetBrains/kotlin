@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeType
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -20,25 +19,16 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.fakeElement
+import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildComponentCall
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
-
-private val expressionSet = listOf(
-    REFERENCE_EXPRESSION,
-    DOT_QUALIFIED_EXPRESSION,
-    LAMBDA_EXPRESSION,
-    FUN
-)
 
 fun String?.nameAsSafeName(defaultName: String = ""): Name {
     return when {
@@ -48,26 +38,8 @@ fun String?.nameAsSafeName(defaultName: String = ""): Name {
     }
 }
 
-fun String.getOperationSymbol(): IElementType {
-    KotlinExpressionParsing.ALL_OPERATIONS.types.forEach {
-        if (it is KtSingleValueToken && it.value == this) return it
-    }
-    if (this == "as?") return KtTokens.AS_SAFE
-    return KtTokens.IDENTIFIER
-}
-
 fun LighterASTNode.getAsStringWithoutBacktick(): String {
     return this.toString().replace("`", "")
-}
-
-fun LighterASTNode.isExpression(): Boolean {
-    return when (this.tokenType) {
-        is KtNodeType,
-        is KtConstantExpressionElementType,
-        is KtStringTemplateExpressionElementType,
-        in expressionSet -> true
-        else -> false
-    }
 }
 
 fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>): T {
@@ -122,7 +94,7 @@ fun generateDestructuringBlock(
                 returnTypeRef = entry.returnTypeRef
                 name = entry.name
                 initializer = buildComponentCall {
-                    val componentCallSource = entry.source?.fakeElement(FirFakeSourceElementKind.DesugaredComponentFunctionCall)
+                    val componentCallSource = entry.source?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
                     source = componentCallSource
                     explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
                     componentIndex = index + 1
@@ -137,3 +109,5 @@ fun generateDestructuringBlock(
         }
     }
 }
+
+val FirUserTypeRef.isUnderscored get() = qualifier.lastOrNull()?.name?.asString() == "_"

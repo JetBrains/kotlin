@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
@@ -29,6 +29,7 @@ import kotlin.random.Random
 @RequiresOptIn
 private annotation class CfgBuilderInternals
 
+@OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
     @CfgBuilderInternals
     private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph(null, "<TOP_LEVEL_GRAPH>", ControlFlowGraph.Kind.TopLevel))
@@ -407,6 +408,7 @@ class ControlFlowGraphBuilder {
         for (declaration in klass.declarations) {
             val graph = when (declaration) {
                 is FirProperty -> declaration.controlFlowGraphReference?.controlFlowGraph
+                is FirField -> declaration.controlFlowGraphReference?.controlFlowGraph
                 is FirAnonymousInitializer -> declaration.controlFlowGraphReference?.controlFlowGraph
                 else -> null
             } ?: continue
@@ -640,6 +642,7 @@ class ControlFlowGraphBuilder {
         addNewSimpleNode(node)
         whenExitNodes.push(createWhenExitNode(whenExpression))
         whenBranchIndices.push(whenExpression.branches.mapIndexed { index, branch -> branch to index }.toMap())
+        notCompletedFunctionCalls.push(mutableListOf())
         levelCounter++
         return node
     }
@@ -675,6 +678,7 @@ class ControlFlowGraphBuilder {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
         // we should remove it
+        notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
         val lastWhenConditionExit = lastNodes.pop()
         val syntheticElseBranchNode = if (!whenExpression.isProperlyExhaustive) {
             createWhenSyntheticElseBranchNode(whenExpression).apply {
@@ -984,7 +988,7 @@ class ControlFlowGraphBuilder {
         catchNodeStorages.pop()
         val catchExitNodes = catchExitNodeStorages.pop()
         val tryMainExitNode = tryMainExitNodes.pop()
-        
+
         notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
 
         val node = tryExitNodes.pop()
@@ -1174,6 +1178,9 @@ class ControlFlowGraphBuilder {
         return Pair(kind, unionNode)
     }
 
+    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression): WhenSubjectExpressionExitNode {
+        return createWhenSubjectExpressionExitNode(expression).also { addNewSimpleNode(it) }
+    }
 
     // ----------------------------------- Annotations -----------------------------------
 
@@ -1395,14 +1402,15 @@ class ControlFlowGraphBuilder {
             tryExitNodes.top().fir.finallyBlock == null -> {
                 // (3)... without finally ...(4)
                 // Either in try-main or catch.
-                if (tryMainExitNodes.top().followingNodes.isNotEmpty()) {
+                val tryMainExitNode = tryMainExitNodes.top()
+                if (tryMainExitNode.followingNodes.isNotEmpty()) {
                     // (4)... in catch, i.e., re-throw.
                     exitTargetsForTry.top()
                 } else {
                     // (4)... in try-main. Route to exit of try main block.
                     // We already have edges from the exit of try main block to each catch clause.
                     // This edge makes the remaining part of try main block, e.g., following `when` branches, marked as dead.
-                    tryMainExitNodes.top()
+                    tryMainExitNode
                 }
             }
             // (3)... within finally.
@@ -1552,7 +1560,7 @@ class ControlFlowGraphBuilder {
 
     private fun FirDeclaration.unwrap(): List<FirDeclaration> =
         when (this) {
-            is FirFunction, is FirAnonymousInitializer -> listOf(this)
+            is FirFunction, is FirAnonymousInitializer, is FirField -> listOf(this)
             is FirProperty -> listOfNotNull(this.getter, this.setter, this)
             else -> emptyList()
         }

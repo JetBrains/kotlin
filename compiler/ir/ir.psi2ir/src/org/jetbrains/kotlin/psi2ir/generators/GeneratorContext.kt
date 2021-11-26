@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -46,7 +48,7 @@ class GeneratorContext private constructor(
         extensions: GeneratorExtensions,
         typeTranslator: TypeTranslator,
         irBuiltIns: IrBuiltIns,
-        fragmentContext: FragmentContext? = null
+        fragmentContext: FragmentContext? = null,
     ) : this(
         configuration,
         moduleDescriptor,

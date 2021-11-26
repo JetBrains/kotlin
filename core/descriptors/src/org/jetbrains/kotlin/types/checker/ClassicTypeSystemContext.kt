@@ -94,6 +94,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
     }
 
+    override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
+        require(this is AbstractStubType, this::errorMessage)
+        return this.originalTypeVariable as TypeVariableTypeConstructorMarker
+    }
+
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is NewCapturedType, this::errorMessage)
         return this.lowerType
@@ -455,8 +460,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker {
-        require(this is NewCapturedType, this::errorMessage)
-        return this.constructor.projection
+        return when (this) {
+            is NewCapturedType -> this.constructor.projection
+            is CapturedType -> this.typeProjection
+            else -> error("Unsupported captured type")
+        }
     }
 
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {

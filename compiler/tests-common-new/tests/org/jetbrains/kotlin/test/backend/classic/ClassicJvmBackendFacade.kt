@@ -30,13 +30,13 @@ class ClassicJvmBackendFacade(
         inputArtifact: ClassicBackendInput
     ): BinaryArtifacts.Jvm {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val (psiFiles, bindingContext, moduleDescriptor, project, _) = inputArtifact
+        val (psiFiles, analysisResult, project, _) = inputArtifact
         // TODO: add configuring classBuilderFactory
         val generationState = GenerationState.Builder(
             project,
             ClassBuilderFactories.TEST,
-            moduleDescriptor,
-            bindingContext,
+            analysisResult.moduleDescriptor,
+            analysisResult.bindingContext,
             psiFiles.toList(),
             configuration
         ).codegenFactory(DefaultCodegenFactory).build()

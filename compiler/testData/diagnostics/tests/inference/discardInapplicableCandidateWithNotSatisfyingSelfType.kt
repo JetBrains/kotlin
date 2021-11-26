@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface WithChildren<out T>
 

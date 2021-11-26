@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
-import org.jetbrains.kotlin.fir.resolve.inference.receiverType
+import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile

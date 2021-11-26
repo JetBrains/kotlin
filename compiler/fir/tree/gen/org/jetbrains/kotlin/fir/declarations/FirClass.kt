@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParameterRefsOwner {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val symbol: FirClassSymbol<out FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
@@ -49,6 +50,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClass
 
     abstract fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass
 

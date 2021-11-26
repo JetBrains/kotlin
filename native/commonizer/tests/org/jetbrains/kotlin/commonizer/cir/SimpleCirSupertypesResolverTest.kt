@@ -43,7 +43,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             """
                 class Outer {
                     open inner class Inner
-                    class X: Inner()
+                    inner class X: Inner()
                 }
             """.trimIndent()
         )

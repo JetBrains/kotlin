@@ -9,6 +9,8 @@ import kotlin.test.*
 
 @Test fun runTest() {
     42.println()
+    val nonConst = 42
+    nonConst.println()
 }
 
 fun <T> T.println() = println(this.toString())

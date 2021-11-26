@@ -1,6 +1,5 @@
-KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
@@ -13,7 +12,7 @@ KtFirNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

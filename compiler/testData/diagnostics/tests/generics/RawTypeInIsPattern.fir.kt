@@ -5,7 +5,7 @@ public fun foo(a: Any, b: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>) {
         is Map<out Any?, Any?> -> {}
         is Map<*, *> -> {}
         is Map<<!SYNTAX!><!>> -> {}
-        is List<Map> -> {}
+        is List<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>> -> {}
         is <!NO_TYPE_ARGUMENTS_ON_RHS!>List<!> -> {}
         is Int -> {}
         else -> {}

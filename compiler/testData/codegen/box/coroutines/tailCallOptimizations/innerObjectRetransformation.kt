@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// FIR status: questionable bytecode listing difference (open/final methods in final class)
+// WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
 

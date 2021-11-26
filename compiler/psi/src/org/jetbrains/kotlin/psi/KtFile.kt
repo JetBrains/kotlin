@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -178,6 +179,9 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     fun findAliasByFqName(fqName: FqName): KtImportAlias? = importDirectives.firstOrNull {
         it.alias != null && fqName == it.importedFqName
     }?.alias
+
+    fun getNameForGivenImportAlias(name: Name): Name? =
+        importDirectives.find { it.importedName == name }?.importedFqName?.pathSegments()?.last()
 
     @Deprecated("") // getPackageFqName should be used instead
     override fun getPackageName(): String {

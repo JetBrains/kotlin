@@ -2511,7 +2511,7 @@ public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    TODO("Wasm stdlib: sortWith(comparator: Comparator<in T>)")
+    if (size > 1) sortArrayWith(this, 0, size, comparator)
 }
 
 /**

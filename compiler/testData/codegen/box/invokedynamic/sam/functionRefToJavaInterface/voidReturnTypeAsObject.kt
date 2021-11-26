@@ -4,8 +4,7 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 0 java/lang/invoke/LambdaMetafactory
-// 1 final synthetic class VoidReturnTypeAsObjectKt\$box\$r\$[0-9]+
+// 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: voidReturnTypeAsObject.kt
 var t = "Failed"

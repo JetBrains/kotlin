@@ -223,6 +223,11 @@ private class IrTypeCheckerContextForTypeMapping(
         return this is IrTypeParameterSymbol
     }
 
+    override fun TypeConstructorMarker.asTypeParameter(): TypeParameterMarker {
+        require(isTypeParameter())
+        return this as IrTypeParameterSymbol
+    }
+
     override fun TypeConstructorMarker.defaultType(): IrType {
         return when (this) {
             is IrClassSymbol -> owner.defaultType

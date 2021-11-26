@@ -2,7 +2,6 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
 fun foo(f: () -> String, g: suspend () -> String, h: suspend () -> String) {}
 

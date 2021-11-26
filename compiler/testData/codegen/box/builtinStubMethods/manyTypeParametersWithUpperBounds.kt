@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class A<U : Number, V : U, W : V> : Set<W> {
     override val size: Int get() = 0

@@ -1,7 +1,6 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 import kotlin.contracts.*
 

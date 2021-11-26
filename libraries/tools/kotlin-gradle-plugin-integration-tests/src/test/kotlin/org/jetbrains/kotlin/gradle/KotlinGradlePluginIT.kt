@@ -913,6 +913,11 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Kotlin build report is written to")
         }
+
+        build("clean", "assemble", "-Pkotlin.build.report.enable=true") {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
+        }
     }
 
     @Test
@@ -1164,15 +1169,14 @@ class KotlinGradleIT : BaseGradleIT() {
     @Test
     fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(
         Project(
-            projectName = "kt-35942-android",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.7.1")
+            projectName = "kt-35942-android"
         )
     ) {
         build(
             ":lib1:compileDebugUnitTestKotlin",
             options = defaultBuildOptions().copy(
                 androidGradlePluginVersion = AGPVersion.v4_2_0,
-                androidHome = KtTestUtil.findAndroidSdk(),
+                androidHome = KtTestUtil.findAndroidSdk().also { acceptAndroidSdkLicenses(it) },
             ),
         ) {
             assertSuccessful()

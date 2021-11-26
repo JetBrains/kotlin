@@ -1,7 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class S1(val s1: String)
-inline class S2(val s2: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S1(val s1: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S2(val s2: String)
 
 object X1
 object X2

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -119,10 +120,10 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
                 compilerPluginArgsRegex.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
 
             compilerPluginOptionsBySourceSet.entries.forEach { (sourceSetName, argsString) ->
-                val shouldHaveAndroidExtensionArgs =
-                    sourceSetName.startsWith("androidApp") && (
-                            androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")
-                            )
+                val shouldHaveAndroidExtensionArgs = sourceSetName.startsWith("androidApp") &&
+                        (androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")) &&
+                        (androidGradlePluginVersion < AGPVersion.v7_1_0 || !sourceSetName.contains("androidAppTestFixtures"))
+
                 if (shouldHaveAndroidExtensionArgs)
                     assertTrue("$sourceSetName is an Android source set and should have Android Extensions in the args") {
                         "plugin:org.jetbrains.kotlin.android" in argsString
@@ -466,9 +467,119 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         get() = GradleVersionRequired.AtLeast("7.0")
 
     override fun defaultBuildOptions(): BuildOptions {
-        val javaHome = File("/opt/openjdk-bin-11")
+        val javaHome = File(System.getProperty("jdk11Home") ?: error("jdk11Home not specified"))
         Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
         return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
+    }
+
+    /**
+     * Regression test for KT-49066. It is not really AGP 7.0 specific, but it is not added to the base class to avoid
+     * running it multiple times.
+     */
+    @Test
+    fun testCustomModuleName() {
+        val project = Project("AndroidIncrementalMultiModule")
+        val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
+
+        project.setupWorkingDir().also {
+            project.gradleBuildScript("libAndroid").appendText(
+                """
+
+                android.kotlinOptions {
+                    moduleName = "custom_path"
+                }
+            """.trimIndent()
+            )
+        }
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path.kotlin_module")
+        }
+
+        val libAndroidUtilKt = project.projectDir.getFileByName("libAndroidUtil.kt")
+        libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources))
+        }
+    }
+}
+
+open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v7_1_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("7.2")
+
+    /**
+     * Starting from AGP version 7.1.0-alpha13, a new attribute com.android.build.api.attributes.AgpVersionAttr was added.
+     * This attribute is *not intended* to be published.
+     */
+    @Test
+    fun testKT49798AgpVersionAttrNotPublished() = with(Project("new-mpp-android")) {
+        build("publish") {
+            val debugPublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib-debug")
+            val releasePublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib")
+
+            listOf(debugPublicationDirectory, releasePublicationDirectory).forEach { publicationDirectory ->
+                assertTrue(publicationDirectory.exists(), "Missing publication directory: $publicationDirectory")
+                val moduleFiles = publicationDirectory.walkTopDown().filter { file -> file.extension == "module" }.toList()
+                assertTrue(moduleFiles.isNotEmpty(), "Missing .module file in $publicationDirectory")
+                assertTrue(moduleFiles.size <= 1, "Multiple .module files in $publicationDirectory: $moduleFiles")
+
+                val moduleFile = moduleFiles.single()
+                val moduleFileText = moduleFile.readText()
+                assertTrue("AgpVersionAttr" !in moduleFileText, ".module file $moduleFile leaks AgpVersionAttr")
+            }
+        }
+    }
+
+    @Test
+    fun testAndroidMultiplatformPublicationAGPCompatibility() = with(Project("new-mpp-android-agp-compatibility")) {
+        /* Publish producer library with current version of AGP */
+        build(":producer:publishAllPublicationsToBuildDirRepository") {
+            assertSuccessful()
+
+            /* Check expected publication layout */
+            assertFileExists("build/repo/com/example/producer-android")
+            assertFileExists("build/repo/com/example/producer-android-debug")
+            assertFileExists("build/repo/com/example/producer-jvm")
+        }
+
+        val checkedConsumerAGPVersions = AGPVersion.testedVersions
+            // Special version added for testing KT-49798
+            .plus(AGPVersion.fromString("7.1.0-beta02"))
+            .filter { version -> version >= AGPVersion.v4_2_0 }
+
+        checkedConsumerAGPVersions.forEach { agpVersion ->
+
+            this.setupWorkingDir()
+            println("Testing compatibility for AGP consumer version $agpVersion")
+            val buildOptions = defaultBuildOptions().copy(androidGradlePluginVersion = agpVersion)
+
+            /*
+            Project: multiplatformAndroidConsumer is a mpp project with jvm and android targets.
+            This project depends on the previous publication as 'commonMainImplementation' dependency
+            */
+            build(":multiplatformAndroidConsumer:assemble", options = buildOptions) {
+                assertSuccessful(
+                    "multiplatformAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+
+            /*
+            Project: plainAndroidConsumer only uses the 'kotlin("android")' plugin
+            This project depends on the previous publication as 'implementation' dependency
+             */
+            build(":plainAndroidConsumer:assemble", options = buildOptions) {
+                assertSuccessful(
+                    "plainAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+        }
     }
 }
 
@@ -1008,6 +1119,54 @@ fun getSomething() = 10
                 assertFailed()
                 assertContains("'kotlin-android' plugin requires one of the Android Gradle plugins.")
             }
+        }
+    }
+
+    @Test
+    fun testLintDependencyResolutionKt49483() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        gradleBuildScript().modify {
+            """
+                plugins {
+                    id("com.android.lint")
+                }
+                
+            """.trimIndent() + it
+        }
+
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
+            android { 
+                lintOptions.checkDependencies = true
+            }
+            dependencies {
+                implementation(project(":java-lib"))
+            }
+        """.trimIndent()
+        )
+
+        gradleSettingsScript().appendText(
+            "\n" + """
+            include("java-lib")
+        """.trimIndent()
+        )
+
+        with(projectDir.resolve("java-lib/build.gradle.kts")) {
+            ensureParentDirsCreated()
+            writeText(
+                """
+                plugins {
+                    id("java-library")
+                    id("com.android.lint")
+                }
+            """.trimIndent()
+            )
+        }
+
+        build(":Lib:lintFlavor1Debug") {
+            assertSuccessful()
+            assertNotContains("as an external dependency and not analyze it.")
         }
     }
 

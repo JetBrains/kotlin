@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 class OutPair<out T, out E>
 class Out<out F>
 class In<in H>

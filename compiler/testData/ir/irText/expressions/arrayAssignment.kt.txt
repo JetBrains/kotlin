@@ -10,4 +10,3 @@ fun foo(): Int {
 fun test2() {
   intArrayOf(elements = [1, 2, 3]).set(index = foo(), value = 1)
 }
-

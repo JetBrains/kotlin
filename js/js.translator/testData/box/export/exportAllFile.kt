@@ -3,7 +3,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
-// MODULE: export-all-file
+// MODULE: export_all_file
 // FILE: lib.kt
 @file:JsExport
 
@@ -19,5 +19,5 @@ class B : A() {
 
 // FILE: test.js
 function box() {
-    return new this["export-all-file"].B().foo("K");
+    return new this["export_all_file"].B().foo("K");
 }

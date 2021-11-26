@@ -39,11 +39,10 @@ class Host {
 
   }
 
-  val testMember: String /* by */ 
+  val testMember: String /* by */
     field = DelegateProvider(value = "OK").provideDelegate(thisRef = <this>, property = Host::testMember)
     get(): String {
       return <this>.#testMember$delegate.getValue(thisRef = <this>, property = Host::testMember)
     }
 
 }
-

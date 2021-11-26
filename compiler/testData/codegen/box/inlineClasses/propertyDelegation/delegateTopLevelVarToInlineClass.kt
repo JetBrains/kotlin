@@ -1,9 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 var setterInvoked = 0
 var backing = 42
 
-inline class Delegate(val ignored: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Delegate(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         backing

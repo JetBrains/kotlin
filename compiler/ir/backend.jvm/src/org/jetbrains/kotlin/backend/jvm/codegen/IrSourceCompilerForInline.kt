@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.doNotAnalyze
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -127,9 +127,9 @@ class IrSourceCompilerForInline(
 
     // TODO: Find a way to avoid using PSI here
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
-        codegen.context.psiErrorBuilder
+        codegen.context.ktDiagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
-            .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
+            .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 }
 

@@ -1,6 +1,4 @@
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // WITH_REFLECT
 
 import kotlin.experimental.ExperimentalTypeInference

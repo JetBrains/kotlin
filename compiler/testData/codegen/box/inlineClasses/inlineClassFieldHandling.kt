@@ -1,8 +1,14 @@
+// WITH_STDLIB
+
 var result = "Fail"
 
-inline class A(val value: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val value: String)
 
-inline class B(val a: A) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class B(val a: A) {
     init {
         result = a.value
     }

@@ -65,7 +65,7 @@ class SourceFileIsModifiedIT : KGPBaseTest() {
                 assertTasksNoSource(":compileTestKotlin")
             }
 
-            val dummyFile = projectPath.resolve("src/main/java/kotlinPackage/Dummy.kt")
+            val dummyFile = javaSourcesDir().resolve("kotlinPackage/Dummy.kt")
             transformDummy(dummyFile)
 
             build("build", buildOptions = buildOptions) {

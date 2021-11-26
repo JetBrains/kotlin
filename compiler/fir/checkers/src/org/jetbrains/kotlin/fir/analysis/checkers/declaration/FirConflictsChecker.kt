@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
@@ -83,7 +84,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         ) {
             conflictingSymbol.ensureResolved(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
-            val conflicting = conflictingSymbol.fir as? FirDeclaration ?: return
+            val conflicting = conflictingSymbol.fir
             if (declaration.moduleData != conflicting.moduleData) return
             val actualConflictingPresentation = conflictingPresentation ?: presenter.represent(conflicting)
             if (conflicting == declaration || actualConflictingPresentation != declarationPresentation) return
@@ -244,7 +245,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        if (declaration.source?.kind !is FirFakeSourceElementKind) {
+        if (declaration.source?.kind !is KtFakeSourceElementKind) {
             when (declaration) {
                 is FirMemberDeclaration -> {
                     if (declaration is FirFunction) {

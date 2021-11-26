@@ -2,7 +2,6 @@
 // WITH_REFLECT
 
 // FIR incorrectly resolves typeParameterType's return type to the nested class `A.T`.
-// IGNORE_BACKEND_FIR: JVM_IR
 
 package test
 

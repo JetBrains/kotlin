@@ -9,6 +9,12 @@ import kotlin.reflect.KClass
 
 @ExportForCompiler
 internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> {
+
+    @ExportForCompiler
+    @ConstantConstructorIntrinsic("KCLASS_IMPL")
+    @Suppress("UNREACHABLE_CODE")
+    constructor() : this(TODO("This is intrinsic constructor and it shouldn't be used directly"))
+
     // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
     override val simpleName: String?
         get() = getRelativeName(typeInfo, true)?.substringAfterLast('.')?.substringAfterLast('$')
@@ -72,10 +78,6 @@ private external fun findAssociatedObjectImpl(typeInfo: NativePtr, key: NativePt
 @ExportForCompiler
 @GCUnsafeCall("Kotlin_Any_getTypeInfo")
 internal external fun getObjectTypeInfo(obj: Any): NativePtr
-
-@ExportForCompiler
-@TypedIntrinsic(IntrinsicType.GET_CLASS_TYPE_INFO)
-internal external inline fun <reified T : Any> getClassTypeInfo(): NativePtr
 
 @GCUnsafeCall("Kotlin_TypeInfo_getPackageName")
 private external fun getPackageName(typeInfo: NativePtr, checkFlags: Boolean): String?

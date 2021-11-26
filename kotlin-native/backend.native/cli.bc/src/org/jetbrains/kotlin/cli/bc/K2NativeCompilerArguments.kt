@@ -47,7 +47,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-manifest", valueDescription = "<path>", description = "Provide a maniferst addend file")
     var manifestFile: String? = null
 
-    @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict', 'relaxed' and 'experimental' are currently supported")
+    @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict' and 'experimental' are currently supported")
     var memoryModel: String? = "strict"
 
     @Argument(value="-module-name", deprecatedName = "-module_name", valueDescription = "<name>", description = "Specify a name for the compilation module")
@@ -360,6 +360,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xruntime-logs", valueDescription = "<tag1=level1,tag2=level2,...>", description = "Enable logging for runtime with tags.")
     var runtimeLogs: String? = null
+
+    @Argument(value = "-Xmeaningful-bridge-names", description = "(Unstable) Produce meaningful names for reverse bridges. Useful only for compiler tests.")
+    var meaningfulBridgeNames: Boolean = false
+
+    @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries")
+    var lazyIrForCaches: String? = null
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {

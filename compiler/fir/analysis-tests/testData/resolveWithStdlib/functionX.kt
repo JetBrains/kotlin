@@ -1,6 +1,8 @@
-import kotlin.jvm.functions.Function0
+// WITH_EXTENDED_CHECKERS
 
-val x: Function0<Int> = <!INITIALIZER_TYPE_MISMATCH!>{ 42 }<!>
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>kotlin.jvm.functions.Function0<!>
+
+val x: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN, PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Function0<Int><!> = <!INITIALIZER_TYPE_MISMATCH!>{ 42 }<!>
 
 val y: Function1<String, String> = { it }
 

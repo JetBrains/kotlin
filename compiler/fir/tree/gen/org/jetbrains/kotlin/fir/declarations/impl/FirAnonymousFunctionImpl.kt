@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirAnonymousFunctionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
+    override val annotations: MutableList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override val annotations: MutableList<FirAnnotation>,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
@@ -52,6 +52,7 @@ internal class FirAnonymousFunctionImpl(
     override var invocationKind: EventOccurrencesRange?,
     override var inlineStatus: InlineStatus,
     override val isLambda: Boolean,
+    override val hasExplicitParameterList: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
@@ -65,8 +66,8 @@ internal class FirAnonymousFunctionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
@@ -78,8 +79,8 @@ internal class FirAnonymousFunctionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         transformAnnotations(transformer, data)
-        transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
@@ -95,13 +96,13 @@ internal class FirAnonymousFunctionImpl(
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

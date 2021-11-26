@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo() {
     for (i in <!EMPTY_RANGE!>2..1<!>) { }

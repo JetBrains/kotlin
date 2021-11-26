@@ -14,7 +14,7 @@ FILE: enums2.kt
 
     }
     public? final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
-        private [ContainingClassKey=SomeEnum] constructor(x: Some): R|SomeEnum| {
+        private [ContainingClassKey=SomeEnum] constructor([CorrespondingProperty=/SomeEnum.x] x: Some): R|SomeEnum| {
             super<R|kotlin/Enum<SomeEnum>|>()
         }
 

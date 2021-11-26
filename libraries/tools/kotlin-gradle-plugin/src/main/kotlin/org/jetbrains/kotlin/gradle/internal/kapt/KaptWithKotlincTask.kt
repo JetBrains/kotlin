@@ -122,7 +122,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
             taskProvider.get(),
             defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull,
             normalizedKotlinDaemonJvmArguments.orNull,
-            metrics.get()
+            metrics.get(),
+            compilerExecutionStrategy.get(),
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),

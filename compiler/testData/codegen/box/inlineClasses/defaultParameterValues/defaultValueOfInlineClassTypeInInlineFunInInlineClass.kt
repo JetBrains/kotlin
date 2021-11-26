@@ -1,11 +1,21 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Z(val int: Int)
-inline class L(val long: Long)
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val int: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(val long: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Str(val string: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Obj(val obj: Any)
 
-inline class Host(val xx: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Host(val xx: Int) {
     inline fun <R> withDefaultZ(fn: (Z) -> R, x: Z = Z(xx)) = fn(x)
     inline fun <R> withDefaultL(fn: (L) -> R, x: L = L(xx.toLong())) = fn(x)
     inline fun <R> withDefaultL2(x: L = L(xx.toLong()), fn: (L) -> R) = fn(x)

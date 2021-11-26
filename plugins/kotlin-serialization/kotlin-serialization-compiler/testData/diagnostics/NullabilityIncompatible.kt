@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*

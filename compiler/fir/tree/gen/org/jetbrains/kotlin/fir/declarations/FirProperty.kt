@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFlowGraphOwner {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val returnTypeRef: FirTypeRef
     abstract override val status: FirDeclarationStatus
+    abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
@@ -76,9 +76,9 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
 
     abstract fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState)
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
-
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
+
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 

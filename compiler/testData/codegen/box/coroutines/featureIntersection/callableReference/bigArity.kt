@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: NATIVE
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
 import kotlin.coroutines.*

@@ -1,15 +1,13 @@
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /A.x
-  dispatchType: A
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: 10
+  initializer: KtConstantInitializerValue(10)
   isConst: false
+  isDelegatedProperty: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -20,21 +18,21 @@ KtFirKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
+  getDispatchReceiver(): A
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirPropertyGetterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtPropertyGetterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -44,23 +42,22 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: ACCESSOR
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /A.y
-  dispatchType: A
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
   hasSetter: false
   initializer: null
   isConst: false
+  isDelegatedProperty: false
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -70,19 +67,21 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: [] kotlin/Int
+  receiverType: kotlin/Int
+  returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Public
+  getDispatchReceiver(): A
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getY
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
@@ -95,7 +94,7 @@ KtFirNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

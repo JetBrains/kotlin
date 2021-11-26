@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirSyntheticPropertyBuilder {
     lateinit var moduleData: FirModuleData
     lateinit var name: Name
-    lateinit var symbol: FirAccessorSymbol
+    lateinit var symbol: FirSyntheticPropertySymbol
     lateinit var delegateGetter: FirSimpleFunction
     lateinit var deprecation: DeprecationsPerUseSite
 

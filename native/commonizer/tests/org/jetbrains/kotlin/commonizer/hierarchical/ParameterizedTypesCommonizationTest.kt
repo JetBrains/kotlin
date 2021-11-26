@@ -17,18 +17,18 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             simpleSingleSourceTarget(
                 "a", """
                     class X<T, R>
-                    fun<T, R> x1(x: X<T, R>)
-                    fun <M> x2(x: X<M, String>)
-                    fun x3(x: X<Int, String>)
+                    fun<T, R> x1(x: X<T, R>) {}
+                    fun <M> x2(x: X<M, String>) {}
+                    fun x3(x: X<Int, String>) {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
                     class X<T, R>
-                    fun<T, R> x1(x: X<T, R>)
-                    fun <M> x2(x: X<M, String>)
-                    fun x3(x: X<Int, String>)
+                    fun<T, R> x1(x: X<T, R>) {}
+                    fun <M> x2(x: X<M, String>) {}
+                    fun x3(x: X<Int, String>) {}
                 """.trimIndent()
             )
         }
@@ -53,7 +53,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias TA2<R> = TA1<String, R>
                     typealias TA3 = TA2<Int>
 
-                    fun x1(x: TA3)
+                    fun x1(x: TA3) {}
                 """.trimIndent()
             )
 
@@ -63,7 +63,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias TA2<R> = TA1<String, R>
                     typealias TA3 = TA2<Int>
                     
-                    fun x1(x: TA3)
+                    fun x1(x: TA3) {}
                 """.trimIndent()
             )
         }
@@ -89,7 +89,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias TA2<R> = TA1<String, R>
                     typealias TA3 = TA2<Int>
 
-                    fun x1(x: TA3)
+                    fun x1(x: TA3) {}
                 """.trimIndent()
             )
 
@@ -99,7 +99,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias TA2<R> = TA1<String, R>
                     typealias TA3 = TA2<Int>
                     
-                    fun x1(x: TA1<String, Int>)
+                    fun x1(x: TA1<String, Int>) {}
                 """.trimIndent()
             )
         }
@@ -125,8 +125,8 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias A<T, M> = Triple<T, String, M>
                     typealias B<T, M> = Triple<T, String, M>
 
-                    fun x1(x: B<Int, Long>)
-                    fun x2(x: A<Int, Long>)
+                    fun x1(x: B<Int, Long>) {}
+                    fun x2(x: A<Int, Long>) {}
                 """.trimIndent()
             )
 
@@ -136,8 +136,8 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias A<T, M> = Triple<T, String, M>
                     typealias B<T, M> = Triple<T, String, M>
 
-                    fun x1(x: A<Int, Long>) // NOTE: A & B flipped
-                    fun x2(x: B<Int, Long>) // NOTE: A & B flipped
+                    fun x1(x: A<Int, Long>) {} // NOTE: A & B flipped
+                    fun x2(x: B<Int, Long>) {} // NOTE: A & B flipped
                 """.trimIndent()
             )
         }
@@ -166,8 +166,8 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias T3<T, M> = Triple<T, String, M>
                     typealias T4<T, M> = Triple<T, String, M>
 
-                    fun x1(x: T4<Int, Long>)
-                    fun x2(x: T3<Int, Long>)
+                    fun x1(x: T4<Int, Long>) {}
+                    fun x2(x: T3<Int, Long>) {}
                 """.trimIndent()
             )
 
@@ -179,8 +179,8 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias T3<T, M> = Triple<T, String, M>
                     typealias T4<T, M> = T3<T, M>
 
-                    fun x1(x: T3<Int, Long>) // NOTE: T3 & T4 flipped
-                    fun x2(x: T4<Int, Long>) // NOTE: T3 & T4 flipped
+                    fun x1(x: T3<Int, Long>) {} // NOTE: T3 & T4 flipped
+                    fun x2(x: T4<Int, Long>) {} // NOTE: T3 & T4 flipped
                 """.trimIndent()
             )
         }
@@ -210,7 +210,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias A2 = Long
                     typealias A3<T, R> = Triple<T, String, R>
                     
-                    fun x(x: A3<A1, A2>)
+                    fun x(x: A3<A1, A2>) {}
                 """.trimIndent()
             )
 
@@ -220,7 +220,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     typealias B1 = String
                     typealias B2 = Long
                     
-                    fun x(x: Triple<B1, String, B2>)
+                    fun x(x: Triple<B1, String, B2>) {}
                 """.trimIndent()
             )
         }
@@ -252,9 +252,9 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     class MyClass
                     typealias X = TA<MyClass>
                     
-                    fun x(x: X)
-                    fun x2(x: TA<MyClass>)
-                    fun x3(x: TA<X>)
+                    fun x(x: X) {}
+                    fun x2(x: TA<MyClass>) {}
+                    fun x3(x: TA<X>) {}
                 """.trimIndent()
             )
 
@@ -263,9 +263,9 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                     class MyClass
                     typealias X = TA<MyClass>
                     
-                    fun x(x: X)
-                    fun x2(x: TA<MyClass>)
-                    fun x3(x: TA<X>)
+                    fun x(x: X) {}
+                    fun x2(x: TA<MyClass>) {}
+                    fun x3(x: TA<X>) {}
                 """.trimIndent()
             )
         }
@@ -288,13 +288,13 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             simpleSingleSourceTarget(
                 "a", """
                     typealias X<T> = Map<Int, T>
-                    fun <T: Any> x(x: X<T>)
+                    fun <T: Any> x(x: X<T>) {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
-                    fun <T: Any> x(x: Map<Int, T>)
+                    fun <T: Any> x(x: Map<Int, T>) {}
                 """.trimIndent()
             )
         }
@@ -313,13 +313,13 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             simpleSingleSourceTarget(
                 "a", """
                     typealias X<T> = Map<Int, T>
-                    fun <T: X<T>> x(x: X<T>)
+                    fun <T: X<T>> x(x: X<T>) {}
                 """.trimIndent()
             )
 
             simpleSingleSourceTarget(
                 "b", """
-                    fun <T: Map<Int, T>> x(x: Map<Int, T>)
+                    fun <T: Map<Int, T>> x(x: Map<Int, T>) {}
                 """.trimIndent()
             )
         }
@@ -338,7 +338,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
             simpleSingleSourceTarget(
                 "a", """
                     typealias X<T> = Map<Int, T>
-                    fun <T: X<T>> x(x: X<T>)
+                    fun <T: X<T>> x(x: X<T>) {}
                 """.trimIndent()
             )
 
@@ -346,14 +346,14 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
                 "b", """
                     typealias X<T> = Map<Int, T>
                     typealias Y<T> = X<T>
-                    fun <T: Y<T>> x(x: Y<T>)
+                    fun <T: Y<T>> x(x: Y<T>) {}
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect typealias X<T> = Map<Int, T>
+                typealias X<T> = Map<Int, T>
                 expect fun <T: X<T>> x(x: X<T>)
             """.trimIndent()
         )
@@ -417,7 +417,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         result.assertCommonized(
             "(a, b)", """
                 expect class Foo<T1, T2, T3>() {
-                    expect fun t(x: Foo<Int, String, T3>)
+                    fun t(x: Foo<Int, String, T3>)
                 }
             """.trimIndent()
         )
@@ -454,7 +454,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         result.assertCommonized(
             "(a, b)", """
                 expect class Foo<T1, T2, T3>() {
-                    expect fun t(x: Y<T3, Int>)
+                    fun t(x: Y<T3, Int>)
                 }
 
                 typealias X<T1, T2, T3> = Foo<T1, T2, T3>

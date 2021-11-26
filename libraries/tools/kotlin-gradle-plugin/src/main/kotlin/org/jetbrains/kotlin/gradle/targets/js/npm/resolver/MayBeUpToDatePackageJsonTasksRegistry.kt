@@ -10,9 +10,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import java.util.concurrent.ConcurrentHashMap
 
 internal abstract class MayBeUpToDatePackageJsonTasksRegistry : BuildService<BuildServiceParameters.None> {
-    private val mayBeUpToDateTasks = mutableSetOf<String>()
+    private val mayBeUpToDateTasks = ConcurrentHashMap.newKeySet<String>()
 
     fun markForNpmDependenciesResolve(task: KotlinPackageJsonTask) {
         mayBeUpToDateTasks.add(task.path)

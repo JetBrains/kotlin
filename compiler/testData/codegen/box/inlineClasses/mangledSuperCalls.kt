@@ -1,4 +1,8 @@
-inline class I(val i: Int)
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class I(val i: Int)
 
 abstract class A {
     abstract fun f(i: I): String

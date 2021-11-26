@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -29,12 +30,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -44,9 +44,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -74,7 +75,7 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
 
 fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
     return buildResolvedTypeRef {
-        source = this@constructFunctionalTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+        source = this@constructFunctionalTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
         type = constructFunctionalType(isSuspend)
     }
 }
@@ -116,7 +117,7 @@ fun createKPropertyType(
 
 fun BodyResolveComponents.buildResolvedQualifierForClass(
     regularClass: FirClassLikeSymbol<*>,
-    sourceElement: FirSourceElement? = null,
+    sourceElement: KtSourceElement? = null,
     // TODO: Clarify if we actually need type arguments for qualifier?
     typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
     diagnostic: ConeDiagnostic? = null,
@@ -178,10 +179,10 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
                 declaration.symbol.constructType(emptyArray(), false),
             )
         } else {
-            val companionObject = declaration.companionObject
-            if (companionObject != null) {
+            val companionObjectSymbol = declaration.companionObjectSymbol
+            if (companionObjectSymbol != null) {
                 return resultType.resolvedTypeFromPrototype(
-                    companionObject.symbol.constructType(emptyArray(), false),
+                    companionObjectSymbol.constructType(emptyArray(), false),
                 )
             }
         }
@@ -217,7 +218,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
     return when (val newCallee = access.calleeReference) {
         is FirErrorNamedReference ->
             buildErrorTypeRef {
-                source = access.source?.fakeElement(FirFakeSourceElementKind.ErrorTypeRef)
+                source = access.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef)
                 diagnostic = ConeStubDiagnostic(newCallee.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
@@ -267,11 +268,11 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
             if (makeNullable) {
                 returnTypeRef.withReplacedConeType(
                     returnTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext),
-                    FirFakeSourceElementKind.ImplicitTypeRef
+                    KtFakeSourceElementKind.ImplicitTypeRef
                 )
             } else {
                 buildResolvedTypeRef {
-                    source = returnTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    source = returnTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     type = returnTypeRef.type
                     annotations += returnTypeRef.annotations
                 }
@@ -291,26 +292,52 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
 ): FirQualifiedAccessExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
-        ?: return qualifiedAccessExpression
+    val builder = transformExpressionUsingSmartcastInfo(
+        qualifiedAccessExpression,
+        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
+        ::FirExpressionWithSmartcastBuilder,
+        ::FirExpressionWithSmartcastToNullBuilder
+    ) ?: return qualifiedAccessExpression
+    return builder.build()
+}
+
+fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
+    whenSubjectExpression: FirWhenSubjectExpression
+): FirWhenSubjectExpression {
+    val builder = transformExpressionUsingSmartcastInfo(
+        whenSubjectExpression,
+        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
+        ::FirWhenSubjectExpressionWithSmartcastBuilder,
+        ::FirWhenSubjectExpressionWithSmartcastToNullBuilder
+    ) ?: return whenSubjectExpression
+    return builder.build()
+}
+
+private inline fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
+    expression: T,
+    smartcastExtractor: (T) -> Pair<PropertyStability, MutableList<ConeKotlinType>>?,
+    smartcastBuilder: () -> FirWrappedExpressionWithSmartcastBuilder<T>,
+    smartcastToNullBuilder: () -> FirWrappedExpressionWithSmartcastToNullBuilder<T>
+): FirWrappedExpressionWithSmartcastBuilder<T>? {
+    val (stability, typesFromSmartCast) = smartcastExtractor(expression) ?: return null
     val smartcastStability = stability.impliedSmartcastStability
-        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(qualifiedAccessExpression)) {
+        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
             SmartcastStability.CAPTURED_VARIABLE
         } else {
             SmartcastStability.STABLE_VALUE
         }
 
-    val originalType = qualifiedAccessExpression.resultType.coneType
+    val originalType = expression.resultType.coneType
     val allTypes = typesFromSmartCast.also {
         it += originalType
     }
-    val intersectedType = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, allTypes)
-    if (intersectedType == originalType) return qualifiedAccessExpression
+    val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
+    if (intersectedType == originalType) return null
     val intersectedTypeRef = buildResolvedTypeRef {
-        source = qualifiedAccessExpression.resultType.source?.fakeElement(FirFakeSourceElementKind.SmartCastedTypeRef)
+        source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
-        annotations += qualifiedAccessExpression.resultType.annotations
-        delegatedTypeRef = qualifiedAccessExpression.resultType
+        annotations += expression.resultType.annotations
+        delegatedTypeRef = expression.resultType
     }
     // For example, if (x == null) { ... },
     //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
@@ -320,15 +347,15 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
                 it += originalType
             }
         val intersectedTypeWithoutNullableNothing =
-            ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, typesFromSmartcastWithoutNullableNothing)
+            ConeTypeIntersector.intersectTypes(session.typeContext, typesFromSmartcastWithoutNullableNothing)
         val intersectedTypeRefWithoutNullableNothing = buildResolvedTypeRef {
-            source = qualifiedAccessExpression.resultType.source?.fakeElement(FirFakeSourceElementKind.SmartCastedTypeRef)
+            source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
             type = intersectedTypeWithoutNullableNothing
-            annotations += qualifiedAccessExpression.resultType.annotations
-            delegatedTypeRef = qualifiedAccessExpression.resultType
+            annotations += expression.resultType.annotations
+            delegatedTypeRef = expression.resultType
         }
-        return buildExpressionWithSmartcastToNull {
-            originalExpression = qualifiedAccessExpression
+        return smartcastToNullBuilder().apply {
+            originalExpression = expression
             smartcastType = intersectedTypeRef
             smartcastTypeWithoutNullableNothing = intersectedTypeRefWithoutNullableNothing
             this.typesFromSmartCast = typesFromSmartCast
@@ -336,39 +363,12 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
         }
     }
 
-    return buildExpressionWithSmartcast {
-        originalExpression = qualifiedAccessExpression
+    return smartcastBuilder().apply {
+        originalExpression = expression
         smartcastType = intersectedTypeRef
         this.typesFromSmartCast = typesFromSmartCast
         this.smartcastStability = smartcastStability
     }
-}
-
-fun CallableId.isInvoke(): Boolean =
-    isKFunctionInvoke()
-            || callableName.asString() == "invoke"
-            && className?.asString()?.startsWith("Function") == true
-            && packageName == StandardClassIds.BASE_KOTLIN_PACKAGE
-
-fun CallableId.isKFunctionInvoke(): Boolean =
-    callableName.asString() == "invoke"
-            && className?.asString()?.startsWith("KFunction") == true
-            && packageName.asString() == "kotlin.reflect"
-
-fun CallableId.isIteratorNext(): Boolean =
-    callableName.asString() == "next" && className?.asString()?.endsWith("Iterator") == true
-            && packageName.asString() == "kotlin.collections"
-
-fun CallableId.isIteratorHasNext(): Boolean =
-    callableName.asString() == "hasNext" && className?.asString()?.endsWith("Iterator") == true
-            && packageName.asString() == "kotlin.collections"
-
-fun CallableId.isIterator(): Boolean =
-    callableName.asString() == "iterator" && packageName.asString() in arrayOf("kotlin.collections", "kotlin.ranges")
-
-fun FirAnnotation.fqName(session: FirSession): FqName? {
-    val symbol = session.symbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
-    return symbol.classId.asSingleFqName()
 }
 
 fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(nullableReceiverExpression: FirExpression, session: FirSession) {
@@ -446,9 +446,10 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
 
-fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassForStaticMemberAttr?.let { lookupTag ->
-    session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
-}
+fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =
+    this.containingClass()?.let { lookupTag ->
+        session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
+    }
 
 fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): ForbiddenNamedArgumentsTarget? {
     if (this is FirConstructor && this.isPrimary) {
@@ -463,7 +464,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
         return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
     }
     return when (origin) {
-        FirDeclarationOrigin.Source, FirDeclarationOrigin.Library -> null
+        FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
         FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.getAsForbiddenNamedArgumentsTarget(session)
         // For intersection overrides, the logic in
@@ -492,73 +493,3 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
 fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
-
-fun isValidTypeParameterFromOuterClass(
-    typeParameterSymbol: FirTypeParameterSymbol,
-    classDeclaration: FirRegularClass?,
-    session: FirSession
-): Boolean {
-    if (classDeclaration == null) {
-        return true  // Extra check is required because of classDeclaration will be resolved later
-    }
-
-    fun containsTypeParameter(currentClassDeclaration: FirRegularClass): Boolean {
-        if (currentClassDeclaration.typeParameters.any { it.symbol == typeParameterSymbol }) {
-            return true
-        }
-
-        for (superTypeRef in currentClassDeclaration.superTypeRefs) {
-            val superClassFir = superTypeRef.firClassLike(session)
-            if (superClassFir == null || superClassFir is FirRegularClass && containsTypeParameter(superClassFir)) {
-                return true
-            }
-        }
-
-        return false
-    }
-
-    return containsTypeParameter(classDeclaration)
-}
-
-fun FirRegularClass.getActualTypeParametersCount(session: FirSession): Int {
-    var result = typeParameters.size
-
-    if (!isInner) {
-        return result
-    }
-
-    val containingClass = getContainingDeclaration(session) as? FirRegularClass
-    if (containingClass != null) {
-        result -= containingClass.typeParameters.size
-    }
-
-    return result
-}
-
-fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
-    if (isLocal) {
-        @OptIn(LookupTagInternals::class)
-        return (this as? FirRegularClass)?.containingClassForLocalAttr?.toFirRegularClass(session)
-    } else {
-        val classId = symbol.classId
-        val parentId = classId.relativeClassName.parent()
-        if (!parentId.isRoot) {
-            val containingDeclarationId = ClassId(classId.packageFqName, parentId, false)
-            return session.symbolProvider.getClassLikeSymbolByClassId(containingDeclarationId)?.fir
-        }
-    }
-
-    return null
-}
-
-fun ConeTypeContext.isTypeMismatchDueToNullability(
-    actualType: ConeKotlinType,
-    expectedType: ConeKotlinType
-): Boolean {
-    return actualType.isNullableType() && !expectedType.isNullableType() && AbstractTypeChecker.isSubtypeOf(
-        this,
-        actualType,
-        expectedType.withNullability(ConeNullability.NULLABLE, this)
-    )
-}
-

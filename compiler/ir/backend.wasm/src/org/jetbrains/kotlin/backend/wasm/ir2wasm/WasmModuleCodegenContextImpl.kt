@@ -58,13 +58,6 @@ class WasmModuleCodegenContextImpl(
         return with(typeTransformer) { irType.toWasmResultType() }
     }
 
-    override fun transformExportedResultType(irType: IrType): WasmType? {
-        // Exported strings are passed as pointers to the raw memory
-        if (irType.getClass() == backendContext.irBuiltIns.stringType.getClass())
-            return WasmI32
-        return with(typeTransformer) { irType.toWasmResultType() }
-    }
-
     override fun transformBlockResultType(irType: IrType): WasmType? {
         return with(typeTransformer) { irType.toWasmBlockResultType() }
     }
@@ -81,8 +74,8 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.definedClassITableData.define(irClass, table)
     }
 
-    override fun setStartFunction(wasmFunction: WasmFunction) {
-        wasmFragment.startFunction = wasmFunction
+    override fun registerInitFunction(wasmFunction: WasmFunction, priority: String) {
+        wasmFragment.initFunctions += WasmCompiledModuleFragment.FunWithPriority(wasmFunction, priority)
     }
 
     override fun addExport(wasmExport: WasmExport<*>) {
@@ -180,12 +173,6 @@ class WasmModuleCodegenContextImpl(
 
 
     override fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int> {
-        // HACK to substitute kotlin.Function5 with kotlin.wasm.internal.Function5
-        val defaultType = irInterface.defaultType
-        if (defaultType.isFunction()) {
-            val n = irInterface.owner.typeParameters.size - 1
-            return wasmFragment.interfaceId.reference(backendContext.wasmSymbols.functionN(n))
-        }
         return wasmFragment.interfaceId.reference(irInterface)
     }
 

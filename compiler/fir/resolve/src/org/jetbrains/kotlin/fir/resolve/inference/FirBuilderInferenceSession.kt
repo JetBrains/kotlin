@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -165,7 +165,7 @@ class FirBuilderInferenceSession(
     }
 
     private fun createNonFixedTypeToVariableSubstitutor(): ConeSubstitutor {
-        val ctx = components.session.inferenceComponents.ctx
+        val ctx = components.session.typeContext
 
         val bindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         for ((variable, nonFixedType) in stubsForPostponedVariables) {
@@ -269,7 +269,6 @@ class FirStubTypeTransformer(
         argumentList.transformArguments(this, data)
 }
 
-private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
+private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
 
-fun FirElement.hasBuilderInferenceAnnotation(): Boolean =
-    (this as? FirAnnotatedDeclaration)?.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID) == true
+fun FirDeclaration.hasBuilderInferenceAnnotation(): Boolean = hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID)

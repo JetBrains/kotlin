@@ -20,7 +20,7 @@
 namespace kotlin {
 
 // TODO: Consider different locking mechanisms.
-template <typename Value, typename Mutex = SpinLock>
+template <typename Value, typename Mutex>
 class SingleLockList : private Pinned {
 public:
     class Node;

@@ -33,5 +33,18 @@ void mm::ShadowStack::EnterFrame(ObjHeader** start, int parameters, int count) n
 
 void mm::ShadowStack::LeaveFrame(ObjHeader** start, int parameters, int count) noexcept {
     FrameOverlay* frame = reinterpret_cast<FrameOverlay*>(start);
+    RuntimeAssert(currentFrame_ == frame, "Frame to leave is expected to be %p, but current frame is %p", frame, currentFrame_);
     currentFrame_ = frame->previous;
+}
+
+void mm::ShadowStack::SetCurrentFrame(ObjHeader** start) noexcept {
+    currentFrame_ = reinterpret_cast<FrameOverlay*>(start);
+}
+
+FrameOverlay* mm::ShadowStack::getCurrentFrame() noexcept {
+    return currentFrame_;
+}
+
+ALWAYS_INLINE void mm::ShadowStack::checkCurrentFrame(FrameOverlay* frame) noexcept {
+    RuntimeAssert(currentFrame_ == frame, "Frame is expected to be %p, but current frame is %p", frame, currentFrame_);
 }

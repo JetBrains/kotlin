@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirTypeAliasImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var deprecation: DeprecationsPerUseSite?,
     override var status: FirDeclarationStatus,
+    override var deprecation: DeprecationsPerUseSite?,
     override val typeParameters: MutableList<FirTypeParameter>,
     override val name: Name,
     override val symbol: FirTypeAliasSymbol,

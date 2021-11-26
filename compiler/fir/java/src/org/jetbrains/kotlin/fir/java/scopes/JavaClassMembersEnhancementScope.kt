@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -24,9 +25,9 @@ class JavaClassMembersEnhancementScope(
     private val overriddenFunctions = mutableMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
     private val overriddenProperties = mutableMapOf<FirPropertySymbol, Collection<FirPropertySymbol>>()
 
-    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
+    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableDeclaration>>>()
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
-        overriddenMembers(name)
+        overriddenMembersForEnhancement(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -64,14 +65,33 @@ class JavaClassMembersEnhancementScope(
         return super.processFunctionsByName(name, processor)
     }
 
+    private fun FirCallableDeclaration.overriddenMembersForEnhancement(name: Name): List<FirCallableDeclaration> {
+        val directlyOverriddensFromScopeFir = overriddenMembers(name)
+        val superTypesScope = useSiteMemberScope.superTypesScope as? FirTypeIntersectionScope ?: return directlyOverriddensFromScopeFir
+
+        val directlyOverriddensFromScope = directlyOverriddensFromScopeFir.map { it.symbol }
+        val result = mutableSetOf<FirCallableSymbol<*>>()
+        for (intersectedOverriddenSymbol in directlyOverriddensFromScope) {
+            val newOverriddens = superTypesScope.getDirectOverriddenSymbols(intersectedOverriddenSymbol).map { it.member }
+            if (newOverriddens.isNotEmpty()) {
+                result += newOverriddens
+            } else {
+                result += intersectedOverriddenSymbol
+            }
+        }
+        return result.map { it.fir }
+    }
+
     private fun FirCallableDeclaration.overriddenMembers(name: Name): List<FirCallableDeclaration> {
         val backMap = overrideBindCache.getOrPut(name) {
-            useSiteMemberScope
-                .overrideByBase
-                .toList()
-                .groupBy({ (_, key) -> key }, { (value) -> value })
+            val result = mutableMapOf<FirCallableSymbol<*>?, MutableList<FirCallableDeclaration>>()
+            for ((key, value) in useSiteMemberScope.overrideByBase) {
+                val resultItem = result.getOrPut(value) { mutableListOf() }
+                resultItem.add(key.fir)
+            }
+            result
         }
-        return backMap[this.symbol]?.map { it.fir } ?: emptyList()
+        return backMap[this.symbol] ?: emptyList()
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

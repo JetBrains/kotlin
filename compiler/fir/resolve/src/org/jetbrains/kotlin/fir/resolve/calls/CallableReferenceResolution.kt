@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -18,9 +21,11 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
-import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -67,7 +72,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
                     ?.let(candidate.substitutor::substituteOrSelf)
 
             if (resultingReceiverType != null && declarationReceiverType != null) {
-                val capturedReceiver = context.inferenceComponents.ctx.captureFromExpression(resultingReceiverType) ?: resultingReceiverType
+                val capturedReceiver = context.session.typeContext.captureFromExpression(resultingReceiverType) ?: resultingReceiverType
                 addSubtypeConstraint(capturedReceiver, declarationReceiverType, position)
             }
         }
@@ -107,6 +112,9 @@ private fun buildReflectionType(
                 )
 
             val parameters = mutableListOf<ConeKotlinType>()
+            if (fir.receiverTypeRef == null && receiverType != null) {
+                parameters += receiverType
+            }
 
             val returnType = callableReferenceAdaptation?.let {
                 parameters += it.argumentTypes
@@ -123,7 +131,7 @@ private fun buildReflectionType(
                     callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
             return createFunctionalType(
                 parameters,
-                receiverType = receiverType,
+                receiverType = receiverType.takeIf { fir.receiverTypeRef != null },
                 rawReturnType = returnType,
                 isKFunctionType = true,
                 isSuspend = isSuspend
@@ -256,9 +264,6 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     )
 }
 
-fun ConeKotlinType?.isPotentiallyArray(): Boolean =
-    this != null && (this.arrayElementType() != null || this is ConeTypeVariableType)
-
 private fun varargParameterTypeByExpectedParameter(
     expectedParameterType: ConeKotlinType,
     substitutedParameter: FirValueParameter,
@@ -359,7 +364,7 @@ private fun createFakeArgumentsForReference(
 class FirFakeArgumentForCallableReference(
     val index: Int
 ) : FirExpression() {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
 
     override val typeRef: FirTypeRef
@@ -407,7 +412,7 @@ private fun FirVariable.canBeMutableReference(candidate: Candidate): Boolean {
     if (!isVar) return false
     if (this is FirField) return true
     val original = this.unwrapFakeOverrides()
-    return original.source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
+    return original.source?.kind == KtFakeSourceElementKind.PropertyFromParameter ||
             (original.setter is FirMemberDeclaration &&
                     candidate.callInfo.session.visibilityChecker.isVisible(original.setter!!, candidate))
 }

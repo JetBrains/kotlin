@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

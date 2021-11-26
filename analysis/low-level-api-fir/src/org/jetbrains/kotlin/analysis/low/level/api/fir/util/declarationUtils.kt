@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -12,10 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 

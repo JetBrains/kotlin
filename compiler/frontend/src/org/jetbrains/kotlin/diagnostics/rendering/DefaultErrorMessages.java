@@ -86,7 +86,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPOSED_SUPER_CLASS, "''{0}'' subclass exposes its ''{2}'' supertype{1}", TO_STRING, TO_STRING, TO_STRING);
         MAP.put(EXPOSED_SUPER_INTERFACE, "''{0}'' sub-interface exposes its ''{2}'' supertype{1}", TO_STRING, TO_STRING, TO_STRING);
         MAP.put(EXPOSED_TYPEALIAS_EXPANDED_TYPE, "''{0}'' typealias exposes ''{2}'' in expanded type{1}", TO_STRING, TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_FROM_PRIVATE_IN_FILE, "Deprecation: private-in-file class should not expose ''{1}'' type{0}", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_FROM_PRIVATE_IN_FILE, "Deprecation: ''{0}'' element should not expose ''{2}'' type{1}", TO_STRING, TO_STRING, TO_STRING);
 
         MAP.put(EXTENSION_SHADOWED_BY_MEMBER, "Extension is shadowed by a member: {0}", COMPACT_WITH_MODIFIERS);
         MAP.put(EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR,
@@ -165,7 +165,7 @@ public class DefaultErrorMessages {
         MAP.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING);
         MAP.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING);
 
-        MAP.put(OPT_IN_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'");
+        MAP.put(OPT_IN_IS_NOT_ENABLED, "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'");
         MAP.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation");
         MAP.put(OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, "This class can only be used as an annotation or as an argument to @OptIn");
 
@@ -346,6 +346,7 @@ public class DefaultErrorMessages {
         MAP.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", NAME);
         MAP.put(UNINITIALIZED_ENUM_ENTRY, "Enum entry ''{0}'' is uninitialized here", NAME);
         MAP.put(UNINITIALIZED_ENUM_COMPANION, "Companion object of enum class ''{0}'' is uninitialized here", NAME);
+        MAP.put(UNINITIALIZED_ENUM_COMPANION_WARNING, "Companion object of enum class ''{0}'' is uninitialized here. This warning will become an error in future releases", NAME);
         MAP.put(UNUSED_VARIABLE, "Variable ''{0}'' is never used", NAME);
         MAP.put(UNUSED_PARAMETER, "Parameter ''{0}'' is never used", NAME);
         MAP.put(UNUSED_ANONYMOUS_PARAMETER, "Parameter ''{0}'' is never used, could be renamed to _", NAME);
@@ -449,6 +450,8 @@ public class DefaultErrorMessages {
 
         MAP.put(PARENTHESIZED_COMPANION_LHS_DEPRECATION, "Access to companion object through parenthesized class name is deprecated. Please, add explicit Companion qualifier.");
 
+        MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "Resolution to private constructor of sealed class. In future it will be allowed to use this constructor only inside declaring sealed class");
+
         MAP.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed");
         MAP.put(LOCAL_VARIABLE_WITH_GETTER, "Local variables are not allowed to have getters");
         MAP.put(LOCAL_VARIABLE_WITH_SETTER, "Local variables are not allowed to have setters");
@@ -459,6 +462,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_IDENTITY_EQUALS, "Identity equality for arguments of types {0} and {1} is deprecated", RENDER_TYPE, RENDER_TYPE);
         MAP.put(IMPLICIT_BOXING_IN_IDENTITY_EQUALS, "Identity equality for arguments of types {0} and {1} can be unstable because of implicit boxing", RENDER_TYPE, RENDER_TYPE);
         MAP.put(FORBIDDEN_IDENTITY_EQUALS, "Identity equality for arguments of types {0} and {1} is forbidden", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES, "Synchronizing by {0} is forbidden", RENDER_TYPE);
 
         MAP.put(DEPRECATED_BINARY_MOD, "Deprecated convention for ''{0}''. Use ''{1}''", NAME, STRING);
         MAP.put(FORBIDDEN_BINARY_MOD, "Convention for ''{0}'' is forbidden. Use ''{1}''", NAME, STRING);
@@ -632,6 +636,7 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "Illegal variable declaration in 'when' subject: {0}. Should be a simple val with an initializer", STRING);
 
         MAP.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
+        MAP.put(NO_ELSE_IN_WHEN_WARNING, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN, "''when'' expression on enum is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_STATEMENT, "Non exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}", STRING, RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS, "''when'' expression on sealed classes is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
@@ -658,7 +663,7 @@ public class DefaultErrorMessages {
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
         MAP.put(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES, "Data class inheritance from other classes is forbidden");
         MAP.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects");
-        MAP.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class");
+        MAP.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "{0} cannot extend a sealed {1}", STRING, CLASS_KIND);
         MAP.put(SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, "Inheritor of sealed class or interface declared in package {0} but it must be in package {1} where base class is declared", TO_STRING, TO_STRING);
         MAP.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited");
         MAP.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of java sealed classes is prohibited");
@@ -716,7 +721,8 @@ public class DefaultErrorMessages {
 
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);
         MAP.put(MISSING_STDLIB, "{0}. Ensure you have the standard Kotlin library in dependencies", STRING);
-        MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}. This expression will have nullable type in future releases", RENDER_TYPE);
+        MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
+        MAP.put(SAFE_CALL_WILL_CHANGE_NULLABILITY, "Safe call on a non-null receiver will have nullable type in future releases");
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression");
@@ -738,20 +744,20 @@ public class DefaultErrorMessages {
         MAP.put(NON_PRIVATE_CONSTRUCTOR_IN_SEALED, "Constructor must be private in sealed class");
         MAP.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class");
 
-        MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner");
-        MAP.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final");
-        MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class");
-        MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
-        MAP.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Value class primary constructor must have only final read-only (val) property parameter");
-        MAP.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields");
-        MAP.put(DELEGATED_PROPERTY_INSIDE_INLINE_CLASS, "Inline class cannot have delegated properties");
-        MAP.put(INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Inline class cannot have value parameter of type ''{0}''", RENDER_TYPE);
-        MAP.put(INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Inline class cannot implement an interface by delegation");
-        MAP.put(INLINE_CLASS_CANNOT_EXTEND_CLASSES, "Inline class cannot extend classes");
-        MAP.put(INLINE_CLASS_CANNOT_BE_RECURSIVE, "Inline class cannot be recursive");
-        MAP.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
-        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
-        MAP.put(INNER_CLASS_INSIDE_INLINE_CLASS, "Inline class cannot have inner classes");
+        MAP.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value classes cannot be local or inner");
+        MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes can be only final");
+        MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value class");
+        MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter"); // +
+        MAP.put(VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Value class primary constructor must have only final read-only (val) property parameter");
+        MAP.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields");
+        MAP.put(DELEGATED_PROPERTY_INSIDE_VALUE_CLASS, "Value class cannot have delegated properties");
+        MAP.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Value class cannot have value parameter of type ''{0}''", RENDER_TYPE);
+        MAP.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation");
+        MAP.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes");
+        MAP.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive");
+        MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
+        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
+        MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
 
@@ -833,6 +839,8 @@ public class DefaultErrorMessages {
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
 
         MAP.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression");
+        MAP.put(INVALID_IF_AS_EXPRESSION_WARNING, "'if' must have both main and 'else' branches if used as an expression");
+        MAP.put(CONFUSING_BRANCH_CONDITION, "The logical expressions may be understood ambiguously in when with subject branches. Please wrap it with parenthesis");
 
         MAP.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
         MAP.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", VISIBILITY, NAME, NAME);
@@ -1069,6 +1077,7 @@ public class DefaultErrorMessages {
         MAP.put(IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE, "Returning type parameter has been inferred to Nothing implicitly because Nothing is more specific than specified expected type. Please specify type arguments explicitly in accordance with expected type to hide this warning. Nothing can produce an exception at runtime. See KT-36776 for more details.");
         MAP.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited");
         MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''");
+        MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN, "Calls having a form of ''suspend fun'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the argument of the call with parens: ''suspend(fun() { ... })''");
 
         MAP.put(PLUGIN_ERROR, "{0}", (d, c) -> d.getText());
         MAP.put(PLUGIN_WARNING, "{0}", (d, c) -> d.getText());

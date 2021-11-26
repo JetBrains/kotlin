@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     val r1 = listOf("O", "K", "fail").let {

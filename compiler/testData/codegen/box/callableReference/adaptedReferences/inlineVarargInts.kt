@@ -1,6 +1,4 @@
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 inline fun foo(x: (Int, Int) -> Int): Int =
     x(120,3)

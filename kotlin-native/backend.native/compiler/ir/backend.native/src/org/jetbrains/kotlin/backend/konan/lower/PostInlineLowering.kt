@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.llvm.ConstantConstructorIntrinsicType
+import org.jetbrains.kotlin.backend.konan.llvm.tryGetConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -93,17 +95,23 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                             expression.startOffset, expression.endOffset,
                             context.irBuiltIns.stringType,
                             IrConstKind.String, builder.toString()))
-                } else if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
-                    // Inline functions themselves are not called (they have been inlined at all call sites),
-                    // so it is ok not to build exact type parameters for them.
-                    val needExactTypeParameters = (container as? IrSimpleFunction)?.isInline != true
-                    return with (KTypeGenerator(context, irFile, expression, needExactTypeParameters)) {
-                        data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = false)
-                    }
                 }
 
                 return expression
             }
+
+            override fun visitConstantObject(expression: IrConstantObject, data: IrBuilderWithScope): IrConstantValue {
+                return if (tryGetConstantConstructorIntrinsicType(expression.constructor) == ConstantConstructorIntrinsicType.KTYPE_IMPL) {
+                    // Inline functions themselves are not called (they have been inlined at all call sites),
+                    // so it is ok not to build exact type parameters for them.
+                    val needExactTypeParameters = (container as? IrSimpleFunction)?.isInline != true
+                    with(KTypeGenerator(context, irFile, expression, needExactTypeParameters)) {
+                        data.at(expression).irKType(expression.typeArguments[0], leaveReifiedForLater = false)
+                    }
+                } else
+                    super.visitConstantObject(expression, data)
+            }
+
         }, data = context.createIrBuilder((container as IrSymbolOwner).symbol, irBody.startOffset, irBody.endOffset))
     }
 }

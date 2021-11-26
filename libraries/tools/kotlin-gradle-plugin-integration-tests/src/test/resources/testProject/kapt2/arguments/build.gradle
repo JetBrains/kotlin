@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
 }
-
-apply plugin: "kotlin"
-apply plugin: "kotlin-kapt"
 
 repositories {
     mavenLocal()

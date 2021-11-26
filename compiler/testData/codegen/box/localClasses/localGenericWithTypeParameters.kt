@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: CLASS_REFERENCES
 class Q<TT> {
     fun <T> qz(x: T, block: (T) -> String) = block(x)
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -175,20 +176,15 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitGetValue(expression: IrGetValue) {
         val valueSymbol = expression.symbol
-        body.buildGetLocal(context.referenceLocal(valueSymbol))
-
         val valueDeclaration = valueSymbol.owner
-        if (valueSymbol.owner is IrValueParameter) {
-            val parent = valueDeclaration.parent
-            if (parent is IrFunction && parent.isExported(backendContext)) {
-                val type = context.transformType(valueDeclaration.type)
-                if (type is WasmRefNullType) {
-                    // TODO: Add these casts as IR-2-IR lowering instead
-                    generateTypeRTT(valueDeclaration.type)
-                    body.buildRefCast()
-                }
-            }
-        }
+        body.buildGetLocal(
+            // Handle cases when IrClass::thisReceiver is referenced instead
+            // of the value parameter of current function
+            if (valueDeclaration.isDispatchReceiver)
+                context.referenceLocal(0)
+            else
+                context.referenceLocal(valueSymbol)
+        )
     }
 
     override fun visitSetValue(expression: IrSetValue) {
@@ -260,6 +256,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             val klassId = context.referenceClassId(klass.symbol)
 
             body.buildConstI32Symbol(klassId)
+            body.buildConstI32(0) // Any::_hashCode
             generateExpression(call.getValueArgument(0)!!)
             body.buildGetGlobal(context.referenceClassRTT(klass.symbol))
             body.buildStructNew(structTypeName)
@@ -272,13 +269,19 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
+        val function: IrFunction = call.symbol.owner.realOverrideTarget
+
         call.dispatchReceiver?.let { generateExpression(it) }
         call.extensionReceiver?.let { generateExpression(it) }
         for (i in 0 until call.valueArgumentsCount) {
-            generateExpression(call.getValueArgument(i)!!)
+            val valueArgument = call.getValueArgument(i)
+            if (valueArgument == null) {
+                generateDefaultInitializerForType(context.transformType(function.valueParameters[i].type), body)
+            } else {
+                generateExpression(valueArgument)
+            }
         }
 
-        val function: IrFunction = call.symbol.owner.realOverrideTarget
 
         if (tryToGenerateIntrinsicCall(call, function)) {
             if (function.returnType == irBuiltIns.unitType)
@@ -314,16 +317,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         } else {
             // Static function call
             body.buildCall(context.referenceFunction(function.symbol))
-        }
-
-        // Return types of imported functions cannot have concrete struct/array references.
-        // Non-primitive return types are represented as eqref which need to be casted back to expected type on call site.
-        if (function.getWasmImportAnnotation() != null || function.getJsFunAnnotation() != null || function.isExternal || function.isExported(backendContext)) {
-            val resT = context.transformResultType(function.returnType)
-            if (resT is WasmRefNullType) {
-                generateTypeRTT(function.returnType)
-                body.buildRefCast()
-            }
         }
 
         // Unit types don't cross function boundaries
@@ -450,14 +443,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
         if (context.irFunction is IrConstructor) {
             body.buildGetLocal(context.referenceLocal(0))
-        }
-
-        // Handle complex exported parameters.
-        // TODO: This should live as a separate lowering which creates separate shims for each exported function.
-        if (context.irFunction.isExported(context.backendContext) &&
-            expression.value.type.getClass() == irBuiltIns.stringType.getClass()) {
-
-            body.buildCall(context.referenceFunction(wasmSymbols.exportString))
         }
 
         body.buildInstr(WasmOp.RETURN)

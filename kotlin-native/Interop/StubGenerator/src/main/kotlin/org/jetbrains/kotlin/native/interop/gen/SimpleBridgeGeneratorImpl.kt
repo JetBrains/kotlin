@@ -123,8 +123,7 @@ class SimpleBridgeGeneratorImpl(
                 val externCPrefix = if (libraryForCStubs.language == Language.CPP) "extern \"C\" " else ""
                 val functionName = pkgName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_") + "_$kotlinFunctionName"
                 if (independent) kotlinLines.add("@" + topLevelKotlinScope.reference(KotlinTypes.independent))
-                // TODO: this should be separate annotation
-                kotlinLines.add("@GCUnsafeCall(${functionName.quoteAsKotlinLiteral()})")
+                kotlinLines.add("@SymbolName(${functionName.quoteAsKotlinLiteral()})")
                 "$externCPrefix$cReturnType $functionName ($joinedCParameters)"
             }
         }

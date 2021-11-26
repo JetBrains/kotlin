@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.renderer
 
+import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
+import org.jetbrains.kotlin.analysis.api.components.RendererModifier
+import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.PsiSourceNavigator.getRawName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -18,9 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
-import org.jetbrains.kotlin.analysis.api.components.RendererModifier
-import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
@@ -36,27 +37,22 @@ internal class FirIdeRenderer private constructor(
 
     private val typeIdeRenderer: ConeTypeIdeRenderer = ConeTypeIdeRenderer(session, options.typeRendererOptions)
 
-    private fun StringBuilder.renderAnnotations(annotated: FirAnnotatedDeclaration) {
+    private fun StringBuilder.renderAnnotations(annotated: FirDeclaration) {
         if (RendererModifier.ANNOTATIONS in options.modifiers) {
             renderAnnotations(typeIdeRenderer, annotated.annotations, session)
         }
     }
 
-    private fun renderType(type: ConeTypeProjection, annotations: List<FirAnnotation>? = null): String =
-        typeIdeRenderer.renderType(type, annotations)
+    private fun renderType(type: ConeTypeProjection): String =
+        typeIdeRenderer.renderType(type)
 
     private fun renderType(firRef: FirTypeRef, approximate: Boolean = false): String {
         require(firRef is FirResolvedTypeRef)
 
         val approximatedIfNeeded = approximate.ifTrue {
-            PublicTypeApproximator.approximateTypeToPublicDenotable(firRef.coneType, session)
+            PublicTypeApproximator.approximateTypeToPublicDenotable(firRef.coneType, session, approximateLocalTypes = true)
         } ?: firRef.coneType
-        val annotations = if (RendererModifier.ANNOTATIONS in options.modifiers) {
-            firRef.annotations
-        } else {
-            null
-        }
-        return renderType(approximatedIfNeeded, annotations)
+        return renderType(approximatedIfNeeded)
     }
 
     private fun StringBuilder.renderName(declaration: FirDeclaration) {
@@ -405,7 +401,7 @@ internal class FirIdeRenderer private constructor(
                 visitEnumEntry(enumEntry, data)
                 data.append(",")
             }
-            partitioned.second.forEach {
+            sortDeclarations(partitioned.second).forEach {
                 if (!it.skipDeclarationForEnumClass()) {
                     it.accept(this, data)
                 }
@@ -414,7 +410,7 @@ internal class FirIdeRenderer private constructor(
 
         fun renderDeclarationForNotEnumClass() {
             check(!regularClass.isEnumClass)
-            regularClass.declarations.forEach {
+            sortDeclarations(regularClass.declarations).forEach {
                 if (!it.isDefaultPrimaryConstructor()) {
                     it.accept(this, data)
                 }
@@ -652,7 +648,7 @@ internal class FirIdeRenderer private constructor(
         append(": ")
         val parameterType = typeToRender.coneType
         if (isVarArg) {
-            append(renderType(parameterType.arrayElementType() ?: parameterType, typeToRender.annotations))
+            append(renderType(parameterType.arrayElementType() ?: parameterType))
         } else {
             append(renderType(typeToRender))
         }
@@ -679,6 +675,33 @@ internal class FirIdeRenderer private constructor(
         supertypes.joinTo(this, ", ") { renderType(it) }
     }
 
+    fun sortDeclarations(declarations: List<FirDeclaration>): List<FirDeclaration> {
+        if (!options.sortNestedDeclarations) return declarations
+
+        fun getDeclarationKind(declaration: FirDeclaration): Int = when (declaration) {
+            is FirEnumEntry -> 0
+            is FirConstructor -> if (declaration.isPrimary) 1 else 2
+            is FirProperty -> 3
+            is FirFunction -> 4
+            else -> 5
+        }
+
+        return declarations.sortedWith(Comparator { left, right ->
+            val kindResult = getDeclarationKind(left) - getDeclarationKind(right)
+            if (kindResult != 0) {
+                return@Comparator kindResult
+            }
+
+            val nameResult = (left.getRawName() ?: "").compareTo(right.getRawName() ?: "")
+            if (nameResult != 0) {
+                return@Comparator nameResult
+            }
+
+            val leftString = StringBuilder().also { builder -> left.accept(this, builder) }.toString()
+            val rightString = StringBuilder().also { builder -> right.accept(this, builder) }.toString()
+            return@Comparator leftString.compareTo(rightString)
+        })
+    }
 
     private fun getClassifierKindPrefix(classifier: FirDeclaration): String = when (classifier) {
         is FirTypeAlias -> "typealias"

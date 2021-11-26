@@ -6,25 +6,27 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 internal object PublicTypeApproximator {
     fun approximateTypeToPublicDenotable(
         type: ConeKotlinType,
         session: FirSession,
+        approximateLocalTypes: Boolean
     ): ConeKotlinType? {
-        val approximator = session.inferenceComponents.approximator
-        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration)
+        val approximator = session.typeApproximator
+        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration(approximateLocalTypes))
     }
 
-    private object PublicApproximatorConfiguration : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+    private class PublicApproximatorConfiguration(
+        override val localTypes: Boolean
+    ) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
         override val allFlexible: Boolean get() = false
         override val errorType: Boolean get() = true
         override val definitelyNotNullType: Boolean get() = false
         override val integerLiteralType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
-        override val localTypes: Boolean get() = true
     }
 }

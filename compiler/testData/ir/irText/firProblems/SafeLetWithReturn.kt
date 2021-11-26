@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo(s: String?): String {
     s?.let { it ->

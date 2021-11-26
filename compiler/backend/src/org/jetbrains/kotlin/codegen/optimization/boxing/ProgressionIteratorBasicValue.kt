@@ -20,17 +20,23 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.range.*
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 
 class ProgressionIteratorBasicValue
 private constructor(
+    val iteratorCallInsn: AbstractInsnNode,
     val nextMethodName: String,
     iteratorType: Type,
     private val primitiveElementType: Type,
     val boxedElementType: Type
 ) : StrictBasicValue(iteratorType) {
 
-    private constructor(typeName: String, valuesPrimitiveType: Type, valuesBoxedType: Type = AsmUtil.boxType(valuesPrimitiveType)) :
-            this("next$typeName", Type.getObjectType("kotlin/collections/${typeName}Iterator"), valuesPrimitiveType, valuesBoxedType)
+    var tainted = false
+        private set
+
+    fun taint() {
+        tainted = true
+    }
 
     val nextMethodDesc: String
         get() = "()" + primitiveElementType.descriptor
@@ -47,32 +53,35 @@ private constructor(
         super.hashCode() * 31 + nextMethodName.hashCode()
 
     companion object {
-        private val CHAR_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Char", Type.CHAR_TYPE)
-        private val INT_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Int", Type.INT_TYPE)
-        private val LONG_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Long", Type.LONG_TYPE)
-
         // TODO functions returning inline classes are mangled now, should figure out how to work with UInt/ULong iterators here
-        // private val UINT_PROGRESSION_ITERATOR_VALUE =
         //     ProgressionIteratorBasicValue("UInt", Type.INT_TYPE, Type.getObjectType("kotlin/UInt"))
-        // private val ULONG_PROGRESSION_ITERATOR_VALUE =
         //     ProgressionIteratorBasicValue("ULong", Type.LONG_TYPE, Type.getObjectType("kotlin/ULong"))
 
-        private val PROGRESSION_CLASS_NAME_TO_ITERATOR_VALUE: Map<String, ProgressionIteratorBasicValue> =
-            hashMapOf(
-                CHAR_RANGE_FQN to CHAR_PROGRESSION_ITERATOR_VALUE,
-                CHAR_PROGRESSION_FQN to CHAR_PROGRESSION_ITERATOR_VALUE,
-                INT_RANGE_FQN to INT_PROGRESSION_ITERATOR_VALUE,
-                INT_PROGRESSION_FQN to INT_PROGRESSION_ITERATOR_VALUE,
-                LONG_RANGE_FQN to LONG_PROGRESSION_ITERATOR_VALUE,
-                LONG_PROGRESSION_FQN to LONG_PROGRESSION_ITERATOR_VALUE,
-                // UINT_RANGE_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
-                // UINT_PROGRESSION_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
-                // ULONG_RANGE_FQN to ULONG_PROGRESSION_ITERATOR_VALUE,
-                // ULONG_PROGRESSION_FQN to ULONG_PROGRESSION_ITERATOR_VALUE
+        private fun progressionIteratorValue(
+            iteratorCallInsn: AbstractInsnNode,
+            typeName: String,
+            valuesPrimitiveType: Type,
+            valuesBoxedType: Type = AsmUtil.boxType(valuesPrimitiveType)
+        ) =
+            ProgressionIteratorBasicValue(
+                iteratorCallInsn,
+                "next$typeName",
+                Type.getObjectType("kotlin/collections/${typeName}Iterator"),
+                valuesPrimitiveType,
+                valuesBoxedType
             )
 
-        fun byProgressionClassType(progressionClassType: Type): ProgressionIteratorBasicValue? =
-            PROGRESSION_CLASS_NAME_TO_ITERATOR_VALUE[progressionClassType.className]
+        fun byProgressionClassType(iteratorCallInsn: AbstractInsnNode, progressionClassType: Type): ProgressionIteratorBasicValue? =
+            when (progressionClassType.className) {
+                CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN ->
+                    progressionIteratorValue(iteratorCallInsn, "Char", Type.CHAR_TYPE)
+                INT_RANGE_FQN, INT_PROGRESSION_FQN ->
+                    progressionIteratorValue(iteratorCallInsn, "Int", Type.INT_TYPE)
+                LONG_RANGE_FQN, LONG_PROGRESSION_FQN ->
+                    progressionIteratorValue(iteratorCallInsn, "Long", Type.LONG_TYPE)
+                else ->
+                    null
+            }
     }
 }
 

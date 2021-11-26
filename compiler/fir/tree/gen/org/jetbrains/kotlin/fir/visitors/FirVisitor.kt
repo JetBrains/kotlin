@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -67,6 +66,7 @@ import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
+import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
@@ -96,6 +96,8 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -115,6 +117,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -170,17 +174,15 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
 
-    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitElement(annotatedDeclaration, data)
-
-    open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
-
-    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitElement(typedDeclaration, data)
-
     open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): R  = visitElement(typeParameterRefsOwner, data)
 
     open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitElement(typeParametersOwner, data)
 
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitElement(memberDeclaration, data)
+
+    open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
+
+    open fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitElement(typedDeclaration, data)
 
     open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitElement(callableDeclaration, data)
 
@@ -268,6 +270,8 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitStarProjection(starProjection: FirStarProjection, data: D): R  = visitElement(starProjection, data)
 
+    open fun visitPlaceholderProjection(placeholderProjection: FirPlaceholderProjection, data: D): R  = visitElement(placeholderProjection, data)
+
     open fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R  = visitElement(typeProjectionWithVariance, data)
 
     open fun visitArgumentList(argumentList: FirArgumentList, data: D): R  = visitElement(argumentList, data)
@@ -326,6 +330,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R  = visitElement(thisReceiverExpression, data)
 
+    open fun <E : FirExpression> visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast: FirWrappedExpressionWithSmartcast<E>, data: D): R  = visitElement(wrappedExpressionWithSmartcast, data)
+
+    open fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNull(wrappedExpressionWithSmartcastToNull: FirWrappedExpressionWithSmartcastToNull<E>, data: D): R  = visitElement(wrappedExpressionWithSmartcastToNull, data)
+
     open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): R  = visitElement(expressionWithSmartcast, data)
 
     open fun visitExpressionWithSmartcastToNull(expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull, data: D): R  = visitElement(expressionWithSmartcastToNull, data)
@@ -363,6 +371,10 @@ abstract class FirVisitor<out R, in D> {
     open fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: D): R  = visitElement(variableAssignment, data)
 
     open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R  = visitElement(whenSubjectExpression, data)
+
+    open fun visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast, data: D): R  = visitElement(whenSubjectExpressionWithSmartcast, data)
+
+    open fun visitWhenSubjectExpressionWithSmartcastToNull(whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull, data: D): R  = visitElement(whenSubjectExpressionWithSmartcastToNull, data)
 
     open fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): R  = visitElement(wrappedDelegateExpression, data)
 

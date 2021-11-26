@@ -364,7 +364,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val thisReceiver = this.dispatchReceiverParameter!!
 
                 val boundFields =
-                    context.mapping.capturedFields[coroutineClass] ?: error("No captured values for class ${coroutineClass.render()}")
+                    context.mapping.capturedFields[coroutineClass]
+                        ?: compilationException(
+                            "No captured values",
+                            coroutineClass
+                        )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody(startOffset, endOffset) {
@@ -393,7 +397,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
             val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
-            val thisReceiver = function.dispatchReceiverParameter ?: error("Expected dispatch receiver for invoke")
+            val thisReceiver = function.dispatchReceiverParameter
+                ?: compilationException(
+                    "Expected dispatch receiver for invoke",
+                    function
+                )
             val functionBody = function.body as IrBlockBody
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody(startOffset, endOffset) {

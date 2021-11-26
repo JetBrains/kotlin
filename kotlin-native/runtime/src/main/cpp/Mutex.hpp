@@ -17,30 +17,60 @@
 #ifndef RUNTIME_MUTEX_H
 #define RUNTIME_MUTEX_H
 
-#include <cstdint>
+#include <atomic>
+#include <thread>
 
 #include "KAssert.h"
+#include "Memory.h"
 #include "Utils.hpp"
 
 namespace kotlin {
 
-class SpinLock : private Pinned {
+enum class MutexThreadStateHandling {
+    kIgnore, kSwitchIfRegistered
+};
+
+template <MutexThreadStateHandling threadStateHandling>
+class SpinLock;
+
+template <>
+class SpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
 public:
     void lock() noexcept {
-        while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
-            // TODO: yield.
+        while(flag_.test_and_set(std::memory_order_acquire)) {
+            std::this_thread::yield();
         }
     }
 
     void unlock() noexcept {
-        if (!__sync_bool_compare_and_swap(&atomicInt, 1, 0)) {
-            RuntimeAssert(false, "Unable to unlock");
-        }
+        flag_.clear(std::memory_order_release);
     }
 
 private:
-    // TODO: Consider using `std::atomic_flag`.
-    int32_t atomicInt = 0;
+    std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
+};
+
+template <>
+class SpinLock<MutexThreadStateHandling::kSwitchIfRegistered> : private Pinned {
+public:
+    void lock() noexcept {
+        // Fast path without thread state switching.
+        if (!flag_.test_and_set(std::memory_order_acquire)) {
+            return;
+        }
+
+        kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+        while (flag_.test_and_set(std::memory_order_acquire)) {
+            std::this_thread::yield();
+        }
+    }
+
+    void unlock() noexcept {
+        flag_.clear(std::memory_order_release);
+    }
+
+private:
+    std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
 };
 
 } // namespace kotlin

@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.isImmutable
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
@@ -49,7 +45,11 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     irType: IrType = value?.type!!, // either value or irType should be supplied at callsite
     isMutable: Boolean = false,
 ): IrVariable {
-    val temporary = scope.createTemporaryVariableDeclaration(irType, nameHint, isMutable)
+    val temporary = scope.createTemporaryVariableDeclaration(
+        irType, nameHint, isMutable,
+        startOffset = startOffset,
+        endOffset = endOffset
+    )
     value?.let { temporary.initializer = it }
     +temporary
     return temporary
@@ -131,6 +131,8 @@ fun IrBuilderWithScope.irGet(type: IrType, variable: IrValueSymbol) =
     IrGetValueImpl(startOffset, endOffset, type, variable)
 
 fun IrBuilderWithScope.irGet(variable: IrValueDeclaration) = irGet(variable.type, variable.symbol)
+
+fun IrBuilderWithScope.irGet(variable: IrValueDeclaration, type: IrType) = irGet(type, variable.symbol)
 
 fun IrBuilderWithScope.irSet(variable: IrValueSymbol, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
     IrSetValueImpl(startOffset, endOffset, context.irBuiltIns.unitType, variable, value, origin)
@@ -378,3 +380,51 @@ inline fun IrBuilderWithScope.irBlockBody(
         endOffset
     ).blockBody(body)
 
+fun IrBuilderWithScope.irConstantPrimitive(value: IrConst<*>) =
+    IrConstantPrimitiveImpl(startOffset, endOffset, value)
+
+fun IrBuilderWithScope.irConstantArray(type: IrType, elements: List<IrConstantValue>) =
+    IrConstantArrayImpl(
+        startOffset, endOffset,
+        type,
+        elements
+    )
+
+fun IrBuilderWithScope.irConstantObject(
+    constructor: IrConstructorSymbol,
+    arguments: List<IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return IrConstantObjectImpl(
+        startOffset, endOffset,
+        constructor,
+        arguments,
+        typeArguments,
+    )
+}
+
+fun IrBuilderWithScope.irConstantObject(
+    clazz: IrClass,
+    arguments: List<IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return irConstantObject(clazz.primaryConstructor?.symbol!!, arguments, typeArguments)
+}
+
+fun IrBuilderWithScope.irConstantObject(
+    clazz: IrClass,
+    elements: Map<String, IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return irConstantObject(
+        clazz,
+        clazz.primaryConstructor!!.symbol.owner.valueParameters.also {
+            require(it.size == elements.size) {
+                "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
+            }
+        }.map {
+            elements[it.name.asString()] ?: error("No value for field named ${it.name} provided")
+        },
+        typeArguments
+    )
+}

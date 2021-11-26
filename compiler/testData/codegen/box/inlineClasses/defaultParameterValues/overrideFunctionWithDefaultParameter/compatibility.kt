@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 // !JVM_DEFAULT_MODE: compatibility
 // TARGET_BACKEND: JVM
@@ -10,7 +10,9 @@ interface Path {
     fun Int.extension(maxDepth: Int = 42)
 }
 
-inline class RealPath(val x: Int) : Path {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class RealPath(val x: Int) : Path {
     override fun dispatch(maxDepth: Int) = Unit
 
     fun childrenDispatch(recursively: Boolean): Unit =

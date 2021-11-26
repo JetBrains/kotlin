@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSpreadOfNullableChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        fun checkAndReport(argument: FirExpression, source: FirSourceElement?) {
+        fun checkAndReport(argument: FirExpression, source: KtSourceElement?) {
             val argumentTypeRef = argument.typeRef
             if (argument is FirSpreadArgumentExpression && argumentTypeRef.coneType !is ConeFlexibleType && argumentTypeRef.canBeNull) {
                 reporter.reportOn(source, FirErrors.SPREAD_OF_NULLABLE, context)

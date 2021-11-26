@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCondition
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 
 object FirLogicExpressionTypeChecker : FirLogicExpressionChecker() {

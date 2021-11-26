@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -74,7 +75,7 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
         super.configure(builder)
         builder.apply {
             defaultDirectives {
-                +SERIALIZE_IR
+                SERIALIZE_IR.with(JvmSerializeIrMode.INLINE)
             }
 
             configureIrHandlersStep {

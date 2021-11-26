@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -18,13 +18,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirClassLikeDeclaration : FirAnnotatedDeclaration(), FirStatement {
-    abstract override val source: FirSourceElement?
+sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
+    abstract override val source: KtSourceElement?
+    abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val annotations: List<FirAnnotation>
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
     abstract override val symbol: FirClassLikeSymbol<out FirClassLikeDeclaration>
     abstract val deprecation: DeprecationsPerUseSite?
 
@@ -39,4 +41,8 @@ sealed class FirClassLikeDeclaration : FirAnnotatedDeclaration(), FirStatement {
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
 }

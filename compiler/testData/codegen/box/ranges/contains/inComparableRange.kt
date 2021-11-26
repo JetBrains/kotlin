@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 class ComparablePair<T : Comparable<T>>(val first: T, val second: T) : Comparable<ComparablePair<T>> {

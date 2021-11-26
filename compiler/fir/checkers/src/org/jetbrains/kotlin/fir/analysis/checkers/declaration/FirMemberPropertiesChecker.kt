@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -40,7 +42,13 @@ object FirMemberPropertiesChecker : FirClassChecker() {
 
         // If all member properties have its own initializer, we don't need to collect property initialization info at all.
         if (memberPropertySymbols.any { !it.hasInitializer }) {
-            collectPropertyInitialization(declaration, memberPropertySymbols, initializedInConstructor, initializedInInitOrOtherProperty)
+            collectPropertyInitialization(
+                declaration,
+                context.session,
+                memberPropertySymbols,
+                initializedInConstructor,
+                initializedInInitOrOtherProperty
+            )
         }
 
         val deadEnds = declaration.collectDeadEndDeclarations()
@@ -60,6 +68,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
 
     private fun collectPropertyInitialization(
         klass: FirClass,
+        session: FirSession,
         memberPropertySymbols: Set<FirPropertySymbol>,
         initializedInConstructor: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
         initializedInInitOrOtherProperty: MutableMap<FirPropertySymbol, EventOccurrencesRange>
@@ -86,13 +95,13 @@ object FirMemberPropertiesChecker : FirClassChecker() {
 
         // To handle the delegated constructor call, we need a cache from constructor to (analyzed) property init info.
         val constructorToData =
-            mutableMapOf<FirConstructor, PropertyInitializationInfo>().withDefault { PropertyInitializationInfo.EMPTY }
+            mutableMapOf<FirConstructorSymbol, PropertyInitializationInfo>().withDefault { PropertyInitializationInfo.EMPTY }
 
         fun collectInfoFromGraph(
             graph: ControlFlowGraph,
             map: MutableMap<FirPropertySymbol, EventOccurrencesRange>,
             acc: (EventOccurrencesRange, EventOccurrencesRange) -> EventOccurrencesRange,
-            delegatedConstructor: FirConstructor? = null,
+            delegatedConstructor: FirConstructorSymbol? = null,
         ) {
             val delegatedInfo = delegatedConstructor?.let { constructorToData.getValue(it) } ?: PropertyInitializationInfo.EMPTY
 
@@ -104,14 +113,15 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             val info = delegatedInfo.plus(infoAtExitNode)
 
             if (graph.declaration is FirConstructor) {
-                constructorToData.putIfAbsent(graph.declaration as FirConstructor, info)
+                constructorToData.putIfAbsent((graph.declaration as FirConstructor).symbol, info)
             }
 
             for (propertySymbol in memberPropertySymbols) {
-                if (map.containsKey(propertySymbol)) {
+                val item = map[propertySymbol]
+                if (item != null) {
                     // Accumulation:
                     //   range join for class constructors, range plus for class's anonymous initializers and property initializations
-                    map[propertySymbol] = acc.invoke(map[propertySymbol]!!, info[propertySymbol] ?: EventOccurrencesRange.ZERO)
+                    map[propertySymbol] = acc.invoke(item, info[propertySymbol] ?: EventOccurrencesRange.ZERO)
                 } else {
                     // Initial assignment.
                     // NB: we should not use `acc` here to not weaken ranges. For example, if we visit one and only constructor where
@@ -122,13 +132,15 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             }
         }
 
-        val constructorGraphs = klass.constructorsSortedByDelegation.mapNotNull { it.controlFlowGraphReference?.controlFlowGraph }
+        val constructorGraphs = klass.constructorsSortedByDelegation(session).mapNotNull {
+            it.resolvedControlFlowGraphReference?.controlFlowGraph
+        }
         for (graph in constructorGraphs) {
             collectInfoFromGraph(
                 graph,
                 initializedInConstructor,
                 EventOccurrencesRange::or,
-                (graph.declaration as? FirConstructor)?.delegatedThisConstructor
+                (graph.declaration as? FirConstructor)?.symbol?.delegatedThisConstructor
             )
         }
 
@@ -152,7 +164,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
         reachable: Boolean
     ) {
         val source = property.source ?: return
-        if (source.kind is FirFakeSourceElementKind) return
+        if (source.kind is KtFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = property.source.getModifierList()

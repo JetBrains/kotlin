@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

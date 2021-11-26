@@ -48,7 +48,8 @@ public:
 
     void InstallWeakCounter(BaseObject& counter) {
         auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(GetObjHeader());
-        *extraObjectData.GetWeakCounterLocation() = counter.GetObjHeader();
+        auto *setCounter = extraObjectData.GetOrSetWeakReferenceCounter(GetObjHeader(), counter.GetObjHeader());
+        EXPECT_EQ(setCounter, counter.GetObjHeader());
     }
 
 protected:

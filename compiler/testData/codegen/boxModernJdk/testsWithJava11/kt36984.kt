@@ -1,7 +1,8 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
 //  ^ JVM_IR back-end generates SAM conversion with invokedynamic
-// WITH_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
+// WITH_STDLIB
 
 fun box(): String {
     val f = {}

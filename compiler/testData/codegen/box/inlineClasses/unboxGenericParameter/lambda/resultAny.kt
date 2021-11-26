@@ -1,7 +1,8 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class IC(val value: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IC(val value: Any)
 
 fun <T> foo(a: Result<T>, ic: IC): Pair<T, Any> = bar(a, ic) { a, ic ->
     a.getOrThrow() to ic.value

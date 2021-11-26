@@ -6,22 +6,17 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.containsAnnotation
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.getAnnotationClassIds
-import org.jetbrains.kotlin.analysis.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirFileSymbol(
     fir: FirFile,
@@ -36,9 +31,7 @@ internal class KtFirFileSymbol(
         TODO("Creating pointers for files from library is not supported yet")
     }
 
-    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
-    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
-    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firRef, resolveState.rootModuleSession, token) }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
     override fun hashCode(): Int = symbolHashCode()

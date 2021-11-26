@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 1/wrapped.kt
 
 fun getWrapped1(): Runnable {

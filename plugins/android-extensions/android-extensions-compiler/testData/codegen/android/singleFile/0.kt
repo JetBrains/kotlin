@@ -33,9 +33,11 @@ class MyActivity(): Activity() {
         } as T?
     }
 
+    private val textViewString = textView1.toString()
+
     public fun box(): String {
         val result = when {
-            textView1.toString() == "TextView" && password.toString() == "EditText" && login.toString() == "Button" -> "OK"
+            textViewString == "TextView" && password.toString() == "EditText" && login.toString() == "Button" -> "OK"
             else -> ""
         }
 

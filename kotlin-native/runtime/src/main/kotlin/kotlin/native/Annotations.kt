@@ -8,29 +8,30 @@ package kotlin.native
 import kotlin.reflect.KClass
 
 /**
- * [SymbolName] annotation is deprecated.
- * See [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
+ * [SymbolName] annotation is deprecated and became internal. Please avoid using it.
+ * It is dangerous when combined with the new experimental memory manager.
+ * If you absolutely need to use the annotation, please comment at
+ * [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
  */
 @RequiresOptIn(
-        message = "@SymbolName annotation is deprecated. See https://youtrack.jetbrains.com/issue/KT-46649",
-        level = RequiresOptIn.Level.WARNING
+        message = "@SymbolName annotation is internal. " +
+                "It is dangerous when combined with the new experimental memory manager. " +
+                "See https://youtrack.jetbrains.com/issue/KT-46649",
+        level = RequiresOptIn.Level.ERROR
 )
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(value = AnnotationRetention.BINARY)
-internal annotation class SymbolNameIsDeprecated
+internal annotation class SymbolNameIsInternal
 
 /**
- * This annotation is deprecated.
- * See [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
- *
- * Forces the compiler to use specified symbol name for the target `external` function.
- *
- * TODO: changing symbol name breaks the binary compatibility,
- * so it should probably be allowed on `internal` and `private` functions only.
+ * This annotation is deprecated and became internal. Please avoid using it.
+ * It is dangerous when combined with the new experimental memory manager.
+ * If you absolutely need to use the annotation, please comment at
+ * [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-@SymbolNameIsDeprecated
+@SymbolNameIsInternal
 public annotation class SymbolName(val name: String)
 
 /**

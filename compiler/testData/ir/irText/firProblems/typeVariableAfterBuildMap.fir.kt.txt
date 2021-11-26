@@ -163,13 +163,14 @@ object Visibilities {
 
   private val ORDERED_VISIBILITIES: Map<Visibility, Int>
     field = buildMap<Visibility, Int>(builderAction = local fun MutableMap<Visibility, Int>.<anonymous>() {
-      <this>.put(key = PrivateToThis, value = 0) /*~> Unit */
-      <this>.put(key = Private, value = 0) /*~> Unit */
-      <this>.put(key = Internal, value = 1) /*~> Unit */
-      <this>.put(key = Protected, value = 1) /*~> Unit */
-      <this>.put(key = Public, value = 2) /*~> Unit */
+      $this$buildMap.put(key = PrivateToThis, value = 0) /*~> Unit */
+      $this$buildMap.put(key = Private, value = 0) /*~> Unit */
+      $this$buildMap.put(key = Internal, value = 1) /*~> Unit */
+      $this$buildMap.put(key = Protected, value = 1) /*~> Unit */
+      $this$buildMap.put(key = Public, value = 2) /*~> Unit */
     }
 )
     private get
 
 }
+

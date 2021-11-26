@@ -42,8 +42,8 @@ fun box(): String {
 // 1 IFGE
 // 7 IF
 // 1 INEG
-// 18 ILOAD
-// 8 ISTORE
+// 19 ILOAD
+// 9 ISTORE
 // 1 IADD
 // 0 ISUB
 // 0 IINC

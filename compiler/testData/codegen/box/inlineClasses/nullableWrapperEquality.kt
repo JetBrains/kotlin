@@ -1,8 +1,14 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Z1(val x: String)
-inline class ZN(val z: Z1?)
-inline class ZN2(val z: ZN)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z1(val x: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ZN(val z: Z1?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ZN2(val z: ZN)
 
 fun zap(b: Boolean): ZN2? = if (b) null else ZN2(ZN(null))
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.contracts.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirLegacyRawContractDescriptionImpl
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirLegacyRawContractDescriptionBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     lateinit var contractCall: FirFunctionCall
 
     fun build(): FirLegacyRawContractDescription {

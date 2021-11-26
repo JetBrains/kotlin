@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
@@ -38,14 +38,14 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @FirBuilderDsl
 class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var returnTypeRef: FirTypeRef
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
+    override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
@@ -64,9 +64,9 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             typeParameters,
             status,
+            returnTypeRef,
             receiverTypeRef,
             deprecation,
             containerSource,

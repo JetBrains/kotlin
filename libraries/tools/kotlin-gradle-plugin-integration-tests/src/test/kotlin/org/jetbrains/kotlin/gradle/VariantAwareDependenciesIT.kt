@@ -88,8 +88,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         val innerProject = Project("simpleProject").apply {
             setupWorkingDir(false)
             gradleBuildScript().modify {
-                it.replace("apply plugin: \"kotlin\"", "")
-                    .replace("\"org.jetbrains.kotlin:kotlin-stdlib\"", "\"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\"")
+                it.checkedReplace("id \"org.jetbrains.kotlin.jvm\"", "")
             }
 
             gradleBuildScript().appendText(

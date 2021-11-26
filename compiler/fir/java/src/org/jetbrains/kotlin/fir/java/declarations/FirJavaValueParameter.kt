@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -28,7 +28,7 @@ import kotlin.contracts.contract
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
@@ -185,7 +185,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
 @FirBuilderDsl
 class FirJavaValueParameterBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     lateinit var moduleData: FirModuleData
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef

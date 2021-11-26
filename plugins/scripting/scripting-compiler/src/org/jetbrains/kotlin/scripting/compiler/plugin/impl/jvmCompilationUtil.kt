@@ -141,7 +141,7 @@ internal fun makeCompiledScript(
                     sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let { ktScript ->
                         makeOtherScripts(ktScript).onSuccess { otherScripts ->
                             KJvmCompiledScript(
-                                containingKtFile.virtualFilePath,
+                                sourceFile.virtualFilePath,
                                 getScriptConfiguration(sourceFile),
                                 ktScript.fqName.asString(),
                                 null,

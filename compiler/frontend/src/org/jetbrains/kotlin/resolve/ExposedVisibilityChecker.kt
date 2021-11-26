@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryForDeprecation3
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
@@ -46,10 +47,21 @@ class ExposedVisibilityChecker(
         if (!languageVersionSettings.supportsFeature(LanguageFeature.PrivateInFileEffectiveVisibility) &&
             elementVisibility == EffectiveVisibility.PrivateInFile
         ) {
-            trace.report(EXPOSED_FROM_PRIVATE_IN_FILE.on(element, restrictingDescriptor, restrictingVisibility))
+            trace.report(EXPOSED_FROM_PRIVATE_IN_FILE.on(element, elementVisibility, restrictingDescriptor, restrictingVisibility))
         } else {
             trace.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingVisibility))
         }
+    }
+
+    private fun <E : PsiElement> reportExposureForDeprecation(
+        diagnostic: DiagnosticFactoryForDeprecation3<E, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>,
+        element: E,
+        elementVisibility: EffectiveVisibility,
+        restrictingDescriptor: DescriptorWithRelation
+    ) {
+        val trace = trace ?: return
+        val restrictingVisibility = restrictingDescriptor.effectiveVisibility()
+        trace.report(diagnostic.on(languageVersionSettings, element, elementVisibility, restrictingDescriptor, restrictingVisibility))
     }
 
     // NB: does not check any members
@@ -62,6 +74,8 @@ class ExposedVisibilityChecker(
         return result and checkFunction(constructor, constructorDescriptor)
     }
 
+    // IMPORTANT: please don't remove this function (it's used in IDE)
+    @Suppress("unused")
     fun checkDeclarationWithVisibility(
         modifierListOwner: KtModifierListOwner,
         descriptor: DeclarationDescriptorWithVisibility,
@@ -119,8 +133,11 @@ class ExposedVisibilityChecker(
                     val propertyOrClassVisibility = (propertyDescriptor ?: functionDescriptor.constructedClass).effectiveVisibility()
                     val restrictingByProperty = parameterDescriptor.type.leastPermissiveDescriptor(propertyOrClassVisibility)
                     if (restrictingByProperty != null) {
-                        reportExposure(
-                            EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, valueParameter, propertyOrClassVisibility, restrictingByProperty
+                        reportExposureForDeprecation(
+                            EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
+                            valueParameter.nameIdentifier ?: valueParameter,
+                            propertyOrClassVisibility,
+                            restrictingByProperty
                         )
                         result = false
                     }

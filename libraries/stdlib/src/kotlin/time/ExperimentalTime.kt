@@ -18,8 +18,6 @@ import kotlin.annotation.AnnotationTarget.*
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalTime::class)`,
  * or by using the compiler argument `-opt-in=kotlin.time.ExperimentalTime`.
  */
-@Suppress("DEPRECATION")
-@Experimental(level = Experimental.Level.ERROR)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)

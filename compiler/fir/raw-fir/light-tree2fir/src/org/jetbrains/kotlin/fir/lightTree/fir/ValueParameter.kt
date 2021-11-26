@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
 import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -51,11 +57,11 @@ class ValueParameter(
         }
 
         return buildProperty {
-            val propertySource = firValueParameter.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)
+            val propertySource = firValueParameter.source?.fakeElement(KtFakeSourceElementKind.PropertyFromParameter)
             source = propertySource
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
+            returnTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyFromParameter)
             this.name = name
             initializer = buildPropertyAccessExpression {
                 source = propertySource
@@ -77,28 +83,40 @@ class ValueParameter(
                 isConst = modifiers.hasConst()
                 isLateInit = false
             }
-            annotations += this@ValueParameter.firValueParameter.annotations
-            val defaultAccessorSource = propertySource?.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
+            annotations += modifiers.annotations.filter {
+                it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
+                        it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
+                        it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+            }
+            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             getter = FirDefaultPropertyGetter(
                 defaultAccessorSource,
                 moduleData,
                 FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-            ).also { it.initContainingClassAttr(context) }
+            ).also {
+                it.initContainingClassAttr(context)
+                it.annotations += modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_GETTER)
+            }
             setter = if (this.isVar) FirDefaultPropertySetter(
                 defaultAccessorSource,
                 moduleData,
                 FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-            ).also { it.initContainingClassAttr(context) } else null
+                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.SETTER_PARAMETER)
+            ).also {
+                it.initContainingClassAttr(context)
+                it.annotations += modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_SETTER)
+            } else null
         }.apply {
             if (firValueParameter.isVararg) {
                 this.isFromVararg = true
             }
+            firValueParameter.correspondingProperty = this
             this.fromPrimaryConstructor = true
         }
     }

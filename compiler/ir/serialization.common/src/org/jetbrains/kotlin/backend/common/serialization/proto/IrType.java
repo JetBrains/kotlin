@@ -92,6 +92,19 @@ public final class IrType extends
             kindCase_ = 3;
             break;
           }
+          case 34: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder subBuilder = null;
+            if (kindCase_ == 4) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_).toBuilder();
+            }
+            kind_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
+              kind_ = subBuilder.buildPartial();
+            }
+            kindCase_ = 4;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -133,6 +146,7 @@ public final class IrType extends
     SIMPLE(1),
     DYNAMIC(2),
     ERROR(3),
+    DNN(4),
     KIND_NOT_SET(0);
     private int value = 0;
     private KindCase(int value) {
@@ -143,6 +157,7 @@ public final class IrType extends
         case 1: return SIMPLE;
         case 2: return DYNAMIC;
         case 3: return ERROR;
+        case 4: return DNN;
         case 0: return KIND_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -210,6 +225,23 @@ public final class IrType extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.getDefaultInstance();
   }
 
+  public static final int DNN_FIELD_NUMBER = 4;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   */
+  public boolean hasDnn() {
+    return kindCase_ == 4;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn() {
+    if (kindCase_ == 4) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
+  }
+
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -252,6 +284,9 @@ public final class IrType extends
     if (kindCase_ == 3) {
       output.writeMessage(3, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_);
     }
+    if (kindCase_ == 4) {
+      output.writeMessage(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -272,6 +307,10 @@ public final class IrType extends
     if (kindCase_ == 3) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(3, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_);
+    }
+    if (kindCase_ == 4) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -401,6 +440,9 @@ public final class IrType extends
       if (kindCase_ == 3) {
         result.kind_ = kind_;
       }
+      if (kindCase_ == 4) {
+        result.kind_ = kind_;
+      }
       result.bitField0_ = to_bitField0_;
       result.kindCase_ = kindCase_;
       return result;
@@ -419,6 +461,10 @@ public final class IrType extends
         }
         case ERROR: {
           mergeError(other.getError());
+          break;
+        }
+        case DNN: {
+          mergeDnn(other.getDnn());
           break;
         }
         case KIND_NOT_SET: {
@@ -670,6 +716,70 @@ public final class IrType extends
      */
     public Builder clearError() {
       if (kindCase_ == 3) {
+        kindCase_ = 0;
+        kind_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public boolean hasDnn() {
+      return kindCase_ == 4;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn() {
+      if (kindCase_ == 4) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public Builder setDnn(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      kind_ = value;
+
+      kindCase_ = 4;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public Builder setDnn(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder builderForValue) {
+      kind_ = builderForValue.build();
+
+      kindCase_ = 4;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public Builder mergeDnn(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType value) {
+      if (kindCase_ == 4 &&
+          kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance()) {
+        kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        kind_ = value;
+      }
+
+      kindCase_ = 4;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public Builder clearDnn() {
+      if (kindCase_ == 4) {
         kindCase_ = 0;
         kind_ = null;
         

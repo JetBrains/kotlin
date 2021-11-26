@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
 // ASSERTIONS_MODE: jvm
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package classAssertions
 

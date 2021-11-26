@@ -52,6 +52,8 @@ interface IrDeclarationOrigin {
     object LOCAL_FUNCTION : IrDeclarationOriginImpl("LOCAL_FUNCTION")
     object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")
     object CATCH_PARAMETER : IrDeclarationOriginImpl("CATCH_PARAMETER")
+    object UNDERSCORE_PARAMETER : IrDeclarationOriginImpl("UNDERSCORE_PARAMETER")
+    object DESTRUCTURED_OBJECT_PARAMETER : IrDeclarationOriginImpl("DESTRUCTURED_OBJECT_PARAMETER")
     object INSTANCE_RECEIVER : IrDeclarationOriginImpl("INSTANCE_RECEIVER")
     object PRIMARY_CONSTRUCTOR_PARAMETER : IrDeclarationOriginImpl("PRIMARY_CONSTRUCTOR_PARAMETER")
     object IR_TEMPORARY_VARIABLE : IrDeclarationOriginImpl("IR_TEMPORARY_VARIABLE")
@@ -78,6 +80,10 @@ interface IrDeclarationOrigin {
     object SYNTHETIC_JAVA_PROPERTY_DELEGATE : IrDeclarationOriginImpl("SYNTHETIC_JAVA_PROPERTY_DELEGATE", isSynthetic = true)
 
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS", isSynthetic = true)
+    object CONTINUATION : IrDeclarationOriginImpl("CONTINUATION", isSynthetic = true)
+    object LOWERED_SUSPEND_FUNCTION : IrDeclarationOriginImpl("LOWERED_SUSPEND_FUNCTION", isSynthetic = true)
+
+    object SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT : IrDeclarationOriginImpl("SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT", isSynthetic = true)
 
     val isSynthetic: Boolean get() = false
 }

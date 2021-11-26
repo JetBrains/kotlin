@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 fun <T1> underlying(a: IC): T1 = bar(a) { it.value as T1 }
 
@@ -22,7 +20,9 @@ fun <T6> IC.extensionValue(): T6 = value as T6
 
 fun <T7> normalValue(ic: IC): T7 = ic.value as T7
 
-inline class IC(val value: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IC(val value: Int) {
     fun <T8> dispatchValue(): T8 = value as T8
 }
 

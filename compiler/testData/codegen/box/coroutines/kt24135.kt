@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 
 import helpers.EmptyContinuation

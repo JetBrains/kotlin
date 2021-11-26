@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatformAnalyzerServices) {
@@ -45,6 +46,7 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
         useImpl<AnnotationResolverImpl>()
         useInstance(ModuleStructureOracle.SingleModule)
         useInstance(ControlFlowInformationProviderImpl.Factory)
+        useInstance(InlineConstTracker.DoNothing)
     })
 }
 

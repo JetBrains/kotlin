@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirThisReceiverExpressionImpl(
-    override var source: FirSourceElement?,
+    override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotation>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var calleeReference: FirThisReference,
+    override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
@@ -93,7 +94,7 @@ internal class FirThisReceiverExpressionImpl(
     }
 
     @FirImplementationDetail
-    override fun replaceSource(newSource: FirSourceElement?) {
+    override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
     }
 

@@ -1,4 +1,6 @@
 FILE: test.kt
+    package jvm
+
     public final fun <K> select(x: R|K|, y: R|K|): R|K| {
         ^select R|<local>/x|
     }

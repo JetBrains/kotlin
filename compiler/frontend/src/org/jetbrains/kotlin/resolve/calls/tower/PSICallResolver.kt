@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
-import org.jetbrains.kotlin.resolve.calls.util.isBinaryRemOperator
-import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -37,20 +35,21 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class PSICallResolver(
     private val typeResolver: TypeResolver,
@@ -76,6 +75,8 @@ class PSICallResolver(
     private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
+
+    private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
 
     val defaultResolutionKinds = setOf(
         NewResolutionOldInference.ResolutionKind.Function,
@@ -393,6 +394,7 @@ class PSICallResolver(
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        override val languageVersionSettings: LanguageVersionSettings get() = context.languageVersionSettings
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
         override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter get() = this@PSICallResolver.implicitsResolutionFilter
@@ -405,6 +407,9 @@ class PSICallResolver(
                 context.transformToReceiverWithSmartCastInfo(implicitReceiver.value)
             }
         }
+
+        override fun getNameForGivenImportAlias(name: Name): Name? =
+            (context.call.callElement.containingFile as? KtFile)?.getNameForGivenImportAlias(name)
 
         override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,
@@ -687,8 +692,25 @@ class PSICallResolver(
             }
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
-            resolveType(context, projection.typeReference, typeResolver)?.let { SimpleTypeArgumentImpl(projection, it) }
-                ?: TypeArgumentPlaceholder
+            val typeReference = projection.typeReference ?: return@map TypeArgumentPlaceholder
+
+            if (typeReference.isPlaceholder) {
+                val resolvedAnnotations = typeResolver.resolveTypeAnnotations(context.trace, context.scope, typeReference)
+                    .apply(ForceResolveUtil::forceResolveAllContents)
+
+                for (annotation in resolvedAnnotations) {
+                    val annotationElement = annotation.source.getPsi() ?: continue
+                    context.trace.report(Errors.UNSUPPORTED.on(annotationElement, "annotations on an underscored type argument"))
+                }
+
+                if (!arePartiallySpecifiedTypeArgumentsEnabled) {
+                    context.trace.report(Errors.UNSUPPORTED.on(typeReference, "underscored type argument"))
+                }
+
+                return@map TypeArgumentPlaceholder
+            }
+
+            SimpleTypeArgumentImpl(projection, resolveType(context, typeReference, typeResolver))
         }
 
     private fun resolveArgumentsInParenthesis(

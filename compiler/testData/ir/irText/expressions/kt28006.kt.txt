@@ -33,4 +33,3 @@ fun test2(x: Int): String {
 fun test3(x: Int): String {
   return x + "\uD83E\uDD17" + x
 }
-

@@ -1,7 +1,9 @@
 
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class A(val x: Int = 0)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val x: Int = 0)
 
 var i = 0
 

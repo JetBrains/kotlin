@@ -20,6 +20,7 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
         var dependencyPropagationFlag: Boolean? = null,
         var expectedToPass: Boolean = true,
         var expectedPhraseInOutput: String? = null,
+        var notExpectedPhraseInOutput: String? = null,
     ) {
         constructor(configure: TestCase.() -> Unit) : this() {
             configure()
@@ -29,9 +30,19 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
     @Parameterized.Parameter(0)
     lateinit var testCase: TestCase
 
+    @Parameterized.Parameter(1)
+    lateinit var testProjectName: String
+
     companion object {
         @OptIn(ExperimentalStdlibApi::class)
         private val testCases = buildList {
+            add(TestCase {
+                hierarchiesByDefault = true
+                granularMetadataFlag = null
+                dependencyPropagationFlag = null
+                expectedToPass = true
+                notExpectedPhraseInOutput = "It is safe to remove the property."
+            })
             add(TestCase {
                 hierarchiesByDefault = true
                 granularMetadataFlag = true
@@ -91,15 +102,22 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
             })
         }
 
-        @Parameterized.Parameters(name = "{0}")
+        private val projectsToTest = listOf(
+            "new-mpp-published",
+            "hierarchical-mpp-project-dependency"
+        )
+
+        @Parameterized.Parameters(name = "{1}: {0}")
         @JvmStatic
-        fun testCases() = testCases.map { arrayOf(it) }
+        fun testCases() = testCases
+            .flatMap { testCase -> projectsToTest.map { arrayOf(testCase, it) } }
     }
 
     val testProject by lazy {
-        Project("new-mpp-published").apply {
+        Project(testProjectName).apply {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleProperties().delete()
         }
     }
 
@@ -128,6 +146,7 @@ internal class MppFlagsMigrationIT : BaseGradleIT() {
                 assertFailed()
 
             testCase.expectedPhraseInOutput?.let { assertContains(it, ignoreCase = true) }
+            testCase.notExpectedPhraseInOutput?.let { assertNotContains(it) }
         }
     }
 }

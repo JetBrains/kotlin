@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 
@@ -25,11 +25,11 @@ object StubFirScopeProvider : FirScopeProvider() {
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope? {
+    ): FirContainingNamesAwareScope? {
         return null
     }
 
-    override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+    override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? {
         return null
     }
 }

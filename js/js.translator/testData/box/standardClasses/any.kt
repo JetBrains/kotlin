@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1285
-// CHECK_CALLED_IN_SCOPE: function=isType scope=box
+// CHECK_CALLED_IN_SCOPE: function=isType scope=box TARGET_BACKENDS=JS
+// CHECK_CALLED_IN_SCOPE: function=isObject scope=box IGNORED_BACKENDS=JS
 package foo
 
 class A : Any()

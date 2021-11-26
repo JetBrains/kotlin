@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -81,8 +83,11 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
     }
     if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
     if (hasJvmDefault()) return true
-    (parentAsClass as? IrLazyClass)?.classProto?.let {
-        return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
+    when (val klass = parentAsClass) {
+        is IrLazyClass -> klass.classProto?.let {
+            return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
+        }
+        is IrMaybeDeserializedClass -> return klass.isNewPlaceForBodyGeneration
     }
     return jvmDefaultMode.forAllMethodsWithBody
 }
@@ -395,3 +400,26 @@ fun IrDeclarationParent.getCallableReferenceOwnerKClassType(context: JvmBackendC
 
 fun IrDeclaration.getCallableReferenceTopLevelFlag(): Int =
     if (parent.let { it is IrClass && it.isFileClass }) 1 else 0
+
+// Based on KotlinTypeMapper.findSuperDeclaration.
+fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean, jvmDefaultMode: JvmDefaultMode): IrSimpleFunction {
+    var current = function
+    while (current.isFakeOverride) {
+        // TODO: probably isJvmInterface instead of isInterface, here and in KotlinTypeMapper
+        val classCallable = current.overriddenSymbols.firstOrNull { !it.owner.parentAsClass.isInterface }?.owner
+        if (classCallable != null) {
+            current = classCallable
+            continue
+        }
+        if (isSuperCall && !current.parentAsClass.isInterface) {
+            val overridden = current.resolveFakeOverride()
+            if (overridden != null && (overridden.isMethodOfAny() || !overridden.isCompiledToJvmDefault(jvmDefaultMode))) {
+                return current
+            }
+        }
+
+        current = current.overriddenSymbols.firstOrNull()?.owner
+            ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
+    }
+    return current
+}

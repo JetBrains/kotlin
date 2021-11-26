@@ -150,12 +150,15 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         classpath: List<File> = emptyList(),
         compiler: CLICompiler<*> = K2JVMCompiler(),
         additionalOptions: List<String> = emptyList(),
-        expectedFileName: String? = "output.txt"
+        expectedFileName: String? = "output.txt",
+        additionalSources: List<String> = emptyList(),
     ): Pair<String, ExitCode> {
         val args = mutableListOf<String>()
         val sourceFile = File(testDataDirectory, fileName)
         assert(sourceFile.exists()) { "Source file does not exist: ${sourceFile.absolutePath}" }
         args.add(sourceFile.path)
+
+        additionalSources.mapTo(args) { File(testDataDirectory, it).path }
 
         if (compiler is K2JSCompiler) {
             if (classpath.isNotEmpty()) {

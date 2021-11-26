@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
@@ -40,7 +40,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             symbolFir == null || symbolFir.initializer == null && symbolFir.delegate == null
         }
 
-        val localProperties = properties.filter { it.fir.initializer == null && it.fir.delegate == null }.toSet()
+        val localProperties = properties.filterTo(mutableSetOf()) { it.fir.initializer == null && it.fir.delegate == null }
 
         val reporterVisitor = PropertyReporter(localData, localProperties, capturedWrites, reporter, context)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)

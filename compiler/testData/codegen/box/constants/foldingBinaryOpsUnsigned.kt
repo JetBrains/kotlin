@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: WASM
 
 val a = "INT " + 0x8fffffffU

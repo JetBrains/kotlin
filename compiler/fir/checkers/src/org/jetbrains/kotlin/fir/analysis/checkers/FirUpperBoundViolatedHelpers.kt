@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -33,6 +32,10 @@ fun checkUpperBoundViolated(
     isTypeAlias: Boolean = false,
     isIgnoreTypeParameters: Boolean = false
 ) {
+    require(typeArguments == null || typeArgumentRefsAndSources == null) {
+        "Only one of those arguments can be not null"
+    }
+
     val type = typeRef?.coneTypeSafe<ConeKotlinType>() ?: return
 
     val typeArgumentsCount = typeArguments?.size ?: type.typeArguments.size
@@ -96,7 +99,7 @@ fun checkUpperBoundViolated(
     for (index in 0 until count) {
         var typeArgument: ConeKotlinType? = null
         var typeArgumentTypeRef: FirTypeRef? = null
-        var typeArgumentSource: FirSourceElement? = null
+        var typeArgumentSource: KtSourceElement? = null
 
         if (typeArguments != null) {
             val localTypeArgument = typeArguments[index]

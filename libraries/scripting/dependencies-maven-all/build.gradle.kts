@@ -42,6 +42,11 @@ noDefaultJar()
 sourcesJar()
 javadocJar()
 
+val mavenPackagesToRelocate = listOf(
+    "org.eclipse",
+    "org.codehaus",
+)
+
 val relocatedJar by task<ShadowJar> {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -51,7 +56,7 @@ val relocatedJar by task<ShadowJar> {
     transform(ComponentsXmlResourceTransformerPatched())
 
     if (kotlinBuildProperties.relocation) {
-        packagesToRelocate.forEach {
+        (packagesToRelocate + mavenPackagesToRelocate).forEach {
             relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
     }

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.resolve.calls.tower.VisibilityErrorOnArgument
 import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
 
 class CallableReferenceArgumentResolver(val callableReferenceOverloadConflictResolver: CallableReferenceOverloadConflictResolver) {
@@ -43,6 +45,7 @@ class CallableReferenceArgumentResolver(val callableReferenceOverloadConflictRes
             chosenCandidate.diagnostics.forEach {
                 val transformedDiagnostic = when (it) {
                     is CompatibilityWarning -> CompatibilityWarningOnArgument(argument, it.candidate)
+                    is VisibilityError -> VisibilityErrorOnArgument(argument, it.invisibleMember)
                     else -> it
                 }
                 diagnosticsHolder.addDiagnostic(transformedDiagnostic)

@@ -11,7 +11,7 @@ fun foo(n :Int ) : Int {
     return foo(n-1) * n
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:8 foo

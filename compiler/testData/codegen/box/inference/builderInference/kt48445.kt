@@ -1,7 +1,8 @@
 // IGNORE_BACKEND: WASM
 // !LANGUAGE: +UnrestrictedBuilderInference
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// FIR status: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER on lazy call (Name3, T)
+// WITH_STDLIB
 
 internal class TowerDataElementsForName() {
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
@@ -48,7 +49,6 @@ internal class TowerDataElementsForName3() {
     }
 }
 
-// mute due to KT-48633
 //internal class TowerDataElementsForName4() {
 //    @OptIn(ExperimentalStdlibApi::class)
 //    val reversedFilteredLocalScopes = buildList l1@ {

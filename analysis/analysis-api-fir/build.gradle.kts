@@ -9,11 +9,14 @@ dependencies {
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:checkers:checkers.jvm"))
     api(project(":compiler:fir:java"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
+    api(project(":analysis:analysis-api-impl-base"))
     api(project(":compiler:light-classes"))
     api(intellijCoreDep())
     implementation(project(":analysis:analysis-api-providers"))
@@ -24,10 +27,11 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApi(projectTests(":analysis:analysis-api-impl-base"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testApi(toolsJar())
     testApiJUnit5()
-    testRuntimeOnly(project(":analysis:symbol-light-classes"))
+    testApi(project(":analysis:symbol-light-classes"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars(
@@ -55,7 +59,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(jUnit5Enabled = true) {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()

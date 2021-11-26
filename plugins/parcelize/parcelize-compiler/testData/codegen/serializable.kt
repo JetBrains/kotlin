@@ -1,5 +1,5 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel, <clinit>
-// WITH_RUNTIME
+// CURIOUS_ABOUT: writeToParcel, createFromParcel, <clinit>
+// WITH_STDLIB
 
 import kotlinx.parcelize.*
 import android.os.Parcelable

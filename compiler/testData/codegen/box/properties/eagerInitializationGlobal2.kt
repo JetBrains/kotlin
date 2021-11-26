@@ -9,7 +9,7 @@ var z2 = false
 // FILE: lib2.kt
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
-@JsEagerInitialization
+@EagerInitialization
 val x = run { z1 = true; 42 }
 
 // Won't be initialized (cause no function from the file will be called during [x] initialization).

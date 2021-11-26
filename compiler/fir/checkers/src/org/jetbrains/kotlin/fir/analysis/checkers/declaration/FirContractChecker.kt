@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -27,7 +27,7 @@ object FirContractChecker : FirFunctionChecker() {
 
         // Any statements that [ConeEffectExtractor] cannot extract effects will be in `unresolvedEffects`.
         for (statement in (declaration.contractDescription as FirResolvedContractDescription).unresolvedEffects) {
-            if (statement.source == null || statement.source!!.kind is FirFakeSourceElementKind) continue
+            if (statement.source == null || statement.source!!.kind is KtFakeSourceElementKind) continue
 
             // TODO: report on fine-grained locations, e.g., ... implies unresolved => report on unresolved, not the entire statement.
             //  but, sometimes, it's just reported on `contract`...

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -16,6 +16,7 @@ fun doTest(work: (Parcelable.Creator<DummyParcelable>) -> Unit): String {
 
     val clazz = dummy.javaClass
     val field = clazz.getDeclaredField("CREATOR")
+    @Suppress("UNCHECKED_CAST")
     val creator = field.get(dummy) as Parcelable.Creator<DummyParcelable>
 
     val parcel = Parcel.obtain()

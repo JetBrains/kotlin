@@ -16,8 +16,6 @@ import kotlin.internal.RequireKotlinVersionKind
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalMultiplatform::class)`,
  * or by using the compiler argument `-opt-in=kotlin.ExperimentalMultiplatform`.
  */
-@Suppress("DEPRECATION")
-@Experimental
 @RequiresOptIn
 @MustBeDocumented
 @Target(

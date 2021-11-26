@@ -1,0 +1,16 @@
+package
+
+public abstract class Checker</*0*/ StateT> {
+    public constructor Checker</*0*/ StateT>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ToolchainPanel {
+    public constructor ToolchainPanel()
+    public final fun </*0*/ ItemT> addVersionChecker(/*0*/ item: ItemT): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

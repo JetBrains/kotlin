@@ -9,7 +9,7 @@ enum class B(val x: Int) {
 }
 
 enum class C(val x: Int) {
-    C1(<!UNINITIALIZED_VARIABLE!>SUM<!>),
+    C1(<!UNINITIALIZED_ENUM_COMPANION_WARNING, UNINITIALIZED_VARIABLE!>SUM<!>),
     C2(1);
 
     companion object {
@@ -32,7 +32,7 @@ enum class Fruit(personal: Int) {
 
 // Another example from KT-11769
 enum class EnumCompanion1(val x: Int) {
-    INSTANCE(<!UNINITIALIZED_ENUM_COMPANION!>Companion<!>.foo()),
+    INSTANCE(<!UNINITIALIZED_ENUM_COMPANION, UNINITIALIZED_ENUM_COMPANION_WARNING!>Companion<!>.foo()),
     ANOTHER(foo());
 
     companion object {

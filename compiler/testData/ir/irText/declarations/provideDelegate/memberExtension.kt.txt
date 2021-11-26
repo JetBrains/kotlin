@@ -26,7 +26,7 @@ object Host {
     return StringDelegate(s = <this>)
   }
 
-  val String.plusK: String /* by */ 
+  val String.plusK: String /* by */
     field = (<this>, "K").provideDelegate(host = <this>, p = Host::plusK)
     get(): String {
       return <this>.#plusK$delegate.getValue(receiver = <this>, p = Host::plusK)
@@ -37,4 +37,3 @@ object Host {
     get
 
 }
-

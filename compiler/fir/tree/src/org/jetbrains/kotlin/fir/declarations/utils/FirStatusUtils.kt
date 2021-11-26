@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.render
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
 inline val FirMemberDeclaration.isAbstract: Boolean get() = status.modality == Modality.ABSTRACT
@@ -24,9 +19,13 @@ inline val FirMemberDeclaration.isFinal: Boolean
     }
 
 inline val FirMemberDeclaration.visibility: Visibility get() = status.visibility
+
+/**
+ * Gets the effective visibility. Note that it's assumed that the element or its non-local container has at least resolve phase
+ * [FirResolvePhase.STATUS], in which case, any declarations with unresolved status are effectively local.
+ */
 inline val FirMemberDeclaration.effectiveVisibility: EffectiveVisibility
-    get() = (status as? FirResolvedDeclarationStatus)?.effectiveVisibility
-        ?: error("Effective visibility for ${render(FirRenderer.RenderMode.NoBodies)} must be resolved")
+    get() = (status as? FirResolvedDeclarationStatus)?.effectiveVisibility ?: EffectiveVisibility.Local
 
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake

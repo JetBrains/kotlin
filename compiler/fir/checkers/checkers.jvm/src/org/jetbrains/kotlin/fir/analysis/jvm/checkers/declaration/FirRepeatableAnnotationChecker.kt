@@ -5,29 +5,27 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-//import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.containsRepeatableAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnnotatedDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationRetention
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -38,14 +36,15 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
+object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
     private val REPEATABLE_ANNOTATION_CONTAINER_NAME = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
 
-    override fun check(declaration: FirAnnotatedDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        val annotations = declaration.annotations
+        if (annotations.isEmpty()) return
         val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
         val session = context.session
-        val annotations = declaration.annotations
         for (annotation in annotations) {
             val classId = annotation.classId ?: continue
             val annotationClassId = annotation.toAnnotationClassId() ?: continue
@@ -149,7 +148,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private fun checkRepeatableAnnotationContainer(
         annotationClass: FirRegularClass,
         containerClass: FirRegularClassSymbol,
-        annotationSource: FirSourceElement?,
+        annotationSource: KtSourceElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -161,7 +160,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private fun checkContainerParameters(
         containerClass: FirRegularClassSymbol,
         annotationClass: FirRegularClass,
-        annotationSource: FirSourceElement?,
+        annotationSource: KtSourceElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -201,7 +200,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private fun checkContainerRetention(
         containerClass: FirRegularClassSymbol,
         annotationClass: FirRegularClass,
-        annotationSource: FirSourceElement?,
+        annotationSource: KtSourceElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -223,7 +222,7 @@ object FirRepeatableAnnotationChecker : FirAnnotatedDeclarationChecker() {
     private fun checkContainerTarget(
         containerClass: FirRegularClassSymbol,
         annotationClass: FirRegularClass,
-        annotationSource: FirSourceElement?,
+        annotationSource: KtSourceElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

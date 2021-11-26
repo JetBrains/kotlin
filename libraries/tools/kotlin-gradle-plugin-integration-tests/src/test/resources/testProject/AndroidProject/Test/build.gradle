@@ -1,7 +1,9 @@
 import org.gradle.util.VersionNumber
 
-apply plugin: 'com.android.test'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.test'
+    id 'org.jetbrains.kotlin.android'
+}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

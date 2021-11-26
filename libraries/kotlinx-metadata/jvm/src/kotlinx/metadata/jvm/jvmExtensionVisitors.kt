@@ -62,6 +62,13 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
     }
 
     /**
+     * Visits the JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
+     */
+    open fun visitJvmFlags(flags: Flags) {
+        delegate?.visitJvmFlags(flags)
+    }
+
+    /**
      * Visits the end of JVM extensions for the class.
      */
     open fun visitEnd() {
@@ -359,59 +366,5 @@ open class JvmTypeExtensionVisitor @JvmOverloads constructor(
          * @see KmTypeVisitor.visitFlexibleTypeUpperBound
          */
         const val PLATFORM_TYPE_ID = JvmProtoBufUtil.PLATFORM_TYPE_ID
-    }
-}
-
-/**
- * A visitor to visit JVM extensions for a type alias.
- */
-open class JvmTypeAliasExtensionVisitor @JvmOverloads constructor(
-    private val delegate: JvmTypeAliasExtensionVisitor? = null
-) : KmTypeAliasExtensionVisitor {
-    final override val type: KmExtensionType
-        get() = TYPE
-
-    /**
-     * Visits the end of JVM extensions for the type alias.
-     */
-    open fun visitEnd() {
-        delegate?.visitEnd()
-    }
-
-    companion object {
-        /**
-         * The type of this extension visitor.
-         *
-         * @see KmExtensionType
-         */
-        @JvmField
-        val TYPE: KmExtensionType = KmExtensionType(JvmTypeAliasExtensionVisitor::class)
-    }
-}
-
-/**
- * A visitor to visit JVM extensions for a value parameter.
- */
-open class JvmValueParameterExtensionVisitor @JvmOverloads constructor(
-    private val delegate: JvmValueParameterExtensionVisitor? = null
-) : KmTypeAliasExtensionVisitor {
-    final override val type: KmExtensionType
-        get() = TYPE
-
-    /**
-     * Visits the end of JVM extensions for the value parameter.
-     */
-    open fun visitEnd() {
-        delegate?.visitEnd()
-    }
-
-    companion object {
-        /**
-         * The type of this extension visitor.
-         *
-         * @see KmExtensionType
-         */
-        @JvmField
-        val TYPE: KmExtensionType = KmExtensionType(JvmValueParameterExtensionVisitor::class)
     }
 }

@@ -18,7 +18,7 @@ FILE: inner.kt
         }
 
         public final inner class Inner : R|kotlin/Any| {
-            public constructor(): R|Owner.Inner| {
+            public Owner.constructor(): R|Owner.Inner| {
                 super<R|kotlin/Any|>()
             }
 

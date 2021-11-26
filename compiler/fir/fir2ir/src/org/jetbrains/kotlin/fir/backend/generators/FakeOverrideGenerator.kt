@@ -101,7 +101,7 @@ class FakeOverrideGenerator(
         )
     }
 
-    private fun generateFakeOverridesForName(
+    internal fun generateFakeOverridesForName(
         irClass: IrClass,
         useSiteMemberScope: FirTypeScope,
         name: Name,
@@ -184,9 +184,9 @@ class FakeOverrideGenerator(
         irClass: IrClass,
         isLocal: Boolean,
         originalSymbol: FirCallableSymbol<*>,
-        cachedIrDeclaration: (D, (D) -> IdSignature?) -> I?,
-        createIrDeclaration: (D, irParent: IrClass, thisReceiverOwner: IrClass?, origin: IrDeclarationOrigin, isLocal: Boolean) -> I,
-        createFakeOverrideSymbol: (D, S) -> S,
+        cachedIrDeclaration: (firDeclaration: D, dispatchReceiverLookupTag: ConeClassLikeLookupTag?, () -> IdSignature?) -> I?,
+        createIrDeclaration: (firDeclaration: D, irParent: IrClass, thisReceiverOwner: IrClass?, origin: IrDeclarationOrigin, isLocal: Boolean) -> I,
+        createFakeOverrideSymbol: (firDeclaration: D, baseSymbol: S) -> S,
         baseSymbols: MutableMap<I, List<S>>,
         result: MutableList<in I>,
         containsErrorTypes: (I) -> Boolean,
@@ -227,7 +227,7 @@ class FakeOverrideGenerator(
                 return
             }
         }
-        val irDeclaration = cachedIrDeclaration(fakeOverrideFirDeclaration) {
+        val irDeclaration = cachedIrDeclaration(fakeOverrideFirDeclaration, null) {
             // Sometimes we can have clashing here when FIR substitution/intersection override
             // have the same signature.
             // Now we avoid this problem by signature caching,

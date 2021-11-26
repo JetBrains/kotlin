@@ -15,7 +15,7 @@ public class A(public val x: Int) {
 
 import utils.*
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
 
 internal fun test(a: A, y: Int): Int = a.plus(y)
 

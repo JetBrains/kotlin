@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// WITH_EXTENDED_CHECKERS
 
 package a
 

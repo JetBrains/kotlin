@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
@@ -70,8 +71,8 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         private const val JAVA_BINARIES_JAR_NAME = "java-binaries"
 
         fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
-            val withRuntime = JvmEnvironmentConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
-                    JvmEnvironmentConfigurationDirectives.WITH_STDLIB in registeredDirectives
+            val withRuntime = ConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
+                    ConfigurationDirectives.WITH_STDLIB in registeredDirectives
             val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives
             val noRuntime = JvmEnvironmentConfigurationDirectives.NO_RUNTIME in registeredDirectives
             if (noRuntime && withRuntime) {

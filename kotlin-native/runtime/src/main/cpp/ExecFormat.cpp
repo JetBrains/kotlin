@@ -99,12 +99,13 @@ void initSymbols() {
   }
 }
 
-const char* addressToSymbol(const void* address) {
+const char* addressToSymbol(const void* address, ptrdiff_t& resultOffset) {
   if (address == nullptr) return nullptr;
 
   // First, look up in dynamically loaded symbols.
   Dl_info info;
   if (dladdr(address, &info) != 0 && info.dli_sname != nullptr) {
+    resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_saddr);
     return info.dli_sname;
   }
 
@@ -121,6 +122,7 @@ const char* addressToSymbol(const void* address) {
     while (begin < end) {
       // st_value is load address adjusted.
       if (addressValue >= begin->st_value && addressValue < begin->st_value + begin->st_size) {
+        resultOffset = addressValue - begin->st_value;
         return &record.strtab[begin->st_name];
       }
       begin++;
@@ -131,8 +133,8 @@ const char* addressToSymbol(const void* address) {
 
 }  // namespace
 
-extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
-  const char* result = addressToSymbol(address);
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
+  const char* result = addressToSymbol(address, resultOffset);
   if (result == nullptr) {
     return false;
   } else {
@@ -295,11 +297,12 @@ class SymbolTable {
     }
   }
 
-  bool functionAddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+  bool functionAddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
     IMAGE_SYMBOL* symbol = findFunctionSymbol(address);
     if (symbol == nullptr) {
       return false;
     } else {
+      resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(getSymbolAddress(symbol));
       getSymbolName(symbol, resultBuffer, resultBufferSize);
       return true;
     }
@@ -311,7 +314,7 @@ SymbolTable* theExeSymbolTable = nullptr;
 
 }  // namespace
 
-extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
   if (theExeSymbolTable == nullptr) {
     // Note: do not protecting the lazy initialization by critical sections for simplicity;
     // this doesn't have any serious consequences.
@@ -321,20 +324,33 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
     RuntimeAssert(rv != 0, "GetModuleHandleExW fails");
     theExeSymbolTable = konanConstructInstance<SymbolTable>(hModule);
   }
-  return theExeSymbolTable->functionAddressToSymbol(address, resultBuffer, resultBufferSize);
+  return theExeSymbolTable->functionAddressToSymbol(address, resultBuffer, resultBufferSize, resultOffset);
 }
 
 #elif __has_include("dlfcn.h")
 
 #include <dlfcn.h>
 
-extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
     if (address == nullptr) return false;
-    const char *result = nullptr;
     Dl_info info;
-    if (dladdr(address, &info) != 0 && info.dli_sname != nullptr) {
+    if (dladdr(address, &info) == 0) return false;
+    const char *result = nullptr;
+    char symbuf[20];
+
+    if (info.dli_sname) {
         result = info.dli_sname;
+        resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_saddr);
+    } else if (info.dli_fname) {
+        result = info.dli_fname;
+        resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_fbase);
+    } else if (0 < konan::snprintf(symbuf, sizeof(symbuf), "%p", info.dli_saddr)) {
+        result = symbuf;
+        resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_saddr);
+    } else {
+        resultOffset = reinterpret_cast<ptrdiff_t>(address);
     }
+
     if (result == nullptr) {
         return false;
     } else {
@@ -346,7 +362,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
 
 #else
 
-extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize) {
+extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset) {
   return false;
 }
 

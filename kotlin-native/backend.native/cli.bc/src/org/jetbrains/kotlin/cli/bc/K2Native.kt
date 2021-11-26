@@ -233,10 +233,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
                 val memoryModelFromArgument = when (arguments.memoryModel) {
-                    "relaxed" -> {
-                        configuration.report(STRONG_WARNING, "Relaxed memory model is not yet fully functional")
-                        MemoryModel.RELAXED
-                    }
+                    "relaxed" -> MemoryModel.RELAXED
                     "strict" -> MemoryModel.STRICT
                     "experimental" -> MemoryModel.EXPERIMENTAL
                     else -> {
@@ -364,6 +361,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         WorkerExceptionHandling.LEGACY
                     }
                 })
+                put(LAZY_IR_FOR_CACHES, when (arguments.lazyIrForCaches) {
+                    null -> true
+                    "enable" -> true
+                    "disable" -> false
+                    else -> {
+                        configuration.report(ERROR, "Expected 'enable' or 'disable' for lazy IR usage for cached libraries")
+                        false
+                    }
+                })
 
                 arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
                 putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
@@ -382,6 +388,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
                 putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
                 putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, configuration))
+                put(MEANINGFUL_BRIDGE_NAMES, arguments.meaningfulBridgeNames)
             }
         }
     }

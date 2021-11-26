@@ -8,18 +8,21 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 public abstract class KtTypeCreator : KtAnalysisSessionComponent() {
     public abstract fun buildClassType(builder: KtClassTypeBuilder): KtClassType
+
+    public abstract fun buildTypeParameterType(builder: KtTypeParameterTypeBuilder): KtTypeParameterType
 }
 
 public interface KtTypeCreatorMixIn : KtAnalysisSessionMixIn
-
 
 public inline fun KtTypeCreatorMixIn.buildClassType(
     classId: ClassId,
@@ -33,6 +36,11 @@ public inline fun KtTypeCreatorMixIn.buildClassType(
 ): KtClassType =
     analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.BySymbol(symbol).apply(build))
 
+public inline fun KtTypeCreatorMixIn.buildTypeParameterType(
+    symbol: KtTypeParameterSymbol,
+    build: KtTypeParameterTypeBuilder.() -> Unit = {}
+): KtTypeParameterType =
+    analysisSession.typesCreator.buildTypeParameterType(KtTypeParameterTypeBuilder.BySymbol(symbol).apply(build))
 
 public sealed class KtTypeBuilder
 
@@ -53,5 +61,11 @@ public sealed class KtClassTypeBuilder : KtTypeBuilder() {
 
     public class ByClassId(public val classId: ClassId) : KtClassTypeBuilder()
     public class BySymbol(public val symbol: KtClassOrObjectSymbol) : KtClassTypeBuilder()
+}
+
+public sealed class KtTypeParameterTypeBuilder : KtTypeBuilder() {
+    public var nullability: KtTypeNullability = KtTypeNullability.NULLABLE
+
+    public class BySymbol(public val symbol: KtTypeParameterSymbol) : KtTypeParameterTypeBuilder()
 }
 

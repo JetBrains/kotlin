@@ -59,7 +59,18 @@ public interface DiagnosticSink {
 
     void report(@NotNull Diagnostic diagnostic);
 
-    default void setCallback(@NotNull DiagnosticsCallback callback) { }
+    /**
+     * use {@link #setCallbackIfNotSet(DiagnosticsCallback)} instead
+     * @param callback
+     */
+    @Deprecated
+    default void setCallback(@NotNull DiagnosticsCallback callback) {
+        setCallbackIfNotSet(callback);
+    }
+
+    default boolean setCallbackIfNotSet(@NotNull DiagnosticsCallback callback) {
+        return false;
+    }
 
     default void resetCallback() { }
 

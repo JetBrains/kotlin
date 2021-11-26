@@ -156,6 +156,9 @@ open class DeepCopyIrTreeWithSymbols(
             superTypes = declaration.superTypes.map {
                 it.remapType()
             }
+            sealedSubclasses = declaration.sealedSubclasses.map {
+                symbolRemapper.getReferencedClass(it)
+            }
             thisReceiver = declaration.thisReceiver?.transform()
             inlineClassRepresentation = declaration.inlineClassRepresentation?.mapUnderlyingType { it.remapType() as IrSimpleType }
             declaration.transformDeclarationsTo(this)
@@ -406,6 +409,28 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun <T> visitConst(expression: IrConst<T>): IrConst<T> =
         expression.shallowCopy().copyAttributes(expression)
+
+    override fun visitConstantObject(expression: IrConstantObject): IrConstantValue =
+        IrConstantObjectImpl(
+            expression.startOffset, expression.endOffset,
+            symbolRemapper.getReferencedConstructor(expression.constructor),
+            expression.valueArguments.transform(),
+            expression.typeArguments.map { it.remapType() },
+            expression.type.remapType()
+        ).copyAttributes(expression)
+
+    override fun visitConstantPrimitive(expression: IrConstantPrimitive): IrConstantValue =
+        IrConstantPrimitiveImpl(
+            expression.startOffset, expression.endOffset,
+            expression.value.transform()
+        ).copyAttributes(expression)
+
+    override fun visitConstantArray(expression: IrConstantArray): IrConstantValue =
+        IrConstantArrayImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.elements.transform(),
+        ).copyAttributes(expression)
 
     override fun visitVararg(expression: IrVararg): IrVararg =
         IrVarargImpl(

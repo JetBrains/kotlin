@@ -9,20 +9,22 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 
 class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVisitorVoid {
@@ -35,6 +37,10 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        require(declaration.isExternal)
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {
@@ -71,33 +77,18 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
-        // TODO: Exported types should be transformed in a separate lowering by creating shim functions for each export.
-        val isExported = declaration.isExported(context.backendContext)
         val resultType =
             when {
-                isExported -> context.transformExportedResultType(declaration.returnType)
                 // Unit_getInstance returns true Unit reference instead of "void"
                 declaration == unitGetInstanceFunction -> context.transformType(declaration.returnType)
                 else -> context.transformResultType(declaration.returnType)
             }
 
-        val isExportedOrImported = isExported || importedName != null
         val wasmFunctionType =
             WasmFunctionType(
                 name = watName,
-                parameterTypes = irParameters.map {
-                    val t = context.transformValueParameterType(it)
-                    if (isExportedOrImported && t is WasmRefNullType) {
-                        WasmRefNullType(WasmHeapType.Simple.Data)
-                    } else {
-                        t
-                    }
-                },
-                resultTypes = listOfNotNull(
-                    resultType.let {
-                        if (isExportedOrImported && it is WasmRefNullType) WasmRefNullType(WasmHeapType.Simple.Data) else it
-                    }
-                )
+                parameterTypes = irParameters.map { context.transformValueParameterType(it) },
+                resultTypes = listOfNotNull(resultType)
             )
         context.defineFunctionType(declaration.symbol, wasmFunctionType)
 
@@ -158,15 +149,19 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
         context.defineFunction(declaration.symbol, function)
 
-        if (declaration == backendContext.startFunction)
-            context.setStartFunction(function)
+        val initPriority = when (declaration) {
+            backendContext.fieldInitFunction -> "0"
+            backendContext.mainCallsWrapperFunction -> "1"
+            else -> null
+        }
+        if (initPriority != null)
+            context.registerInitFunction(function, initPriority)
 
-        if (declaration.isExported(backendContext)) {
+        if (declaration.isExported()) {
             context.addExport(
                 WasmExport.Function(
                     field = function,
-                    // TODO: Add ability to specify exported name.
-                    name = declaration.name.identifier
+                    name = declaration.getJsNameOrKotlinName().identifier
                 )
             )
         }
@@ -282,6 +277,26 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
         val invalidIndex = -1
+
+        val fqnShouldBeEmitted = context.backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
+        //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
+        val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
+        val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+        val typeInfo = ConstantDataStruct(
+            "TypeInfo",
+            listOf(
+                ConstantDataIntField("TypePackageNameLength", packageName.length),
+                ConstantDataIntField("TypePackageNamePtr", context.referenceStringLiteral(packageName)),
+                ConstantDataIntField("TypeNameLength", simpleName.length),
+                ConstantDataIntField("TypeNamePtr", context.referenceStringLiteral(simpleName))
+            )
+        )
+
+        val superClass = classMetadata.klass.getSuperClass(context.backendContext.irBuiltIns)
+        val superTypeId = superClass?.let {
+            ConstantDataIntField("SuperTypeId", context.referenceClassId(it.symbol))
+        } ?: ConstantDataIntField("SuperTypeId", -1)
+
         val vtableSizeField = ConstantDataIntField(
             "V-table length",
             classMetadata.virtualMethods.size
@@ -306,6 +321,8 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         return ConstantDataStruct(
             "Class TypeInfo: ${classMetadata.klass.fqNameWhenAvailable} ",
             listOf(
+                typeInfo,
+                superTypeId,
                 interfaceTablePtr,
                 vtableSizeField,
                 vtableArray,
@@ -368,7 +385,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)
     is WasmRefNullType -> g.buildRefNull(type.heapType)
-    is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
+    is WasmExternRef, is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
     WasmUnreachableType -> error("Unreachable type can't be initialized")
     else -> error("Unknown value type ${type.name}")
 }
@@ -378,5 +395,5 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
     return listOfNotNull(implicitThis, dispatchReceiverParameter, extensionReceiverParameter) + valueParameters
 }
 
-fun IrFunction.isExported(context: WasmBackendContext): Boolean =
-    fqNameWhenAvailable in context.additionalExportedDeclarations || isJsExport()
+fun IrFunction.isExported(): Boolean =
+    isJsExport()

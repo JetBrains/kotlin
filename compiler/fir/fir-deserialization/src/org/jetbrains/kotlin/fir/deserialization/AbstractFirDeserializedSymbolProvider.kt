@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -65,6 +67,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     session: FirSession,
     val moduleDataProvider: ModuleDataProvider,
     val kotlinScopeProvider: FirKotlinScopeProvider,
+    val defaultDeserializationOrigin: FirDeclarationOrigin,
 ) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
@@ -86,10 +89,13 @@ abstract class AbstractFirDeserializedSymbolProvider(
     // ------------------------ Abstract members ------------------------
 
     protected abstract fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData>
+
     protected abstract fun extractClassMetadata(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): ClassMetadataFindResult?
+
+    protected abstract fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean
 
     // ------------------------ Deserialization methods ------------------------
 
@@ -120,7 +126,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return getPackageParts(classId.packageFqName).firstNotNullOfOrNull { part ->
             val ids = part.typeAliasNameIndex[classId.shortClassName]
             if (ids == null || ids.isEmpty()) return@firstNotNullOfOrNull null
-            val aliasProto = ids.map { part.proto.getTypeAlias(it) }.single()
+            val aliasProto = part.proto.getTypeAlias(ids.single())
             part.context.memberDeserializer.loadTypeAlias(aliasProto).symbol
         }
     }
@@ -146,8 +152,10 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     kotlinScopeProvider,
                     parentContext,
                     sourceElement,
+                    origin = defaultDeserializationOrigin,
                     deserializeNestedClass = this::getClass,
                 )
+                symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
                 symbol to postProcessor
             }
             null -> null to null

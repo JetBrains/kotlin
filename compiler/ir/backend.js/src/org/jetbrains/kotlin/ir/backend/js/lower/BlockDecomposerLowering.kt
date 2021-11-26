@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -620,11 +620,17 @@ class BlockDecomposerTransformer(
             )
 
             expression.receiver = newArguments[0]
-                ?: error("No new receiver in destructured composite for:\n${expression.dump()}")
+                ?: compilationException(
+                    "No new receiver in destructured composite",
+                    expression
+                )
 
             for (i in expression.arguments.indices) {
                 expression.arguments[i] = newArguments[i + 1]
-                    ?: error("No argument #$i in destructured composite for:\n${expression.dump()}")
+                    ?: compilationException(
+                        "No argument #$i in destructured composite",
+                        expression
+                    )
             }
 
             newStatements.add(expression)

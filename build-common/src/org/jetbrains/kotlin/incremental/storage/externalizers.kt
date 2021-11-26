@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
-import java.util.*
 
 /**
  * Storage versioning:
@@ -111,6 +111,17 @@ object ClassIdExternalizer : DataExternalizer<ClassId> {
             /* relativeClassName */ FqNameExternalizer.read(input),
             /* isLocal */ input.readBoolean()
         )
+    }
+}
+
+object JvmClassNameExternalizer : DataExternalizer<JvmClassName> {
+
+    override fun save(output: DataOutput, jvmClassName: JvmClassName) {
+        output.writeString(jvmClassName.internalName)
+    }
+
+    override fun read(input: DataInput): JvmClassName {
+        return JvmClassName.byInternalName(input.readString())
     }
 }
 
@@ -349,8 +360,8 @@ open class GenericCollectionExternalizer<T, C : Collection<T>>(
 class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
     GenericCollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
 
-class LinkedHashSetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, LinkedHashSet<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
+class SetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
+    GenericCollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
 class LinkedHashMapExternalizer<K, V>(
     private val keyExternalizer: DataExternalizer<K>,

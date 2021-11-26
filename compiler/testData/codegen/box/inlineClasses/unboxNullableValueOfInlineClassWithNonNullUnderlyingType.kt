@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 class BoxT<T>(val boxed: T)
 class BoxAny(val boxed: Any?)
@@ -6,11 +6,17 @@ class BoxFoo(val boxed: IFoo?)
 
 interface IFoo
 
-inline class Str(val value: String) : IFoo
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Str(val value: String) : IFoo
 
-inline class Str2(val value: Str): IFoo
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Str2(val value: Str): IFoo
 
-inline class StrArr(val value: Array<String>): IFoo
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class StrArr(val value: Array<String>): IFoo
 
 fun boxToTypeParameter(x: Str?) = BoxT(x)
 fun boxToNullableAny(x: Str?) = BoxAny(x)

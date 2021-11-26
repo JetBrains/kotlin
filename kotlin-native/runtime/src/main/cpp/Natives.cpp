@@ -42,12 +42,12 @@ KInt Kotlin_Any_hashCode(KConstRef thiz) {
 }
 
 NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
-    KStdVector<void*> stackTrace;
+    kotlin::StackTrace stackTrace;
     {
         // Don't use `kotlin::CallWithThreadState` to avoid messing up callstack.
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
         // Skip this function and primary `Throwable` constructor.
-        stackTrace = kotlin::GetCurrentStackTrace(2);
+        stackTrace = kotlin::StackTrace<>::current(2);
     }
 
     ObjHolder resultHolder;
@@ -61,7 +61,7 @@ NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
 OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
     const KNativePtr* array = PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0);
     size_t size = stackTrace->array()->count_;
-    auto stackTraceStrings = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(kotlin::GetStackTraceStrings, array, size);
+    auto stackTraceStrings = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(kotlin::GetStackTraceStrings, kotlin::std_support::span<void* const>(array, size));
     ObjHolder resultHolder;
     ObjHeader* strings = AllocArrayInstance(theArrayTypeInfo, stackTraceStrings.size(), resultHolder.slot());
 

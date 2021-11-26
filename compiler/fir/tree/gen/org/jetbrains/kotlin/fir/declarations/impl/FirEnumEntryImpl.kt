@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -31,15 +31,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirEnumEntryImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override var returnTypeRef: FirTypeRef,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
@@ -61,26 +61,21 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         initializer?.accept(visitor, data)
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -91,6 +86,11 @@ internal class FirEnumEntryImpl(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

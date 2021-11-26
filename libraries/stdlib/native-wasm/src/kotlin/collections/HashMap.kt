@@ -133,7 +133,7 @@ actual class HashMap<K, V> private constructor(
             val new = HashMapEntrySet(this)
             if (!isFrozen)
                 entriesView = new
-            return new
+            new
         } else cur
     }
 

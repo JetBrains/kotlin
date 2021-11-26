@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,9 +15,13 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isBoxedArray
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import java.lang.IllegalStateException
 
 
 /**
@@ -33,7 +36,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * TODO: consider making this visitor non-recursive to make it more general.
  */
 internal abstract class AbstractValueUsageTransformer(
-        val builtIns: KotlinBuiltIns,
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns
 ): IrElementTransformerVoid() {
@@ -267,6 +269,30 @@ internal abstract class AbstractValueUsageTransformer(
         }
 
         return declaration
+    }
+
+    override fun visitConstantArray(expression: IrConstantArray): IrConstantValue {
+        expression.transformChildrenVoid(this)
+
+        val elementType = if (expression.type.isBoxedArray)
+            irBuiltIns.anyNType
+        else
+            irBuiltIns.primitiveArrayElementTypes[expression.type.getClass()?.symbol]
+                    ?: throw IllegalStateException("Unexpected array type ${expression.type.render()}")
+
+        expression.elements.forEachIndexed { index, it ->
+            expression.putElement(index, it.useAs(elementType) as IrConstantValue)
+        }
+        return expression
+    }
+
+    override fun visitConstantObject(expression: IrConstantObject): IrConstantValue {
+        expression.transformChildrenVoid(this)
+
+        expression.valueArguments.forEachIndexed { index, arg ->
+            expression.putArgument(index, arg.useAsArgument(expression.constructor.owner.valueParameters[index]) as IrConstantValue)
+        }
+        return expression
     }
 
     // TODO: IrStringConcatenation, IrEnumEntry?

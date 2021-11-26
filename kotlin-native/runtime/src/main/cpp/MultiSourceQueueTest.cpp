@@ -18,8 +18,8 @@ using namespace kotlin;
 
 namespace {
 
-template <typename T>
-KStdVector<T> Collect(MultiSourceQueue<T>& queue) {
+template <typename T, typename Mutex>
+KStdVector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
     KStdVector<T> result;
     for (const auto& element : queue.LockForIter()) {
         result.push_back(element);
@@ -29,7 +29,7 @@ KStdVector<T> Collect(MultiSourceQueue<T>& queue) {
 
 } // namespace
 
-using IntQueue = MultiSourceQueue<int>;
+using IntQueue = MultiSourceQueue<int, SpinLock<MutexThreadStateHandling::kIgnore>>;
 
 TEST(MultiSourceQueueTest, Insert) {
     IntQueue queue;

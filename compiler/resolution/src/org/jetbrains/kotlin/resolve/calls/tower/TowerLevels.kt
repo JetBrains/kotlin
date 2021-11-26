@@ -64,10 +64,11 @@ internal abstract class AbstractScopeTowerLevel(
 
             val shouldSkipVisibilityCheck = scopeTower.isNewInferenceEnabled
             if (!shouldSkipVisibilityCheck) {
-                DescriptorVisibilities.findInvisibleMember(
+                DescriptorVisibilityUtils.findInvisibleMember(
                     getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
                     descriptor,
-                    scopeTower.lexicalScope.ownerDescriptor
+                    scopeTower.lexicalScope.ownerDescriptor,
+                    scopeTower.languageVersionSettings
                 )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
@@ -357,7 +358,8 @@ internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower) : Abstract
         extensionReceiver: ReceiverValueWithSmartCastInfo?,
         collectCandidates: LexicalScope.(Name, LookupLocation) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
-        if (extensionReceiver == null || name !in HIDES_MEMBERS_NAME_LIST) return emptyList()
+        if (extensionReceiver == null) return emptyList()
+        if (name !in HIDES_MEMBERS_NAME_LIST && scopeTower.getNameForGivenImportAlias(name) !in HIDES_MEMBERS_NAME_LIST) return emptyList()
 
         return scopeTower.lexicalScope.collectCandidates(name, location).filter {
             it.extensionReceiverParameter != null && it.hasHidesMembersAnnotation()

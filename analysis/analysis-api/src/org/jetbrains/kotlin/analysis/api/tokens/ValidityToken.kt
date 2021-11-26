@@ -14,6 +14,8 @@ public abstract class ValidityToken {
 
     public abstract fun isAccessible(): Boolean
     public abstract fun getInaccessibilityReason(): String
+
+    public abstract val factory: ValidityTokenFactory
 }
 
 public abstract class ValidityTokenFactory {

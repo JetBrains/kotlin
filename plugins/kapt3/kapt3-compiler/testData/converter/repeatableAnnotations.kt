@@ -15,7 +15,7 @@ public class R {
 }
 
 // FILE: test.kt
-// WITH_RUNTIME
+// WITH_STDLIB
 import lib.Anno
 import kotlin.reflect.KClass
 

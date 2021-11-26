@@ -38,7 +38,12 @@ interface Diagnostics : GenericDiagnostics<Diagnostic> {
 
     fun noSuppression(): Diagnostics
 
-    fun setCallback(callback: DiagnosticsCallback) {}
+    fun setCallback(callback: DiagnosticsCallback) {
+        setCallbackIfNotSet(callback)
+    }
+
+    fun setCallbackIfNotSet(callback: DiagnosticsCallback): Boolean = false
+
     fun resetCallback() {}
 
     companion object {

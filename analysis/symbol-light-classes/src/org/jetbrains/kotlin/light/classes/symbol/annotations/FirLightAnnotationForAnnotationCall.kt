@@ -10,12 +10,12 @@ import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiImplUtil
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class FirLightAnnotationForAnnotationCall(
-    private val annotationCall: KtAnnotationCall,
+    private val annotationCall: KtAnnotationApplication,
     parent: PsiElement,
 ) : FirLightAbstractAnnotation(parent) {
 

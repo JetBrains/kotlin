@@ -64,25 +64,27 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
         val irClass = irConstructor.parentAsClass
         val parentThisField = innerClassesSupport.getOuterThisField(irClass)
 
-        val blockBody = irConstructor.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
+        irConstructor.body?.let { blockBody ->
+            if (blockBody !is IrBlockBody) throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
 
-        loweredConstructor.body = context.irFactory.createBlockBody(blockBody.startOffset, blockBody.endOffset) {
-            context.createIrBuilder(irConstructor.symbol, irConstructor.startOffset, irConstructor.endOffset).apply {
-                statements.add(0, irSetField(irGet(irClass.thisReceiver!!), parentThisField, irGet(outerThisParameter)))
+            loweredConstructor.body = context.irFactory.createBlockBody(blockBody.startOffset, blockBody.endOffset) {
+                context.createIrBuilder(irConstructor.symbol, irConstructor.startOffset, irConstructor.endOffset).apply {
+                    statements.add(0, irSetField(irGet(irClass.thisReceiver!!), parentThisField, irGet(outerThisParameter)))
+                }
+
+                statements.addAll(blockBody.statements)
+
+                if (statements.find { it is IrInstanceInitializerCall } == null) {
+                    val delegatingConstructorCall =
+                        statements.find { it is IrDelegatingConstructorCall } as IrDelegatingConstructorCall?
+                            ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
+                    delegatingConstructorCall.apply { dispatchReceiver = IrGetValueImpl(startOffset, endOffset, outerThisParameter.symbol) }
+                }
+                patchDeclarationParents(loweredConstructor)
+
+                val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(irConstructor)
+                transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
             }
-
-            statements.addAll(blockBody.statements)
-
-            if (statements.find { it is IrInstanceInitializerCall } == null) {
-                val delegatingConstructorCall =
-                    statements.find { it is IrDelegatingConstructorCall } as IrDelegatingConstructorCall?
-                        ?: throw AssertionError("Delegating constructor call expected: ${irConstructor.dump()}")
-                delegatingConstructorCall.apply { dispatchReceiver = IrGetValueImpl(startOffset, endOffset, outerThisParameter.symbol) }
-            }
-            patchDeclarationParents(loweredConstructor)
-
-            val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(irConstructor)
-            transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
         }
 
         return loweredConstructor

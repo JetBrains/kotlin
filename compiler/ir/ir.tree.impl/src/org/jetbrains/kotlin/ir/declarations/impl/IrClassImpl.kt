@@ -29,7 +29,7 @@ open class IrClassImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrClassSymbol,
+    final override val symbol: IrClassSymbol,
     override val name: Name,
     override val kind: ClassKind,
     override var visibility: DescriptorVisibility,
@@ -41,14 +41,12 @@ open class IrClassImpl(
     override val isInline: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
-    override val source: SourceElement = SourceElement.NO_SOURCE
+    override val source: SourceElement = SourceElement.NO_SOURCE,
+    override val factory: IrFactory = IrFactoryImpl
 ) : IrClass() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -70,4 +68,6 @@ open class IrClassImpl(
     override var metadata: MetadataSource? = null
 
     override var attributeOwnerId: IrAttributeContainer = this
+
+    override var sealedSubclasses: List<IrClassSymbol> = emptyList()
 }

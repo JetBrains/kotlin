@@ -5,43 +5,67 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.utils.keysToMap
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Provider
 import java.io.File
-import java.util.HashSet
 
 internal class TaskOutputsBackup(
-    val outputs: FileCollection,
-    val previousOutputs: Map<File, Array<Byte>> = outputs
-        .flatMap {
-            if (it.isDirectory) {
-                it.walk().filter(File::isFile)
-            } else {
-                sequenceOf(it)
-            }
-        }
-        .filter { it.exists() }
-        .toSet()
-        .keysToMap { it.readBytes().toTypedArray() }
+    val fileSystemOperations: FileSystemOperations,
+    val buildDirectory: DirectoryProperty,
+    val snapshotsDir: Provider<Directory>,
+    val outputs: FileCollection
 ) {
-
-    fun restoreOutputs() {
-        outputs.forEach {
-            if (it.isDirectory) {
-                it.deleteRecursively()
-            } else if (it.isFile) {
-                it.delete()
+    fun createSnapshot() {
+        // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
+        // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
+        outputs.files.toSortedSet().forEachIndexed { index, outputPath ->
+            val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
+            if (outputPath.isDirectory) {
+                fileSystemOperations.sync { spec ->
+                    spec.from(outputPath)
+                    spec.into(snapshotsDir.map { it.dir(pathInSnapshot) })
+                }
+            } else {
+                fileSystemOperations.copy { spec ->
+                    spec.from(outputPath)
+                    spec.into(snapshotsDir.map { it.file(pathInSnapshot).asFile.parentFile })
+                }
             }
-        }
-
-        val dirs = HashSet<File>()
-
-        for ((file, bytes) in previousOutputs) {
-            val dir = file.parentFile
-            if (dirs.add(dir)) {
-                dir.mkdirs()
-            }
-            file.writeBytes(bytes.toByteArray())
         }
     }
+
+    fun restoreOutputs() {
+        fileSystemOperations.delete {
+            it.delete(outputs)
+        }
+
+        outputs.files.toSortedSet().forEachIndexed { index, outputPath ->
+            val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
+            val fileInSnapshot = snapshotsDir.get().file(pathInSnapshot).asFile
+            if (fileInSnapshot.isDirectory) {
+                fileSystemOperations.sync { spec ->
+                    spec.from(snapshotsDir.map { it.dir(pathInSnapshot) })
+                    spec.into(outputPath)
+                }
+            } else {
+                fileSystemOperations.copy { spec ->
+                    spec.from(snapshotsDir.map { it.file(pathInSnapshot).asFile.parentFile })
+                    spec.into(outputPath.parentFile)
+                }
+            }
+        }
+    }
+
+    fun deleteSnapshot() {
+        fileSystemOperations.delete { it.delete(snapshotsDir) }
+    }
+
+    private val File.pathRelativeToBuildDirectory: String
+        get() {
+            val buildDir = buildDirectory.get().asFile
+            return relativeTo(buildDir).path
+        }
 }

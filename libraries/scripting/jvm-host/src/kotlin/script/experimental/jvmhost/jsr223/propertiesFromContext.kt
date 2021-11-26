@@ -41,12 +41,14 @@ fun configureProvidedPropertiesFromJsr223Context(context: ScriptEvaluationConfig
         val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE)
         val globalBindings = jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE)
         for (prop in knownProperties) {
-            val v = when {
-                engineBindings?.containsKey(prop.key) == true -> engineBindings[prop.key]
-                globalBindings?.containsKey(prop.key) == true -> globalBindings[prop.key]
-                else -> return ResultWithDiagnostics.Failure("Property ${prop.key} is not found in the bindings".asErrorDiagnostics())
+            if (prop.key !in updatedProperties) {
+                val v = when {
+                    engineBindings?.containsKey(prop.key) == true -> engineBindings[prop.key]
+                    globalBindings?.containsKey(prop.key) == true -> globalBindings[prop.key]
+                    else -> return ResultWithDiagnostics.Failure("Property ${prop.key} is not found in the bindings".asErrorDiagnostics())
+                }
+                updatedProperties[prop.key] = v
             }
-            updatedProperties[prop.key] = v
         }
         ScriptEvaluationConfiguration(context.evaluationConfiguration) {
             providedProperties(updatedProperties)

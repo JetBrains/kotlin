@@ -1,5 +1,7 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    const __doNotImplementIt: unique symbol
+    type __doNotImplementIt = typeof __doNotImplementIt
     interface publicInterface {
     }
     const publicVal: number;
@@ -9,14 +11,14 @@ declare namespace JS_TESTS {
     }
     class Class {
         constructor();
-        protected readonly protectedVal: number;
+        protected get protectedVal(): number;
         protected protectedFun(): number;
-        protected readonly protectedNestedObject: {
+        protected static get protectedNestedObject(): {
         };
-        protected readonly Companion: {
-            readonly companionObjectProp: number;
+        protected static get Companion(): {
+            get companionObjectProp(): number;
         };
-        readonly publicVal: number;
+        get publicVal(): number;
         publicFun(): number;
     }
     namespace Class {
@@ -30,5 +32,20 @@ declare namespace JS_TESTS {
         class publicClass {
             constructor();
         }
+    }
+    abstract class EnumClass {
+        private constructor();
+        static get EC1(): EnumClass & {
+            get name(): "EC1";
+            get ordinal(): 0;
+        };
+        static get EC2(): EnumClass & {
+            get name(): "EC2";
+            get ordinal(): 1;
+        };
+        static values(): Array<EnumClass>;
+        static valueOf(value: string): EnumClass;
+        get name(): "EC1" | "EC2";
+        get ordinal(): 0 | 1;
     }
 }

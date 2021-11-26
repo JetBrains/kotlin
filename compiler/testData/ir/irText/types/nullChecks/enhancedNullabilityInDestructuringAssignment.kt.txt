@@ -93,4 +93,3 @@ fun test4() {
   // }
   use(x = x, y = y /*!! @NotNull P */)
 }
-

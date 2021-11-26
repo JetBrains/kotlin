@@ -1,7 +1,5 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
 fun interface ResultHandler<T> {
     @Suppress("RESULT_CLASS_IN_RETURN_TYPE")

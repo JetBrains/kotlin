@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.nameIdentifier
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -15,12 +20,12 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirSimpleFunction, KtFunction>() {
-    override fun isApplicable(element: FirSimpleFunction, source: FirSourceElement): Boolean =
-        source.kind !is FirFakeSourceElementKind
+    override fun isApplicable(element: FirSimpleFunction, source: KtSourceElement): Boolean =
+        source.kind !is KtFakeSourceElementKind
 
     override fun checkPsi(
         element: FirSimpleFunction,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: KtFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -39,7 +44,7 @@ object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirS
 
     override fun checkLightTree(
         element: FirSimpleFunction,
-        source: FirSourceElement,
+        source: KtLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {

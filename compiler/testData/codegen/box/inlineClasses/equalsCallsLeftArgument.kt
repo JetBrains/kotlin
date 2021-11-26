@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class A(val x: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val x: String)
 
 class B {
     override fun equals(other: Any?) = true

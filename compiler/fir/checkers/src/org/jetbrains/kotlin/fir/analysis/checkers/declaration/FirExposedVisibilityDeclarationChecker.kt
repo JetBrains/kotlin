@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -120,18 +119,20 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
                     )
                 }
         }
-        declaration.valueParameters.forEachIndexed { i, valueParameter ->
-            if (i < declaration.valueParameters.size) {
-                val (restricting, restrictingVisibility) = valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                    ?.findVisibilityExposure(context, functionVisibility) ?: return@forEachIndexed
-                reporter.reportOn(
-                    valueParameter.source,
-                    FirErrors.EXPOSED_PARAMETER_TYPE,
-                    functionVisibility,
-                    restricting,
-                    restrictingVisibility,
-                    context
-                )
+        if (declaration !is FirPropertyAccessor) {
+            declaration.valueParameters.forEachIndexed { i, valueParameter ->
+                if (i < declaration.valueParameters.size) {
+                    val (restricting, restrictingVisibility) = valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+                        ?.findVisibilityExposure(context, functionVisibility) ?: return@forEachIndexed
+                    reporter.reportOn(
+                        valueParameter.source,
+                        FirErrors.EXPOSED_PARAMETER_TYPE,
+                        functionVisibility,
+                        restricting,
+                        restrictingVisibility,
+                        context
+                    )
+                }
             }
         }
         checkMemberReceiver(declaration.receiverTypeRef, declaration as? FirCallableDeclaration, reporter, context)
@@ -144,19 +145,25 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
         if (propertyVisibility == EffectiveVisibility.Local) return
         declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
             ?.findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility) ->
-                val diagnostic = if (declaration.fromPrimaryConstructor == true) {
-                    FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR
+                if (declaration.fromPrimaryConstructor == true) {
+                    reporter.reportOn(
+                        declaration.source,
+                        FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
+                        propertyVisibility,
+                        restricting,
+                        restrictingVisibility,
+                        context
+                    )
                 } else {
-                    FirErrors.EXPOSED_PROPERTY_TYPE
+                    reporter.reportOn(
+                        declaration.source,
+                        FirErrors.EXPOSED_PROPERTY_TYPE,
+                        propertyVisibility,
+                        restricting,
+                        restrictingVisibility,
+                        context
+                    )
                 }
-                reporter.reportOn(
-                    declaration.source,
-                    diagnostic,
-                    propertyVisibility,
-                    restricting,
-                    restrictingVisibility,
-                    context
-                )
             }
         checkMemberReceiver(declaration.receiverTypeRef, declaration, reporter, context)
     }

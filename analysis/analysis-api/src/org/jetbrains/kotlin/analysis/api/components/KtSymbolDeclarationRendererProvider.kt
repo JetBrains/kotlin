@@ -30,7 +30,12 @@ public data class KtTypeRendererOptions(
      * When `true` will render as `UnresolvedQualifier`
      * When `false` will render as "ERROR_TYPE <symbol not found for UnresolvedQualifier>"
      */
-    public val renderUnresolvedTypeAsResolved: Boolean = true
+    public val renderUnresolvedTypeAsResolved: Boolean = true,
+
+    /**
+     * Should annotations on types be rendered.
+     */
+    public val renderTypeAnnotations: Boolean = true
 ) {
     public companion object {
         public val DEFAULT: KtTypeRendererOptions = KtTypeRendererOptions()
@@ -83,6 +88,11 @@ public data class KtDeclarationRendererOptions(
     val forceRenderingOverrideModifier: Boolean = false,
 
     val renderDefaultParameterValue: Boolean = true,
+
+    /**
+     * Sort nested declarations by kind (enum values, then constructors, then properties, then functions) and name.
+     */
+    val sortNestedDeclarations: Boolean = false,
 ) {
     public companion object {
         public val DEFAULT: KtDeclarationRendererOptions = KtDeclarationRendererOptions()

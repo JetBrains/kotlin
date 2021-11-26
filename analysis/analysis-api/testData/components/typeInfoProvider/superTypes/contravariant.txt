@@ -1,0 +1,23 @@
+[direct super types]
+kotlin.collections.List<CapturedType(in kotlin/String)>
+kotlin.collections.MutableCollection<CapturedType(in kotlin/String)>
+
+[approximated direct super types]
+kotlin.collections.List<kotlin.Any?>
+kotlin.collections.MutableCollection<in kotlin.String>
+
+[all super types]
+kotlin.collections.List<CapturedType(in kotlin/String)>
+kotlin.collections.MutableCollection<CapturedType(in kotlin/String)>
+kotlin.collections.Collection<CapturedType(in kotlin/String)>
+kotlin.collections.MutableIterable<CapturedType(in kotlin/String)>
+kotlin.collections.Iterable<CapturedType(in kotlin/String)>
+kotlin.Any
+
+[approximated all super types]
+kotlin.collections.List<kotlin.Any?>
+kotlin.collections.MutableCollection<in kotlin.String>
+kotlin.collections.Collection<kotlin.Any?>
+kotlin.collections.MutableIterable<kotlin.Any?>
+kotlin.collections.Iterable<kotlin.Any?>
+kotlin.Any

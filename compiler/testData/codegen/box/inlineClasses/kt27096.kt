@@ -1,8 +1,8 @@
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class Ucn(private val i: UInt)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Ucn(private val i: UInt)
 
 class PPInput(private val s: ByteArray) {
     fun peek(n: UInt = 0u): Ucn? =

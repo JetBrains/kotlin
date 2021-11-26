@@ -1,9 +1,6 @@
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /foo
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: true
   isExternal: false
@@ -16,7 +13,8 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: [] kotlin/String
+  receiverType: kotlin/String
+  returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

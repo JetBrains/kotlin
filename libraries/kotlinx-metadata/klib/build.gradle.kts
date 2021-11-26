@@ -1,15 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.pill.PillExtension
 
 description = "Kotlin Library (KLIB) metadata manipulation library"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-}
-
-pill {
-    variant = PillExtension.Variant.FULL
 }
 
 group = "org.jetbrains.kotlinx"

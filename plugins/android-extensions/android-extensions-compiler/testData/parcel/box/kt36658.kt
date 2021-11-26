@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM
 // StackOverflowError caused by infinite loop in MyObject.writeToParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test

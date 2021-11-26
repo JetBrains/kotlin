@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference, +FunctionReferenceWithDefaultValueAsOtherType
-
 fun sum(vararg args: Int): Int {
     var result = 0
     for (arg in args)

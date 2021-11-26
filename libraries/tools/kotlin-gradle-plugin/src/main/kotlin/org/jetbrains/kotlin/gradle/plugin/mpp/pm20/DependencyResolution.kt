@@ -13,9 +13,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.capabilities.Capability
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 import java.util.*
@@ -214,3 +212,17 @@ internal fun ComponentIdentifier.matchesModuleIdentifier(id: KotlinModuleIdentif
         }
         else -> false
     }
+
+private fun getProjectStructureMetadata(
+    project: Project,
+    module: ResolvedComponentResult,
+    configuration: Configuration,
+    moduleIdentifier: KotlinModuleIdentifier? = null
+): KotlinProjectStructureMetadata? {
+    val extractor = if (moduleIdentifier != null)
+        MppDependencyProjectStructureMetadataExtractor.create(project, module, moduleIdentifier, configuration)
+    else
+        MppDependencyProjectStructureMetadataExtractor.create(project, module, configuration, resolveViaAvailableAt = true)
+
+    return extractor?.getProjectStructureMetadata()
+}

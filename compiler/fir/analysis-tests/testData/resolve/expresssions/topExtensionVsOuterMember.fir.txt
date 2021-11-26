@@ -12,7 +12,7 @@ FILE: topExtensionVsOuterMember.kt
         }
 
         public final inner class Inner : R|kotlin/Any| {
-            public constructor(): R|Outer.Inner| {
+            public Outer.constructor(): R|Outer.Inner| {
                 super<R|kotlin/Any|>()
             }
 

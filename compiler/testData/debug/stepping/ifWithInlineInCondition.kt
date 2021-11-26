@@ -29,7 +29,7 @@ inline fun Boolean.rid(): Boolean = this
 
 fun nop() {}
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:3 box
 // test.kt:24 box
 // test.kt:3 box

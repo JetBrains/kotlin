@@ -6,23 +6,24 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -99,10 +100,10 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
                 klass: FirClass,
                 useSiteSession: FirSession,
                 scopeSession: ScopeSession
-            ): FirScope =
+            ): FirContainingNamesAwareScope? =
                 error("Should not be called")
 
-            override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope =
+            override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
                 error("Should not be called")
         }
 
@@ -124,7 +125,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         )
 
         val firDump = firElement.render(FirRenderer.RenderMode.WithFqNames)
-        KotlinTestUtils.assertEqualsToFile(testDataFileSibling(".txt"), firDump)
+        JUnit5Assertions.assertEqualsToTestDataFileSibling(firDump)
     }
 
     companion object {

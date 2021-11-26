@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
 open class FirNamedReferenceWithCandidate(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     name: Name,
     val candidate: Candidate
 ) : FirSimpleNamedReference(source, name, candidate.symbol) {
@@ -28,7 +28,7 @@ open class FirNamedReferenceWithCandidate(
 }
 
 class FirErrorReferenceWithCandidate(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     name: Name,
     candidate: Candidate,
     val diagnostic: ConeDiagnostic
@@ -37,7 +37,7 @@ class FirErrorReferenceWithCandidate(
 }
 
 class FirPropertyWithExplicitBackingFieldResolvedNamedReference(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
     val hasVisibleBackingField: Boolean,

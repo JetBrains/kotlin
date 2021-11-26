@@ -1,4 +1,6 @@
-apply plugin: 'kotlin'
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

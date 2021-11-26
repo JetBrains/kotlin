@@ -67,7 +67,7 @@ internal class StepHandler(
 
             // To reduce local variable usage, we create and use temporary variables only if necessary.
             // This temporary variable for step needs to be mutable for certain cases (see below).
-            val (stepArgVar, stepArgExpression) = createTemporaryVariableIfNecessary(stepArg, "stepArg", isMutable = true)
+            val (stepArgVar, stepArgExpression) = createLoopTemporaryVariableIfNecessary(stepArg, "stepArg", isMutable = true)
 
             // The `step` standard library function only accepts positive values, and performs the following check:
             //
@@ -131,7 +131,7 @@ internal class StepHandler(
                     // Check value of nested step and negate step arg if needed: `if (nestedStep <= 0) -step else step`
                     // A temporary variable is created only if necessary, so we can preserve the evaluation order.
                     val nestedStep = nestedInfo.step
-                    val (tmpNestedStepVar, nestedStepExpression) = createTemporaryVariableIfNecessary(nestedStep, "nestedStep")
+                    val (tmpNestedStepVar, nestedStepExpression) = createLoopTemporaryVariableIfNecessary(nestedStep, "nestedStep")
                     nestedStepVar = tmpNestedStepVar
                     val nestedStepNonPositiveCheck = irCall(stepCompFun).apply {
                         putValueArgument(0, nestedStepExpression.shallowCopy())
@@ -163,8 +163,8 @@ internal class StepHandler(
 
             // Store the nested "first" and "last" and final "step" in temporary variables only if necessary, so we can preserve the
             // evaluation order.
-            val (nestedFirstVar, nestedFirstExpression) = createTemporaryVariableIfNecessary(nestedInfo.first, "nestedFirst")
-            val (nestedLastVar, nestedLastExpression) = createTemporaryVariableIfNecessary(nestedInfo.last, "nestedLast")
+            val (nestedFirstVar, nestedFirstExpression) = createLoopTemporaryVariableIfNecessary(nestedInfo.first, "nestedFirst")
+            val (nestedLastVar, nestedLastExpression) = createLoopTemporaryVariableIfNecessary(nestedInfo.last, "nestedLast")
 
             // Creating a progression with a step value != 1 may result in a "last" value that is smaller than the given "last". The new
             // "last" value is such that iterating over the progression (by incrementing by "step") does not go over the "last" value.

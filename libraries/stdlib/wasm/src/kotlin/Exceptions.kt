@@ -66,7 +66,7 @@ public actual open class ClassCastException actual constructor(message: String?)
     actual constructor() : this(null)
 }
 
-public actual open class AssertionError private constructor(message: String?, cause: Throwable?) : Error(message, cause) {
+public actual open class AssertionError constructor(message: String?, cause: Throwable?) : Error(message, cause) {
     actual constructor() : this(null)
     constructor(message: String?) : this(message, null)
     actual constructor(message: Any?) : this(message.toString(), message as? Throwable)

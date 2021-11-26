@@ -1,8 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 inline fun foo(mkString: () -> String): String =
         mkString()

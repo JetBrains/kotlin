@@ -1,0 +1,58 @@
+FILE: InnerClassOfThrowableOnObject.kt
+    public final class Generic<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Generic<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Generic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                lval x: R|<anonymous>| = object : R|kotlin/Exception| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Exception|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|Generic.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                lval x: R|<anonymous>| = object : R|kotlin/Exception| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Exception|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        public final inner class Inner<T> : R|kotlin/Any| {
+            public Generic<T>.constructor(): R|Generic.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                lval x: R|<anonymous><T>| = object : R|kotlin/Exception| {
+                    private constructor(): R|<anonymous><T>| {
+                        super<R|kotlin/Exception|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }

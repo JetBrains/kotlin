@@ -204,7 +204,7 @@ def construct_cmake_flags(
     return cmake_args
 
 
-def run_command(command: List[str]):
+def run_command(command: List[str], dry_run):
     """
     Execute single command in terminal/cmd.
 
@@ -220,9 +220,9 @@ def run_command(command: List[str]):
         command = ' '.join(command)
         print("Running command: " + command)
 
-    subprocess.run(command, shell=True, check=True)
-
-
+    if not dry_run:
+        subprocess.run(command, shell=True, check=True)
+        
 def force_create_directory(parent, name) -> Path:
     build_path = parent / name
     print(f"Force-creating directory {build_path}")
@@ -241,7 +241,7 @@ def llvm_build_commands(
     return [cmake_command, ninja_command]
 
 
-def clone_llvm_repository(repo, branch, llvm_repo_destination):
+def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     """
     Downloads a single commit from the given repository.
     """
@@ -252,7 +252,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination):
     repo = default_repo if repo is None else repo
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
-    run_command([git, "clone", repo, "--branch", branch, "--depth", "1", "llvm-project"])
+    run_command([git, "clone", repo, "--branch", branch, "--depth", "1", "llvm-project"], dry_run)
     return absolute_path(llvm_repo_destination)
 
 
@@ -300,6 +300,7 @@ def build_parser() -> argparse.ArgumentParser:
     # Misc.
     parser.add_argument("--save-temporary-files", action='store_true',
                         help="Should intermediate build results be saved?")
+    parser.add_argument("--dry-run", action='store_true', help="Only print commands, do not run")
     return parser
 
 
@@ -356,7 +357,7 @@ def build_distribution(args):
 
         os.chdir(build_dir)
         for command in commands:
-            run_command(command)
+            run_command(command, args.dry_run)
         os.chdir(current_dir)
         bootstrap_path = install_path
 
@@ -420,13 +421,13 @@ def main():
     setup_environment(args)
     temporary_llvm_repo = None
     if args.llvm_src is None:
-        temporary_llvm_repo = clone_llvm_repository(args.repo, args.branch, args.llvm_repo_destination)
+        temporary_llvm_repo = clone_llvm_repository(args.repo, args.branch, args.llvm_repo_destination, args.dry_run)
         args.llvm_src = temporary_llvm_repo
     final_dist = build_distribution(args)
     if args.pack:
         archive = create_archive(final_dist, args.install_path)
         create_checksum_file(archive, f"{archive}.sha256")
-    if not args.save_temporary_files and temporary_llvm_repo is not None:
+    if not args.save_temporary_files and temporary_llvm_repo is not None and not args.dry_run:
         print(f"Removing temporary directory: {temporary_llvm_repo}")
         shutil.rmtree(temporary_llvm_repo)
 

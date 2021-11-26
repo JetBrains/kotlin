@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -204,15 +205,6 @@ private fun chooseAndAddStdlibDependency(
 
         if (stdlibModuleName != null && !moduleAddedInHierarchy)
             dependencies.add(project.kotlinDependency(stdlibModuleName, project.kotlinExtension.coreLibrariesVersion))
-    }
-}
-
-private fun Project.findAndroidTarget(): KotlinAndroidTarget? {
-    val kotlinExtension = project.kotlinExtension
-    return when (kotlinExtension) {
-        is KotlinMultiplatformExtension -> kotlinExtension.targets.withType(KotlinAndroidTarget::class.java).single()
-        is KotlinAndroidProjectExtension -> kotlinExtension.target
-        else -> null
     }
 }
 

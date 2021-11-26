@@ -1,4 +1,5 @@
 //RELEASE_COROUTINE_NEEDED
+//CHECK_BY_JAVA_FILE
 class Foo {
   suspend fun doSomething(foo: Foo): Bar {}
 }
@@ -18,3 +19,5 @@ interface Base {
 class Derived: Base {
     override suspend fun foo() { ... }
 }
+
+// FIR_COMPARISON

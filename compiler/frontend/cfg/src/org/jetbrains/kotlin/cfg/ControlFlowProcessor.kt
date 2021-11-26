@@ -346,7 +346,10 @@ class ControlFlowProcessor(
                 builder.jumpOnTrue(afterElvis, expression, builder.getBoundValue(left))
                 generateInstructions(right)
                 builder.bindLabel(afterElvis)
-                mergeValues(listOf(left, right).filterNotNull(), expression)
+                mergeValues(listOfNotNull(left, right), expression)
+                if (right != null && languageVersionSettings?.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis) == true) {
+                    trace.record(USED_AS_EXPRESSION, right, true)
+                }
             } else {
                 if (!generateCall(expression)) {
                     generateBothArgumentsAndMark(expression)

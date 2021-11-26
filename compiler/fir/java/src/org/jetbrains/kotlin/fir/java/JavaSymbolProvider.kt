@@ -31,7 +31,7 @@ class JavaSymbolProvider(
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId: ClassId, parentClassSymbol: FirRegularClassSymbol? ->
                 javaFacade.findClass(classId)?.let { FirRegularClassSymbol(classId) to (it to parentClassSymbol) }
-                    ?: null to (null to null)
+                    ?: (null to (null to null))
             },
             postCompute = { _, classSymbol, (javaClass, parentClassSymbol) ->
                 if (classSymbol != null && javaClass != null) {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.util.HashMap
 
 private fun <A> unaryOperation(

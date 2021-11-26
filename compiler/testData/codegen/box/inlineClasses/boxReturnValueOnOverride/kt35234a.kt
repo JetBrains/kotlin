@@ -1,9 +1,10 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
-inline class NumberInlineClass(val value: Double)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class NumberInlineClass(val value: Double)
 
 interface TypeAdapter<FROM, TO> {
     fun decode(string: FROM): TO

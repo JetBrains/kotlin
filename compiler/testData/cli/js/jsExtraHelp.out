@@ -19,7 +19,9 @@ where advanced options include:
   -Xir-dce-runtime-diagnostic={log|exception}
                              Enable runtime diagnostics when performing DCE instead of removing declarations
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
+  -Xir-new-ir2js             New fragment-based ir2js
   -Xir-only                  Disables pre-IR backend
+  -Xir-per-file              Splits generated .js per-file
   -Xir-per-module            Splits generated .js per-module
   -Xir-per-module-output-name Adds a custom output name to the splitted js files
   -Xir-produce-js            Generates JS file using IR backend. Also disables pre-IR backend
@@ -32,10 +34,13 @@ where advanced options include:
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when access safely to boolean in external declarations
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
+  -Xpartial-linkage          Allow unlinked symbols
   -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module
+  -Xwasm-kclass-fqn          Enable support for FQ names in KClass
+  -Xwasm-launcher=esm|nodejs Picks flavor for the wasm launcher. Default is ESM.
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xbuiltins-from-sources    Compile builtIns from sources

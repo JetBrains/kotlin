@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -75,7 +75,7 @@ internal class FirIdeProvider(
         symbol.fir.originalForSubstitutionOverride?.symbol?.let {
             return getFirCallableContainerFile(it)
         }
-        if (symbol is FirAccessorSymbol) {
+        if (symbol is FirSyntheticPropertySymbol) {
             val fir = symbol.fir
             if (fir is FirSyntheticProperty) {
                 return getFirCallableContainerFile(fir.getter.delegate.symbol)
@@ -86,16 +86,6 @@ internal class FirIdeProvider(
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
-
-    @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
-        TODO()
-    }
-
-    @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
-        TODO()
-    }
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
         declarationProvider.getClassNamesInPackage(fqName)

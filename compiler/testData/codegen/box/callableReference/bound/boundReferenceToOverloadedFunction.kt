@@ -1,6 +1,3 @@
-
-// !LANGUAGE: +NewInference
-
 interface JsonParser
 interface JsonCodingParser : JsonParser
 

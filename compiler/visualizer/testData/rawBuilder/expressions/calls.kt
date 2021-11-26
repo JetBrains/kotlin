@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 //                                    fun (Int).plus(Int): Int
 //                             Int    │ distance.y: Int
 //                             │      │ │

@@ -181,6 +181,8 @@ object StandardClassIds {
             val deprecatedSinceKotlinWarningSince = Name.identifier("warningSince")
             val deprecatedSinceKotlinErrorSince = Name.identifier("errorSince")
             val deprecatedSinceKotlinHiddenSince = Name.identifier("hiddenSince")
+
+            val parameterNameName = jvmNameName
         }
     }
 
@@ -189,6 +191,8 @@ object StandardClassIds {
         val coroutineContext = "coroutineContext".callableId(BASE_COROUTINES_PACKAGE)
 
         val clone = "clone".callableId(Cloneable)
+
+        val not = "not".callableId(Boolean)
     }
 }
 

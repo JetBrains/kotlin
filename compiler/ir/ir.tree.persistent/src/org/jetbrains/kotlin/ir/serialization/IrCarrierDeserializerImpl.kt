@@ -30,7 +30,6 @@ internal class IrCarrierDeserializerImpl(
     val indexToBody: (Int) -> IrBody,
     val indexToExpressionBody: (Int) -> IrExpressionBody
 ) : IrCarrierDeserializer() {
-
     override fun deserializeParentSymbol(proto: Long): IrSymbol {
         return declarationDeserializer.symbolDeserializer.deserializeIrSymbol(proto)
     }
@@ -65,6 +64,10 @@ internal class IrCarrierDeserializerImpl(
 
     override fun deserializeSuperType(proto: Int): IrType {
         return declarationDeserializer.deserializeIrType(proto)
+    }
+
+    override fun deserializeSealedSubclass(proto: Long): IrClassSymbol {
+        return declarationDeserializer.symbolDeserializer.deserializeIrSymbol(proto) as IrClassSymbol
     }
 
     override fun deserializeType(proto: Int): IrType {

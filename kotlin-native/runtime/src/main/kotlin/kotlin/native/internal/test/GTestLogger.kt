@@ -8,7 +8,7 @@ package kotlin.native.internal.test
 internal class GTestLogger : TestLoggerWithStatistics() {
 
     private val Collection<TestSuite>.totalTestsNotIgnored: Int
-        get() = asSequence().filter { !it.ignored }.sumBy { it.testCases.values.count { !it.ignored } }
+        get() = asSequence().filter { !it.ignored }.sumOf { it.testCases.values.count { !it.ignored } }
 
     private val Collection<TestSuite>.totalNotIgnored: Int
         get() = filter { !it.ignored }.size

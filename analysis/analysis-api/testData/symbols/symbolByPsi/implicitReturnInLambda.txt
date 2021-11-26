@@ -1,7 +1,5 @@
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -9,48 +7,47 @@ KtFirValueParameterSymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
-  annotatedType: [] kotlin/Int
+KtLocalVariableSymbol:
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
   name: b
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirAnonymousFunctionSymbol:
-  annotatedType: [] kotlin/Int
+KtAnonymousFunctionSymbol:
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   valueParameters: [
-    KtFirValueParameterSymbol(a)
+    KtValueParameterSymbol(a)
   ]
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
-  annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
+KtLocalVariableSymbol:
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
   name: lam1
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -58,74 +55,72 @@ KtFirValueParameterSymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
-  annotatedType: [] kotlin/Int
+KtLocalVariableSymbol:
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
   name: c
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirAnonymousFunctionSymbol:
-  annotatedType: [] kotlin/Int
+KtAnonymousFunctionSymbol:
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   valueParameters: [
-    KtFirValueParameterSymbol(a)
+    KtValueParameterSymbol(a)
   ]
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
-  annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
+KtLocalVariableSymbol:
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
   name: lam2
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirLocalVariableSymbol:
-  annotatedType: [] kotlin/Int
+KtLocalVariableSymbol:
   callableIdIfNonLocal: null
   isExtension: false
   isVal: true
   name: b
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirAnonymousFunctionSymbol:
-  annotatedType: [] kotlin/Int
+KtAnonymousFunctionSymbol:
   callableIdIfNonLocal: null
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   valueParameters: [
-    KtFirValueParameterSymbol(it)
+    KtValueParameterSymbol(it)
   ]
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /foo
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -139,16 +134,15 @@ KtFirFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -156,15 +150,13 @@ KtFirValueParameterSymbol:
   name: lmbd
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /bar
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -178,10 +170,11 @@ KtFirFunctionSymbol:
   name: bar
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(lmbd)
+    KtValueParameterSymbol(lmbd)
   ]
   visibility: Private
   deprecationStatus: null

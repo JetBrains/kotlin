@@ -1,28 +1,27 @@
-KtFirEnumEntrySymbol:
-  annotatedType: [] X
+KtEnumEntrySymbol:
   callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
   isExtension: false
   name: Y
   origin: SOURCE
   receiverType: null
+  returnType: X
   symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
-KtFirEnumEntrySymbol:
-  annotatedType: [] X
+KtEnumEntrySymbol:
   callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
   isExtension: false
   name: Z
   origin: SOURCE
   receiverType: null
+  returnType: X
   symbolKind: CLASS_MEMBER
   deprecationStatus: null
 
-KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
   classIdIfNonLocal: X
   classKind: ENUM_CLASS
   companionObject: null
@@ -35,7 +34,7 @@ KtFirNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    [] kotlin/Enum<X>
+    kotlin/Enum<X>
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

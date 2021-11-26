@@ -1,7 +1,8 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
-inline class FieldValue(val value: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class FieldValue(val value: String)
 
 enum class RequestFields {
     ENUM_ONE

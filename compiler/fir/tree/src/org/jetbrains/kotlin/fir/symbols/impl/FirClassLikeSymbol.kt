@@ -66,7 +66,7 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
         }
 
     val companionObjectSymbol: FirRegularClassSymbol?
-        get() = fir.companionObject?.symbol
+        get() = fir.companionObjectSymbol
 }
 
 val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(SpecialNames.ANONYMOUS), true)

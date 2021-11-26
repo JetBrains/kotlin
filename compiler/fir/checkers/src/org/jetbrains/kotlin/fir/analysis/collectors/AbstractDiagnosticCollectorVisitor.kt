@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -127,11 +125,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
-        if (propertyAccessor !is FirDefaultPropertyAccessor) {
-            val property = context.containingDeclarations.last() as FirProperty
-            withAnnotationContainer(propertyAccessor) {
-                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
-            }
+        val property = context.containingDeclarations.last() as FirProperty
+        withAnnotationContainer(propertyAccessor) {
+            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
         }
     }
 
@@ -164,7 +160,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
-        if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
+        if (typeRef.source != null && typeRef.source?.kind !is KtFakeSourceElementKind) {
             withAnnotationContainer(typeRef) {
                 checkElement(typeRef)
                 visitNestedElements(typeRef)
@@ -180,15 +176,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
         // as children in delegatedTypeRef. We should make sure those elements are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
-        if (resolvedTypeRef.type is ConeClassErrorType) {
+        val resolvedTypeRefType = resolvedTypeRef.type
+        if (resolvedTypeRefType is ConeClassErrorType) {
             super.visitResolvedTypeRef(resolvedTypeRef, data)
         }
-        if (resolvedTypeRef.source?.kind is FirFakeSourceElementKind) return
+        if (resolvedTypeRef.source?.kind is KtFakeSourceElementKind) return
 
         //the note about is just wrong
         //if we don't visit resolved type we can't make any diagnostics on them
         //so here we check resolvedTypeRef
-        if (resolvedTypeRef.type !is ConeClassErrorType) {
+        if (resolvedTypeRefType !is ConeClassErrorType) {
             withAnnotationContainer(resolvedTypeRef) {
                 checkElement(resolvedTypeRef)
             }
@@ -323,13 +320,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
     inline fun <R> withAnnotationContainer(annotationContainer: FirAnnotationContainer, block: () -> R): R {
         val existingContext = context
         addSuppressedDiagnosticsToContext(annotationContainer)
-        if (annotationContainer.annotations.isNotEmpty()) {
+        val notEmptyAnnotations = annotationContainer.annotations.isNotEmpty()
+        if (notEmptyAnnotations) {
             context = context.addAnnotationContainer(annotationContainer)
         }
         return try {
             block()
         } finally {
-            if (annotationContainer.annotations.isNotEmpty()) {
+            if (notEmptyAnnotations) {
                 existingContext.dropAnnotationContainer()
             }
             context = existingContext
@@ -345,6 +343,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
             allInfosSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_INFOS in arguments,
             allWarningsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_WARNINGS in arguments,
             allErrorsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS in arguments
-        )
+        ) as CheckerContext
     }
 }

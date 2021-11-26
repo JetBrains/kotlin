@@ -18,4 +18,9 @@ fun barTest() {
     println(bar())
 }
 
+class Bar : Foo()
 
+@Test
+fun barfooTest() {
+    println(Bar().foo())
+}

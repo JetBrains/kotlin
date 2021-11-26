@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -59,9 +56,12 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     kotlinDaemonJvmArgs?.let {
         task.kotlinDaemonJvmArguments.set(it.split("\\s+".toRegex()))
     }
+    if (!task.compilerExecutionStrategy.isPresent) {
+        task.compilerExecutionStrategy.set(kotlinCompilerExecutionStrategy)
+    }
 }
 
- internal class PropertiesProvider private constructor(private val project: Project) {
+internal class PropertiesProvider private constructor(private val project: Project) {
     private val localProperties: Properties by lazy {
         Properties().apply {
             val localPropertiesFile = project.rootProject.file("local.properties")
@@ -145,7 +145,9 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
 
     var mpp13XFlagsSetByPlugin: Boolean
         get() = booleanProperty("kotlin.internal.mpp.13X.flags.setByPlugin") ?: false
-        set(value) { project.extensions.extraProperties.set("kotlin.internal.mpp.13X.flags.setByPlugin") { "$value" } }
+        set(value) {
+            project.extensions.extraProperties.set("kotlin.internal.mpp.13X.flags.setByPlugin", "$value")
+        }
 
     val mppHierarchicalStructureByDefault: Boolean
         get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT) ?: false
@@ -159,11 +161,14 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     val mppStabilityNoWarn: Boolean?
         get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
-     val wasmStabilityNoWarn: Boolean
-         get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
+    val wasmStabilityNoWarn: Boolean
+        get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
 
-     val ignoreDisabledNativeTargets: Boolean?
+    val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
+
+    val ignoreAbsentAndroidMultiplatformTarget: Boolean
+        get() = booleanProperty("kotlin.mpp.absentAndroidTarget.nowarn") ?: false
 
     val ignoreIncorrectNativeDependencies: Boolean?
         get() = booleanProperty(KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES)
@@ -358,6 +363,14 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     val kotlinDaemonJvmArgs: String?
         get() = property("kotlin.daemon.jvmargs")
 
+    val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
+        get() {
+            val gradleProperty = property("kotlin.compiler.execution.strategy")
+            // system property is for backward compatibility
+            val value = (gradleProperty ?: System.getProperty("kotlin.compiler.execution.strategy"))?.toLowerCase()
+            return KotlinCompilerExecutionStrategy.fromProperty(value)
+        }
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -421,5 +434,7 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
                 return get(CACHED_PROVIDER_EXT_NAME) as? PropertiesProvider
                     ?: PropertiesProvider(project) // Fallback if multiple class loaders are involved
             }
+
+        internal val Project.kotlinPropertiesProvider get() = PropertiesProvider(this)
     }
 }

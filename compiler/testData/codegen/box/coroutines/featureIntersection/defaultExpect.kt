@@ -1,7 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 
 import kotlin.coroutines.*
 

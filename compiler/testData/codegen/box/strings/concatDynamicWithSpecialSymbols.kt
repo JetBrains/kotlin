@@ -1,5 +1,8 @@
 // Will be executed on JDK 9, 11, 15
 // IGNORE_BACKEND: ANDROID
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: FLAKY
+
 fun test(z: Int): String {
     val result = "" + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() +
             z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() + z + 1.toChar() +

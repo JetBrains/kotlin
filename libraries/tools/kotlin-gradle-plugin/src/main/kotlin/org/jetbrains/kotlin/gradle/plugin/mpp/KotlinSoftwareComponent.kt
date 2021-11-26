@@ -168,8 +168,7 @@ class DefaultKotlinUsageContext(
             to.attribute<T>(attribute, from.getAttribute(attribute)!!)
         }
 
-        configurationAttributes.keySet()
-            .filter { it != ProjectLocalConfigurations.ATTRIBUTE }
+        filterOutNonPublishableAttributes(configurationAttributes.keySet())
             .forEach { copyAttribute(it, configurationAttributes, result) }
 
         return result
@@ -178,4 +177,22 @@ class DefaultKotlinUsageContext(
     override fun getCapabilities(): Set<Capability> = emptySet()
 
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
+
+    private fun filterOutNonPublishableAttributes(attributes: Set<Attribute<*>>): Set<Attribute<*>> =
+        attributes.filterTo(mutableSetOf()) {
+            it != ProjectLocalConfigurations.ATTRIBUTE &&
+                    /**
+                     * We exclude the attribute "org.gradle.jvm.environment" from publishing to avoid two issues:
+                     *
+                     * 1. Kotlin < 1.6.0 consumers which don't set this attribute on the consumer side. If this attribute is not set on the
+                     * consumer side, then the Gradle built-in disambiguation rule applies: { standard-jvm, android } -> standard-jvm.
+                     * In Kotlin 1.5.31, this would conflict with the rule on o.j.k.platform.type: { androidJvm, jvm } -> androidJvm, so the
+                     * two rules would choose different closes match variants, and disambiguation would fail.
+                     *
+                     * 2. If this attribute is published, but not present on all the variants in a multiplatform library, and is also
+                     * missing on the consumer side (like Gradle < 7.0, Kotlin 1.6.0), then there is a
+                     * case when Gradle fails to choose a variant in a completely reasonable setup.
+                     */
+                    it.name != "org.gradle.jvm.environment"
+        }
 }

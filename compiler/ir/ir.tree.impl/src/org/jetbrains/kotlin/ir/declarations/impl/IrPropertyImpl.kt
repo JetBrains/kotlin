@@ -42,8 +42,6 @@ abstract class IrPropertyCommonImpl(
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -77,6 +75,7 @@ class IrPropertyImpl(
     isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
     containerSource
@@ -103,6 +102,7 @@ class IrFakeOverridePropertyImpl(
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
     containerSource = null,

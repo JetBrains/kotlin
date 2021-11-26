@@ -26,7 +26,7 @@ private enum class TopLevelEnum(private val e: NestedEnum) {
 
 fun testAccess() {
     E1
-    NestedEntry
-    A1()
+    <!INVISIBLE_REFERENCE!>NestedEntry<!>
+    <!INVISIBLE_REFERENCE!>A1<!>()
     <!INVISIBLE_REFERENCE!>A2<!>
 }

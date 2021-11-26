@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
-// WITH_RUNTIME
+// WITH_STDLIB
 
 object KT32183 {
     interface AGraphExecutionEntity {

@@ -1,19 +1,25 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 interface IFoo<T : IFoo<T>> {
     fun T.foo(): String = bar()
     fun bar(): String
 }
 
-inline class Z(val x: Int) : IFoo<Z> {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val x: Int) : IFoo<Z> {
     override fun bar(): String = "OK"
 }
 
-inline class L(val x: Long) : IFoo<L> {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(val x: Long) : IFoo<L> {
     override fun bar(): String = "OK"
 }
 
-inline class S(val x: String) : IFoo<S> {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val x: String) : IFoo<S> {
     override fun bar(): String = x
 }
 

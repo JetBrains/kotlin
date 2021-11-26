@@ -69,7 +69,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         val methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
 
         if (context.state.generateParametersMetadata && !isSynthetic) {
-            generateParameterNames(irFunction, methodVisitor, signature, context.state)
+            generateParameterNames(irFunction, methodVisitor, context.state)
         }
 
         if (irFunction.origin !in methodOriginsWithoutAnnotations) {
@@ -329,23 +329,16 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
     origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
             origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
 
-private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jvmSignature: JvmMethodSignature, state: GenerationState) {
-    val iterator = irFunction.valueParameters.iterator()
-    for (parameterSignature in jvmSignature.valueParameters) {
-        val irParameter = when (parameterSignature.kind) {
-            JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter!!
-            else -> iterator.next()
-        }
-        val name = when (parameterSignature.kind) {
-            JvmMethodParameterKind.RECEIVER -> getNameForReceiverParameter(irFunction, state)
-            else -> irParameter.name.asString()
-        }
+private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, state: GenerationState) {
+    irFunction.extensionReceiverParameter?.let {
+        mv.visitParameter(irFunction.extensionReceiverName(state), Opcodes.ACC_MANDATED)
+    }
+    for (irParameter in irFunction.valueParameters) {
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
         // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
         // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
         // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
         val access = when {
-            irParameter == irFunction.extensionReceiverParameter -> Opcodes.ACC_MANDATED
             irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
             // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
             //      to generate LVT entries for them)
@@ -356,24 +349,21 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jv
             irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
             else -> 0
         }
-        mv.visitParameter(name, access)
+        mv.visitParameter(irParameter.name.asString(), access)
     }
 }
 
-private fun getNameForReceiverParameter(irFunction: IrFunction, state: GenerationState): String {
+internal fun IrFunction.extensionReceiverName(state: GenerationState): String {
     if (!state.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
         return AsmUtil.RECEIVER_PARAMETER_NAME
     }
 
-    // Current codegen never touches CALL_LABEL_FOR_LAMBDA_ARGUMENT
-//    if (irFunction is IrSimpleFunction) {
-//        val labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, irFunction.descriptor)
-//        if (labelName != null) {
-//            return getLabeledThisName(labelName, prefix, defaultName)
-//        }
-//    }
-
-    val callableName = irFunction.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol?.owner?.name ?: irFunction.name
+    extensionReceiverParameter?.let {
+        if (it.name.asString().startsWith(AsmUtil.LABELED_THIS_PARAMETER)) {
+            return it.name.asString()
+        }
+    }
+    val callableName = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name ?: name
     return if (callableName.isSpecial || !Name.isValidIdentifier(callableName.asString()))
         AsmUtil.RECEIVER_PARAMETER_NAME
     else

@@ -5,35 +5,35 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.typeParametersList
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 // KtExpression is the appropriate PsiElement type; local variables are used in increments/decrements of dot-qualified expressions.
 object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirProperty, KtExpression>() {
-    override fun isApplicable(element: FirProperty, source: FirSourceElement): Boolean =
-        source.kind !is FirFakeSourceElementKind && element.isLocal
+    override fun isApplicable(element: FirProperty, source: KtSourceElement): Boolean =
+        source.kind !is KtFakeSourceElementKind && element.isLocal
 
     override fun checkPsi(
         element: FirProperty,
-        source: FirPsiSourceElement,
+        source: KtPsiSourceElement,
         psi: KtExpression,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         if (psi is KtProperty && psi.typeParameterList != null) {
             val diagnostic =
-                if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
                     FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS else FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING
             reporter.reportOn(source, diagnostic, context)
         }
@@ -41,13 +41,13 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
 
     override fun checkLightTree(
         element: FirProperty,
-        source: FirSourceElement,
+        source: KtLightSourceElement,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
             val diagnostic =
-                if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersForLocalVariables))
                     FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS else FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING
             reporter.reportOn(source, diagnostic, context)
 

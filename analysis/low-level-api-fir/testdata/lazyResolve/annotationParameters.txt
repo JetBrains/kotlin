@@ -15,7 +15,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -52,7 +52,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -89,7 +89,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -126,7 +126,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -163,7 +163,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -200,7 +200,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -237,7 +237,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -274,7 +274,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -311,7 +311,7 @@ FILE: annotationParameters.kt
 
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
-        public [STATUS] [ContainingClassKey=Anno] constructor([RAW_FIR] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [STATUS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -348,7 +348,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -385,7 +385,7 @@ FILE: annotationParameters.kt
 
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
-        public [STATUS] [ContainingClassKey=Anno] constructor([RAW_FIR] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [STATUS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -422,7 +422,7 @@ FILE: annotationParameters.kt
 
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
-        public [STATUS] [ContainingClassKey=Anno] constructor([RAW_FIR] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [STATUS] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -459,7 +459,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -496,7 +496,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -533,7 +533,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -570,7 +570,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -607,7 +607,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -644,7 +644,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -681,7 +681,7 @@ FILE: annotationParameters.kt
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
-        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] args: A.X): R|Anno| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -718,7 +718,7 @@ FILE: annotationParameters.kt
 
     }
     public final [BODY_RESOLVE] annotation class Anno : R|kotlin/Annotation| {
-        public [BODY_RESOLVE] [ContainingClassKey=Anno] constructor([BODY_RESOLVE] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
+        public [BODY_RESOLVE] [ContainingClassKey=Anno] constructor([BODY_RESOLVE] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
             super<R|kotlin/Any|>()
         }
 

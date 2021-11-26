@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.visualizer
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -41,7 +41,7 @@ abstract class AbstractVisualizerTest : AbstractKotlinCompilerTest() {
 //        useFrontendHandlers(handler)
 
         defaultDirectives {
-            +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+            +ConfigurationDirectives.WITH_STDLIB
         }
 
         forTestsMatching("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/*") {

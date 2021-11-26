@@ -80,14 +80,6 @@ object JavaAnnotationMapper {
             StandardNames.FqNames.retention to RETENTION_ANNOTATION,
             StandardNames.FqNames.mustBeDocumented to DOCUMENTED_ANNOTATION
         )
-
-    val javaToKotlinNameMap: Map<FqName, FqName> =
-        mapOf(
-            TARGET_ANNOTATION to StandardNames.FqNames.target,
-            RETENTION_ANNOTATION to StandardNames.FqNames.retention,
-            DEPRECATED_ANNOTATION to StandardNames.FqNames.deprecated,
-            DOCUMENTED_ANNOTATION to StandardNames.FqNames.mustBeDocumented
-        )
 }
 
 open class JavaAnnotationDescriptor(

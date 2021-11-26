@@ -21,7 +21,7 @@ class BuildSessionLoggerTest {
 
     private lateinit var rootFolder: File
 
-    private fun statFilesCount() = rootFolder.listFiles().single().listFiles().size
+    private fun statFilesCount() = rootFolder.listFiles()?.single()?.listFiles()?.size ?: 0
 
     @Before
     fun prepareFolder() {
@@ -56,7 +56,7 @@ class BuildSessionLoggerTest {
         logger1.finishBuildSession("", null)
         logger2.finishBuildSession("", null)
 
-        rootFolder.listFiles().first().listFiles().forEach { file ->
+        rootFolder.listFiles()?.first()?.listFiles()?.forEach { file ->
             assertTrue(
                 file.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()),
                 "Check that file name ${file.name} matches pattern ${BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN}"
@@ -73,7 +73,7 @@ class BuildSessionLoggerTest {
 
         assertEquals(1, statFilesCount())
 
-        val file2edit = rootFolder.listFiles().first().listFiles().first()
+        val file2edit = rootFolder.listFiles()?.first()?.listFiles()?.first() ?: fail("Could not find single stat file")
 
         logger.startBuildSession(0, 0)
         logger.finishBuildSession("", null)
@@ -97,8 +97,8 @@ class BuildSessionLoggerTest {
         logger.finishBuildSession("", null)
         assertEquals(1, statFilesCount())
 
-        val statsFolder = rootFolder.listFiles().single()
-        val singleStatFile = statsFolder.listFiles().single()
+        val statsFolder = rootFolder.listFiles()?.single() ?: fail("${rootFolder.absolutePath} was not created")
+        val singleStatFile = statsFolder.listFiles()?.single() ?: fail("stat file was not created")
 
         for (i in 1..200) {
             File(statsFolder, "$i").createNewFile()
@@ -110,24 +110,24 @@ class BuildSessionLoggerTest {
         logger.finishBuildSession("", null)
 
         assertTrue(
-            statsFolder.listFiles().filter { it.name == singleStatFile.name }.count() == 1,
+            statsFolder.listFiles()?.count { it.name == singleStatFile.name } == 1,
             "Could not find expected file ${singleStatFile.name}"
         )
 
         // files not matching the pattern should not be affected
         assertEquals(
             200,
-            statsFolder.listFiles().filter { !it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
+            statsFolder.listFiles()?.count { !it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) },
             "Some files which should not be affected, were removed"
         )
 
         assertEquals(
             maxFiles,
-            statsFolder.listFiles().filter { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
+            statsFolder.listFiles()?.count { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) },
             "Some files which should not be affected, were removed"
         )
         assertEquals(
-            statsFolder.listFiles().filter { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }.sorted(),
+            statsFolder.listFiles()?.filter { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }?.sorted(),
             BuildSessionLogger.listProfileFiles(statsFolder)
         )
     }
@@ -142,7 +142,7 @@ class BuildSessionLoggerTest {
         logger.finishBuildSession("Build", null)
         assertEquals(1, statFilesCount())
 
-        val statFile = rootFolder.listFiles().single().listFiles().single()
+        val statFile = rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")
         statFile.appendBytes("break format of the file".toByteArray())
 
         logger.startBuildSession(1, startTime)
@@ -196,7 +196,7 @@ class BuildSessionLoggerTest {
         }
         logger.finishBuildSession("Build", null)
 
-        MetricsContainer.readFromFile(rootFolder.listFiles().single().listFiles().single()) {
+        MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
             for (metric in StringMetrics.values()) {
                 assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
             }

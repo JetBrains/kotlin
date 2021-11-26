@@ -10,6 +10,7 @@ import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
@@ -93,6 +94,9 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
                 add(NO_TIMEOUT_ARG)
             } else {
                 addAll(cliArg(TIMEOUT_ARG, timeout))
+            }
+            if (compilation.platformType == KotlinPlatformType.wasm) {
+                addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
             }
         }
 

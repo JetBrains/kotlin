@@ -10,6 +10,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
-import java.io.File
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -254,26 +254,54 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         KotlinCompilationsModuleGroups.unionModules(this, other)
     }
 
-    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        with(target.project) {
-            dependencies.add(
-                compileOnlyConfigurationName,
-                project.files(Callable { other.output.classesDirs })
-            )
-
-            configurations.named(compileOnlyConfigurationName).configure {
-                it.extendsFrom(configurations.findByName(other.compileDependencyConfigurationName))
-            }
-
-            if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
-                dependencies.add(runtimeOnlyConfigurationName, project.files(Callable { other.output.allOutputs }))
-                if (other is KotlinCompilationToRunnableFiles<*>) {
-                    configurations.named(runtimeOnlyConfigurationName).configure {
-                        it.extendsFrom(configurations.findByName(other.runtimeDependencyConfigurationName))
-                    }
+    /**
+     * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
+     * a lazy manner
+     */
+    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
+        project.configurations.named(this).configure { receiverConfiguration ->
+            receiverConfiguration.dependencies.addAllLater(
+                project.objects.listProperty(Dependency::class.java).apply {
+                    set(
+                        project.provider {
+                            configurationNames
+                                .map { project.configurations.getByName(it) }
+                                .flatMap { it.allDependencies }
+                        }
+                    )
                 }
-            }
+            )
         }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        /*
+          we add dependencies to compileDependencyConfiguration ('compileClasspath' usually) and runtimeDependency
+          ('runtimeClasspath') instead of modifying respective api/implementation/compileOnly/runtimeOnly configs
+
+          This is needed because api/implementation/compileOnly/runtimeOnly are used in IDE Import and will leak
+          to dependencies of IDE modules. But they are not needed here, because IDE resolution works inherently
+          transitively and symbols from associated compilation will be resolved from source sets of associated
+          compilation itself (moreover, direct dependencies are not equivalent to transitive ones because of
+          resolution order - e.g. in case of FQNs clash, so it's even harmful)
+        */
+        project.dependencies.add(compileOnlyConfigurationName, project.files(Callable { other.output.classesDirs }))
+        project.dependencies.add(runtimeOnlyConfigurationName, project.files(Callable { other.output.allOutputs }))
+
+        compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.compileOnlyConfigurationName
+        )
+
+        runtimeDependencyConfigurationName?.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.runtimeOnlyConfigurationName
+        )
     }
 
     private val _associateWith: MutableSet<AbstractKotlinCompilation<*>> = mutableSetOf()

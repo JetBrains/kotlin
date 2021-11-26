@@ -4,7 +4,7 @@
 private class Bar
 
 sealed class SealedFoo(
-    <!EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR!>val x: Bar<!>,
+    val <!EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_WARNING!>x<!>: Bar,
     private val y: Bar,
     z: Bar
 )

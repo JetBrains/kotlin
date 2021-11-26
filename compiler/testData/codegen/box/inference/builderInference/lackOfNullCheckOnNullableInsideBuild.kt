@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
+// WITH_STDLIB
 // Issue: KT-36371
 
 import kotlin.experimental.ExperimentalTypeInference

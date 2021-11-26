@@ -3,7 +3,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
-// MODULE: overriden-chain-non-export-intermediate
+// MODULE: overriden_chain_non_export_intermediate
 // FILE: lib.kt
 @JsExport
 abstract class A {
@@ -29,7 +29,7 @@ class C : B() {
 // FILE: test.js
 
 function box() {
-    return test(new this["overriden-chain-non-export-intermediate"].C());
+    return test(new this["overriden_chain_non_export_intermediate"].C());
 }
 
 function test(c) {

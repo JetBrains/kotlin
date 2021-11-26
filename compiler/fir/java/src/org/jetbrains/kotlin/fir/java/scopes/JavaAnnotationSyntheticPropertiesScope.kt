@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.nullableModuleData
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -45,7 +45,7 @@ class JavaAnnotationSyntheticPropertiesScope(
             val function = functionSymbol.fir
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)
-                FirAccessorSymbol(callableId, callableId).also {
+                FirJavaOverriddenSyntheticPropertySymbol(callableId, callableId).also {
                     val accessor = FirSyntheticPropertyAccessor(function, isGetter = true)
                     FirSyntheticProperty(
                         session.nullableModuleData ?: function.moduleData,

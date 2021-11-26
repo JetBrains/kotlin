@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 enum class ResultType constructor(val reason: String) {
     SOMETHING("123"),

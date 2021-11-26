@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -16,7 +16,7 @@ import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirArgumentListBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     val arguments: MutableList<FirExpression> = mutableListOf()
 
     fun build(): FirArgumentList {

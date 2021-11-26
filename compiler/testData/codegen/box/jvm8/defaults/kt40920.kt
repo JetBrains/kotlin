@@ -1,7 +1,7 @@
 // !JVM_DEFAULT_MODE: enable
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: JBase.java
 
 public interface JBase extends Base {

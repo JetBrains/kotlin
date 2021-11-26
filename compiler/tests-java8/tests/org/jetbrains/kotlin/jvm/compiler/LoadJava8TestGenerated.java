@@ -123,6 +123,42 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
         }
     }
 
+    @TestMetadata("compiler/testData/loadJava8/compiledKotlinWithStdlib")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompiledKotlinWithStdlib extends AbstractLoadJava8Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestCompiledKotlinWithStdlib, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCompiledKotlinWithStdlib() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledKotlinWithStdlib"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("compiler/testData/loadJava8/compiledKotlinWithStdlib/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotations extends AbstractLoadJava8Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCompiledKotlinWithStdlib, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledKotlinWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("RepeatableAnnotationWithExplicitContainer.kt")
+            public void testRepeatableAnnotationWithExplicitContainer() throws Exception {
+                runTest("compiler/testData/loadJava8/compiledKotlinWithStdlib/annotations/RepeatableAnnotationWithExplicitContainer.kt");
+            }
+
+            @TestMetadata("RepeatableAnnotationWithImplicitContainer.kt")
+            public void testRepeatableAnnotationWithImplicitContainer() throws Exception {
+                runTest("compiler/testData/loadJava8/compiledKotlinWithStdlib/annotations/RepeatableAnnotationWithImplicitContainer.kt");
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/loadJava8/sourceJava")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

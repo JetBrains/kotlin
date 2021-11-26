@@ -1,5 +1,8 @@
+// WITH_STDLIB
 
-inline class WrappingInt(val value: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class WrappingInt(val value: Int) {
     operator fun inc(): WrappingInt = plus(1)
     operator fun plus(num: Int): WrappingInt = WrappingInt((value + num) and 0xFFFF)
 }

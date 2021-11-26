@@ -9,8 +9,8 @@ fun test_0(b: Boolean): String = when (b) {
 
 // Deprecated
 fun test_1(b: Boolean): String = when (b) {
-    <!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!> -> "true"
-    <!NON_TRIVIAL_BOOLEAN_CONSTANT!>"" != ""<!> -> "false"
+    (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!>) -> "true"
+    (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>"" != ""<!>) -> "false"
 }
 
 const val TRUE = true
@@ -27,5 +27,5 @@ const val s2 = "s2"
 // Already not working
 fun test_3(b: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(b) {
     true -> "true"
-    s1 == s2 -> "false"
+    (s1 == s2) -> "false"
 }

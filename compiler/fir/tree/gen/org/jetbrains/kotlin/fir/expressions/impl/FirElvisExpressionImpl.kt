@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirElvisExpressionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
     override var calleeReference: FirReference,
     override var lhs: FirExpression,

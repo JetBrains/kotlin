@@ -1,8 +1,8 @@
 $kotlin_test_internal$.beginModule();
 
 module.exports = function() {
-    var A = require("JS_TESTS").api.A;
-    var B = require("JS_TESTS").api.B;
+    var A = require("main").api.A;
+    var B = require("main").api.B;
 
     return {
         "res": (new A().ping()) + (new B().pong())

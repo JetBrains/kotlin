@@ -171,7 +171,7 @@ protected constructor(
                 propertyDeclaration,
                 trace,
                 c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration),
-                InferenceSession.default
+                c.inferenceSession ?: InferenceSession.default
             )
             result.add(propertyDescriptor)
         }
@@ -184,7 +184,7 @@ protected constructor(
                 entry,
                 trace,
                 c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(entry),
-                InferenceSession.default
+                c.inferenceSession ?: InferenceSession.default
             )
             result.add(propertyDescriptor)
         }
@@ -212,11 +212,20 @@ protected constructor(
         }.toList()
     }
 
+    protected open fun collectDescriptorsFromDestructingDeclaration(
+        result: MutableSet<DeclarationDescriptor>,
+        declaration: KtDestructuringDeclaration,
+        nameFilter: (Name) -> Boolean,
+        location: LookupLocation,
+    ) {
+        // MultiDeclarations are not supported on global level by default
+    }
+
     protected fun computeDescriptorsFromDeclaredElements(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
         location: LookupLocation
-    ): List<DeclarationDescriptor> {
+    ): MutableSet<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = LinkedHashSet<DeclarationDescriptor>(declarations.size)
         for (declaration in declarations) {
@@ -258,12 +267,12 @@ protected constructor(
                     }
                 }
                 is KtDestructuringDeclaration -> {
-                    // MultiDeclarations are not supported on global level
+                    collectDescriptorsFromDestructingDeclaration(result, declaration, nameFilter, location)
                 }
                 else -> throw IllegalArgumentException("Unsupported declaration kind: " + declaration)
             }
         }
-        return result.toList()
+        return result
     }
 
     // Do not change this, override in concrete subclasses:

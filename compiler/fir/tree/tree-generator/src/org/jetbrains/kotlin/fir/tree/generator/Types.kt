@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
-val sourceElementType = type("fir", "FirSourceElement")
+val sourceElementType = type(KtSourceElement::class)
 val jumpTargetType = type("fir", "FirTarget")
 val constKindType = type("types", "ConstantValueKind")
 val operationType = type("fir.expressions", "FirOperation")
@@ -69,6 +70,7 @@ val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")
 val classLikeSymbolType = type("fir.symbols.impl", "FirClassLikeSymbol<*>")
+val regularClassSymbolType = type("fir.symbols.impl", "FirRegularClassSymbol")
 val typeParameterSymbolType = type("fir.symbols.impl", "FirTypeParameterSymbol")
 val emptyArgumentListType = type("fir.expressions", "FirEmptyArgumentList")
 val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
@@ -96,4 +98,5 @@ val deprecationsPerUseSiteType = type("fir.declarations", "DeprecationsPerUseSit
 val emptyAnnotationArgumentMappingType = type("fir.expressions.impl", "FirEmptyAnnotationArgumentMapping")
 
 val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")
+val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl")
 

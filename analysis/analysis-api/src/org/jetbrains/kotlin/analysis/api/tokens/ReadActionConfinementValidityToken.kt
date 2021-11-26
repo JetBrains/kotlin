@@ -52,6 +52,8 @@ public class ReadActionConfinementValidityToken(project: Project) : ValidityToke
         @HackToForceAllowRunningAnalyzeOnEDT
         public val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
+
+    public override val factory: ValidityTokenFactory = ReadActionConfinementValidityTokenFactory
 }
 
 public object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
@@ -70,6 +72,7 @@ public object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory()
     private val currentAnalysisContextEnteringCount = ThreadLocal.withInitial { 0 }
 
     internal fun isInsideAnalysisContext() = currentAnalysisContextEnteringCount.get() > 0
+
 }
 
 @RequiresOptIn("All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution")

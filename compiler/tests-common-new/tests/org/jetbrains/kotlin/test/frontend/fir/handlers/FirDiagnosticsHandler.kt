@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -19,8 +20,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.renderForDebugInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -50,9 +53,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     companion object {
         private val allowedKindsForDebugInfo = setOf(
-            FirRealSourceElementKind,
-            FirFakeSourceElementKind.DesugaredCompoundAssignment,
-            FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
+            KtRealSourceElementKind,
+            KtFakeSourceElementKind.DesugaredCompoundAssignment,
+            KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
         )
     }
 
@@ -92,32 +95,16 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 // SYNTAX errors will be reported later
                 if (diagnostic.factory == FirErrors.SYNTAX) return@flatMap emptyList()
                 if (!diagnostic.isValid) return@flatMap emptyList()
-                diagnostic.toMetaInfos(file, lightTreeEnabled, lightTreeComparingModeEnabled)
+                diagnostic.toMetaInfos(
+                    file,
+                    globalMetadataInfoHandler,
+                    lightTreeEnabled,
+                    lightTreeComparingModeEnabled
+                )
             }
             globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
             collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             collectDebugInfoDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-        }
-    }
-
-    private fun FirDiagnostic.toMetaInfos(
-        file: TestFile,
-        lightTreeEnabled: Boolean,
-        lightTreeComparingModeEnabled: Boolean,
-        forceRenderArguments: Boolean = false
-    ): List<FirDiagnosticCodeMetaInfo> {
-        val ranges = factory.defaultPositioningStrategy.markDiagnostic(this)
-        return ranges.map { range ->
-            val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
-            val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
-                .any { it.description != null }
-            if (shouldRenderArguments) {
-                metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
-            }
-            if (lightTreeComparingModeEnabled) {
-                metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
-            }
-            metaInfo
         }
     }
 
@@ -130,13 +117,23 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirErrors.SYNTAX.on(FirRealPsiSourceElement(it), positioningStrategy = null)
-                    .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                FirErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
+                    .toMetaInfos(
+                        testFile,
+                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        lightTreeEnabled,
+                        lightTreeComparingModeEnabled
+                    )
             }
         } else {
             collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
                 FirErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
-                    .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    .toMetaInfos(
+                        testFile,
+                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        lightTreeEnabled,
+                        lightTreeComparingModeEnabled
+                    )
             }
         }
 
@@ -149,7 +146,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
-        val result = mutableListOf<FirDiagnostic>()
+        val result = mutableListOf<KtDiagnostic>()
         val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile).groupBy(
             keySelector = { it.start..it.end },
             valueTransform = { it.tag }
@@ -192,14 +189,20 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }.let(firFile::accept)
         globalMetadataInfoHandler.addMetadataInfosForFile(
             testFile,
-            result.flatMap { it.toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments = true) }
+            result.flatMap { it.toMetaInfos(
+                testFile,
+                globalMetadataInfoHandler,
+                lightTreeEnabled,
+                lightTreeComparingModeEnabled,
+                forceRenderArguments = true
+            ) }
         )
     }
 
     fun createExpressionTypeDiagnosticIfExpected(
         element: FirExpression,
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
-    ): FirDiagnosticWithParameters1<String>? =
+    ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
             element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.originalType)
         }
@@ -216,21 +219,21 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         element: FirElement,
         reference: FirNamedReference,
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
-    ): FirDiagnosticWithParameters1<String>? =
+    ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
             Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
         }
 
-    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: FirSourceElement): FirSourceElement {
+    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
         val elementType = sourceElement.elementType
         return if (this === DebugInfoDiagnosticFactory1.CALL
             && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
         ) {
-            if (sourceElement is FirPsiSourceElement) {
+            if (sourceElement is KtPsiSourceElement) {
                 val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
-                psi?.let { FirRealPsiSourceElement(it) } ?: sourceElement
+                psi?.let { KtRealPsiSourceElement(it) } ?: sourceElement
             } else {
                 val tree = sourceElement.treeStructure
                 val selector = tree.selector(sourceElement.lighterASTNode)
@@ -239,7 +242,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 } else {
                     val startDelta = tree.getStartOffset(selector) - tree.getStartOffset(sourceElement.lighterASTNode)
                     val endDelta = tree.getEndOffset(selector) - tree.getEndOffset(sourceElement.lighterASTNode)
-                    FirLightSourceElement(
+                    KtLightSourceElement(
                         selector, sourceElement.startOffset + startDelta, sourceElement.endOffset + endDelta, tree
                     )
                 }
@@ -253,7 +256,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         element: FirElement,
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>,
         argument: () -> String,
-    ): FirDiagnosticWithParameters1<String>? {
+    ): KtDiagnosticWithParameters1<String>? {
         val sourceElement = element.source ?: return null
         if (sourceElement.kind !in allowedKindsForDebugInfo) return null
 
@@ -268,16 +271,16 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
 
         val argumentText = argument()
-        val factory = FirDiagnosticFactory1<String>(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class)
+        val factory = KtDiagnosticFactory1<String>(name, severity, AbstractSourceElementPositioningStrategy.DEFAULT, PsiElement::class)
         return when (positionedElement) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters1(
+            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
                 positionedElement,
                 argumentText,
                 severity,
                 factory,
                 factory.defaultPositioningStrategy
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
                 positionedElement,
                 argumentText,
                 severity,
@@ -339,5 +342,24 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
     override fun firstAttributeEnabled(module: TestModule): Boolean {
         return FirDiagnosticsDirectives.USE_LIGHT_TREE !in module.directives
     }
+}
+
+fun KtDiagnostic.toMetaInfos(
+    file: TestFile,
+    globalMetadataInfoHandler1: GlobalMetadataInfoHandler,
+    lightTreeEnabled: Boolean,
+    lightTreeComparingModeEnabled: Boolean,
+    forceRenderArguments: Boolean = false
+): List<FirDiagnosticCodeMetaInfo> = textRanges.map { range ->
+    val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
+    val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler1.getExistingMetaInfosForActualMetadata(file, metaInfo)
+        .any { it.description != null }
+    if (shouldRenderArguments) {
+        metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
+    }
+    if (lightTreeComparingModeEnabled) {
+        metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
+    }
+    metaInfo
 }
 

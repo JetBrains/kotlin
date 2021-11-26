@@ -1,4 +1,8 @@
-inline class InlineLong(val value: Long)
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class InlineLong(val value: Long)
 inline val Number.toInlineLong get() = InlineLong(this.toLong())
 
 fun box(): String {

@@ -52,4 +52,3 @@ fun testProperty() {
     <get-p>().remAssign(s = "%=")
   }
 }
-

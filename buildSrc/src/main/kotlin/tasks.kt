@@ -61,6 +61,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-stdlib-js",
+    ":kotlin-stdlib-wasm",
     ":examples:annotation-processor-example",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
@@ -88,6 +89,10 @@ fun Task.dependsOnKotlinGradlePluginPublish() {
     }
 }
 
+enum class JUnitMode {
+    JUnit4, JUnit5, Mix
+}
+
 /**
  * @param parallel is redundant if @param jUnit5Enabled is true, because
  *   JUnit5 supports parallel test execution by itself, without gradle help
@@ -96,7 +101,7 @@ fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
     shortenTempRootName: Boolean = false,
-    jUnit5Enabled: Boolean = false,
+    jUnitMode: JUnitMode = JUnitMode.JUnit4,
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> {
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
@@ -136,7 +141,7 @@ fun Project.projectTest(
                     }
                 }
 
-                val parentNames = if (jUnit5Enabled) {
+                val parentNames = if (jUnitMode != JUnitMode.JUnit4) {
                     /*
                      * If we run test from inner test class with junit 5 we need
                      *   to include all containing classes of our class
@@ -154,10 +159,12 @@ fun Project.projectTest(
                     if (treeElement.isDirectory) {
                         classFileNameWithoutExtension.startsWith(path)
                     } else {
-                        if (jUnit5Enabled) {
-                            path == classFileName || (path.endsWith(".class") && parentNames.any { path.startsWith(it) })
-                        } else {
-                            path == classFileName || (path.endsWith(".class") && path.startsWith("$classFileNameWithoutExtension$"))
+                        if (path == classFileName) return@include true
+                        if (!path.endsWith(".class")) return@include false
+                        when(jUnitMode) {
+                            JUnitMode.JUnit5 -> parentNames.any { path.startsWith(it) }
+                            JUnitMode.JUnit4 -> path.startsWith("$classFileNameWithoutExtension$")
+                            JUnitMode.Mix -> parentNames.any { path.startsWith(it) } || path.startsWith("$classFileNameWithoutExtension$")
                         }
                     }
                 }
@@ -193,6 +200,10 @@ fun Project.projectTest(
         systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
         systemProperty("kotlin.ni", if (project.rootProject.hasProperty("newInferenceTests")) "true" else "false")
         systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
+        project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
+            systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
+            systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
+        }
 
         systemProperty("idea.ignore.disabled.plugins", "true")
 
@@ -225,7 +236,7 @@ fun Project.projectTest(
             }
         }
 
-        if (parallel && !jUnit5Enabled) {
+        if (parallel && jUnitMode != JUnitMode.JUnit5) {
             maxParallelForks =
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").forUseAtConfigurationTime().orNull?.toInt()
                     ?: (Runtime.getRuntime().availableProcessors() / if (project.kotlinBuildProperties.isTeamcityBuild) 2 else 4).coerceAtLeast(1)

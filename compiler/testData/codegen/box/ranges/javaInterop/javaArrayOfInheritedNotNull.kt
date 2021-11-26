@@ -1,6 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: box.kt
 import kotlin.test.*

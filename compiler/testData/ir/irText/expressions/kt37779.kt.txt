@@ -8,4 +8,3 @@ fun test1() {
 fun test2(ss: Array<String>) {
   foo(s = [*ss])
 }
-

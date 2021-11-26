@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 operator fun ClosedRange<Int>.contains(value: Long) = false
 operator fun ClosedRange<UInt>.contains(value: ULong) = false

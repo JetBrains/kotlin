@@ -10,9 +10,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KClass
 
 @FixmeReflection
-internal abstract class KSuspendFunctionImpl<out R>(
-        name: String, fqName: String, receiver: Any?,
-        arity: Int, flags: Int, returnType: KType
-): KFunctionImpl<R>(name, fqName, receiver, arity, flags, returnType) {
+internal abstract class KSuspendFunctionImpl<out R>: KFunctionImpl<R>() {
     override fun toString() = "suspend function $name"
 }

@@ -107,7 +107,11 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
 
         fun Project.isUseWorkerApi(): Boolean {
-            return getBooleanOptionValue(BooleanOption.KAPT_USE_WORKER_API)
+            return getBooleanOptionValue(BooleanOption.KAPT_USE_WORKER_API) {
+                """
+                |'${BooleanOption.KAPT_USE_WORKER_API}' is deprecated and scheduled to be removed in Kotlin 1.7 release.
+                """.trimMargin()
+            }
         }
 
         fun Project.isIncrementalKapt(): Boolean {
@@ -174,8 +178,15 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         fun isEnabled(project: Project) =
             project.plugins.any { it is Kapt3GradleSubplugin }
 
-        private fun Project.getBooleanOptionValue(booleanOption: BooleanOption): Boolean {
-            return when (val value = findProperty(booleanOption.optionName)) {
+        private fun Project.getBooleanOptionValue(
+            booleanOption: BooleanOption,
+            deprecationMessage: (() -> String)? = null
+        ): Boolean {
+            val value = findProperty(booleanOption.optionName)
+            if (value != null && deprecationMessage != null) {
+                logger.warn(deprecationMessage())
+            }
+            return when (value) {
                 is Boolean -> value
                 is String -> when {
                     value.equals("true", ignoreCase = true) -> true
@@ -610,7 +621,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 if (includeCompileClasspath && project.classLoadersCacheSize() > 0) {
                     project.logger.warn(
                         "ClassLoaders cache can't be enabled together with AP discovery in compilation classpath."
-                                + "\nSet 'kapt.includeCompileClasspath = false' to disable discovery"
+                                + "\nSet 'kapt.include.compile.classpath=false' to disable discovery"
                     )
                 } else {
                     it.classLoadersCacheSize = project.classLoadersCacheSize()

@@ -1,7 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class InlineNotNullPrimitive(val x: Int)
-inline class InlineNotNullReference(val y: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class InlineNotNullPrimitive(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class InlineNotNullReference(val y: String)
 
 fun <T> testNotNullPrimitive(a: Any, b: T, c: InlineNotNullPrimitive, d: InlineNotNullPrimitive?) {}
 fun <T> testNotNullReference(a: Any, b: T, c: InlineNotNullReference, d: InlineNotNullReference?) {}

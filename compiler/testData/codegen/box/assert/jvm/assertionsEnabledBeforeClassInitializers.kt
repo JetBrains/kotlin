@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // ASSERTIONS_MODE: jvm
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // Assertions which run before the class initializer are always checked
 

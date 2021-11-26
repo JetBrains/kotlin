@@ -1,6 +1,6 @@
 public final enum class Enum : R|kotlin/Enum<test/Enum>| {
     public final inner class Inner : R|kotlin/Any| {
-        public constructor(): R|test/Enum.Inner|
+        public test/Enum.constructor(): R|test/Enum.Inner|
 
     }
 

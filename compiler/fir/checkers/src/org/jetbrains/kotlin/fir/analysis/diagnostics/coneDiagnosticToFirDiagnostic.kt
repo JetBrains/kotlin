@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
@@ -20,11 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
@@ -36,10 +36,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-private fun ConeDiagnostic.toFirDiagnostic(
-    source: FirSourceElement,
-    qualifiedAccessSource: FirSourceElement?
-): FirDiagnostic? = when (this) {
+private fun ConeDiagnostic.toKtDiagnostic(
+    source: KtSourceElement,
+    qualifiedAccessSource: KtSourceElement?
+): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
         source,
         (this.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
@@ -64,13 +64,13 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeAmbiguityError -> when {
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val candidate = candidates.first { it.currentApplicability == CandidateApplicability.UNSAFE_CALL }
+            val candidate = candidates.first { it.applicability == CandidateApplicability.UNSAFE_CALL }
             val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
             mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
         }
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
             val unstableSmartcast =
-                this.candidates.first { it.currentApplicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
+                this.candidates.first { it.applicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
             FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 unstableSmartcast.argument.source,
                 unstableSmartcast.targetType,
@@ -96,7 +96,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeNoTypeArgumentsOnRhsError ->
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.candidateSymbol)
     is ConeSimpleDiagnostic -> when {
-        source.kind is FirFakeSourceElementKind && source.kind != FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
+        source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
@@ -112,26 +112,28 @@ private fun ConeDiagnostic.toFirDiagnostic(
         runIf(variable.isLocalMember) { FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source) }
     is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source)
     is ConeUnderscoreUsageWithoutBackticks -> FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.createOn(this.source)
+    is ConeAmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER.createOn(source, this.candidateTypes)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
 fun ConeDiagnostic.toFirDiagnostics(
-    source: FirSourceElement,
-    qualifiedAccessSource: FirSourceElement?
-): List<FirDiagnostic> {
+    session: FirSession,
+    source: KtSourceElement,
+    qualifiedAccessSource: KtSourceElement?
+): List<KtDiagnostic> {
     return when (this) {
-        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(this, source, qualifiedAccessSource)
-        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(this, source, qualifiedAccessSource)
-        else -> listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
+        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, qualifiedAccessSource)
+        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, qualifiedAccessSource)
+        else -> listOfNotNull(toKtDiagnostic(source, qualifiedAccessSource))
     }
 }
 
 private fun mapUnsafeCallError(
-    candidate: Candidate,
+    candidate: AbstractCandidate,
     rootCause: UnsafeCall,
-    source: FirSourceElement,
-    qualifiedAccessSource: FirSourceElement?,
-): FirDiagnostic? {
+    source: KtSourceElement,
+    qualifiedAccessSource: KtSourceElement?,
+): KtDiagnostic? {
     if (candidate.callInfo.isImplicitInvoke) {
         return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.createOn(source, rootCause.actualType)
     }
@@ -168,7 +170,7 @@ private fun mapUnsafeCallError(
             )
         }
     }
-    return if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
+    return if (source.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
         FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression)
     } else {
         FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression)
@@ -176,10 +178,11 @@ private fun mapUnsafeCallError(
 }
 
 private fun mapInapplicableCandidateError(
+    session: FirSession,
     diagnostic: ConeInapplicableCandidateError,
-    source: FirSourceElement,
-    qualifiedAccessSource: FirSourceElement?,
-): List<FirDiagnostic> {
+    source: KtSourceElement,
+    qualifiedAccessSource: KtSourceElement?,
+): List<KtDiagnostic> {
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
     val diagnostics = diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
         when (rootCause) {
@@ -191,7 +194,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.forbiddenNamedArgumentsTarget
             )
             is ArgumentTypeMismatch -> {
-                val typeContext = diagnostic.candidate.callInfo.session.typeContext
+                val typeContext = session.typeContext
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
                     rootCause.expectedType.removeTypeVariableTypes(typeContext),
@@ -225,6 +228,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.smartcastStability.description,
                 rootCause.isCastToNotNull
             )
+            is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)
             else -> genericDiagnostic
         }
     }.distinct()
@@ -238,18 +242,19 @@ private fun mapInapplicableCandidateError(
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun mapSystemHasContradictionError(
+    session: FirSession,
     diagnostic: ConeConstraintSystemHasContradiction,
-    source: FirSourceElement,
-    qualifiedAccessSource: FirSourceElement?,
-): List<FirDiagnostic> {
+    source: KtSourceElement,
+    qualifiedAccessSource: KtSourceElement?,
+): List<KtDiagnostic> {
     val errorsToIgnore = mutableSetOf<ConstraintSystemError>()
-    return buildList<FirDiagnostic> {
+    return buildList<KtDiagnostic> {
         for (error in diagnostic.candidate.system.errors) {
             addIfNotNull(
                 error.toDiagnostic(
                     source,
                     qualifiedAccessSource,
-                    diagnostic.candidate.callInfo.session.typeContext,
+                    session.typeContext,
                     errorsToIgnore,
                     diagnostic.candidate,
                 )
@@ -281,12 +286,12 @@ private fun mapSystemHasContradictionError(
 }
 
 private fun ConstraintSystemError.toDiagnostic(
-    source: FirSourceElement,
-    qualifiedAccessSource: FirSourceElement?,
+    source: KtSourceElement,
+    qualifiedAccessSource: KtSourceElement?,
     typeContext: ConeTypeContext,
     errorsToIgnore: MutableSet<ConstraintSystemError>,
-    candidate: Candidate,
-): FirDiagnostic? {
+    candidate: AbstractCandidate,
+): KtDiagnostic? {
     return when (this) {
         is NewConstraintError -> {
             val position = position.from
@@ -361,7 +366,7 @@ private fun ConstraintSystemError.toDiagnostic(
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
-private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0 {
+private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
     @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX
@@ -404,7 +409,6 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.EnumEntryAsType -> FirErrors.ENUM_ENTRY_AS_TYPE
         DiagnosticKind.NotASupertype -> FirErrors.NOT_A_SUPERTYPE
         DiagnosticKind.SuperNotAvailable -> FirErrors.SUPER_NOT_AVAILABLE
-        DiagnosticKind.AmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
@@ -413,46 +417,46 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
 
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun FirDiagnosticFactory0.createOn(
-    element: FirSourceElement?
-): FirSimpleDiagnostic? {
+private fun KtDiagnosticFactory0.createOn(
+    element: KtSourceElement?
+): KtSimpleDiagnostic? {
     return element?.let { on(it, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A> FirDiagnosticFactory1<A>.createOn(
-    element: FirSourceElement?,
+private fun <A> KtDiagnosticFactory1<A>.createOn(
+    element: KtSourceElement?,
     a: A
-): FirDiagnosticWithParameters1<A>? {
+): KtDiagnosticWithParameters1<A>? {
     return element?.let { on(it, a, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B> FirDiagnosticFactory2<A, B>.createOn(
-    element: FirSourceElement?,
+private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
+    element: KtSourceElement?,
     a: A,
     b: B
-): FirDiagnosticWithParameters2<A, B>? {
+): KtDiagnosticWithParameters2<A, B>? {
     return element?.let { on(it, a, b, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C> FirDiagnosticFactory3<A, B, C>.createOn(
-    element: FirSourceElement?,
+private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
+    element: KtSourceElement?,
     a: A,
     b: B,
     c: C
-): FirDiagnosticWithParameters3<A, B, C>? {
+): KtDiagnosticWithParameters3<A, B, C>? {
     return element?.let { on(it, a, b, c, positioningStrategy = null) }
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C, D> FirDiagnosticFactory4<A, B, C, D>.createOn(
-    element: FirSourceElement?,
+private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
+    element: KtSourceElement?,
     a: A,
     b: B,
     c: C,
     d: D
-): FirDiagnosticWithParameters4<A, B, C, D>? {
+): KtDiagnosticWithParameters4<A, B, C, D>? {
     return element?.let { on(it, a, b, c, d, positioningStrategy = null) }
 }

@@ -93,4 +93,3 @@ fun testVararg0(): String {
     ::fnWithVarargs
   })
 }
-

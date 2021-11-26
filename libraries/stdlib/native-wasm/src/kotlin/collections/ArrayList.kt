@@ -6,12 +6,12 @@
 package kotlin.collections
 
 actual class ArrayList<E> private constructor(
-        private var array: Array<E>,
-        private var offset: Int,
-        private var length: Int,
-        private var isReadOnly: Boolean,
-        private val backing: ArrayList<E>?,
-        private val root: ArrayList<E>?
+    private var backingArray: Array<E>,
+    private var offset: Int,
+    private var length: Int,
+    private var isReadOnly: Boolean,
+    private val backingList: ArrayList<E>?,
+    private val root: ArrayList<E>?
 ) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
 
     actual constructor() : this(10)
@@ -25,7 +25,7 @@ actual class ArrayList<E> private constructor(
 
     @PublishedApi
     internal fun build(): List<E> {
-        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         checkIsMutable()
         isReadOnly = true
         return this
@@ -38,21 +38,21 @@ actual class ArrayList<E> private constructor(
 
     override actual fun get(index: Int): E {
         checkElementIndex(index)
-        return array[offset + index]
+        return backingArray[offset + index]
     }
 
     override actual operator fun set(index: Int, element: E): E {
         checkIsMutable()
         checkElementIndex(index)
-        val old = array[offset + index]
-        array[offset + index] = element
+        val old = backingArray[offset + index]
+        backingArray[offset + index] = element
         return old
     }
 
     override actual fun indexOf(element: E): Int {
         var i = 0
         while (i < length) {
-            if (array[offset + i] == element) return i
+            if (backingArray[offset + i] == element) return i
             i++
         }
         return -1
@@ -61,7 +61,7 @@ actual class ArrayList<E> private constructor(
     override actual fun lastIndexOf(element: E): Int {
         var i = length - 1
         while (i >= 0) {
-            if (array[offset + i] == element) return i
+            if (backingArray[offset + i] == element) return i
             i--
         }
         return -1
@@ -132,21 +132,21 @@ actual class ArrayList<E> private constructor(
 
     override actual fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
         checkRangeIndexes(fromIndex, toIndex)
-        return ArrayList(array, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
+        return ArrayList(backingArray, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
     }
 
     actual fun trimToSize() {
-        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
-        if (length < array.size)
-            array = array.copyOfUninitializedElements(length)
+        if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        if (length < backingArray.size)
+            backingArray = backingArray.copyOfUninitializedElements(length)
     }
 
     final actual fun ensureCapacity(minCapacity: Int) {
-        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-        if (minCapacity > array.size) {
-            val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
-            array = array.copyOfUninitializedElements(newSize)
+        if (minCapacity > backingArray.size) {
+            val newSize = ArrayDeque.newCapacity(backingArray.size, minCapacity)
+            backingArray = backingArray.copyOfUninitializedElements(newSize)
         }
     }
 
@@ -156,32 +156,32 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun hashCode(): Int {
-        return array.subarrayContentHashCode(offset, length)
+        return backingArray.subarrayContentHashCode(offset, length)
     }
 
     override fun toString(): String {
         @Suppress("DEPRECATION_ERROR")
-        return array.subarrayContentToString(offset, length)
+        return backingArray.subarrayContentToString(offset, length)
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> toArray(destination: Array<T>): Array<T> {
-        if (destination.size < length) {
-            return array.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<T>
+    override fun <T> toArray(array: Array<T>): Array<T> {
+        if (array.size < length) {
+            return backingArray.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<T>
         }
 
-        (array as Array<T>).copyInto(destination, 0, startIndex = offset, endIndex = offset + length)
+        (backingArray as Array<T>).copyInto(array, 0, startIndex = offset, endIndex = offset + length)
 
-        if (destination.size > length) {
-            destination[length] = null as T // null-terminate
+        if (array.size > length) {
+            array[length] = null as T // null-terminate
         }
 
-        return destination
+        return array
     }
 
     override fun toArray(): Array<Any?> {
         @Suppress("UNCHECKED_CAST")
-        return array.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<Any?>
+        return backingArray.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<Any?>
     }
 
     // ---------------------------- private ----------------------------
@@ -216,85 +216,85 @@ actual class ArrayList<E> private constructor(
     }
 
     private fun contentEquals(other: List<*>): Boolean {
-        return array.subarrayContentEquals(offset, length, other)
+        return backingArray.subarrayContentEquals(offset, length, other)
     }
 
     private fun insertAtInternal(i: Int, n: Int) {
         ensureExtraCapacity(n)
-        array.copyInto(array, startIndex = i, endIndex = offset + length, destinationOffset = i + n)
+        backingArray.copyInto(backingArray, startIndex = i, endIndex = offset + length, destinationOffset = i + n)
         length += n
     }
 
     private fun addAtInternal(i: Int, element: E) {
-        if (backing != null) {
-            backing.addAtInternal(i, element)
-            array = backing.array
+        if (backingList != null) {
+            backingList.addAtInternal(i, element)
+            backingArray = backingList.backingArray
             length++
         } else {
             insertAtInternal(i, 1)
-            array[i] = element
+            backingArray[i] = element
         }
     }
 
     private fun addAllInternal(i: Int, elements: Collection<E>, n: Int) {
-        if (backing != null) {
-            backing.addAllInternal(i, elements, n)
-            array = backing.array
+        if (backingList != null) {
+            backingList.addAllInternal(i, elements, n)
+            backingArray = backingList.backingArray
             length += n
         } else {
             insertAtInternal(i, n)
             var j = 0
             val it = elements.iterator()
             while (j < n) {
-                array[i + j] = it.next()
+                backingArray[i + j] = it.next()
                 j++
             }
         }
     }
 
     private fun removeAtInternal(i: Int): E {
-        if (backing != null) {
-            val old = backing.removeAtInternal(i)
+        if (backingList != null) {
+            val old = backingList.removeAtInternal(i)
             length--
             return old
         } else {
-            val old = array[i]
-            array.copyInto(array, startIndex = i + 1, endIndex = offset + length, destinationOffset = i)
-            array.resetAt(offset + length - 1)
+            val old = backingArray[i]
+            backingArray.copyInto(backingArray, startIndex = i + 1, endIndex = offset + length, destinationOffset = i)
+            backingArray.resetAt(offset + length - 1)
             length--
             return old
         }
     }
 
     private fun removeRangeInternal(rangeOffset: Int, rangeLength: Int) {
-        if (backing != null) {
-            backing.removeRangeInternal(rangeOffset, rangeLength)
+        if (backingList != null) {
+            backingList.removeRangeInternal(rangeOffset, rangeLength)
         } else {
-            array.copyInto(array, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset)
-            array.resetRange(fromIndex = length - rangeLength, toIndex = length)
+            backingArray.copyInto(backingArray, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset)
+            backingArray.resetRange(fromIndex = length - rangeLength, toIndex = length)
         }
         length -= rangeLength
     }
 
     /** Retains elements if [retain] == true and removes them it [retain] == false. */
     private fun retainOrRemoveAllInternal(rangeOffset: Int, rangeLength: Int, elements: Collection<E>, retain: Boolean): Int {
-        if (backing != null) {
-            val removed = backing.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
+        if (backingList != null) {
+            val removed = backingList.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
             length -= removed
             return removed
         } else {
             var i = 0
             var j = 0
             while (i < rangeLength) {
-                if (elements.contains(array[rangeOffset + i]) == retain) {
-                    array[rangeOffset + j++] = array[rangeOffset + i++]
+                if (elements.contains(backingArray[rangeOffset + i]) == retain) {
+                    backingArray[rangeOffset + j++] = backingArray[rangeOffset + i++]
                 } else {
                     i++
                 }
             }
             val removed = rangeLength - j
-            array.copyInto(array, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset + j)
-            array.resetRange(fromIndex = length - removed, toIndex = length)
+            backingArray.copyInto(backingArray, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset + j)
+            backingArray.resetRange(fromIndex = length - removed, toIndex = length)
             length -= removed
             return removed
         }
@@ -320,13 +320,13 @@ actual class ArrayList<E> private constructor(
         override fun previous(): E {
             if (index <= 0) throw NoSuchElementException()
             lastIndex = --index
-            return list.array[list.offset + lastIndex]
+            return list.backingArray[list.offset + lastIndex]
         }
 
         override fun next(): E {
             if (index >= list.length) throw NoSuchElementException()
             lastIndex = index++
-            return list.array[list.offset + lastIndex]
+            return list.backingArray[list.offset + lastIndex]
         }
 
         override fun set(element: E) {

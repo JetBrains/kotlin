@@ -1,6 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
-// WITH_RUNTIME
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

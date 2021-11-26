@@ -20,6 +20,7 @@ dependencies {
     api("org.jsoup:jsoup:1.14.2")
     if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testApiJUnit5(vintageEngine = true)
 }

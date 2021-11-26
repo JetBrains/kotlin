@@ -61,7 +61,7 @@ class C {
   }
 
   interface NestedInterface {
-    abstract fun foo() 
+    abstract fun foo()
     fun bar() {
       return <this>.foo()
     }
@@ -78,4 +78,3 @@ class C {
   }
 
 }
-

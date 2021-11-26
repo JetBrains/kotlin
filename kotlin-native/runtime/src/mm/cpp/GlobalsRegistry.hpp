@@ -15,16 +15,18 @@ namespace kotlin {
 namespace mm {
 
 class GlobalsRegistry : Pinned {
+    using Mutex = SpinLock<MutexThreadStateHandling::kIgnore>;
+
 public:
-    class ThreadQueue : public MultiSourceQueue<ObjHeader**>::Producer {
+    class ThreadQueue : public MultiSourceQueue<ObjHeader**, Mutex>::Producer {
     public:
         explicit ThreadQueue(GlobalsRegistry& registry) : Producer(registry.globals_) {}
         // Do not add fields as this is just a wrapper and Producer does not have virtual destructor.
     };
 
-    using Iterable = MultiSourceQueue<ObjHeader**>::Iterable;
+    using Iterable = MultiSourceQueue<ObjHeader**, Mutex>::Iterable;
 
-    using Iterator = MultiSourceQueue<ObjHeader**>::Iterator;
+    using Iterator = MultiSourceQueue<ObjHeader**, Mutex>::Iterator;
 
     GlobalsRegistry();
     ~GlobalsRegistry();
@@ -47,7 +49,7 @@ public:
 
 private:
     // TODO: Add-only MultiSourceQueue can be made more efficient. Measure, if it's a problem.
-    MultiSourceQueue<ObjHeader**> globals_;
+    MultiSourceQueue<ObjHeader**, Mutex> globals_;
 };
 
 } // namespace mm

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmGlobalDeclarationTable
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIrSerializerSession
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -17,13 +19,13 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
 
     private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
 
-    override fun serializeIrFile(irFile: IrFile): ByteArray {
-        return makeSerializerSession().serializeJvmIrFile(irFile).toByteArray()
+    override fun serializeIrFile(irFile: IrFile): ByteArray? {
+        return makeSerializerSession().serializeJvmIrFile(irFile)?.toByteArray()
     }
 
-    override fun serializeTopLevelIrClass(irClass: IrClass): ByteArray {
+    override fun serializeTopLevelIrClass(irClass: IrClass): ByteArray? {
         assert(irClass.parent is IrFile)
-        return makeSerializerSession().serializeTopLevelClass(irClass).toByteArray()
+        return makeSerializerSession().serializeTopLevelClass(irClass)?.toByteArray()
     }
 
     private fun makeSerializerSession() =
@@ -31,5 +33,6 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
             configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             declarationTable,
             mutableMapOf(),
+            configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE
         )
 }

@@ -1,5 +1,5 @@
-// CURIOUS_ABOUT newArray
-// WITH_RUNTIME
+// CURIOUS_ABOUT: newArray
+// WITH_STDLIB
 
 import kotlinx.parcelize.*
 import android.os.Parcel

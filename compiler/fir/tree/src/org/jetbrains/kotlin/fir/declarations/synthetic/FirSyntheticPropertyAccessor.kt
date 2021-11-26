@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -26,7 +26,7 @@ class FirSyntheticPropertyAccessor(
     val delegate: FirSimpleFunction,
     override val isGetter: Boolean
 ) : FirPropertyAccessor() {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = delegate.source
 
     override val moduleData: FirModuleData

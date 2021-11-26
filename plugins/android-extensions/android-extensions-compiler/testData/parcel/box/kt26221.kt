@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM
 // Fails with a VerifyError in Foo.writeToParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test

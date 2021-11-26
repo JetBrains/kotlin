@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.commons.Method
-import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
     JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
@@ -49,7 +48,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     bindingContext: BindingContext,
     private val diagnostics: DiagnosticSink,
     moduleName: String,
-    languageVersionSettings: LanguageVersionSettings,
+    val languageVersionSettings: LanguageVersionSettings,
     useOldInlineClassesManglingScheme: Boolean,
     shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
@@ -111,9 +110,10 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
     ) {
         for (predefinedSignature in PREDEFINED_SIGNATURES) {
-            if (!signatures.containsKey(predefinedSignature)) continue
+            val signature = signatures[predefinedSignature]
+            if (signature.isEmpty()) continue
 
-            val origins = signatures[predefinedSignature] + JvmDeclarationOrigin.NO_ORIGIN
+            val origins = signature + JvmDeclarationOrigin.NO_ORIGIN
 
             val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, predefinedSignature, origins) ?: continue
             diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))
@@ -230,7 +230,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         descriptor.getParentJavaStaticClassScope()?.run {
             getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                 .filter {
-                    it is FunctionDescriptor && DescriptorVisibilities.isVisibleIgnoringReceiver(it, descriptor)
+                    it is FunctionDescriptor && DescriptorVisibilityUtils.isVisibleIgnoringReceiver(it, descriptor, languageVersionSettings)
                 }
                 .forEach(::processMember)
         }

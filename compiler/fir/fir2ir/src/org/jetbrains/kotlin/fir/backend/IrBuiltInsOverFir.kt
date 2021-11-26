@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -348,6 +348,9 @@ class IrBuiltInsOverFir(
         }
     }
 
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol
+        get() = TODO("Not yet implemented")
+
     override lateinit var lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
     override lateinit var lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
     override lateinit var greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
@@ -454,15 +457,31 @@ class IrBuiltInsOverFir(
         }
 
     override val extensionToString: IrSimpleFunctionSymbol by lazy {
-        findFunctions(kotlinPackage, Name.identifier("toString")).first { function ->
+        findFunctions(kotlinPackage, OperatorNameConventions.TO_STRING).single { function ->
             function.owner.extensionReceiverParameter?.let { receiver -> receiver.type == anyNType } ?: false
         }
     }
 
-    override val stringPlus: IrSimpleFunctionSymbol
-        get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == stringType
+    override val memberToString: IrSimpleFunctionSymbol by lazy {
+        findBuiltInClassMemberFunctions(anyClass, OperatorNameConventions.TO_STRING).single { function ->
+            function.owner.valueParameters.isEmpty()
         }
+    }
+
+    override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
+        findFunctions(kotlinPackage, OperatorNameConventions.PLUS).single { function ->
+            val isStringExtension =
+                function.owner.extensionReceiverParameter?.let { receiver -> receiver.type == stringType.withHasQuestionMark(true) }
+                    ?: false
+            isStringExtension && function.owner.valueParameters.size == 1 && function.owner.valueParameters[0].type == anyNType
+        }
+    }
+
+    override val memberStringPlus: IrSimpleFunctionSymbol by lazy {
+        findBuiltInClassMemberFunctions(stringClass, OperatorNameConventions.PLUS).single { function ->
+            function.owner.valueParameters.size == 1 && function.owner.valueParameters[0].type == anyNType
+        }
+    }
 
     private class KotlinPackageFuns(
         val arrayOf: IrSimpleFunctionSymbol,
@@ -1063,7 +1082,7 @@ class IrBuiltInsOverFir(
     }
 
 
-    private fun findFunctions(packageName: FqName, name: Name) =
+    private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> =
         components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name).mapNotNull { firOpSymbol ->
             components.declarationStorage.getIrFunctionSymbol(firOpSymbol) as? IrSimpleFunctionSymbol
         }

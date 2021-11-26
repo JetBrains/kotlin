@@ -86,7 +86,7 @@ class Fir2IrLazySimpleFunction(
     }
 
     override val initialSignatureFunction: IrFunction? by lazy {
-        (fir.initialSignatureAttr as? FirFunction)?.symbol?.let { declarationStorage.getIrFunctionSymbol(it).owner }
+        (fir.initialSignatureAttr as? FirFunction)?.symbol?.let { declarationStorage.getIrFunctionSymbol(it).owner }?.takeIf { it !== this }
     }
 
     override val containerSource: DeserializedContainerSource?

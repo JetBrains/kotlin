@@ -5,7 +5,7 @@ FILE: objectInnerClass.kt
         }
 
         local final inner class Child : R|<anonymous>.Base| {
-            public constructor(property: R|B|): R|<anonymous>.Child| {
+            public <anonymous>.constructor(property: R|B|): R|<anonymous>.Child| {
                 this@R|/<anonymous>|.super<R|<anonymous>.Base|>(R|<local>/property|)
             }
 
@@ -31,7 +31,7 @@ FILE: objectInnerClass.kt
         }
 
         local open inner class Base : R|kotlin/Any| {
-            public constructor(property: R|B|): R|<anonymous>.Base| {
+            public <anonymous>.constructor(property: R|B|): R|<anonymous>.Base| {
                 super<R|kotlin/Any|>()
             }
 
@@ -92,7 +92,7 @@ FILE: objectInnerClass.kt
         }
 
         public open inner class Base : R|kotlin/Any| {
-            public constructor(property: R|B|): R|Case2.Base| {
+            public Case2.constructor(property: R|B|): R|Case2.Base| {
                 super<R|kotlin/Any|>()
             }
 
@@ -130,7 +130,7 @@ FILE: objectInnerClass.kt
             }
 
             local final inner class Child : R|Case3.<anonymous>.Base| {
-                public constructor(property: R|B|): R|Case3.<anonymous>.Child| {
+                public <anonymous>.constructor(property: R|B|): R|Case3.<anonymous>.Child| {
                     this@R|/<anonymous>|.super<R|Case3.<anonymous>.Base|>(R|<local>/property|)
                 }
 
@@ -156,7 +156,7 @@ FILE: objectInnerClass.kt
             }
 
             local open inner class Base : R|kotlin/Any| {
-                public constructor(property: R|B|): R|Case3.<anonymous>.Base| {
+                public <anonymous>.constructor(property: R|B|): R|Case3.<anonymous>.Base| {
                     super<R|kotlin/Any|>()
                 }
 

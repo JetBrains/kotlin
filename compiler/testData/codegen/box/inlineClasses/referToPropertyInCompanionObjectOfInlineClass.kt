@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Foo(val c: Char) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val c: Char) {
     companion object {
         val prop = "O"
         const val constVal = 1

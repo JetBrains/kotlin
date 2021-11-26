@@ -53,7 +53,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             expression.symbol.owner.name.asString() != "invoke"
         ) return super.visitFunctionAccess(expression)
 
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+        return context.createJvmIrBuilder(currentScope!!).run {
             at(expression)
             irCall(functionNInvokeFun).apply {
                 dispatchReceiver = irImplicitCast(

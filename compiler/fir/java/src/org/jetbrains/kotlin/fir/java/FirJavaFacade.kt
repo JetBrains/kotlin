@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.openapi.progress.ProcessCanceledException
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -23,25 +26,27 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -150,9 +155,52 @@ class FirJavaFacade(
         firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
         enhancement.enhanceTypeParameterBounds(firJavaClass.typeParameters)
-        firJavaClass.superTypeRefs.replaceAll { enhancement.enhanceSuperType(it) }
+        val enhancedSuperTypes = buildList {
+            val purelyImplementedSupertype = firJavaClass.getPurelyImplementedSupertype()
+            val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
+            firJavaClass.superTypeRefs.mapNotNullTo(this) { superType ->
+                enhancement.enhanceSuperType(superType).takeUnless {
+                    purelyImplementedSupertypeClassId != null && it.coneType.classId == purelyImplementedSupertypeClassId
+                }
+            }
+            purelyImplementedSupertype?.let {
+                add(buildResolvedTypeRef { type = it })
+            }
+        }
+        firJavaClass.replaceSuperTypeRefs(enhancedSuperTypes)
         firJavaClass.replaceDeprecation(firJavaClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
         return firJavaClass
+    }
+
+    private fun FirJavaClass.getPurelyImplementedSupertype(): ConeKotlinType? {
+        val purelyImplementedClassIdFromAnnotation = annotations
+            .firstOrNull { it.classId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
+            ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirConstExpression<*>) }
+            ?.let { it.value as? String }
+            ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
+            ?.let { ClassId.topLevel(FqName(it)) }
+        val purelyImplementedClassId = purelyImplementedClassIdFromAnnotation
+            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(symbol.classId)
+            ?: return null
+        val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(purelyImplementedClassId) ?: return null
+        val superTypeParameterSymbols = superTypeSymbol.typeParameterSymbols ?: return null
+        val typeParameters = this.typeParameters
+        val supertypeParameterCount = superTypeParameterSymbols.size
+        val typeParameterCount = typeParameters.size
+        val parametersAsTypeProjections = when {
+            typeParameterCount == supertypeParameterCount ->
+                typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isNullable = false) }
+            typeParameterCount == 1 && supertypeParameterCount > 1 && purelyImplementedClassIdFromAnnotation == null -> {
+                val projection = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isNullable = false)
+                (1..supertypeParameterCount).map { projection }
+            }
+            else -> return null
+        }
+        return ConeClassLikeTypeImpl(
+            ConeClassLikeLookupTagImpl(purelyImplementedClassId),
+            parametersAsTypeProjections.toTypedArray(),
+            isNullable = false
+        )
     }
 
     private fun createFirJavaClass(
@@ -165,7 +213,7 @@ class FirJavaFacade(
         val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
         val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
         return buildJavaClass {
-            source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+            source = (javaClass as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
             moduleData = baseModuleData
             symbol = classSymbol
             name = javaClass.name
@@ -195,6 +243,13 @@ class FirJavaFacade(
                 }
             }
             javaClass.supertypes.mapTo(superTypeRefs) { it.toFirJavaTypeRef(session, javaTypeParameterStack) }
+            if (superTypeRefs.isEmpty()) {
+                superTypeRefs.add(
+                    buildResolvedTypeRef {
+                        type = StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false)
+                    }
+                )
+            }
 
             val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
 
@@ -247,7 +302,8 @@ class FirJavaFacade(
                     javaClass,
                     ownerClassBuilder = this,
                     classTypeParameters,
-                    javaTypeParameterStack
+                    javaTypeParameterStack,
+                    parentClassSymbol,
                 )
             }
             for (javaConstructor in javaClassDeclaredConstructors) {
@@ -258,6 +314,7 @@ class FirJavaFacade(
                     ownerClassBuilder = this,
                     classTypeParameters,
                     javaTypeParameterStack,
+                    parentClassSymbol,
                 )
             }
 
@@ -272,7 +329,7 @@ class FirJavaFacade(
             if (classIsAnnotation) {
                 declarations +=
                     buildConstructorForAnnotationClass(
-                        classSource = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor) as? FirFakeSourceElement,
+                        classSource = (javaClass as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor) as? KtFakeSourceElement,
                         constructorId = constructorId,
                         ownerClassBuilder = this,
                         valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor
@@ -310,7 +367,7 @@ class FirJavaFacade(
         val returnType = javaField.type
         return when {
             javaField.isEnumEntry -> buildEnumEntry {
-                source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+                source = (javaField as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
                 moduleData = baseModuleData
                 symbol = FirEnumEntrySymbol(fieldId)
                 name = fieldName
@@ -333,7 +390,7 @@ class FirJavaFacade(
                 containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
             }
             else -> buildJavaField {
-                source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+                source = (javaField as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
                 moduleData = baseModuleData
                 symbol = FirFieldSymbol(fieldId)
                 name = fieldName
@@ -383,7 +440,7 @@ class FirJavaFacade(
         val returnType = javaMethod.returnType
         return buildJavaMethod {
             moduleData = baseModuleData
-            source = (javaMethod as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+            source = (javaMethod as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
             symbol = methodSymbol
             name = methodName
             returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
@@ -425,7 +482,7 @@ class FirJavaFacade(
     private fun convertJavaAnnotationMethodToValueParameter(javaMethod: JavaMethod, firJavaMethod: FirJavaMethod): FirJavaValueParameter =
         buildJavaValueParameter {
             source = (javaMethod as? JavaElementImpl<*>)?.psi
-                ?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
+                ?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
             moduleData = baseModuleData
             returnTypeRef = firJavaMethod.returnTypeRef
             name = javaMethod.name
@@ -440,10 +497,11 @@ class FirJavaFacade(
         ownerClassBuilder: FirJavaClassBuilder,
         classTypeParameters: List<FirTypeParameter>,
         javaTypeParameterStack: JavaTypeParameterStack,
+        outerClassSymbol: FirRegularClassSymbol?,
     ): FirJavaConstructor {
         val constructorSymbol = FirConstructorSymbol(constructorId)
         return buildJavaConstructor {
-            source = (javaConstructor as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+            source = (javaConstructor as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
             moduleData = baseModuleData
             symbol = constructorSymbol
             isInner = javaClass.outerClass != null && !javaClass.isStatic
@@ -464,6 +522,7 @@ class FirJavaFacade(
             returnTypeRef = buildResolvedTypeRef {
                 type = ownerClassBuilder.buildSelfTypeRef()
             }
+            dispatchReceiverType = if (isThisInner) outerClassSymbol?.defaultType() else null
             typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
             if (javaConstructor != null) {
@@ -481,7 +540,7 @@ class FirJavaFacade(
     }
 
     private fun buildConstructorForAnnotationClass(
-        classSource: FirFakeSourceElement?,
+        classSource: KtFakeSourceElement?,
         constructorId: CallableId,
         ownerClassBuilder: FirJavaClassBuilder,
         valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor

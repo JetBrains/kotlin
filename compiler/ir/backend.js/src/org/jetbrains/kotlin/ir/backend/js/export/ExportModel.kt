@@ -23,7 +23,7 @@ class ExportedNamespace(
     val declarations: List<ExportedDeclaration>
 ) : ExportedDeclaration()
 
-class ExportedFunction(
+data class ExportedFunction(
     val name: String,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
@@ -35,9 +35,17 @@ class ExportedFunction(
     val ir: IrSimpleFunction
 ) : ExportedDeclaration()
 
-class ExportedConstructor(
+data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
+    val visibility: ExportedVisibility
+) : ExportedDeclaration() {
     val isProtected: Boolean
+        get() = visibility == ExportedVisibility.PROTECTED
+}
+
+data class ExportedConstructSignature(
+    val parameters: List<ExportedParameter>,
+    val returnType: ExportedType,
 ) : ExportedDeclaration()
 
 class ExportedProperty(
@@ -48,15 +56,17 @@ class ExportedProperty(
     val isStatic: Boolean = false,
     val isAbstract: Boolean,
     val isProtected: Boolean,
+    val isField: Boolean,
     val irGetter: IrFunction?,
     val irSetter: IrFunction?,
+    val exportedObject: ExportedClass? = null,
 ) : ExportedDeclaration()
 
 
 // TODO: Cover all cases with frontend and disable error declarations
 class ErrorDeclaration(val message: String) : ExportedDeclaration()
 
-class ExportedClass(
+data class ExportedClass(
     val name: String,
     val isInterface: Boolean = false,
     val isAbstract: Boolean = false,
@@ -89,13 +99,18 @@ sealed class ExportedType {
         object Nothing : Primitive("never")
     }
 
+    sealed class LiteralType<T : Any>(val value: T) : ExportedType() {
+        class StringLiteralType(value: String) : LiteralType<String>(value)
+        class NumberLiteralType(value: Number) : LiteralType<Number>(value)
+    }
+
     class Array(val elementType: ExportedType) : ExportedType()
     class Function(
         val parameterTypes: List<ExportedType>,
         val returnType: ExportedType
     ) : ExportedType()
 
-    class ClassType(val name: String, val arguments: List<ExportedType>) : ExportedType()
+    class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass) : ExportedType()
     class TypeParameter(val name: String) : ExportedType()
     class Nullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()
@@ -105,8 +120,24 @@ sealed class ExportedType {
         val members: List<ExportedDeclaration>
     ) : ExportedType()
 
+    class UnionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
+
     class IntersectionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
 
-    fun withNullability(nullable: Boolean) =
+    class ImplicitlyExportedType(val type: ExportedType) : ExportedType() {
+        override fun withNullability(nullable: Boolean) =
+            ImplicitlyExportedType(type.withNullability(nullable))
+    }
+
+    open fun withNullability(nullable: Boolean) =
         if (nullable) Nullable(this) else this
+
+    fun withImplicitlyExported(implicitlyExportedType: Boolean) =
+        if (implicitlyExportedType) ImplicitlyExportedType(this) else this
+}
+
+enum class ExportedVisibility(val keyword: String) {
+    DEFAULT(""),
+    PRIVATE("private "),
+    PROTECTED("protected ")
 }

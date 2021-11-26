@@ -13,6 +13,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
@@ -27,6 +28,9 @@ internal abstract class KotlinRootNpmResolverStateHolder : BuildService<KotlinRo
         val npmEnvironment: Property<NpmEnvironment>
         val yarnResolutions: ListProperty<YarnResolution>
         val taskRequirements: Property<TasksRequirements>
+
+        // pulled up from compilation resolver since it was failing with ClassNotFoundException on deserialization, see KT-49061
+        val packageJsonHandlers: MapProperty<String, List<PackageJson.() -> Unit>>
     }
 
     var initialized = false

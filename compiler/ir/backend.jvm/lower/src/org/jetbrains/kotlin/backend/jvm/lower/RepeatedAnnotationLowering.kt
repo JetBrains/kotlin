@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
-internal val repeatedAnnotationPhase = makeIrFilePhase(
+internal val repeatedAnnotationPhase = makeIrModulePhase(
     ::RepeatedAnnotationLowering,
     name = "RepeatedAnnotation",
     description = "Enclose repeated annotations in a container annotation, generating a container class if needed"

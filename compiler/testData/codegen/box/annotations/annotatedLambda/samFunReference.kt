@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // SAM_CONVERSIONS: CLASS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Test.java
 
 class Test {

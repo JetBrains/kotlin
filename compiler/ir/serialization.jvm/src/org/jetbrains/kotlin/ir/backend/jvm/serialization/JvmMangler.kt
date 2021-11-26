@@ -37,9 +37,9 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
 
-    private class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
+    private class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
         override fun copy(newMode: MangleMode): IrMangleComputer =
-            JvmIrManglerComputer(builder, newMode)
+            JvmIrManglerComputer(builder, newMode, compatibleMode)
 
         override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean =
             irFunction.isFromJava()
@@ -53,8 +53,8 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = JvmIrExportChecker(compatibleMode)
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> =
-        JvmIrManglerComputer(StringBuilder(256), mode)
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
+        JvmIrManglerComputer(StringBuilder(256), mode, compatibleMode)
 }
 
 class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : DescriptorBasedKotlinManglerImpl() {
@@ -101,6 +101,6 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = ExportChecker
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> =
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<DeclarationDescriptor> =
         JvmDescriptorManglerComputer(StringBuilder(256), mainDetector, mode)
 }

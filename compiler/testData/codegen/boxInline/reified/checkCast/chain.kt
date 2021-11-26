@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: 1.kt
 package test

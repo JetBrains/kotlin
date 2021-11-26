@@ -42,11 +42,11 @@ class Outer<T> {
             var x = foobar<String>()
             x = foobar<String>()
 
-            x().foo().a() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<T, F, String, Double, Short, Long>>() }
+            x().foo().a() checkType { _<A<T, F, String, Double, Short, Long>>() }
             x().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<T, F, String, Double, Short, Char>>() }
 
-            x = foobar<Int>()
-            x = z.foobar<String>()
+            x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
+            x = <!ASSIGNMENT_TYPE_MISMATCH!>z.foobar<String>()<!>
 
             var y = noParameters()
             y = noParameters()

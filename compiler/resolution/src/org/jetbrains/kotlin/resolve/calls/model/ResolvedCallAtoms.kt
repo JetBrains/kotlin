@@ -78,7 +78,7 @@ class ResolvedCallableReferenceCallAtom(
 
 open class MutableResolvedCallAtom(
     override val atom: KotlinCall,
-    override val candidateDescriptor: CallableDescriptor, // original candidate descriptor
+    originalCandidateDescriptor: CallableDescriptor, // original candidate descriptor
     override val explicitReceiverKind: ExplicitReceiverKind,
     override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
     override val extensionReceiverArgument: SimpleKotlinCallArgument?,
@@ -94,6 +94,10 @@ open class MutableResolvedCallAtom(
     private var suspendAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
     private var unitAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
     private var signedUnsignedConstantConversions: HashMap<KotlinCallArgument, IntegerValueTypeConstant>? = null
+    private var _candidateDescriptor = originalCandidateDescriptor
+
+    override val candidateDescriptor: CallableDescriptor
+        get() = _candidateDescriptor
 
     val hasSamConversion: Boolean
         get() = samAdapterMap != null
@@ -144,6 +148,11 @@ open class MutableResolvedCallAtom(
 
     override public fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
         super.setAnalyzedResults(subResolvedAtoms)
+    }
+
+    override fun setCandidateDescriptor(newCandidateDescriptor: CallableDescriptor) {
+        if (newCandidateDescriptor == candidateDescriptor) return
+        _candidateDescriptor = newCandidateDescriptor
     }
 
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"

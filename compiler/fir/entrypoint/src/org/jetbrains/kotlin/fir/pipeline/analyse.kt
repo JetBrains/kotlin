@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
@@ -20,7 +21,7 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>): Map<FirFile, List<FirDiagnostic>> {
+fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>): Map<FirFile, List<KtDiagnostic>> {
     val collector = FirDiagnosticsCollector.create(this, scopeSession)
     return buildMap {
         for (file in firFiles) {
@@ -28,5 +29,13 @@ fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>):
             collector.collectDiagnostics(file, reporter)
             put(file, reporter.diagnostics)
         }
+    }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>, reporter: DiagnosticReporter) {
+    val collector = FirDiagnosticsCollector.create(this, scopeSession)
+    for (file in firFiles) {
+        collector.collectDiagnostics(file, reporter)
     }
 }

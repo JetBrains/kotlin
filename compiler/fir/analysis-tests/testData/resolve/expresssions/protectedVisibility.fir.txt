@@ -13,7 +13,7 @@ FILE: protectedVisibility.kt
         }
 
         public final inner class Inner : R|kotlin/Any| {
-            public constructor(): R|Protected.Inner| {
+            public Protected.constructor(): R|Protected.Inner| {
                 super<R|kotlin/Any|>()
             }
 

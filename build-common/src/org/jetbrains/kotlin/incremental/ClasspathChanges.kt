@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.incremental.storage.FqNameExternalizer
-import org.jetbrains.kotlin.incremental.storage.LinkedHashSetExternalizer
+import org.jetbrains.kotlin.incremental.storage.SetExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolExternalizer
 import org.jetbrains.kotlin.name.FqName
 import java.io.*
@@ -24,13 +24,13 @@ sealed class ClasspathChanges : Serializable {
             private const val serialVersionUID = 0L
         }
 
-        lateinit var lookupSymbols: LinkedHashSet<LookupSymbol>
+        lateinit var lookupSymbols: Set<LookupSymbol> // Preferably ordered but not required
             private set
 
-        lateinit var fqNames: LinkedHashSet<FqName>
+        lateinit var fqNames: Set<FqName> // Preferably ordered but not required
             private set
 
-        constructor(lookupSymbols: LinkedHashSet<LookupSymbol>, fqNames: LinkedHashSet<FqName>) : this() {
+        constructor(lookupSymbols: Set<LookupSymbol>, fqNames: Set<FqName>) : this() {
             this.lookupSymbols = lookupSymbols
             this.fqNames = fqNames
         }
@@ -61,14 +61,14 @@ sealed class ClasspathChanges : Serializable {
 private object ClasspathChangesAvailableExternalizer : DataExternalizer<ClasspathChanges.Available> {
 
     override fun save(output: DataOutput, classpathChanges: ClasspathChanges.Available) {
-        LinkedHashSetExternalizer(LookupSymbolExternalizer).save(output, classpathChanges.lookupSymbols)
-        LinkedHashSetExternalizer(FqNameExternalizer).save(output, classpathChanges.fqNames)
+        SetExternalizer(LookupSymbolExternalizer).save(output, classpathChanges.lookupSymbols)
+        SetExternalizer(FqNameExternalizer).save(output, classpathChanges.fqNames)
     }
 
     override fun read(input: DataInput): ClasspathChanges.Available {
         return ClasspathChanges.Available(
-            lookupSymbols = LinkedHashSetExternalizer(LookupSymbolExternalizer).read(input),
-            fqNames = LinkedHashSetExternalizer(FqNameExternalizer).read(input)
+            lookupSymbols = SetExternalizer(LookupSymbolExternalizer).read(input),
+            fqNames = SetExternalizer(FqNameExternalizer).read(input)
         )
     }
 }

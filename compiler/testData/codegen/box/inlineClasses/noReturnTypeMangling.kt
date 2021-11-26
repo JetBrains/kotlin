@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
+// WITH_STDLIB
+// !LANGUAGE: -MangleClassMembersReturningInlineClasses
 
-inline class S(val x: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val x: String)
 
 class Test {
     fun getO() = S("O")

@@ -61,10 +61,13 @@ tasks.validatePlugins.configure {
 
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+    kotlin.filter.exclude("**/FileCheckTest.kt")
+    kotlin.filter.exclude("**/bitcode/**")
+    kotlin.filter.exclude("**/testing/**")
+    kotlin.filter.exclude("**/CompilationDatabase.kt")
+
     kotlin.srcDir("src/main/kotlin")
-    //kotlin.srcDir("tools/benchmarks/shared/src/main/kotlin")
     kotlin.srcDir("../../build-tools/src/main/kotlin")
-    //kotlin.srcDir("../../build-tools/src/main/kotlin")
     kotlin.srcDir("../../shared/src/library/kotlin")
     kotlin.srcDir("../../shared/src/main/kotlin")
     kotlin.srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")

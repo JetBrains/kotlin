@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.clientserver.TestProxy
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGER
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -23,9 +23,13 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.nameWithoutExtension
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
+import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
+import org.jetbrains.kotlin.test.services.runtimeClasspathProviders
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.containsBoxMethod
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -33,13 +37,11 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.lang.reflect.Method
-import java.net.URI
 import java.net.URL
 import java.net.URLClassLoader
-import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 
-class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
     }
@@ -134,8 +136,8 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
             )
         } else {
             val jdkKind = module.directives.singleOrZeroValue(JDK_KIND)
-            if (jdkKind?.requiresSeparateProcess == true) {
-                runSeparateJvmInstance(module, jdkKind, classLoader, classFileFactory)
+            if (jdkKind?.requiresSeparateProcess == true || REQUIRES_SEPARATE_PROCESS in module.directives) {
+                runSeparateJvmInstance(module, jdkKind ?: TestJdkKind.FULL_JDK, classLoader, classFileFactory)
             } else {
                 runBoxInCurrentProcess(
                     classLoader,
@@ -181,6 +183,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         classFileFactory: ClassFileFactory
     ): String {
         val jdkHome = when (jdkKind) {
+            TestJdkKind.FULL_JDK -> KtTestUtil.getJdk8Home()
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             else -> error("Unsupported JDK kind: $jdkKind")
@@ -192,26 +195,21 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
 
         val classPath = extractClassPath(module, classLoader, classFileFactory)
 
-        val mainFile = module.files.firstOrNull {
-            it.name == MainFunctionForBlackBoxTestsSourceProvider.BOX_MAIN_FILE_NAME && it.isAdditional
-        } ?: error("No file with main function was generated. Please check TODO source provider")
+        val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments() ?: run {
+            val mainFile = module.files.firstOrNull {
+                it.name == MainFunctionForBlackBoxTestsSourceProvider.BOX_MAIN_FILE_NAME && it.isAdditional
+            } ?: error("No file with main function was generated. Please check TODO source provider")
 
-        val mainFqName = listOfNotNull(
-            MainFunctionForBlackBoxTestsSourceProvider.detectPackage(mainFile),
-            "${mainFile.nameWithoutExtension}Kt"
-        ).joinToString(".")
+            val mainFqName = listOfNotNull(
+                MainFunctionForBlackBoxTestsSourceProvider.detectPackage(mainFile),
+                "${mainFile.nameWithoutExtension}Kt"
+            ).joinToString(".")
 
-        val command = listOfNotNull(
-            javaExe.absolutePath,
-            runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
-            "-ea",
-            runIf(ENABLE_JVM_PREVIEW in module.directives) { "--enable-preview" },
-            "-classpath",
-            classPath.joinToString(File.pathSeparator, transform = { File(it.toURI()).absolutePath }),
-            mainFqName,
-        )
-        val process = ProcessBuilder(command).start()
-        process.waitFor(1, TimeUnit.MINUTES)
+            listOf(mainFqName)
+        }
+
+        val process = launchSeparateJvmProcess(javaExe, module, classPath, mainClassAndArguments)
+        process.waitFor(3, TimeUnit.MINUTES)
         return try {
             when (process.exitValue()) {
                 0 -> "OK"
@@ -228,6 +226,24 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         } finally {
             process.outputStream.flush()
         }
+    }
+
+    protected open fun launchSeparateJvmProcess(
+        javaExe: File,
+        module: TestModule,
+        classPath: List<URL>,
+        mainClassAndArguments: List<String>
+    ): Process {
+        val command = listOfNotNull(
+            javaExe.absolutePath,
+            runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
+            "-ea",
+            runIf(ENABLE_JVM_PREVIEW in module.directives) { "--enable-preview" },
+            "-classpath",
+            classPath.joinToString(File.pathSeparator, transform = { File(it.toURI()).absolutePath }),
+        ) + mainClassAndArguments
+
+        return ProcessBuilder(command).start()
     }
 
     private fun invokeBoxInSeparateProcess(
@@ -268,7 +284,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         reportProblems: Boolean
     ): GeneratedClassLoader {
         val classLoader = createClassLoader(module, classFileFactory)
-        if (module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
+        if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
             val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, classLoader, reportProblems)
             if (!verificationSucceeded) {
                 assertions.fail { "Verification failed: see exceptions above" }
@@ -308,7 +324,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         }
 
         computeClasspath(rootModule, true)
-        testServices.runtimeClasspathProviders.flatMapTo(result) { it.runtimeClassPaths() }
+        testServices.runtimeClasspathProviders.flatMapTo(result) { it.runtimeClassPaths(rootModule) }
         return result
     }
 

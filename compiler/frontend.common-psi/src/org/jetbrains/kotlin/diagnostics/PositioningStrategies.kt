@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.tree.TokenSet
@@ -296,9 +297,28 @@ object PositioningStrategies {
     val TAILREC_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.TAILREC_KEYWORD)
 
     @JvmField
+    val OBJECT_KEYWORD: PositioningStrategy<KtObjectDeclaration> = object : PositioningStrategy<KtObjectDeclaration>() {
+        override fun mark(element: KtObjectDeclaration): List<TextRange> {
+            return markElement(element.getObjectKeyword() ?: element)
+        }
+    }
+
+    @JvmField
     val FIELD_KEYWORD: PositioningStrategy<KtBackingField> = object : DeclarationHeader<KtBackingField>() {
         override fun mark(element: KtBackingField): List<TextRange> {
             return markElement(element.fieldKeyword)
+        }
+    }
+
+    @JvmField
+    val PROPERTY_DELEGATE: PositioningStrategy<KtProperty> = object : DeclarationHeader<KtProperty>() {
+        override fun mark(element: KtProperty): List<TextRange> {
+            val delegate = element.delegate
+            return if (delegate != null) {
+                markElement(delegate)
+            } else {
+                DEFAULT.mark(element)
+            }
         }
     }
 
@@ -531,6 +551,30 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val REDUNDANT_NULLABLE: PositioningStrategy<KtTypeReference> = object : PositioningStrategy<KtTypeReference>() {
+        override fun mark(element: KtTypeReference): List<TextRange> {
+            var typeElement = element.typeElement
+            var question: ASTNode? = null
+            var prevQuestion: ASTNode? = null
+            var lastQuestion: ASTNode? = null
+            while (typeElement is KtNullableType) {
+                prevQuestion = question
+                question = typeElement.questionMarkNode
+                if (lastQuestion == null) {
+                    lastQuestion = question
+                }
+                typeElement = typeElement.innerType
+            }
+
+            if (lastQuestion != null) {
+                return markRange((prevQuestion ?: lastQuestion).psi, lastQuestion.psi)
+            }
+
+            return super.mark(element)
+        }
+    }
+
+    @JvmField
     val NULLABLE_TYPE: PositioningStrategy<KtNullableType> = object : PositioningStrategy<KtNullableType>() {
         override fun mark(element: KtNullableType): List<TextRange> {
             return markNode(element.questionMarkNode)
@@ -713,6 +757,7 @@ object PositioningStrategies {
         override fun mark(element: KtExpression): List<TextRange> {
             return when (element) {
                 is KtBinaryExpression -> mark(element.operationReference)
+                is KtBinaryExpressionWithTypeRHS -> mark(element.operationReference)
                 is KtUnaryExpression -> mark(element.operationReference)
                 else -> super.mark(element)
             }
@@ -879,6 +924,13 @@ object PositioningStrategies {
 
     val NON_FINAL_MODIFIER_OR_NAME: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.ABSTRACT_KEYWORD, KtTokens.OPEN_KEYWORD, KtTokens.SEALED_KEYWORD))
+
+    val DELEGATED_SUPERTYPE_BY_KEYWORD: PositioningStrategy<KtTypeReference> = object : PositioningStrategy<KtTypeReference>() {
+        override fun mark(element: KtTypeReference): List<TextRange> {
+            val parent = element.parent as? KtDelegatedSuperTypeEntry ?: return super.mark(element)
+            return markElement(parent.byKeywordNode.psi ?: element)
+        }
+    }
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for

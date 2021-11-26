@@ -10,17 +10,14 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
-import org.jetbrains.kotlin.fir.declarations.utils.collectEnumEntries
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind.OR
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -245,11 +242,11 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
     ) {
         val flags = Flags()
         whenExpression.accept(ConditionChecker, flags)
-        if (!flags.containsFalse) {
-            destination.add(WhenMissingCase.BooleanIsMissing.False)
-        }
         if (!flags.containsTrue) {
-            destination.add(WhenMissingCase.BooleanIsMissing.True)
+            destination.add(WhenMissingCase.BooleanIsMissing.TrueIsMissing)
+        }
+        if (!flags.containsFalse) {
+            destination.add(WhenMissingCase.BooleanIsMissing.FalseIsMissing)
         }
     }
 
@@ -342,7 +339,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                     if (firClass?.classKind == ClassKind.OBJECT) {
                         firClass.symbol
                     } else {
-                        firClass?.companionObject?.symbol
+                        firClass?.companionObjectSymbol
                     }
                 }
                 else -> {

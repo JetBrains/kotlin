@@ -2,7 +2,7 @@
 // IGNORE_FIR_DIAGNOSTICS
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(

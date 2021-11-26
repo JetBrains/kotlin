@@ -17,25 +17,37 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.com.google.common.base.Objects
 import org.jetbrains.kotlin.gradle.GradleVersionRequired.Companion.OLDEST_SUPPORTED
+import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 import org.junit.Assume
 
 sealed class GradleVersionRequired(val minVersion: String, val maxVersion: String?) {
     companion object {
-        const val OLDEST_SUPPORTED = "6.1.1"
+        const val OLDEST_SUPPORTED = minSupportedGradleVersion
 
-        val FOR_MPP_SUPPORT = AtLeast("6.1.1")
+        val FOR_MPP_SUPPORT = AtLeast(OLDEST_SUPPORTED)
     }
 
-    class Exact(version: String) : GradleVersionRequired(version, version)
+    class Exact(version: String) : GradleVersionRequired(version, version) {
+        override fun toString(): String = "Exact(${minVersion})"
+    }
 
-    class AtLeast(version: String) : GradleVersionRequired(version, null)
+    class AtLeast(version: String) : GradleVersionRequired(version, null) {
+        override fun toString(): String = "AtLeast(${minVersion}"
+    }
 
     class InRange(minVersion: String, maxVersion: String) : GradleVersionRequired(minVersion, maxVersion)
 
     class Until(maxVersion: String) : GradleVersionRequired(OLDEST_SUPPORTED, maxVersion)
 
     object None : GradleVersionRequired(OLDEST_SUPPORTED, null)
+
+    override fun equals(other: Any?): Boolean = other is GradleVersionRequired &&
+            minVersion == other.minVersion &&
+            maxVersion == other.maxVersion
+
+    override fun hashCode(): Int = java.util.Objects.hash(minVersion, maxVersion)
 }
 
 

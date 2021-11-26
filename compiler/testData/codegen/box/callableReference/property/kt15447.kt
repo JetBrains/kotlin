@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_LAZY
-//WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     var methodVar = "OK"

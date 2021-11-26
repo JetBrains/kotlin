@@ -1,4 +1,6 @@
 FILE: B.kt
+    package b
+
     public abstract class MyClass : R|kotlin/Any| {
         public constructor(): R|b/MyClass| {
             super<R|kotlin/Any|>()
@@ -12,6 +14,8 @@ FILE: B.kt
     public abstract interface I : R|kotlin/Any| {
     }
 FILE: A.kt
+    package a
+
     public final class YourClass : R|b/MyClass| {
         public constructor(): R|a/YourClass| {
             super<R|b/MyClass|>()

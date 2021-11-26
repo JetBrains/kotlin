@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
 
 dependencies {
@@ -20,7 +20,6 @@ kotlin {
             inputFileProperty.set(provider { compilation.npmProject.require("webpack/bin/webpack.js") }.map { RegularFile { File(it) } })
             dependsOn("browserDevelopmentWebpack")
             val configFile = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserDevelopmentWebpack").map { it.configFile }.get()
-            configFile.parentFile.listFiles().forEach { println(it)}
             args("configtest")
             args(configFile.absolutePath)
         }

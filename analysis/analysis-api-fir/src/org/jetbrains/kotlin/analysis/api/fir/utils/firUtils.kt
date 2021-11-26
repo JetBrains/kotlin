@@ -5,6 +5,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
@@ -22,6 +26,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
@@ -82,4 +88,12 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
             containingClass.classKind == ClassKind.OBJECT
 
     return if (canBeImported) callableId.asSingleFqName() else null
+}
+
+internal fun FirExpression.asKtInitializerValue(): KtInitializerValue {
+    val ktExpression = psi as? KtExpression
+    return when (val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantExpression(this)) {
+        null -> KtNonConstantInitializerValue(ktExpression)
+        else -> KtConstantInitializerValue(evaluated, ktExpression)
+    }
 }

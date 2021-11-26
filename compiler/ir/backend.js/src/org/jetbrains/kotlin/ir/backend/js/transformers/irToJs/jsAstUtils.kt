@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -40,6 +43,13 @@ fun <T : JsNode> IrWhen.toJsNode(
             val condition = br.condition.accept(IrElementToJsExpressionTransformer(), data)
             node(condition, body, n)
         }
+    }
+
+fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
+    if (receiver == null || name.isValidES5Identifier()) {
+        JsNameRef(JsName(name, false), receiver)
+    } else {
+        JsArrayAccess(receiver, JsStringLiteral(name))
     }
 
 fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(JsBinaryOperator.ASG, left, right)
@@ -76,9 +86,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
     functionParams.forEach { function.addParameter(it) }
-    if (declaration.isSuspend) {
-        function.addParameter(JsName(Namer.CONTINUATION)) // TODO: Use namer?
-    }
+    check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
 
     return function
 }
@@ -110,16 +118,26 @@ fun translateCall(
     val jsExtensionReceiver = expression.extensionReceiver?.accept(transformer, context)
     val arguments = translateCallArguments(expression, context, transformer)
 
-    // Transform external property accessor call
-    // @JsName-annotated external property accessors are translated as function calls
+    // Transform external and interface's property accessor call
+    // @JsName-annotated external and interface's property accessors are translated as function calls
     if (function.getJsName() == null) {
         val property = function.correspondingPropertySymbol?.owner
-        if (property != null && property.isEffectivelyExternal()) {
-            val nameRef = JsNameRef(context.getNameForProperty(property), jsDispatchReceiver)
+        if (
+            property != null &&
+            (property.isEffectivelyExternal() || property.isExportedMember())
+        ) {
+            val propertyName = context.getNameForProperty(property)
+            val nameRef = when (jsDispatchReceiver) {
+                null -> JsNameRef(propertyName)
+                else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
+            }
             return when (function) {
                 property.getter -> nameRef
                 property.setter -> jsAssignment(nameRef, arguments.single())
-                else -> error("Function must be an accessor of corresponding property")
+                else -> compilationException(
+                    "Function must be an accessor of corresponding property",
+                    function
+                )
             }
         }
     }
@@ -129,17 +147,22 @@ fun translateCall(
     }
 
     expression.superQualifierSymbol?.let { superQualifier ->
-        val (target, klass) = if (superQualifier.owner.isInterface) {
+        val (target: IrSimpleFunction, klass: IrClass) = if (superQualifier.owner.isInterface) {
             val impl = function.resolveFakeOverride()!!
             Pair(impl, impl.parentAsClass)
         } else {
             Pair(function, superQualifier.owner)
         }
 
-        val qualifierName = context.getNameForClass(klass).makeRef()
-        val targetName = context.getNameForMemberFunction(target)
-        val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
-        val callRef = JsNameRef(Namer.CALL_FUNCTION, qPrototype)
+        val callRef = if (klass.isInterface && target.body != null) {
+            JsNameRef(Namer.CALL_FUNCTION, JsNameRef(context.getNameForStaticDeclaration(target)))
+        } else {
+            val qualifierName = context.getNameForClass(klass).makeRef()
+            val targetName = context.getNameForMemberFunction(target)
+            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
+            JsNameRef(Namer.CALL_FUNCTION, qPrototype)
+        }
+
         return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
     }
 
@@ -153,7 +176,7 @@ fun translateCall(
 
     val ref = when (jsDispatchReceiver) {
         null -> JsNameRef(symbolName)
-        else -> JsNameRef(symbolName, jsDispatchReceiver)
+        else -> jsElementAccess(symbolName.ident, jsDispatchReceiver)
     }
 
     return if (isExternalVararg) {
@@ -170,12 +193,12 @@ fun translateCall(
         if (jsDispatchReceiver != null) {
             if (argumentsAsSingleArray is JsArrayLiteral) {
                 JsInvocation(
-                    JsNameRef(symbolName, jsDispatchReceiver),
+                    jsElementAccess(symbolName.ident, jsDispatchReceiver),
                     argumentsAsSingleArray.expressions
                 )
             } else {
                 // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-                val receiverName = JsName("\$externalVarargReceiverTmp")
+                val receiverName = JsName("\$externalVarargReceiverTmp", false)
                 val receiverRef = receiverName.makeRef()
 
                 val iifeFun = JsFunction(
@@ -184,7 +207,7 @@ fun translateCall(
                         JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
                         JsReturn(
                             JsInvocation(
-                                JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
+                                JsNameRef("apply", jsElementAccess(symbolName.ident, receiverRef)),
                                 listOf(
                                     receiverRef,
                                     argumentsAsSingleArray
@@ -195,20 +218,15 @@ fun translateCall(
                     "VarargIIFE"
                 )
 
-                val iifeFunHasContext = (jsDispatchReceiver as? JsNameRef)?.qualifier is JsThisRef
-                if (iifeFunHasContext) {
-                    JsInvocation(
-                        // Create scope for temporary variable holding dispatch receiver
-                        // It is used both during method reference and passing `this` value to `apply` function.
-                        JsNameRef(
-                            "call",
-                            iifeFun
-                        ),
-                        JsThisRef()
-                    )
-                } else {
-                    JsInvocation(iifeFun)
-                }
+                JsInvocation(
+                    // Create scope for temporary variable holding dispatch receiver
+                    // It is used both during method reference and passing `this` value to `apply` function.
+                    JsNameRef(
+                        "call",
+                        iifeFun
+                    ),
+                    JsThisRef()
+                )
             }
         } else {
             if (argumentsAsSingleArray is JsArrayLiteral) {
@@ -336,9 +354,8 @@ fun translateCallArguments(
         .dropLastWhile { it == null }
         .map { it ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1)) }
 
-    return if (expression.symbol.isSuspend) {
-        arguments + context.continuation
-    } else arguments
+    check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
+    return arguments
 }
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =
@@ -476,7 +493,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: 
 
     if (node.startOffset == UNDEFINED_OFFSET || node.endOffset == UNDEFINED_OFFSET) return
 
-    val fileEntry = context.currentFile?.fileEntry ?: return
+    val fileEntry = context.currentFile.fileEntry
 
     val path = fileEntry.name
     val startLine = fileEntry.getLineNumber(node.startOffset)

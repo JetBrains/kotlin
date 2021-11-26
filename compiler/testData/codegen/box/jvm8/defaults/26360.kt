@@ -1,6 +1,6 @@
 // JVM_TARGET: 1.8
 // !JVM_DEFAULT_MODE: enable
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 interface Base {
     fun value(): String

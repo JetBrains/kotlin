@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun build(): List<() -> Int> {
     val r = ArrayList<() -> Int>()

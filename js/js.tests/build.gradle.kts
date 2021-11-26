@@ -27,10 +27,16 @@ val testJsRuntime by configurations.creating {
 }
 
 dependencies {
+    testApiJUnit5(vintageEngine = true)
     testRuntimeOnly(intellijDep())
 
     testApi(protobufFull())
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
@@ -70,7 +76,7 @@ dependencies {
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
 
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${commonVer("org.junit", "junit-bom")}")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -164,6 +170,20 @@ val unzipV8 by task<Copy> {
     into(unpackedDir)
 }
 
+val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+val installTsDependencies by task<NpmTask> {
+    workingDir.set(testDataDir)
+    args.set(listOf("install"))
+}
+
+val generateTypeScriptTests by task<NpmTask>  {
+    dependsOn(installTsDependencies)
+
+    workingDir.set(testDataDir)
+    args.set(listOf("run", "generateTypeScriptTests"))
+}
+
 fun Test.setupV8() {
     dependsOn(unzipV8)
     val v8Path = unzipV8.get().destinationDir
@@ -184,6 +204,11 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     inputs.files(rootDir.resolve("js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js"))
 
     dependsOn(":dist")
+
+    if (!project.hasProperty("teamcity")) {
+        dependsOn(generateTypeScriptTests)
+    }
+
     if (jsEnabled) {
         dependsOn(testJsRuntime)
         inputs.files(testJsRuntime)
@@ -203,11 +228,10 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
         inputs.dir(rootDir.resolve("libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"))
     }
 
-    exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/es6/semantics/*")
+    exclude("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
 
-    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/*")
+    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/*")
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     setUpBoxTests()
@@ -235,11 +259,9 @@ fun Test.setUpBoxTests() {
     }
 }
 
-val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
-
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
-    systemProperty("kotlin.js.ir.pir", "false")
+    maxHeapSize = "3g"
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
@@ -251,50 +273,29 @@ projectTest(parallel = true) {
 
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
-    outputs.dir("$buildDir/out-pir")
+
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
 
     configureTestDistribution()
 }
 
-projectTest("jsTest", true) {
+projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
+    maxHeapSize = "3g"
+    useJUnitPlatform()
 }
 
-projectTest("jsIrTest", true) {
-    systemProperty("kotlin.js.ir.pir", "false")
+projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+    maxHeapSize = "3g"
+    useJUnitPlatform()
 }
 
-projectTest("jsEs6IrTest", true) {
-    systemProperty("kotlin.js.ir.pir", "false")
-    systemProperty("kotlin.js.ir.es6", "true")
-
-    dependsOn(":dist")
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
-    systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
-
-    exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/semantics/*")
-
-    include("org/jetbrains/kotlin/js/test/es6/semantics/*")
-
-    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
-    setUpBoxTests()
-}
-
-projectTest("jsPirTest", true) {
-    systemProperty("kotlin.js.ir.skipRegularMode", "true")
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
-}
-
-projectTest("quickTest", true) {
+projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
+    maxHeapSize = "3g"
     systemProperty("kotlin.js.skipMinificationTest", "true")
+    useJUnitPlatform()
 }
 
 testsJar {}
@@ -339,10 +340,24 @@ projectTest("wasmTest", true) {
     setupV8()
     setupSpiderMonkey()
 
-    include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
+    include("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
 
-    dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
-    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
+    dependsOn(":kotlin-stdlib-wasm:compileKotlinWasm")
+    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/wasm/main")
+
+    dependsOn(":kotlin-test:kotlin-test-wasm:compileKotlinWasm")
+    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/wasm/main")
 
     setUpBoxTests()
+}
+
+projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
+    workingDir = rootDir
+
+    include("org/jetbrains/kotlin/incremental/*")
+
+    dependsOn(":dist")
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
 }

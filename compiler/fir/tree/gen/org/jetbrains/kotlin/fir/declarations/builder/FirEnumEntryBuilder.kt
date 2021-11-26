@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @FirBuilderDsl
 class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var returnTypeRef: FirTypeRef
     val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
+    lateinit var returnTypeRef: FirTypeRef
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
@@ -60,9 +60,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             typeParameters,
             status,
+            returnTypeRef,
             deprecation,
             containerSource,
             dispatchReceiverType,

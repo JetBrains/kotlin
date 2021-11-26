@@ -72,7 +72,7 @@ class PackageQualifierReceiver(
     useSiteSession: FirSession
 ) : QualifierReceiver(explicitReceiver) {
     val scope = FirPackageMemberScope(explicitReceiver.packageFqName, useSiteSession)
-    override fun classifierScope(): FirScope? {
+    override fun classifierScope(): FirScope {
         return FirOnlyClassifiersScope(scope)
     }
 

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 suspend fun f(): Int {
   return 4
 }

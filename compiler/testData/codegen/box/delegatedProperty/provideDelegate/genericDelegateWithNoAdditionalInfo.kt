@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// FIR status: in progress (delegate branch)
+// WITH_STDLIB
 
 import kotlin.reflect.KProperty
 

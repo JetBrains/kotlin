@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.contracts.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirResolvedContractDescriptionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val effects: MutableList<FirEffectDeclaration>,
     override val unresolvedEffects: MutableList<FirStatement>,
 ) : FirResolvedContractDescription() {

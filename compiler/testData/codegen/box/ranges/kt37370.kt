@@ -1,5 +1,5 @@
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun testContinue1() {
     for (i in 0..1) {

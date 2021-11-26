@@ -38,15 +38,30 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
         return false
     }
 
-    private fun externalFunction(name: String, type: LLVMTypeRef) =
-            context.llvm.externalFunction(name, type, context.stdlibModule.llvmSymbolOrigin)
-
     private fun moduleFunction(name: String) =
             LLVMGetNamedFunction(context.llvmModule, name) ?: throw IllegalStateException("$name function is not available")
 
-    val getMethodImpl = externalFunction("class_getMethodImplementation", functionType(pointerType(functionType(voidType, false)), false, int8TypePtr, int8TypePtr))
-    val getClass = externalFunction("object_getClass", functionType(int8TypePtr, false, int8TypePtr))
-    val getSuperClass = externalFunction("class_getSuperclass", functionType(int8TypePtr, false, int8TypePtr))
+    val getMethodImpl = context.llvm.externalFunction(LlvmFunctionProto(
+            "class_getMethodImplementation",
+            LlvmRetType(pointerType(functionType(voidType, false))),
+            listOf(LlvmParamType(int8TypePtr), LlvmParamType(int8TypePtr)),
+            origin = context.stdlibModule.llvmSymbolOrigin)
+    )
+
+    val getClass = context.llvm.externalFunction(LlvmFunctionProto(
+            "object_getClass",
+            LlvmRetType(int8TypePtr),
+            listOf(LlvmParamType(int8TypePtr)),
+            origin = context.stdlibModule.llvmSymbolOrigin)
+    )
+
+    val getSuperClass = context.llvm.externalFunction(LlvmFunctionProto(
+            "class_getSuperclass",
+            LlvmRetType(int8TypePtr),
+            listOf(LlvmParamType(int8TypePtr)),
+            origin = context.stdlibModule.llvmSymbolOrigin)
+    )
+
     val checkerFunction = moduleFunction("Kotlin_mm_checkStateAtExternalFunctionCall")
 
     private data class ExternalCallInfo(val name: String?, val calledPtr: LLVMValueRef)
@@ -102,10 +117,10 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
                     callSiteDescription = "$functionName (over objc_msgSend)"
                     calledName = null
                     val firstArgI8Ptr = LLVMBuildBitCast(builder, LLVMGetArgOperand(call, 0), int8TypePtr, "")
-                    val firstArgClassPtr = LLVMBuildCall(builder, getClass, listOf(firstArgI8Ptr).toCValues(), 1, "")
+                    val firstArgClassPtr = LLVMBuildCall(builder, getClass.llvmValue, listOf(firstArgI8Ptr).toCValues(), 1, "")
                     val isNil = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ, firstArgI8Ptr, LLVMConstNull(int8TypePtr), "")
                     val selector = LLVMGetArgOperand(call, 1)
-                    val calledPtrLlvmIfNotNilFunPtr = LLVMBuildCall(builder, getMethodImpl, listOf(firstArgClassPtr, selector).toCValues(), 2, "")
+                    val calledPtrLlvmIfNotNilFunPtr = LLVMBuildCall(builder, getMethodImpl.llvmValue, listOf(firstArgClassPtr, selector).toCValues(), 2, "")
                     val calledPtrLlvmIfNotNil = LLVMBuildBitCast(builder, calledPtrLlvmIfNotNilFunPtr, int8TypePtr, "")
                     val calledPtrLlvmIfNil = LLVMConstIntToPtr(Int64(MSG_SEND_TO_NULL).llvm, int8TypePtr)
                     calledPtrLlvm = LLVMBuildSelect(builder, isNil, calledPtrLlvmIfNil, calledPtrLlvmIfNotNil, "")
@@ -117,8 +132,8 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
                     val superStruct = LLVMGetArgOperand(call, 0)
                     val superClassPtrPtr = LLVMBuildGEP(builder, superStruct, listOf(Int32(0).llvm, Int32(1).llvm).toCValues(), 2, "")
                     val superClassPtr = LLVMBuildLoad(builder, superClassPtrPtr, "")
-                    val classPtr = LLVMBuildCall(builder, getSuperClass, listOf(superClassPtr).toCValues(), 1, "")
-                    val calledPtrLlvmFunPtr = LLVMBuildCall(builder, getMethodImpl, listOf(classPtr, LLVMGetArgOperand(call, 1)).toCValues(), 2, "")
+                    val classPtr = LLVMBuildCall(builder, getSuperClass.llvmValue, listOf(superClassPtr).toCValues(), 1, "")
+                    val calledPtrLlvmFunPtr = LLVMBuildCall(builder, getMethodImpl.llvmValue, listOf(classPtr, LLVMGetArgOperand(call, 1)).toCValues(), 2, "")
                     calledPtrLlvm = LLVMBuildBitCast(builder, calledPtrLlvmFunPtr, int8TypePtr, "")
                 }
                 else -> {

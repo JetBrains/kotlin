@@ -14,16 +14,9 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
 
 @DisplayName("Gradle daemon memory leak")
-@DaemonsGradlePluginTests
-class GradleDaemonMemoryIT : KGPBaseTest() {
+class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-
-    @AfterEach
-    fun tearDown() {
-        // Stops Gradle and Kotlin daemons, so new run will start them again
-        ConnectorServices.reset()
-    }
 
     // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
     // Setting user.variant to different value implies a new daemon process will be created.

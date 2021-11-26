@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions +FunctionalInterfaceConversion
 // WITH_REFLECT
 // FULL_JDK
 // TARGET_BACKEND: JVM

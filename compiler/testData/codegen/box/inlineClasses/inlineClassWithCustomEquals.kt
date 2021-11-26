@@ -1,11 +1,14 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: not supported in JVM
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-@file:Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
+@file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
-inline class Z(val data: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val data: Int) {
     override fun equals(other: Any?): Boolean =
         other is Z &&
                 data % 256 == other.data % 256

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -35,9 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -45,7 +41,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
-    variableStorage: VariableStorage,
+    variableStorage: VariableStorageImpl,
     flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
     val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>,
     val preliminaryLoopVisitor: PreliminaryLoopVisitor
@@ -77,7 +73,7 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
     companion object {
         fun <FLOW : Flow> empty(session: FirSession): DataFlowAnalyzerContext<FLOW> =
             DataFlowAnalyzerContext(
-                ControlFlowGraphBuilder(), VariableStorage(session),
+                ControlFlowGraphBuilder(), VariableStorageImpl(session),
                 mutableMapOf(), mutableMapOf(), PreliminaryLoopVisitor()
             )
     }
@@ -89,8 +85,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private val context: DataFlowAnalyzerContext<FLOW>
 ) {
     companion object {
-        internal val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
-
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
             dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>
@@ -102,7 +96,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 private val visibilityChecker = components.session.visibilityChecker
 
                 override val logicSystem: PersistentLogicSystem =
-                    object : PersistentLogicSystem(components.session.inferenceComponents.ctx) {
+                    object : PersistentLogicSystem(components.session.typeContext) {
                         override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {
                             val symbol = variable.identifier.symbol
 
@@ -168,8 +162,24 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Requests -----------------------------------
 
-    fun isAccessToUnstableLocalVariable(qualifiedAccessExpression: FirQualifiedAccessExpression): Boolean {
+    fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean {
+        val qualifiedAccessExpression = when (expression) {
+            is FirQualifiedAccessExpression -> expression
+            is FirWhenSubjectExpression -> {
+                val whenExpression = expression.whenRef.value
+                when {
+                    whenExpression.subjectVariable != null -> return true
+                    else -> whenExpression.subject as? FirQualifiedAccessExpression
+                }
+            }
+            else -> null
+        }  ?: return false
         return context.firLocalVariableAssignmentAnalyzer?.isAccessToUnstableLocalVariable(qualifiedAccessExpression) == true
+    }
+
+    fun getTypeUsingSmartcastInfo(whenSubjectExpression: FirWhenSubjectExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
+        val symbol = whenSubjectExpression.symbol ?: return null
+        return getTypeUsingSmartcastInfo(symbol, whenSubjectExpression)
     }
 
     fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
@@ -178,8 +188,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
          * If there is no useful information there is no data flow variable also
          */
         val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.symbol ?: return null
+        return getTypeUsingSmartcastInfo(symbol, qualifiedAccessExpression)
+    }
+
+    private fun getTypeUsingSmartcastInfo(
+        symbol: FirBasedSymbol<*>,
+        expression: FirExpression
+    ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = graphBuilder.lastNode.flow
-        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, qualifiedAccessExpression, flow) ?: return null
+        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, expression, flow) ?: return null
         val stability = variable.stability
         val result = mutableListOf<ConeKotlinType>()
         flow.directAliasMap[variable]?.let {
@@ -390,7 +407,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
-                val isNotNullCheck = type.nullability == ConeNullability.NOT_NULL
+                val isNotNullCheck = !type.canBeNull
                 val isRegularIs = operation == FirOperation.IS
                 if (operandVariable.isReal()) {
                     val hasTypeInfo = operandVariable typeEq type
@@ -654,16 +671,32 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // Add `Any` to the set of possible types; the intersection type `T? & Any` will be reduced to `T` after smartcast.
         val (node, unionNode) = graphBuilder.exitCheckNotNullCall(checkNotNullCall, callCompleted)
         node.mergeIncomingFlow()
-        val argument = checkNotNullCall.argument
-        variableStorage.getOrCreateRealVariable(node.previousFlow, argument.symbol, argument)?.let { operandVariable ->
-            node.flow.addTypeStatement(operandVariable typeEq any)
-            logicSystem.approveStatementsInsideFlow(
-                node.flow,
-                operandVariable notEq null,
-                shouldRemoveSynthetics = true,
-                shouldForkFlow = false
-            )
+
+        fun FirExpression.propagateNotNullInfo() {
+            val symbol = this.symbol
+            if (symbol != null) {
+                variableStorage.getOrCreateRealVariable(node.previousFlow, symbol, this)?.let { operandVariable ->
+                    node.flow.addTypeStatement(operandVariable typeEq any)
+                    logicSystem.approveStatementsInsideFlow(
+                        node.flow,
+                        operandVariable notEq null,
+                        shouldRemoveSynthetics = true,
+                        shouldForkFlow = false
+                    )
+                }
+            }
+            when (this) {
+                is FirSafeCallExpression -> receiver.propagateNotNullInfo()
+                is FirTypeOperatorCall -> {
+                    if (operation == FirOperation.AS || operation == FirOperation.SAFE_AS) {
+                        argument.propagateNotNullInfo()
+                    }
+                }
+            }
         }
+
+        checkNotNullCall.argument.propagateNotNullInfo()
+
         unionNode?.let { unionFlowFromArguments(it) }
     }
 
@@ -725,6 +758,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
         whenExitNode.mergeIncomingFlow()
+    }
+
+    fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression) {
+        graphBuilder.exitWhenSubjectExpression(expression).mergeIncomingFlow()
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -877,7 +914,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         safeCall.receiver.let { receiver ->
             val type = receiver.coneType.takeIf { it.isMarkedNullable }
-                ?.withNullability(ConeNullability.NOT_NULL, components.session.typeContext)
+                ?.makeConeTypeDefinitelyNotNullOrNotNull(components.session.typeContext)
                 ?: return@let
 
             val variable = variableStorage.getOrCreateVariable(flow, receiver)
@@ -1055,10 +1092,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitConstExpression(constExpression).mergeIncomingFlow()
     }
 
-    fun exitLocalVariableDeclaration(variable: FirProperty) {
+    fun exitLocalVariableDeclaration(variable: FirProperty, hadExplicitType: Boolean) {
         val node = graphBuilder.exitVariableDeclaration(variable).mergeIncomingFlow()
         val initializer = variable.initializer ?: return
-        exitVariableInitialization(node, initializer, variable, assignment = null)
+        exitVariableInitialization(node, initializer, variable, assignment = null, hadExplicitType)
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
@@ -1066,7 +1103,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val property = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty ?: return
         // TODO: add unstable smartcast
         if (property.isLocal || !property.isVar) {
-            exitVariableInitialization(node, assignment.rValue, property, assignment)
+            exitVariableInitialization(node, assignment.rValue, property, assignment, hasExplicitType = false)
         }
         processConditionalContract(assignment)
     }
@@ -1075,7 +1112,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node: CFGNode<*>,
         initializer: FirExpression,
         property: FirProperty,
-        assignment: FirVariableAssignment?
+        assignment: FirVariableAssignment?,
+        hasExplicitType: Boolean,
     ) {
         val flow = node.flow
         val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(
@@ -1093,13 +1131,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)
             ?.let { initializerVariable ->
-                val isInitializerStable = initializerVariable.stability == PropertyStability.STABLE_VALUE ||
-                        (initializerVariable.stability == PropertyStability.LOCAL_VAR &&
-                                initializer is FirQualifiedAccessExpression &&
-                                !isAccessToUnstableLocalVariable(initializer))
+                val isInitializerStable =
+                    initializerVariable.isStable || (initializerVariable.hasLocalStability && initializer.isAccessToStableVariable())
 
-                if (isInitializerStable && (propertyVariable.stability == PropertyStability.STABLE_VALUE || propertyVariable.stability == PropertyStability.LOCAL_VAR)
-                ) {
+                if (!hasExplicitType && isInitializerStable && (propertyVariable.hasLocalStability || propertyVariable.isStable)) {
                     logicSystem.addLocalVariableAlias(
                         flow, propertyVariable,
                         RealVariableAndType(initializerVariable, initializer.coneType)
@@ -1127,6 +1162,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
         }
     }
+
+    private fun FirExpression.isAccessToStableVariable(): Boolean =
+        this is FirQualifiedAccessExpression && !isAccessToUnstableLocalVariable(this)
+
+    private val RealVariable.isStable get() = stability == PropertyStability.STABLE_VALUE
+    private val RealVariable.hasLocalStability get() = stability == PropertyStability.LOCAL_VAR
 
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {

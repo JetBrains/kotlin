@@ -1,5 +1,5 @@
 // FIR_IGNORE
-// WITH_RUNTIME
+// WITH_STDLIB
 //                            foo.a: Int
 //                            │ fun (Int).compareTo(Int): Int
 //                            │ │ foo.b: Int

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -19,23 +20,20 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.lowerIfFlexible
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.*
 
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (!context.languageVersionSettings.needReport()) return
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
         for ((valueParameter, arguments) in resolvedCall.valueArguments) {
             val expectedType = if (valueParameter.isVararg) {
                 valueParameter.varargElementType ?: continue
@@ -52,11 +50,6 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         }
     }
 
-    private fun LanguageVersionSettings.needReport(): Boolean {
-        return supportsFeature(LanguageFeature.ReportChangingIntegerOperatorResolve) &&
-                !supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)
-    }
-
     @JvmStatic
     fun checkArgument(
         expectedType: KotlinType,
@@ -65,7 +58,7 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         trace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (!languageVersionSettings.needReport()) return
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
         val type = expectedType.lowerIfFlexible()
         if (type.isPrimitiveNumberOrNullableType()) {
             checkArgumentImpl(type, KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)
@@ -91,9 +84,10 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
 
         val compileTimeValue = bindingContext[BindingContext.COMPILE_TIME_VALUE, argumentExpression] ?: return
 
-        val expressionType = when (compileTimeValue) {
+        val newExpressionType = when (compileTimeValue) {
             is IntegerValueTypeConstant -> {
-                val valueTypeConstructor = compileTimeValue.unknownIntegerType.constructor as? IntegerLiteralTypeConstructor ?: return
+                val currentExpressionType = compileTimeValue.unknownIntegerType
+                val valueTypeConstructor = currentExpressionType.constructor as? IntegerLiteralTypeConstructor ?: return
                 valueTypeConstructor.getApproximatedType()
             }
             is TypedCompileTimeConstant -> {
@@ -110,8 +104,11 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
             }
             else -> return
         }
-        if (expressionType.constructor != expectedType.constructor) {
-            trace.report(Errors.INTEGER_OPERATOR_RESOLVE_WILL_CHANGE.on(argumentExpression, expressionType))
+        if (newExpressionType.constructor != expectedType.constructor) {
+            val willBeConversion = newExpressionType.isInt() && expectedType.makeNotNullable().isLong()
+            if (!willBeConversion) {
+                trace.report(Errors.INTEGER_OPERATOR_RESOLVE_WILL_CHANGE.on(argumentExpression, newExpressionType))
+            }
         }
     }
 
@@ -125,6 +122,5 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         "times", "div", "rem", "shl", "shr", "ushr", "and", "or",
         "xor", "unaryPlus", "unaryMinus", "inv",
     ).mapTo(mutableSetOf()) { FqName.fromSegments(listOf("kotlin", "Int", it)) }
-
 }
 

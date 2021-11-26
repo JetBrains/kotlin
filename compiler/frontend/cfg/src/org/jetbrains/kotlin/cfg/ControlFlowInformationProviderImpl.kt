@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cfg
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.TailRecursionKind.*
@@ -43,14 +44,10 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.findDestructuredVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.getDispatchReceiverWithSmartCast
-import org.jetbrains.kotlin.resolve.calls.util.hasThisOrNoDispatchReceiver
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -410,7 +407,15 @@ class ControlFlowInformationProviderImpl private constructor(
                             report(Errors.UNINITIALIZED_ENUM_ENTRY.on(element, classDescriptor), ctxt)
                         ClassKind.OBJECT -> if (classDescriptor.isCompanionObject) {
                             val container = classDescriptor.containingDeclaration
-                            if (container is ClassDescriptor && container.kind == ClassKind.ENUM_CLASS) {
+                            /*
+                             * ProhibitAccessToEnumCompanionMembersInEnumConstructorCall feature enabled then UNINITIALIZED_ENUM_COMPANION
+                             *   will be reported from EnumCompanionInEnumConstructorCallChecker
+                             */
+                            if (
+                                container is ClassDescriptor &&
+                                container.kind == ClassKind.ENUM_CLASS &&
+                                !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAccessToEnumCompanionMembersInEnumConstructorCall)
+                            ) {
                                 report(Errors.UNINITIALIZED_ENUM_COMPANION.on(element, container), ctxt)
                             }
                         }
@@ -485,9 +490,9 @@ class ControlFlowInformationProviderImpl private constructor(
 
             val receiverValue = expression.getResolvedCall(trace.bindingContext)?.getDispatchReceiverWithSmartCast()
 
-            if (DescriptorVisibilities.isVisible(receiverValue, variableDescriptor, descriptor)
+            if (DescriptorVisibilityUtils.isVisible(receiverValue, variableDescriptor, descriptor, languageVersionSettings)
                 && setterDescriptor != null
-                && !DescriptorVisibilities.isVisible(receiverValue, setterDescriptor, descriptor)
+                && !DescriptorVisibilityUtils.isVisible(receiverValue, setterDescriptor, descriptor, languageVersionSettings)
             ) {
                 report(
                     Errors.INVISIBLE_SETTER.on(
@@ -943,6 +948,13 @@ class ControlFlowInformationProviderImpl private constructor(
                 } else {
                     checkImplicitCastOnConditionalExpression(element)
                 }
+            } else if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis)) {
+                val parent = element.deparenthesizedParent
+                if (parent is KtBinaryExpression) {
+                    if (parent.operationToken === KtTokens.ELVIS) {
+                        trace.report(INVALID_IF_AS_EXPRESSION_WARNING.on(element.getIfKeyword()))
+                    }
+                }
             }
         }
     }
@@ -1033,6 +1045,18 @@ class ControlFlowInformationProviderImpl private constructor(
                         } else {
                             // report info if subject is sealed class and warning if it is enum
                             checkWhenStatement(subjectType, element, context)
+                        }
+                    }
+                }
+                if (
+                    !usedAsExpression &&
+                    missingCases.isNotEmpty() &&
+                    !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis)
+                ) {
+                    val parent = element.deparenthesizedParent
+                    if (parent is KtBinaryExpression) {
+                        if (parent.operationToken === KtTokens.ELVIS) {
+                            trace.report(NO_ELSE_IN_WHEN_WARNING.on(element, missingCases))
                         }
                     }
                 }
@@ -1355,4 +1379,13 @@ class ControlFlowInformationProviderImpl private constructor(
                     || diagnosticFactory === UNUSED_ANONYMOUS_PARAMETER
                     || diagnosticFactory === UNUSED_CHANGED_VALUE
     }
+
+    private val PsiElement.deparenthesizedParent: PsiElement
+        get() {
+            var result = parent
+            while (result is KtParenthesizedExpression || result is KtLabeledExpression || result is KtAnnotatedExpression) {
+                result = result.parent
+            }
+            return result
+        }
 }

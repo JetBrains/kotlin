@@ -1,5 +1,5 @@
-// CURIOUS_ABOUT writeToParcel, createFromParcel
-// WITH_RUNTIME
+// CURIOUS_ABOUT: writeToParcel, createFromParcel
+// WITH_STDLIB
 
 package test
 

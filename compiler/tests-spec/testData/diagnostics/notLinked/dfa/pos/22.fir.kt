@@ -1,6 +1,7 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+// WITH_EXTENDED_CHECKERS
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
@@ -84,8 +85,8 @@ fun case_8(x: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?) {
-    if (!!!(x !is TypealiasNullableStringIndirect?)) else {
-        if (!!(x !is TypealiasNullableStringIndirect?)) else {
+    if (!!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
+        if (!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>?.get(0)
         }
@@ -118,7 +119,7 @@ fun case_11(x: Any?) {
 inline fun <reified T, reified K>case_12(x: Any?) {
     if (x is T) {
         if (<!USELESS_IS_CHECK!>x is T<!> is K) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         }
     }
 }
@@ -127,7 +128,7 @@ inline fun <reified T, reified K>case_12(x: Any?) {
 inline fun <reified T, reified K>case_13(x: Any?) {
     if (x is T) {
         if (x is K) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!! & K!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T & K")!>x<!>
         }
     }
 }
@@ -136,7 +137,7 @@ inline fun <reified T, reified K>case_13(x: Any?) {
 inline fun <reified T, reified K>case_14(x: Any?) {
     if (x is T) {
         if (<!USELESS_IS_CHECK!>x !is T<!>) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         }
     }
 }
@@ -145,7 +146,7 @@ inline fun <reified T, reified K>case_14(x: Any?) {
 inline fun <reified T, reified K>case_15(x: Any?) {
     if (x !is T) {
         if (x is T) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         }
     }
 }

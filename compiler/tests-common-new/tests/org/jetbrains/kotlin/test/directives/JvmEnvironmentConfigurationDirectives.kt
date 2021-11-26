@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.JVMAssertionsMode
-import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
-import org.jetbrains.kotlin.config.JvmStringConcat
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -25,13 +22,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val FULL_JDK by directive("Add full java standard library to classpath")
     val STDLIB_JDK8 by directive("Add Java 8 stdlib to classpath")
 
-    val WITH_RUNTIME by directive(
-        description = """
-            Add Kotlin stdlib to classpath
-            This directive is deprecated, use WITH_STDLIB instead
-        """.trimIndent()
-    )
-    val WITH_STDLIB by directive("Add Kotlin runtime to classpath")
     val WITH_REFLECT by directive("Add Kotlin reflect to classpath")
     val NO_RUNTIME by directive("Don't add any runtime libs to classpath")
 
@@ -86,7 +76,8 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable old mangling scheme for inline classes"
     )
 
-    val SERIALIZE_IR by directive(
-        description = "Enable serialization of JVM IR"
+    val SERIALIZE_IR by enumDirective(
+        description = "Enable serialization of JVM IR",
+        additionalParser = JvmSerializeIrMode.Companion::fromString
     )
 }

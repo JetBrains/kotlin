@@ -1,0 +1,19 @@
+package
+
+public fun testWithSubject_ok(/*0*/ x: kotlin.Boolean, /*1*/ y: kotlin.Boolean?, /*2*/ any: kotlin.Any, /*3*/ z: kotlin.Boolean): kotlin.Unit
+public operator fun kotlin.Any?.contains(/*0*/ other: kotlin.Any): kotlin.Boolean
+public operator fun kotlin.Boolean.dec(): kotlin.Boolean
+public operator fun kotlin.Boolean.div(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+public operator fun kotlin.Boolean.divAssign(/*0*/ other: kotlin.Boolean): kotlin.Unit
+public fun kotlin.Boolean.id(): kotlin.Boolean
+public operator fun kotlin.Boolean.inc(): kotlin.Boolean
+public operator fun kotlin.Boolean.minus(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+public operator fun kotlin.Boolean.minusAssign(/*0*/ other: kotlin.Boolean): kotlin.Unit
+public operator fun kotlin.Boolean.plus(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+public operator fun kotlin.Boolean.plusAssign(/*0*/ other: kotlin.Boolean): kotlin.Unit
+public operator fun kotlin.Boolean.rangeTo(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+public operator fun kotlin.Boolean.rem(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+public operator fun kotlin.Boolean.remAssign(/*0*/ other: kotlin.Boolean): kotlin.Unit
+public operator fun kotlin.Boolean.times(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+public operator fun kotlin.Boolean.timesAssign(/*0*/ other: kotlin.Boolean): kotlin.Unit
+

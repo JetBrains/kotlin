@@ -1,7 +1,4 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: TYPE_OPERATORS
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()

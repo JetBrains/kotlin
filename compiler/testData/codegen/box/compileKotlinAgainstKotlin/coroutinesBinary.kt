@@ -1,5 +1,5 @@
 // MODULE: lib
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // FILE: A.kt
 package a
@@ -29,7 +29,7 @@ fun builder(c: suspend Controller.() -> Unit) {
 }
 
 // MODULE: main(lib)
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: B.kt
 import a.builder
 

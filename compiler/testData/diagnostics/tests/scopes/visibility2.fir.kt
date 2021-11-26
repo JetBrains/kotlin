@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
+// WITH_EXTENDED_CHECKERS
+
 //FILE:a.kt
 package a
 
@@ -24,16 +26,16 @@ import a.PO
 
 fun test() {
     val y = makeA()
-    y.bar()
+    y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : A = <!INVISIBLE_REFERENCE!>A<!>()
-    val a : java.util.Arrays.ArrayList<Int>;
+    val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
+    val a : <!INVISIBLE_REFERENCE!>java.util.Arrays.ArrayList<Int><!>;
 
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 }
 
-class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {
@@ -44,6 +46,6 @@ class Q {
 }
 
 //check that 'toString' can be invoked without specifying return type
-class NewClass : java.util.ArrayList<Integer>() {
-    public override fun toString() = "a"
+class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun toString() = "a"
 }

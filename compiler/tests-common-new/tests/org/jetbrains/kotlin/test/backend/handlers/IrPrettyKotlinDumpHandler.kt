@@ -36,10 +36,10 @@ class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
 
-        val irFiles = info.backendInput.irModuleFragment.files
+        val irFiles = info.irModuleFragment.files
         val builder = dumper.builderForModule(module)
-        val filteredIrFiles = irFiles.groupWithTestFiles(module).filter {
-            EXTERNAL_FILE !in it.first.directives
+        val filteredIrFiles = irFiles.groupWithTestFiles(module).filterNot {
+            it.first?.directives?.contains(EXTERNAL_FILE) == true
         }.map { it.second }
         val printFileName = filteredIrFiles.size > 1 || testServices.moduleStructure.modules.size > 1
         for (irFile in filteredIrFiles) {

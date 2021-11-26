@@ -42,4 +42,6 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
     open fun getPreviousScripts(): List<IrScriptSymbol>? = null
 
     open fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? = null
+
+    open fun remapDebuggerFieldPropertyDescriptor(propertyDescriptor: PropertyDescriptor): PropertyDescriptor = propertyDescriptor
 }

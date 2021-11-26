@@ -82,6 +82,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     @Input var noStdLib            = false
     @Input var noMain              = false
+    @Input var noPack: Boolean     = false
     @Input var enableOptimizations = project.environmentVariables.enableOptimizations
     @Input var enableAssertions    = false
 
@@ -187,7 +188,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     }
 
     /** Args passed to the compiler at both stages of the two-stage compilation and during the singe-stage compilation. */
-    protected fun buildCommonArgs() = mutableListOf<String>().apply {
+    protected open fun buildCommonArgs() = mutableListOf<String>().apply {
         addArgs("-repo", libraries.repos.map { it.canonicalPath })
 
         if (platformConfiguration.files.isNotEmpty()) {
@@ -282,9 +283,16 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         enableMultiplatform(true)
     }
 
-    internal fun commonSrcDir(dir: Any) {
+    override fun commonSrcDir(dir: Any) {
         commonSrcFiles_.add(directoryToKt(dir))
     }
+
+    override fun commonSrcFiles(vararg files: Any) {
+        commonSrcFiles_.add(project.files(files))
+    }
+
+    override fun commonSrcFiles(files: Collection<Any>) = commonSrcFiles(*files.toTypedArray())
+
 
     // DSL. Other parameters.
 
@@ -303,6 +311,10 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     override fun noMain(flag: Boolean) {
         noMain = flag
+    }
+
+    override fun noPack(flag: Boolean) {
+        noPack = flag
     }
 
     override fun enableOptimizations(flag: Boolean) {
@@ -379,6 +391,22 @@ open class KonanCompileFrameworkTask: KonanCompileNativeBinary() {
 }
 
 open class KonanCompileLibraryTask: KonanCompileTask() {
+    override val artifact: File
+        @Internal get() = destinationDir.resolve(artifactFullName)
+
+    val artifactFile: File?
+        @Optional @OutputFile get() = if (!noPack) artifact else null
+
+    val artifactDirectory: File?
+        @Optional @OutputDirectory get() = if (noPack) artifact else null
+
+    override val artifactSuffix: String
+        @Internal get() = if (!noPack) produce.suffix(konanTarget) else ""
+
+    override fun buildCommonArgs() = super.buildCommonArgs().apply {
+        addKey("-nopack", noPack)
+    }
+
     override val produce: CompilerOutputKind get() = CompilerOutputKind.LIBRARY
     override val enableTwoStageCompilation: Boolean = false
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun testChar(a: Char, x: Char, y: Char) = a in x until y
 
 fun testByte(a: Byte, x: Byte, y: Byte) = a in x until y

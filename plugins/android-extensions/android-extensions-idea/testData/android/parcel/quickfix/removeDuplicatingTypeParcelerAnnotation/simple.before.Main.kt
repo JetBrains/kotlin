@@ -1,6 +1,6 @@
 // "Remove redundant ''@TypeParceler'' annotation" "true"
 // WARNING: This annotation duplicates the one for Class 'Foo'
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

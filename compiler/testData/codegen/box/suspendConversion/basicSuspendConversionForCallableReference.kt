@@ -1,6 +1,5 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// IGNORE_BACKEND: WASM
 
 fun foo1(f: suspend () -> Unit) {}
 fun bar1() {}

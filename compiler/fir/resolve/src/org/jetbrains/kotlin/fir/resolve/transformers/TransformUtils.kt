@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -105,7 +105,7 @@ internal fun FirTypedDeclaration.transformTypeToArrayType() {
     // If the delegated type is already resolved, it means we have already created a resolved array type for this vararg type declaration.
     // This is because in the buildResolvedTypeRef call below, we set the delegated type ref to the previous (non-vararg) resolved type ref.
     if (returnTypeRef.delegatedTypeRef is FirResolvedTypeRef &&
-        returnTypeRef.delegatedTypeRef?.source?.kind == FirFakeSourceElementKind.ArrayTypeFromVarargParameter
+        returnTypeRef.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter
     ) return
     val returnType = returnTypeRef.coneType
 
@@ -116,7 +116,7 @@ internal fun FirTypedDeclaration.transformTypeToArrayType() {
             type = ConeKotlinTypeProjectionOut(returnType).createArrayType()
             annotations += returnTypeRef.annotations
             // ? do we really need replacing source of nested delegatedTypeRef ?
-            delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ArrayTypeFromVarargParameter)
+            delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
         }
     )
 }
@@ -135,8 +135,8 @@ inline fun <T> withScopeCleanup(scopes: MutableList<*>, l: () -> T): T {
 }
 
 inline fun <T> withClassDeclarationCleanup(
-    classDeclarations: ArrayDeque<FirRegularClass>,
-    topClassDeclaration: FirRegularClass,
+    classDeclarations: ArrayDeque<FirClass>,
+    topClassDeclaration: FirClass,
     l: () -> T
 ): T {
     classDeclarations.addLast(topClassDeclaration)

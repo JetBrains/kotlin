@@ -23,8 +23,6 @@ object Namer {
     val PROTOTYPE_NAME = "prototype"
     val CONSTRUCTOR_NAME = "constructor"
 
-    val CONTINUATION = "\$cont"
-
     val JS_ERROR = JsNameRef("Error")
 
     val JS_OBJECT = JsNameRef("Object")

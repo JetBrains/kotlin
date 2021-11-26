@@ -18,14 +18,14 @@ fun box() {
 //   - the _declaration_ of the local function does not figure in the byte code
 //     of the outer function and hence, has no line number
 
-// LOCAL VARIABLES
-// LOCAL VARIABLES JVM
+// EXPECTATIONS
+// EXPECTATIONS JVM
 // test.kt:10 box:
 // test.kt:5 foo:
 // test.kt:7 foo: $fun$bar$1:TestKt$foo$1=TestKt$foo$1
 // test.kt:11 box:
 
-// LOCAL VARIABLES JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:10 box:
 // test.kt:7 foo:
 // test.kt:11 box:

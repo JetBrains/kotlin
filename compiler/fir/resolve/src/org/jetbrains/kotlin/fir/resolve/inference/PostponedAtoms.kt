@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
@@ -25,9 +22,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 //  --------------------------- Variables ---------------------------
 
-class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
-class ConeTypeVariableForPostponedAtom(name: String) : ConeTypeVariable(name)
-class ConeTypeVariableForLambdaParameterType(name: String, val index: Int) : ConeTypeVariable(name)
+
 
 //  -------------------------- Atoms --------------------------
 
@@ -49,7 +44,8 @@ class ResolvedLambdaAtom(
     val parameters: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
-    candidateOfOuterCall: Candidate?
+    candidateOfOuterCall: Candidate?,
+    val coerceFirstParameterToExtensionReceiver: Boolean
 ) : PostponedResolvedAtom() {
     init {
         candidateOfOuterCall?.let {

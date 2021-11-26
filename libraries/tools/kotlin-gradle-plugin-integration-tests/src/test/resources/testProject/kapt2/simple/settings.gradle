@@ -1,10 +1,12 @@
 pluginManagement {
+    // Required for KaptModeIT. Remove it once these tests will be migrated.
     repositories {
         mavenLocal()
-        mavenCentral()
+        gradlePluginPortal()
     }
 
     plugins {
         id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
+        id "org.jetbrains.kotlin.kapt" version "$kotlin_version"
     }
 }

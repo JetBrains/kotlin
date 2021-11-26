@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
 
-abstract class RuntimeClasspathProvider {
-    abstract fun runtimeClassPaths(): List<File>
+abstract class RuntimeClasspathProvider(val testServices: TestServices) {
+    abstract fun runtimeClassPaths(module: TestModule): List<File>
 }
 
-class RuntimeClasspathProviderHolder(val providers: List<RuntimeClasspathProvider>) : TestService
+class RuntimeClasspathProvidersContainer(val providers: List<RuntimeClasspathProvider>) : TestService
 
-private val TestServices.runtimeClasspathProviderHolder: RuntimeClasspathProviderHolder by TestServices.testServiceAccessor()
+private val TestServices.runtimeClasspathProviderContainer: RuntimeClasspathProvidersContainer by TestServices.testServiceAccessor()
 val TestServices.runtimeClasspathProviders: List<RuntimeClasspathProvider>
-    get() = runtimeClasspathProviderHolder.providers
+    get() = runtimeClasspathProviderContainer.providers

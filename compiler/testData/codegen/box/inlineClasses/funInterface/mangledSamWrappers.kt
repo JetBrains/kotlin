@@ -1,7 +1,8 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
-// !LANGUAGE: +InlineClasses
-inline class A(val value: String)
+// WITH_STDLIB
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val value: String)
 
 fun interface B {
     fun f(x: A): A

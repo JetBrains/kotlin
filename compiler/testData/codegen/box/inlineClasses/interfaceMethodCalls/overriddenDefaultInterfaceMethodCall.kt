@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 interface IBase {
     fun foo() = "BAD"
@@ -8,11 +8,17 @@ interface IFoo : IBase {
     override fun foo() = "OK"
 }
 
-inline class Z(val x: Int) : IFoo
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val x: Int) : IFoo
 
-inline class L(val x: Long) : IFoo
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(val x: Long) : IFoo
 
-inline class S(val x: String) : IFoo
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val x: String) : IFoo
 
 fun box(): String {
     if (Z(42).foo() != "OK") throw AssertionError()

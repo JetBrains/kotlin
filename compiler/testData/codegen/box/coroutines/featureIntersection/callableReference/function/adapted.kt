@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-44849
 
 import kotlin.coroutines.*

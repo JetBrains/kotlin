@@ -82,6 +82,6 @@ fun test() {
     val i : Int? = null
     i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
-    1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()<!>
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

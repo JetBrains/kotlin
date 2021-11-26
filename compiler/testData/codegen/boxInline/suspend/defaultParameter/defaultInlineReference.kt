@@ -1,5 +1,5 @@
 // SKIP_INLINE_CHECK_IN: bar$default
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // FILE: 1.kt
 package test

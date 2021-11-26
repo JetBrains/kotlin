@@ -259,12 +259,15 @@ private class FirCallArgumentsProcessor(
 
         for ((index, parameter) in parameters.withIndex()) {
             if (!result.containsKey(parameter)) {
-                if (bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(parameter, function, originScope, index)) {
-                    result[parameter] = ResolvedCallArgument.DefaultArgument
-                } else if (parameter.isVararg) {
-                    result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())
-                } else {
-                    addDiagnostic(NoValueForParameter(parameter, function))
+                when {
+                    bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(
+                        useSiteSession, bodyResolveComponents.scopeSession, parameter, function, originScope, index
+                    ) ->
+                        result[parameter] = ResolvedCallArgument.DefaultArgument
+                    parameter.isVararg ->
+                        result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())
+                    else ->
+                        addDiagnostic(NoValueForParameter(parameter, function))
                 }
             }
         }

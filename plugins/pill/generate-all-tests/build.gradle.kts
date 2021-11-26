@@ -13,7 +13,8 @@ val depenencyProjects = arrayOf(
     ":compiler:visualizer",
     ":js:js.tests",
     ":compiler:tests-java8",
-    ":core:descriptors.runtime"
+    ":core:descriptors.runtime",
+    ":generators:analysis-api-generator"
 )
 
 dependencies {
@@ -23,7 +24,7 @@ dependencies {
     }
 
     testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    testRuntimeOnly(platform("org.junit:junit-bom:5.7.0"))
+    testRuntimeOnly(platform(commonDep("org.junit:junit-bom")))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter")
 }
 

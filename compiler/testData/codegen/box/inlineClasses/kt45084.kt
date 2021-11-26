@@ -1,6 +1,8 @@
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
 
-inline class Z(val value: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val value: Long)
 
 fun f(g: (
     z: Z,

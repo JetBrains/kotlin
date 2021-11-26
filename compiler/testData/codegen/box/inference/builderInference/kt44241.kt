@@ -1,5 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 class A

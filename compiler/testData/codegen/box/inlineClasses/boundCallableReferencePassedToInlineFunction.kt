@@ -1,18 +1,26 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class IcInt(val i: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcInt(val i: Int) {
     fun simple(): String = i.toString()
 }
 
-inline class IcLong(val l: Long) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcLong(val l: Long) {
     fun simple(): String = l.toString()
 }
 
-inline class IcAny(val a: Any?) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcAny(val a: Any?) {
     fun simple(): String = a?.toString() ?: "null"
 }
 
-inline class IcOverIc(val o: IcLong) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcOverIc(val o: IcLong) {
     fun simple(): String = o.toString()
 }
 

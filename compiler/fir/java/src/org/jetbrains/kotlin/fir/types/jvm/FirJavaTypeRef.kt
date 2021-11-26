@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.jvm
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
@@ -30,7 +30,7 @@ class FirJavaTypeRef(
     override val isMarkedNullable: Boolean
         get() = false
 
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }

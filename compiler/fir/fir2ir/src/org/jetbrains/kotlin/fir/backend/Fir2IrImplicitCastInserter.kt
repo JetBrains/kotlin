@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class Fir2IrImplicitCastInserter(
@@ -233,7 +233,9 @@ class Fir2IrImplicitCastInserter(
         // Cast type massage 1. Remove @EnhancedNullability
         // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
         val castType = type.removeAnnotations {
-            it.symbol.owner.parentAsClass.classId == CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID
+            val classId = it.symbol.owner.parentAsClass.classId
+            classId == StandardClassIds.Annotations.EnhancedNullability ||
+                    classId == StandardClassIds.Annotations.FlexibleNullability
         }.withHasQuestionMark(false)
         return IrTypeOperatorCallImpl(
             this.startOffset,
@@ -282,6 +284,25 @@ class Fir2IrImplicitCastInserter(
 
     override fun visitExpressionWithSmartcastToNull(
         expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull,
+        data: IrElement
+    ): IrElement {
+        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
+        return data
+    }
+
+    override fun visitWhenSubjectExpressionWithSmartcast(
+        whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast,
+        data: IrElement
+    ): IrElement {
+        return if (whenSubjectExpressionWithSmartcast.isStable) {
+            implicitCastOrExpression(data as IrExpression, whenSubjectExpressionWithSmartcast.typeRef)
+        } else {
+            data as IrExpression
+        }
+    }
+
+    override fun visitWhenSubjectExpressionWithSmartcastToNull(
+        whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull,
         data: IrElement
     ): IrElement {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.

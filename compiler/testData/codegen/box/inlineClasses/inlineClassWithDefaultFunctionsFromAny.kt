@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Z(val data: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val data: Int)
 
 fun box(): String {
     if (Z(0) != Z(0)) throw AssertionError()

@@ -1,7 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Str(val string: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Obj(val obj: Any)
 
 inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
 

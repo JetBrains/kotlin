@@ -84,11 +84,13 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithUnitConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithConstantConversion: Map<KotlinCallArgument, IntegerValueTypeConstant>
+    abstract fun setCandidateDescriptor(newCandidateDescriptor: CallableDescriptor)
 }
 
 class SamConversionDescription(
     val convertedTypeByOriginParameter: UnwrappedType,
-    val convertedTypeByCandidateParameter: UnwrappedType // expected type for corresponding argument
+    val convertedTypeByCandidateParameter: UnwrappedType, // expected type for corresponding argument
+    val originalParameterType: UnwrappedType // need to overload resolution on inherited SAM interfaces
 )
 
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {

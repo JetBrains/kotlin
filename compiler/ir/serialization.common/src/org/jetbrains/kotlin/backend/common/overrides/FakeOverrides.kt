@@ -68,11 +68,12 @@ class FakeOverrideBuilder(
     val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
+    friendModules: Map<String, Collection<String>>,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureSerializer(builder, table)
     }
-) : FakeOverrideBuilderStrategy() {
+) : FakeOverrideBuilderStrategy(friendModules) {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
     private val irOverridingUtil = IrOverridingUtil(typeSystem, this)
@@ -80,7 +81,7 @@ class FakeOverrideBuilder(
     // TODO: The declaration table is needed for the signaturer.
 //    private val fakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler, signatureSerializerFactory)
 
-    private val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
+    val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
     fun enqueueClass(clazz: IrClass, signature: IdSignature, compatibilityMode: CompatibilityMode) {
         fakeOverrideDeclarationTable.assumeDeclarationSignature(clazz, signature)
         fakeOverrideCandidates[clazz] = compatibilityMode

@@ -27,7 +27,12 @@ import kotlin.collections.HashMap
 
 const val EMBEDDED_CONFIGURATION_NAME = "embedded"
 
-class JpsCompatiblePluginTasks(private val rootProject: Project, private val platformDir: File, private val resourcesDir: File) {
+class JpsCompatiblePluginTasks(
+    private val rootProject: Project,
+    private val platformDir: File,
+    private val resourcesDir: File,
+    private val isIdePluginAttached: Boolean
+) {
     companion object {
         private val DIST_LIBRARIES = listOf(
             ":kotlin-annotations-jvm",
@@ -43,7 +48,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         private val IGNORED_LIBRARIES = listOf(
             // Libraries
             ":kotlin-stdlib-common",
-            ":kotlin-reflect-api",
             ":kotlin-serialization",
             ":kotlin-test:kotlin-test-common",
             ":kotlin-test:kotlin-test-annotations-common",
@@ -58,14 +62,15 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         )
 
         private val MAPPED_LIBRARIES = mapOf(
+            ":kotlin-reflect-api/main" to ":kotlin-reflect/main",
             ":kotlin-reflect-api/java9" to ":kotlin-reflect/main"
         )
 
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
 
         private val ALLOWED_ARTIFACT_PATTERNS = listOf(
-            Regex.fromLiteral("dist_root.xml"),
-            Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml")
+            Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml"),
+            Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml")
         )
     }
 
@@ -73,7 +78,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
     private lateinit var intellijCoreDir: File
-    private var isAndroidStudioPlatform: Boolean = false
 
     private fun initEnvironment(project: Project) {
         projectDir = project.projectDir
@@ -82,7 +86,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
                     ?: error("Invalid platform version: $platformVersion")
         intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
-        isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
 
     fun pill() {
@@ -113,7 +116,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         removeJpsAndPillRunConfigurations()
         removeArtifactConfigurations()
 
-        if (variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
+        if (isIdePluginAttached && variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
             val artifactDependencyMapper = object : ArtifactDependencyMapper {
                 override fun map(dependency: PDependency): List<PDependency> {
                     val result = mutableListOf<PDependency>()
@@ -173,14 +176,11 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         val runConfigurationsDir = File(resourcesDir, "runConfigurations")
         val targetDir = File(projectDir, ".idea/runConfigurations")
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
-        val additionalIdeaArgs = if (isAndroidStudioPlatform) "-Didea.platform.prefix=AndroidStudio" else ""
 
         targetDir.mkdirs()
 
         fun substitute(text: String): String {
-            return text
-                .replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
-                .replace("\$ADDITIONAL_IDEA_ARGS\$", additionalIdeaArgs)
+            return text.replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
         }
 
         (runConfigurationsDir.listFiles() ?: emptyArray())
@@ -245,19 +245,31 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
 
-                fun addOrReplaceOptionValue(name: String, value: Any?) {
-                    val optionsWithoutNewValue = options.filter { !it.startsWith("-D$name=") }
-                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
+                fun addOptionIfAbsent(name: String) {
+                    if (options.none { it == name }) {
+                        options = options + name
+                    }
                 }
 
-                if (options.none { it == "-ea" }) {
-                    options = options + "-ea"
+                fun addOrReplaceOptionValue(name: String, value: Any?, prefix: String = "-D") {
+                    val optionsWithoutNewValue = options.filter { !it.startsWith("$prefix$name=") }
+                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("$prefix$name=$value"))
                 }
 
+                addOptionIfAbsent("-ea")
+                addOptionIfAbsent("-XX:+HeapDumpOnOutOfMemoryError")
+                addOptionIfAbsent("-Xmx1600m")
+                addOptionIfAbsent("-XX:+UseCodeCacheFlushing")
+
+                addOrReplaceOptionValue("ReservedCodeCacheSize", "128m", prefix = "-XX:")
+                addOrReplaceOptionValue("jna.nosys", "true")
+                addOrReplaceOptionValue("idea.platform.prefix", "Idea")
+                addOrReplaceOptionValue("idea.is.unit.test", "true")
+                addOrReplaceOptionValue("idea.ignore.disabled.plugins", "true")
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
-                addOrReplaceOptionValue("ideaSdk.androidPlugin.path", "$platformDirProjectRelative/plugins/android/lib")
                 addOrReplaceOptionValue("use.jps", "true")
                 addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
+                addOrReplaceOptionValue("java.awt.headless", "true")
 
                 val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
                 addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)

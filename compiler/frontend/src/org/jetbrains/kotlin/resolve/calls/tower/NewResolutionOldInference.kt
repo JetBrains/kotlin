@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -32,10 +33,6 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
-import org.jetbrains.kotlin.resolve.calls.util.isBinaryRemOperator
-import org.jetbrains.kotlin.resolve.calls.util.isConventionCall
-import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
-import org.jetbrains.kotlin.resolve.calls.util.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
@@ -48,7 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.*
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -374,6 +371,9 @@ class NewResolutionOldInference(
                 cache.getOrPut(it) { resolutionContext.transformToReceiverWithSmartCastInfo(it) }
             }
 
+        override fun getNameForGivenImportAlias(name: Name): Name? =
+            (resolutionContext.call.callElement.containingFile as? KtFile)?.getNameForGivenImportAlias(name)
+
         override val lexicalScope: LexicalScope get() = resolutionContext.scope
 
         override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
@@ -381,6 +381,8 @@ class NewResolutionOldInference(
         override val isNewInferenceEnabled: Boolean
             get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = resolutionContext.languageVersionSettings
 
         override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,

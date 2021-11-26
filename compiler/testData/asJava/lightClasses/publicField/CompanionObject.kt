@@ -1,5 +1,5 @@
 // C
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class C {
     companion object {

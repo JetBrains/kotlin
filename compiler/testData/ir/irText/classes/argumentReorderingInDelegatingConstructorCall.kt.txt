@@ -36,4 +36,3 @@ class Test2 : Base {
   }
 
 }
-

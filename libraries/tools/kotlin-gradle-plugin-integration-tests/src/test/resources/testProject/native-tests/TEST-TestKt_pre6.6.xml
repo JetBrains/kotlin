@@ -4,11 +4,13 @@
     <properties/>
     <testcase name="fooTest" classname="org.foo.test.TestKt" time="..."/>
     <testcase name="barTest" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="barfooTest" classname="org.foo.test.TestKt" time="..."/>
     <testcase name="fail" classname="org.foo.test.TestKt" time="...">
       <failure message="..." type="kotlin.IllegalStateException">...</failure>
     </testcase>
     <system-out><![CDATA[Foo call
-Bar call]]></system-out>
+Bar call
+42]]></system-out>
     <system-err/>
   </testsuite>
 </results>

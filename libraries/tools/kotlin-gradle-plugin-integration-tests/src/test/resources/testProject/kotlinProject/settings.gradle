@@ -10,5 +10,6 @@ pluginManagement {
     plugins {
         id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
         id "org.jetbrains.kotlin.plugin.allopen" version "$kotlin_version"
+        id "org.jetbrains.kotlin.kapt" version "$kotlin_version"
     }
 }

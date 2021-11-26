@@ -1,7 +1,7 @@
 // !API_VERSION: 1.5
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: box.kt
 
 package test

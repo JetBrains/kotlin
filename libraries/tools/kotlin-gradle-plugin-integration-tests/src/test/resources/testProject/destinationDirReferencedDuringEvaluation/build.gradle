@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation'junit:junit:4.12'
+    testImplementation'junit:junit:4.13.2'
 }
 
 // important to test that destinationDir is configured before evaluation

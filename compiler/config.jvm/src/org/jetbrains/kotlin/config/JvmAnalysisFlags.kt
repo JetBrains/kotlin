@@ -19,6 +19,9 @@ object JvmAnalysisFlags {
     val jvmDefaultMode by Delegates.JvmDefaultModeDisabledByDefault
 
     @JvmStatic
+    val jvmDefaultAllowNonDefaultInheritance by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

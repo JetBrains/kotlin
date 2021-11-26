@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
@@ -50,6 +51,18 @@ internal class FirInvokeResolveTowerExtension(
             invokeBuiltinExtensionMode = false
         ) {
             it.runResolverForNoReceiver(invokeReceiverVariableInfo)
+        }
+    }
+
+    fun enqueueResolveTasksForSuperReceiver(info: CallInfo, receiver: FirQualifiedAccessExpression) {
+        if (info.callKind != CallKind.Function) return
+        val invokeReceiverVariableInfo = info.replaceWithVariableAccess()
+        enqueueInvokeReceiverTask(
+            info,
+            invokeReceiverVariableInfo,
+            invokeBuiltinExtensionMode = false
+        ) {
+            it.runResolverForSuperReceiver(invokeReceiverVariableInfo, receiver)
         }
     }
 

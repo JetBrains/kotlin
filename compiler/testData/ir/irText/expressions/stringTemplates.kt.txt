@@ -41,4 +41,3 @@ val test8: String
 val test9: String
   field = <get-x>()
   get
-

@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Value<T>(val value: T) {
     inline fun <R> runBlock(block: (T) -> R) = block(value)

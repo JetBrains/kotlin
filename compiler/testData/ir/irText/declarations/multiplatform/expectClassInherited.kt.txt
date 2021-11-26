@@ -1,13 +1,13 @@
 expect abstract class A {
-  protected expect constructor() /* primary */ 
-  expect abstract fun foo() 
+  protected expect constructor() /* primary */
+  expect abstract fun foo()
 
 }
 
 expect open class B : A {
-  expect constructor(i: Int) /* primary */ 
-  expect override fun foo() 
-  expect open fun bar(s: String) 
+  expect constructor(i: Int) /* primary */
+  expect override fun foo()
+  expect open fun bar(s: String)
 
 }
 
@@ -18,7 +18,7 @@ abstract class A {
 
   }
 
-  abstract fun foo() 
+  abstract fun foo()
 
 }
 
@@ -36,4 +36,3 @@ open class B : A {
   }
 
 }
-

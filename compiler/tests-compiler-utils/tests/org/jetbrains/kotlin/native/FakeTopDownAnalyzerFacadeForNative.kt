@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -57,6 +58,7 @@ private fun createFakeTopDownAnalyzerForNative(
     configureStandardResolveComponents()
 
     useInstance(declarationProviderFactory)
+    useInstance(InlineConstTracker.DoNothing)
     CompilerEnvironment.configure(this)
 }.apply {
     val moduleDescriptor = get<ModuleDescriptorImpl>()

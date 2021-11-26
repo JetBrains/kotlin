@@ -39,7 +39,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
             )
         }
 
-        result.assertCommonized("(a,b)", "expect class X expect constructor()")
+        result.assertCommonized("(a,b)", "expect class X()")
     }
 
     fun `test typealias to different classes`() {
@@ -75,31 +75,31 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
 
         result.assertCommonized(
             "(a,b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 typealias x = AB
             """
         )
 
         result.assertCommonized(
             "(c,d)", """
-                expect class CD expect constructor()
+                expect class CD()
                 typealias x = CD
             """
         )
 
         result.assertCommonized(
             "(c,d)", """
-                expect class CD expect constructor()
+                expect class CD()
                 typealias x = CD
             """
         )
 
         result.assertCommonized(
-            "(e,f)", """expect class x expect constructor()"""
+            "(e,f)", """expect class x()"""
         )
 
-        result.assertCommonized("(a, b, c, d)", """expect class x expect constructor()""")
-        result.assertCommonized("(a, b, c, d, e, f)", """expect class x expect constructor()""")
+        result.assertCommonized("(a, b, c, d)", """expect class x()""")
+        result.assertCommonized("(a, b, c, d, e, f)", """expect class x()""")
     }
 
 

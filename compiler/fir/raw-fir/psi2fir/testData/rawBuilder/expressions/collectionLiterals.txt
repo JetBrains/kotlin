@@ -1,6 +1,6 @@
 FILE: collectionLiterals.kt
     public? final? annotation class Ann1 : R|kotlin/Annotation| {
-        public? [ContainingClassKey=Ann1] constructor(arr: IntArray): R|Ann1| {
+        public? [ContainingClassKey=Ann1] constructor([CorrespondingProperty=/Ann1.arr] arr: IntArray): R|Ann1| {
             super<R|kotlin/Any|>()
         }
 
@@ -9,7 +9,7 @@ FILE: collectionLiterals.kt
 
     }
     public? final? annotation class Ann2 : R|kotlin/Annotation| {
-        public? [ContainingClassKey=Ann2] constructor(arr: DoubleArray): R|Ann2| {
+        public? [ContainingClassKey=Ann2] constructor([CorrespondingProperty=/Ann2.arr] arr: DoubleArray): R|Ann2| {
             super<R|kotlin/Any|>()
         }
 
@@ -18,7 +18,7 @@ FILE: collectionLiterals.kt
 
     }
     public? final? annotation class Ann3 : R|kotlin/Annotation| {
-        public? [ContainingClassKey=Ann3] constructor(arr: Array<String>): R|Ann3| {
+        public? [ContainingClassKey=Ann3] constructor([CorrespondingProperty=/Ann3.arr] arr: Array<String>): R|Ann3| {
             super<R|kotlin/Any|>()
         }
 

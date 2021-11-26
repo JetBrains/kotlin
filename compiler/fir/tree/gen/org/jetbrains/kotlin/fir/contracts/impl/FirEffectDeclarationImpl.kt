@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.contracts.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirEffectDeclarationImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val effect: ConeEffectDeclaration,
 ) : FirEffectDeclaration() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

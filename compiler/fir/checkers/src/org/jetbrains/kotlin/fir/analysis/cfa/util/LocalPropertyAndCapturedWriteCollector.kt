@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
+import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol

@@ -15,4 +15,9 @@ fun foo(vararg args: Any?) {
 
 @Test fun runTest() {
     foo(1, null, true, "Hello")
+    val nonConstInt = 1
+    val nonConstNull = null
+    val nonConstBool = true
+    val nonConstString = "Hello"
+    foo(nonConstInt, nonConstNull, nonConstBool, nonConstString)
 }

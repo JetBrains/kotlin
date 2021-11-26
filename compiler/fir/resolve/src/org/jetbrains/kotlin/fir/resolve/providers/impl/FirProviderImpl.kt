@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -29,7 +28,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         if (symbol is FirBackingFieldSymbol) {
             return getFirCallableContainerFile(symbol.fir.propertySymbol)
         }
-        if (symbol is FirAccessorSymbol) {
+        if (symbol is FirSyntheticPropertySymbol) {
             val fir = symbol.fir
             if (fir is FirSyntheticProperty) {
                 return getFirCallableContainerFile(fir.getter.delegate.symbol)
@@ -77,17 +76,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         }
     }
 
-    @FirProviderInternals
-    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
-        klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
-    }
-
-    @FirProviderInternals
-    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
-        klass.accept(FirRecorder, FirRecorderData(state, owner.file, session.nameConflictsTracker))
-    }
-
-    private val FirAnnotatedDeclaration.file: FirFile
+    private val FirDeclaration.file: FirFile
         get() = when (this) {
             is FirFile -> this
             is FirRegularClass -> getFirClassifierContainerFile(this.symbol.classId)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -36,6 +36,13 @@ class Fir2IrBuiltIns(
 
     internal fun flexibleNullabilityAnnotationConstructorCall(): IrConstructorCall? =
         flexibleNullabilityAnnotationSymbol?.toConstructorCall()
+
+    private val extensionFunctionTypeAnnotationSymbol by lazy {
+        annotationSymbolById(StandardClassIds.Annotations.ExtensionFunctionType)
+    }
+
+    internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall? =
+        extensionFunctionTypeAnnotationSymbol?.toConstructorCall()
 
     private fun annotationSymbolById(id: ClassId): IrClassSymbol? =
         provider?.getClassSymbolById(id) ?: session.symbolProvider.getClassLikeSymbolByClassId(id)?.toSymbol(

@@ -1,5 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // FILE: J.java
 

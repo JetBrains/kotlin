@@ -40,7 +40,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(regularClass) {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder
-            defaultNull("companionObject")
+            defaultNull("companionObjectSymbol")
             openBuilder()
             withCopy()
         }
@@ -221,6 +221,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(thisReceiverExpression) {
             parents += qualifiedAccessBuilder
+            default("isImplicit", "false")
         }
 
         builder(variableAssignment) {
@@ -250,10 +251,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")
-            withCopy()
-        }
-
-        builder(errorTypeRef) {
             withCopy()
         }
 

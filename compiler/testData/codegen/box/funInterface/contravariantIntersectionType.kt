@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
-
 // CHECK_BYTECODE_TEXT
 // 0 java/lang/invoke/LambdaMetafactory
 

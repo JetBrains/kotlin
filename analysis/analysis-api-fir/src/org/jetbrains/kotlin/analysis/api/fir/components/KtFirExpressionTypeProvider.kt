@@ -6,29 +6,29 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirPackageDirective
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
-import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.api.components.KtExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirPackageDirective
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -39,10 +39,34 @@ internal class KtFirExpressionTypeProvider(
 
     override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
         when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
+            is FirPropertyAccessExpression -> {
+                // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
+                val containingClass =
+                    (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
+                if (fir.calleeReference is FirSuperReference && fir.typeRef is FirErrorTypeRef && containingClass != null) {
+                    val superTypes = containingClass.superConeTypes
+                    when (superTypes.size) {
+                        0 -> analysisSession.builtinTypes.ANY
+                        1 -> superTypes.single().asKtType()
+                        else -> ConeIntersectionType(superTypes).asKtType()
+                    }
+                } else {
+                    fir.typeRef.coneType.asKtType()
+                }
+            }
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType(firResolveState).asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel -> null
+            // For invalid code like the following,
+            // ```
+            // when {
+            //   true, false -> {}
+            // }
+            // ```
+            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
+            // case, we simply report null since FIR does not know about it.
+            is FirWhenBranch -> null
             else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
         }
     }
@@ -67,7 +91,7 @@ internal class KtFirExpressionTypeProvider(
             ?: getExpectedTypeByVariableAssignment(unwrapped)
             ?: getExpectedTypeByPropertyDeclaration(unwrapped)
             ?: getExpectedTypeByFunctionExpressionBody(unwrapped)
-        return expectedType.takeIf { it !is KtClassErrorType }
+        return expectedType
     }
 
     private fun getExpectedTypeByTypeCast(expression: PsiElement): KtType? {
@@ -125,7 +149,7 @@ internal class KtFirExpressionTypeProvider(
     private fun getExpectedTypeByReturnExpression(expression: PsiElement): KtType? {
         val returnParent = expression.getReturnExpressionWithThisType() ?: return null
         val targetSymbol = with(analysisSession) { returnParent.getReturnTargetSymbol() } ?: return null
-        return targetSymbol.annotatedType.type
+        return targetSymbol.returnType
     }
 
     private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? =

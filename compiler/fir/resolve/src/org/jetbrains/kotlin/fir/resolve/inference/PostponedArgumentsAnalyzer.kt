@@ -42,7 +42,8 @@ interface LambdaAnalyzer {
         receiverType: ConeKotlinType?,
         parameters: List<ConeKotlinType>,
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
-        stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
+        stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
+        candidate: Candidate
     ): ReturnArgumentsAnalysisResult
 }
 
@@ -139,7 +140,8 @@ class PostponedArgumentsAnalyzer(
             receiver,
             parameters,
             expectedTypeForReturnArguments,
-            stubsForPostponedVariables
+            stubsForPostponedVariables,
+            candidate
         )
         applyResultsOfAnalyzedLambdaToCandidateSystem(
             c,

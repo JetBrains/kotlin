@@ -4,5 +4,3 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
-
-enableFeaturePreview('GRADLE_METADATA')

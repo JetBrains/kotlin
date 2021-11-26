@@ -1,5 +1,5 @@
 fun interface IRunnable {
-  abstract fun run() 
+  abstract fun run()
 
 }
 
@@ -53,4 +53,3 @@ fun test(fn: Function0<Unit>, r: IRunnable, s: String, arr: Array<String>) {
   }
  /*-> IRunnable */, s = [*arr])
 }
-

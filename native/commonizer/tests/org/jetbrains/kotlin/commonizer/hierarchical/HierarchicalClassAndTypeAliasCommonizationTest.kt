@@ -60,7 +60,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "a", """
                 typealias X = NotX
 
-                class NotX(val constructorProperty: Int) {
+                class NotX(constructorParameter: Int) {
                     val property: Int = 42
                     fun function() = 42
                 }
@@ -69,7 +69,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
             simpleSingleSourceTarget(
                 "b", """
-                class X(val constructorProperty: Int) {
+                class X(constructorParameter: Int) {
                     val property: Int = 42
                     fun function() = 42
                 }
@@ -79,9 +79,9 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-            expect class X expect constructor(expect val constructorProperty: Int) {
-                expect val property: Int
-                expect fun function(): Int
+            expect class X(constructorParameter: Int) {
+                val property: Int
+                fun function(): Int
             }
         """.trimIndent()
         )
@@ -94,7 +94,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "a", """
                 typealias X = NotX
                 typealias NotX = ReallyNotX 
-                class ReallyNotX(val constructorProperty: Int) {
+                class ReallyNotX(constructorParameter: Int) {
                     val property: Int = 42
                     fun function() = 42
                 }
@@ -103,7 +103,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
             simpleSingleSourceTarget(
                 "b", """
-                class X(val constructorProperty: Int) {
+                class X(constructorParameter: Int) {
                     val property: Int = 42
                     fun function() = 42
                 }
@@ -111,11 +111,12 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             )
         }
 
+        // TODO: [EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER]
         result.assertCommonized(
             "(a, b)", """
-            expect class X expect constructor(expect val constructorProperty: Int) {
-                expect val property: Int
-                expect fun function(): Int
+                expect class X(constructorParameter: Int) {
+                val property: Int
+                fun function(): Int
             }
         """.trimIndent()
         )
@@ -145,8 +146,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor() {
-                    expect val x: Int
+                expect class X() {
+                    val x: Int
                 }
             """.trimIndent()
         )
@@ -176,8 +177,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor() {
-                    expect val x: Int
+                expect class AB() {
+                    val x: Int
                 }
                 typealias X = AB
             """.trimIndent()
@@ -205,7 +206,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             )
         }
 
-        result.assertCommonized("(a, b)", """expect class X expect constructor()""")
+        result.assertCommonized("(a, b)", """expect class X()""")
     }
 
     fun `test typeAlias with nullability`() {
@@ -251,7 +252,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
+                expect class AB()
                 expect class V
                 expect class Y
             """.trimIndent()
@@ -280,8 +281,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-                expect class AB expect constructor()
-                expect typealias V = AB
+                expect class AB()
+                typealias V = AB
                 expect class Y
             """.trimIndent()
         )
@@ -294,7 +295,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             simpleSingleSourceTarget(
                 "a", """
                     class X 
-                    fun createX(): X
+                    fun createX(): X = null!!
                 """.trimIndent()
             )
 
@@ -302,14 +303,14 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "b", """
                     class B
                     typealias X = B
-                    fun createX(): X
+                    fun createX(): X = null!!
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor()
+                expect class X()
                 expect fun createX(): X
             """.trimIndent()
         )
@@ -337,7 +338,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor()
+                expect class X()
                 expect fun useX(x: X)
             """.trimIndent()
         )
@@ -352,42 +353,42 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             simpleSingleSourceTarget(
                 "a", """
                     class X
-                    fun createBox(): Box<X>
+                    fun createBox(): Box<X> = null!!
                 """.trimIndent()
             )
             simpleSingleSourceTarget(
                 "b", """
                     class B
                     typealias X = B
-                    fun createBox(): Box<X>
+                    fun createBox(): Box<X> = null!!
                 """.trimIndent()
             )
             simpleSingleSourceTarget(
                 "c", """
                     class CD
                     typealias X = CD
-                    fun createBox(): Box<X>
+                    fun createBox(): Box<X> = null!!
                 """.trimIndent()
             )
             simpleSingleSourceTarget(
                 "d", """
                     class CD
                     typealias X = CD
-                    fun createBox(): Box<X>
+                    fun createBox(): Box<X> = null!!
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor()
+                expect class X()
                 expect fun createBox(): Box<X>
             """.trimIndent()
         )
 
         result.assertCommonized(
             "(c, d)", """
-                expect class CD expect constructor()
+                expect class CD()
                 typealias X = CD
                 expect fun createBox(): Box<X>
             """.trimIndent()
@@ -395,7 +396,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b, c, d)", """
-                expect class X expect constructor()
+                expect class X()
                 expect fun createBox(): Box<X>
             """.trimIndent()
         )
@@ -409,7 +410,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 "a", """
                     class Box<T>
                     class X
-                    fun useBox(x: Box<X>)
+                    fun useBox(x: Box<X>) {}
                 """.trimIndent()
             )
 
@@ -418,15 +419,15 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     class Box<T>
                     class B 
                     typealias X = B
-                    fun useBox(x: Box<X>)
+                    fun useBox(x: Box<X>) {}
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class Box<T> expect constructor()
-                expect class X expect constructor()
+                expect class Box<T>()
+                expect class X()
                 expect fun useBox(x: Box<X>)
             """.trimIndent()
         )
@@ -441,7 +442,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     class Box<T>
                     class A
                     typealias X = A
-                    fun useBox(x: Box<X>)
+                    fun useBox(x: Box<X>) {}
                 """.trimIndent()
             )
 
@@ -450,15 +451,15 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     class Box<T>
                     class B 
                     typealias X = B
-                    fun useBox(x: Box<X>)
+                    fun useBox(x: Box<X>) {}
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class Box<T> expect constructor()
-                expect class X expect constructor()
+                expect class Box<T>()
+                expect class X()
                 expect fun useBox(x: Box<X>)
             """.trimIndent()
         )
@@ -487,7 +488,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor(): SuperClass
+                expect class X(): SuperClass
             """.trimIndent()
         )
     }
@@ -515,7 +516,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         result.assertCommonized(
             "(a, b)", """
                 expect interface SuperClass
-                expect class X expect constructor(): SuperClass
+                expect class X(): SuperClass
             """.trimIndent()
         )
     }
@@ -654,8 +655,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     typealias A = X
                     typealias B = Y
 
-                    fun x(x: A)
-                    fun x(x: B)
+                    fun x(x: A) {}
+                    fun x(x: B) {}
                 """.trimIndent()
             )
 
@@ -667,8 +668,8 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     typealias A = Y // NOTE: Y & X are swapped
                     typealias B = X // NOTE: Y & X are swapped
 
-                    fun x(x: A)
-                    fun x(x: B)
+                    fun x(x: A) {}
+                    fun x(x: B) {}
                 """.trimIndent()
             )
         }
@@ -696,7 +697,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     typealias A = X
                     typealias B = Y
 
-                    fun x(x: A)
+                    fun x(x: A) {}
                 """.trimIndent()
             )
 
@@ -708,7 +709,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                     typealias A = Y // NOTE: Y & X are swapped
                     typealias B = X // NOTE: Y & X are swapped
 
-                    fun x(x: A)
+                    fun x(x: A) {}
                 """.trimIndent()
             )
         }

@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -39,10 +39,10 @@ object FirOpenMemberChecker : FirClassChecker() {
         }
     }
 
-    private val FirSourceElement.shouldReportOpenFromSource: Boolean
+    private val KtSourceElement.shouldReportOpenFromSource: Boolean
         get() = when (kind) {
-            FirRealSourceElementKind,
-            FirFakeSourceElementKind.PropertyFromParameter -> true
+            KtRealSourceElementKind,
+            KtFakeSourceElementKind.PropertyFromParameter -> true
             else -> false
         }
 }

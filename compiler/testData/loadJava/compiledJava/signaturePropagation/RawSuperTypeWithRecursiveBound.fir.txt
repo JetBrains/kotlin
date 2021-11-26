@@ -8,7 +8,7 @@ public open class RawSuperTypeWithRecursiveBound : R|kotlin/Any| {
 
         @R|java/lang/Override|() public open fun dummy(): R|kotlin/Unit|
 
-        public constructor(): R|test/RawSuperTypeWithRecursiveBound.Derived|
+        public test/RawSuperTypeWithRecursiveBound.constructor(): R|test/RawSuperTypeWithRecursiveBound.Derived|
 
     }
     public abstract interface Super<T : R|ft<test/RawSuperTypeWithRecursiveBound.Super<ft<T, T?>>, test/RawSuperTypeWithRecursiveBound.Super<ft<T, T?>>?>|> : R|kotlin/Any| {

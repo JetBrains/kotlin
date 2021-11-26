@@ -1138,6 +1138,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/kt48806.kt");
         }
 
+        @TestMetadata("kt49203.kt")
+        public void testKt49203() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt49203.kt");
+        }
+
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -1733,6 +1738,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
         }
 
+        @TestMetadata("FlushFromAnonymous.kt")
+        public void testFlushFromAnonymous() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
+        }
+
         @TestMetadata("ImplicitReceiverStack.kt")
         public void testImplicitReceiverStack() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
@@ -1751,6 +1761,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("kt43342.kt")
         public void testKt43342() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt43342.kt");
+        }
+
+        @TestMetadata("localClassUsedBeforeDeclaration.kt")
+        public void testLocalClassUsedBeforeDeclaration() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localClassUsedBeforeDeclaration.kt");
         }
 
         @TestMetadata("readWriteProperty.kt")
@@ -1826,6 +1841,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/lambdas/justLambda.kt");
         }
 
+        @TestMetadata("lambdaReturningUnit.kt")
+        public void testLambdaReturningUnit() throws Exception {
+            runTest("compiler/testData/ir/irText/lambdas/lambdaReturningUnit.kt");
+        }
+
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             runTest("compiler/testData/ir/irText/lambdas/localFunction.kt");
@@ -1874,27 +1894,14 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/regressions/kt45236.kt");
         }
 
+        @TestMetadata("newInferenceFixationOrder1.kt")
+        public void testNewInferenceFixationOrder1() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/newInferenceFixationOrder1.kt");
+        }
+
         @TestMetadata("typeAliasCtorForGenericClass.kt")
         public void testTypeAliasCtorForGenericClass() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
-        }
-
-        @TestMetadata("compiler/testData/ir/irText/regressions/newInference")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class NewInference extends AbstractKlibTextTestCase {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInNewInference() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions/newInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-            }
-
-            @TestMetadata("fixationOrder1.kt")
-            public void testFixationOrder1() throws Exception {
-                runTest("compiler/testData/ir/irText/regressions/newInference/fixationOrder1.kt");
-            }
         }
     }
 
@@ -1991,6 +1998,36 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
         }
 
+        @TestMetadata("definitelyNonNull.kt")
+        public void testDefinitelyNonNull() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNull.kt");
+        }
+
+        @TestMetadata("definitelyNonNullOverride.kt")
+        public void testDefinitelyNonNullOverride() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNullOverride.kt");
+        }
+
+        @TestMetadata("definitelyNonNullSAM.kt")
+        public void testDefinitelyNonNullSAM() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNullSAM.kt");
+        }
+
+        @TestMetadata("definitelyNotNullAsArgument.kt")
+        public void testDefinitelyNotNullAsArgument() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNotNullAsArgument.kt");
+        }
+
+        @TestMetadata("definitelyNotNullAsReceiver.kt")
+        public void testDefinitelyNotNullAsReceiver() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNotNullAsReceiver.kt");
+        }
+
+        @TestMetadata("definitelyNotNullWithIntersection1.kt")
+        public void testDefinitelyNotNullWithIntersection1() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNotNullWithIntersection1.kt");
+        }
+
         @TestMetadata("genericDelegatedDeepProperty.kt")
         public void testGenericDelegatedDeepProperty() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
@@ -2011,34 +2048,19 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/inStarProjectionInReceiverType.kt");
         }
 
-        @TestMetadata("intersectionType1_NI.kt")
-        public void testIntersectionType1_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType1_NI.kt");
+        @TestMetadata("intersectionType1.kt")
+        public void testIntersectionType1() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType1.kt");
         }
 
-        @TestMetadata("intersectionType1_OI.kt")
-        public void testIntersectionType1_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType1_OI.kt");
+        @TestMetadata("intersectionType2.kt")
+        public void testIntersectionType2() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType2.kt");
         }
 
-        @TestMetadata("intersectionType2_NI.kt")
-        public void testIntersectionType2_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType2_NI.kt");
-        }
-
-        @TestMetadata("intersectionType2_OI.kt")
-        public void testIntersectionType2_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType2_OI.kt");
-        }
-
-        @TestMetadata("intersectionType3_NI.kt")
-        public void testIntersectionType3_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType3_NI.kt");
-        }
-
-        @TestMetadata("intersectionType3_OI.kt")
-        public void testIntersectionType3_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType3_OI.kt");
+        @TestMetadata("intersectionType3.kt")
+        public void testIntersectionType3() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType3.kt");
         }
 
         @TestMetadata("intersectionTypeInSamType.kt")
@@ -2051,9 +2073,9 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/kt36143.kt");
         }
 
-        @TestMetadata("localVariableOfIntersectionType_NI.kt")
-        public void testLocalVariableOfIntersectionType_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType_NI.kt");
+        @TestMetadata("localVariableOfIntersectionType.kt")
+        public void testLocalVariableOfIntersectionType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType.kt");
         }
 
         @TestMetadata("smartCastOnFakeOverrideReceiver.kt")
@@ -2066,14 +2088,19 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/smartCastOnReceiverOfGenericType.kt");
         }
 
-        @TestMetadata("starProjection_OI.kt")
-        public void testStarProjection_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/starProjection_OI.kt");
+        @TestMetadata("starProjection.kt")
+        public void testStarProjection() throws Exception {
+            runTest("compiler/testData/ir/irText/types/starProjection.kt");
         }
 
         @TestMetadata("typeAliasWithUnsafeVariance.kt")
         public void testTypeAliasWithUnsafeVariance() throws Exception {
             runTest("compiler/testData/ir/irText/types/typeAliasWithUnsafeVariance.kt");
+        }
+
+        @TestMetadata("typeCheckOnDefinitelyNotNull.kt")
+        public void testTypeCheckOnDefinitelyNotNull() throws Exception {
+            runTest("compiler/testData/ir/irText/types/typeCheckOnDefinitelyNotNull.kt");
         }
 
         @TestMetadata("compiler/testData/ir/irText/types/nullChecks")

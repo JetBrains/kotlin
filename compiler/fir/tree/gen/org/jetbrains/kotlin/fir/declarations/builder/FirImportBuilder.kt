@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirImportBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     var importedFqName: FqName? = null
     var isAllUnder: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var aliasName: Name? = null
-    var aliasSource: FirSourceElement? = null
+    var aliasSource: KtSourceElement? = null
 
     fun build(): FirImport {
         return FirImportImpl(

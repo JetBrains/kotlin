@@ -141,6 +141,41 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
                     }
                 }
             }
+
+            // Extended Name Section
+            // https://github.com/WebAssembly/extended-name-section/blob/main/document/core/appendix/custom.rst
+
+            appendSection(4u) {
+                appendVectorSize(module.gcTypes.size)
+                module.gcTypes.forEach {
+                    appendModuleFieldReference(it)
+                    b.writeString(it.name)
+                }
+            }
+
+            appendSection(7u) {
+                appendVectorSize(module.globals.size)
+                module.globals.forEach { global ->
+                    appendModuleFieldReference(global)
+                    b.writeString(global.name)
+                }
+            }
+
+            // Experimental fields name section
+            // https://github.com/WebAssembly/gc/issues/193
+            appendSection(10u) {
+                appendVectorSize(module.gcTypes.size)
+                module.gcTypes.forEach {
+                    if (it is WasmStructDeclaration) {
+                        appendModuleFieldReference(it)
+                        appendVectorSize(it.fields.size)
+                        it.fields.forEachIndexed { index, field ->
+                            b.writeVarUInt32(index)
+                            b.writeString(field.name)
+                        }
+                    }
+                }
+            }
         }
     }
 

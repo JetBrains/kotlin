@@ -29,7 +29,9 @@ fun runPillTask(taskName: String) {
 
     val platformDir = IntellijRootUtils.getIntellijRootDir(project)
     val resourcesDir = File(project.projectDir, "resources")
-    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir)
+    val isIdePluginAttached = project.rootProject.intellijSdkVersionForIde() != null
+
+    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir, isIdePluginAttached)
 }
 
 val jar: Jar by tasks

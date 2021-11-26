@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.resolve.isValidTypeParameterFromOuterClass
+import org.jetbrains.kotlin.fir.resolve.isValidTypeParameterFromOuterDeclaration
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjections
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -49,7 +47,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
 
                 for (index in typeArguments.size until typeParameters.size) {
                     val typeParameter = typeParameters[index]
-                    if (!isValidTypeParameterFromOuterClass(typeParameter, declaration, context.session)) {
+                    if (!isValidTypeParameterFromOuterDeclaration(typeParameter, declaration, context.session)) {
                         val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break
                         reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass, context)
                         break

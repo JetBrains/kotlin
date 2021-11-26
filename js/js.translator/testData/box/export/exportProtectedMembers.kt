@@ -20,6 +20,13 @@ open class Foo protected constructor() {
             _baz = value
         }
 
+    protected val bazReadOnly: String
+        get() = _baz
+
+    protected val quux: String = "quux"
+
+    protected var quuz: String = "quuz"
+
     protected class NestedClass {
         val prop: String = "nested class property"
     }
@@ -37,9 +44,15 @@ function box() {
     foo = new exportProtectedMembers.Foo();
 
     if (foo.bar() != 'protected method') return 'failed to call protected method';
-    if (foo.baz != 'baz') return 'failed to read protected property';
+    if (foo.baz != 'baz') return 'failed to read `baz`';
+    if (foo.bazReadOnly != 'baz') return 'failed to read `bazReadOnly`';
     foo.baz = 'beer';
-    if (foo.baz != 'beer') return 'failed to write protected property';
+    if (foo.baz != 'beer') return 'failed to write protected var';
+    if (foo.bazReadOnly != 'beer') return 'unexpected value of `bazReadOnly` after modifying `baz`';
+    if (foo.quux != 'quux') return 'failed to read `quux`';
+    if (foo.quuz != 'quuz') return 'failed to read `quuz`';
+    foo.quuz = 'ale';
+    if (foo.quuz != 'ale') return 'failed to write `quuz`';
 
     nestedClass = new exportProtectedMembers.Foo.NestedClass()
     if (nestedClass.prop != 'nested class property')

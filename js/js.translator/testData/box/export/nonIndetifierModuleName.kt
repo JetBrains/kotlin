@@ -4,7 +4,7 @@
 // INFER_MAIN_MODULE
 // SKIP_NODE_JS
 
-// MODULE: non-identifier-module-name
+// MODULE: non_identifier_module_name
 // FILE: lib.kt
 @JsName("foo")
 @JsExport
@@ -12,5 +12,5 @@ public fun foo(k: String): String = "O$k"
 
 // FILE: test.js
 function box() {
-    return this["non-identifier-module-name"].foo("K");
+    return this["non_identifier_module_name"].foo("K");
 }

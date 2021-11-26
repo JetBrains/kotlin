@@ -231,12 +231,3 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     }
     return string.encodeToByteArray()
 }
-
-@TypedIntrinsic(IntrinsicType.LIST_OF_INTERNAL)
-@PublishedApi
-internal fun <T> listOfInternal(vararg elements: T): List<T> {
-    val result = ArrayList<T>(elements.size)
-    for (i in 0 until elements.size)
-        result.add(elements[i])
-    return result
-}

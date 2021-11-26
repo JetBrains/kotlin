@@ -1,5 +1,6 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument -ProhibitVarargAsArrayAfterSamArgument
+// !LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 // TARGET_BACKEND: JVM
 
 // FILE: Test.java

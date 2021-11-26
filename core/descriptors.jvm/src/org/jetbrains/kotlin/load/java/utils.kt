@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
@@ -31,3 +30,9 @@ class DeprecationCausedByFunctionNInfo(override val target: DeclarationDescripto
 }
 
 internal fun Visibility.toDescriptorVisibility(): DescriptorVisibility = JavaDescriptorVisibilities.toDescriptorVisibility(this)
+
+fun isJspecifyEnabledInStrictMode(javaTypeEnhancementState: JavaTypeEnhancementState) =
+    javaTypeEnhancementState.getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE) == ReportLevel.STRICT
+
+fun hasErasedValueParameters(memberDescriptor: CallableMemberDescriptor) =
+    memberDescriptor is FunctionDescriptor && memberDescriptor.getUserData(JavaMethodDescriptor.HAS_ERASED_VALUE_PARAMETERS) == true

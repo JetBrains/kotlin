@@ -11,12 +11,22 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.util.*
 
 class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirectoryManager(testServices) {
     private val cache = mutableMapOf<String, File>()
     private val rootTempDir: File = run {
         val testInfo = testServices.testInfo
-        KtTestUtil.tmpDirForTest(testInfo.className, testInfo.methodName)
+        val className = testInfo.className
+        val methodName = testInfo.methodName
+        if (!onWindows) return@run KtTestUtil.tmpDirForTest(className, methodName)
+
+        // This code will simplify directory name for windows. This is needed because there can occur errors due to long name
+        val lastDot = className.lastIndexOf('.')
+        val packageName = className.substring(0, lastDot + 1)
+        val simplifiedClassName = className.substring(lastDot + 1).getOnlyUpperCaseSymbols()
+        val simplifiedMethodName = methodName.getOnlyUpperCaseSymbols()
+        KtTestUtil.tmpDirForTest(packageName + simplifiedClassName, "test$simplifiedMethodName")
     }
 
     override fun getOrCreateTempDirectory(name: String): File {
@@ -26,5 +36,13 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
     override fun cleanupTemporaryDirectories() {
         cache.clear()
         FileUtil.delete(rootTempDir)
+    }
+
+    companion object {
+        private val onWindows: Boolean = System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")
+
+        private fun String.getOnlyUpperCaseSymbols(): String {
+            return this.filter { it.isUpperCase() || it == '$' }.toList().joinToString(separator = "")
+        }
     }
 }

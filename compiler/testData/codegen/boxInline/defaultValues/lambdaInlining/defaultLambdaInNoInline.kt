@@ -8,7 +8,8 @@ inline fun inlineFun(crossinline inlineLambda: () -> String = { "OK" }, noinline
 }
 
 // FILE: 2.kt
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda_0 scope=box
+// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda_0 scope=box TARGET_BACKENDS=JS
+// CHECK_CALLED_IN_SCOPE: function=box$lambda scope=box IGNORED_BACKENDS=JS
 import test.*
 
 fun box(): String {

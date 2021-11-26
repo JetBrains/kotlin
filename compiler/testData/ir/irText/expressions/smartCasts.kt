@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun expectsString(s: String) {}
 fun expectsInt(i: Int) {}

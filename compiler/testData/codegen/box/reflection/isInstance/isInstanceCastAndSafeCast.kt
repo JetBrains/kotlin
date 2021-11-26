@@ -1,6 +1,6 @@
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.reflect.KClass
 import kotlin.reflect.cast

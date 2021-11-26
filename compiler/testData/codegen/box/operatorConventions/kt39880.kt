@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: -StrictOnlyInputTypesChecks
 
 fun foo(fn: () -> Boolean) {}

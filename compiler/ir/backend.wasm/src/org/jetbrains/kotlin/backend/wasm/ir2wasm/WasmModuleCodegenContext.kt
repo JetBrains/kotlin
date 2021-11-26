@@ -23,7 +23,7 @@ interface WasmModuleCodegenContext : WasmBaseCodegenContext {
     fun defineInterfaceMethodTable(irFunction: IrFunctionSymbol, wasmTable: WasmTable)
     fun addJsFun(importName: String, jsCode: String)
 
-    fun setStartFunction(wasmFunction: WasmFunction)
+    fun registerInitFunction(wasmFunction: WasmFunction, priority: String)
     fun addExport(wasmExport: WasmExport<*>)
 
     fun registerVirtualFunction(irFunction: IrSimpleFunctionSymbol)

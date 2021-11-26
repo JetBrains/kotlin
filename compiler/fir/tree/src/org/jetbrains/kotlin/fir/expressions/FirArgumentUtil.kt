@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirArraySetArgumentList
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListForErrorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListForErrorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListImpl
 
 fun buildUnaryArgumentList(argument: FirExpression): FirArgumentList = buildArgumentList {
@@ -27,7 +27,7 @@ fun buildArraySetArgumentList(rValue: FirExpression, indexes: List<FirExpression
 
 fun buildResolvedArgumentList(
     mapping: LinkedHashMap<FirExpression, FirValueParameter>,
-    source: FirSourceElement? = null
+    source: KtSourceElement? = null
 ): FirResolvedArgumentList =
     FirResolvedArgumentListImpl(source, mapping)
 
@@ -45,6 +45,6 @@ object FirEmptyArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = emptyList()
 
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
 }

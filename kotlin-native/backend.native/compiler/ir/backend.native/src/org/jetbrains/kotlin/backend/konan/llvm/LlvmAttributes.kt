@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
@@ -48,27 +49,6 @@ private fun addTargetCpuAndFeaturesAttributes(context: Context, llvmFunction: LL
     }
 }
 
-internal fun addLlvmAttributesForKotlinFunction(context: Context, irFunction: IrFunction, llvmFunction: LLVMValueRef) {
-    if (irFunction.returnType.isNothing()) {
-        setFunctionNoReturn(llvmFunction)
-    }
-
-    if (mustNotInline(context, irFunction)) {
-        setFunctionNoInline(llvmFunction)
-    }
-}
-
-private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
-    if (context.shouldContainLocationDebugInfo()) {
-        if (irFunction is IrConstructor && irFunction.isPrimary && irFunction.returnType.isThrowable()) {
-            // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.
-            return true
-        }
-    }
-
-    return false
-}
-
 private fun shouldEnforceFramePointer(context: Context): Boolean {
     // TODO: do we still need it?
     if (!context.shouldOptimize()) {
@@ -98,4 +78,39 @@ private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: Context) {
     }
 
     LLVMAddTargetDependentFunctionAttr(llvmFunction, "frame-pointer", fpKind)
+}
+
+interface LlvmAttribute {
+    fun asAttributeKindId(): LLVMAttributeKindId
+}
+
+// We use sealed class instead of enum because there are attributes with parameters
+// that we might want to use later. For example, align(<n>).
+sealed class LlvmParameterAttribute(private val llvmAttributeName: String) : LlvmAttribute {
+
+    override fun asAttributeKindId(): LLVMAttributeKindId = llvmAttributeKindIdCache.getOrPut(this) {
+        getLlvmAttributeKindId(llvmAttributeName)
+    }
+
+    companion object {
+        private val llvmAttributeKindIdCache = mutableMapOf<LlvmParameterAttribute, LLVMAttributeKindId>()
+    }
+
+    object SignExt : LlvmParameterAttribute("signext")
+    object ZeroExt : LlvmParameterAttribute("zeroext")
+}
+
+sealed class LlvmFunctionAttribute(private val llvmAttributeName: String) : LlvmAttribute {
+
+    override fun asAttributeKindId(): LLVMAttributeKindId = llvmAttributeKindIdCache.getOrPut(this) {
+        getLlvmAttributeKindId(llvmAttributeName)
+    }
+
+    companion object {
+        private val llvmAttributeKindIdCache = mutableMapOf<LlvmFunctionAttribute, LLVMAttributeKindId>()
+    }
+
+    object NoUnwind : LlvmFunctionAttribute("nounwind")
+    object NoReturn : LlvmFunctionAttribute("noreturn")
+    object NoInline : LlvmFunctionAttribute("noinline")
 }

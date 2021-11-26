@@ -10,6 +10,7 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol

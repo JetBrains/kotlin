@@ -1,5 +1,7 @@
 Module: m1
 FILE: base.kt
+    package hello
+
     public final class Hello : R|kotlin/Any| {
         public constructor(msg: R|kotlin/String|): R|hello/Hello| {
             super<R|kotlin/Any|>()
@@ -20,6 +22,8 @@ FILE: base.kt
     }
 Module: m2
 FILE: user.kt
+    package test
+
     public final fun foo(hello: R|hello/Hello|): R|kotlin/String| {
         ^foo R|<local>/hello|.R|hello/Hello.msg|
     }

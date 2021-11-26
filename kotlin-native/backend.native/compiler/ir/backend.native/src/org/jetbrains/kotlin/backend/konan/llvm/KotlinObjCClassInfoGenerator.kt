@@ -87,7 +87,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 .distinctBy { it.selector }
 
         allInitMethodsInfo.mapTo(this) {
-            ObjCMethodDesc(it.selector, it.encoding, context.llvm.missingInitImp)
+            ObjCMethodDesc(it.selector, it.encoding, context.llvm.missingInitImp.llvmValue)
         }
     }
 
@@ -126,7 +126,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 ObjCMethodDesc(
                         annotation.getAnnotationStringValue("selector"),
                         annotation.getAnnotationStringValue("encoding"),
-                        it.llvmFunction
+                        it.llvmFunction.llvmValue
                 )
             }
 

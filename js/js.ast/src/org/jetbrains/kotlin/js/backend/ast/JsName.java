@@ -25,10 +25,6 @@ public class JsName extends HasMetadata implements Symbol {
     this.temporary = temporary;
   }
 
-  public JsName(@NotNull String ident) {
-    this(ident, false);
-  }
-
   public boolean isTemporary() {
     return temporary;
   }

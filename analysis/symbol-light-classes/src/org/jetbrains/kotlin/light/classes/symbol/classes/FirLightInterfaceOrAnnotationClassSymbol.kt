@@ -45,8 +45,6 @@ internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
 
     override fun getImplementsList(): PsiReferenceList? = null
 
-    override fun getOwnInnerClasses(): List<PsiClass> = emptyList()
-
     override fun isInterface(): Boolean = true
 
     override fun isEnum(): Boolean = false

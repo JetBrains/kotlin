@@ -13,10 +13,13 @@ import kotlin.math.*
  * Represents the amount of time one instant of time is away from another instant.
  *
  * A negative duration is possible in a situation when the second instant is earlier than the first one.
- * An infinite duration value [Duration.INFINITE] can be used to represent infinite timeouts.
  *
  * The type can store duration values up to ±146 years with nanosecond precision,
  * and up to ±146 million years with millisecond precision.
+ * If a duration-returning operation provided in `kotlin.time` produces a duration value that doesn't fit into the above range,
+ * the returned `Duration` is infinite.
+ *
+ * An infinite duration value [Duration.INFINITE] can be used to represent infinite timeouts.
  *
  * To construct a duration use either the extension function [toDuration],
  * or the extension properties [hours], [minutes], [seconds], and so on,
@@ -74,6 +77,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of nanoseconds.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -90,6 +95,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         /**
          * Returns a [Duration] equal to this [Double] number of microseconds.
+         *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -108,6 +115,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of milliseconds.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -124,6 +133,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         /**
          * Returns a [Duration] equal to this [Double] number of seconds.
+         *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -142,6 +153,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of minutes.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -159,6 +172,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Returns a [Duration] equal to this [Double] number of hours.
          *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
         @kotlin.internal.InlineOnly
@@ -175,6 +190,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         /**
          * Returns a [Duration] equal to this [Double] number of days.
+         *
+         * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
          */
@@ -531,6 +548,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is this duration value multiplied by the given [scale] number.
      *
+     * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
+     *
      * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
      * e.g. when multiplying an infinite duration by zero.
      */
@@ -717,6 +736,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns the value of this duration expressed as a [Double] number of the specified [unit].
      *
+     * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
+     *
      * An infinite duration value is converted either to [Double.POSITIVE_INFINITY] or [Double.NEGATIVE_INFINITY] depending on its sign.
      */
     public fun toDouble(unit: DurationUnit): Double {
@@ -760,30 +781,37 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         toLong(unit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
 
     /** The value of this duration expressed as a [Double] number of days. */
+    @ExperimentalTime
     @Deprecated("Use inWholeDays property instead or convert toDouble(DAYS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.DAYS)"))
     public val inDays: Double get() = toDouble(DurationUnit.DAYS)
 
     /** The value of this duration expressed as a [Double] number of hours. */
+    @ExperimentalTime
     @Deprecated("Use inWholeHours property instead or convert toDouble(HOURS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.HOURS)"))
     public val inHours: Double get() = toDouble(DurationUnit.HOURS)
 
     /** The value of this duration expressed as a [Double] number of minutes. */
+    @ExperimentalTime
     @Deprecated("Use inWholeMinutes property instead or convert toDouble(MINUTES) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MINUTES)"))
     public val inMinutes: Double get() = toDouble(DurationUnit.MINUTES)
 
     /** The value of this duration expressed as a [Double] number of seconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeSeconds property instead or convert toDouble(SECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.SECONDS)"))
     public val inSeconds: Double get() = toDouble(DurationUnit.SECONDS)
 
     /** The value of this duration expressed as a [Double] number of milliseconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeMilliseconds property instead or convert toDouble(MILLISECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MILLISECONDS)"))
     public val inMilliseconds: Double get() = toDouble(DurationUnit.MILLISECONDS)
 
     /** The value of this duration expressed as a [Double] number of microseconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeMicroseconds property instead or convert toDouble(MICROSECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MICROSECONDS)"))
     public val inMicroseconds: Double get() = toDouble(DurationUnit.MICROSECONDS)
 
     /** The value of this duration expressed as a [Double] number of nanoseconds. */
+    @ExperimentalTime
     @Deprecated("Use inWholeNanoseconds property instead or convert toDouble(NANOSECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.NANOSECONDS)"))
     public val inNanoseconds: Double get() = toDouble(DurationUnit.NANOSECONDS)
 
@@ -871,6 +899,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * The range of durations that can be expressed as a `Long` number of nanoseconds is approximately ±292 years.
      */
+    @ExperimentalTime
     @Deprecated("Use inWholeNanoseconds property instead.", ReplaceWith("this.inWholeNanoseconds"))
     public fun toLongNanoseconds(): Long = inWholeNanoseconds
 
@@ -881,6 +910,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * The range of durations that can be expressed as a `Long` number of milliseconds is approximately ±292 million years.
      */
+    @ExperimentalTime
     @Deprecated("Use inWholeMilliseconds property instead.", ReplaceWith("this.inWholeMilliseconds"))
     public fun toLongMilliseconds(): Long = inWholeMilliseconds
 
@@ -1059,6 +1089,8 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
 /**
  * Returns a [Duration] equal to this [Double] number of the specified [unit].
  *
+ * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
+ *
  * @throws IllegalArgumentException if this `Double` value is `NaN`.
  */
 @SinceKotlin("1.6")
@@ -1082,14 +1114,14 @@ public fun Double.toDuration(unit: DurationUnit): Duration {
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.nanoseconds' extension property from Duration.Companion instead.", ReplaceWith("this.nanoseconds", "kotlin.time.Duration.Companion.nanoseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
 /** Returns a [Duration] equal to this [Long] number of nanoseconds. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.nanoseconds' extension property from Duration.Companion instead.", ReplaceWith("this.nanoseconds", "kotlin.time.Duration.Companion.nanoseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
 /**
@@ -1100,7 +1132,7 @@ public val Long.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.nanoseconds' extension property from Duration.Companion instead.", ReplaceWith("this.nanoseconds", "kotlin.time.Duration.Companion.nanoseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
 
@@ -1108,14 +1140,14 @@ public val Double.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.microseconds' extension property from Duration.Companion instead.", ReplaceWith("this.microseconds", "kotlin.time.Duration.Companion.microseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
 /** Returns a [Duration] equal to this [Long] number of microseconds. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.microseconds' extension property from Duration.Companion instead.", ReplaceWith("this.microseconds", "kotlin.time.Duration.Companion.microseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
 /**
@@ -1126,7 +1158,7 @@ public val Long.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.microseconds' extension property from Duration.Companion instead.", ReplaceWith("this.microseconds", "kotlin.time.Duration.Companion.microseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
 
@@ -1134,14 +1166,14 @@ public val Double.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.milliseconds' extension property from Duration.Companion instead.", ReplaceWith("this.milliseconds", "kotlin.time.Duration.Companion.milliseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 
 /** Returns a [Duration] equal to this [Long] number of milliseconds. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.milliseconds' extension property from Duration.Companion instead.", ReplaceWith("this.milliseconds", "kotlin.time.Duration.Companion.milliseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 
 /**
@@ -1152,7 +1184,7 @@ public val Long.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.milliseconds' extension property from Duration.Companion instead.", ReplaceWith("this.milliseconds", "kotlin.time.Duration.Companion.milliseconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 
 
@@ -1160,14 +1192,14 @@ public val Double.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.seconds' extension property from Duration.Companion instead.", ReplaceWith("this.seconds", "kotlin.time.Duration.Companion.seconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.seconds get() = toDuration(DurationUnit.SECONDS)
 
 /** Returns a [Duration] equal to this [Long] number of seconds. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.seconds' extension property from Duration.Companion instead.", ReplaceWith("this.seconds", "kotlin.time.Duration.Companion.seconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.seconds get() = toDuration(DurationUnit.SECONDS)
 
 /**
@@ -1178,7 +1210,7 @@ public val Long.seconds get() = toDuration(DurationUnit.SECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.seconds' extension property from Duration.Companion instead.", ReplaceWith("this.seconds", "kotlin.time.Duration.Companion.seconds"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.seconds get() = toDuration(DurationUnit.SECONDS)
 
 
@@ -1186,14 +1218,14 @@ public val Double.seconds get() = toDuration(DurationUnit.SECONDS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.minutes' extension property from Duration.Companion instead.", ReplaceWith("this.minutes", "kotlin.time.Duration.Companion.minutes"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.minutes get() = toDuration(DurationUnit.MINUTES)
 
 /** Returns a [Duration] equal to this [Long] number of minutes. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.minutes' extension property from Duration.Companion instead.", ReplaceWith("this.minutes", "kotlin.time.Duration.Companion.minutes"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.minutes get() = toDuration(DurationUnit.MINUTES)
 
 /**
@@ -1204,7 +1236,7 @@ public val Long.minutes get() = toDuration(DurationUnit.MINUTES)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.minutes' extension property from Duration.Companion instead.", ReplaceWith("this.minutes", "kotlin.time.Duration.Companion.minutes"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.minutes get() = toDuration(DurationUnit.MINUTES)
 
 
@@ -1212,14 +1244,14 @@ public val Double.minutes get() = toDuration(DurationUnit.MINUTES)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.hours' extension property from Duration.Companion instead.", ReplaceWith("this.hours", "kotlin.time.Duration.Companion.hours"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.hours get() = toDuration(DurationUnit.HOURS)
 
 /** Returns a [Duration] equal to this [Long] number of hours. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.hours' extension property from Duration.Companion instead.", ReplaceWith("this.hours", "kotlin.time.Duration.Companion.hours"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.hours get() = toDuration(DurationUnit.HOURS)
 
 /**
@@ -1230,7 +1262,7 @@ public val Long.hours get() = toDuration(DurationUnit.HOURS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.hours' extension property from Duration.Companion instead.", ReplaceWith("this.hours", "kotlin.time.Duration.Companion.hours"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.hours get() = toDuration(DurationUnit.HOURS)
 
 
@@ -1238,14 +1270,14 @@ public val Double.hours get() = toDuration(DurationUnit.HOURS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Int.days' extension property from Duration.Companion instead.", ReplaceWith("this.days", "kotlin.time.Duration.Companion.days"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Int.days get() = toDuration(DurationUnit.DAYS)
 
 /** Returns a [Duration] equal to this [Long] number of days. */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Long.days' extension property from Duration.Companion instead.", ReplaceWith("this.days", "kotlin.time.Duration.Companion.days"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Long.days get() = toDuration(DurationUnit.DAYS)
 
 /**
@@ -1256,7 +1288,7 @@ public val Long.days get() = toDuration(DurationUnit.DAYS)
 @SinceKotlin("1.3")
 @ExperimentalTime
 @Deprecated("Use 'Double.days' extension property from Duration.Companion instead.", ReplaceWith("this.days", "kotlin.time.Duration.Companion.days"))
-@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public val Double.days get() = toDuration(DurationUnit.DAYS)
 
 
@@ -1268,6 +1300,8 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 
 /**
  * Returns a duration whose value is the specified [duration] value multiplied by this number.
+ *
+ * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
  *
  * @throws IllegalArgumentException if the operation results in a `NaN` value.
  */

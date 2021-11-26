@@ -1,7 +1,8 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: common.kt
 
 @file:JvmMultifileClass

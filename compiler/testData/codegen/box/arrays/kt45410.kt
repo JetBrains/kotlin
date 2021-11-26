@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 private const val MOD = 998244353

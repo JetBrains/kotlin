@@ -6,22 +6,20 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationTransformer
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.render
 
 
 // JS PIR (and IC) requires DeclarationTransformer instead of FileLoweringPass
@@ -30,7 +28,7 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
     DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
-        if (declaration is IrClass && declaration.isAnnotationClass) listOf(visitClassNew(declaration))
+        if (declaration is IrClass && declaration.isAnnotationClass) listOf(visitClassNew(declaration) as IrClass)
         else null
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
@@ -38,12 +36,13 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
         return expression
     }
 
-    override fun visitClassNew(declaration: IrClass): IrClass {
-        if (!declaration.isAnnotationClass) return declaration
-        context.irFactory.stageController.unrestrictDeclarationListsAccess {
-            implementGeneratedFunctions(declaration, declaration)
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        if (declaration.isAnnotationClass) {
+            context.irFactory.stageController.unrestrictDeclarationListsAccess {
+                implementGeneratedFunctions(declaration, declaration)
+            }
         }
-        return declaration
+        return super.visitClassNew(declaration)
     }
 
     private val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> =
@@ -53,13 +52,16 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
         when {
             type.isPrimitiveArray() -> arraysContentEquals[type]
             else -> arraysContentEquals.entries.singleOrNull { (k, _) -> k.isArray() }?.value
-        } ?: error("Can't find an Arrays.contentEquals method for array type ${type.render()}")
+        } ?: compilationException("Can't find an Arrays.contentEquals method for array type", type)
 
     override fun implementAnnotationPropertiesAndConstructor(
         implClass: IrClass,
         annotationClass: IrClass,
         generatedConstructor: IrConstructor
     ) {
-        throw IllegalStateException("Should not be called")
+        compilationException(
+            "Should not be called",
+            implClass
+        )
     }
 }

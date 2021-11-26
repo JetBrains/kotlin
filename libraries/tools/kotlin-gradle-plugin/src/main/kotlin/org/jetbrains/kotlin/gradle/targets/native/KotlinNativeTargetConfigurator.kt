@@ -82,11 +82,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         linkTask: TaskProvider<KotlinNativeLink>
     ) {
         fun <T : Task> Configuration.configureConfiguration(taskProvider: TaskProvider<T>) {
-            setupAsPublicConfigurationIfSupported(binary.target)
             project.afterEvaluate {
                 val task = taskProvider.get()
                 val artifactFile = when (task) {
-                    is FatFrameworkTask -> task.fatFrameworkDir
+                    is FatFrameworkTask -> task.fatFramework
                     else -> binary.outputFile
                 }
                 val linkArtifact = project.artifacts.add(name, artifactFile) { artifact ->
@@ -433,7 +432,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         "compilation for target '${compilation.platformType.name}'."
                 it.enabled = compilation.konanTarget.enabledOnCurrentHost
 
-                it.destinationDir = project.klibOutputDirectory(compilation).resolve("klib")
+                it.destinationDirectory.set(project.klibOutputDirectory(compilation).resolve("klib"))
             }
 
 

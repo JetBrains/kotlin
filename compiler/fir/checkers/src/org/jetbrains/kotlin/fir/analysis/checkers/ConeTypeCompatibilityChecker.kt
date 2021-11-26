@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -44,6 +45,8 @@ import org.jetbrains.kotlin.types.Variance
  * not a super class/interface of `Collection`
  */
 object ConeTypeCompatibilityChecker {
+
+    private val javaClassClassId = ClassId.fromString("java/lang/Class")
 
     /**
      * The result returned by [ConeTypeCompatibilityChecker]. Note the order of enum entries matters.
@@ -145,6 +148,9 @@ object ConeTypeCompatibilityChecker {
         }
 
         if (upperBounds.size < 2) return Compatibility.COMPATIBLE
+
+        // TODO: Due to KT-49358, we skip any checks on Java class.
+        if (upperBounds.any { it.classId == javaClassClassId }) return Compatibility.COMPATIBLE
 
         // Base types are compatible. Now we check type parameters.
 

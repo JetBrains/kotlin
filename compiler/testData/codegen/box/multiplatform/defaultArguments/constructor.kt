@@ -1,6 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// FIR status: default argument mapping in MPP isn't designed yet
+// WITH_STDLIB
 // FILE: common.kt
 
 expect class Foo(a: String, b: Int = 0, c: Double? = null)

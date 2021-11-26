@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,30 +23,29 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 ) : FirDefaultTransformer<D>() {
     abstract override fun transformAnnotation(annotation: FirAnnotation, data: D): FirStatement
 
-    protected lateinit var scope: FirScope
+    protected lateinit var scopes: List<FirScope>
 
     override fun transformFile(file: FirFile, data: D): FirFile {
-        scope = FirCompositeScope(createImportingScopes(file, session, scopeSession, useCaching = false))
-        val state = beforeChildren(file)
+        scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
+        val state = beforeTransformingChildren(file)
         file.transformDeclarations(this, data)
-        afterChildren(state)
-        return transformAnnotatedDeclaration(file, data) as FirFile
+        afterTransformingChildren(state)
+        return transformDeclaration(file, data) as FirFile
     }
 
     override fun transformProperty(property: FirProperty, data: D): FirProperty {
-        return transformAnnotatedDeclaration(property, data) as FirProperty
+        return transformDeclaration(property, data) as FirProperty
     }
 
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: D
     ): FirStatement {
-        return transformAnnotatedDeclaration(regularClass, data).also {
-            val state = beforeChildren(regularClass)
+        return transformDeclaration(regularClass, data).also {
+            val state = beforeTransformingChildren(regularClass)
             regularClass.transformDeclarations(this, data)
-            regularClass.transformCompanionObject(this, data)
             regularClass.transformSuperTypeRefs(this, data)
-            afterChildren(state)
+            afterTransformingChildren(state)
         } as FirStatement
     }
 
@@ -55,10 +53,10 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         simpleFunction: FirSimpleFunction,
         data: D
     ): FirSimpleFunction {
-        return transformAnnotatedDeclaration(simpleFunction, data).also {
-            val state = beforeChildren(simpleFunction)
+        return transformDeclaration(simpleFunction, data).also {
+            val state = beforeTransformingChildren(simpleFunction)
             simpleFunction.transformValueParameters(this, data)
-            afterChildren(state)
+            afterTransformingChildren(state)
         } as FirSimpleFunction
     }
 
@@ -66,10 +64,10 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         constructor: FirConstructor,
         data: D
     ): FirConstructor {
-        return transformAnnotatedDeclaration(constructor, data).also {
-            val state = beforeChildren(constructor)
+        return transformDeclaration(constructor, data).also {
+            val state = beforeTransformingChildren(constructor)
             constructor.transformValueParameters(this, data)
-            afterChildren(state)
+            afterTransformingChildren(state)
         } as FirConstructor
     }
 
@@ -77,22 +75,19 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         valueParameter: FirValueParameter,
         data: D
     ): FirStatement {
-        return transformAnnotatedDeclaration(valueParameter, data) as FirStatement
+        return transformDeclaration(valueParameter, data) as FirStatement
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): FirTypeAlias {
-        return transformAnnotatedDeclaration(typeAlias, data) as FirTypeAlias
+        return transformDeclaration(typeAlias, data) as FirTypeAlias
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: D): FirTypeRef {
         return transformAnnotationContainer(typeRef, data) as FirTypeRef
     }
 
-    override fun transformAnnotatedDeclaration(
-        annotatedDeclaration: FirAnnotatedDeclaration,
-        data: D
-    ): FirAnnotatedDeclaration {
-        return transformAnnotationContainer(annotatedDeclaration, data) as FirAnnotatedDeclaration
+    override fun transformDeclaration(declaration: FirDeclaration, data: D): FirDeclaration {
+        return transformAnnotationContainer(declaration, data) as FirDeclaration
     }
 
     override fun transformAnnotationContainer(
@@ -106,9 +101,22 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
         return element
     }
 
-    protected open fun beforeChildren(declaration: FirAnnotatedDeclaration): S? {
+    /**
+     * Gets called before transforming [parentDeclaration]'s nested declarations (like in a class of a file).
+     *
+     * @param parentDeclaration A declaration whose nested declarations are about to be transformed.
+     * @return Some state of the transformer; when the nested declarations are transformed, this state will be
+     * passed to the [afterTransformingChildren].
+     */
+    protected open fun beforeTransformingChildren(parentDeclaration: FirDeclaration): S? {
         return null
     }
 
-    protected open fun afterChildren(state: S?) {}
+    /**
+     * Gets called after performing transformation of some declaration's nested declarations; can be used to restore the internal
+     * state of the transformer.
+     *
+     * @param state A state produced by the [beforeTransformingChildren] call before the transformation.
+     */
+    protected open fun afterTransformingChildren(state: S?) {}
 }

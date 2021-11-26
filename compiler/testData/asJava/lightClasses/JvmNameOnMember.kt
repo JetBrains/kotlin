@@ -1,5 +1,5 @@
 // C
-// WITH_RUNTIME
+// WITH_STDLIB
 class C {
     @JvmName("myFun")
     fun g(c: C) {

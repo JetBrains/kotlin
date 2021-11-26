@@ -1,7 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class UInt(val value: Int)
-inline class ULong(val value: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UInt(val value: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ULong(val value: Long)
 
 fun foo(u: UInt, f: (UInt) -> ULong): ULong = f(u)
 inline fun inlinedFoo(u: UInt, f: (UInt) -> ULong): ULong = f(u)

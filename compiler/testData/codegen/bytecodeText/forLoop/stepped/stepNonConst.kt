@@ -35,8 +35,8 @@ fun box(): String {
 // 1 IF_ICMPEQ
 // 1 IFGT
 // 3 IF
-// 9 ILOAD
-// 4 ISTORE
+// 10 ILOAD
+// 5 ISTORE
 // 1 IADD
 // 0 ISUB
 // 0 IINC

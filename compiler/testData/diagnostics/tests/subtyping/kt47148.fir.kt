@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface Visitor<T> {
     fun visit(key: String): T

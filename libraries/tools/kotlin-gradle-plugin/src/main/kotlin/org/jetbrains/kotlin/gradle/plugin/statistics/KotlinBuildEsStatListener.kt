@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.net.InetAddress
+import java.util.*
 
 enum class TaskExecutionState {
     SKIPPED,
@@ -28,8 +29,10 @@ enum class TaskExecutionState {
     ;
 }
 
-class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: List<ReportStatistics>, val buildUuid: String) :
+class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: List<ReportStatistics>) :
     OperationCompletionListener, AutoCloseable, TaskExecutionListener {
+
+    val buildUuid: String = UUID.randomUUID().toString()
 
     val label by lazy { CompilerSystemProperties.KOTLIN_STAT_LABEl_PROPERTY.value }
     val hostName: String? by lazy {

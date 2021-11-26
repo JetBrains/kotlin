@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 interface IFooList {
     fun foo(): List<String>
@@ -9,7 +8,9 @@ interface IFooMutableList {
     fun foo(): MutableList<String>
 }
 
-inline class AL(val t: MutableList<String>) : MutableList<String> {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class AL(val t: MutableList<String>) : MutableList<String> {
     override val size: Int get() = t.size
     override fun get(index: Int): String = t.get(index)
     override fun set(index: Int, element: String): String = t.set(index, element)

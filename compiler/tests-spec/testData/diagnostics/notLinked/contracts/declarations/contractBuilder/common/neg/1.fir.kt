@@ -47,7 +47,7 @@ fun case_5(value_1: Int?) {
     println("!")
     contract {
         returns(true) implies (value_1 != null)
-    } as ContractBuilder
+    } <!CAST_NEVER_SUCCEEDS!>as<!> ContractBuilder
 }
 
 /*
@@ -93,6 +93,6 @@ fun case_9(number: Int?): Boolean {
     val value_1 = number != null
     contract {
         returns(false) implies (value_1)
-    } as ContractBuilder
+    } <!CAST_NEVER_SUCCEEDS!>as<!> ContractBuilder
     return number == null
 }

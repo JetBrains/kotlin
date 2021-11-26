@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun fooInt(b: (Int, Int) -> String): String {
     return b(3, 5)

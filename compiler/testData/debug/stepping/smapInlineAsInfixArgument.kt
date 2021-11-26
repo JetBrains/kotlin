@@ -18,7 +18,7 @@ fun fail() : String {
     return "fail"
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:6 box
 // test.kt:14 box
 // test.kt:7 box

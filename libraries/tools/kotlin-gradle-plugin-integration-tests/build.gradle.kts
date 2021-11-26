@@ -66,6 +66,9 @@ val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
             false
         }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.io.path.ExperimentalPathApi"
+}
 
 val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
@@ -101,7 +104,7 @@ fun Test.advanceGradleVersion() {
 projectTest(
     "test",
     shortenTempRootName = shortenTempRootName,
-    jUnit5Enabled = true
+    jUnitMode = JUnitMode.JUnit5
 ) {
     includeMppAndAndroid(false)
     includeNative(false)
@@ -111,7 +114,7 @@ projectTest(
 projectTest(
     "testAdvanceGradleVersion",
     shortenTempRootName = shortenTempRootName,
-    jUnit5Enabled = true
+    jUnitMode = JUnitMode.JUnit5
 ) {
     advanceGradleVersion()
     includeMppAndAndroid(false)
@@ -124,7 +127,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testNative",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         includeNative(true)
         finalizedBy(cleanTestKitCacheTask)
@@ -133,7 +136,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testAdvanceGradleVersionNative",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         advanceGradleVersion()
         includeNative(true)
@@ -143,7 +146,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testMppAndAndroid",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         includeMppAndAndroid(true)
         finalizedBy(cleanTestKitCacheTask)
@@ -152,7 +155,7 @@ if (isTeamcityBuild) {
     projectTest(
         "testAdvanceGradleVersionMppAndAndroid",
         shortenTempRootName = shortenTempRootName,
-        jUnit5Enabled = true
+        jUnitMode = JUnitMode.JUnit5
     ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)
@@ -161,16 +164,57 @@ if (isTeamcityBuild) {
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
+val maxParallelTestForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+
+val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
+
+    maxParallelForks = maxParallelTestForks
+
+    useJUnitPlatform {
+        excludeTags("DaemonsKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
 
 val simpleTestsTask = tasks.register<Test>("kgpSimpleTests") {
     group = KGP_TEST_TASKS_GROUP
-    description = "Run only simple tests for Kotlin Gradle Plugin"
-    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+    description = "Run only simple tests for Kotlin Gradle Plugin (deprecated)"
+    maxParallelForks = maxParallelTestForks
 
     useJUnitPlatform {
         includeTags("SimpleKGP")
         includeEngines("junit-jupiter")
     }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
+val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for Kotlin/JVM part of Gradle plugin"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("JvmKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
+val jsTestsTask = tasks.register<Test>("kgpJsTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for Kotlin/JS part of Gradle plugin"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("JsKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
@@ -185,11 +229,50 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
         includeTags("DaemonsKGP")
         includeEngines("junit-jupiter")
     }
+
+    // Disabled cause jna dependency FD is leaking on windows agents
+    //if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
+val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run tests for all support plugins, such as kapt, allopen, etc"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("OtherKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
+val mppTestsTask = tasks.register<Test>("kgpMppTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run Multiplatform Kotlin Gradle plugin tests"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("MppKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
+}
+
+val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
+    group = KGP_TEST_TASKS_GROUP
+    description = "Run Android Kotlin Gradle plugin tests"
+    maxParallelForks = maxParallelTestForks
+    useJUnitPlatform {
+        includeTags("AndroidKGP")
+        includeEngines("junit-jupiter")
+    }
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
-    dependsOn(simpleTestsTask, daemonsTestsTask)
+    dependsOn(simpleTestsTask, jvmTestsTask, jsTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
@@ -205,6 +288,7 @@ tasks.withType<Test> {
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
+    dependsOn(":examples:annotation-processor-example:install")
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
@@ -214,16 +298,20 @@ tasks.withType<Test> {
         systemProperty("installCocoapods", installCocoapods)
     }
 
+    val jdk8Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16).map { it.metadata.installationPath.asFile.absolutePath }
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
     doFirst {
+        systemProperty("jdk8Home", jdk8Provider.get())
         systemProperty("jdk9Home", jdk9Provider.get())
         systemProperty("jdk10Home", jdk10Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())
+        systemProperty("jdk16Home", jdk16Provider.get())
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }
@@ -232,8 +320,14 @@ tasks.withType<Test> {
     useAndroidSdk()
 
     val shouldApplyJunitPlatform = name !in setOf(
+        allParallelTestsTask.name,
         simpleTestsTask.name,
-        daemonsTestsTask.name
+        jvmTestsTask.name,
+        jsTestsTask.name,
+        daemonsTestsTask.name,
+        otherPluginsTestTask.name,
+        mppTestsTask.name,
+        androidTestsTask.name
     )
     if (shouldApplyJunitPlatform) {
         maxHeapSize = "512m"

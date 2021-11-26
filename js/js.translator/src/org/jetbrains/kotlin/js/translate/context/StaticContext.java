@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
+import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
-import org.jetbrains.kotlin.js.naming.NameSuggestionKt;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsBuiltinNameClashChecker;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
@@ -843,7 +843,7 @@ public final class StaticContext {
             JsExpression currentImports = pureFqn(getNameForImportsForInline(), null);
 
             JsExpression lhsModuleRef;
-            if (NameSuggestionKt.isValidES5Identifier(moduleId)) {
+            if (IdentifierPolicyKt.isValidES5Identifier(moduleId)) {
                 moduleRef = pureFqn(moduleId, importsRef);
                 lhsModuleRef = pureFqn(moduleId, currentImports);
             }

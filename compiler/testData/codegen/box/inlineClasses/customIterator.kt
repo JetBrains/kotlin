@@ -1,10 +1,12 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-44529
 
-inline class InlineDouble3(val values: DoubleArray) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class InlineDouble3(val values: DoubleArray) {
     operator fun iterator(): DoubleIterator = IteratorImpl(values)
 }
 

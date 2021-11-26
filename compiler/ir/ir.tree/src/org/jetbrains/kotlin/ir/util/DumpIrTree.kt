@@ -111,6 +111,7 @@ class DumpIrTreeVisitor(
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
+            declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
             declaration.declarations.ordered().dumpElements()
@@ -339,6 +340,22 @@ class DumpIrTreeVisitor(
             expression.receiver.accept(this, "receiver")
             for ((i, arg) in expression.arguments.withIndex()) {
                 arg.accept(this, i.toString())
+            }
+        }
+    }
+
+    override fun visitConstantArray(expression: IrConstantArray, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            for ((i, value) in expression.elements.withIndex()) {
+                value.accept(this, i.toString())
+            }
+        }
+    }
+
+    override fun visitConstantObject(expression: IrConstantObject, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            for ((index, argument) in expression.valueArguments.withIndex()) {
+                argument.accept(this, expression.constructor.owner.valueParameters[index].name.toString())
             }
         }
     }

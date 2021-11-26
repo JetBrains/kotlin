@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirElement {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract val mapping: Map<Name, FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationArgumentMapping(this, data)

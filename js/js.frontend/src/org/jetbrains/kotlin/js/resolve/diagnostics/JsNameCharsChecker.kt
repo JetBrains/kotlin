@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 
 class JsNameCharsChecker(private val suggestion: NameSuggestion) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
+            return
+        }
         val bindingContext = context.trace.bindingContext
 
         if (descriptor is PropertyAccessorDescriptor && AnnotationsUtils.getJsName(descriptor) == null) return

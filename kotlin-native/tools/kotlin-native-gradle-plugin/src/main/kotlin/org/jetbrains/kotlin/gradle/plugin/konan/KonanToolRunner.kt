@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.nio.file.Files
 import org.jetbrains.kotlin.*
+import java.io.ByteArrayOutputStream
 
 internal interface KonanToolRunner : Named {
     val mainClass: String
@@ -109,7 +110,10 @@ internal abstract class KonanCliRunner(
         val launcher = project.getProperty(KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER) as? Provider<JavaLauncher>
                 ?: throw IllegalStateException("Missing property: ${KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER}")
 
-        project.exec(object : Action<ExecSpec> {
+        val out = ByteArrayOutputStream()
+        val err = ByteArrayOutputStream()
+
+        val execResult = project.exec(object : Action<ExecSpec> {
             override fun execute(exec: ExecSpec) {
                 exec.executable = launcher.get().executablePath.toString()
                 val properties = System.getProperties().asSequence()
@@ -131,8 +135,18 @@ internal abstract class KonanCliRunner(
                 })
                 blacklistEnvironment.forEach { environment.remove(it) }
                 exec.environment(environment)
+                exec.errorOutput = err
+                exec.standardOutput = out
+                exec.isIgnoreExitValue = true
             }
         })
+
+        check(execResult.exitValue == 0) {
+            """
+                stdout:$out
+                stderr:$err
+            """.trimIndent()
+        }
     }
 }
 

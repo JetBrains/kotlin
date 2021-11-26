@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
@@ -62,6 +62,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
         MAP.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
         MAP.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions");
+        MAP.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes");
         MAP.put(SYNCHRONIZED_IN_INTERFACE, "'@Synchronized' annotation cannot be used on interface members");
         MAP.put(EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
         MAP.put(EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
@@ -91,8 +92,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
                                              "Make sure you have kotlin-reflect.jar in the classpath");
 
-        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can call default methods via super only within @JvmDefault members. Please annotate the containing interface member with @JvmDefault");
-        MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
+        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can call JVM-default members via super only within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls");
+        MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using protected members which are not @JvmStatic in the superclass companion is unsupported yet");
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
@@ -220,8 +221,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(SYNCHRONIZED_ON_SUSPEND, "@Synchronized annotation is not applicable to suspend functions and lambdas");
 
         MAP.put(TYPEOF_SUSPEND_TYPE, "Suspend functional types are not supported in typeOf");
-        MAP.put(TYPEOF_EXTENSION_FUNCTION_TYPE, "Extension function types are not supported in typeOf");
-        MAP.put(TYPEOF_ANNOTATED_TYPE, "Annotated types are not supported in typeOf");
         MAP.put(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING);
     }
 

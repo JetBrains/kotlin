@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract val condition: FirExpression
     abstract val result: FirBlock
 

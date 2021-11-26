@@ -17,4 +17,8 @@ abstract class ModuleStructureExtractor @OptIn(TestInfrastructureInternals::clas
         testDataFileName: String,
         directivesContainer: DirectivesContainer,
     ): TestModuleStructure
+
+    companion object {
+        const val DEFAULT_MODULE_NAME = "main"
+    }
 }

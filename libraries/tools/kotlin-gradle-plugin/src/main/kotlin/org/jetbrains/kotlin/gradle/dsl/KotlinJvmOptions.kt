@@ -45,6 +45,13 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var noStdlib: kotlin.Boolean
 
     /**
+     * Use the IR backend. This option has no effect unless the language version less than 1.5 is used
+     * Default value: false
+     */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.HIDDEN)
+     var useIR: kotlin.Boolean
+
+    /**
      * Use the old JVM backend
      * Default value: false
      */

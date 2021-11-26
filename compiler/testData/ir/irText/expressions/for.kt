@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun testEmpty(ss: List<String>) {
     for (s in ss);

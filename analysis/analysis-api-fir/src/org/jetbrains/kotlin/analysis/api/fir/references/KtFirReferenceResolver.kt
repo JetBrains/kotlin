@@ -13,7 +13,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.analysis.api.analyse
-import org.jetbrains.kotlin.analysis.api.fir.utils.runInPossiblyEdtThread
+import org.jetbrains.kotlin.analysis.api.impl.base.util.runInPossiblyEdtThread
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)

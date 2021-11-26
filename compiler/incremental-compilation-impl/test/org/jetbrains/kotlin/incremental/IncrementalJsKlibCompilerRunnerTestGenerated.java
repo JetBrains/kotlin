@@ -853,6 +853,11 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
         public void testVarianceChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/varianceChanged/");
         }
+
+        @TestMetadata("withIntermediateBodiesChanged")
+        public void testWithIntermediateBodiesChanged() throws Exception {
+            runTest("jps-plugin/testData/incremental/classHierarchyAffected/withIntermediateBodiesChanged/");
+        }
     }
 
     @TestMetadata("jps-plugin/testData/incremental/js")

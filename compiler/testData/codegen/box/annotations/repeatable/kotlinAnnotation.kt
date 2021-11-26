@@ -1,6 +1,6 @@
 // !LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8
 

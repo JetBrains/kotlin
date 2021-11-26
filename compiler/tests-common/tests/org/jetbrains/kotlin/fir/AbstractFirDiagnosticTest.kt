@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
@@ -57,13 +58,13 @@ import java.io.File
  *   and it will opens xdot with dump for that test
  */
 @OptIn(SymbolInternals::class)
-abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
+abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     companion object {
         const val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
 
         private val allowedKindsForDebugInfo = setOf(
-            FirRealSourceElementKind,
-            FirFakeSourceElementKind.DesugaredCompoundAssignment,
+            KtRealSourceElementKind,
+            KtFakeSourceElementKind.DesugaredCompoundAssignment,
         )
 
         val TestFile.withDumpCfgDirective: Boolean
@@ -118,7 +119,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         for (testFile in testFiles) {
             val firFile = firFiles.firstOrNull { it.psi == testFile.ktFile }
             if (firFile != null) {
-                val debugInfoDiagnostics: List<FirDiagnostic> =
+                val debugInfoDiagnostics: List<KtDiagnostic> =
                     collectDebugInfoDiagnostics(firFile, testFile.diagnosedRangesToDiagnosticNames)
                 testFile.getActualText(
                     diagnostics.getValue(firFile) + debugInfoDiagnostics,
@@ -135,8 +136,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     protected fun collectDebugInfoDiagnostics(
         firFile: FirFile,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
-    ): List<FirDiagnostic> {
-        val result = mutableListOf<FirDiagnostic>()
+    ): List<KtDiagnostic> {
+        val result = mutableListOf<KtDiagnostic>()
 
 
         object : FirDefaultVisitorVoid() {
@@ -167,7 +168,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     fun createExpressionTypeDiagnosticIfExpected(
         element: FirExpression,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
-    ): FirDiagnosticWithParameters1<String>? =
+    ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
             element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.originalType)
         }
@@ -184,7 +185,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         element: FirElement,
         reference: FirNamedReference,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
-    ): FirDiagnosticWithParameters1<String>? =
+    ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.CALL.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
 
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
@@ -196,11 +197,11 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         element: FirElement,
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>,
         argument: () -> String,
-    ): FirDiagnosticWithParameters1<String>? {
+    ): KtDiagnosticWithParameters1<String>? {
         val sourceElement = element.source ?: return null
         val sourceKind = sourceElement.kind
         if (sourceKind !in allowedKindsForDebugInfo) {
-            if (sourceKind != FirFakeSourceElementKind.ImplicitReturn || sourceElement.elementType != KtNodeTypes.RETURN) {
+            if (sourceKind != KtFakeSourceElementKind.ImplicitReturn || sourceElement.elementType != KtNodeTypes.RETURN) {
                 return null
             }
         }
@@ -212,19 +213,19 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
         val argumentText = argument()
         return when (sourceElement) {
-            is FirPsiSourceElement -> FirPsiDiagnosticWithParameters1(
+            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
-                SourceElementPositioningStrategy.DEFAULT
+                KtDiagnosticFactory1(name, severity, AbstractSourceElementPositioningStrategy.DEFAULT, PsiElement::class),
+                AbstractSourceElementPositioningStrategy.DEFAULT
             )
-            is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1(name, severity, SourceElementPositioningStrategy.DEFAULT, PsiElement::class),
-                SourceElementPositioningStrategy.DEFAULT
+                KtDiagnosticFactory1(name, severity, AbstractSourceElementPositioningStrategy.DEFAULT, PsiElement::class),
+                AbstractSourceElementPositioningStrategy.DEFAULT
             )
         }
     }
@@ -263,9 +264,9 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
 
-    protected fun collectDiagnostics(firFiles: List<FirFile>): Map<FirFile, List<FirDiagnostic>> {
+    protected fun collectDiagnostics(firFiles: List<FirFile>): Map<FirFile, List<KtDiagnostic>> {
         val collectors = mutableMapOf<FirSession, AbstractDiagnosticCollector>()
-        val result = mutableMapOf<FirFile, List<FirDiagnostic>>()
+        val result = mutableMapOf<FirFile, List<KtDiagnostic>>()
         for (firFile in firFiles) {
             val session = firFile.moduleData.session
             val collector = collectors.computeIfAbsent(session) { createCollector(session) }

@@ -18,7 +18,7 @@ fun kt6840_2(s: String?) {
 
 fun kt1635(s: String?) {
     s?.hashCode()!!
-    s<!UNSAFE_CALL!>.<!>hashCode()
+    s.hashCode()
 }
 
 fun kt2127() {
@@ -64,6 +64,24 @@ fun kt4565_2(a: SomeClass?) {
     val extra = (a as? SubClass)?.extra
     if (extra != null) {
         a.extra.hashCode()
+    }
+}
+
+inline fun <reified T : SomeClass> kt45345(a: SomeClass?) {
+    if (a?.data is T) {
+        a.data
+    }
+}
+
+inline fun <reified T : U, U : SomeClass> kt45345_2(a: SomeClass?) {
+    if (a?.data is T) {
+        a.data
+    }
+}
+
+inline fun <reified T : U, U : SomeClass?> kt45345_3(a: SomeClass?) {
+    if (a?.data is T) {
+        a<!UNSAFE_CALL!>.<!>data
     }
 }
 

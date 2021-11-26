@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 const val a = "INT " + 0x8fffffffU
 const val b = "BYTE " + 0x8ffU

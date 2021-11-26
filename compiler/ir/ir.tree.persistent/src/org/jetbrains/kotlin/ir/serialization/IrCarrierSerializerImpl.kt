@@ -63,6 +63,10 @@ internal class IrCarrierSerializerImpl(val fileSerializer: IrFileSerializer, val
         return fileSerializer.serializeIrType(value)
     }
 
+    override fun serializeSealedSubclass(value: IrClassSymbol): Long {
+        return fileSerializer.serializeIrSymbol(value)
+    }
+
     override fun serializeType(value: IrType): Int {
         return fileSerializer.serializeIrType(value)
     }

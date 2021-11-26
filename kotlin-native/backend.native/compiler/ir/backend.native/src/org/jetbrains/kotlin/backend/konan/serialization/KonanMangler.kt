@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.types.KotlinType
 
 abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrBasedKotlinManglerImpl() {
     override fun getExportChecker(compatibleMode: Boolean): IrExportCheckerVisitor = KonanIrExportChecker(compatibleMode)
 
-    override fun getMangleComputer(mode: MangleMode): IrMangleComputer = KonanIrManglerComputer(StringBuilder(256), mode, withReturnType)
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): IrMangleComputer = KonanIrManglerComputer(StringBuilder(256), mode, compatibleMode, withReturnType)
 
     override fun IrDeclaration.isPlatformSpecificExport(): Boolean {
         if (this is IrSimpleFunction) if (isFakeOverride) return false
@@ -51,8 +50,8 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
         override fun IrDeclaration.isPlatformSpecificExported(): Boolean = isPlatformSpecificExport()
     }
 
-    private class KonanIrManglerComputer(builder: StringBuilder, mode: MangleMode, private val withReturnType: Boolean) : IrMangleComputer(builder, mode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer = KonanIrManglerComputer(builder, newMode, withReturnType)
+    private class KonanIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean, private val withReturnType: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer = KonanIrManglerComputer(builder, newMode, compatibleMode, withReturnType)
 
         override fun addReturnType(): Boolean = withReturnType
 
@@ -93,7 +92,7 @@ object KonanManglerIr : AbstractKonanIrMangler(false)
 abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = KonanDescriptorExportChecker()
 
-    override fun getMangleComputer(mode: MangleMode): DescriptorMangleComputer = KonanDescriptorMangleComputer(StringBuilder(256), mode)
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): DescriptorMangleComputer = KonanDescriptorMangleComputer(StringBuilder(256), mode)
 
     private inner class KonanDescriptorExportChecker : DescriptorExportCheckerVisitor() {
         override fun DeclarationDescriptor.isPlatformSpecificExported(): Boolean = isPlatformSpecificExport()

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.*
-import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
@@ -17,16 +17,16 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -41,18 +41,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpressionWithPossibleResolve
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findAssignment
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.ConcurrentHashMap
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-) : KtCallResolver(), KtFirAnalysisSessionComponent {
-    private val diagnosticCache = mutableListOf<FirDiagnostic>()
+) : AbstractKtCallResolver(), KtFirAnalysisSessionComponent {
+    private val diagnosticCache = mutableListOf<KtDiagnostic>()
     private val cache: ConcurrentHashMap<KtElement, KtCall?> = ConcurrentHashMap()
 
     override fun resolveAccessorCall(call: KtSimpleNameExpression): KtCall? = withValidityAssertion {
@@ -86,6 +84,9 @@ internal class KtFirCallResolver(
                     ktArgumentMapping[setterValue] = setterParameterSymbol
                 }
                 return KtFunctionCall(ktArgumentMapping, target, KtSubstitutor.Empty(token), token)
+            }
+            is FirPropertyAccessExpression -> {
+                KtFunctionCall(LinkedHashMap(), fir.calleeReference.createCallTarget() ?: return null, KtSubstitutor.Empty(token), token)
             }
             else -> return null
         }
@@ -258,7 +259,7 @@ internal class KtFirCallResolver(
     private fun FirReference.createCallTarget(): KtCallTarget? {
         return when (this) {
             is FirSuperReference -> createCallTarget(source)
-            is FirResolvedNamedReference -> getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it, token) }
+            is FirResolvedNamedReference -> getKtFunctionLikeSymbol()?.let { KtSuccessCallTarget(it, token) }
             is FirErrorNamedReference -> createErrorCallTarget(source)
             is FirErrorReferenceWithCandidate -> createErrorCallTarget(source)
             is FirSimpleNamedReference ->
@@ -325,22 +326,25 @@ internal class KtFirCallResolver(
         return ktArgumentMapping
     }
 
-    private fun FirErrorNamedReference.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
+    private fun FirErrorNamedReference.createErrorCallTarget(qualifiedAccessSource: KtSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
             source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource, diagnosticCache) }
                 ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token), token)
 
-    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
+    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(qualifiedAccessSource: KtSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
             source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource, diagnosticCache) }
                 ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token), token)
 
-    private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =
-        resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol
+    private fun FirResolvedNamedReference.getKtFunctionLikeSymbol(): KtFunctionLikeSymbol? {
+        val fir = resolvedSymbol.fir
+        val targetFir = if (fir is FirProperty) fir.getter else fir
+        return targetFir?.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol
+    }
 
-    private fun FirSuperReference.createCallTarget(qualifiedAccessSource: FirSourceElement?): KtCallTarget? =
+    private fun FirSuperReference.createCallTarget(qualifiedAccessSource: KtSourceElement?): KtCallTarget? =
         when (val type = superTypeRef.coneType) {
             is ConeKotlinErrorType ->
                 KtErrorCallTarget(
@@ -361,13 +365,4 @@ internal class KtFirCallResolver(
 
     private fun KtAnalysisSession.getPrimaryConstructor(symbolWithMembers: KtSymbolWithMembers): KtConstructorSymbol? =
         symbolWithMembers.getDeclaredMemberScope().getConstructors().firstOrNull { it.isPrimary }
-
-    companion object {
-        private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
-            listOf(
-                CallableId(StandardNames.getFunctionClassId(arity), OperatorNameConventions.INVOKE),
-                CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
-            )
-        }
-    }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 
 open class B<T>
 

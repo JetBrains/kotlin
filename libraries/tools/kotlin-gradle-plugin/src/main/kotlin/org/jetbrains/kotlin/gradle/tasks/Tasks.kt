@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.model.ReplacedBy
@@ -53,15 +53,15 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
+import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
-import java.util.LinkedHashSet
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -213,6 +213,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val layout = project.layout
 
+    @get:Inject
+    internal abstract val fileSystemOperations: FileSystemOperations
+
     @get:Internal
     protected val objects: ObjectFactory = project.objects
 
@@ -319,7 +322,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                     it,
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get()
+                    metrics.get(),
+                    compilerExecutionStrategy.get(),
                 )
             }
         )
@@ -328,6 +332,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
+        KotlinBuildStatsService.applyIfInitialised {
+            if (name.contains("Test"))
+                it.report(BooleanMetrics.TESTS_EXECUTED, true)
+            else
+                it.report(BooleanMetrics.COMPILATION_STARTED, true)
+        }
         val buildMetrics = metrics.get()
         buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
             systemPropertiesService.get().startIntercept()
@@ -339,7 +349,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
                     buildMetrics.measure(BuildTime.BACKUP_OUTPUT) {
-                        TaskOutputsBackup(allOutputFiles())
+                        TaskOutputsBackup(
+                            fileSystemOperations,
+                            layout.buildDirectory,
+                            layout.buildDirectory.dir("snapshot/kotlin/$name"),
+                            allOutputFiles()
+                        ).also {
+                            it.createSnapshot()
+                        }
                     }
                 else null
 
@@ -553,6 +570,9 @@ abstract class KotlinCompile @Inject constructor(
                     compileJavaTaskProvider.map { it.name }
                 )
             }
+            task.moduleName.set(task.project.provider {
+                task.kotlinOptions.moduleName ?: task.parentKotlinOptionsImpl.orNull?.moduleName ?: compilation.moduleName
+            })
 
             if (properties.useClasspathSnapshot) {
                 val classpathSnapshot = task.project.configurations.getByName(classpathSnapshotConfigurationName(task.name))
@@ -652,6 +672,7 @@ abstract class KotlinCompile @Inject constructor(
                     toolchain.currentJvmJdkToolsJar.orNull,
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
+                    compilerExecutionStrategy.get(),
                     workerExecutor
                 )
             })
@@ -980,6 +1001,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
+                    compilerExecutionStrategy.get(),
                     workerExecutor
                 )
             }

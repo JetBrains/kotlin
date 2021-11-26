@@ -36,4 +36,3 @@ class Derived2 : Base2 {
   }
 
 }
-

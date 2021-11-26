@@ -42,6 +42,15 @@ var KmClass.anonymousObjectOriginName: String?
     }
 
 /**
+ * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
+ */
+var KmClass.jvmFlags: Flags
+    get() = jvm.jvmFlags
+    set(value) {
+        jvm.jvmFlags = value
+    }
+
+/**
  * Metadata of local delegated properties used somewhere inside this package fragment (but not in any class).
  * Note that for classes produced by the Kotlin compiler, such properties will have default accessors.
  *

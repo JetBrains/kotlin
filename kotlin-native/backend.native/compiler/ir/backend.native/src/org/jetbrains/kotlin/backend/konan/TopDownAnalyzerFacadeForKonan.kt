@@ -6,34 +6,28 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.konan.KotlinResolvedModuleDescriptors
-import org.jetbrains.kotlin.storage.StorageManager
 
 internal object TopDownAnalyzerFacadeForKonan {
+
+    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
 
     fun analyzeFiles(files: Collection<KtFile>, context: Context): AnalysisResult {
         val config = context.config
@@ -41,25 +35,20 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
-        val module = NativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+        val module = nativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
                 moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
-        val resolvedDependencies = ResolvedDependencies(
-                config.resolvedLibraries,
-                projectContext.storageManager,
-                module.builtIns,
-                config.languageVersionSettings,
-                config.friendModuleFiles,
-                module
-        )
+        val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
+                config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
+                config.friendModuleFiles, config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module))
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
         if (!module.isNativeStdlib()) {
-            val dependencies = listOf(module) + resolvedDependencies.moduleDescriptors.resolvedDescriptors + resolvedDependencies.moduleDescriptors.forwardDeclarationsModule
-            module.setDependencies(dependencies, resolvedDependencies.friends)
+            val dependencies = listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule
+            module.setDependencies(dependencies, resolvedModuleDescriptors.friendModules)
         } else {
-            assert (resolvedDependencies.moduleDescriptors.resolvedDescriptors.isEmpty())
+            assert(resolvedModuleDescriptors.resolvedDescriptors.isEmpty())
             moduleContext.setDependencies(module)
             // [K][Suspend]FunctionN belong to stdlib.
             additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
@@ -122,34 +111,3 @@ internal object TopDownAnalyzerFacadeForKonan {
         }
     }
 }
-
-private class ResolvedDependencies(
-    resolvedLibraries: KotlinLibraryResolveResult,
-    storageManager: StorageManager,
-    builtIns: KotlinBuiltIns,
-    specifics: LanguageVersionSettings,
-    friendModuleFiles: Set<File>,
-    currentModuleDescriptor: ModuleDescriptorImpl
-) {
-
-    val moduleDescriptors: KotlinResolvedModuleDescriptors
-    val friends: Set<ModuleDescriptorImpl>
-
-    init {
-
-        val collectedFriends = mutableListOf<ModuleDescriptorImpl>()
-
-        val customAction: (KotlinLibrary, ModuleDescriptorImpl) -> Unit = { library, moduleDescriptor ->
-            if (friendModuleFiles.contains(library.libraryFile)) {
-                collectedFriends.add(moduleDescriptor)
-            }
-        }
-
-        this.moduleDescriptors = NativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
-                resolvedLibraries, storageManager, builtIns, specifics, customAction, listOf(currentModuleDescriptor))
-
-        this.friends = collectedFriends.toSet()
-    }
-}
-
-val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())

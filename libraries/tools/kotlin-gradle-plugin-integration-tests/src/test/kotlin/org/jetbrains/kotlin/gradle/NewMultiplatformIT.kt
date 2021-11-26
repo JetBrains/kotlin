@@ -1035,7 +1035,6 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNonMppConsumersOfLibraryPublishedWithNoMetadataOptIn() {
         val repoDir = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
             build(
                 "publish"
             ) { assertSuccessful() }
@@ -1416,37 +1415,6 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
-
-    @Test
-    fun testStaleOutputCleanup() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
-        setupWorkingDir()
-        // Check that output directories of Kotlin compilations are registered for Gradle stale outputs cleanup.
-        // One way to check that is to run a Gradle build with no Gradle history (no .gradle directory) and see that the compilation
-        // output directories are cleaned up, even those outside the project's buildDir
-
-        gradleBuildScript().appendText(
-            "\n" + """
-            kotlin.targets.js.compilations.main.output.classesDirs.from("foo") // should affect Gradle's behavior wrt stale output cleanup
-            task('foo') {
-                outputs.dir("foo")
-                doFirst {
-                    println 'hello'
-                    file("foo/2.txt").text = System.currentTimeMillis()
-                }
-            }
-            """.trimIndent()
-        )
-
-        val staleFilePath = "foo/1.txt"
-        projectDir.resolve(staleFilePath).run { parentFile.mkdirs(); createNewFile() }
-
-        build("foo") {
-            assertSuccessful()
-            assertNoSuchFile(staleFilePath)
-            assertFileExists("foo/2.txt")
-        }
-    }
-
     @Test
     fun testDefaultSourceSetsDsl() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
@@ -1488,7 +1456,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
         fun testDependencies() = testResolveAllConfigurations("app") {
-            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
+            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.13.2.jar")
             assertEquals(
                 1,
                 (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
@@ -1529,10 +1497,10 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
         testResolveAllConfigurations("app") {
             assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
-            assertContains(">> :app:junitCompileClasspath --> junit-4.12.jar")
+            assertContains(">> :app:junitCompileClasspath --> junit-4.13.2.jar")
 
             assertContains(">> :app:mixedJunitCompileClasspath --> lib-junit.jar")
-            assertContains(">> :app:mixedJunitCompileClasspath --> junit-4.12.jar")
+            assertContains(">> :app:mixedJunitCompileClasspath --> junit-4.13.2.jar")
 
             assertContains(">> :app:testngCompileClasspath --> lib-testng.jar")
             assertContains(">> :app:testngCompileClasspath --> testng-6.14.3.jar")
@@ -1873,7 +1841,12 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testWasmJs() = with(Project("new-mpp-wasm-js", gradleVersion)) {
+    fun testWasmJs() = with(Project(
+        "new-mpp-wasm-js",
+        // TODO: this test fails with deprecation error on Gradle <7.0
+        // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
+        gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0")
+    )) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         build("build") {

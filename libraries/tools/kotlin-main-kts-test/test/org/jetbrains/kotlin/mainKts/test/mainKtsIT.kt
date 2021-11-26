@@ -121,6 +121,26 @@ class MainKtsIT {
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun testCacheWithFileLocation() {
+        val scriptPath = File("$TEST_DATA_ROOT/script-file-location-default.main.kts").absolutePath
+        val cache = createTempDirectory("main.kts.test")
+        val expectedTestOutput = listOf(Regex.escape(scriptPath))
+
+        try {
+            Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+            runWithKotlinRunner(scriptPath, expectedTestOutput, cacheDir = cache)
+            val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
+            Assert.assertTrue(cacheFile != null && cacheFile.exists())
+
+            // this run should use the cached script
+            runWithKotlinRunner(scriptPath, expectedTestOutput, cacheDir = cache)
+        } finally {
+            cache.toFile().deleteRecursively()
+        }
+    }
+
     @Test
     fun testHelloSerialization() {
         val paths = PathUtil.kotlinPathsForDistDirectory

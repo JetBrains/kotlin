@@ -191,7 +191,7 @@ internal class TestProcessor (val context: Context) {
             element.acceptChildrenVoid(this)
         }
 
-        fun IrFunctionSymbol.hasAnnotation(fqName: FqName) = descriptor.annotations.any { it.fqName == fqName }
+        fun IrFunctionSymbol.hasAnnotation(fqName: FqName) = owner.hasAnnotation(fqName)
 
         /**
          * Checks if [this] or any of its parent functions has the annotation with the given [testAnnotation].

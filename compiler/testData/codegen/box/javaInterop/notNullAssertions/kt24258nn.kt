@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: kt24258nn.kt
 
 val lazyNotNullString: String by lazy { J.nullNotNullString() }

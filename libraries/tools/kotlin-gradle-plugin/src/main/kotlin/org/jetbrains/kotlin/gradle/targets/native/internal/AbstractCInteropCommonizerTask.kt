@@ -13,32 +13,35 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileNameLength
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import java.io.File
 
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
     @get:OutputDirectory
     abstract val outputDirectory: File
 
-    internal fun outputDirectory(group: CInteropCommonizerGroup): File {
-        val interopsDirectoryName = group.interops.map { it.interopName }.toSet().joinToString(";")
-        val groupDisambiguation = group.targets.joinToString { it.identityString } +
-                group.interops.joinToString { it.uniqueName }
-
-        return outputDirectory
-            .resolve(ensureMaxFileNameLength(interopsDirectoryName))
-            .resolve(base64Hash(groupDisambiguation))
-    }
-
     internal abstract fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup?
+}
 
-    internal fun commonizedOutputLibraries(dependent: CInteropCommonizerDependent): FileCollection {
-        val fileProvider = project.filesProvider {
-            val group = findInteropsGroup(dependent) ?: return@filesProvider emptySet<File>()
-            CommonizerOutputFileLayout
-                .resolveCommonizedDirectory(outputDirectory(group), dependent.target)
-                .listFiles().orEmpty().toSet()
-        }
+internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {
+    val interopsDirectoryName = group.interops.map { it.interopName }.toSet().joinToString(";")
+    val groupDisambiguation = group.targets.joinToString { it.identityString } +
+            group.interops.joinToString { it.uniqueName }
 
-        return fileProvider.builtBy(this)
+    return outputDirectory
+        .resolve(ensureMaxFileNameLength(interopsDirectoryName))
+        .resolve(base64Hash(groupDisambiguation))
+}
+
+internal fun AbstractCInteropCommonizerTask.commonizedOutputLibraries(dependent: CInteropCommonizerDependent): FileCollection {
+    return outputFilesProvider {
+        (commonizedOutputDirectory(dependent) ?: return@outputFilesProvider emptySet<File>())
+            .listFiles().orEmpty().toSet()
     }
+}
+
+internal fun AbstractCInteropCommonizerTask.commonizedOutputDirectory(dependent: CInteropCommonizerDependent): File? {
+    val group = findInteropsGroup(dependent) ?: return null
+    return CommonizerOutputFileLayout
+        .resolveCommonizedDirectory(outputDirectory(group), dependent.target)
 }

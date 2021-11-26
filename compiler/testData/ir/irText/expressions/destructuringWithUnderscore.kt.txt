@@ -35,4 +35,3 @@ fun B.test() {
   val z: Int = (<this>, tmp0_container).component3()
   // }
 }
-

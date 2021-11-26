@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -16,16 +18,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
 import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -167,7 +171,14 @@ object FirOverrideChecker : FirClassChecker() {
             it.ensureResolved(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
             val fir = it.fir
-            visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
+            visibilityChecker.isVisible(
+                fir,
+                context.session,
+                file,
+                containingDeclarations,
+                null,
+                skipCheckForContainingClassVisibility = true
+            )
         }
         if (!hasVisibleBase) {
             //NB: Old FE reports this in an attempt to override private member,
@@ -247,7 +258,7 @@ object FirOverrideChecker : FirClassChecker() {
             val kind = member.source?.kind
             // Only report if the current member has real source or it's a member property declared inside the primary constructor.
 
-            if (kind is FirFakeSourceElementKind.DataClassGeneratedMembers) {
+            if (kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
                 overriddenMemberSymbols.find { it.isFinal }?.let { base ->
                     reporter.reportOn(
                         containingClass.source,
@@ -260,7 +271,7 @@ object FirOverrideChecker : FirClassChecker() {
                 return
             }
 
-            if (kind !is FirRealSourceElementKind && kind !is FirFakeSourceElementKind.PropertyFromParameter) return
+            if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
             val overridden = overriddenMemberSymbols.first().originalOrSelf()
             val originalContainingClassSymbol = overridden.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return

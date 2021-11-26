@@ -7,6 +7,8 @@ val projectsAllowedToUseFirFromSymbol = listOf(
     "java",
     "jvm",
     "raw-fir",
+    "providers",
+    "semantics",
     "resolve",
     "tree",
     "jvm-backend",

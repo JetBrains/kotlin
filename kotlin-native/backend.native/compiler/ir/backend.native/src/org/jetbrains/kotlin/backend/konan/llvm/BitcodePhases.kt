@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -327,17 +323,6 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         description = "Code generation",
         op = { context, irModule ->
             irModule.acceptVoid(context.codegenVisitor)
-            // TODO: Consider adding LLVM_IR compiler output kind.
-            if (context.configuration.getBoolean(KonanConfigKeys.SAVE_LLVM_IR)) {
-                val moduleName: String = memScoped {
-                    val sizeVar = alloc<size_tVar>()
-                    LLVMGetModuleIdentifier(context.llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
-                }
-                val output = context.config.tempFiles.create(moduleName,".ll")
-                if (LLVMPrintModuleToFile(context.llvmModule, output.absolutePath, null) != 0) {
-                    error("Can't dump LLVM IR to ${output.absolutePath}")
-                }
-            }
         }
 )
 

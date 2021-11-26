@@ -19,14 +19,14 @@ private class Outer<E> {
         private var doubleStringInt = Outer<Double>().Inner<String>().foo<Int>()()
 
         private fun bar() {
-            doubleCharSequenceInt = doubleStringNumber
+            doubleCharSequenceInt = <!ASSIGNMENT_TYPE_MISMATCH!>doubleStringNumber<!>
             doubleCharSequenceInt = doubleStringInt
 
             doubleStringInt = Outer<Double>().Inner<String>().foo<Int>()()
 
-            doubleStringInt.e.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Double>() }
-            doubleStringInt.f.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
-            doubleStringInt.g.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
+            doubleStringInt.e.checkType { _<Double>() }
+            doubleStringInt.f.checkType { _<String>() }
+            doubleStringInt.g.checkType { _<Int>() }
         }
     }
 }

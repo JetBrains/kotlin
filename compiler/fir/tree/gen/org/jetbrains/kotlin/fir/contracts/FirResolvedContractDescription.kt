@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.contracts
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirResolvedContractDescription : FirContractDescription() {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract val effects: List<FirEffectDeclaration>
     abstract val unresolvedEffects: List<FirStatement>
 

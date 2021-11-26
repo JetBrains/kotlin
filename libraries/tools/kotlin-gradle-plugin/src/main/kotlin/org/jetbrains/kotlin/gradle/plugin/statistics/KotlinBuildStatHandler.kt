@@ -70,9 +70,7 @@ class KotlinBuildStatHandler {
 
     internal fun reportGlobalMetrics(gradle: Gradle, sessionLogger: BuildSessionLogger) {
         sessionLogger.report(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
-        System.getProperty("os.name")?.also {
-            sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name"))
-        }
+        System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
         sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
         sessionLogger.report(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
         sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
@@ -84,15 +82,12 @@ class KotlinBuildStatHandler {
 
         gradle.taskGraph.whenReady() { taskExecutionGraph ->
             val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-            report(sessionLogger, BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"), null)
-            report(sessionLogger, BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"), null)
             report(sessionLogger, BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"), null)
         }
 
         fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
-        if (buildSrcExists(gradle.rootProject)) {
-            sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, true)
-        }
+        sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, buildSrcExists(gradle.rootProject))
+
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
                 for (configuration in project.configurations) {

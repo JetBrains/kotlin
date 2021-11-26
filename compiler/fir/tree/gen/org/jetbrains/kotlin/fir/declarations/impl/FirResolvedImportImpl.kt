@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.name.ClassId
@@ -23,11 +23,11 @@ internal class FirResolvedImportImpl(
     override val packageFqName: FqName,
     override val relativeParentClassName: FqName?,
 ) : FirResolvedImport() {
-    override val source: FirSourceElement? get() = delegate.source
+    override val source: KtSourceElement? get() = delegate.source
     override val importedFqName: FqName? get() = delegate.importedFqName
     override val isAllUnder: Boolean get() = delegate.isAllUnder
     override val aliasName: Name? get() = delegate.aliasName
-    override val aliasSource: FirSourceElement? get() = delegate.aliasSource
+    override val aliasSource: KtSourceElement? get() = delegate.aliasSource
     override val resolvedParentClassId: ClassId? get() = relativeParentClassName?.let { ClassId(packageFqName, it, false) }
     override val importedName: Name? get() = importedFqName?.shortName()
 

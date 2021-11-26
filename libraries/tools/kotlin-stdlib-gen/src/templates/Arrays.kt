@@ -1284,9 +1284,6 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.Native) {
             body { """if (size > 1) sortArrayWith(this, 0, size, comparator)""" }
-            on(Backend.Wasm) {
-                body { """TODO("Wasm stdlib: $signature")""" }
-            }
         }
     }
 

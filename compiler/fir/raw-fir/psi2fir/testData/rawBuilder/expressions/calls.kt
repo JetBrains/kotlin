@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 infix fun Int.distance(y: Int) = this + y
 
 fun test(): Int = 3 distance 4

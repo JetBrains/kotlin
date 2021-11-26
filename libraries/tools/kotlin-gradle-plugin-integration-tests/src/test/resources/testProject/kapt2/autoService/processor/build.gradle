@@ -1,9 +1,0 @@
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin'
-
-dependencies {
-    ext.autoServiceVersion = '1.0-rc2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "com.google.auto.service:auto-service:$autoServiceVersion"
-    kapt "com.google.auto.service:auto-service:$autoServiceVersion"
-}

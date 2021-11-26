@@ -11,6 +11,7 @@
 #include "FinalizerHooksTestSupport.hpp"
 #include "Memory.h"
 #include "ObjectTestSupport.hpp"
+#include "TestSupport.hpp"
 
 using namespace kotlin;
 
@@ -46,6 +47,7 @@ TEST_F(FinalizerHooksTest, TypeWithFinalizerHookWithoutExtra) {
 }
 
 TEST_F(FinalizerHooksTest, TypeWithFinalizerHookWithExtra) {
+    ScopedMemoryInit init;
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>().addFlag(TF_HAS_FINALIZER)};
     test_support::Object<EmptyPayload> object(type.typeInfo());
     ObjHeader* obj = object.header();
@@ -71,6 +73,7 @@ TEST_F(FinalizerHooksTest, TypeWithoutFinalizerHookWithoutExtra) {
 }
 
 TEST_F(FinalizerHooksTest, TypeWithoutFinalizerHookWithExtra) {
+    ScopedMemoryInit init;
     test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
     test_support::Object<EmptyPayload> object(type.typeInfo());
     ObjHeader* obj = object.header();

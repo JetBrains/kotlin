@@ -18,16 +18,15 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class KtFirDelegatingScope<S>(
+internal open class KtFirDelegatingScope(
+    val firScope: FirContainingNamesAwareScope,
     private val builder: KtSymbolByFirBuilder,
     final override val token: ValidityToken
-) : KtScope where S : FirContainingNamesAwareScope, S : FirScope {
-
-    abstract val firScope: S
-
+) : KtScope {
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
     }
@@ -54,6 +53,10 @@ internal abstract class KtFirDelegatingScope<S>(
         firScope.getConstructors(builder)
     }
 
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
+    }
+
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {
         name in getAllPossibleNames()
     }
@@ -78,13 +81,6 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
         yieldAll(callables)
     }
 }
-
-internal class KtFirDelegatingScopeImpl<S>(
-    override val firScope: S,
-    builder: KtSymbolByFirBuilder,
-    token: ValidityToken
-) : KtFirDelegatingScope<S>(builder, token) where S : FirContainingNamesAwareScope, S : FirScope
-
 
 internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KtSymbolByFirBuilder): Sequence<KtClassifierSymbol> =
     sequence {

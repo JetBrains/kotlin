@@ -1467,6 +1467,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("kt49203.kt")
+        public void testKt49203() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt49203.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -2172,12 +2178,6 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
-            @TestMetadata("samConversionInGenericConstructorCall_NI.kt")
-            public void testSamConversionInGenericConstructorCall_NI() throws Exception {
-                runTest("compiler/testData/ir/irText/expressions/sam/samConversionInGenericConstructorCall_NI.kt");
-            }
-
-            @Test
             @TestMetadata("samConversionToGeneric.kt")
             public void testSamConversionToGeneric() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samConversionToGeneric.kt");
@@ -2291,6 +2291,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("FlushFromAnonymous.kt")
+        public void testFlushFromAnonymous() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
+        }
+
+        @Test
         @TestMetadata("ImplicitReceiverStack.kt")
         public void testImplicitReceiverStack() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
@@ -2324,6 +2330,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("kt43342.kt")
         public void testKt43342() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt43342.kt");
+        }
+
+        @Test
+        @TestMetadata("localClassUsedBeforeDeclaration.kt")
+        public void testLocalClassUsedBeforeDeclaration() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localClassUsedBeforeDeclaration.kt");
         }
 
         @Test
@@ -2457,6 +2469,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("lambdaReturningUnit.kt")
+        public void testLambdaReturningUnit() throws Exception {
+            runTest("compiler/testData/ir/irText/lambdas/lambdaReturningUnit.kt");
+        }
+
+        @Test
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             runTest("compiler/testData/ir/irText/lambdas/localFunction.kt");
@@ -2521,6 +2539,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("newInferenceFixationOrder1.kt")
+        public void testNewInferenceFixationOrder1() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/newInferenceFixationOrder1.kt");
+        }
+
+        @Test
         @TestMetadata("typeAliasCtorForGenericClass.kt")
         public void testTypeAliasCtorForGenericClass() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
@@ -2530,22 +2554,6 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("typeParametersInImplicitCast.kt")
         public void testTypeParametersInImplicitCast() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/typeParametersInImplicitCast.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/ir/irText/regressions/newInference")
-        @TestDataPath("$PROJECT_ROOT")
-        public class NewInference {
-            @Test
-            public void testAllFilesPresentInNewInference() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions/newInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-            }
-
-            @Test
-            @TestMetadata("fixationOrder1.kt")
-            public void testFixationOrder1() throws Exception {
-                runTest("compiler/testData/ir/irText/regressions/newInference/fixationOrder1.kt");
-            }
         }
     }
 
@@ -2699,6 +2707,48 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("definitelyNonNull.kt")
+        public void testDefinitelyNonNull() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNull.kt");
+        }
+
+        @Test
+        @TestMetadata("definitelyNonNullOverride.kt")
+        public void testDefinitelyNonNullOverride() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNullOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("definitelyNonNullSAM.kt")
+        public void testDefinitelyNonNullSAM() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNullSAM.kt");
+        }
+
+        @Test
+        @TestMetadata("definitelyNonNullWithJava.kt")
+        public void testDefinitelyNonNullWithJava() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNonNullWithJava.kt");
+        }
+
+        @Test
+        @TestMetadata("definitelyNotNullAsArgument.kt")
+        public void testDefinitelyNotNullAsArgument() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNotNullAsArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("definitelyNotNullAsReceiver.kt")
+        public void testDefinitelyNotNullAsReceiver() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNotNullAsReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("definitelyNotNullWithIntersection1.kt")
+        public void testDefinitelyNotNullWithIntersection1() throws Exception {
+            runTest("compiler/testData/ir/irText/types/definitelyNotNullWithIntersection1.kt");
+        }
+
+        @Test
         @TestMetadata("genericDelegatedDeepProperty.kt")
         public void testGenericDelegatedDeepProperty() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
@@ -2723,39 +2773,21 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
-        @TestMetadata("intersectionType1_NI.kt")
-        public void testIntersectionType1_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType1_NI.kt");
+        @TestMetadata("intersectionType1.kt")
+        public void testIntersectionType1() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType1.kt");
         }
 
         @Test
-        @TestMetadata("intersectionType1_OI.kt")
-        public void testIntersectionType1_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType1_OI.kt");
+        @TestMetadata("intersectionType2.kt")
+        public void testIntersectionType2() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType2.kt");
         }
 
         @Test
-        @TestMetadata("intersectionType2_NI.kt")
-        public void testIntersectionType2_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType2_NI.kt");
-        }
-
-        @Test
-        @TestMetadata("intersectionType2_OI.kt")
-        public void testIntersectionType2_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType2_OI.kt");
-        }
-
-        @Test
-        @TestMetadata("intersectionType3_NI.kt")
-        public void testIntersectionType3_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType3_NI.kt");
-        }
-
-        @Test
-        @TestMetadata("intersectionType3_OI.kt")
-        public void testIntersectionType3_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/intersectionType3_OI.kt");
+        @TestMetadata("intersectionType3.kt")
+        public void testIntersectionType3() throws Exception {
+            runTest("compiler/testData/ir/irText/types/intersectionType3.kt");
         }
 
         @Test
@@ -2777,9 +2809,9 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
-        @TestMetadata("localVariableOfIntersectionType_NI.kt")
-        public void testLocalVariableOfIntersectionType_NI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType_NI.kt");
+        @TestMetadata("localVariableOfIntersectionType.kt")
+        public void testLocalVariableOfIntersectionType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType.kt");
         }
 
         @Test
@@ -2813,15 +2845,21 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
-        @TestMetadata("starProjection_OI.kt")
-        public void testStarProjection_OI() throws Exception {
-            runTest("compiler/testData/ir/irText/types/starProjection_OI.kt");
+        @TestMetadata("starProjection.kt")
+        public void testStarProjection() throws Exception {
+            runTest("compiler/testData/ir/irText/types/starProjection.kt");
         }
 
         @Test
         @TestMetadata("typeAliasWithUnsafeVariance.kt")
         public void testTypeAliasWithUnsafeVariance() throws Exception {
             runTest("compiler/testData/ir/irText/types/typeAliasWithUnsafeVariance.kt");
+        }
+
+        @Test
+        @TestMetadata("typeCheckOnDefinitelyNotNull.kt")
+        public void testTypeCheckOnDefinitelyNotNull() throws Exception {
+            runTest("compiler/testData/ir/irText/types/typeCheckOnDefinitelyNotNull.kt");
         }
 
         @Nested
@@ -2861,6 +2899,18 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             @TestMetadata("implicitNotNullOnPlatformType.kt")
             public void testImplicitNotNullOnPlatformType() throws Exception {
                 runTest("compiler/testData/ir/irText/types/nullChecks/implicitNotNullOnPlatformType.kt");
+            }
+
+            @Test
+            @TestMetadata("nullCheckInElvisRhs.kt")
+            public void testNullCheckInElvisRhs() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckInElvisRhs.kt");
+            }
+
+            @Test
+            @TestMetadata("nullCheckOnInterfaceDelegation.kt")
+            public void testNullCheckOnInterfaceDelegation() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnInterfaceDelegation.kt");
             }
 
             @Test
@@ -2930,6 +2980,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 @TestMetadata("nnStringVsTXString.kt")
                 public void testNnStringVsTXString() throws Exception {
                     runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/nnStringVsTXString.kt");
+                }
+
+                @Test
+                @TestMetadata("stringVsAny.kt")
+                public void testStringVsAny() throws Exception {
+                    runTest("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult/stringVsAny.kt");
                 }
 
                 @Test

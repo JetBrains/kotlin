@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIA
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -82,7 +83,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
         if (!expression.isBoxOrUnboxCall())
             return super.visitCall(expression)
 
-        val argument = expression.getArguments().single().second
+        val argument = expression.getArgumentsWithIr().single().second
         val foldedArgument = fold(
                 expression           = argument,
                 coercion             = expression,
@@ -133,7 +134,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
             if (it.isBoxOrUnboxCall()) {
                 val result =
                         if (coercionDeclaringClass == (it as IrCall).symbol.owner.getCoercedClass())
-                            it.getArguments().single().second
+                            it.getArgumentsWithIr().single().second
                         else expression
 
                 return PossiblyFoldedExpression(result.transformIfAsked(), result != expression)
@@ -161,6 +162,16 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                                         statements = statements,
                                         inlineFunctionSymbol = inlineFunctionSymbol)
                             }
+                            /*
+                             * Visitor below requires being very careful when changing it.
+                             * It heavily relies on implementation of fold and getFullExpression functions,
+                             * in particular it uses fact, that parts of foldedReturnableBlockValues will be replaced
+                             * simultaneously with IR.
+                             *
+                             * For example, this requires replacing ReturnableBlock symbols in separate pass,
+                             * because it needs new return nodes to be created, which breaks changing it's content in
+                             * foldedReturnableBlockValues.
+                             */
                             transformedReturnableBlock.transformChildrenVoid(object: IrElementTransformerVoid() {
                                 override fun visitExpression(expression: IrExpression): IrExpression {
                                     expression.transformChildrenVoid()
@@ -169,7 +180,8 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                                     }
                                     return expression
                                 }
-
+                            })
+                            transformedReturnableBlock.transformChildrenVoid(object: IrElementTransformerVoid() {
                                 override fun visitReturn(expression: IrReturn): IrExpression {
                                     expression.transformChildrenVoid(this)
                                     return if (expression.returnTargetSymbol != oldSymbol)

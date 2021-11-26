@@ -7,20 +7,21 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirOverrideInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -31,7 +32,6 @@ private constructor(
     val firResolveState: FirModuleResolveState,
     internal val firSymbolBuilder: KtSymbolByFirBuilder,
     token: ValidityToken,
-    element: KtElement,
     private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
@@ -110,7 +110,6 @@ private constructor(
             contextResolveState,
             firSymbolBuilder.createReadOnlyCopy(contextResolveState),
             token,
-            originalKtFile,
             AnalysisSessionMode.DEPENDENT_COPY
         )
     }
@@ -118,15 +117,12 @@ private constructor(
     val rootModuleSession: FirSession get() = firResolveState.rootModuleSession
     val firSymbolProvider: FirSymbolProvider get() = rootModuleSession.symbolProvider
     val targetPlatform: TargetPlatform get() = rootModuleSession.moduleData.platform
-    val searchScope: GlobalSearchScope = element.resolveScope//todo
 
     companion object {
         @InvalidWayOfUsingAnalysisSession
-        @Deprecated("Please use org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProviderKt.analyze")
         internal fun createAnalysisSessionByResolveState(
             firResolveState: FirModuleResolveState,
             token: ValidityToken,
-            element: KtElement,
         ): KtFirAnalysisSession {
             val project = firResolveState.project
             val firSymbolBuilder = KtSymbolByFirBuilder(
@@ -139,7 +135,6 @@ private constructor(
                 firResolveState,
                 firSymbolBuilder,
                 token,
-                element,
                 AnalysisSessionMode.REGULAR,
             )
         }

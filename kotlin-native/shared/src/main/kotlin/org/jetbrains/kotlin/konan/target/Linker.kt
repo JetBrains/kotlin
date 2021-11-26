@@ -145,8 +145,11 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
         return listOf(Command(clang).apply {
             +"-o"
             +executable
-            +"-fPIC"
-            +"-shared"
+            when (kind) {
+                LinkerOutputKind.EXECUTABLE -> +listOf("-fPIE", "-pie")
+                LinkerOutputKind.DYNAMIC_LIBRARY -> +listOf("-fPIC", "-shared")
+                LinkerOutputKind.STATIC_LIBRARY -> {}
+            }
             +"-target"
             +clangTarget
             +libDirs
@@ -334,8 +337,11 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 class GccBasedLinker(targetProperties: GccConfigurables)
     : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
-    private val ar = if (HostManager.hostIsMac) "$absoluteTargetToolchain/bin/llvm-ar"
-        else "$absoluteTargetToolchain/bin/ar"
+    private val ar = if (HostManager.hostIsLinux) {
+        "$absoluteTargetToolchain/bin/ar"
+    } else {
+        "$absoluteTargetToolchain/bin/llvm-ar"
+    }
     override val libGcc = "$absoluteTargetSysRoot/${super.libGcc}"
 
     private val specificLibs = abiSpecificLibraries.map { "-L${absoluteTargetSysRoot}/$it" }

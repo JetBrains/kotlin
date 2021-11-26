@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -62,7 +62,7 @@ class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComp
 
     fun generate(irProperty: IrProperty, property: FirProperty) {
         val applicableTargets = when {
-            property.source?.kind == FirFakeSourceElementKind.PropertyFromParameter -> constructorPropertyTargets
+            property.source?.kind == KtFakeSourceElementKind.PropertyFromParameter -> constructorPropertyTargets
             irProperty.isDelegated -> delegatedPropertyTargets
             else -> propertyTargets
         }
@@ -74,7 +74,7 @@ class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComp
     fun generate(irField: IrField, property: FirProperty) {
         val irProperty = irField.correspondingPropertySymbol?.owner ?: throw AssertionError("$irField is not a property field")
         val applicableTargets = when {
-            property.source?.kind == FirFakeSourceElementKind.PropertyFromParameter -> constructorPropertyTargets
+            property.source?.kind == KtFakeSourceElementKind.PropertyFromParameter -> constructorPropertyTargets
             irProperty.isDelegated -> delegatedPropertyTargets
             else -> propertyTargets
         }

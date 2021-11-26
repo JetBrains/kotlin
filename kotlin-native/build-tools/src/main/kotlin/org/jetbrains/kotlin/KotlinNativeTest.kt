@@ -87,7 +87,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
 
     @get:Internal
     override val buildTasks: List<Task>
-        get() = listOf(project.findKonanBuildTask(name, project.testTarget))
+        get() = listOf(project.findKonanBuildTask(name, project.testTarget).get())
 
     @Suppress("UnstableApiUsage")
     override fun configure(config: Closure<*>): Task {
@@ -314,11 +314,7 @@ open class KonanLocalTest : KonanTest() {
             // TODO: as for now it captures output only in the driver task.
             // It should capture output from the build task using Gradle's LoggerManager and LoggerOutput
             val compilationLog = project.file("$executable.compilation.log").readText()
-            // TODO: ugly hack to fix irrelevant warnings.
-            val filteredCompilationLog = compilationLog.split('\n').filter {
-                it != "warning: relaxed memory model is not yet fully functional"
-            }.joinToString(separator = "\n")
-            output.stdOut = filteredCompilationLog + output.stdOut
+            output.stdOut = compilationLog + output.stdOut
         }
         output.check()
         output.print()

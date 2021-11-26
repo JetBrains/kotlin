@@ -1,4 +1,4 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition +ReportChangingIntegerOperatorResolve
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // ISSUE: Kt-47447, KT-47729
 
 fun takeLong(value : Long) {}
@@ -11,10 +11,10 @@ fun <A> takeGeneric(value : A) {}
 fun <A> takeGenericX(value : A?) {}
 
 fun test_1() {
-    takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>) // warning
+    takeLong(1 + 1) // ok
     takeInt(1 + 1) // ok
     takeAny(1 + 1) // ok
-    takeLongX(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>) // warning
+    takeLongX(1 + 1) // ok
     takeIntX(1 + 1) // ok
     takeAnyX(1 + 1) // ok
     takeGeneric(1 + 1) // ok

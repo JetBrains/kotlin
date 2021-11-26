@@ -6,7 +6,7 @@ public open class RawSuperType : R|kotlin/Any| {
 
         @R|java/lang/Override|() public open fun dummy(): R|kotlin/Unit|
 
-        public constructor(): R|test/RawSuperType.Derived|
+        public test/RawSuperType.constructor(): R|test/RawSuperType.Derived|
 
     }
     public abstract interface Super<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {

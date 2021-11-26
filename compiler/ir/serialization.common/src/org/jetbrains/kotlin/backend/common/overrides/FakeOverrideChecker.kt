@@ -31,7 +31,7 @@ class FakeOverrideChecker(
         }
     }
 
-    private fun validateFakeOverrides(clazz: IrClass) {
+    private fun validateFakeOverrides(clazz: IrClass, compatibleMode: Boolean = false) {
         val classId = clazz.classId ?: return
         val classDescriptor = clazz.module.module.findClassAcrossModuleDependencies(classId) ?: return
         // All enum entry overrides look like fake overrides in descriptor enum entries
@@ -44,7 +44,7 @@ class FakeOverrideChecker(
             .filterNot { it.visibility == DescriptorVisibilities.PRIVATE || it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
         val descriptorSignatures = descriptorFakeOverrides
-            .map { with(descriptorMangler) { it.signatureString() } }
+            .map { with(descriptorMangler) { it.signatureString(compatibleMode) } }
             .sorted()
 
         val irFakeOverrides = clazz.declarations
@@ -56,7 +56,7 @@ class FakeOverrideChecker(
         }
 
         val irSignatures = irFakeOverrides
-            .map { with(irMangler) { it.signatureString() } }
+            .map { with(irMangler) { it.signatureString(compatibleMode) } }
             .sorted()
 
         // We can't have equality here because dependency libraries could have

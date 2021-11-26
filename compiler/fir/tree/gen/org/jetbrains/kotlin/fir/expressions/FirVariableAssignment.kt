@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -26,7 +26,7 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract val lValue: FirReference
     abstract val lValueTypeRef: FirTypeRef
     abstract val rValue: FirExpression
@@ -44,7 +44,7 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     @FirImplementationDetail
-    abstract override fun replaceSource(newSource: FirSourceElement?)
+    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef)
 

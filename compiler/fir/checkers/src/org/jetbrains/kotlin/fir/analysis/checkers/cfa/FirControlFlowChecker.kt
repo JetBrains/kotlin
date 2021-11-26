@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.cfa
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
 abstract class FirControlFlowChecker {

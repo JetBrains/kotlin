@@ -29,9 +29,11 @@ object KonanFqNames {
     val leakDetectorCandidate = FqName("kotlin.native.internal.LeakDetectorCandidate")
     val canBePrecreated = FqName("kotlin.native.internal.CanBePrecreated")
     val typedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
+    val constantConstructorIntrinsic = FqName("kotlin.native.internal.ConstantConstructorIntrinsic")
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
     val hasFinalizer = FqName("kotlin.native.internal.HasFinalizer")
     val hasFreezeHook = FqName("kotlin.native.internal.HasFreezeHook")
     val gcUnsafeCall = FqName("kotlin.native.internal.GCUnsafeCall")
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
+    val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
 }

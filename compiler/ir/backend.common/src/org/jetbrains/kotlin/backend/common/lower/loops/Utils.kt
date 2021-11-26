@@ -10,19 +10,13 @@ import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isTrivial
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -74,6 +68,18 @@ internal fun IrExpression.decrement(): IrExpression {
     }
 }
 
+internal val IrExpression.canChangeValueDuringExecution: Boolean
+    get() = when (this) {
+        is IrGetValue ->
+            !this.symbol.owner.isImmutable
+        is IrConst<*>,
+        is IrGetObjectValue,
+        is IrGetEnumValue ->
+            false
+        else ->
+            true
+    }
+
 internal val IrExpression.canHaveSideEffects: Boolean
     get() = !isTrivial()
 
@@ -94,10 +100,33 @@ internal val IrExpression.constLongValue: Long?
  * This helps reduce local variable usage.
  */
 internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
-    expression: IrExpression, nameHint: String? = null,
-    irType: IrType? = null, isMutable: Boolean = false
+    expression: IrExpression,
+    nameHint: String? = null,
+    irType: IrType? = null,
+    isMutable: Boolean = false
 ): Pair<IrVariable?, IrExpression> =
     if (expression.canHaveSideEffects) {
+        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
+    } else {
+        Pair(null, expression)
+    }
+
+/**
+ * If [expression] can change value during execution ([IrExpression.canChangeValueDuringExecution]),
+ * this function creates a temporary local variable for that expression and returns that variable and an [IrGetValue] for it.
+ * Otherwise, it returns no variable and [expression].
+ * Note that a variable expression doesn't have side effects per se, but can change value during execution,
+ * so if it's denotes a value that would be used in a loop (say, a loop bound), it should be cached in a temporary at the loop header.
+ *
+ * This helps reduce local variable usage.
+ */
+internal fun DeclarationIrBuilder.createLoopTemporaryVariableIfNecessary(
+    expression: IrExpression,
+    nameHint: String? = null,
+    irType: IrType? = null,
+    isMutable: Boolean = false
+): Pair<IrVariable?, IrExpression> =
+    if (expression.canChangeValueDuringExecution) {
         scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)

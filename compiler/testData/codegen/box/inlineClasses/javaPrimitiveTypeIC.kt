@@ -1,11 +1,19 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
-inline class I(val x: Int)
-inline class JLI(val x: java.lang.Integer)
-inline class U(val x: Unit?)
-inline class N(val x: Nothing?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class I(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class JLI(val x: java.lang.Integer)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class U(val x: Unit?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class N(val x: Nothing?)
 
 val icUnit = U(Unit)
 val icNull = N(null)

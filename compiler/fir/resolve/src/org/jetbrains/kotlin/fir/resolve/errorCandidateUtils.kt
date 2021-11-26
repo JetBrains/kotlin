@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.*
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 fun createErrorReferenceWithErrorCandidate(
     callInfo: CallInfo,
     diagnostic: ConeDiagnostic,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     resolutionContext: ResolutionContext,
     resolutionStageRunner: ResolutionStageRunner
 ): FirErrorReferenceWithCandidate {
@@ -28,7 +28,7 @@ fun createErrorReferenceWithErrorCandidate(
 fun createErrorReferenceWithExistingCandidate(
     candidate: Candidate,
     diagnostic: ConeDiagnostic,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     resolutionContext: ResolutionContext,
     resolutionStageRunner: ResolutionStageRunner,
 ): FirErrorReferenceWithCandidate {

@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -332,7 +332,7 @@ class ImplicitBodyResolveComputationSession {
     private val implicitBodyResolveStatusMap = hashMapOf<FirCallableSymbol<*>, ImplicitBodyResolveComputationStatus>()
 
     internal fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
-        if (symbol is FirAccessorSymbol) {
+        if (symbol is FirSyntheticPropertySymbol) {
             val fir = symbol.fir
             if (fir is FirSyntheticProperty) {
                 return getStatus(fir.getter.delegate.symbol)

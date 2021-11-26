@@ -794,9 +794,14 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         return object : JvmClassExtensionVisitor() {
             private val localDelegatedProperties = mutableListOf<StringBuilder>()
             private var moduleName: String? = null
+            private var jvmFlags: Flags? = null
 
             override fun visitAnonymousObjectOriginName(internalName: String) {
                 anonymousObjectOriginName = internalName
+            }
+
+            override fun visitJvmFlags(flags: Flags) {
+                jvmFlags = flags
             }
 
             override fun visitLocalDelegatedProperty(
@@ -811,6 +816,17 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
 
             override fun visitEnd() {
                 sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
+                val flags = jvmFlags
+                if (flags != null) {
+                    if (JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE(flags)) {
+                        sb.appendLine()
+                        sb.appendLine("  // has method bodies in interface")
+                    }
+                    if (JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE(flags)) {
+                        sb.appendLine()
+                        sb.appendLine("  // is compiled in compatibility mode")
+                    }
+                }
             }
         }
     }

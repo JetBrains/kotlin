@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
-import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
@@ -44,11 +43,9 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.onSuccess
@@ -63,12 +60,12 @@ const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
 class ScriptUtilIT {
 
     companion object {
-        private val argsHelloWorldOutput =
+        private const val argsHelloWorldOutput =
             """Hello, world!
 a1
 done
 """
-        private val bindingsHelloWorldOutput =
+        private const val bindingsHelloWorldOutput =
             """Hello, world!
 a1 = 42
 done
@@ -99,41 +96,6 @@ done
         }.let {
             Assert.assertEquals(bindingsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
         }
-    }
-
-    @Ignore("Fails on TC for unclear reasons, rewrite to the new API")
-    @Test
-    fun testResolveStdJUnitHelloWorld() {
-        val savedErr = System.err
-        try {
-            System.setErr(PrintStream(NullOutputStream()))
-            Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
-        } finally {
-            System.setErr(savedErr)
-        }
-
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        Assert.assertNotNull(scriptClass)
-        captureOut {
-            scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
-        }.let {
-            Assert.assertEquals(argsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
-        }
-    }
-
-    @Ignore("Fails on TC for unclear reasons, rewrite to the new API")
-    @Test
-    fun testResolveStdJUnitDynVer() {
-        val (out, err) = captureOutAndErr {
-            Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
-        }
-        Assert.assertTrue(
-            "Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err",
-            err.contains("error: unresolved reference: assertThrows")
-        )
-
-        val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        Assert.assertNotNull(scriptClass)
     }
 
     private fun compileScript(
@@ -253,10 +215,3 @@ done
         return outStream.toString() to errStream.toString()
     }
 }
-
-private class NullOutputStream : OutputStream() {
-    override fun write(b: Int) {}
-    override fun write(b: ByteArray) {}
-    override fun write(b: ByteArray, off: Int, len: Int) {}
-}
-

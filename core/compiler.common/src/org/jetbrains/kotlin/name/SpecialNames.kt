@@ -58,6 +58,9 @@ object SpecialNames {
     @JvmField
     val UNDERSCORE_FOR_UNUSED_VAR = Name.special("<unused var>")
 
+    @JvmField
+    val IMPLICIT_SET_PARAMETER = Name.special("<set-?>")
+
     @JvmStatic
     fun safeIdentifier(name: Name?): Name {
         return if (name != null && !name.isSpecial) name else SAFE_IDENTIFIER_FOR_NO_NAME

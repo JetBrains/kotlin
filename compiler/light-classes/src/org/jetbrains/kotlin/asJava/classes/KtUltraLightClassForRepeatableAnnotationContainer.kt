@@ -79,7 +79,7 @@ private class KtUltraLightModifierListForRepeatableAnnotationContainer(
     private val containingClass: KtLightClassForSourceDeclaration,
     support: KtUltraLightSupport,
 ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
-    override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.PUBLIC
+    override fun hasModifierProperty(name: String): Boolean = name in modifiers
     override fun copy() = KtUltraLightModifierListForRepeatableAnnotationContainer(containingClass, support)
     override fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = tryConvertAsRepeatableContainer(support)
     override val annotationsFilter: ((KtLightAbstractAnnotation) -> Boolean) = { it.qualifiedName in allowedAnnotations }
@@ -92,5 +92,9 @@ private class KtUltraLightModifierListForRepeatableAnnotationContainer(
             CommonClassNames.JAVA_LANG_ANNOTATION_TARGET,
             StandardNames.FqNames.target.asString(),
         )
+
+        // It is marked as Abstract because all the annotation classes are marked as Abstract
+        // It is marked as Static because all nested interfaces marked as Static
+        private val modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.ABSTRACT, PsiModifier.STATIC)
     }
 }

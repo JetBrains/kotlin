@@ -1,4 +1,6 @@
 FILE: annotations.kt
+    package annotations
+
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|)) public final annotation class Simple : R|kotlin/Annotation| {
         public constructor(): R|annotations/Simple| {
             super<R|kotlin/Any|>()
@@ -58,6 +60,8 @@ FILE: annotations.kt
     }
 FILE: main.kt
     @FILE:R|annotations/Simple|()
+    package test
+
     @R|annotations/WithInt|(value = Int(42)) public abstract class First : R|kotlin/Any| {
         public constructor(): R|test/First| {
             super<R|kotlin/Any|>()

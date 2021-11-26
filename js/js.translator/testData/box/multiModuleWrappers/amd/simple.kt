@@ -1,12 +1,12 @@
 // EXPECTED_REACHABLE_NODES: 1284
 // MODULE: module1
-// FILE: bar.kt
 // MODULE_KIND: AMD
+// FILE: bar.kt
 fun bar() = "bar"
 
 // MODULE: main(module1)
-// FILE: box.kt
 // MODULE_KIND: AMD
+// FILE: box.kt
 fun box(): String {
     assertEquals("bar", bar())
     return "OK"

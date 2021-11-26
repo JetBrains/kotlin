@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 fun test() {
     var x = 0
     val x1 = x++

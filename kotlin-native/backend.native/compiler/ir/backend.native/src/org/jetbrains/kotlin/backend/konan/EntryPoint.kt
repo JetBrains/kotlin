@@ -19,14 +19,24 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.irCatch
 import org.jetbrains.kotlin.name.Name
 
 internal fun makeEntryPoint(context: Context): IrFunction {
     val actualMain = context.ir.symbols.entryPoint!!.owner
+    // TODO: Do we need to do something with the offsets if <main> is in a cached library?
+    val startOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))
+        actualMain.startOffset
+    else
+        SYNTHETIC_OFFSET
+    val endOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))
+        actualMain.endOffset
+    else
+        SYNTHETIC_OFFSET
     val entryPoint = IrFunctionImpl(
-            actualMain.startOffset,
-            actualMain.startOffset,
+            startOffset,
+            endOffset,
             IrDeclarationOrigin.DEFINED,
             IrSimpleFunctionSymbolImpl(),
             Name.identifier("Konan_start"),
@@ -44,7 +54,7 @@ internal fun makeEntryPoint(context: Context): IrFunction {
     ).also { function ->
         function.valueParameters = listOf(
             IrValueParameterImpl(
-                    actualMain.startOffset, actualMain.startOffset,
+                    startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,
                     IrValueParameterSymbolImpl(),
                     Name.identifier("args"),
@@ -60,16 +70,12 @@ internal fun makeEntryPoint(context: Context): IrFunction {
             })
     }
     entryPoint.annotations += buildSimpleAnnotation(context.irBuiltIns,
-            actualMain.startOffset, actualMain.startOffset,
+            startOffset, endOffset,
             context.ir.symbols.exportForCppRuntime.owner, "Konan_start")
 
     val builder = context.createIrBuilder(entryPoint.symbol)
     entryPoint.body = builder.irBlockBody(entryPoint) {
-        +IrTryImpl(
-                startOffset = actualMain.startOffset,
-                endOffset   = actualMain.startOffset,
-                type        = context.irBuiltIns.nothingType
-        ).apply {
+        +IrTryImpl(startOffset, endOffset, context.irBuiltIns.nothingType).apply {
             tryResult = irBlock {
                 +irCall(actualMain).apply {
                     if (actualMain.valueParameters.size != 0)

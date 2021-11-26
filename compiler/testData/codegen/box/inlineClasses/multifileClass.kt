@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
 
 fun box(): String {
     val uia = uintArrayOf()

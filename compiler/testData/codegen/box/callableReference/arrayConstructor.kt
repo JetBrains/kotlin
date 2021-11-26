@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun g(b: (Int, (Int) -> String) -> Array<String>): Array<String> =
     b(1) { "O" }

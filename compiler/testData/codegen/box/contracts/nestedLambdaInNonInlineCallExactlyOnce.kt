@@ -1,6 +1,6 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-38849
 
 import kotlin.contracts.*

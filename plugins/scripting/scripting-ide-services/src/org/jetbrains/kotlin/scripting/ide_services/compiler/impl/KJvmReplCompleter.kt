@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import org.jetbrains.kotlin.scripting.ide_common.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.scripting.ide_common.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.scripting.ide_common.idea.util.IdeDescriptorRenderersScripting
-import org.jetbrains.kotlin.scripting.ide_common.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -32,8 +28,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
+import org.jetbrains.kotlin.scripting.ide_common.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.scripting.ide_common.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.scripting.ide_common.idea.util.IdeDescriptorRenderersScripting
+import org.jetbrains.kotlin.scripting.ide_common.idea.util.getResolutionScope
 import org.jetbrains.kotlin.scripting.ide_services.compiler.completion
 import org.jetbrains.kotlin.scripting.ide_services.compiler.filterOutShadowedDescriptors
+import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.KJvmReplCompleter.ResultGetter
 import org.jetbrains.kotlin.scripting.ide_services.compiler.nameFilter
 import org.jetbrains.kotlin.scripting.resolve.classId
 import org.jetbrains.kotlin.types.KotlinType
@@ -373,7 +374,7 @@ private class KJvmReplCompleter(
 
             if (descriptor is DeclarationDescriptorWithVisibility) {
                 return try {
-                    descriptor.visibility.isVisible(null, descriptor, inDescriptor)
+                    descriptor.visibility.isVisible(null, descriptor, inDescriptor, useSpecialRulesForPrivateSealedConstructors = true)
                 } catch (e: IllegalStateException) {
                     true
                 }

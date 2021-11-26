@@ -1,3 +1,0 @@
-fun <T> genericFoo(): T
-val <T> T.generic: T
-    get()

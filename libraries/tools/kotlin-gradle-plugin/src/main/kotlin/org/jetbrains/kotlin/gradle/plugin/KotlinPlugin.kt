@@ -12,6 +12,7 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.SourceKind
 import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
@@ -273,7 +274,7 @@ internal class Kotlin2JsSourceSetProcessor(
                                 "Gradle will not be able to build the project because of the root directory lock.\n" +
                                 "To fix this, consider using the default outputFile location instead of providing it explicitly."
                     )
-                kotlinTaskInstance.destinationDir = outputDir
+                kotlinTaskInstance.destinationDirectory.set(outputDir)
 
                 if (
                     kotlinOptions.freeCompilerArgs.contains(PRODUCE_JS) ||
@@ -613,14 +614,12 @@ internal abstract class AbstractKotlinPlugin(
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                    setupAsPublicConfigurationIfSupported(kotlinTarget)
                     usesPlatformOf(kotlinTarget)
                 }
 
                 project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(kotlinTarget))
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                    setupAsPublicConfigurationIfSupported(kotlinTarget)
                     usesPlatformOf(kotlinTarget)
                 }
             }
@@ -791,7 +790,7 @@ internal open class KotlinAndroidPlugin(
 }
 
 class KotlinConfigurationTools internal constructor(
-    @Suppress("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR")
+    @Suppress("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_WARNING", "EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR")
     val kotlinTasksProvider: KotlinTasksProvider
 )
 

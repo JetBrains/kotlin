@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -40,13 +40,13 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @FirBuilderDsl
 open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var returnTypeRef: FirTypeRef
     override lateinit var status: FirDeclarationStatus
+    override lateinit var returnTypeRef: FirTypeRef
     open var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
     override var containerSource: DeserializedContainerSource? = null
@@ -66,8 +66,8 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             resolvePhase,
             origin,
             attributes,
-            returnTypeRef,
             status,
+            returnTypeRef,
             receiverTypeRef,
             deprecation,
             containerSource,
@@ -103,8 +103,8 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.status = original.status
+    copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.deprecation = original.deprecation
     copyBuilder.containerSource = original.containerSource

@@ -1,4 +1,4 @@
-val test1: Int /* by */ 
+val test1: Int /* by */
   field = lazy<Int>(initializer = local fun <anonymous>(): Int {
     return 42
   }
@@ -18,7 +18,7 @@ class C {
     field = map
     get
 
-  val test2: Int /* by */ 
+  val test2: Int /* by */
     field = lazy<Int>(initializer = local fun <anonymous>(): Int {
       return 42
     }
@@ -27,7 +27,7 @@ class C {
       return <this>.#test2$delegate.getValue<Int>(thisRef = <this>, property = C::test2)
     }
 
-  var test3: Any /* by */ 
+  var test3: Any /* by */
     field = <this>.<get-map>()
     get(): Any {
       return <this>.#test3$delegate.getValue<Any, Any>(thisRef = <this>, property = C::test3)
@@ -38,7 +38,7 @@ class C {
 
 }
 
-var test4: Any /* by */ 
+var test4: Any /* by */
   field = hashMapOf<String, Any>()
   get(): Any {
     return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
@@ -46,4 +46,3 @@ var test4: Any /* by */
   set(<set-?>: Any) {
     return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }
-

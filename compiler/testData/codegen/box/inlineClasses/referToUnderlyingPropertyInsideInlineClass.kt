@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class UInt(val value: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UInt(val value: Int) {
     operator fun plus(other: UInt) = UInt(value + other.value)
     fun otherValue(other: UInt) = other.value
 }

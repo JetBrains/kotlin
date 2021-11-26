@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.isUnitOrFlexibleUnit
+import org.jetbrains.kotlin.fir.resolve.transformWhenSubjectExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -42,7 +42,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): FirStatement {
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
-        return context.forBlock {
+        return context.forBlock(session) {
             val context = ResolutionMode.ContextIndependent
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .also {
@@ -62,7 +62,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         }
         whenExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
-        return context.withWhenExpression(whenExpression) with@{
+        return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
 
@@ -127,7 +127,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         if (subjectType != null) {
             whenSubjectExpression.resultType = subjectType
         }
-        return whenSubjectExpression
+        dataFlowAnalyzer.exitWhenSubjectExpression(whenSubjectExpression)
+        return components.transformWhenSubjectExpressionUsingSmartcastInfo(whenSubjectExpression)
     }
 
     // ------------------------------- Try/catch expressions -------------------------------
@@ -165,7 +166,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     override fun transformCatch(catch: FirCatch, data: ResolutionMode): FirCatch {
         dataFlowAnalyzer.enterCatchClause(catch)
         catch.parameter.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        return context.forBlock {
+        return context.forBlock(session) {
             catch.transformParameter(transformer, ResolutionMode.ContextIndependent)
             catch.transformBlock(transformer, ResolutionMode.ContextDependent)
         }.also { dataFlowAnalyzer.exitCatchClause(it) }

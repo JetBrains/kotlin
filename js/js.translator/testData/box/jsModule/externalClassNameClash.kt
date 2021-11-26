@@ -1,6 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1284
-// FILE: a.kt
 // MODULE_KIND: AMD
+// FILE: a.kt
 @file:JsModule("a")
 package a
 
@@ -13,7 +13,6 @@ external fun bar(): Int
 external val prop: Int
 
 // FILE: b.kt
-// MODULE_KIND: AMD
 @file:JsModule("b")
 package b
 

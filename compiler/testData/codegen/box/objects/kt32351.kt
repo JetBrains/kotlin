@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: UNKNOWN
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface Runnable {
     fun run()

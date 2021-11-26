@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -12,11 +13,11 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
-import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -28,7 +29,7 @@ const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_root_ide_package_"
 
 fun BodyResolveComponents.resolveRootPartOfQualifier(
     namedReference: FirSimpleNamedReference,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
 ): FirResolvedQualifier? {
@@ -46,6 +47,17 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
     for (scope in createCurrentScopeList()) {
         scope.getSingleClassifier(name)?.let {
             if (it is FirRegularClassSymbol) {
+                val isVisible = session.visibilityChecker.isVisible(
+                    it.fir,
+                    session,
+                    file,
+                    containingDeclarations,
+                    null,
+                    false,
+                )
+                if (!isVisible) {
+                    return@let
+                }
                 val classId = it.classId
                 return buildResolvedQualifier {
                     this.source = source
@@ -73,7 +85,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
 
 fun FirResolvedQualifier.continueQualifier(
     namedReference: FirSimpleNamedReference,
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     components: BodyResolveComponents,
@@ -119,7 +131,7 @@ private fun FqName.continueQualifierInPackage(
     typeArguments: List<FirTypeProjection>,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     components: BodyResolveComponents,
-    source: FirSourceElement?
+    source: KtSourceElement?
 ): FirResolvedQualifier? {
     val childFqName = this.child(name)
     if (components.symbolProvider.getPackage(childFqName) != null) {
@@ -156,7 +168,7 @@ private fun FqName.continueQualifierInPackage(
 }
 
 internal fun extractNonFatalDiagnostics(
-    source: FirSourceElement?,
+    source: KtSourceElement?,
     explicitReceiver: FirExpression?,
     symbol: FirClassLikeSymbol<*>,
     extraNotFatalDiagnostics: List<ConeDiagnostic>?

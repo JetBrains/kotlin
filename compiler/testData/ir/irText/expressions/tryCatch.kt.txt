@@ -24,4 +24,3 @@ fun test2(): Int {
     555 /*~> Unit */
   }
 }
-

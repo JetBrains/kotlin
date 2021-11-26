@@ -8,18 +8,9 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastToNullImpl
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.types.SmartcastStability
 
-class FirExpressionWithSmartcastToNullBuilder {
-    lateinit var originalExpression: FirQualifiedAccessExpression
-    lateinit var smartcastType: FirTypeRef
-    lateinit var typesFromSmartCast: Collection<ConeKotlinType>
-    lateinit var smartcastStability: SmartcastStability
-    lateinit var smartcastTypeWithoutNullableNothing: FirTypeRef
-
-    fun build(): FirExpressionWithSmartcastToNull {
+class FirExpressionWithSmartcastToNullBuilder : FirWrappedExpressionWithSmartcastToNullBuilder<FirQualifiedAccessExpression>() {
+    override fun build(): FirExpressionWithSmartcastToNull {
         return FirExpressionWithSmartcastToNullImpl(
             originalExpression,
             smartcastType,

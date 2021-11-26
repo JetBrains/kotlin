@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirPropertyFromParameterResolvedNamedReferenceBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
 

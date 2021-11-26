@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.utils.SmartSet
@@ -89,7 +90,7 @@ class JvmSignatureClashDetector(
                 realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
                     if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                         reportJvmSignatureClash(
-                            ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                            JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
                             listOf(irClass),
                             conflictingJvmDeclarationsData
                         )
@@ -102,7 +103,7 @@ class JvmSignatureClashDetector(
                         methods.any { DescriptorVisibilities.isPrivate(it.visibility) }
                     ) {
                         reportJvmSignatureClash(
-                            ErrorsJvm.CONFLICTING_JVM_DECLARATIONS,
+                            JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
                             methods,
                             conflictingJvmDeclarationsData
                         )
@@ -112,7 +113,7 @@ class JvmSignatureClashDetector(
                 else ->
                     if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                         reportJvmSignatureClash(
-                            ErrorsJvm.ACCIDENTAL_OVERRIDE,
+                            JvmBackendErrors.ACCIDENTAL_OVERRIDE,
                             methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },
                             conflictingJvmDeclarationsData
                         )
@@ -130,7 +131,7 @@ class JvmSignatureClashDetector(
                 type.internalName, classOrigin, predefinedSignature,
                 methods.map { it.getJvmDeclarationOrigin() } + JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, null)
             )
-            reportJvmSignatureClash(ErrorsJvm.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
+            reportJvmSignatureClash(JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
         }
     }
 
@@ -138,27 +139,21 @@ class JvmSignatureClashDetector(
         for ((rawSignature, fields) in fieldsBySignature) {
             if (fields.size <= 1) continue
             val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(classOrigin, rawSignature, fields)
-            reportJvmSignatureClash(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, fields, conflictingJvmDeclarationsData)
+            reportJvmSignatureClash(JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS, fields, conflictingJvmDeclarationsData)
         }
     }
 
     private fun reportJvmSignatureClash(
-        diagnosticFactory1: DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData>,
+        diagnosticFactory1: KtDiagnosticFactory1<ConflictingJvmDeclarationsData>,
         irDeclarations: Collection<IrDeclaration>,
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
-        val psiElements = irDeclarations.mapNotNullTo(LinkedHashSet()) { it.getElementForDiagnostics() }
-        for (psiElement in psiElements) {
-            context.psiErrorBuilder.at(psiElement)
-                .report(diagnosticFactory1, conflictingJvmDeclarationsData)
+        irDeclarations.mapNotNullTo(LinkedHashSet()) { irDeclaration ->
+            context.ktDiagnosticReporter.atFirstValidFrom(irDeclaration, irClass, containingIrFile = irDeclaration.file)
+        }.forEach {
+            it.report(diagnosticFactory1, conflictingJvmDeclarationsData)
         }
     }
-
-    private fun IrDeclaration.findPsiElement(): PsiElement? = PsiSourceManager.findPsiElement(this)
-
-    private fun IrDeclaration.getElementForDiagnostics(): PsiElement? =
-        findPsiElement()
-            ?: irClass.findPsiElement()
 
     private fun getConflictingJvmDeclarationsData(
         classOrigin: JvmDeclarationOrigin,
@@ -189,6 +184,7 @@ class JvmSignatureClashDetector(
             IrDeclarationOrigin.IR_BUILTINS_STUB,
             JvmLoweredDeclarationOrigin.TO_ARRAY,
             JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
+            ANNOTATION_IMPLEMENTATION
         )
 
         val PREDEFINED_SIGNATURES = listOf(

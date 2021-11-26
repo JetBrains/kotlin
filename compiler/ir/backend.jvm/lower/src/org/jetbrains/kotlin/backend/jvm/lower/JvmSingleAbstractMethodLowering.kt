@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -29,7 +28,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 internal val singleAbstractMethodPhase = makeIrFilePhase(
     ::JvmSingleAbstractMethodLowering,
     name = "SingleAbstractMethod",
-    description = "Replace SAM conversions with instances of interface-implementing classes"
+    description = "Replace SAM conversions with instances of interface-implementing classes",
+    // FunctionReferenceLowering produces optimized SAM wrappers.
+    prerequisite = setOf(functionReferencePhase),
 )
 
 private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : SingleAbstractMethodLowering(context) {

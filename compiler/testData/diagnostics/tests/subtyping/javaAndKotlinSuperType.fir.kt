@@ -20,11 +20,11 @@ fun test(b: B, c: C, d: D, e: E) {
     eatAString(b)
     eatAString(c)
     eatAString(d)
-    eatAString(e)
+    eatAString(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
 
     eatAStringN(b)
     eatAStringN(c)
-    eatAStringN(d)
+    eatAStringN(<!ARGUMENT_TYPE_MISMATCH!>d<!>)
     eatAStringN(e)
 }
 

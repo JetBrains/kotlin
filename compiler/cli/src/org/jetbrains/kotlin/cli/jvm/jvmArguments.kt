@@ -255,7 +255,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, arguments.noResetJarTimestamps)
     put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, arguments.noUnifiedNullChecks)
 
-    put(JVMConfigurationKeys.SERIALIZE_IR, arguments.serializeIr)
+    put(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.fromString(arguments.serializeIr))
 
     put(JVMConfigurationKeys.VALIDATE_IR, arguments.validateIr)
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
@@ -271,7 +271,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.ASSERTIONS_MODE, assertionsMode ?: JVMAssertionsMode.DEFAULT)
 
     put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
-    put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
     put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, arguments.useOldClassFilesReading)
     put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, arguments.useFastJarFileSystem)
 

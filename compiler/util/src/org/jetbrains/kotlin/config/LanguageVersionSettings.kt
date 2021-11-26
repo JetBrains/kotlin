@@ -198,13 +198,11 @@ enum class LanguageFeature(
     TypeEnhancementImprovementsInStrictMode(KOTLIN_1_6),
     ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor(KOTLIN_1_6, kind = BUG_FIX),
     PrivateInFileEffectiveVisibility(KOTLIN_1_6, kind = BUG_FIX),
-    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_6, kind = BUG_FIX),
     ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
     ProperCheckAnnotationsTargetInTypeUsePositions(KOTLIN_1_6, kind = BUG_FIX),
 
     SuspendFunctionAsSupertype(KOTLIN_1_6),
     UnrestrictedBuilderInference(KOTLIN_1_6),
-    ProperTypeInferenceConstraintsProcessing(KOTLIN_1_6, kind = BUG_FIX),
     ClassTypeParameterAnnotations(KOTLIN_1_6),
     TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
     WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
@@ -233,13 +231,27 @@ enum class LanguageFeature(
     StopPropagatingDeprecationThroughOverrides(KOTLIN_1_7),
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
+    JvmPermittedSubclassesAttributeForSealed(KOTLIN_1_7),
+    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_7, kind = BUG_FIX),
+    IgnoreNullabilityForErasedValueParameters(KOTLIN_1_7, kind = BUG_FIX),
+    ProperTypeInferenceConstraintsProcessing(KOTLIN_1_7, kind = BUG_FIX),
+    ProhibitNonExhaustiveIfInRhsOfElvis(KOTLIN_1_7, kind = BUG_FIX), // KT-44705
+    ForbidExposingTypesInPrimaryConstructorProperties(KOTLIN_1_7, kind = BUG_FIX),
+    ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_7, kind = BUG_FIX),
+    PartiallySpecifiedTypeArguments(KOTLIN_1_7),
+    EliminateAmbiguitiesWithExternalTypeParameters(KOTLIN_1_7),
+    EliminateAmbiguitiesOnInheritedSamInterfaces(KOTLIN_1_7),
+
+    // 1.8
+
+    ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
+    UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
     // Disabled for indefinite time. See KT-48535 and related discussion
     OptInOnOverrideForbidden(sinceVersion = null, kind = BUG_FIX),
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
-    ReportChangingIntegerOperatorResolve(sinceVersion = null),
 
     // Experimental features
 
@@ -252,6 +264,8 @@ enum class LanguageFeature(
     InlineClasses(KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
     ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, kind = BUG_FIX, defaultState = State.DISABLED),
     ExplicitBackingFields(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
+    FunctionalTypeWithExtensionAsSupertype(sinceVersion = KOTLIN_1_6, defaultState = State.DISABLED),
+    JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE)
 
     ;
 
@@ -339,6 +353,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_1_5(1, 5),
     KOTLIN_1_6(1, 6),
     KOTLIN_1_7(1, 7),
+    KOTLIN_1_8(1, 8),
     ;
 
     override val isStable: Boolean
@@ -364,7 +379,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0  1.1  1.2   1.3  1.4           1.5  1.6     1.7
+        //            1.0  1.1  1.2   1.3  1.4           1.5  1.6     1.7  1.8
         // Language:  UNSUPPORTED -------> DEPRECATED -> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 

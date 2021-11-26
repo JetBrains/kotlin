@@ -1,6 +1,7 @@
 // !CHECK_TYPE
 // SKIP_JAVAC
 // FULL_JDK
+// WITH_EXTENDED_CHECKERS
 
 // FILE: a.kt
 
@@ -9,17 +10,17 @@ import java.util.*
 import utils.*
 
 import java.io.PrintStream
-import java.lang.Comparable as Com
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Com
 
 val l : MutableList<in Int> = ArrayList<Int>()
 
-fun test(l : java.util.List<Int>) {
-  val x : <!UNRESOLVED_REFERENCE!>java.List<!>
-  val y : java.util.List<Int>
-  val b : java.lang.Object
-  val z : <!UNRESOLVED_REFERENCE!>java.utils.List<Int><!>
+fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
+  val <!UNUSED_VARIABLE!>x<!> : <!UNRESOLVED_REFERENCE!>java.List<!>
+  val <!UNUSED_VARIABLE!>y<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>
+  val <!UNUSED_VARIABLE!>b<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Object<!>
+  val <!UNUSED_VARIABLE!>z<!> : <!UNRESOLVED_REFERENCE!>java.utils.List<Int><!>
 
-  val f : java.io.File? = null
+  val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null
 
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<!>
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>
@@ -32,7 +33,7 @@ fun test(l : java.util.List<Int>) {
   <!NO_COMPANION_OBJECT!>List<Int><!>
 
 
-  val o = "sdf" as Object
+  val <!UNUSED_VARIABLE!>o<!> = "sdf" as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>
 
   try {
     // ...
@@ -43,9 +44,9 @@ fun test(l : java.util.List<Int>) {
 
   PrintStream("sdf")
 
-  val c : Com<Int>? = null
+  val c : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Com<Int><!>? = null
 
-  checkSubtype<java.lang.Comparable<Int>?>(c)
+  checkSubtype<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<Int><!>?>(c)
 
 //  Collections.sort<Integer>(ArrayList<Integer>())
   xxx.<!UNRESOLVED_REFERENCE!>Class<!>()

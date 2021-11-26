@@ -1,5 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface A {
     fun foo(): MutableList<String>

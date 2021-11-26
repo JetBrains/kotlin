@@ -36,7 +36,7 @@ FILE: referenceToExtension.kt
 
         public final fun test_1(): R|kotlin/Unit| {
             lval memberValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<CapturedType(*)>>| = Q|GenericTest.B|::R|SubstitutionOverride</GenericTest.B.memberVal: R|GenericTest.A<CapturedType(*)>|>|
-            lval memberFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<CapturedType(*)>>| = Q|GenericTest.B|::R|SubstitutionOverride</GenericTest.B.memberFun: R|GenericTest.A<CapturedType(*)>|>|
+            lval memberFunRef: R|kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<CapturedType(*)>>| = Q|GenericTest.B|::R|SubstitutionOverride</GenericTest.B.memberFun: R|GenericTest.A<CapturedType(*)>|>|
         }
 
         public final fun test_2(): R|kotlin/Unit| {
@@ -87,7 +87,7 @@ FILE: referenceToExtension.kt
 
         public final fun test_2(): R|kotlin/Unit| {
             lval memberValRef: R|kotlin/reflect/KProperty1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.B.memberVal|
-            lval memberFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.B.memberFun|
+            lval memberFunRef: R|kotlin/reflect/KFunction1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.B.memberFun|
         }
 
     }

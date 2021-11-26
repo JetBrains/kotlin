@@ -17,28 +17,28 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object JsPlatformConfigurator : PlatformConfiguratorBase(
-        DynamicTypesAllowed(),
-        additionalDeclarationCheckers = listOf(
-            NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
-            JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-            JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
-            JsRuntimeAnnotationChecker,
-            JsDynamicDeclarationChecker,
-            JsExportAnnotationChecker,
-            JsExportDeclarationChecker
-        ),
-        additionalCallCheckers = listOf(
-            JsModuleCallChecker,
-            JsDynamicCallChecker,
-            JsDefinedExternallyCallChecker,
-        ),
-        identifierChecker = JsIdentifierChecker
+    DynamicTypesAllowed(),
+    additionalDeclarationCheckers = listOf(
+        NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
+        JsNameChecker, JsModuleChecker, JsExternalFileChecker,
+        JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsRuntimeAnnotationChecker,
+        JsDynamicDeclarationChecker,
+        JsExportAnnotationChecker,
+        JsExportDeclarationChecker
+    ),
+    additionalCallCheckers = listOf(
+        JsModuleCallChecker,
+        JsDynamicCallChecker,
+        JsDefinedExternallyCallChecker,
+    ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()
+        container.useImpl<JsIdentifierChecker>()
         container.useImpl<JsNameCharsChecker>()
         container.useImpl<JsBuiltinNameClashChecker>()
         container.useInstance(JsModuleClassLiteralChecker)

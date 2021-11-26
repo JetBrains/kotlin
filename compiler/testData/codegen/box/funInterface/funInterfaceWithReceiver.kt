@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
 // IGNORE_BACKEND: JS_IR_ES6
 
 fun interface FunWithReceiver {

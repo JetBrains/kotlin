@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val typeArguments: List<FirTypeProjection>
@@ -28,6 +28,7 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val calleeReference: FirThisReference
+    abstract val isImplicit: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReceiverExpression(this, data)
 
@@ -36,7 +37,7 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
         transformer.transformThisReceiverExpression(this, data) as E
 
     @FirImplementationDetail
-    abstract override fun replaceSource(newSource: FirSourceElement?)
+    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 

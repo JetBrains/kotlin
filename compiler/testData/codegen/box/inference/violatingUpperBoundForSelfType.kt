@@ -1,6 +1,6 @@
 // !LANGUAGE: -ProperTypeInferenceConstraintsProcessing
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 
 fun <E : Enum<E>> createMap(enumClass: Class<E>) {}

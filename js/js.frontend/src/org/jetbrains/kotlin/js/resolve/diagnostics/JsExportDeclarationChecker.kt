@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsExportDeclarationChecker.isExportable
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
+import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.inline.isInlineWithReified
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
@@ -109,13 +112,15 @@ object JsExportDeclarationChecker : DeclarationChecker {
                 }
 
                 val wrongDeclaration: String? = when (descriptor.kind) {
-                    ENUM_CLASS -> "enum class"
-                    INTERFACE -> if (descriptor.isExternal) null else "interface"
                     ANNOTATION_CLASS -> "annotation class"
-                    CLASS -> if (descriptor.isInlineClass()) {
-                        "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
+                    CLASS -> when {
+                        descriptor.isInsideInterface -> "nested class inside exported interface"
+                        descriptor.isInlineClass() -> "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
+                        else -> null
+                    }
+                    else -> if (descriptor.isInsideInterface) {
+                        "${if (descriptor.isCompanionObject) "companion object" else "nested/inner declaration"} inside exported interface"
                     } else null
-                    else -> null
                 }
 
                 if (wrongDeclaration != null) {
@@ -128,8 +133,11 @@ object JsExportDeclarationChecker : DeclarationChecker {
                     return
                 }
 
-                for (superType in descriptor.defaultType.supertypes()) {
-                    if (!superType.isExportable(bindingContext)) {
+                val supertypes = descriptor.defaultType.supertypes()
+                val isEnum = supertypes.any { KotlinBuiltIns.isEnum(it) }
+
+                for (superType in supertypes) {
+                    if (!superType.isExportable(bindingContext) && !(KotlinBuiltIns.isComparable(superType) && isEnum)) {
                         trace.report(ErrorsJs.NON_EXPORTABLE_TYPE.on(declaration, "super", superType))
                     }
                 }
@@ -188,6 +196,8 @@ object JsExportDeclarationChecker : DeclarationChecker {
         val descriptor = constructor.declarationDescriptor
 
         if (descriptor !is MemberDescriptor) return false
+
+        if (KotlinBuiltIns.isEnum(this)) return true
 
         return descriptor.isEffectivelyExternal() || AnnotationsUtils.isExportedObject(descriptor, bindingContext)
     }

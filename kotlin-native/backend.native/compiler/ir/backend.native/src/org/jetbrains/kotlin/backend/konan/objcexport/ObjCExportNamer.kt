@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -89,7 +90,7 @@ fun createNamer(
 ): ObjCExportNamer = ObjCExportNamerImpl(
         (exportedDependencies + moduleDescriptor).toSet(),
         moduleDescriptor.builtIns,
-        ObjCExportMapper(local = true),
+        ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.LEGACY),
         topLevelNamePrefix,
         local = true
 )
@@ -472,7 +473,7 @@ internal class ObjCExportNamerImpl(
                         else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> "error"
-                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
+                    is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 if (index == 0) {
@@ -525,7 +526,7 @@ internal class ObjCExportNamerImpl(
                         else -> it!!.name.asString().toIdentifier()
                     }
                     MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
-                    MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
+                    is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                 }
 
                 append(label)

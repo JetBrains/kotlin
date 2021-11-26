@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -67,6 +66,7 @@ import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
+import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
@@ -96,6 +96,8 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -115,6 +117,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -152,17 +156,17 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitExpression(expression: FirExpression, data: D): R  = visitStatement(expression, data)
 
-    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitAnnotatedDeclaration(typedDeclaration, data)
+    override fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitAnnotationContainer(declaration, data)
 
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
-    override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): R  = visitTypeParameterRefsOwner(memberDeclaration, data)
+    override fun visitTypedDeclaration(typedDeclaration: FirTypedDeclaration, data: D): R  = visitMemberDeclaration(typedDeclaration, data)
 
-    override fun visitField(field: FirField, data: D): R  = visitVariable(field, data)
+    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitTypedDeclaration(callableDeclaration, data)
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 
-    override fun visitFile(file: FirFile, data: D): R  = visitAnnotatedDeclaration(file, data)
+    override fun visitFile(file: FirFile, data: D): R  = visitDeclaration(file, data)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): R  = visitExpression(anonymousFunctionExpression, data)
 
@@ -190,6 +194,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitStarProjection(starProjection: FirStarProjection, data: D): R  = visitTypeProjection(starProjection, data)
 
+    override fun visitPlaceholderProjection(placeholderProjection: FirPlaceholderProjection, data: D): R  = visitTypeProjection(placeholderProjection, data)
+
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R  = visitTypeProjection(typeProjectionWithVariance, data)
 
     override fun visitCall(call: FirCall, data: D): R  = visitStatement(call, data)
@@ -214,9 +220,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R  = visitQualifiedAccessExpression(thisReceiverExpression, data)
 
-    override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): R  = visitQualifiedAccessExpression(expressionWithSmartcast, data)
-
-    override fun visitExpressionWithSmartcastToNull(expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull, data: D): R  = visitExpressionWithSmartcast(expressionWithSmartcastToNull, data)
+    override fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNull(wrappedExpressionWithSmartcastToNull: FirWrappedExpressionWithSmartcastToNull<E>, data: D): R  = visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcastToNull, data)
 
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: D): R  = visitExpression(safeCallExpression, data)
 

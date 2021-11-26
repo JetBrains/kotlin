@@ -1,6 +1,7 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status:
 //  java.lang.StackOverflowError
 //	at Nat$Companion$invoke$1.next(kt36853_fibonacci.kt:40) ...
 

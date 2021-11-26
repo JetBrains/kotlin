@@ -29,15 +29,13 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 class IrErrorDeclarationImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    private val _descriptor: DeclarationDescriptor?
+    private val _descriptor: DeclarationDescriptor?,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrErrorDeclaration() {
     override val descriptor: DeclarationDescriptor
         get() = _descriptor ?: this.toIrBasedDescriptor()
 
     override var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

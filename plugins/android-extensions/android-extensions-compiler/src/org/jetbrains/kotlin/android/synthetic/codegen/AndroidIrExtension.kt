@@ -201,7 +201,8 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
             return super.visitClassNew(declaration)
 
         if ((containerOptions.cache ?: extension.getGlobalCacheImpl(declaration)).hasCache) {
-            declaration.declarations += declaration.getCacheField()
+            // Place the field first so that it is initialized before any init blocks.
+            declaration.declarations.add(0, declaration.getCacheField())
             declaration.declarations += declaration.getClearCacheFun()
             declaration.declarations += declaration.getCachedFindViewByIdFun()
         }

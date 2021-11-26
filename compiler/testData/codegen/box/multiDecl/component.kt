@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_TEXT
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class S(val a: String, val b: String) {
   operator fun component1() : String = a

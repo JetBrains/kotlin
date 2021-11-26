@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationInfos
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -18,6 +19,9 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -26,6 +30,12 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import java.nio.file.Path
 import java.nio.file.Paths
+
+/**
+ * Any top level declarations in core/builtins/src are also available from FirBuiltinSymbolProvider (or FirIdeBuiltinSymbolProvider) for IDE
+ * so we filter them out to avoid providing the "same" symbols twice.
+ */
+private val kotlinBuiltins = setOf("kotlin/ArrayIntrinsicsKt", "kotlin/internal/ProgressionUtilKt")
 
 // This symbol provider loads JVM classes, reading extra info from Kotlin `@Metadata` annotations
 // if present. Use it for library and incremental compilation sessions. For source sessions use
@@ -38,11 +48,13 @@ class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider) {
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         return packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
+            if (partName in kotlinBuiltins) return@mapNotNull null
             val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
             if (!javaFacade.hasTopLevelClassOf(classId)) return@mapNotNull null
             val (kotlinJvmBinaryClass, byteContent) =
@@ -125,6 +137,9 @@ class JvmClassFileBasedSymbolProvider(
             classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
         )
     }
+
+    override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
+        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
     override fun getPackage(fqName: FqName): FqName? =
         javaFacade.getPackage(fqName)

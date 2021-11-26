@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
-import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
-import org.jetbrains.kotlin.codegen.optimization.common.updateMaxStack
+import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -239,9 +236,6 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             transformCall(methodContext, call)
         }
 
-        // If an inplace argument contains a non-local jump,
-        // moving such argument inside inline function body can interfere with stack normalization.
-        // TODO investigate complex cases
         if (callContext.args.any { it.isUnsafeToMove(methodContext) }) {
             // Do not transform such call, just strip call and argument markers.
             val insnList = methodContext.methodNode.instructions
@@ -258,10 +252,15 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
     }
 
     private fun ArgContext.isUnsafeToMove(methodContext: MethodContext): Boolean {
+        // The following operations make inplace argument unsafe to move:
+        // - non-local jump (moving such argument inside inline function body can interfere with stack normalization);
+        // - variable store (variables defined inside argument can interfere with variables in inline function body).
+        // TODO investigate whether it's possible to lift these restrictions.
         val argInsns = InsnSequence(this.argStartMarker, this.argEndMarker)
         val localLabels = argInsns.filterTo(HashSet()) { it is LabelNode }
         return argInsns.any { insn ->
-            insn in methodContext.suspensionJumpLabels ||
+            insn.isStoreOperation() ||
+                    insn in methodContext.suspensionJumpLabels ||
                     insn.opcode == Opcodes.GOTO && (insn as JumpInsnNode).label !in localLabels
         }
     }

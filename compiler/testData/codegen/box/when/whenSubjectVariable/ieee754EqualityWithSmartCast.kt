@@ -1,5 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject +ProperIeee754Comparisons
-// IGNORE_BACKEND_FIR: JVM_IR
 
 val az: Any = -0.0
 val afz: Any = -0.0f

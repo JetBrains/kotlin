@@ -1,5 +1,7 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    const __doNotImplementIt: unique symbol
+    type __doNotImplementIt = typeof __doNotImplementIt
     namespace foo {
         const _val: number;
         let _var: number;
@@ -24,40 +26,43 @@ declare namespace JS_TESTS {
         }
         class A1 {
             constructor(x: number);
-            readonly x: number;
+            get x(): number;
         }
         class A2 {
             constructor(x: string, y: boolean);
-            readonly x: string;
-            y: boolean;
+            get x(): string;
+            get y(): boolean;
+            set y(value: boolean);
         }
         class A3 {
             constructor();
-            readonly x: number;
+            get x(): number;
         }
         class A4 {
             constructor();
-            readonly _valCustom: number;
-            readonly _valCustomWithField: number;
-            _varCustom: number;
-            _varCustomWithField: number;
+            get _valCustom(): number;
+            get _valCustomWithField(): number;
+            get _varCustom(): number;
+            set _varCustom(value: number);
+            get _varCustomWithField(): number;
+            set _varCustomWithField(value: number);
         }
         const O0: {
         };
         const O: {
-            readonly x: number;
+            get x(): number;
             foo(): number;
         };
         function takesO(o: typeof foo.O): number;
         class KT_37829 {
             constructor();
-            readonly Companion: {
-                readonly x: number;
+            static get Companion(): {
+                get x(): number;
             };
         }
         class TestSealed {
             protected constructor(name: string);
-            readonly name: string;
+            get name(): string;
         }
         namespace TestSealed {
             class AA extends foo.TestSealed {
@@ -71,7 +76,7 @@ declare namespace JS_TESTS {
         }
         abstract class TestAbstract {
             constructor(name: string);
-            readonly name: string;
+            get name(): string;
         }
         namespace TestAbstract {
             class AA extends foo.TestAbstract {
@@ -85,7 +90,7 @@ declare namespace JS_TESTS {
         }
         class TestDataClass {
             constructor(name: string);
-            readonly name: string;
+            get name(): string;
             component1(): string;
             copy(name: string): foo.TestDataClass;
             toString(): string;
@@ -95,8 +100,45 @@ declare namespace JS_TESTS {
         namespace TestDataClass {
             class Nested {
                 constructor();
-                readonly prop: string;
+                get prop(): string;
             }
         }
+        abstract class TestEnumClass {
+            private constructor();
+            get constructorParameter(): string;
+            static get A(): foo.TestEnumClass & {
+                get name(): "A";
+                get ordinal(): 0;
+            };
+            static get B(): foo.TestEnumClass & {
+                get name(): "B";
+                get ordinal(): 1;
+            };
+            get foo(): number;
+            bar(value: string): string;
+            bay(): string;
+            static values(): Array<foo.TestEnumClass>;
+            static valueOf(value: string): foo.TestEnumClass;
+            get name(): "A" | "B";
+            get ordinal(): 0 | 1;
+        }
+        namespace TestEnumClass {
+            class Nested {
+                constructor();
+                get prop(): string;
+            }
+        }
+        interface TestInterface {
+            readonly value: string;
+            getOwnerName(): string;
+            readonly __doNotUseIt: __doNotImplementIt;
+        }
+        class TestInterfaceImpl implements foo.TestInterface {
+            constructor(value: string);
+            get value(): string;
+            getOwnerName(): string;
+            readonly __doNotUseIt: __doNotImplementIt;
+        }
+        function processInterface(test: foo.TestInterface): string;
     }
 }

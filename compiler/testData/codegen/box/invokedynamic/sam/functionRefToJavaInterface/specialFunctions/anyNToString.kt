@@ -4,7 +4,7 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 0 java/lang/invoke/LambdaMetafactory
+// 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: anyNToString.kt
 fun box() =

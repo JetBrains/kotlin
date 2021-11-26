@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.chooseFactory
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -42,7 +46,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
 
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType?,
-        source: FirSourceElement,
+        source: KtSourceElement,
         isArray: Boolean,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -52,7 +56,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
             return
         }
 
-        var factory: FirDiagnosticFactory1<FirTypeParameterSymbol>? = null
+        var factory: KtDiagnosticFactory1<FirTypeParameterSymbol>? = null
 
         lateinit var symbol: FirTypeParameterSymbol
         if (typeArgument is ConeTypeParameterType) {

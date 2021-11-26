@@ -685,6 +685,12 @@ public class FirOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTest
                 }
 
                 @Test
+                @TestMetadata("kt48261.kt")
+                public void testKt48261() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt48261.kt");
+                }
+
+                @Test
                 @TestMetadata("NonPlatformTypeParameter.kt")
                 public void testNonPlatformTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
@@ -911,6 +917,12 @@ public class FirOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTest
             @TestMetadata("enhancedRecursiveStarProjection.kt")
             public void testEnhancedRecursiveStarProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48261.kt")
+            public void testKt48261() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/kt48261.kt");
             }
 
             @Test

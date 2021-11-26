@@ -1,6 +1,6 @@
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -PLATFORM_CLASS_MAPPED_TO_KOTLIN
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package kotlin.jvm
 

@@ -1,7 +1,8 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: default argument mapping in MPP isn't designed yet
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: J.java
 
 public class J {

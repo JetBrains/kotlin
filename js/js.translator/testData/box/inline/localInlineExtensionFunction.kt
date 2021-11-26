@@ -1,8 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1292
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: capturedInLambda
-// CHECK_CONTAINS_NO_CALLS: declaredInLambda
+// CHECK_CONTAINS_NO_CALLS: capturedInLambda except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: declaredInLambda except=Unit_getInstance
 
 internal data class State(var count: Int = 0)
 

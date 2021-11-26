@@ -19,7 +19,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
                     class Box<T>
                     class A
                     typealias X = A
-                    fun x(x: Box<X>)
+                    fun x(x: Box<X>) {}
                 """.trimIndent()
             )
 
@@ -28,15 +28,15 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
                     class Box<T>
                     class B
                     typealias X = B
-                    fun x(x: Box<B>)
+                    fun x(x: Box<B>) {}
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class Box<T> expect constructor()
-                expect class X expect constructor()
+                expect class Box<T>()
+                expect class X()
                 expect fun x(x: Box<X>)
             """.trimIndent()
         )
@@ -55,7 +55,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
                 "a", """
                     class A
                     typealias X = A
-                    fun x(x: Box<X>)
+                    fun x(x: Box<X>) {}
                 """.trimIndent()
             )
 
@@ -63,14 +63,14 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
                 "b", """
                     class B
                     typealias X = B
-                    fun x(x: Box<B>)
+                    fun x(x: Box<B>) {}
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor()
+                expect class X()
                 expect fun x(x: Box<X>)
             """.trimIndent()
         )
@@ -98,7 +98,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
 
         result.assertCommonized(
             "(a, b)", """
-                expect class X expect constructor()
+                expect class X()
                 expect fun useX(x: X)
             """.trimIndent()
         )
@@ -113,7 +113,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
                     class Box<T>
                     class A
                     typealias X = A
-                    val x: Box<X>
+                    val x: Box<X> = null!!
                 """.trimIndent()
             )
 
@@ -122,15 +122,15 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
                     class Box<T>
                     class B
                     typealias X = B
-                    val x: Box<B>
+                    val x: Box<B> = null!!
                 """.trimIndent()
             )
         }
 
         result.assertCommonized(
             "(a, b)", """
-                expect class Box<T> expect constructor()
-                expect class X expect constructor()
+                expect class Box<T>()
+                expect class X()
                 expect val x: Box<X>
             """.trimIndent()
         )

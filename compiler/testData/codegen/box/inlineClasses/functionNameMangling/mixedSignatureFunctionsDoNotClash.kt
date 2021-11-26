@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Id(val id: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Id(val id: String)
 
 fun test(id: Id, str: String) {
     if (id.id != "OK" && str != "1") throw AssertionError()

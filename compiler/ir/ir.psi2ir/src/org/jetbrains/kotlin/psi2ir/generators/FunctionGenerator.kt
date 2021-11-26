@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -28,14 +29,15 @@ import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+@ObsoleteDescriptorBasedAPI
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
@@ -67,9 +69,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction? =
         functionDescriptor.takeIf { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
             ?.let {
-                declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
-                    generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
-                }
+                declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE)
+                    .buildWithScope { irFunction ->
+                        generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
+                    }
             }
 
     private inline fun declareSimpleFunction(
@@ -207,8 +210,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         property: PropertyDescriptor,
         irAccessor: IrSimpleFunction
     ): IrExpression? {
-        val containingDeclaration = property.containingDeclaration
-        return when (containingDeclaration) {
+        return when (val containingDeclaration = property.containingDeclaration) {
             is ClassDescriptor -> {
                 val thisAsReceiverParameter = containingDeclaration.thisAsReceiverParameter
                 IrGetValueImpl(
@@ -370,15 +372,29 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         return call.resultingDescriptor.name.asString()
     }
 
-    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement, name: Name? = null) =
-        context.symbolTable.declareValueParameter(
+    private fun declareParameter(
+        descriptor: ParameterDescriptor,
+        ktElement: KtPureElement?,
+        irOwnerElement: IrElement,
+        name: Name? = null
+    ): IrValueParameter {
+        var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        if (ktElement is KtParameter) {
+            if (ktElement.isSingleUnderscore) {
+                origin = IrDeclarationOrigin.UNDERSCORE_PARAMETER
+            } else if (ktElement.destructuringDeclaration != null) {
+                origin = IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
+            }
+        }
+        return context.symbolTable.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
-            IrDeclarationOrigin.DEFINED,
+            origin,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name
         )
+    }
 
     private fun generateDefaultAnnotationParameterValue(
         valueExpression: KtExpression,

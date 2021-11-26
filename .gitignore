@@ -26,6 +26,7 @@ build/
 !**/test/**/build
 *.iml
 !**/testData/**/*.iml
+.idea/remote-targets.xml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
 .idea/artifacts/PILL_*.xml

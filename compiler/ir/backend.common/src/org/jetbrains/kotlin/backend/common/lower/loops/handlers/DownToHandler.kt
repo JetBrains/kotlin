@@ -63,7 +63,8 @@ internal class DownToHandler(private val context: CommonBackendContext) :
 
     private fun IrExpression.convertToExclusiveLowerBound(progressionType: ProgressionType): IrExpression? {
         if (progressionType is UnsignedProgressionType) {
-            if (this.constLongValue == 0L) return null
+            // On JVM, prefer unsigned counter loop with inclusive bound
+            if (preferJavaLikeCounterLoop || this.constLongValue == 0L) return null
         }
 
         val irConst = this as? IrConst<*> ?: return null

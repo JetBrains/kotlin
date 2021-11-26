@@ -9,9 +9,9 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.valOrVarKeyword
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -41,7 +41,7 @@ sealed class FirModifierList {
         override val modifiers: List<FirModifier.FirLightModifier>
             get() {
                 val modifierNodes = modifierList.getChildren(tree)
-                return modifierNodes.filterNotNull()
+                return modifierNodes
                     .filter { it.tokenType is KtModifierKeywordToken }
                     .map { FirModifier.FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree, offsetDelta) }
             }
@@ -60,8 +60,8 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
         node: ASTNode,
         token: KtModifierKeywordToken
     ) : FirModifier<ASTNode>(node, token) {
-        override val source: FirSourceElement
-            get() = node.psi.toFirPsiSourceElement()
+        override val source: KtSourceElement
+            get() = node.psi.toKtPsiSourceElement()
     }
 
     class FirLightModifier(
@@ -70,23 +70,23 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
         val tree: FlyweightCapableTreeStructure<LighterASTNode>,
         private val offsetDelta: Int
     ) : FirModifier<LighterASTNode>(node, token) {
-        override val source: FirSourceElement
-            get() = node.toFirLightSourceElement(
+        override val source: KtSourceElement
+            get() = node.toKtLightSourceElement(
                 tree,
                 startOffset = node.startOffset + offsetDelta,
                 endOffset = node.endOffset + offsetDelta
             )
     }
 
-    abstract val source: FirSourceElement
+    abstract val source: KtSourceElement
 }
 
-fun FirSourceElement?.getModifierList(): FirModifierList? {
+fun KtSourceElement?.getModifierList(): FirModifierList? {
     return when (this) {
         null -> null
-        is FirPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
-        is FirLightSourceElement -> {
-            val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtNodeTypes.MODIFIER_LIST }
+        is KtPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
+        is KtLightSourceElement -> {
+            val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it.tokenType == KtNodeTypes.MODIFIER_LIST }
                 ?: return null
             val offsetDelta = startOffset - lighterASTNode.startOffset
             FirModifierList.FirLightModifierList(modifierListNode, treeStructure, offsetDelta)
@@ -100,9 +100,9 @@ fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = sou
 
 fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
 
-internal val FirSourceElement?.valOrVarKeyword: KtKeywordToken?
+internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
     get() = when (this) {
         null -> null
-        is FirPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
-        is FirLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
+        is KtPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
+        is KtLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
     }

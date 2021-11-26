@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // SKIP_KT_DUMP
 
 import kotlin.contracts.ExperimentalContracts

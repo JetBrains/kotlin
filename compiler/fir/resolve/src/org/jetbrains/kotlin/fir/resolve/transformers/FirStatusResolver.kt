@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -38,10 +38,27 @@ class FirStatusResolver(
             FirDeclarationStatusImpl.Modifier.CONST,
             FirDeclarationStatusImpl.Modifier.LATEINIT,
             FirDeclarationStatusImpl.Modifier.TAILREC,
+            FirDeclarationStatusImpl.Modifier.EXTERNAL,
         )
 
         private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =
             FirDeclarationStatusImpl.Modifier.values().toList() - NOT_INHERITED_MODIFIERS
+    }
+
+    private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions
+
+    private inline fun FirMemberDeclaration.applyExtensionTransformers(
+        operation: FirStatusTransformerExtension.(FirDeclarationStatus) -> FirDeclarationStatus
+    ): FirDeclarationStatus {
+        if (extensionStatusTransformers.isEmpty()) return status
+        val declaration = this
+        return extensionStatusTransformers.fold(status) { acc, it ->
+            if (it.needTransformStatus(declaration)) {
+                it.operation(acc)
+            } else {
+                acc
+            }
+        }
     }
 
     fun resolveStatus(
@@ -64,41 +81,69 @@ class FirStatusResolver(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun resolveStatus(property: FirProperty, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(property, property.status, containingClass, null, isLocal) l@{
-            if (containingClass == null) return@l emptyList()
-            @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
-            buildList<FirProperty> {
-                val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
-                scope.processPropertiesByName(property.name) {}
-                scope.processDirectOverriddenPropertiesWithBaseScope(property.symbol) { symbol, _ ->
-                    this += symbol.fir
-                    ProcessorAction.NEXT
-                }
-            }.map {
-                it.ensureResolved(FirResolvePhase.STATUS)
-                it.status as FirResolvedDeclarationStatus
+    fun getOverriddenProperties(
+        property: FirProperty,
+        containingClass: FirClass?,
+    ): List<FirProperty> {
+        if (containingClass == null) {
+            return emptyList()
+        }
+
+        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+
+        return buildList {
+            scope.processPropertiesByName(property.name) {}
+            scope.processDirectOverriddenPropertiesWithBaseScope(property.symbol) { symbol, _ ->
+                this += symbol.fir
+                ProcessorAction.NEXT
             }
         }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(function, function.status, containingClass, null, isLocal) l@{
-            if (containingClass == null) return@l emptyList()
-            @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
-            buildList<FirCallableDeclaration> {
-                val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
-                val symbol = function.symbol
-                scope.processFunctionsByName(function.name) {}
-                scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
-                    this += overriddenSymbol.fir
-                    ProcessorAction.NEXT
-                }
-            }.mapNotNull {
-                it.status as? FirResolvedDeclarationStatus
+    fun resolveStatus(
+        property: FirProperty,
+        containingClass: FirClass?,
+        isLocal: Boolean,
+        overriddenStatuses: List<FirResolvedDeclarationStatus>? = null,
+    ): FirResolvedDeclarationStatus {
+        val statuses = overriddenStatuses ?: getOverriddenProperties(property, containingClass)
+            .map {
+                it.ensureResolved(FirResolvePhase.STATUS)
+                it.status as FirResolvedDeclarationStatus
             }
+
+        val status = property.applyExtensionTransformers { transformStatus(it, property, containingClass, isLocal) }
+        return resolveStatus(property, status, containingClass, null, isLocal, statuses)
+    }
+
+    private fun getOverriddenStatuses(
+        function: FirSimpleFunction,
+        containingClass: FirClass?
+    ): List<FirResolvedDeclarationStatus> {
+        if (containingClass == null) {
+            return emptyList()
         }
+
+        @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
+        return buildList<FirCallableDeclaration> {
+            val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+            val symbol = function.symbol
+            scope.processFunctionsByName(function.name) {}
+            scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
+                this += overriddenSymbol.fir
+                ProcessorAction.NEXT
+            }
+        }.mapNotNull {
+            it.status as? FirResolvedDeclarationStatus
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
+        val status = function.applyExtensionTransformers { transformStatus(it, function, containingClass, isLocal) }
+        val overriddenStatuses = getOverriddenStatuses(function, containingClass)
+        return resolveStatus(function, status, containingClass, null, isLocal, overriddenStatuses)
     }
 
     fun resolveStatus(
@@ -106,7 +151,8 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(regularClass, regularClass.status, containingClass, null, isLocal) { emptyList() }
+        val status = regularClass.applyExtensionTransformers { transformStatus(it, regularClass, containingClass, isLocal) }
+        return resolveStatus(regularClass, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(
@@ -114,24 +160,30 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(typeAlias, typeAlias.status, containingClass, null, isLocal) { emptyList() }
+        val status = typeAlias.applyExtensionTransformers { transformStatus(it, typeAlias, containingClass, isLocal) }
+        return resolveStatus(typeAlias, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(
         propertyAccessor: FirPropertyAccessor,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
-        isLocal: Boolean
+        isLocal: Boolean,
+        overriddenStatuses: List<FirResolvedDeclarationStatus> = emptyList(),
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(propertyAccessor, propertyAccessor.status, containingClass, containingProperty, isLocal) { emptyList() }
+        val status = propertyAccessor.applyExtensionTransformers {
+            transformStatus(it, propertyAccessor, containingClass, containingProperty, isLocal)
+        }
+        return resolveStatus(propertyAccessor, status, containingClass, containingProperty, isLocal, overriddenStatuses)
     }
 
     fun resolveStatus(constructor: FirConstructor, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(constructor, constructor.status, containingClass, null, isLocal) { emptyList() }
+        val status = constructor.applyExtensionTransformers { transformStatus(it, constructor, containingClass, isLocal) }
+        return resolveStatus(constructor, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(field: FirField, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(field, field.status, containingClass, null, isLocal) { emptyList() }
+        return resolveStatus(field, field.status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(
@@ -139,26 +191,28 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(backingField, backingField.status, containingClass, null, isLocal) { emptyList() }
+        val status = backingField.applyExtensionTransformers { transformStatus(it, backingField, containingClass, isLocal) }
+        return resolveStatus(backingField, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(enumEntry, enumEntry.status, containingClass, null, isLocal) { emptyList() }
+        val status = enumEntry.applyExtensionTransformers { transformStatus(it, enumEntry, containingClass, isLocal) }
+        return resolveStatus(enumEntry, status, containingClass, null, isLocal, emptyList())
     }
 
-    private inline fun resolveStatus(
+    private fun resolveStatus(
         declaration: FirDeclaration,
         status: FirDeclarationStatus,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
         isLocal: Boolean,
-        overriddenExtractor: () -> List<FirResolvedDeclarationStatus>
+        overriddenStatuses: List<FirResolvedDeclarationStatus>
     ): FirResolvedDeclarationStatus {
         if (status is FirResolvedDeclarationStatus) return status
         require(status is FirDeclarationStatusImpl)
 
         @Suppress("UNCHECKED_CAST")
-        val overriddenStatuses = overriddenExtractor() as List<FirResolvedDeclarationStatusImpl>
+        overriddenStatuses as List<FirResolvedDeclarationStatusImpl>
         val visibility = when (status.visibility) {
             Visibilities.Unknown -> when {
                 isLocal -> Visibilities.Local
@@ -192,7 +246,7 @@ class FirStatusResolver(
             containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-        val annotations = ((containingProperty ?: declaration) as? FirAnnotatedDeclaration)?.annotations ?: emptyList()
+        val annotations = (containingProperty ?: declaration).annotations
 
         val hasPublishedApiAnnotation = annotations.any {
             it.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.Annotations.PublishedApi
@@ -298,12 +352,3 @@ private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
         else -> true
     }
 }
-
-private object PublishedApiEffectiveVisibilityKey : FirDeclarationDataKey()
-var FirDeclaration.publishedApiEffectiveVisibility: EffectiveVisibility? by FirDeclarationDataRegistry.data(PublishedApiEffectiveVisibilityKey)
-
-inline val FirCallableSymbol<*>.publishedApiEffectiveVisibility: EffectiveVisibility?
-    get() {
-        ensureResolved(FirResolvePhase.STATUS)
-        return fir.publishedApiEffectiveVisibility
-    }

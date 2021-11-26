@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirBackingFieldReferenceImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val candidateSymbol: FirBasedSymbol<*>?,
     override val resolvedSymbol: FirBackingFieldSymbol,
 ) : FirBackingFieldReference() {

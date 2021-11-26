@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun testUIntRangeLiteral(a: UInt, b: UInt) = 42u in a .. b
 
 fun testULongRangeLiteral(a: ULong, b: ULong) = 42UL in a .. b

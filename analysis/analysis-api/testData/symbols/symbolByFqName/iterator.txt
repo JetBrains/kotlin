@@ -1,6 +1,5 @@
-KtFirNamedClassOrObjectSymbol:
-  annotationClassIds: []
-  annotations: []
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
   classIdIfNonLocal: kotlin/collections/Iterator
   classKind: INTERFACE
   companionObject: null
@@ -13,11 +12,11 @@ KtFirNamedClassOrObjectSymbol:
   name: Iterator
   origin: LIBRARY
   superTypes: [
-    [] kotlin/Any
+    kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtFirTypeParameterSymbol(T)
+    KtTypeParameterSymbol(T)
   ]
   visibility: Public
   deprecationStatus: null

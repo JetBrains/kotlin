@@ -1,4 +1,5 @@
 // !LANGUAGE: +JvmRecordSupport
+// IGNORE_BACKEND_FIR: JVM_IR
 // ENABLE_JVM_PREVIEW
 // FILE: MyRec.java
 public record MyRec(String name) {}

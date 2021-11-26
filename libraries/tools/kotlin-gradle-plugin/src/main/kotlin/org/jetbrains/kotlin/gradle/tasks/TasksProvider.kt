@@ -78,6 +78,16 @@ internal inline fun <reified T : Task> Project.locateOrRegisterTask(name: String
     return project.locateTask(name) ?: project.registerTask(name, T::class.java, body = body)
 }
 
+internal inline fun <reified T : Task> Project.locateOrRegisterTask(
+    name: String,
+    args: List<Any> = emptyList(),
+    invokeWhenRegistered: (TaskProvider<T>.() -> Unit) = {},
+    noinline configureTask: (T.() -> Unit)? = null
+): TaskProvider<T> {
+    locateTask<T>(name)?.let { return it }
+    return registerTask(name, args, configureTask).also(invokeWhenRegistered)
+}
+
 internal open class KotlinTasksProvider {
     open fun registerKotlinJVMTask(
         project: Project,

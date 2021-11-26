@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrStatement
@@ -15,7 +17,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.collections.set
 
 class PropertyLazyInitLowering(
     private val context: JsIrBackendContext
@@ -71,24 +73,11 @@ class PropertyLazyInitLowering(
 
         val initializationCall = JsIrBuilder.buildCall(
             target = initFun.symbol,
-            type = initFun.returnType
+            type = initFun.returnType,
+            origin = PROPERTY_INIT_FUN_CALL
         )
 
-        when (container) {
-            is IrSimpleFunction ->
-                irBody.prependFunctionCall(initializationCall)
-            is IrField -> {
-                container
-                    .correspondingProperty
-                    ?.takeIf { it.isForLazyInit() }
-                    ?.takeIf { it.backingField?.initializer != null }
-                    ?.let { listOf(it.getter, it.setter) }
-                    ?.filterNotNull()
-                    ?.forEach {
-                        irBody.prependFunctionCall(initializationCall)
-                    }
-            }
-        }
+        if (container is IrSimpleFunction) irBody.prependFunctionCall(initializationCall)
     }
 
     private fun createInitializationFunction(
@@ -173,6 +162,10 @@ class PropertyLazyInitLowering(
             )
         ).let { listOf(it) }
     }
+
+    companion object {
+        object PROPERTY_INIT_FUN_CALL : IrStatementOriginImpl("PROPERTY_INIT_FUN_CALL")
+    }
 }
 
 private fun createIrGetField(field: IrField): IrGetField {
@@ -191,8 +184,11 @@ private fun createIrSetField(field: IrField, expression: IrExpression): IrSetFie
     )
 }
 
-private fun allFieldsInFilePure(fieldToInitializer: Collection<IrExpression>) =
-    fieldToInitializer.all { it.isPure(anyVariable = true) }
+private fun allFieldsInFilePure(fieldToInitializer: Collection<IrExpression>): Boolean =
+    fieldToInitializer
+        .all { expression ->
+            expression.isPure(anyVariable = true)
+        }
 
 class RemoveInitializersForLazyProperties(
     private val context: JsIrBackendContext
@@ -271,7 +267,10 @@ private val IrDeclaration.correspondingProperty: IrProperty?
             is IrField -> propertyWithPersistentSafe {
                 correspondingPropertySymbol?.owner
             }
-            else -> error("Can be only IrProperty, IrSimpleFunction or IrField")
+            else -> compilationException(
+                "Can be only IrProperty, IrSimpleFunction or IrField",
+                this
+            )
         }
     }
 
@@ -284,10 +283,9 @@ private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> 
     } else null
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
-    correspondingProperty
-        ?.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol) != true &&
-            withPersistentSafe { origin in compatibleOrigins } == true
-
+    correspondingProperty?.let {
+        it.isForLazyInit() && !it.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol)
+    } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
 
 private fun IrDeclaration.assertCompatibleDeclaration() {
     assert(this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage)

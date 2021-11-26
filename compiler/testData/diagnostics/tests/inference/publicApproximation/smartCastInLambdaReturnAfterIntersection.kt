@@ -18,5 +18,5 @@ fun smartCastAfterIntersection(a: One, b: Two) = run {
 }
 
 fun test(one: One, two: Two) {
-    smartCastAfterIntersection(one, two)<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>base<!>()
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>smartCastAfterIntersection(one, two)<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>base<!>()<!>
 }

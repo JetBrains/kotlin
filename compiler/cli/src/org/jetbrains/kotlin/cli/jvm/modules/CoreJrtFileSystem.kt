@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ConcurrentFactoryMap
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.URLUtil
 import java.io.File
 import java.net.URI
@@ -39,7 +40,14 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
                 if (isAtLeastJava9()) {
                     FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
                 } else {
-                    val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                    /*
+                    This ClassLoader actually lives as long as current thread due to ThreadLocal leak in jrtfs,
+                    See https://bugs.openjdk.java.net/browse/JDK-8260621
+                    So that cache allows us to avoid creating too many classloaders for same JDK and reduce severity of that leak
+                    */
+                    val classLoader = jrtFsClassLoaderCache.computeIfAbsent(jrtFsJar) {
+                        URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                    }
                     FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
                 }
             CoreJrtHandler(this, jdkHomePath, fileSystem.getPath(""))
@@ -83,5 +91,7 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
 
         fun isModularJdk(jdkHome: File): Boolean =
             loadJrtFsJar(jdkHome) != null
+
+        private val jrtFsClassLoaderCache = ContainerUtil.createConcurrentWeakValueMap<File, URLClassLoader>()
     }
 }

@@ -6,8 +6,8 @@ plugins {
 
 val commonMainSources by task<Sync> {
     from(
-        "$rootDir/libraries/kotlin.test/common/src",
-        "$rootDir/libraries/kotlin.test/annotations-common/src"
+        "$rootDir/libraries/kotlin.test/common/src/main",
+        "$rootDir/libraries/kotlin.test/annotations-common/src/main"
     )
     into("$buildDir/commonMainSources")
 }

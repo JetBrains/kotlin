@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 
@@ -16,6 +16,6 @@ class FirArraySetArgumentList internal constructor(
     override val arguments: List<FirExpression>
         get() = indexes + rValue
 
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = null
 }

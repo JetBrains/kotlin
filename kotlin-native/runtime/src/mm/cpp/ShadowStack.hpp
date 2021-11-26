@@ -53,6 +53,9 @@ public:
 
     void EnterFrame(ObjHeader** start, int parameters, int count) noexcept;
     void LeaveFrame(ObjHeader** start, int parameters, int count) noexcept;
+    void SetCurrentFrame(ObjHeader** start) noexcept;
+    FrameOverlay* getCurrentFrame() noexcept;
+    ALWAYS_INLINE void checkCurrentFrame(FrameOverlay* frame) noexcept;
 
     Iterator begin() noexcept { return Iterator(currentFrame_); }
     Iterator end() noexcept { return Iterator(nullptr); }

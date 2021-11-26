@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -48,7 +48,7 @@ import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaMethod @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
@@ -186,7 +186,7 @@ val ALL_JAVA_OPERATION_NAMES =
 
 @FirBuilderDsl
 class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef

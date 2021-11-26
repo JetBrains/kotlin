@@ -110,6 +110,60 @@ FILE: boundSmartcastsInBranches.kt
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+        when () {
+            !=(R|<local>/y|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+        when () {
+            !=(R|<local>/z|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+        R|<local>/y| = Null(null)
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+        when () {
+            !=(R|<local>/y|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.R|kotlin/String.length|
+                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+        when () {
+            !=(R|<local>/z|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+    }
+    public final fun test_8(): R|kotlin/Unit| {
+        lval z: R|kotlin/String?| = Null(null)
+        lvar y: R|kotlin/String?| = R|<local>/z|
+        lval x: R|kotlin/String?| = R|<local>/y|
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
                 R|<local>/y|.R|kotlin/String.length|
                 R|<local>/z|.R|kotlin/String.length|
             }

@@ -14,7 +14,7 @@ fun box(): String {
 }
 
 // FORCE_STEP_INTO
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:12 box
 // test.kt:3 box
 // test.kt:4 box

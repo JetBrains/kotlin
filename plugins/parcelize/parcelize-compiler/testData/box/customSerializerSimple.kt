@@ -1,4 +1,6 @@
-// WITH_RUNTIME
+// WITH_STDLIB
+// fir doesn't support annotations with type arguments
+// IGNORE_BACKEND_FIR: JVM_IR
 
 @file:JvmName("TestKt")
 package test
@@ -18,7 +20,7 @@ object Parceler1 : Parceler<String> {
 typealias Parceler2 = Parceler1
 
 object Parceler3 : Parceler<String> {
-    override fun create(parcel: Parcel) = parcel.readString().toUpperCase()
+    override fun create(parcel: Parcel) = parcel.readString().uppercase()
 
     override fun String.write(parcel: Parcel, flags: Int) {
         parcel.writeString(this)
@@ -29,7 +31,7 @@ object Parceler3 : Parceler<String> {
 @TypeParceler<String, Parceler2>
 data class Test(
         val a: String,
-        @TypeParceler<String, Parceler1> val b: String,
+        @<!REDUNDANT_TYPE_PARCELER!>TypeParceler<!><String, Parceler1> val b: String,
         @TypeParceler<String, Parceler3> val c: CharSequence,
         val d: @WriteWith<Parceler3> String
 ) : Parcelable

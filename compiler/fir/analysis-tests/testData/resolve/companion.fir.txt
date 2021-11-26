@@ -1,4 +1,6 @@
 FILE: companion.kt
+    package test
+
     public abstract class Some : R|kotlin/Any| {
         public constructor(): R|test/Some| {
             super<R|kotlin/Any|>()

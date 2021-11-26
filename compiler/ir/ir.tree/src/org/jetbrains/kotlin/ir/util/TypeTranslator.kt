@@ -44,6 +44,8 @@ abstract class TypeTranslator(
 
     private val erasureStack = Stack<PropertyDescriptor>()
 
+    private val supportDefinitelyNotNullTypes: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)
+
     protected abstract fun isTypeAliasAccessibleHere(typeAliasDescriptor: TypeAliasDescriptor): Boolean
 
     fun enterScope(irElement: IrTypeParametersContainer) {
@@ -85,17 +87,20 @@ abstract class TypeTranslator(
             ?: symbolTable.referenceTypeParameter(originalTypeParameter)
     }
 
-    fun translateType(kotlinType: KotlinType): IrType =
-        translateType(kotlinType, Variance.INVARIANT).type
+    fun translateType(kotlinType: KotlinType): IrType {
+        return translateType(kotlinType, Variance.INVARIANT).type
+    }
 
     private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
-        val approximatedType = approximate(kotlinType)
+        val approximatedType = approximate(kotlinType.unwrap())
 
         when {
             approximatedType.isError ->
                 return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
             approximatedType.isDynamic() ->
                 return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+            supportDefinitelyNotNullTypes && approximatedType is DefinitelyNotNullType ->
+                return makeTypeProjection(IrDefinitelyNotNullTypeImpl(approximatedType, translateType(approximatedType.original)), variance)
         }
 
         val upperType = approximatedType.upperIfFlexible()
@@ -143,6 +148,7 @@ abstract class TypeTranslator(
                     val lowerTypeDescriptor =
                         lowerType.constructor.declarationDescriptor as? ClassDescriptor
                             ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
+                    annotations = translateTypeAnnotations(upperType, approximatedType)
                     classifier = symbolTable.referenceClass(lowerTypeDescriptor)
                     arguments = when {
                         approximatedType is RawType ->
@@ -152,7 +158,7 @@ abstract class TypeTranslator(
                         else ->
                             translateTypeArguments(upperType.arguments)
                     }
-                    annotations = translateTypeAnnotations(upperType, approximatedType)
+
                 }
 
                 else ->

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
@@ -31,7 +31,7 @@ import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaClass @FirImplementationDetail internal constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
@@ -61,9 +61,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
-    override val companionObject: FirRegularClass?
-        get() = null
-
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
@@ -78,6 +75,11 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
+
+    override val companionObjectSymbol: FirRegularClassSymbol?
+        get() = null
+
+    override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {}
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
@@ -116,10 +118,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         return this
     }
 
-    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        return this
-    }
-
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass {
         typeParameters.transformInplace(transformer, data)
         return this
@@ -137,7 +135,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
     lateinit var javaTypeParameterStack: JavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
 
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
@@ -165,13 +163,6 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
             existingNestedClassifierNames
         )
     }
-
-    @Deprecated("Modification of 'hasLazyNestedClassifiers' has no impact for FirRegularClassImplBuilder", level = DeprecationLevel.HIDDEN)
-    override var companionObject: FirRegularClass?
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
-        }
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaClassBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin

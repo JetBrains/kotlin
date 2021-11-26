@@ -31,6 +31,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
     }
 
     private fun jsProject() = Project("kotlin-js-plugin-project").apply {
+        // TODO: remove settings.gradle from test project after migrating to the new test DSL
         setupWorkingDir()
         gradleBuildScript().modify { it.lines().filter { "html" !in it }.joinToString("\n") }
         projectFile("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }

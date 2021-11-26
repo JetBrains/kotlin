@@ -28,7 +28,7 @@ sealed class TestsError(val original: Throwable, val type: TestsExceptionType) :
     override val cause: Throwable? get() = original.cause
 
     // This function is called in the constructor of Throwable, where original is not yet initialized
-    override fun fillInStackTrace(): Throwable? = @Suppress("UNNECESSARY_SAFE_CALL") original?.fillInStackTrace()
+    override fun fillInStackTrace(): Throwable? = @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") original?.fillInStackTrace()
 
     override fun setStackTrace(stackTrace: Array<out StackTraceElement>?) {
         original.stackTrace = stackTrace

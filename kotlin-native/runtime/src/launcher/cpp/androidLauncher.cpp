@@ -29,6 +29,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "launcher.h"
 #include "androidLauncher.h"
 
 #include <android/log.h>
@@ -44,8 +45,6 @@
 #endif
 
 //--- main --------------------------------------------------------------------//
-extern "C" KInt Konan_start(const ObjHeader*);
-
 namespace {
 
 typedef struct {

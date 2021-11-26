@@ -13,4 +13,3 @@ class C {
 inline fun C.foo() {
   <this>.bar()
 }
-

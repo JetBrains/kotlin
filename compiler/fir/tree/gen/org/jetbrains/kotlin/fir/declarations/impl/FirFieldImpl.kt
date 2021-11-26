@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -32,15 +33,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirFieldImpl @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override var returnTypeRef: FirTypeRef,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
@@ -56,32 +57,29 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         initializer?.accept(visitor, data)
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformInitializer(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -92,6 +90,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -128,6 +131,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         transformAnnotations(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         return this
     }
 
@@ -152,4 +156,8 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
 }

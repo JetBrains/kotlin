@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 interface GFoo<out T> {
     fun foo(): T
 }
@@ -8,7 +10,9 @@ interface IBar {
 
 interface SFooBar : GFoo<IBar>
 
-inline class X(val x: String) : IBar {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val x: String) : IBar {
     override fun bar(): String = x
 }
 

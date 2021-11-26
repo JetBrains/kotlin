@@ -29,14 +29,12 @@ class IrEnumEntryImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
-    override val name: Name
+    override val name: Name,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrEnumEntry() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

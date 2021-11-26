@@ -6,17 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.type
 
 object FirPropertyTypeParametersChecker : FirPropertyChecker() {
 
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val boundsByName = declaration.typeParameters.map { it.name to it.bounds }.toMap()
+        val boundsByName = declaration.typeParameters.associate { it.name to it.bounds }
         val usedTypes = HashSet<ConeKotlinType>()
         fun collectAllTypes(type: ConeKotlinType) {
             if (usedTypes.add(type)) {

@@ -54,7 +54,7 @@ internal class LLVMCoverageWriter(
                         fileIds.toCValues(), fileIds.size.signExtend(),
                         regions.toCValues(), regions.size.signExtend())
 
-                val functionName = context.llvmDeclarations.forFunction(functionRegions.function).llvmFunction.name
+                val functionName = context.llvmDeclarations.forFunction(functionRegions.function).llvmValue.name
                 val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(context.llvmModule),
                         functionName, functionRegions.structuralHash, functionCoverage)!!
 

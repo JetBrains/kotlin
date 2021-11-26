@@ -196,7 +196,7 @@ object CirDeserializers {
         CirValueParameter.createInterned(
             annotations = annotations(source.flags, typeResolver, source::annotations),
             name = CirName.create(source.name),
-            returnType = type(source.type!!, typeResolver),
+            returnType = type(source.type, typeResolver),
             varargElementType = source.varargElementType?.let { type(it, typeResolver) },
             declaresDefaultValue = Flag.ValueParameter.DECLARES_DEFAULT_VALUE(source.flags),
             isCrossinline = Flag.ValueParameter.IS_CROSSINLINE(source.flags),

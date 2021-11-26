@@ -40,7 +40,7 @@ fun third(arg: Any?): Int {
         is String -> return 0
         is Double -> return 1
         is <!DUPLICATE_LABEL_IN_WHEN!>Double<!> -> return 2
-        <!DUPLICATE_LABEL_IN_WHEN!>null<!> -> return 3
+        <!DUPLICATE_LABEL_IN_WHEN, SENSELESS_NULL_IN_WHEN!>null<!> -> return 3
         !is String -> return 4
         else -> return 5
     }

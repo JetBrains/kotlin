@@ -1,12 +1,20 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 package root
 
-inline class IcInt(val x: Int)
-inline class IcLong(val l: Long)
-inline class IcAny(val a: Any?)
-inline class IcOverIc(val o: IcLong)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcInt(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcLong(val l: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcAny(val a: Any?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcOverIc(val o: IcLong)
 
 fun check(c: Class<*>, s: String) {
     if (c.toString() != s) error("Fail, expected: $s, actual: $c")

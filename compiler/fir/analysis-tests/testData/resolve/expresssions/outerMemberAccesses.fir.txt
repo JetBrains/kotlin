@@ -22,7 +22,7 @@ FILE: O.kt
                 private get(): R|kotlin/Int|
 
             private final inner class Some : R|kotlin/Any| {
-                public constructor(z: R|kotlin/Boolean|): R|O.Derived.Some| {
+                public O.Derived.constructor(z: R|kotlin/Boolean|): R|O.Derived.Some| {
                     super<R|kotlin/Any|>()
                 }
 

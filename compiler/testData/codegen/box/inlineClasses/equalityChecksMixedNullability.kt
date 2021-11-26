@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class A(val a: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val a: String)
 
 fun isEqualNA(x: A?, y: A) = x == y
 fun isEqualAN(x: A, y: A?) = x == y

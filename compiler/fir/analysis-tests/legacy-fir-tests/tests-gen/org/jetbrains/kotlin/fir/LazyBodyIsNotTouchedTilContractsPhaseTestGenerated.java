@@ -2000,6 +2000,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierChecker.kt");
         }
 
+        @TestMetadata("RedundantVisibilityModifierCheckerForInnerComponents.kt")
+        public void testRedundantVisibilityModifierCheckerForInnerComponents() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerForInnerComponents.kt");
+        }
+
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3119,6 +3124,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartCastInInit.kt");
         }
 
+        @TestMetadata("smartcastInByClause.kt")
+        public void testSmartcastInByClause() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastInByClause.kt");
+        }
+
         @TestMetadata("smartcastToNothing.kt")
         public void testSmartcastToNothing() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToNothing.kt");
@@ -3230,6 +3240,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/when.kt");
+            }
+
+            @TestMetadata("whenSubjectExpression.kt")
+            public void testWhenSubjectExpression() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures/whenSubjectExpression.kt");
             }
         }
 
@@ -3496,6 +3511,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("bareWithFlexibleArg.kt")
+        public void testBareWithFlexibleArg() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithFlexibleArg.kt");
+        }
+
         @TestMetadata("bareWithSubjectTypeAlias.kt")
         public void testBareWithSubjectTypeAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithSubjectTypeAlias.kt");
@@ -3569,6 +3589,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/kotlinJavaKotlinHierarchy.kt");
         }
 
+        @TestMetadata("privateAliasInSamePackage.kt")
+        public void testPrivateAliasInSamePackage() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/privateAliasInSamePackage.kt");
+        }
+
         @TestMetadata("protectedInCompanion.kt")
         public void testProtectedInCompanion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/protectedInCompanion.kt");
@@ -3577,6 +3602,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("singletonConstructors.kt")
         public void testSingletonConstructors() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/singletonConstructors.kt");
+        }
+
+        @TestMetadata("superAccessToJavaField.kt")
+        public void testSuperAccessToJavaField() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/superAccessToJavaField.kt");
         }
 
         @TestMetadata("visibilityWithOverrides.kt")

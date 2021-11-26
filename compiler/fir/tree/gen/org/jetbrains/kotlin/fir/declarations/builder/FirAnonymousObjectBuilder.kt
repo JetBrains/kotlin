@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
@@ -35,13 +36,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var deprecation: DeprecationsPerUseSite? = null
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override lateinit var status: FirDeclarationStatus
+    override var deprecation: DeprecationsPerUseSite? = null
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
@@ -56,8 +58,9 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
             resolvePhase,
             origin,
             attributes,
-            deprecation,
             typeParameters,
+            status,
+            deprecation,
             classKind,
             superTypeRefs,
             declarations,

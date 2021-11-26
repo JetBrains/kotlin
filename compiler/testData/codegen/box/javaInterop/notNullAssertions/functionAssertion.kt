@@ -1,6 +1,6 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 // FILE: F.java
 import java.util.function.Function;

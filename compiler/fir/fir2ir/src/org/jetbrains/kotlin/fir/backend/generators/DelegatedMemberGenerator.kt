@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isJavaDefault
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
@@ -25,6 +27,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
 
 /**
  * A generator for delegated members from implementation by delegation.
@@ -36,6 +41,10 @@ import org.jetbrains.kotlin.ir.types.isUnit
 class DelegatedMemberGenerator(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
+
+    companion object {
+        private val PLATFORM_DEPENDENT_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.PlatformDependent"))
+    }
 
     private val baseFunctionSymbols = mutableMapOf<IrFunction, List<FirNamedFunctionSymbol>>()
     private val basePropertySymbols = mutableMapOf<IrProperty, List<FirPropertySymbol>>()
@@ -55,7 +64,7 @@ class DelegatedMemberGenerator(
                 declarationStorage.getIrFunctionSymbol(unwrapped.symbol).owner as? IrSimpleFunction
                     ?: return@processAllFunctions
 
-            if (unwrapped.isJavaDefault) {
+            if (shouldSkipDelegationFor(unwrapped)) {
                 return@processAllFunctions
             }
 
@@ -78,6 +87,10 @@ class DelegatedMemberGenerator(
             val member = declarationStorage.getIrPropertySymbol(unwrapped.symbol).owner as? IrProperty
                 ?: return@processAllProperties
 
+            if (shouldSkipDelegationFor(unwrapped)) {
+                return@processAllProperties
+            }
+
             val irSubProperty = generateDelegatedProperty(
                 subClass, firSubClass, irField, member, propertySymbol.fir
             )
@@ -86,6 +99,26 @@ class DelegatedMemberGenerator(
             subClass.addMember(irSubProperty)
         }
     }
+
+    private fun shouldSkipDelegationFor(unwrapped: FirCallableDeclaration): Boolean {
+        // See org.jetbrains.kotlin.resolve.jvm.JvmDelegationFilter
+        return (unwrapped is FirSimpleFunction && unwrapped.isDefaultJavaMethod()) ||
+                unwrapped.hasAnnotation(JVM_DEFAULT_CLASS_ID) ||
+                unwrapped.hasAnnotation(PLATFORM_DEPENDENT_CLASS_ID)
+    }
+
+    private fun FirSimpleFunction.isDefaultJavaMethod(): Boolean =
+        when {
+            isIntersectionOverride ->
+                baseForIntersectionOverride!!.isDefaultJavaMethod()
+            isSubstitutionOverride ->
+                originalForSubstitutionOverride!!.isDefaultJavaMethod()
+            else -> {
+                // Check that we have a non-abstract method from Java interface
+                origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
+            }
+        }
+
 
     fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
         val superClasses by lazy(LazyThreadSafetyMode.NONE) {
@@ -118,7 +151,7 @@ class DelegatedMemberGenerator(
     ): IrSimpleFunction {
         val delegateFunction =
             declarationStorage.createIrFunction(
-                delegateOverride, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
+                delegateOverride, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 containingClass = firSubClass.symbol.toLookupTag()
             )
         val baseSymbols = mutableListOf<FirNamedFunctionSymbol>()
@@ -188,7 +221,7 @@ class DelegatedMemberGenerator(
     ): IrProperty {
         val delegateProperty =
             declarationStorage.createIrProperty(
-                firDelegateProperty, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
+                firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 containingClass = firSubClass.symbol.toLookupTag()
             )
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their

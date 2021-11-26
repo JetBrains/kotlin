@@ -21,4 +21,3 @@ class Box<T : Any?> {
     get
 
 }
-

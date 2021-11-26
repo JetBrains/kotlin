@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // For a private @JvmStatic function `f` in `A.Companion`, we generate:
 // 1) private instance method `f` in `A.Companion`, with the actual implementation;

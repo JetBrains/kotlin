@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.parseAnalysisFlags
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -17,6 +21,15 @@ import org.jetbrains.kotlin.test.services.TestServices
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(ConfigurationDirectives)
+
+    override fun provideAdditionalAnalysisFlags(
+        directives: RegisteredDirectives,
+        languageVersion: LanguageVersion
+    ): Map<AnalysisFlag<*>, Any?> {
+        return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
+            it[allowFullyQualifiedNameInKClass] = true
+        }
+    }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val rawFlags = module.directives[ConfigurationDirectives.KOTLIN_CONFIGURATION_FLAGS]

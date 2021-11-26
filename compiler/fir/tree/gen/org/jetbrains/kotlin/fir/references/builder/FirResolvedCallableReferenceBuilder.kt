@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirResolvedCallableReferenceBuilder {
-    var source: FirSourceElement? = null
+    var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
     val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()

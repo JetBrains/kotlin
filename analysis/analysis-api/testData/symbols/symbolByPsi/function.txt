@@ -1,7 +1,5 @@
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -9,15 +7,13 @@ KtFirValueParameterSymbol:
   name: x
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /foo
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -31,10 +27,11 @@ KtFirFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(x)
+    KtValueParameterSymbol(x)
   ]
   visibility: Public
   deprecationStatus: null

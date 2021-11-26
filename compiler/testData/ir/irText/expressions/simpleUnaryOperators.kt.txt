@@ -21,4 +21,3 @@ fun test5(x: Boolean): Boolean {
 fun test6(): Boolean {
   return false
 }
-

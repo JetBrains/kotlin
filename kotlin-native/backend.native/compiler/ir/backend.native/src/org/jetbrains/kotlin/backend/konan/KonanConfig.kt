@@ -59,7 +59,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val memoryModel: MemoryModel by lazy {
         when (configuration.get(BinaryOptions.memoryModel)!!) {
             MemoryModel.STRICT -> MemoryModel.STRICT
-            MemoryModel.RELAXED -> MemoryModel.RELAXED
+            MemoryModel.RELAXED -> {
+                configuration.report(CompilerMessageSeverity.ERROR,
+                        "Relaxed memory model is deprecated and isn't expected to work right way with current Kotlin version." +
+                                " Use strict as default. ")
+                MemoryModel.STRICT
+            }
             MemoryModel.EXPERIMENTAL -> {
                 if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
@@ -273,6 +278,34 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
     internal val propertyLazyInitialization: Boolean get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)!!
+
+    internal val lazyIrForCaches: Boolean get() = configuration.get(KonanConfigKeys.LAZY_IR_FOR_CACHES)!!
+
+    internal val entryPointName: String by lazy {
+        if (target.family == Family.ANDROID) {
+            val androidProgramTypeOrNull = configuration.get(BinaryOptions.androidProgramType)
+            if (androidProgramTypeOrNull == null) {
+                configuration.report(CompilerMessageSeverity.WARNING, """
+                    Android Native executables are currently built as shared libraries with NativeActivity support, but the default behavior is going to change in 1.7.0 to build regular executables instead.
+                    To keep using NativeActivity support, add binaryOptions["androidProgramType"] = "nativeActivity" to your androidNative executable configuration block in Gradle script:
+                    binaries {
+                        executable {
+                            binaryOptions["androidProgramType"] = "nativeActivity"
+                        }
+                    }
+                    See https://youtrack.jetbrains.com/issue/KT-49406 for more details.
+                """.trimIndent())
+            }
+            val androidProgramType = androidProgramTypeOrNull ?: AndroidProgramType.Default
+            if (androidProgramType.konanMainOverride != null) {
+                return@lazy androidProgramType.konanMainOverride
+            }
+        }
+        "Konan_main"
+    }
+
+    internal val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
+        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.LEGACY
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

@@ -8,15 +8,21 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 
-class FirTotalResolveProcessor(session: FirSession) {
+class FirTotalResolveProcessor(session: FirSession, enablePluginPhases: Boolean = false) {
     val scopeSession: ScopeSession = ScopeSession()
 
-    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(session, scopeSession)
+    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(session, scopeSession, enablePluginPhases)
 
     fun process(files: List<FirFile>) {
         for (processor in processors) {
+            processor.beforePhase()
             when (processor) {
                 is FirTransformerBasedResolveProcessor -> {
                     for (file in files) {
@@ -27,6 +33,7 @@ class FirTotalResolveProcessor(session: FirSession) {
                     processor.process(files)
                 }
             }
+            processor.afterPhase()
         }
     }
 }
@@ -41,7 +48,7 @@ fun createAllCompilerResolveProcessors(
     }
 }
 
-inline fun <T : FirResolveProcessor> createAllResolveProcessors(
+private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
     scopeSession: ScopeSession? = null,
     pluginPhasesEnabled: Boolean,
     creator: FirResolvePhase.(ScopeSession) -> T
@@ -52,4 +59,24 @@ inline fun <T : FirResolveProcessor> createAllResolveProcessors(
         !it.noProcessor && if (!pluginPhasesEnabled) !it.pluginPhase else true
     }
     return phases.map { it.creator(scopeSession) }
+}
+
+fun FirResolvePhase.createCompilerProcessorByPhase(
+    session: FirSession,
+    scopeSession: ScopeSession
+): FirResolveProcessor {
+    return when (this) {
+        RAW_FIR -> throw IllegalArgumentException("Raw FIR building phase does not have a transformer")
+        ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
+        COMPANION_GENERATION -> FirCompanionGenerationProcessor(session, scopeSession)
+        IMPORTS -> FirImportResolveProcessor(session, scopeSession)
+        SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
+        SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
+        TYPES -> FirTypeResolveProcessor(session, scopeSession)
+        STATUS -> FirStatusResolveProcessor(session, scopeSession)
+        ARGUMENTS_OF_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
+        CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
+        IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
+        BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
+    }
 }

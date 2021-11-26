@@ -13,18 +13,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProviderStorage
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.cachedValue
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getValue
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FirIdeResolveStateService(project: Project) {
     private val sessionProviderStorage = FirIdeSessionProviderStorage(project)
 
-    private val stateCache by cachedValue(
-        project,
+    private val stateCache by strongCachedValue(
         project.createProjectWideOutOfBlockModificationTracker(),
         ProjectRootModificationTracker.getInstance(project),
     ) {

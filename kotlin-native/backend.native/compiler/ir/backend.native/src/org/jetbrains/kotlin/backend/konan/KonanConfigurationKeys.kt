@@ -170,6 +170,8 @@ class KonanConfigKeys {
                 CompilerConfigurationKey.create("use external dependencies to enhance IR linker error messages")
         val LLVM_VARIANT: CompilerConfigurationKey<LlvmVariant?> = CompilerConfigurationKey.create("llvm variant")
         val RUNTIME_LOGS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("enable runtime logging")
+        val LAZY_IR_FOR_CACHES: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("use lazy IR for cached libraries")
+        val MEANINGFUL_BRIDGE_NAMES: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("enable meaningful bridge names")
     }
 }
 

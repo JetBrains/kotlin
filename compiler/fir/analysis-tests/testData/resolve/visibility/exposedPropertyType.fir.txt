@@ -57,16 +57,16 @@ FILE: exposedPropertyType.kt
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final var var4: R|A.AInnerPrivate|
-            public get(): R|A.AInnerPrivate|
-            public set(value: R|A.AInnerPrivate|): R|kotlin/Unit|
+        public final var var4: <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>
+            public get(): <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>
+            public set(value: <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>): R|kotlin/Unit|
 
         public final var var5: R|A.AInnerPublic|
             public get(): R|A.AInnerPublic|
             public set(value: R|A.AInnerPublic|): R|kotlin/Unit|
 
-        public final var var6: R|A.AInnerProtectedEnum|
-            public get(): R|A.AInnerProtectedEnum|
-            public set(value: R|A.AInnerProtectedEnum|): R|kotlin/Unit|
+        public final var var6: <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>
+            public get(): <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>
+            public set(value: <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>): R|kotlin/Unit|
 
     }

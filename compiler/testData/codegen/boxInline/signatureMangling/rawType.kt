@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: C.java
 public class C<T> {
     T val;

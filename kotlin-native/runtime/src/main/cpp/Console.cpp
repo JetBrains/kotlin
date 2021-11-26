@@ -22,6 +22,9 @@
 #include "Porting.h"
 #include "Types.h"
 #include "Exceptions.h"
+#ifdef KONAN_ANDROID
+#include "CompilerConstants.hpp"
+#endif
 
 #include "utf8.h"
 
@@ -46,8 +49,12 @@ void Kotlin_io_Console_print(KString message) {
 void Kotlin_io_Console_println(KString message) {
     Kotlin_io_Console_print(message);
 #ifndef KONAN_ANDROID
-    // On Android single print produces logcat entry, so no need in linefeed.
     Kotlin_io_Console_println0();
+#else
+    // On Android single print produces logcat entry, so no need in linefeed.
+    if (!kotlin::compiler::printToAndroidLogcat()) {
+        Kotlin_io_Console_println0();
+    }
 #endif
 }
 

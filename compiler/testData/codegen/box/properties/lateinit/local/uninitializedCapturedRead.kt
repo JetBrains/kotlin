@@ -1,6 +1,4 @@
-// WITH_RUNTIME
-
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
 // WASM_MUTE_REASON: REFLECTION
 
 import kotlin.UninitializedPropertyAccessException

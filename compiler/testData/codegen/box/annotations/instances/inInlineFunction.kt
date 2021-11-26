@@ -1,10 +1,9 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
 // DONT_TARGET_EXACT_BACKEND: JS
 // IGNORE_DEXING
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +InstantiationOfAnnotationClasses
 
 import kotlin.test.*

@@ -12,7 +12,7 @@ object WriterAppender {
 
     class Builder1<B : Builder1<B>> {
         fun asBuilder(): B {
-            return this as B
+            return this <!UNCHECKED_CAST!>as B<!>
         }
     }
 

@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 

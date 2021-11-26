@@ -1,5 +1,5 @@
 // !DUMP_DEPENDENCIES
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 
 fun <K1, V1> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1> =

@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -74,6 +72,7 @@ private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrE
     if (InlineClassAbi.unboxType(expression.type) == null)
         return null
     val toStringFunction = expression.type.classOrNull?.owner?.toStringFunction
+        ?.let { (it as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: it }
         ?: return null
     val toStringReplacement = backendContext.inlineClassReplacements.getReplacementFunction(toStringFunction)
         ?: return null
@@ -133,7 +132,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+        return context.createJvmIrBuilder(currentScope!!, expression).run {
             // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
             // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
             // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove
@@ -204,7 +203,7 @@ private class JvmDynamicStringConcatenationLowering(val context: JvmBackendConte
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+        return context.createJvmIrBuilder(currentScope!!, expression).run {
             // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
             // fail a nullability check (NullPointerException) on the receiver. However, the non-IR backend currently does NOT insert this
             // check (see KT-36625, pending language design decision). To maintain compatibility with the non-IR backend, we remove

@@ -9,4 +9,3 @@ fun box(): String {
   }
  /*-> @EnhancedNullability Function<Fun, String> */)
 }
-

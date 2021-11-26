@@ -3,7 +3,7 @@
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: inline.kt
 
 import helpers.*

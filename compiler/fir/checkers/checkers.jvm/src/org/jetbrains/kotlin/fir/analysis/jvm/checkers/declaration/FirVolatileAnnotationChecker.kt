@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 
 object FirVolatileAnnotationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.source?.kind != FirRealSourceElementKind) return
+        if (declaration.source?.kind != KtRealSourceElementKind) return
 
         val fieldAnnotation = declaration.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
         if (fieldAnnotation != null && !declaration.isVar) {

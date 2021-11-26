@@ -1,6 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // KT-10444 Do not ignore smart (unchecked) casts to the same classifier
 
+class Base<in T>
 class Qwe<T : Any>(val a: T?) {
     fun test1(obj: Any) {
         obj as Qwe<T>
@@ -8,8 +9,12 @@ class Qwe<T : Any>(val a: T?) {
     }
 
     fun test1(obj: Qwe<*>) {
-        obj as Qwe<T>
+        obj <!UNCHECKED_CAST!>as Qwe<T><!>
         check(obj.a)
+    }
+
+    fun test2(b: Base<*>) {
+        b <!UNCHECKED_CAST!>as Base<Any><!>
     }
 
     fun check(a: T?) {

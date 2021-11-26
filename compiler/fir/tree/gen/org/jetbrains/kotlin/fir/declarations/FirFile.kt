@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
@@ -18,17 +18,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirFile : FirAnnotatedDeclaration() {
-    abstract override val source: FirSourceElement?
+abstract class FirFile : FirDeclaration() {
+    abstract override val source: KtSourceElement?
+    abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val annotations: List<FirAnnotation>
     abstract val packageDirective: FirPackageDirective
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
     abstract val name: String
+    abstract val path: String?
     abstract override val symbol: FirFileSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)

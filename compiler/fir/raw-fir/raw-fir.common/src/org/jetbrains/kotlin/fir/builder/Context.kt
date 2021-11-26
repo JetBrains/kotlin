@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.KtSourceElementKind
+import org.jetbrains.kotlin.fir.FirFunctionTarget
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirLoopTarget
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -40,12 +45,12 @@ class Context<T> {
     val capturedTypeParameters = mutableListOf<StatusFirTypeParameterSymbolList>()
     val arraySetArgument = mutableMapOf<T, FirExpression>()
 
-    var forcedElementSourceKind: FirSourceElementKind? = null
+    var forcedElementSourceKind: KtSourceElementKind? = null
     val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
     var containerIsExpect: Boolean = false
 
-    fun pushFirTypeParameters(notNested: Boolean, parameters: List<FirTypeParameterRef>) {
-        capturedTypeParameters.add(StatusFirTypeParameterSymbolList(notNested, parameters.map { it.symbol }))
+    fun pushFirTypeParameters(isInnerOrLocal: Boolean, parameters: List<FirTypeParameterRef>) {
+        capturedTypeParameters.add(StatusFirTypeParameterSymbolList(isInnerOrLocal, parameters.map { it.symbol }))
     }
 
     fun popFirTypeParameters() {
@@ -53,17 +58,17 @@ class Context<T> {
         list.removeAt(list.lastIndex)
     }
 
-    inline fun applyToActualCapturedTypeParameters(ignoreLastLevel: Boolean, action: (FirTypeParameterSymbol) -> Unit) {
+    fun appendOuterTypeParameters(ignoreLastLevel: Boolean, typeParameters: MutableList<FirTypeParameterRef>) {
         for (index in capturedTypeParameters.lastIndex downTo 0) {
             val element = capturedTypeParameters[index]
 
             if (index < capturedTypeParameters.lastIndex || !ignoreLastLevel) {
                 for (capturedTypeParameter in element.list) {
-                    action(capturedTypeParameter)
+                    typeParameters += buildOuterClassTypeParameterRef { symbol = capturedTypeParameter }
                 }
             }
 
-            if (!element.notNested) {
+            if (!element.isInnerOrLocal) {
                 break
             }
         }
@@ -114,5 +119,5 @@ class Context<T> {
         }
     }
 
-    data class StatusFirTypeParameterSymbolList(val notNested: Boolean, val list: List<FirTypeParameterSymbol> = listOf())
+    data class StatusFirTypeParameterSymbolList(val isInnerOrLocal: Boolean, val list: List<FirTypeParameterSymbol> = listOf())
 }

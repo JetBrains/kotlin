@@ -1,6 +1,5 @@
 
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun testBreak() {
     for (i in 0..1) {

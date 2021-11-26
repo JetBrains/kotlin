@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun foo1(x: Int) = x
 fun foo2(vararg x: Int) = x[0]

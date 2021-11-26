@@ -7,7 +7,7 @@ class A(val x: String) {
 }
 
 fun test() = js("""
-return JS_TESTS.A_int(23).x;
+return main.A_int(23).x;
 """)
 
 fun box(): String {

@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConcurrentHashMapCont
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall
 import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
@@ -124,4 +126,7 @@ object FirJvmErrors {
     val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError0<PsiElement>(ProhibitConcurrentHashMapContains)
     val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError0<PsiElement>(ProhibitSpreadOnSignaturePolymorphicCall, SourceElementPositioningStrategies.SPREAD_OPERATOR)
 
+    init {
+        RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)
+    }
 }

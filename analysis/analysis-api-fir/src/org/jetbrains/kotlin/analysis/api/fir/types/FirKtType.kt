@@ -8,17 +8,18 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
-import org.jetbrains.kotlin.fir.resolve.inference.receiverType
+import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -31,11 +32,10 @@ internal interface KtFirType : ValidityTokenOwner {
 
 private fun KtFirType.typeEquals(other: Any?): Boolean {
     if (other !is KtFirType) return false
-    if (this.token != other.token) return false
     return this.coneType == other.coneType
 }
 
-private fun KtFirType.typeHashcode(): Int = token.hashCode() * 31 + coneType.hashCode()
+private fun KtFirType.typeHashcode(): Int = coneType.hashCode()
 
 internal class KtFirUsualClassType(
     override val coneType: ConeClassLikeTypeImpl,
@@ -51,6 +51,10 @@ internal class KtFirUsualClassType(
         coneType.typeArguments.map { typeArgument ->
             builder.typeBuilder.buildTypeArgument(typeArgument)
         }
+    }
+
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
@@ -73,6 +77,10 @@ internal class KtFirFunctionalType(
         coneType.typeArguments.map { typeArgument ->
             builder.typeBuilder.buildTypeArgument(typeArgument)
         }
+    }
+
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
@@ -118,6 +126,10 @@ internal class KtFirClassErrorType(
     override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
+    }
+
     override val candidateClassSymbols: Collection<KtClassLikeSymbol> by cached {
         val symbols = coneType.diagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
         symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it.fir) }
@@ -131,9 +143,17 @@ internal class KtFirClassErrorType(
 internal class KtFirCapturedType(
     override val coneType: ConeCapturedType,
     override val token: ValidityToken,
+    private val builder: KtSymbolByFirBuilder,
 ) : KtCapturedType(), KtFirType {
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
+    }
+
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+
+
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }
@@ -144,6 +164,9 @@ internal class KtFirDefinitelyNotNullType(
     private val builder: KtSymbolByFirBuilder,
 ) : KtDefinitelyNotNullType(), KtFirType {
     override val original: KtType by cached { builder.typeBuilder.buildKtType(this.coneType.original) }
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
+    }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
@@ -161,6 +184,10 @@ internal class KtFirTypeParameterType(
             ?: error("Type parameter ${coneType.lookupTag} was not found")
     }
 
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
+    }
+
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
@@ -176,7 +203,9 @@ internal class KtFirFlexibleType(
 
     override val lowerBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.upperBound) }
-
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
+    }
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
@@ -192,7 +221,9 @@ internal class KtFirIntersectionType(
     override val conjuncts: List<KtType> by cached {
         coneType.intersectedTypes.map { conjunct -> builder.typeBuilder.buildKtType(conjunct) }
     }
-
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
+    }
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
@@ -213,6 +244,10 @@ internal class KtFirIntegerLiteralType(
         coneType.possibleTypes.map { possibleType ->
             builder.typeBuilder.buildKtType(possibleType) as KtClassType
         }
+    }
+
+    override val annotationsList: KtAnnotationsList by cached {
+        KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultCallableShortenOption
+import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultClassShortenOption
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
@@ -23,7 +25,22 @@ public enum class ShortenOption {
     SHORTEN_AND_IMPORT,
 
     /** Shorten references to this symbol and import this symbol and all its sibling symbols with star import on the parent. */
-    SHORTEN_AND_STAR_IMPORT
+    SHORTEN_AND_STAR_IMPORT;
+
+    public companion object {
+        public val defaultClassShortenOption: (KtClassLikeSymbol) -> ShortenOption = {
+            if (it.classIdIfNonLocal?.isNestedClass == true) {
+                SHORTEN_IF_ALREADY_IMPORTED
+            } else {
+                SHORTEN_AND_IMPORT
+            }
+        }
+
+        public val defaultCallableShortenOption: (KtCallableSymbol) -> ShortenOption = { symbol ->
+            if (symbol is KtEnumEntrySymbol) DO_NOT_SHORTEN
+            else SHORTEN_AND_IMPORT
+        }
+    }
 }
 
 public abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
@@ -36,20 +53,6 @@ public abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
 }
 
 public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
-    public companion object {
-        private val defaultClassShortenOption: (KtClassLikeSymbol) -> ShortenOption = {
-            if (it.classIdIfNonLocal?.isNestedClass == true) {
-                ShortenOption.SHORTEN_IF_ALREADY_IMPORTED
-            } else {
-                ShortenOption.SHORTEN_AND_IMPORT
-            }
-        }
-
-        private val defaultCallableShortenOption: (KtCallableSymbol) -> ShortenOption = { symbol ->
-            if (symbol is KtEnumEntrySymbol) ShortenOption.DO_NOT_SHORTEN
-            else ShortenOption.SHORTEN_AND_IMPORT
-        }
-    }
 
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not

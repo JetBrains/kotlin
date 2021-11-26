@@ -1493,6 +1493,18 @@ public class Float private constructor(public val value: Float) : Number(), Comp
          */
         @Suppress("DIVISION_BY_ZERO")
         public val NaN: Float = 0.0f / 0.0f
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -1801,6 +1813,18 @@ public class Double private constructor(public val value: Double) : Number(), Co
          */
         @Suppress("DIVISION_BY_ZERO")
         public val NaN: Double = 0.0 / 0.0
+
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**

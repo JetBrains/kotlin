@@ -6,7 +6,7 @@ fun foo() {
     try {
         TODO()
     } catch (_: Exception) {
-        <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>.stackTrace
+        <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
     }
     try {
         TODO()
@@ -15,22 +15,22 @@ fun foo() {
             val x2 = {
                 val x3 = { y: Int ->
                     val x4 = { _: Int ->
-                        <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
+                        <!UNRESOLVED_REFERENCE!>`_`<!>
                     }
-                    <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
+                    <!UNRESOLVED_REFERENCE!>`_`<!>
                 }
-                <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
+                <!UNRESOLVED_REFERENCE!>`_`<!>
                 10
             }
-            fun bar(x: Exception = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>) {}
+            fun bar(x: Exception = <!UNRESOLVED_REFERENCE!>`_`<!>) {}
             class Bar(`_`: Exception = <!UNINITIALIZED_PARAMETER!>`_`<!>) {
-                inner class Bar2(x: Exception = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>) { }
+                inner class Bar2(x: Exception = <!UNRESOLVED_REFERENCE!>`_`<!>) { }
             }
         }
     } catch (_: Exception) {
-        <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>.stackTrace
-        val y1 = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
-        val y2 = (<!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>)
+        <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
+        val y1 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>
+        val y2 = (<!UNRESOLVED_REFERENCE!>`_`<!>)
     }
     try {
         TODO()
@@ -38,7 +38,7 @@ fun foo() {
         try {
             TODO()
         } catch (x: Exception) {
-            <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>.stackTrace
+            <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
         }
     }
     val boo1 = { `_`: Exception ->

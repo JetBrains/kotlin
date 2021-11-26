@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
+import org.jetbrains.kotlin.fir.types.typeContext
 
 object FirCatchParameterChecker : FirTryExpressionChecker() {
     override fun check(expression: FirTryExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -48,7 +48,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
                     source,
                     FirErrors.THROWABLE_TYPE_MISMATCH,
                     coneType,
-                    context.session.inferenceComponents.ctx.isTypeMismatchDueToNullability(
+                    context.session.typeContext.isTypeMismatchDueToNullability(
                         coneType,
                         session.builtinTypes.throwableType.type
                     ),

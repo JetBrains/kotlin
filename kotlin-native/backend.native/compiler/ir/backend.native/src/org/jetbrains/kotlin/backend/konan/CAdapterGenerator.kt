@@ -212,21 +212,22 @@ private class ExportedElement(val kind: ElementKind,
                 val function = declaration as FunctionDescriptor
                 val irFunction = irSymbol.owner as IrFunction
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val llvmFunction = owner.codegen.llvmFunction(irFunction)
+                val llvmCallable = owner.codegen.llvmFunction(irFunction)
                 // If function is virtual, we need to resolve receiver properly.
                 val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
                         irFunction.isOverridable) {
-                    // We need LLVMGetElementType() as otherwise type is function pointer.
-                    generateFunction(owner.codegen, LLVMGetElementType(llvmFunction.type)!!, cname) {
+                    generateFunction(owner.codegen, llvmCallable.functionType, cname) {
                         val receiver = param(0)
-                        val numParams = LLVMCountParams(llvmFunction)
-                        val args = (0 .. numParams - 1).map { index -> param(index) }
+                        val numParams = LLVMCountParams(llvmCallable.llvmValue)
+                        val args = (0..numParams - 1).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, irFunction)
+                        callee.attributeProvider.addFunctionAttributes(this.function)
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
                     }
                 } else {
-                    LLVMAddAlias(context.llvmModule, llvmFunction.type, llvmFunction, cname)!!
+                    val aliasType = pointerType(llvmCallable.functionType)
+                    LLVMAddAlias(context.llvmModule, aliasType, llvmCallable.llvmValue, cname)!!
                 }
                 LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
             }
@@ -433,7 +434,8 @@ private class ExportedElement(val kind: ElementKind,
                 mapIndexed { index, it -> "${owner.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
         // TODO: do we really need that in every function?
         builder.append("  Kotlin_initRuntimeIfNeeded();\n")
-        builder.append("  ScopedRunnableState stateGuard;\n");
+        builder.append("  ScopedRunnableState stateGuard;\n")
+        builder.append("  FrameOverlay* frame = getCurrentFrame();")
         val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
             translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
         })
@@ -465,7 +467,10 @@ private class ExportedElement(val kind: ElementKind,
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
             builder.append("  return $result;\n")
         }
-        builder.append("   } catch (ExceptionObjHolder& e) { std::terminate(); } \n")
+        builder.append("   } catch (...) {")
+        builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
+        builder.append("       HandleCurrentExceptionWhenLeavingKotlinCode();\n")
+        builder.append("   } \n")
 
         builder.append("}\n")
 
@@ -910,6 +915,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |struct KTypeInfo;
         |typedef struct KTypeInfo KTypeInfo;
         |
+        |struct FrameOverlay;
+        |typedef struct FrameOverlay FrameOverlay;
+        |
         |#define RUNTIME_NOTHROW __attribute__((nothrow))
         |#define RUNTIME_USED __attribute__((used))
         |#define RUNTIME_NORETURN __attribute__((noreturn))
@@ -923,9 +931,12 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |${prefix}_KBoolean IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
         |void EnterFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
         |void LeaveFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+        |void SetCurrentFrame(KObjHeader** start) RUNTIME_NOTHROW;
+        |FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
         |void Kotlin_initRuntimeIfNeeded();
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
+        |void HandleCurrentExceptionWhenLeavingKotlinCode();
         |
         |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
         |char* CreateCStringFromString(const KObjHeader*);
@@ -958,13 +969,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |  KObjHeader* obj_;
         |
         |  KObjHeader** frame() { return reinterpret_cast<KObjHeader**>(&frame_); }
-        |};
-        |
-        |class ExceptionObjHolder {
-        |public:
-        |    virtual ~ExceptionObjHolder() = default;
-        |
-        |    KObjHeader* GetExceptionObject() noexcept;
         |};
         |
         |class ScopedRunnableState {

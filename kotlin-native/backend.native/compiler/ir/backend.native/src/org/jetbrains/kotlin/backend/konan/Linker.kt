@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
@@ -19,7 +21,16 @@ internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
             CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
-            CompilerOutputKind.PROGRAM -> LinkerOutputKind.EXECUTABLE
+            CompilerOutputKind.PROGRAM -> run {
+                if (context.config.target.family == Family.ANDROID) {
+                    val configuration = context.config.configuration
+                    val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
+                    if (androidProgramType.linkerOutputKindOverride != null) {
+                        return@run androidProgramType.linkerOutputKindOverride
+                    }
+                }
+                LinkerOutputKind.EXECUTABLE
+            }
             else -> TODO("${context.config.produce} should not reach native linker stage")
         }
 
@@ -58,6 +69,8 @@ internal class Linker(val context: Context) {
 
     private fun saveAdditionalInfoForCache() {
         saveCacheBitcodeDependencies()
+        saveInlineFunctionBodies()
+        saveClassFields()
     }
 
     private fun saveCacheBitcodeDependencies() {
@@ -71,6 +84,18 @@ internal class Linker(val context: Context) {
                             && it !in context.config.cacheSupport.librariesToCache // Skip loops.
                 }.cast<List<KonanLibrary>>()
         bitcodeDependenciesFile.writeLines(bitcodeDependencies.map { it.uniqueName })
+    }
+
+    private fun saveInlineFunctionBodies() {
+        val outputFiles = context.config.outputFiles
+        val inlineFunctionBodiesFile = File(outputFiles.inlineFunctionBodiesFile!!)
+        inlineFunctionBodiesFile.writeBytes(InlineFunctionBodyReferenceSerializer.serialize(context.inlineFunctionBodies))
+    }
+
+    private fun saveClassFields() {
+        val outputFiles = context.config.outputFiles
+        val classFieldsFile = File(outputFiles.classFieldsFile!!)
+        classFieldsFile.writeBytes(ClassFieldsSerializer.serialize(context.classFields))
     }
 
     private fun renameOutput() {

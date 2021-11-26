@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorPropertyImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
@@ -49,9 +49,9 @@ internal class FirErrorPropertyImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
@@ -65,22 +65,17 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -90,6 +85,11 @@ internal class FirErrorPropertyImpl(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

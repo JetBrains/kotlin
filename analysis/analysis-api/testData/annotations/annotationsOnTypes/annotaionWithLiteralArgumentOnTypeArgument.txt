@@ -1,0 +1,5 @@
+KtTypeReference: @TypeAnnotation(1) Int
+annotations: [
+  TypeAnnotation(value = 1)
+    psi: KtAnnotationEntry
+]

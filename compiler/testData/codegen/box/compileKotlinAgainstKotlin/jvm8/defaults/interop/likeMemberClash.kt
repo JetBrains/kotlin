@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // FULL_JDK
 // MODULE: lib
 // !JVM_DEFAULT_MODE: disable

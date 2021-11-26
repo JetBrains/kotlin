@@ -10,4 +10,3 @@ fun outer() {
 
   local()
 }
-

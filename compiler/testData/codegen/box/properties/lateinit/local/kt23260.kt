@@ -1,8 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
-
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: REFLECTION
+// WITH_STDLIB
 
 fun box(): String {
     lateinit var str: String

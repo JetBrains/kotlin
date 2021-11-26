@@ -40,16 +40,24 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.disposeNativeMemoryAllocator
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+
+internal class InlineFunctionOriginInfo(val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -65,14 +73,14 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 
     private val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
 
-    val loweredInlineFunctions = mutableSetOf<IrFunction>()
+    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
 
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
-    fun getOuterThisField(innerClass: IrClass): IrField =
-        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.descriptor}")
-        else outerThisFields.getOrPut(innerClass) {
+    fun getOuterThisField(innerClass: IrClass): IrField {
+        assert(innerClass.isInner) { "Class is not inner: ${innerClass.render()}" }
+        return outerThisFields.getOrPut(innerClass) {
             val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
 
@@ -105,6 +113,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 parent = innerClass
             }
         }
+    }
 
     fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
         assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
@@ -275,7 +284,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
-        KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
+        KonanReflectionTypes(moduleDescriptor)
     }
 
     // TODO: Remove after adding special <userData> property to IrDeclaration.
@@ -284,12 +293,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
         if (irClass is IrLazyClass)
             return layoutBuilders.getOrPut(irClass) {
-                ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+                ClassLayoutBuilder(irClass, this)
             }
         val metadata = irClass.metadata as? CodegenClassMetadata
                 ?: CodegenClassMetadata(irClass).also { irClass.metadata = it }
         metadata.layoutBuilder?.let { return it }
-        val layoutBuilder = ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+        val layoutBuilder = ClassLayoutBuilder(irClass, this)
         metadata.layoutBuilder = layoutBuilder
         return layoutBuilder
     }
@@ -494,6 +503,26 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
      * Manages internal ABI references and declarations.
      */
     val internalAbi = InternalAbi(this)
+
+    lateinit var irLinker: KonanIrLinker
+
+    val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
+
+    val classFields = mutableListOf<SerializedClassFields>()
+
+    val targetAbiInfo: TargetAbiInfo by lazy {
+        when {
+            config.target == KonanTarget.MINGW_X64 -> {
+                WindowsX64TargetAbiInfo()
+            }
+            !config.target.family.isAppleFamily && config.target.architecture == Architecture.ARM64 -> {
+                AAPCS64TargetAbiInfo()
+            }
+            else -> {
+                DefaultTargetAbiInfo()
+            }
+        }
+    }
 }
 
 private fun MemberScope.getContributedClassifier(name: String) =

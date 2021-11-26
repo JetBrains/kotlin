@@ -1,9 +1,0 @@
-pluginManagement {
-    repositories {
-        maven { url '<mavenLocalUrl>' }
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
-
-rootProject.name = 'cleanTask'

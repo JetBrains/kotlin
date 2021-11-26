@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorFunctionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
+    override val annotations: MutableList<FirAnnotation>,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override val annotations: MutableList<FirAnnotation>,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
@@ -47,8 +47,8 @@ internal class FirErrorFunctionImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
 ) : FirErrorFunction() {
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val body: FirBlock? get() = null
@@ -60,16 +60,16 @@ internal class FirErrorFunctionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
+        returnTypeRef.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         transformAnnotations(transformer, data)
-        transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReturnTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         return this
@@ -80,13 +80,13 @@ internal class FirErrorFunctionImpl(
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 

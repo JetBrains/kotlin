@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
-internal fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode?> {
+internal fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode> {
     val children = Ref<Array<LighterASTNode?>>()
     val count = tree.getChildren(this, children)
     return if (count > 0) children.get().filterNotNull() else emptyList()

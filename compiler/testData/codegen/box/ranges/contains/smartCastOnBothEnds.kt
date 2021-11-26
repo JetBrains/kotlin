@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // Fails on the old JVM backend because of KT-42017.
 // IGNORE_BACKEND: JVM

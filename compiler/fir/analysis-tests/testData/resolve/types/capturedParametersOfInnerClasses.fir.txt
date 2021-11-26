@@ -5,12 +5,12 @@ FILE: capturedParametersOfInnerClasses.kt
         }
 
         public final inner class B<K1, K2, T1, T2> : R|kotlin/Any| {
-            public constructor<K1, K2>(): R|A.B<K1, K2, T1, T2>| {
+            public A<T1, T2>.constructor<K1, K2>(): R|A.B<K1, K2, T1, T2>| {
                 super<R|kotlin/Any|>()
             }
 
             public final inner class C<U1, U2, K1, K2, T1, T2> : R|kotlin/Any| {
-                public constructor<U1, U2>(): R|A.B.C<U1, U2, K1, K2, T1, T2>| {
+                public A.B<K1, K2, T1, T2>.constructor<U1, U2>(): R|A.B.C<U1, U2, K1, K2, T1, T2>| {
                     super<R|kotlin/Any|>()
                 }
 

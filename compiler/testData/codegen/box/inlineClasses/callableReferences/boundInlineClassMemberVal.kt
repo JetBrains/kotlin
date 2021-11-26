@@ -1,15 +1,20 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class Z(val x: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val x: Int) {
     val xx get() = x
 }
 
-inline class L(val x: Long) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(val x: Long) {
     val xx get() = x
 }
 
-inline class S(val x: String) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val x: String) {
     val xx get() = x
 }
 

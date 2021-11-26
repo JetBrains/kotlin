@@ -9,8 +9,9 @@ plugins {
     id("jps-compatible")
 }
 
-apply(from = "functionalTest.gradle.kts")
-val functionalTestImplementation by configurations
+if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(from = "functionalTest.gradle.kts")
+}
 
 configure<GradlePluginDevelopmentExtension> {
     isAutomatedPublishing = false
@@ -80,11 +81,13 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
-    functionalTestImplementation("com.android.tools.build:gradle:4.0.1") {
-        because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
-    }
 
-    functionalTestImplementation(gradleKotlinDsl())
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        "functionalTestImplementation"("com.android.tools.build:gradle:4.0.1") {
+            because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
+        }
+        "functionalTestImplementation"(gradleKotlinDsl())
+    }
 
     testImplementation(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
 
@@ -93,7 +96,7 @@ dependencies {
     testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(project(":kotlin-test::kotlin-test-junit"))
-    testImplementation("junit:junit:4.12")
+    testImplementation(commonDep("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))

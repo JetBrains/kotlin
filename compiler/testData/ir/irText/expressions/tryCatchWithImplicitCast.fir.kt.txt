@@ -2,7 +2,12 @@ fun testImplicitCast(a: Any) {
   when {
     a !is String -> return Unit
   }
-  val t: String = try a /*as String */
-  catch (e: Throwable)""
+  val t: String = try { // BLOCK
+    a /*as String */
+  }
+  catch (e: Throwable){ // BLOCK
+    ""
+  }
 
 }
+

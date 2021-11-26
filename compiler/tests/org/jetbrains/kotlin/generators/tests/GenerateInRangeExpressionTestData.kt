@@ -41,7 +41,7 @@ object GenerateInRangeExpressionTestData {
             println("// IGNORE_BACKEND: WASM")
         }
         println("// $PREAMBLE_MESSAGE")
-        println("// WITH_RUNTIME")
+        println("// WITH_STDLIB")
         println()
         println(header)
         println()

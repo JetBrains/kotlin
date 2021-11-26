@@ -35,7 +35,8 @@ private val JavaTypeQualifiers.nullabilityForErrors: NullabilityQualifier?
 fun JavaTypeQualifiers.computeQualifiersForOverride(
     superQualifiers: Collection<JavaTypeQualifiers>,
     isCovariant: Boolean,
-    isForVarargParameter: Boolean
+    isForVarargParameter: Boolean,
+    ignoreDeclarationNullabilityAnnotations: Boolean
 ): JavaTypeQualifiers {
     val newNullabilityForErrors = superQualifiers.mapNotNull { it.nullabilityForErrors }.toSet()
         .select(nullabilityForErrors, isCovariant)
@@ -45,7 +46,9 @@ fun JavaTypeQualifiers.computeQualifiersForOverride(
         .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, mutability, isCovariant)
     // Vararg value parameters effectively have non-nullable type in Kotlin
     // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
-    val realNullability = newNullability?.takeUnless { isForVarargParameter && it == NullabilityQualifier.NULLABLE }
+    val realNullability = newNullability?.takeUnless {
+        ignoreDeclarationNullabilityAnnotations || (isForVarargParameter && it == NullabilityQualifier.NULLABLE)
+    }
     return JavaTypeQualifiers(
         realNullability, newMutability,
         realNullability == NullabilityQualifier.NOT_NULL && (definitelyNotNull || superQualifiers.any { it.definitelyNotNull }),

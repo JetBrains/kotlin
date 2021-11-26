@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.scripting.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
@@ -51,6 +54,20 @@ class LazyScriptClassMemberScope(
     }
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
+    }
+
+    override fun collectDescriptorsFromDestructingDeclaration(
+        result: MutableSet<DeclarationDescriptor>,
+        declaration: KtDestructuringDeclaration,
+        nameFilter: (Name) -> Boolean,
+        location: LookupLocation
+    ) {
+        for (entry in declaration.entries) {
+            val name = entry.nameAsSafeName
+            if (nameFilter(name) && name.identifierOrNullIfSpecial != "_") {
+                result.addAll(getContributedVariables(name, location))
+            }
+        }
     }
 
     companion object {

@@ -7,7 +7,7 @@ fun foo(x: Int): Int {
     return bar(x)   // 7
 }
 
-//FILE: test.kt
+// FILE: test.kt
 import foo
 fun box() {
     foo(-3)            //4
@@ -20,16 +20,16 @@ fun bar(x: Int) =
         foo(x)
     }
 
-// LINENUMBERS
-// test.kt:4 box
+// EXPECTATIONS
+// test.kt:13 box
 // foo.kt:4 foo
 // foo.kt:7 foo
-// test.kt:8 bar
-// test.kt:9 bar
+// test.kt:17 bar
+// test.kt:18 bar
 // foo.kt:4 foo
 // foo.kt:5 foo
-// test.kt:9 bar
-// test.kt:12 bar
+// test.kt:18 bar
+// test.kt:21 bar
 // foo.kt:7 foo
-// test.kt:4 box
-// test.kt:5 box
+// test.kt:13 box
+// test.kt:14 box

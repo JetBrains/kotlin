@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// WITH_EXTENDED_CHECKERS
 fun <NN: Any, NNN: NN> nonMisleadingNullable(
         nn: NN?,
         nnn: NNN?

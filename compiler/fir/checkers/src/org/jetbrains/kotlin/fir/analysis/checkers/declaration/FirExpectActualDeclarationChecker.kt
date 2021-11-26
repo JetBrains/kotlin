@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
@@ -40,12 +40,12 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun <T> checkActualDeclarationHasExpected(
-        declaration: T,
+    private fun checkActualDeclarationHasExpected(
+        declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         checkActual: Boolean = true
-    ) where T : FirDeclaration, T : FirMemberDeclaration {
+    ) {
         val scopeSession = ScopeSession()
         val symbol = declaration.symbol
         val compatibilityToMembersMap = FirExpectActualResolver.findExpectForActual(symbol, context.session, scopeSession) ?: return
@@ -118,7 +118,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun checkAnnotationConstructors(
-        source: FirSourceElement?,
+        source: KtSourceElement?,
         expected: FirConstructorSymbol,
         actual: FirConstructorSymbol,
         context: CheckerContext,

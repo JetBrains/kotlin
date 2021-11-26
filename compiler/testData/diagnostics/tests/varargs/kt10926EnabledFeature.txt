@@ -1,0 +1,12 @@
+package
+
+public fun main(/*0*/ c: AllCollection<kotlin.Any?>): kotlin.Unit
+
+public final class AllCollection</*0*/ T> {
+    public constructor AllCollection</*0*/ T>()
+    public final fun </*0*/ K, /*1*/ T> addAll(/*0*/ values: kotlin.Array<K>, /*1*/ vararg values2: T /*kotlin.Array<out T>*/): kotlin.Int
+    public final fun </*0*/ K, /*1*/ T> addAll(/*0*/ vararg values: T /*kotlin.Array<out T>*/, /*1*/ values2: kotlin.Array<K>): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

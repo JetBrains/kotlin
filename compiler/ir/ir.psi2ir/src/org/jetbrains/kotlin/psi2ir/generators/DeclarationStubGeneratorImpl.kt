@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyScopedTypeParametersResolver
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.*
 
 class DeclarationStubGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
@@ -44,4 +45,19 @@ fun generateTypicalIrProviderList(
         moduleDescriptor, symbolTable, irBuiltins, extensions
     )
     return listOfNotNull(deserializer, stubGenerator)
+}
+
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class DeclarationStubGeneratorForNotFoundClasses(
+    private val stubGenerator: DeclarationStubGeneratorImpl
+) : IrProvider {
+
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
+        if (symbol.isBound) return null
+
+        val classDescriptor = symbol.descriptor as? NotFoundClasses.MockClassDescriptor
+            ?: return null
+        return stubGenerator.generateClassStub(classDescriptor)
+    }
 }

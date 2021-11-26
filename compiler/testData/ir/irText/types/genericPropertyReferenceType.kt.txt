@@ -31,4 +31,3 @@ fun test2(a: Any) {
   a as C<String> /*~> Unit */
   use(p = a /*as C<String> */::y/*<String>()*/)
 }
-

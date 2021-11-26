@@ -9,12 +9,12 @@ public final class TestFirst : R|kotlin/Any| {
     }
 
     public final inner class InnerClass : R|kotlin/Any| {
-        public constructor(): R|test/TestFirst.InnerClass|
+        public test/TestFirst.constructor(): R|test/TestFirst.InnerClass|
 
     }
 
     public final inner class NotInnerClass : R|kotlin/Any| {
-        public constructor(): R|test/TestFirst.NotInnerClass|
+        public test/TestFirst.constructor(): R|test/TestFirst.NotInnerClass|
 
     }
 

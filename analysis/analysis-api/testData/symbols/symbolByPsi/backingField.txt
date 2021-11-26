@@ -1,9 +1,6 @@
-KtFirPropertyGetterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtPropertyGetterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -13,15 +10,14 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: ACCESSOR
   valueParameters: []
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -29,15 +25,13 @@ KtFirValueParameterSymbol:
   name: value
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirPropertySetterSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtPropertySetterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
-  dispatchType: null
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -46,27 +40,26 @@ KtFirPropertySetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  parameter: KtFirValueParameterSymbol(value)
+  parameter: KtValueParameterSymbol(value)
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: ACCESSOR
   valueParameters: [
-    KtFirValueParameterSymbol(value)
+    KtValueParameterSymbol(value)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /p
-  dispatchType: null
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
   hasSetter: true
   initializer: null
   isConst: false
+  isDelegatedProperty: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -77,8 +70,10 @@ KtFirKotlinPropertySymbol:
   name: p
   origin: SOURCE
   receiverType: null
-  setter: KtFirPropertySetterSymbol(<setter>)
+  returnType: kotlin/Int
+  setter: KtPropertySetterSymbol(<setter>)
   symbolKind: TOP_LEVEL
+  typeParameters: []
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null

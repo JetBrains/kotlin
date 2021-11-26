@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractAllOpenBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFir2IrAllOpenTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
@@ -28,10 +31,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
 import org.jetbrains.kotlin.noarg.*
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBoxTest
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBytecodeListingTest
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBoxTest
-import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBytecodeListingTest
+import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -144,24 +144,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractParcelIrBytecodeListingTest> {
                 model("parcel/codegen", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup("plugins/parcelize/parcelize-compiler/tests", "plugins/parcelize/parcelize-compiler/testData") {
-            testClass<AbstractParcelizeBoxTest> {
-                model("box", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelizeIrBoxTest> {
-                model("box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractParcelizeBytecodeListingTest> {
-                model("codegen", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelizeIrBytecodeListingTest> {
-                model("codegen", targetBackend = TargetBackend.JVM_IR)
             }
         }
 
@@ -286,12 +268,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
-            testClass<AbstractFirAllOpenDiagnosticTest> {
-                model("")
-            }
-        }
-
         testGroup("plugins/lombok/lombok-compiler-plugin/tests", "plugins/lombok/lombok-compiler-plugin/testData") {
             testClass<AbstractLombokCompileTest> {
                 model("compile")
@@ -371,5 +347,53 @@ fun main(args: Array<String>) {
         }
     }
 */
+    }
+
+    generateTestGroupSuiteWithJUnit5 {
+        val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+
+        testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
+            testClass<AbstractParcelizeBoxTest> {
+                model("box")
+            }
+
+            testClass<AbstractParcelizeIrBoxTest> {
+                model("box")
+            }
+
+            testClass<AbstractParcelizeFirBoxTest> {
+                model("box")
+            }
+
+            testClass<AbstractParcelizeBytecodeListingTest> {
+                model("codegen")
+            }
+
+            testClass<AbstractParcelizeIrBytecodeListingTest> {
+                model("codegen")
+            }
+
+            testClass<AbstractParcelizeDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirParcelizeDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/fir/fir-plugin-prototype/tests-gen", "plugins/fir/fir-plugin-prototype/testData") {
+            testClass<AbstractFirAllOpenDiagnosticTest> {
+                model("diagnostics")
+            }
+
+            testClass<AbstractFir2IrAllOpenTest> {
+                model("fir2ir")
+            }
+
+            testClass<AbstractAllOpenBlackBoxCodegenTest> {
+                model("box")
+            }
+        }
     }
 }

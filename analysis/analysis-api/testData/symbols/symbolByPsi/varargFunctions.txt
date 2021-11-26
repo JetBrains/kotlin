@@ -1,7 +1,5 @@
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -9,15 +7,13 @@ KtFirValueParameterSymbol:
   name: a
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Int
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /primitive
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -31,18 +27,17 @@ KtFirFunctionSymbol:
   name: primitive
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(a)
+    KtValueParameterSymbol(a)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Float?
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -50,15 +45,13 @@ KtFirValueParameterSymbol:
   name: b
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Float?
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /nullablePrimitive
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -72,18 +65,17 @@ KtFirFunctionSymbol:
   name: nullablePrimitive
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(b)
+    KtValueParameterSymbol(b)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
-  annotatedType: [] kotlin/Any
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -91,15 +83,13 @@ KtFirValueParameterSymbol:
   name: c
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Any
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /nonPrimitive
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -113,18 +103,17 @@ KtFirFunctionSymbol:
   name: nonPrimitive
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(c)
+    KtValueParameterSymbol(c)
   ]
   visibility: Public
   deprecationStatus: null
 
-KtFirValueParameterSymbol:
-  annotatedType: [] ERROR CLASS: Symbol not found for Unresolved
-  annotationClassIds: []
-  annotations: []
+KtValueParameterSymbol:
+  annotationsList: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
   isExtension: false
@@ -132,15 +121,13 @@ KtFirValueParameterSymbol:
   name: d
   origin: SOURCE
   receiverType: null
+  returnType: ERROR_TYPE
   symbolKind: LOCAL
   deprecationStatus: null
 
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Unit
-  annotationClassIds: []
-  annotations: []
+KtFunctionSymbol:
+  annotationsList: []
   callableIdIfNonLocal: /error
-  dispatchType: null
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -154,10 +141,11 @@ KtFirFunctionSymbol:
   name: error
   origin: SOURCE
   receiverType: null
+  returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(d)
+    KtValueParameterSymbol(d)
   ]
   visibility: Public
   deprecationStatus: null

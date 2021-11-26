@@ -340,7 +340,7 @@ class CallableReferencesCandidateFactory(
                     val setter = descriptor.setter
                     setter == null || DescriptorVisibilities.isVisible(
                         dispatchReceiver?.asReceiverValueForVisibilityChecks, setter,
-                        scopeTower.lexicalScope.ownerDescriptor
+                        scopeTower.lexicalScope.ownerDescriptor, false
                     )
                 }
 

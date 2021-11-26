@@ -23,8 +23,7 @@ class ClassicFrontend2ClassicBackendConverter(
         val (psiFiles, analysisResults, project, languageVersionSettings) = inputArtifact
         return ClassicBackendInput(
             psiFiles.values,
-            analysisResults.bindingContext,
-            analysisResults.moduleDescriptor,
+            analysisResults,
             project,
             languageVersionSettings
         )

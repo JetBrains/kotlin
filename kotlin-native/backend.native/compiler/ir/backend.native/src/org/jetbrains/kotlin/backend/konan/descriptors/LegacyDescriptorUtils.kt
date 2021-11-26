@@ -43,12 +43,6 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-/**
- * @return `konan.internal` member scope
- */
-internal val KonanBuiltIns.kotlinNativeInternal: MemberScope
-    get() = this.builtInsModule.getPackage(RuntimeNames.kotlinNativeInternalPackageName).memberScope
-
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
 
 internal fun ClassDescriptor.isNothing() = this.defaultType.isNothing()

@@ -15,8 +15,8 @@ class Q {
     private var x = foo<CharSequence, Number>()()
 
     fun bar() {
-        x.e.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><CharSequence>() }
-        x.f.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Number>() }
+        x.e.checkType { _<CharSequence>() }
+        x.f.checkType { _<Number>() }
         x.g.checkType { _<Number>() }
     }
 }

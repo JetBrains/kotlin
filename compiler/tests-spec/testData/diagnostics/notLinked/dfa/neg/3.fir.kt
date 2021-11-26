@@ -1,6 +1,7 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE
 // SKIP_TXT
+// WITH_EXTENDED_CHECKERS
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Nothing?) {
@@ -68,7 +69,7 @@ fun case_8(x: Nothing?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Nothing?) {
-    if (!!(<!USELESS_IS_CHECK!>x !is TypealiasNullableStringIndirect?<!>)) else {
+    if (!!(<!USELESS_IS_CHECK!>x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!><!>)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!UNRESOLVED_REFERENCE!>length<!>
     }

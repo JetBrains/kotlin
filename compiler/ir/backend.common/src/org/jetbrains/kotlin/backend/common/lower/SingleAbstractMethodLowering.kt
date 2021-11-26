@@ -223,11 +223,15 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             extensionReceiverParameter = superMethod.extensionReceiverParameter?.copyTo(this)
             valueParameters = superMethod.valueParameters.map { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
-                +irReturn(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
-                    dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
-                    extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
-                    valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
-                })
+                +irReturn(
+                    irCall(
+                        wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }.symbol,
+                        superMethod.returnType
+                    ).apply {
+                        dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
+                        extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
+                        valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
+                    })
             }
         }
 
@@ -318,7 +322,7 @@ class SamEqualsHashCodeMethodsGenerator(
 
     private fun generateHashCode(anyGenerator: MethodsFromAnyGeneratorForLowerings) {
         anyGenerator.createHashCodeMethodDeclaration().apply {
-            val hashCode = context.irBuiltIns.functionClass.owner.functions.single{ it.isHashCode() }.symbol
+            val hashCode = context.irBuiltIns.functionClass.owner.functions.single { it.isHashCode() }.symbol
             body = context.createIrBuilder(symbol).run {
                 irExprBody(
                     irCall(hashCode).also {

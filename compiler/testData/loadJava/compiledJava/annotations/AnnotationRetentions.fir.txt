@@ -6,7 +6,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
 
     }
     @R|test/AnnotationRetentions.BaseAnnotation|() public/*package*/ open inner class BaseClass : R|kotlin/Any| {
-        public/*package*/ constructor(): R|test/AnnotationRetentions.BaseClass|
+        public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.BaseClass|
 
     }
     @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) public final annotation class BinaryAnnotation : R|kotlin/Annotation| {
@@ -14,7 +14,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
 
     }
     @R|test/AnnotationRetentions.BinaryAnnotation|() public/*package*/ open inner class BinaryClass : R|kotlin/Any| {
-        public/*package*/ constructor(): R|test/AnnotationRetentions.BinaryClass|
+        public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.BinaryClass|
 
     }
     @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) public final annotation class RuntimeAnnotation : R|kotlin/Annotation| {
@@ -22,7 +22,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
 
     }
     @R|test/AnnotationRetentions.RuntimeAnnotation|() public/*package*/ open inner class RuntimeClass : R|kotlin/Any| {
-        public/*package*/ constructor(): R|test/AnnotationRetentions.RuntimeClass|
+        public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.RuntimeClass|
 
     }
     @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class SourceAnnotation : R|kotlin/Annotation| {
@@ -30,7 +30,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
 
     }
     @R|test/AnnotationRetentions.SourceAnnotation|() public/*package*/ open inner class SourceClass : R|kotlin/Any| {
-        public/*package*/ constructor(): R|test/AnnotationRetentions.SourceClass|
+        public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.SourceClass|
 
     }
 }

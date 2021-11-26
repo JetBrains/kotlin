@@ -7,6 +7,8 @@ package kotlin
 
 import kotlin.wasm.internal.*
 
+import kotlin.random.*
+
 /**
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
@@ -37,8 +39,12 @@ public open class Any {
      * * Whenever it is invoked on the same object more than once, the `hashCode` method must consistently return the same integer, provided no information used in `equals` comparisons on the object is modified.
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
-    // TODO: Implement
-    public open fun hashCode(): Int = 100
+    internal var _hashCode: Int = 0
+    public open fun hashCode(): Int {
+        if (_hashCode == 0)
+            _hashCode = Random.nextInt(1, Int.MAX_VALUE)
+        return _hashCode
+    }
 
     /**
      * Returns a string representation of the object.

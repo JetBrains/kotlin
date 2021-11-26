@@ -5,19 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.scopes.KtNonStarImportingScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.scopes.NonStarImport
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
 import org.jetbrains.kotlin.name.ClassId
@@ -27,10 +25,8 @@ internal class KtFirNonStarImportingScope(
     private val firScope: FirAbstractSimpleImportingScope,
     private val builder: KtSymbolByFirBuilder,
     override val token: ValidityToken,
-) : KtNonStarImportingScope, ValidityTokenOwner {
-
-    @OptIn(ExperimentalStdlibApi::class)
-    override val imports: List<NonStarImport> by cached {
+) : KtScope {
+    private val imports: List<NonStarImport> by cached {
         buildList {
             firScope.simpleImports.values.forEach { imports ->
                 imports.forEach { import ->
@@ -58,6 +54,10 @@ internal class KtFirNonStarImportingScope(
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
+    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+        emptySequence()
+    }
+
     override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
@@ -67,6 +67,4 @@ internal class KtFirNonStarImportingScope(
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.mapNotNullTo((hashSetOf())) { it.relativeClassName?.shortName() }
     }
-
-    override val isDefaultImportingScope: Boolean = withValidityAssertion { firScope is FirDefaultSimpleImportingScope }
 }

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 
 class K2JSCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -170,6 +173,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-per-module-output-name", description = "Adds a custom output name to the splitted js files")
     var irPerModuleOutputName: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xir-per-file", description = "Splits generated .js per-file")
+    var irPerFile: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xir-new-ir2js", description = "New fragment-based ir2js")
+    var irNewIr2Js: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
@@ -226,16 +235,38 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
     var errorTolerancePolicy: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
+    var partialLinkage: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
     var wasm: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xwasm-debug-info", description = "Add debug info to WebAssembly compiled module")
-    var wasmDebug: Boolean by FreezableVar(false)
+    var wasmDebug: Boolean by FreezableVar(true)
+
+    @Argument(
+            value = "-Xwasm-launcher",
+            valueDescription = "esm|nodejs",
+            description = "Picks flavor for the wasm launcher. Default is ESM."
+    )
+    var wasmLauncher: String? by NullableStringFreezableVar("esm")
+
+    @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for FQ names in KClass")
+    var wasmKClassFqn: Boolean by FreezableVar(false)
+
+    override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
+        return super.configureAnalysisFlags(collector, languageVersion).also {
+            it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
+        }
+    }
 
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
         return super.configureLanguageFeatures(collector).apply {
             if (extensionFunctionsInExternals) {
                 this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
+            }
+            if (!isIrBackendEnabled()) {
+                this[LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping] = LanguageFeature.State.DISABLED
             }
         }
     }

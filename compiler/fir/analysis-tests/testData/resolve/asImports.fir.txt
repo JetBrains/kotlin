@@ -1,4 +1,6 @@
 FILE: A.kt
+    package foo
+
     public final class A : R|kotlin/Any| {
         public constructor(): R|foo/A| {
             super<R|kotlin/Any|>()

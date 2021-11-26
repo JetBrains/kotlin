@@ -37,8 +37,6 @@ class JvmReflectionAPICallChecker(
     reflectionTypes: ReflectionTypes,
     storageManager: StorageManager
 ) : AbstractReflectionApiCallChecker(reflectionTypes, storageManager) {
-    override fun isAllowedKClassMember(name: Name): Boolean =
-        super.isAllowedKClassMember(name) || name.asString() == "qualifiedName"
 
     override val isWholeReflectionApiAvailable by storageManager.createLazyValue {
         module.findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) != null

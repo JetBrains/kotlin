@@ -1,7 +1,9 @@
 import org.gradle.util.VersionNumber
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
 
 android {
     compileSdkVersion 22
@@ -64,5 +66,5 @@ else {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testImplementation'junit:junit:4.12'
+    testImplementation'junit:junit:4.13.2'
 }

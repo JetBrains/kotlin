@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
 object ExtendedDeclarationCheckers : DeclarationCheckers() {
+    override val fileCheckers: Set<FirFileChecker>
+        get() = setOf(
+            PlatformClassMappedToKotlinImportsChecker
+        )
+
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             RedundantVisibilityModifierSyntaxChecker,

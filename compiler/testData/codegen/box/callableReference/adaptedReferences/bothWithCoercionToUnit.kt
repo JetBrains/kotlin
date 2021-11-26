@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-
 fun foo(s: String = "kotlin", vararg t: String): Boolean {
     if (s != "kotlin") throw AssertionError(s)
     if (t.size != 0) throw AssertionError(t.size.toString())

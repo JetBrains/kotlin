@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.NullableMap
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getOrPut
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -20,7 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -40,7 +44,7 @@ abstract class FirSamResolver {
     abstract fun getSamConstructor(firRegularClass: FirRegularClass): FirSimpleFunction?
 }
 
-private val SAM_PARAMETER_NAME = Name.identifier("block")
+private val SAM_PARAMETER_NAME = Name.identifier("function")
 
 class FirSamResolverImpl(
     private val session: FirSession,
@@ -209,6 +213,7 @@ class FirSamResolverImpl(
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
             }
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -246,7 +251,8 @@ private fun FirRegularClass.getSingleAbstractMethodOrNull(
 
 private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<Name> {
     val classes =
-        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session)
+        // Note: we search only for names in this function, so substitution is not needed      V
+        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session, substituteTypes = false)
             .mapNotNullTo(mutableListOf(this)) {
                 (session.symbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirRegularClassSymbol)?.fir
             }

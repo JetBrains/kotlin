@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,

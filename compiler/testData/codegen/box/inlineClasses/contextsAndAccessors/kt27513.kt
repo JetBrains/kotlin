@@ -1,8 +1,8 @@
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class A(val b: String) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val b: String) {
     override fun toString(): String =
         buildString { append(b) }
 }

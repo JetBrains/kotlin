@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  */
 class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val builder = context.createIrBuilder(context.startFunction.symbol)
-        val startFunctionBody = context.startFunction.body as IrBlockBody
+        val builder = context.createIrBuilder(context.fieldInitFunction.symbol)
+        val startFunctionBody = context.fieldInitFunction.body as IrBlockBody
 
         irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -39,6 +39,10 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
 
             override fun visitField(declaration: IrField) {
                 super.visitField(declaration)
+
+                // External properties can be "initialized" with `= defineExternally`. Ignoring it.
+                if (declaration.isExternal) return
+
                 if (!declaration.isStatic) return
                 val initValue: IrExpression = declaration.initializer?.expression ?: return
 

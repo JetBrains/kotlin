@@ -26,6 +26,7 @@ class SyncKotlinAndAndroidSourceSetsTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 

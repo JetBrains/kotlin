@@ -18,7 +18,7 @@ inline fun baz() {
 
 fun nop() {}
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:11 box
 // test.kt:19 nop

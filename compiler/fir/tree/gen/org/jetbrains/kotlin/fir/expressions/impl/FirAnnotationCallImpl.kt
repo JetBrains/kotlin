@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirAnnotationCallImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
     override var argumentList: FirArgumentList,

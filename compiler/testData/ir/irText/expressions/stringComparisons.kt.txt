@@ -13,4 +13,3 @@ fun test3(a: String, b: String): Boolean {
 fun test4(a: String, b: String): Boolean {
   return lessOrEqual(arg0 = a.compareTo(other = b), arg1 = 0)
 }
-

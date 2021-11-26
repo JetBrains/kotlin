@@ -162,6 +162,15 @@ To generate a compilation database for the Kotlin/Native runtime, run the Gradle
 This task generates `<path_to_kotlin>/kotlin-native/compile_commands.json` file that should be opened in CLion as project.
 Other developer tools also can use generated compilation database, but then `clangd` tool should be installed manually.
 
+Also, it's possible to build Kotlin/Native runtime with dwarf debug information, which can be useful for debugging.
+To do this you should add `kotlin.native.isNativeRuntimeDebugInfoEnabled=true` line to `local.properties` file. Note, that changing
+this property requires clean compiler rebuild with gradle daemon restart.
+
+Unfortunately, this feature works quite unstable because of using several llvm versions simultaneously,
+so it's need to be additionally enabled while compiling application with `-Xbinary=stripDebugInfoFromNativeLibs=false`
+compiler flag or corresponding setting in gradle build script. After doing this, Kotlin/Native runtime in application
+is debuggable in CLion, with Attach to process tool.
+
  ## Performance measurement
   
  Firstly, it's necessary to build analyzer tool to have opportunity to compare different performance results:

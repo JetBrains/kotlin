@@ -69,7 +69,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     }
 
     @TaskAction
-    internal fun commonizeCInteropLibraries() {
+    protected fun commonizeCInteropLibraries() {
         getAllInteropsGroups().forEach(::commonize)
     }
 

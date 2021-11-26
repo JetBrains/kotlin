@@ -19,7 +19,7 @@ fun box() {
 // interfaces with default methods (forwarding to the actual implementation
 // on A$DefaultImpls) have the line number of the class declaration.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:14 box
 // test.kt:14 <init>
 // test.kt:14 box

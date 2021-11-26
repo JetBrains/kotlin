@@ -23,8 +23,6 @@ public expect annotation class JsName(val name: String)
  * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsExport::class)`,
  * or with the `-opt-in=kotlin.js.ExperimentalJsExport` compiler option is given.
  */
-@Suppress("DEPRECATION")
-@Experimental(level = Experimental.Level.WARNING)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
@@ -66,13 +64,3 @@ public annotation class ExperimentalJsExport
 @SinceKotlin("1.4")
 @OptionalExpectation
 public expect annotation class JsExport()
-
-/**
- * Forces a top-level property to be initialized eagerly, opposed to lazily on the first access to file and/or property.
- */
-@ExperimentalStdlibApi
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.PROPERTY)
-@SinceKotlin("1.6")
-@OptionalExpectation
-public expect annotation class JsEagerInitialization

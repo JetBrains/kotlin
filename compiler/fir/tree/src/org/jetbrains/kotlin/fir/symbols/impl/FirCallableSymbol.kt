@@ -67,5 +67,5 @@ val FirCallableSymbol<*>.isExtension: Boolean
     get() = when (fir) {
         is FirFunction -> fir.receiverTypeRef != null
         is FirProperty -> fir.receiverTypeRef != null
-        else -> false
+        is FirVariable -> false
     }

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -29,29 +29,31 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirFileBuilder : FirAnnotationContainerBuilder {
-    override var source: FirSourceElement? = null
+    override var source: KtSourceElement? = null
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var packageDirective: FirPackageDirective
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
+    var path: String? = null
 
     override fun build(): FirFile {
         return FirFileImpl(
             source,
+            annotations,
             moduleData,
             resolvePhase,
             origin,
             attributes,
-            annotations,
             packageDirective,
             imports,
             declarations,
             name,
+            path,
         )
     }
 

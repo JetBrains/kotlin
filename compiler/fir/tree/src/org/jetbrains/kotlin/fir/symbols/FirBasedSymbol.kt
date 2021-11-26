@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
 abstract class FirBasedSymbol<E : FirDeclaration> {
     private var _fir: E? = null
@@ -25,11 +26,14 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
     val origin: FirDeclarationOrigin
         get() = fir.origin
 
-    val source: FirSourceElement?
+    val source: KtSourceElement?
         get() = fir.source
 
     val moduleData: FirModuleData
         get() = fir.moduleData
+
+    val annotations: List<FirAnnotation>
+        get() = fir.annotations
 }
 
 @RequiresOptIn

@@ -82,6 +82,10 @@ ALWAYS_INLINE inline int getSourceInfo(void* addr, SourceInfo *result, int resul
     }
 }
 
+#ifdef KONAN_ANDROID
+bool printToAndroidLogcat() noexcept;
+#endif
+
 } // namespace compiler
 } // namespace kotlin
 

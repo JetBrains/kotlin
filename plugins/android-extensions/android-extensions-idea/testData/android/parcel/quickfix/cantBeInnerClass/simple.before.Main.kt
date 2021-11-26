@@ -1,6 +1,6 @@
 // "Remove 'inner' modifier" "true"
 // ERROR: 'Parcelable' can't be an inner class
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

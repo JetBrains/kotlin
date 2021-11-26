@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun test(): Int = "123".indexOfAny(CharArray(1000) { '1' })
 

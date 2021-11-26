@@ -14,3 +14,17 @@ package kotlin.js
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
 public actual annotation class JsExport
+
+/**
+ * Specifies JavaScript name for external and imported declarations
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+public actual annotation class JsName(actual val name: String)

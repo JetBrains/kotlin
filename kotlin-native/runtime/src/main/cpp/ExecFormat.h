@@ -21,7 +21,7 @@
 
 extern "C" {
 
-bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize);
+bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset);
 
 }  // extern "C"
 

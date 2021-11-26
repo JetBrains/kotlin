@@ -132,7 +132,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File ktFile = new File(ktFileName);
         File txtFile = getTxtFileFromKtFile(ktFileName);
 
-        CompilerConfiguration configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getClasspath(), Collections.emptyList());
+        CompilerConfiguration configuration = newConfiguration(configurationKind, getJdkKind(), getClasspath(), Collections.emptyList());
         updateConfiguration(configuration);
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);

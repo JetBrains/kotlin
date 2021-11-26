@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -17,7 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.visitors.*
 
 open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<IrElement>) : IrElementVisitorVoid {
@@ -82,7 +85,12 @@ class LiveLocalsTransformer(
 ) :
     IrElementTransformerVoid() {
     override fun visitGetValue(expression: IrGetValue): IrExpression {
-        val field = localMap[expression.symbol] ?: return expression
+        val field = localMap[expression.symbol]
+            ?: return if (expression.symbol.owner.isDispatchReceiver)
+                receiver()
+            else
+                expression
+
         return expression.run { IrGetFieldImpl(startOffset, endOffset, field, type, receiver(), origin) }
     }
 
@@ -99,7 +107,10 @@ class LiveLocalsTransformer(
         return if (initializer != null) {
             declaration.run { IrSetFieldImpl(startOffset, endOffset, field, receiver(), initializer, unitType) }
         } else {
-            JsIrBuilder.buildComposite(declaration.type)
+            JsIrBuilder.buildComposite(unitType)
         }
     }
 }
+
+fun loweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =
+    if (function.returnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType

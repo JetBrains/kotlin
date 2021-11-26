@@ -1,0 +1,20 @@
+package test
+
+@test.Anno(code = 3) @test.Anno(code = 4) public fun f(): kotlin.Unit
+
+@java.lang.annotation.Repeatable(value = test.Anno.Container::class) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS}) public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ code: kotlin.Int)
+    public final val code: kotlin.Int
+        public final fun <get-code>(): kotlin.Int
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS}) public final annotation class Container : kotlin.Annotation {
+        /*primary*/ public constructor Container(/*0*/ value: kotlin.Array<test.Anno>)
+        public final val value: kotlin.Array<test.Anno>
+            public final fun <get-value>(): kotlin.Array<test.Anno>
+    }
+}
+
+@test.Anno(code = 1) @test.Anno(code = 2) public final class Z {
+    /*primary*/ public constructor Z()
+}
+@test.Anno(code = 5) @test.Anno(code = 6) public typealias S = kotlin.String

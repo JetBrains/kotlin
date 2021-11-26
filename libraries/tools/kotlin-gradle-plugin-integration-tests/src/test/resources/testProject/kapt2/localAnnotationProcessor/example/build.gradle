@@ -1,5 +1,8 @@
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'idea'
+}
 
 dependencies {
 	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -9,10 +12,8 @@ dependencies {
 
     implementation files("a")
 
-    testImplementation'junit:junit:4.12'
+    testImplementation'junit:junit:4.13.2'
 }
-
-apply plugin: 'idea'
 
 idea {
     module {

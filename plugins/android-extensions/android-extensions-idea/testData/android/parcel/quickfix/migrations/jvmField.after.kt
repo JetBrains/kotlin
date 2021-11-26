@@ -1,7 +1,7 @@
 // "Migrate to ''Parceler'' companion object" "true"
 // ERROR: 'CREATOR' definition is not allowed. Use 'Parceler' companion object instead
 // ERROR: Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

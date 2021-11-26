@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.*
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirConstructedClassTypeParameterRef(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override val symbol: FirTypeParameterSymbol,
 ) : FirPureAbstractElement(), FirTypeParameterRef {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

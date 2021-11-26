@@ -90,6 +90,7 @@ abstract class KotlinCompileCommon @Inject constructor(
                     null,
                     normalizedKotlinDaemonJvmArguments.orNull,
                     metrics.get(),
+                    compilerExecutionStrategy.get(),
                     workerExecutor
                 )
             }

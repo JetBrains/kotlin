@@ -32,9 +32,8 @@ class DelegateProvider {
 
 }
 
-val testTopLevel: String /* by */ 
+val testTopLevel: String /* by */
   field = DelegateProvider(value = "OK").provideDelegate(thisRef = null, property = ::testTopLevel)
   get(): String {
     return #testTopLevel$delegate.getValue(thisRef = null, property = ::testTopLevel)
   }
-

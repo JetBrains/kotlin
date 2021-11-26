@@ -1,7 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument
-
 fun interface MyRunnable {
     fun run()
 }

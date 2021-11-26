@@ -85,7 +85,7 @@ fun <T> Inv<out T>.case_7() {
 
 // TESTCASE NUMBER: 8
 fun <T> T.case_8() {
-    this as MutableList<T>
+    this <!UNCHECKED_CAST!>as MutableList<T><!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Any?, kotlin.Boolean>")!>this::equals<!>
     this.equals(10)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Any?, kotlin.Boolean>")!>::equals<!>

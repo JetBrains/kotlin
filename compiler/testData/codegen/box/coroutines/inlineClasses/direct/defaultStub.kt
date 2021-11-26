@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {

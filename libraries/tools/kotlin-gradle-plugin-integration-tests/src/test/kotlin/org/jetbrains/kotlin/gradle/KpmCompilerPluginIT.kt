@@ -10,12 +10,6 @@ import kotlin.test.assertTrue
 
 class KpmCompilerPluginIT : BaseGradleIT() {
 
-    /**
-     * Gradle implementation of KPM uses features of 6.4+ version
-     */
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.4")
-
     @Test
     fun testTransientPluginOptions() {
         val project = transformProjectWithPluginsDsl("kpmTransientPluginOptions")

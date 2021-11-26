@@ -1,44 +1,68 @@
+import org.jetbrains.kotlin.ideaExt.idea
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
 dependencies {
-    api(project(":compiler:fir:cones"))
-    api(project(":compiler:fir:tree"))
-    api(project(":compiler:fir:resolve"))
-    api(project(":compiler:fir:checkers"))
-    api(project(":compiler:frontend"))
-
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:checkers"))
+    compileOnly(project(":compiler:fir:fir2ir"))
+    compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testApi(intellijDep())
-
-    testApi(commonDep("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApiJUnit5()
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testApi(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijDep()) {
+        includeJars(
+            "jna",
+            "jdom",
+            "trove4j",
+            "intellij-deps-fastutil-8.4.1-4",
+            rootProject = rootProject)
+    }
+
+    testRuntimeOnly(toolsJar())
 }
+
+val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    "main" {
+        projectDefault()
+    }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
 }
 
-projectTest(parallel = true) {
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
+    }
+}
+
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
+    useJUnitPlatform()
     jvmArgs!!.removeIf { it.contains("-Xmx") }
     maxHeapSize = "3g"
     dependsOn(":plugins:fir:fir-plugin-prototype:plugin-annotations:jar")

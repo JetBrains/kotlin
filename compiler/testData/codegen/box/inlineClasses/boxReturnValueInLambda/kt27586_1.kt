@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // IGNORE_BACKEND: WASM
 // Result::getOrNull contains cast (value as T). It gets inlined but type parameter is not updated. We loose information that it was

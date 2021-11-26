@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: MyListWithCustomToArray.java
 
 public abstract class MyListWithCustomToArray<E> extends java.util.AbstractList<E> {

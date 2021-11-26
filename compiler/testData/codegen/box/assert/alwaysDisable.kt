@@ -5,7 +5,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS
 // ASSERTIONS_MODE: always-disable
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun checkTrue(): Boolean {
     var hit = false

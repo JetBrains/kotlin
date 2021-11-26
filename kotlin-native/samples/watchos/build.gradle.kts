@@ -70,6 +70,12 @@ kotlin {
 
     sourceSets["iosMain"].dependsOn(appleMain)
     sourceSets["watchosMain"].dependsOn(appleMain)
+
+    sourceSets {
+        all {
+            languageSettings.useExperimentalAnnotation("kotlin.native.SymbolNameIsInternal")
+        }
+    }
 }
 
 // Create Xcode integration tasks.

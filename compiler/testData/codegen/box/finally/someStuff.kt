@@ -1,7 +1,6 @@
 // Tests that are inspired by the stack-related and verifier-related bugs in the wasm backend
 
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     if (!test1()) return "Fail 1"

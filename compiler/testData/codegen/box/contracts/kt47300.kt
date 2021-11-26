@@ -1,4 +1,5 @@
-// WITH_RUNTIME
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// WITH_STDLIB
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind

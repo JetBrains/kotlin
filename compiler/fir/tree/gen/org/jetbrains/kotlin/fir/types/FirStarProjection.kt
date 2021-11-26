@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirStarProjection : FirTypeProjection() {
-    abstract override val source: FirSourceElement?
+    abstract override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStarProjection(this, data)
 

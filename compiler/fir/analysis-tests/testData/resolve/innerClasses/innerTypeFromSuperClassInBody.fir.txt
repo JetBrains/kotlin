@@ -5,7 +5,7 @@ FILE: innerTypeFromSuperClassInBody.kt
         }
 
         public final inner class Inner<X : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public constructor(): R|A.Inner<X>| {
+            public A<X>.constructor(): R|A.Inner<X>| {
                 super<R|kotlin/Any|>()
             }
 

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun <reified T : Any> jClass() = T::class.java
 inline fun <reified T : Any> jClassArray() = jClass<Array<T>>()
