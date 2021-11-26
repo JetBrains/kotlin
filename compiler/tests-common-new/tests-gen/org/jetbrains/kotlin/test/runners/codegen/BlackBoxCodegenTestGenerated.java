@@ -13641,45 +13641,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
-        @TestMetadata("delegateToAnother.kt")
-        public void testDelegateToAnother() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother.kt");
-        }
-
-        @Test
-        @TestMetadata("delegateToAnotherCustom.kt")
-        public void testDelegateToAnotherCustom() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherCustom.kt");
-        }
-
-        @Test
-        @TestMetadata("delegateToAnotherMutable.kt")
-        public void testDelegateToAnotherMutable() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherMutable.kt");
-        }
-
-        @Test
-        @TestMetadata("delegateToAnotherWithSideEffects.kt")
-        public void testDelegateToAnotherWithSideEffects() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherWithSideEffects.kt");
-        }
-
-        @Test
         @TestMetadata("delegateToConstructorParameter.kt")
         public void testDelegateToConstructorParameter() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("delegateToGenericJavaProperty.kt")
-        public void testDelegateToGenericJavaProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToGenericJavaProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("delegateToOpenProperty.kt")
-        public void testDelegateToOpenProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToOpenProperty.kt");
         }
 
         @Test
@@ -13932,6 +13896,52 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("varInInnerClass.kt")
         public void testVarInInnerClass() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/varInInnerClass.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DelegateToAnother {
+            @Test
+            public void testAllFilesPresentInDelegateToAnother() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToAnother"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("custom.kt")
+            public void testCustom() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/custom.kt");
+            }
+
+            @Test
+            @TestMetadata("genericJavaProperty.kt")
+            public void testGenericJavaProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/genericJavaProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("mutable.kt")
+            public void testMutable() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/mutable.kt");
+            }
+
+            @Test
+            @TestMetadata("openProperty.kt")
+            public void testOpenProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/openProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("withSideEffects.kt")
+            public void testWithSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/withSideEffects.kt");
+            }
         }
 
         @Nested
