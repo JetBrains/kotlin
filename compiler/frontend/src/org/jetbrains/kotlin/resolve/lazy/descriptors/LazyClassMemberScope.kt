@@ -317,9 +317,7 @@ open class LazyClassMemberScope(
                 if (!primaryConstructorParameters.get(parameter.index).hasValOrVar()) continue
 
                 val properties = getContributedVariables(parameter.name, location)
-                if (properties.isEmpty()) continue
-
-                val property = properties.iterator().next()
+                val property = properties.firstOrNull { it.extensionReceiverParameter == null } ?: continue
 
                 ++componentIndex
 

@@ -9557,6 +9557,28 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Components {
+            @Test
+            public void testAllFilesPresentInComponents() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/components"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("kt49812.kt")
+            public void testKt49812() throws Exception {
+                runTest("compiler/testData/codegen/box/dataClasses/components/kt49812.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49936.kt")
+            public void testKt49936() throws Exception {
+                runTest("compiler/testData/codegen/box/dataClasses/components/kt49936.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
         @TestDataPath("$PROJECT_ROOT")
         public class Copy {

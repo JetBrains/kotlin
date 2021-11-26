@@ -269,6 +269,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/kt31649.kt");
             }
 
+            @TestMetadata("kt49936.kt")
+            public void testKt49936() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/kt49936.kt");
+            }
+
             @TestMetadata("lambdaInDataClassDefaultParameter.kt")
             public void testLambdaInDataClassDefaultParameter() throws Exception {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/lambdaInDataClassDefaultParameter.kt");
