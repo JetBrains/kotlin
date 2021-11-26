@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_COROUTINES
 // WITH_STDLIB
 // MODULE: lib(support)
