@@ -151,6 +151,8 @@ if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.6.0-RC-473"
 }
 
+extra["versions.kotlinx-metadata-jvm"] = "0.4.0"
+
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
