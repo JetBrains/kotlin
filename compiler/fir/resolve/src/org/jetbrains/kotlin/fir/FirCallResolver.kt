@@ -644,7 +644,7 @@ class FirCallResolver(
                 val candidate = candidates.singleOrNull()
 
                 val diagnostic = if (expectedCallKind == CallKind.Function) {
-                    ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }, candidates.map { it.symbol })
+                    ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }, candidates)
                 } else {
                     val singleExpectedCandidate = expectedCandidates?.singleOrNull()
 
@@ -654,7 +654,7 @@ class FirCallResolver(
                     }
 
                     if (fir is FirRegularClass) {
-                        ConeResolutionToClassifierError(fir.symbol)
+                        ConeResolutionToClassifierError(singleExpectedCandidate!!, fir.symbol)
                     } else {
                         val coneType = explicitReceiver?.typeRef?.coneType
                         when {
@@ -764,12 +764,12 @@ class FirCallResolver(
     private fun createConeDiagnosticForCandidateWithError(
         applicability: CandidateApplicability,
         candidate: Candidate
-    ): ConeDiagnosticWithCandidates {
+    ): ConeDiagnostic {
         return when (applicability) {
-            CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)
+            CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
             CandidateApplicability.VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
-            CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate.symbol))
-            CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate.symbol as FirRegularClassSymbol)
+            CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
+            CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
             else -> ConeInapplicableCandidateError(applicability, candidate)
         }
     }

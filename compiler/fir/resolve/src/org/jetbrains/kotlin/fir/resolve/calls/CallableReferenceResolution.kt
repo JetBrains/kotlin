@@ -138,7 +138,7 @@ private fun buildReflectionType(
             ) to callableReferenceAdaptation
         }
         is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, candidate) to null
-        else -> ConeClassErrorType(ConeUnsupportedCallableReferenceTarget(fir)) to null
+        else -> ConeClassErrorType(ConeUnsupportedCallableReferenceTarget(candidate)) to null
     }
 }
 

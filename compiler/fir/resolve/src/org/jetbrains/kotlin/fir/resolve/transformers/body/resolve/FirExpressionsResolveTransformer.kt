@@ -542,15 +542,15 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
 
         fun reportAmbiguity(): FirStatement {
-            val operatorCallSymbol = operatorCallReference?.candidateSymbol
-            val assignmentCallSymbol = assignCallReference?.candidateSymbol
+            val operatorCallCandidate = operatorCallReference?.candidate
+            val assignmentCallCandidate = assignCallReference?.candidate
 
-            requireNotNull(operatorCallSymbol)
-            requireNotNull(assignmentCallSymbol)
+            requireNotNull(operatorCallCandidate)
+            requireNotNull(assignmentCallCandidate)
 
             return buildErrorExpression {
                 source = assignmentOperatorStatement.source
-                diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallSymbol, assignmentCallSymbol))
+                diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallCandidate, assignmentCallCandidate))
             }
         }
 

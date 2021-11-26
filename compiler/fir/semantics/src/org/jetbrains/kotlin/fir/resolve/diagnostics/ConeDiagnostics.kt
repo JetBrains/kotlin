@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
@@ -26,13 +25,20 @@ sealed interface ConeUnresolvedError : ConeDiagnostic {
     val qualifier: String?
 }
 
+interface ConeDiagnosticWithSymbol<S : FirBasedSymbol<*>> : ConeDiagnostic {
+    val symbol: S
+}
+
 interface ConeDiagnosticWithCandidates : ConeDiagnostic {
-    val candidateSymbols: Collection<FirBasedSymbol<*>>
+    val candidates: Collection<AbstractCandidate>
+    val candidateSymbols: Collection<FirBasedSymbol<*>> get() = candidates.map { it.symbol }
 }
 
 interface ConeDiagnosticWithSingleCandidate : ConeDiagnosticWithCandidates {
+    val candidate: AbstractCandidate
+    val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
+    override val candidates: Collection<AbstractCandidate> get() = listOf(candidate)
     override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = listOf(candidateSymbol)
-    val candidateSymbol: FirBasedSymbol<*>
 }
 
 class ConeUnresolvedReferenceError(val name: Name? = null) : ConeUnresolvedError {
@@ -57,7 +63,7 @@ class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
 class ConeFunctionCallExpectedError(
     val name: Name,
     val hasValueParameters: Boolean,
-    override val candidateSymbols: Collection<FirBasedSymbol<*>>
+    override val candidates: Collection<AbstractCandidate>
 ) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Function call expected: $name(${if (hasValueParameters) "..." else ""})"
 }
@@ -66,23 +72,26 @@ class ConeFunctionExpectedError(val expression: String, val type: ConeKotlinType
     override val reason: String get() = "Expression '$expression' of type '$type' cannot be invoked as a function"
 }
 
-class ConeResolutionToClassifierError(override val candidateSymbol: FirRegularClassSymbol) : ConeDiagnosticWithSingleCandidate {
+class ConeResolutionToClassifierError(
+    override val candidate: AbstractCandidate,
+    override val candidateSymbol: FirRegularClassSymbol
+) : ConeDiagnosticWithSingleCandidate {
     override val reason: String get() = "Resolution to classifier"
 }
 
 class ConeHiddenCandidateError(
-    override val candidateSymbol: FirBasedSymbol<*>
+    override val candidate: AbstractCandidate
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is deprecated with DeprecationLevel.HIDDEN"
 }
 
 class ConeVisibilityError(
-    override val candidateSymbol: FirBasedSymbol<*>
-) : ConeDiagnosticWithSingleCandidate {
-    override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is invisible"
+    override val symbol: FirBasedSymbol<*>
+) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
+    override val reason: String get() = "HIDDEN: ${describeSymbol(symbol)} is invisible"
 }
 
-class ConeInapplicableWrongReceiver(override val candidateSymbols: Collection<FirBasedSymbol<*>>) : ConeDiagnosticWithCandidates {
+class ConeInapplicableWrongReceiver(override val candidates: Collection<AbstractCandidate>) : ConeDiagnosticWithCandidates {
     override val reason: String
         get() = "None of the following candidates is applicable because of receiver type mismatch: ${
             candidateSymbols.map { describeSymbol(it) }
@@ -91,21 +100,20 @@ class ConeInapplicableWrongReceiver(override val candidateSymbols: Collection<Fi
 
 class ConeInapplicableCandidateError(
     val applicability: CandidateApplicability,
-    val candidate: AbstractCandidate,
+    override val candidate: AbstractCandidate,
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidateSymbol)}"
-    override val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
 }
 
 class ConeNoCompanionObject(
-    override val candidateSymbol: FirRegularClassSymbol
+    override val candidate: AbstractCandidate
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String
         get() = "Classifier ''$candidateSymbol'' does not have a companion object, and thus must be initialized here"
 }
 
 class ConeConstraintSystemHasContradiction(
-    val candidate: AbstractCandidate,
+    override val candidate: AbstractCandidate,
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String get() = "CS errors: ${describeSymbol(candidateSymbol)}"
     override val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
@@ -121,13 +129,13 @@ class ConeArgumentTypeMismatchCandidateError(
 class ConeAmbiguityError(
     val name: Name,
     val applicability: CandidateApplicability,
-    val candidates: Collection<AbstractCandidate>
+    override val candidates: Collection<AbstractCandidate>
 ) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Ambiguity: $name, ${candidateSymbols.map { describeSymbol(it) }}"
     override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = candidates.map { it.symbol }
 }
 
-class ConeOperatorAmbiguityError(override val candidateSymbols: Collection<FirBasedSymbol<*>>) : ConeDiagnosticWithCandidates {
+class ConeOperatorAmbiguityError(override val candidates: Collection<AbstractCandidate>) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Operator overload ambiguity. Compatible candidates: ${candidateSymbols.map { describeSymbol(it) }}"
 }
 
@@ -145,14 +153,13 @@ class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {
     override val reason: String get() = "Not a legal annotation: $name"
 }
 
-interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSingleCandidate {
+interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSymbol<FirClassLikeSymbol<*>> {
     val desiredCount: Int
-    override val candidateSymbol: FirClassLikeSymbol<*>
 }
 
 class ConeWrongNumberOfTypeArgumentsError(
     override val desiredCount: Int,
-    override val candidateSymbol: FirClassLikeSymbol<*>,
+    override val symbol: FirClassLikeSymbol<*>,
     source: KtSourceElement
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
@@ -160,7 +167,7 @@ class ConeWrongNumberOfTypeArgumentsError(
 
 class ConeNoTypeArgumentsOnRhsError(
     override val desiredCount: Int,
-    override val candidateSymbol: FirClassLikeSymbol<*>
+    override val symbol: FirClassLikeSymbol<*>
 ) : ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "No type arguments on RHS"
 }
@@ -175,9 +182,8 @@ class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic {
     override val reason: String get() = "Cannot access ''${target}'' before superclass constructor has been called"
 }
 
-class ConeUnsupportedCallableReferenceTarget(val fir: FirCallableDeclaration) : ConeDiagnosticWithSingleCandidate {
-    override val reason: String get() = "Unsupported declaration for callable reference: ${fir.render()}"
-    override val candidateSymbol: FirBasedSymbol<*> get() = fir.symbol
+class ConeUnsupportedCallableReferenceTarget(override val candidate: AbstractCandidate) : ConeDiagnosticWithSingleCandidate {
+    override val reason: String get() = "Unsupported declaration for callable reference: ${candidate.symbol.fir.render()}"
 }
 
 class ConeTypeParameterSupertype(val symbol: FirTypeParameterSymbol) : ConeDiagnostic {
@@ -207,9 +213,9 @@ class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not suppor
 
 class ConeDeprecated(
     val source: KtSourceElement?,
-    override val candidateSymbol: FirBasedSymbol<*>,
+    override val symbol: FirBasedSymbol<*>,
     val deprecationInfo: DeprecationInfo
-) : ConeDiagnosticWithSingleCandidate {
+) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
     override val reason: String get() = "Deprecated: ${deprecationInfo.message}"
 }
 
