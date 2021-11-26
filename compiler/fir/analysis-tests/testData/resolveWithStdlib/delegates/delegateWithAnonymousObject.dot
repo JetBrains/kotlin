@@ -178,8 +178,8 @@ digraph delegateWithAnonymousObject_kt {
             55 [label="Enter block"];
             56 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
             57 [label="Access variable this@R|/IssuesListUserProfile|"];
-            58 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (builder inference): TypeVariable(_Target)|>|(...)"];
-            59 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (builder inference): TypeVariable(_Target)|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+            58 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (chain inference): TypeVariable(_Target)|>|(...)"];
+            59 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (chain inference): TypeVariable(_Target)|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
             60 [label="Stub" style="filled" fillcolor=gray];
             61 [label="Exit block" style="filled" fillcolor=gray];
         }

@@ -35,7 +35,7 @@ class FirDelegatedPropertyInferenceSession(
 
     private fun ConeKotlinType.containsStubType(): Boolean {
         return this.contains {
-            it is ConeStubTypeForBuilderInference
+            it is ConeStubTypeForChainInference
         }
     }
 
@@ -155,7 +155,7 @@ class FirDelegatedPropertyInferenceSession(
         typeVariable as ConeTypeVariable
         completionContext.fixVariable(
             typeVariable,
-            ConeStubTypeForFixation(
+            ConeStubTypeForSyntheticFixation(
                 ConeStubTypeConstructor(typeVariable, isTypeVariableInSubtyping = false, isForFixation = true),
                 ConeNullability.create(typeVariable.defaultType.isMarkedNullable)
             ),
@@ -248,7 +248,7 @@ class FirDelegatedPropertyInferenceSession(
             }
 
             stubTypesByTypeVariable.getOrPut(variable) {
-                ConeStubTypeForBuilderInference(
+                ConeStubTypeForChainInference(
                     syntheticVariable,
                     ConeNullability.create(syntheticVariable.defaultType.isMarkedNullable)
                 ).also {

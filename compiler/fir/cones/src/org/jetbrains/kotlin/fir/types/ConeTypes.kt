@@ -357,7 +357,7 @@ sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val
     }
 }
 
-open class ConeStubTypeForBuilderInference(constructor: ConeStubTypeConstructor, nullability: ConeNullability) :
+open class ConeStubTypeForChainInference(constructor: ConeStubTypeConstructor, nullability: ConeNullability) :
     ConeStubType(constructor, nullability) {
     constructor(variable: ConeTypeVariable, nullability: ConeNullability) : this(
         ConeStubTypeConstructor(
@@ -367,8 +367,8 @@ open class ConeStubTypeForBuilderInference(constructor: ConeStubTypeConstructor,
     )
 }
 
-class ConeStubTypeForFixation(constructor: ConeStubTypeConstructor, nullability: ConeNullability) :
-    ConeStubTypeForBuilderInference(constructor, nullability)
+class ConeStubTypeForSyntheticFixation(constructor: ConeStubTypeConstructor, nullability: ConeNullability) :
+    ConeStubTypeForChainInference(constructor, nullability)
 
 class ConeStubTypeForTypeVariableInSubtyping(constructor: ConeStubTypeConstructor, nullability: ConeNullability) :
     ConeStubType(constructor, nullability) {
