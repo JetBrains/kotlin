@@ -56,8 +56,13 @@ interface NpmApi : Serializable {
 
 data class NpmEnvironment(
     val rootPackageDir: File,
-    val nodeExecutable: String
+    val nodeExecutable: String,
+    val isWindows: Boolean
 ) : Serializable
 
 internal val NodeJsRootExtension.asNpmEnvironment
-    get() = NpmEnvironment(rootPackageDir, requireConfigured().nodeExecutable)
+    get() = NpmEnvironment(
+        rootPackageDir,
+        requireConfigured().nodeExecutable,
+        requireConfigured().isWindows
+    )
