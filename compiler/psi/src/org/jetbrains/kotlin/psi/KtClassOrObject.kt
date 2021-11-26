@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
@@ -76,7 +77,11 @@ abstract class KtClassOrObject :
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()
         val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
-        return body.addAfter(declaration, anchor) as T
+        return if (anchor?.nextSibling is PsiErrorElement) {
+            body.addBefore(declaration, anchor)
+        } else {
+            body.addAfter(declaration, anchor)
+        } as T
     }
 
     inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T {
