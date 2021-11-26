@@ -43,9 +43,9 @@ class XCFrameworkIT : BaseGradleIT() {
                 assertTasksExecuted(":shared:assembleSdkDebugWatchosFatFrameworkForXCFramework")
                 assertTasksExecuted(":shared:assembleSdkDebugXCFramework")
                 assertFileExists("/shared/build/XCFrameworks/debug/sdk.xcframework")
-                assertFileExists("/shared/build/XCFrameworks/debug/sdk.xcframework/ios-arm64/dSYMs/sdk.framework.dSYM")
-                assertFileExists("/shared/build/fat-framework/debug/sdk/watchos/sdk.framework")
-                assertFileExists("/shared/build/fat-framework/debug/sdk/watchos/sdk.framework.dSYM")
+                assertFileExists("/shared/build/XCFrameworks/debug/sdk.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
+                assertFileExists("/shared/build/sdkXCFrameworkTemp/fatframework/debug/watchos/sdk.framework")
+                assertFileExists("/shared/build/sdkXCFrameworkTemp/fatframework/debug/watchos/sdk.framework.dSYM")
             }
 
             build("assembleSdkDebugXCFramework") {
@@ -68,12 +68,12 @@ class XCFrameworkIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosX64")
-                assertTasksExecuted(":shared:assembleReleaseXCFramework")
+                assertTasksExecuted(":shared:assembleSharedReleaseXCFramework")
                 assertFileExists("/shared/build/XCFrameworks/release/shared.xcframework")
                 assertFileExists("/shared/build/XCFrameworks/release/shared.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosX64")
-                assertTasksExecuted(":shared:assembleDebugXCFramework")
+                assertTasksExecuted(":shared:assembleSharedDebugXCFramework")
                 assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework")
                 assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
             }
@@ -86,8 +86,8 @@ class XCFrameworkIT : BaseGradleIT() {
             build("tasks") {
                 assertSuccessful()
                 assertTasksNotRegistered(
-                    ":shared:assembleDebugXCFramework",
-                    ":shared:assembleReleaseXCFramework",
+                    ":shared:assembleSharedDebugXCFramework",
+                    ":shared:assembleSharedReleaseXCFramework",
                     ":shared:assembleXCFramework"
                 )
             }
@@ -105,7 +105,7 @@ class XCFrameworkIT : BaseGradleIT() {
 
             build("tasks") {
                 assertFailed()
-                assertContains("Cannot add task 'assembleReleaseXCFramework' as a task with that name already exists.")
+                assertContains("Cannot add task 'assembleSharedReleaseXCFramework' as a task with that name already exists.")
             }
         }
     }
