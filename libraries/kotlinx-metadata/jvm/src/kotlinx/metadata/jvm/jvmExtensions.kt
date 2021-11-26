@@ -146,6 +146,15 @@ var KmProperty.syntheticMethodForAnnotations: JvmMethodSignature?
     }
 
 /**
+ * TODO: WHAT IS AN EXAMPLE OF THIS?
+ */
+var KmProperty.syntheticMethodForDelegate: JvmMethodSignature?
+    get() = jvm.syntheticMethodForDelegate
+    set(value) {
+        jvm.syntheticMethodForDelegate = value
+    }
+
+/**
  * JVM signature of the constructor, or null if the JVM signature of this constructor is unknown.
  *
  * Example: `JvmMethodSignature("<init>", "(Ljava/lang/Object;)V")`.
