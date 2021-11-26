@@ -7,7 +7,7 @@ func testStackTrace() throws {
     try assertTrue(trace[1].contains("Exceptions.kt"))
     try assertTrue(trace[2].contains("stacktrace.kt:7"))
     try assertTrue(trace[3].contains("stacktrace.kt:12"))
-    try assertTrue(trace[5].contains("stacktrace.swift:4"))
+    try assertTrue(trace[5].contains("stacktrace.swift:5"))
     try assertTrue(trace[6].contains("main.swift"))
 }
 
