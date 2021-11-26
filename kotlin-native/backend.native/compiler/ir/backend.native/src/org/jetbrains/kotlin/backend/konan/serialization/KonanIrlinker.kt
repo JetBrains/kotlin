@@ -569,7 +569,7 @@ internal class KonanIrLinker(
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
-                DescriptorByIdSignatureFinder.LookupMode.MODULE_ONLY
+                DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
         )
 
         private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
@@ -623,7 +623,7 @@ internal class KonanIrLinker(
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
                 moduleDescriptor, KonanManglerDesc,
-                DescriptorByIdSignatureFinder.LookupMode.MODULE_ONLY
+                DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
         )
 
         override fun contains(idSig: IdSignature) =

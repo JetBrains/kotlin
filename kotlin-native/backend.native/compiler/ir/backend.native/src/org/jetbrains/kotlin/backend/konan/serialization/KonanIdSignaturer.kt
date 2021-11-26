@@ -11,12 +11,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 class KonanIdSignaturer(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
 
     override fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder =
-            KonanDescriptorBasedSignatureBuilder(mangler, type)
+            KonanDescriptorBasedSignatureBuilder(type)
 
     private inner class KonanDescriptorBasedSignatureBuilder(
-            mangler: KotlinMangler.DescriptorMangler,
             type: SpecialDeclarationType
-    ) : DescriptorBasedSignatureBuilder(mangler, type) {
+    ) : DescriptorBasedSignatureBuilder(type) {
 
         /**
          * We need a way to distinguish interop declarations from usual ones
