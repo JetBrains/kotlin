@@ -5,11 +5,21 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-internal val Class<*>.sanitizedName: String
-    get() = name.map { if (it.isLetterOrDigit() || it == '_') it else '_' }.joinToString("")
+internal val Class<*>.sanitizedName: String get() = sanitize(name)
 
-internal fun getSanitizedFileName(fileName: String): String =
-    fileName.map { if (it.isLetterOrDigit() || it == '_' || it == '.') it else '_' }.joinToString("")
+internal fun getSanitizedFileName(fileName: String): String = sanitize(fileName, allowDots = true)
+
+private fun sanitize(s: String, allowDots: Boolean = false) = buildString {
+    s.forEach { ch ->
+        append(
+            when {
+                ch.isLetterOrDigit() || ch == '_' -> ch
+                allowDots && ch == '.' -> ch
+                else -> '_'
+            }
+        )
+    }
+}
 
 internal const val DEFAULT_FILE_NAME = "main.kt"
 
