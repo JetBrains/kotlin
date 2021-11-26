@@ -34,7 +34,7 @@ dependencies {
     // Note that kotlinx-metadata-jvm already includes kotlinx-metadata, core:metadata, core:metadata.jvm,
     // and protobuf-lite, so we only need to include kotlinx-metadata-jvm in the shadow jar.
     compileOnly(project(":kotlinx-metadata"))
-    shadows(project(":kotlinx-metadata-jvm"))
+    shadows(commonDep("org.jetbrains.kotlinx:kotlinx-metadata-jvm"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }
 
