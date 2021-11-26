@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 import java.util.Properties
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
-import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 
 internal interface KonanToolRunner {
     fun run(args: List<String>)
@@ -68,10 +67,10 @@ internal abstract class KonanCliRunner(
             """.trimIndent()
             }
 
-    data class IsolatedClassLoaderCacheKey(val classpath: Set<java.io.File>, val project: Project)
+    data class IsolatedClassLoaderCacheKey(val classpath: Set<java.io.File>)
 
     // TODO: can't we use this for other implementations too?
-    final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath, project)
+    final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath)
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
@@ -104,16 +103,6 @@ internal class KonanCliCompilerRunner(
     }
 }
 
-private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java).also {
-    it.isAccessible = true
-}
-
-internal class CliToolConfig(konanHome: String, target: String) : AbstractToolConfig(konanHome, target, emptyMap()) {
-    override fun loadLibclang() {
-        load0.invoke(Runtime.getRuntime(), String::class.java, libclang)
-    }
-}
-
 /** Kotlin/Native C-interop tool runner */
 internal class KonanCliInteropRunner(
         project: Project,
@@ -130,10 +119,6 @@ internal class KonanCliInteropRunner(
             result["PATH"] = "$it;${System.getenv("PATH")}"
         }
         result
-    }
-
-    fun init(target: String) {
-        CliToolConfig(konanHome, target).prepare()
     }
 
     private val llvmExecutablesPath: String? by lazy {

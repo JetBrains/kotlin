@@ -36,10 +36,8 @@ import javax.inject.Inject
 
 open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
-    private val interopRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
-
     @get:Internal
-    override val toolRunner: KonanToolRunner = interopRunner
+    override val toolRunner: KonanToolRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
@@ -176,8 +174,6 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
     }
 
     override fun run() {
-        interopRunner.init(target)
-
         destinationDir.mkdirs()
         if (dumpParameters) {
             dumpProperties(this)

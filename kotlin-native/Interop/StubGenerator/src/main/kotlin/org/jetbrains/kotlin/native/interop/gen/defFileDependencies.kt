@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
 import java.io.File
 
-fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
+fun defFileDependencies(args: Array<String>) {
     val defFiles = mutableListOf<File>()
     val targets = mutableListOf<String>()
 
@@ -30,14 +30,14 @@ fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
         }
     }
 
-    defFileDependencies(makeDependencyAssigner(targets, defFiles, runFromDaemon))
+    defFileDependencies(makeDependencyAssigner(targets, defFiles))
 }
 
-private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>, runFromDaemon: Boolean) =
-        CompositeDependencyAssigner(targets.map { makeDependencyAssignerForTarget(it, defFiles, runFromDaemon) })
+private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>) =
+        CompositeDependencyAssigner(targets.map { makeDependencyAssignerForTarget(it, defFiles) })
 
-private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>, runFromDaemon: Boolean): SingleTargetDependencyAssigner {
-    val tool = prepareTool(target, KotlinPlatform.NATIVE, runFromDaemon)
+private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>): SingleTargetDependencyAssigner {
+    val tool = prepareTool(target, KotlinPlatform.NATIVE)
     val cinteropArguments = CInteropArguments()
     cinteropArguments.argParser.parse(arrayOf())
     val libraries = defFiles.associateWith {

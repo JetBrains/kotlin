@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRenderer as konancMainFor
 import org.jetbrains.kotlin.backend.konan.env.setEnv
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
-private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (Array<String>) -> Unit) {
+private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
     val utilityName = args[0]
     val utilityArgs = args.drop(1).toTypedArray()
     when (utilityName) {
@@ -37,17 +37,17 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
             konancMain(utilityArgs)
         }
         "cinterop" -> {
-            val konancArgs = invokeInterop("native", utilityArgs, runFromDaemon)
+            val konancArgs = invokeInterop("native", utilityArgs)
             konancArgs?.let { konancMain(it) }
         }
         "jsinterop" -> {
-            val konancArgs = invokeInterop("wasm", utilityArgs, runFromDaemon)
+            val konancArgs = invokeInterop("wasm", utilityArgs)
             konancArgs?.let { konancMain(it) }
         }
         "klib" ->
             klibMain(utilityArgs)
         "defFileDependencies" ->
-            defFileDependencies(utilityArgs, runFromDaemon)
+            defFileDependencies(utilityArgs)
         "generatePlatformLibraries" ->
             generatePlatformLibraries(utilityArgs)
 
@@ -59,7 +59,7 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
     }
 }
 
-fun main(args: Array<String>) = mainImpl(args, false, ::konancMain)
+fun main(args: Array<String>) = mainImpl(args, ::konancMain)
 
 private fun setupClangEnv() {
     setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
@@ -67,5 +67,5 @@ private fun setupClangEnv() {
 
 fun daemonMain(args: Array<String>) = usingNativeMemoryAllocator {
     setupClangEnv() // For in-process invocation have to setup proper environment manually.
-    mainImpl(args, true, ::konancMainForGradle)
+    mainImpl(args, ::konancMainForGradle)
 }
