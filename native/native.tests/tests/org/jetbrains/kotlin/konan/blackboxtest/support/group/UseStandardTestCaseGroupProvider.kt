@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
 
 @Target(AnnotationTarget.CLASS)
-@TestSettings(providerClass = ExtTestCaseGroupProvider::class, requiredSettings = [TestRoots::class, GeneratedSources::class])
-annotation class UseExtTestCaseGroupProvider
+@TestSettings(providerClass = StandardTestCaseGroupProvider::class, requiredSettings = [TestRoots::class, GeneratedSources::class])
+annotation class UseStandardTestCaseGroupProvider

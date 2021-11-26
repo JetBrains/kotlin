@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main() {
@@ -28,7 +29,9 @@ fun main() {
 
         // Samples (how to utilize the abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeBlackBoxTest> {
+            testClass<AbstractNativeBlackBoxTest>(
+                annotations = listOf(annotation(UseStandardTestCaseGroupProvider::class.java))
+            ) {
                 model("samples")
                 model("samples2")
             }

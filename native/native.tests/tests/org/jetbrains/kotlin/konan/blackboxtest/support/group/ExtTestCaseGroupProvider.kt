@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -155,12 +157,12 @@ private class ExtTestDataFile(
             optInsForCompiler = optInsForCompiler,
             expectActualLinker = EXPECT_ACTUAL_LINKER_DIRECTIVE in structure.directives,
             generatedSourcesDir = computeGeneratedSourcesDir(
-                testDataBaseDir = settings.testRoots.baseDir,
+                testDataBaseDir = settings.get<TestRoots>().baseDir,
                 testDataFile = testDataFile,
-                generatedSourcesBaseDir = settings.testSourcesDir
+                generatedSourcesBaseDir = settings.get<GeneratedSources>().testSourcesDir
             ),
             nominalPackageName = computePackageName(
-                testDataBaseDir = settings.testRoots.baseDir,
+                testDataBaseDir = settings.get<TestRoots>().baseDir,
                 testDataFile = testDataFile
             )
         )
@@ -578,7 +580,7 @@ private class ExtTestDataFile(
             testCaseDir = testDataFileSettings.generatedSourcesDir,
             findOrGenerateSharedModule = { moduleName: String, generator: SharedModuleGenerator ->
                 sharedModules.computeIfAbsent(moduleName) {
-                    generator(settings.sharedSourcesDir)
+                    generator(settings.get<GeneratedSources>().sharedSourcesDir)
                 }
             }
         )

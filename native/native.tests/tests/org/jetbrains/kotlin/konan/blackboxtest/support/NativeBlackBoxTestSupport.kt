@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
@@ -48,39 +50,21 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             val enclosingTestClass = enclosingTestClass
 
             return root.getStore(NAMESPACE).getOrComputeIfAbsent(enclosingTestClass.sanitizedName) {
-                val globalSettings = getOrCreateGlobalSettings()
                 val (testSettings, testSettingsAnnotation) = computeTestSettings(enclosingTestClass)
+                val requiredSettings: Set<KClass<*>> =
+                    /* Always required */ setOf(GlobalSettings::class, Binaries::class) +/* Custom */ testSettings.requiredSettings
 
-                val testRoots = computeTestRoots(enclosingTestClass)
+                val globalSettings = getOrCreateGlobalSettings()
 
-                val uniqueEnclosingClassDirName = globalSettings.target.compressedName + "_" + enclosingTestClass.compressedSimpleName
-
-                val testSourcesDir = globalSettings.baseBuildDir
-                    .resolve("bbtest.src")
-                    .resolve(uniqueEnclosingClassDirName)
-                    .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale generated sources.
-
-                val sharedSourcesDir = testSourcesDir
-                    .resolve("__shared_modules__")
-                    .ensureExistsAndIsEmptyDirectory()
-
-                val testBinariesDir = globalSettings.baseBuildDir
-                    .resolve("bbtest.bin")
-                    .resolve(uniqueEnclosingClassDirName)
-                    .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
-
-                val sharedBinariesDir = testBinariesDir
-                    .resolve("__shared_modules__")
-                    .ensureExistsAndIsEmptyDirectory()
-
-                val settings = Settings(
-                    global = globalSettings,
-                    testRoots = testRoots,
-                    testSourcesDir = testSourcesDir,
-                    sharedSourcesDir = sharedSourcesDir,
-                    testBinariesDir = testBinariesDir,
-                    sharedBinariesDir = sharedBinariesDir
-                )
+                val settings = Settings(requiredSettings.map { clazz ->
+                    when (clazz) {
+                        GlobalSettings::class -> globalSettings
+                        TestRoots::class -> computeTestRoots(enclosingTestClass)
+                        GeneratedSources::class -> computeGeneratedSourceDirs(globalSettings, enclosingTestClass)
+                        Binaries::class -> computeBinariesDirs(globalSettings, enclosingTestClass)
+                        else -> fail { "Unknown test setting type: $clazz" }
+                    }
+                })
 
                 val testCaseGroupProvider = createTestCaseGroupProvider(settings, testSettings, testSettingsAnnotation)
 
@@ -88,17 +72,30 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             }.cast()
         }
 
+        private val ExtensionContext.enclosingTestInstance: AbstractNativeBlackBoxTest
+            get() = requiredTestInstances.allInstances.firstOrNull().cast()
+
+        private val ExtensionContext.enclosingTestClass: Class<*>
+            get() = generateSequence(requiredTestClass) { it.enclosingClass }.last()
+
         private fun ExtensionContext.getOrCreateGlobalSettings(): GlobalSettings =
             root.getStore(NAMESPACE).getOrComputeIfAbsent(GlobalSettings::class.java.sanitizedName) {
                 // Create with the default settings.
                 GlobalSettings()
             }.cast()
 
-        private val ExtensionContext.enclosingTestInstance: AbstractNativeBlackBoxTest
-            get() = requiredTestInstances.allInstances.firstOrNull().cast()
+        private fun computeTestSettings(enclosingTestClass: Class<*>): Pair<TestSettings, Annotation?> {
+            val findTestSettings: Class<*>.() -> Pair<TestSettings, Annotation>? = {
+                annotations.asSequence().mapNotNull { annotation ->
+                    val testSettings = annotation.annotationClass.findAnnotation<TestSettings>() ?: return@mapNotNull null
+                    testSettings to annotation
+                }.firstOrNull()
+            }
 
-        private val ExtensionContext.enclosingTestClass: Class<*>
-            get() = generateSequence(requiredTestClass) { it.enclosingClass }.last()
+            return enclosingTestClass.findTestSettings()
+                ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { it.findTestSettings() }
+                ?: fail { "No @${TestSettings::class.simpleName} annotation found on test classes" }
+        }
 
         private fun computeTestRoots(enclosingTestClass: Class<*>): TestRoots {
             val testRoots: Set<File> = when (val outermostTestMetadata = enclosingTestClass.getAnnotation(TestMetadata::class.java)) {
@@ -126,17 +123,30 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             return TestRoots(testRoots, baseDir)
         }
 
-        private fun computeTestSettings(enclosingTestClass: Class<*>): Pair<TestSettings, Annotation?> {
-            val findTestSettings: Class<*>.() -> Pair<TestSettings, Annotation>? = {
-                annotations.asSequence().mapNotNull { annotation ->
-                    val testSettings = annotation.annotationClass.findAnnotation<TestSettings>() ?: return@mapNotNull null
-                    testSettings to annotation
-                }.firstOrNull()
-            }
+        private fun computeGeneratedSourceDirs(globalSettings: GlobalSettings, enclosingTestClass: Class<*>): GeneratedSources {
+            val testSourcesDir = globalSettings.baseBuildDir
+                .resolve("bbtest.src")
+                .resolve("${globalSettings.target.compressedName}_${enclosingTestClass.compressedSimpleName}")
+                .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale generated sources.
 
-            return enclosingTestClass.findTestSettings()
-                ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { it.findTestSettings() }
-                ?: (TestSettings.DEFAULT to null) // Fallback if there is no annotation.
+            val sharedSourcesDir = testSourcesDir
+                .resolve("__shared_modules__")
+                .ensureExistsAndIsEmptyDirectory()
+
+            return GeneratedSources(testSourcesDir, sharedSourcesDir)
+        }
+
+        private fun computeBinariesDirs(globalSettings: GlobalSettings, enclosingTestClass: Class<*>): Binaries {
+            val testBinariesDir = globalSettings.baseBuildDir
+                .resolve("bbtest.bin")
+                .resolve("${globalSettings.target.compressedName}_${enclosingTestClass.compressedSimpleName}")
+                .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
+
+            val sharedBinariesDir = testBinariesDir
+                .resolve("__shared_modules__")
+                .ensureExistsAndIsEmptyDirectory()
+
+            return Binaries(testBinariesDir, sharedBinariesDir)
         }
 
         private fun createTestCaseGroupProvider(

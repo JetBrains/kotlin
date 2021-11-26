@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Com
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
@@ -174,14 +175,16 @@ internal class TestRunProvider(
     }
 
     // Currently, only local test runner is supported.
-    fun createRunner(testRun: TestRun): AbstractRunner<*> = when (val target = settings.global.target) {
-        settings.global.hostTarget -> LocalTestRunner(testRun, settings.global.executionTimeout)
-        else -> fail {
-            """
-                Running at non-host target is not supported yet.
-                Compilation target: $target
-                Host target: ${settings.global.hostTarget}
-            """.trimIndent()
+    fun createRunner(testRun: TestRun): AbstractRunner<*> = with(settings.get<GlobalSettings>()) {
+        when (val target = target) {
+            hostTarget -> LocalTestRunner(testRun, executionTimeout)
+            else -> fail {
+                """
+                    Running at non-host target is not supported yet.
+                    Compilation target: $target
+                    Host target: $hostTarget
+                """.trimIndent()
+            }
         }
     }
 

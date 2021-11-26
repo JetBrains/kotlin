@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_FILE_NAME
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.computeGeneratedSourcesDir
@@ -52,13 +54,13 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
 
     private fun createTestCase(testDataFile: File): TestCase {
         val generatedSourcesDir = computeGeneratedSourcesDir(
-            testDataBaseDir = settings.testRoots.baseDir,
+            testDataBaseDir = settings.get<TestRoots>().baseDir,
             testDataFile = testDataFile,
-            generatedSourcesBaseDir = settings.testSourcesDir
+            generatedSourcesBaseDir = settings.get<GeneratedSources>().testSourcesDir
         )
 
         val nominalPackageName = computePackageName(
-            testDataBaseDir = settings.testRoots.baseDir,
+            testDataBaseDir = settings.get<TestRoots>().baseDir,
             testDataFile = testDataFile
         )
 
