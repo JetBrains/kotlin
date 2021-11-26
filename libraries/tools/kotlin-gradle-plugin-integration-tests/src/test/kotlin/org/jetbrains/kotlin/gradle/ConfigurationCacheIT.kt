@@ -60,7 +60,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @OptIn(ExperimentalStdlibApi::class)
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs")
+            // KT-49933: Support Gradle Configuration caching with HMPP
+            val publishedTargets = listOf(/*"kotlinMultiplatform",*/ "jvm6", "nodeJs")
 
             testConfigurationCacheOf(
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
