@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFE10AnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnTypesTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.callResolver.AbstractKtFe10ResolveCallTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.compileTimeConstantProvider.AbstractKtFe10CompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10ReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10WhenMissingCasesTest
@@ -46,8 +44,8 @@ import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFir
 import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirSubstitutionOverridesUnwrappingTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
+import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirSubstitutionOverridesUnwrappingTest
 import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByReferenceTest
@@ -148,7 +146,9 @@ private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
 private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("callResolver") {
         test(
-            fir = AbstractFirResolveCallTest::class, fe10 = AbstractKtFe10ResolveCallTest::class,
+            fir = AbstractFirResolveCallTest::class,
+            // TODO: re-enable after KtFe10CallResolver is properly implemented
+            fe10 = null // AbstractKtFe10ResolveCallTest::class,
         ) {
             model("resolveCall")
         }
