@@ -76,9 +76,7 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs +=
-        listOf("-opt-in=kotlin.RequiresOptIn",
-               "-Xskip-runtime-version-check",
-               "-opt-in=kotlin.ExperimentalStdlibApi")
+        listOf("-opt-in=kotlin.RequiresOptIn", "-opt-in=kotlin.ExperimentalStdlibApi")
 }
 
 dependencies {
