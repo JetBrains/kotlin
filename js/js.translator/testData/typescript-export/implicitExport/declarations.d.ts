@@ -10,7 +10,8 @@ declare namespace JS_TESTS {
         function consumer(value: any/* foo.NonExportedType */): number;
         class A {
             constructor(value: any/* foo.NonExportedType */);
-            value: any/* foo.NonExportedType */;
+            get value(): any/* foo.NonExportedType */;
+            set value(value: any/* foo.NonExportedType */);
             increment<T>(t: T): any/* foo.NonExportedType */;
         }
         class B /* extends foo.NonExportedType */ {

@@ -10,6 +10,7 @@ import getC = JS_TESTS.foo.getC;
 import B2 = JS_TESTS.foo.B2;
 import C2 = JS_TESTS.foo.C2;
 import EC = JS_TESTS.foo.EC;
+import A2 = JS_TESTS.foo.A2;
 
 class Impl extends AC {
     z(z: number): void {
@@ -19,17 +20,27 @@ class Impl extends AC {
     get y(): boolean { return true; }
 }
 
-// TODO: Uncomment with fix of export open properties
-// class A2Impl extends A2 {
-//     bar: string = "barA2"
-//     readonly baz: string = "bazA2"
-//     readonly foo: string = "fooA2"
-//
-//     bay(): string {
-//         return "bayA2";
-//     }
-//
-// }
+class A2Impl extends A2 {
+    _bar: string = "barA2"
+
+    get bar(): string {
+        return this._bar
+    }
+    set bar(value: string) {
+        this._bar = value
+    }
+    get baz(): string {
+        return "bazA2"
+    }
+    get foo(): string {
+        return "fooA2"
+    }
+
+    bay(): string {
+        return "bayA2";
+    }
+
+}
 
 function box(): string {
     const impl = new Impl();
@@ -75,11 +86,13 @@ function box(): string {
     if (getC().baz != "bazC") return "Fail 25"
     if (getC().bay() != "bayC") return "Fail 26"
 
-    // const a2Impl = new A2Impl()
-    // if (a2Impl.foo != "fooA2") return "Fail 27"
-    // if (a2Impl.bar != "barA2") return "Fail 28"
-    // if (a2Impl.baz != "bazA2") return "Fail 29"
-    // if (a2Impl.bay() != "bayA2") return "Fail 30"
+    const a2Impl = new A2Impl()
+    if (a2Impl.foo != "fooA2") return "Fail 27"
+    if (a2Impl.bar != "barA2") return "Fail 28"
+    a2Impl.bar = "barA2.2"
+    if (a2Impl.bar != "barA2.2") return "Fail 28.2"
+    if (a2Impl.baz != "bazA2") return "Fail 29"
+    if (a2Impl.bay() != "bayA2") return "Fail 30"
 
     const b2 = new B2()
     if (b2.foo != "fooB2") return "Fail 31"

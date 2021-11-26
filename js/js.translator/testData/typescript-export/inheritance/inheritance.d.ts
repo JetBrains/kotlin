@@ -17,16 +17,17 @@ declare namespace JS_TESTS {
     namespace foo {
         abstract class AC implements foo.I2 {
             constructor();
-            x: string;
-            abstract readonly y: boolean;
+            get x(): string;
+            set x(value: string);
+            abstract get y(): boolean;
             abstract z(z: number): void;
-            readonly acProp: string;
-            abstract readonly acAbstractProp: string;
+            get acProp(): string;
+            abstract get acAbstractProp(): string;
         }
         class OC extends foo.AC implements foo.I<string, boolean, number> {
             constructor(y: boolean, acAbstractProp: string);
-            readonly y: boolean;
-            readonly acAbstractProp: string;
+            get y(): boolean;
+            get acAbstractProp(): string;
             z(z: number): void;
         }
         class FC extends foo.OC {
@@ -50,48 +51,53 @@ declare namespace JS_TESTS {
         function getC(): foo.I3;
         abstract class A2 implements foo.I3 {
             constructor();
-            abstract readonly foo: string;
-            abstract bar: string;
-            abstract readonly baz: string;
+            abstract get foo(): string;
+            abstract get bar(): string;
+            abstract set bar(value: string);
+            abstract get baz(): string;
             abstract bay(): string;
             readonly __doNotUseIt: __doNotImplementIt;
         }
         class B2 extends foo.A2 {
             constructor();
-            readonly foo: string;
-            bar: string;
-            readonly baz: string;
+            get foo(): string;
+            get bar(): string;
+            set bar(value: string);
+            get baz(): string;
             bay(): string;
         }
         class C2 extends foo.B2 {
             constructor();
-            readonly foo: string;
-            bar: string;
-            baz: string;
+            get foo(): string;
+            get bar(): string;
+            set bar(value: string);
+            get baz(): string;
+            set baz(value: string);
             bay(): string;
         }
         abstract class EC implements foo.I3 {
             private constructor();
-            static readonly EC1: foo.EC & {
-                readonly name: "EC1";
-                readonly ordinal: 0;
+            static get EC1(): foo.EC & {
+                get name(): "EC1";
+                get ordinal(): 0;
             };
-            static readonly EC2: foo.EC & {
-                readonly name: "EC2";
-                readonly ordinal: 1;
+            static get EC2(): foo.EC & {
+                get name(): "EC2";
+                get ordinal(): 1;
             };
-            static readonly EC3: foo.EC & {
-                readonly name: "EC3";
-                readonly ordinal: 2;
+            static get EC3(): foo.EC & {
+                get name(): "EC3";
+                get ordinal(): 2;
             };
-            readonly foo: string;
-            bar: string;
+            get foo(): string;
+            get bar(): string;
+            set bar(value: string);
             bay(): string;
             static values(): Array<foo.EC>;
             static valueOf(value: string): foo.EC;
-            readonly name: "EC1" | "EC2" | "EC3";
-            readonly ordinal: 0 | 1 | 2;
-            abstract readonly baz: string;
+            get name(): "EC1" | "EC2" | "EC3";
+            get ordinal(): 0 | 1 | 2;
+            abstract get baz(): string;
             readonly __doNotUseIt: __doNotImplementIt;
         }
     }

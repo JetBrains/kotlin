@@ -144,6 +144,7 @@ class ExportModelGenerator(
             isStatic = false,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
+            isField = parentClass?.isInterface == true,
             irGetter = property.getter,
             irSetter = property.setter
         )
@@ -169,6 +170,7 @@ class ExportModelGenerator(
                 isProtected = false,
                 irGetter = null,
                 irSetter = null,
+                isField = false,
             )
 
         val nameProperty = fakeProperty(
@@ -195,7 +197,8 @@ class ExportModelGenerator(
             isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
             irGetter = context.mapping.enumEntryToGetInstanceFun[irEnumEntry]
                 ?: error("Unable to find get instance fun for ${field.fqNameWhenAvailable}"),
-            irSetter = null
+            irSetter = null,
+            isField = false,
         )
     }
 
@@ -385,6 +388,7 @@ class ExportModelGenerator(
                 irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,
                 irSetter = null,
                 exportedObject = exportedClass,
+                isField = false,
             )
         }
 

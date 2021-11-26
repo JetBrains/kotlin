@@ -56,6 +56,7 @@ class ExportedProperty(
     val isStatic: Boolean = false,
     val isAbstract: Boolean,
     val isProtected: Boolean,
+    val isField: Boolean,
     val irGetter: IrFunction?,
     val irSetter: IrFunction?,
     val exportedObject: ExportedClass? = null,

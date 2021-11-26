@@ -4,26 +4,26 @@ declare namespace JS_TESTS {
     type __doNotImplementIt = typeof __doNotImplementIt
     class ClassWithDefaultCtor {
         constructor();
-        readonly x: string;
+        get x(): string;
     }
     class ClassWithPrimaryCtor {
         constructor(x: string);
-        readonly x: string;
+        get x(): string;
     }
     class ClassWithSecondaryCtor {
         private constructor();
-        readonly x: string;
+        get x(): string;
         static create(y: string): ClassWithSecondaryCtor;
     }
     class ClassWithMultipleSecondaryCtors {
         private constructor();
-        readonly x: string;
+        get x(): string;
         static createFromString(y: string): ClassWithMultipleSecondaryCtors;
         static createFromInts(y: number, z: number): ClassWithMultipleSecondaryCtors;
     }
     class OpenClassWithMixedConstructors {
         constructor(x: string);
-        readonly x: string;
+        get x(): string;
         static createFromStrings(y: string, z: string): OpenClassWithMixedConstructors;
         static createFromInts(y: number, z: number): OpenClassWithMixedConstructors;
     }
@@ -34,6 +34,6 @@ declare namespace JS_TESTS {
     }
     class KotlinGreeter {
         constructor(greeting: string);
-        readonly greeting: string;
+        get greeting(): string;
     }
 }

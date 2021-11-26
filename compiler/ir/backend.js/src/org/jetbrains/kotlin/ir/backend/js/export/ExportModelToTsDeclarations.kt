@@ -24,7 +24,7 @@ fun wrapTypeScript(name: String, moduleKind: ModuleKind, dts: String): String {
         else -> "declare "
     }
     val types = """
-       type Nullable<T> = T | null | undefined  
+       type Nullable<T> = T | null | undefined
        ${declareKeyword}const __doNotImplementIt: unique symbol
        type __doNotImplementIt = typeof __doNotImplementIt
     """.trimIndent().prependIndent(moduleKind.indent) + "\n"
@@ -105,7 +105,7 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
     is ExportedProperty -> {
         val visibility = if (isProtected) "protected " else ""
         val keyword = when {
-            isMember -> (if (isAbstract) "abstract " else "") + (if (!mutable) "readonly " else "")
+            isMember -> (if (isAbstract) "abstract " else "")
             else -> if (mutable) "let " else "const "
         }
         val possibleStatic = if (isMember && isStatic) "static " else ""
@@ -114,7 +114,18 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
             isMember && containsUnresolvedChar -> "\"$name\""
             else -> name
         }
-        if (!isMember && containsUnresolvedChar) "" else "$prefix$visibility$possibleStatic$keyword$memberName: ${type.toTypeScript(indent)};"
+        val typeToTypeScript = type.toTypeScript(indent)
+        if (isMember && !isField) {
+            val getter = "$prefix$visibility$possibleStatic${keyword}get $memberName(): $typeToTypeScript;"
+            if (!mutable) getter
+            else getter + "\n" + "$indent$prefix$visibility$possibleStatic${keyword}set $memberName(value: $typeToTypeScript);"
+        } else {
+            if (!isMember && containsUnresolvedChar) ""
+            else {
+                val readonly = if (isMember && !mutable) "readonly " else ""
+                "$prefix$visibility$possibleStatic$keyword$readonly$memberName: $typeToTypeScript;"
+            }
+        }
     }
 
     is ExportedClass -> {
@@ -202,8 +213,9 @@ fun List<ExportedDeclaration>.withMagicProperty(): List<ExportedDeclaration> {
             isStatic = false,
             isAbstract = false,
             isProtected = false,
+            isField = true,
             irGetter = null,
-            irSetter = null
+            irSetter = null,
         )
     )
 }
@@ -250,6 +262,7 @@ fun ExportedClass.toReadonlyProperty(): ExportedProperty {
         isStatic = false,
         isAbstract = false,
         isProtected = false,
+        isField = false,
         irGetter = null,
         irSetter = null
     )

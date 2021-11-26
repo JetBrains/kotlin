@@ -15,7 +15,7 @@ declare namespace JS_TESTS {
         function exportedFun(): number;
         class ExportedClass {
             constructor();
-            readonly value: number;
+            get value(): number;
         }
     }
     namespace foo {
@@ -23,7 +23,7 @@ declare namespace JS_TESTS {
         function fileLevelExportedFun(): number;
         class FileLevelExportedClass {
             constructor();
-            readonly value: number;
+            get value(): number;
         }
     }
 }

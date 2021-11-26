@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -24,6 +26,7 @@ var getC = JS_TESTS.foo.getC;
 var B2 = JS_TESTS.foo.B2;
 var C2 = JS_TESTS.foo.C2;
 var EC = JS_TESTS.foo.EC;
+var A2 = JS_TESTS.foo.A2;
 var Impl = /** @class */ (function (_super) {
     __extends(Impl, _super);
     function Impl() {
@@ -43,16 +46,42 @@ var Impl = /** @class */ (function (_super) {
     });
     return Impl;
 }(AC));
-// class A2Impl extends A2 {
-//     bar: string = "barA2"
-//     readonly baz: string = "bazA2"
-//     readonly foo: string = "fooA2"
-//
-//     bay(): string {
-//         return "bayA2";
-//     }
-//
-// }
+var A2Impl = /** @class */ (function (_super) {
+    __extends(A2Impl, _super);
+    function A2Impl() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._bar = "barA2";
+        return _this;
+    }
+    Object.defineProperty(A2Impl.prototype, "bar", {
+        get: function () {
+            return this._bar;
+        },
+        set: function (value) {
+            this._bar = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(A2Impl.prototype, "baz", {
+        get: function () {
+            return "bazA2";
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(A2Impl.prototype, "foo", {
+        get: function () {
+            return "fooA2";
+        },
+        enumerable: false,
+        configurable: true
+    });
+    A2Impl.prototype.bay = function () {
+        return "bayA2";
+    };
+    return A2Impl;
+}(A2));
 function box() {
     var impl = new Impl();
     if (impl.acProp !== "acProp")
@@ -115,11 +144,18 @@ function box() {
         return "Fail 25";
     if (getC().bay() != "bayC")
         return "Fail 26";
-    // const a2Impl = new A2Impl()
-    // if (a2Impl.foo != "fooA2") return "Fail 27"
-    // if (a2Impl.bar != "barA2") return "Fail 28"
-    // if (a2Impl.baz != "bazA2") return "Fail 29"
-    // if (a2Impl.bay() != "bayA2") return "Fail 30"
+    var a2Impl = new A2Impl();
+    if (a2Impl.foo != "fooA2")
+        return "Fail 27";
+    if (a2Impl.bar != "barA2")
+        return "Fail 28";
+    a2Impl.bar = "barA2.2";
+    if (a2Impl.bar != "barA2.2")
+        return "Fail 28.2";
+    if (a2Impl.baz != "bazA2")
+        return "Fail 29";
+    if (a2Impl.bay() != "bayA2")
+        return "Fail 30";
     var b2 = new B2();
     if (b2.foo != "fooB2")
         return "Fail 31";

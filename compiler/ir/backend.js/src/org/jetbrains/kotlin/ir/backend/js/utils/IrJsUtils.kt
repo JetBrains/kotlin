@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
+fun IrDeclaration.isExportedMember() =
+    parentClassOrNull.let { it is IrClass && it.isJsExport() }
+
 fun IrDeclaration?.isExportedClass() =
     this is IrClass && kind.isClass && isJsExport()
 

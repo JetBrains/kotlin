@@ -11,14 +11,14 @@ declare namespace JS_TESTS {
     }
     class Class {
         constructor();
-        protected readonly protectedVal: number;
+        protected get protectedVal(): number;
         protected protectedFun(): number;
-        protected static readonly protectedNestedObject: {
+        protected static get protectedNestedObject(): {
         };
-        protected static readonly Companion: {
-            readonly companionObjectProp: number;
+        protected static get Companion(): {
+            get companionObjectProp(): number;
         };
-        readonly publicVal: number;
+        get publicVal(): number;
         publicFun(): number;
     }
     namespace Class {
@@ -35,17 +35,17 @@ declare namespace JS_TESTS {
     }
     abstract class EnumClass {
         private constructor();
-        static readonly EC1: EnumClass & {
-            readonly name: "EC1";
-            readonly ordinal: 0;
+        static get EC1(): EnumClass & {
+            get name(): "EC1";
+            get ordinal(): 0;
         };
-        static readonly EC2: EnumClass & {
-            readonly name: "EC2";
-            readonly ordinal: 1;
+        static get EC2(): EnumClass & {
+            get name(): "EC2";
+            get ordinal(): 1;
         };
         static values(): Array<EnumClass>;
         static valueOf(value: string): EnumClass;
-        readonly name: "EC1" | "EC2";
-        readonly ordinal: 0 | 1;
+        get name(): "EC1" | "EC2";
+        get ordinal(): 0 | 1;
     }
 }

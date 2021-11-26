@@ -26,40 +26,43 @@ declare namespace JS_TESTS {
         }
         class A1 {
             constructor(x: number);
-            readonly x: number;
+            get x(): number;
         }
         class A2 {
             constructor(x: string, y: boolean);
-            readonly x: string;
-            y: boolean;
+            get x(): string;
+            get y(): boolean;
+            set y(value: boolean);
         }
         class A3 {
             constructor();
-            readonly x: number;
+            get x(): number;
         }
         class A4 {
             constructor();
-            readonly _valCustom: number;
-            readonly _valCustomWithField: number;
-            _varCustom: number;
-            _varCustomWithField: number;
+            get _valCustom(): number;
+            get _valCustomWithField(): number;
+            get _varCustom(): number;
+            set _varCustom(value: number);
+            get _varCustomWithField(): number;
+            set _varCustomWithField(value: number);
         }
         const O0: {
         };
         const O: {
-            readonly x: number;
+            get x(): number;
             foo(): number;
         };
         function takesO(o: typeof foo.O): number;
         class KT_37829 {
             constructor();
-            static readonly Companion: {
-                readonly x: number;
+            static get Companion(): {
+                get x(): number;
             };
         }
         class TestSealed {
             protected constructor(name: string);
-            readonly name: string;
+            get name(): string;
         }
         namespace TestSealed {
             class AA extends foo.TestSealed {
@@ -73,7 +76,7 @@ declare namespace JS_TESTS {
         }
         abstract class TestAbstract {
             constructor(name: string);
-            readonly name: string;
+            get name(): string;
         }
         namespace TestAbstract {
             class AA extends foo.TestAbstract {
@@ -87,7 +90,7 @@ declare namespace JS_TESTS {
         }
         class TestDataClass {
             constructor(name: string);
-            readonly name: string;
+            get name(): string;
             component1(): string;
             copy(name: string): foo.TestDataClass;
             toString(): string;
@@ -97,32 +100,32 @@ declare namespace JS_TESTS {
         namespace TestDataClass {
             class Nested {
                 constructor();
-                readonly prop: string;
+                get prop(): string;
             }
         }
         abstract class TestEnumClass {
             private constructor();
-            readonly constructorParameter: string;
-            static readonly A: foo.TestEnumClass & {
-                readonly name: "A";
-                readonly ordinal: 0;
+            get constructorParameter(): string;
+            static get A(): foo.TestEnumClass & {
+                get name(): "A";
+                get ordinal(): 0;
             };
-            static readonly B: foo.TestEnumClass & {
-                readonly name: "B";
-                readonly ordinal: 1;
+            static get B(): foo.TestEnumClass & {
+                get name(): "B";
+                get ordinal(): 1;
             };
-            readonly foo: number;
+            get foo(): number;
             bar(value: string): string;
             bay(): string;
             static values(): Array<foo.TestEnumClass>;
             static valueOf(value: string): foo.TestEnumClass;
-            readonly name: "A" | "B";
-            readonly ordinal: 0 | 1;
+            get name(): "A" | "B";
+            get ordinal(): 0 | 1;
         }
         namespace TestEnumClass {
             class Nested {
                 constructor();
-                readonly prop: string;
+                get prop(): string;
             }
         }
         interface TestInterface {
@@ -132,7 +135,7 @@ declare namespace JS_TESTS {
         }
         class TestInterfaceImpl implements foo.TestInterface {
             constructor(value: string);
-            readonly value: string;
+            get value(): string;
             getOwnerName(): string;
             readonly __doNotUseIt: __doNotImplementIt;
         }

@@ -3,19 +3,21 @@ declare namespace JS_TESTS {
     const __doNotImplementIt: unique symbol
     type __doNotImplementIt = typeof __doNotImplementIt
     namespace foo {
-
-
-
+        
+        
+        
         function invalid_args_name_sum(first_value: number, second_value: number): number;
-
+        
         class A1 {
             constructor(first_value: number, second_value: number);
-            readonly "first value": number;
-            "second.value": number;
+            get "first value"(): number;
+            get "second.value"(): number;
+            set "second.value"(value: number);
         }
         class A2 {
             constructor();
-            "invalid:name": number;
+            get "invalid:name"(): number;
+            set "invalid:name"(value: number);
         }
         class A3 {
             constructor();
@@ -24,8 +26,9 @@ declare namespace JS_TESTS {
         }
         class A4 {
             constructor();
-            static readonly Companion: {
-                "@invalid+name@": number;
+            static get Companion(): {
+                get "@invalid+name@"(): number;
+                set "@invalid+name@"(value: number);
                 "^)run.something.weird^("(): string;
             };
         }
