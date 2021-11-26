@@ -28,7 +28,7 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
         fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
             argument.nameId = stringTable.getStringIndex(parameterName.asString())
-            argument.setValue(valueProto(argumentExpression.toConstantValue() ?: return))
+            argument.setValue(valueProto(argumentExpression.toConstantValue(session) ?: return))
             addArgument(argument)
         }
 
