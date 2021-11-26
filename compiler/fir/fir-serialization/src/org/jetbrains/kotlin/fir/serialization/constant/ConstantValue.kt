@@ -157,6 +157,7 @@ internal class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(valu
             var type = argumentType
             var arrayDimensions = 0
             while (true) {
+                if (type.isPrimitiveArray) break
                 type = type.arrayElementType() ?: break
                 arrayDimensions++
             }

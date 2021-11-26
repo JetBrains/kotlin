@@ -5,10 +5,23 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.FirAnnotationCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -16,12 +29,12 @@ import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-internal fun FirExpression.toConstantValue(): ConstantValue<*>? = accept(FirToConstantValueTransformer, null)
+internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? = accept(FirToConstantValueTransformer, session)
 
-internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, Nothing?>() {
+internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
     override fun visitElement(
         element: FirElement,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*>? {
         error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
     }
@@ -29,7 +42,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
     @OptIn(ExperimentalUnsignedTypes::class)
     override fun <T> visitConstExpression(
         constExpression: FirConstExpression<T>,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*>? {
         val value = constExpression.value
         return when (constExpression.kind) {
@@ -53,59 +66,110 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
 
     override fun visitArrayOfCall(
         arrayOfCall: FirArrayOfCall,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*> {
-        return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, null) })
+        return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, data) })
     }
 
     override fun visitAnnotation(
         annotation: FirAnnotation,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*> {
         return AnnotationValue(annotation)
     }
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): ConstantValue<*> {
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): ConstantValue<*> {
         return visitAnnotation(annotationCall, data)
     }
 
     override fun visitGetClassCall(
         getClassCall: FirGetClassCall,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*>? {
-        return KClassValue.create(getClassCall.typeRef.coneTypeUnsafe())
+        return KClassValue.create(getClassCall.argument.typeRef.coneTypeUnsafe())
     }
 
     override fun visitQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*>? {
         val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return null
-        val enumEntry = symbol.fir as? FirEnumEntry ?: return null
-        val classId = enumEntry.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId ?: return null
-        val outerClassId = classId.outerClassId ?: return null
-        return EnumValue(outerClassId, enumEntry.name)
+
+        return when {
+            symbol.fir is FirEnumEntry -> {
+                val classId = symbol.fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId ?: return null
+                EnumValue(classId, (symbol.fir as FirEnumEntry).name)
+            }
+
+            symbol is FirConstructorSymbol -> {
+                val constructorCall = qualifiedAccessExpression as FirFunctionCall
+                val constructedClassSymbol = symbol.containingClass()?.toFirRegularClassSymbol(data) ?: return null
+                return if (constructedClassSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
+                    AnnotationValue(
+                        buildAnnotationCall {
+                            argumentMapping = buildAnnotationArgumentMapping {
+                                constructorCall.argumentMapping?.forEach { (firExpression, firValueParameter) ->
+                                    mapping[firValueParameter.name] = firExpression
+                                }
+                            }
+                            annotationTypeRef = qualifiedAccessExpression.typeRef
+                            calleeReference = buildSimpleNamedReference {
+                                source = qualifiedAccessExpression.source
+                                name = qualifiedAccessExpression.calleeReference.name
+                            }
+                        }
+                    )
+                } else {
+                    null
+                }
+            }
+
+            symbol.callableId.packageName.asString() == "kotlin" -> {
+                val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
+                when (symbol.callableId.callableName.asString()) {
+                    "toByte" -> ByteValue((dispatchReceiver.accept(this, data)!!.value as Number).toByte())
+                    "toLong" -> LongValue((dispatchReceiver.accept(this, data)!!.value as Number).toLong())
+                    "toShort" -> ShortValue((dispatchReceiver.accept(this, data)!!.value as Number).toShort())
+                    "toFloat" -> FloatValue((dispatchReceiver.accept(this, data)!!.value as Number).toFloat())
+                    "toDouble" -> DoubleValue((dispatchReceiver.accept(this, data)!!.value as Number).toDouble())
+                    "toChar" -> CharValue((dispatchReceiver.accept(this, data)!!.value as Number).toChar())
+                    "unaryMinus" -> {
+                        when (val receiverValue = dispatchReceiver.accept(this, data)) {
+                            is ByteValue -> ByteValue((-receiverValue.value).toByte())
+                            is LongValue -> LongValue(-receiverValue.value)
+                            is ShortValue -> ShortValue((-receiverValue.value).toShort())
+                            is FloatValue -> FloatValue(-receiverValue.value)
+                            is DoubleValue -> DoubleValue(-receiverValue.value)
+                            else -> null
+                        }
+                    }
+                    else -> null
+                }
+            }
+
+            else -> null
+        }
     }
 
-    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?): ConstantValue<*>? {
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: FirSession): ConstantValue<*>? {
         return visitQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
     override fun visitFunctionCall(
         functionCall: FirFunctionCall,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*>? {
         return visitQualifiedAccessExpression(functionCall, data)
     }
 
     override fun visitVarargArgumentsExpression(
         varargArgumentsExpression: FirVarargArgumentsExpression,
-        data: Nothing?
+        data: FirSession
     ): ConstantValue<*> {
-        return ArrayValue(varargArgumentsExpression.arguments.mapNotNull { it.accept(this, null) })
+        return ArrayValue(varargArgumentsExpression.arguments.mapNotNull { it.accept(this, data) })
     }
 
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?): ConstantValue<*>? {
-        return namedArgumentExpression.expression.accept(this, null)
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: FirSession): ConstantValue<*>? {
+        return namedArgumentExpression.expression.accept(this, data)
     }
 }
