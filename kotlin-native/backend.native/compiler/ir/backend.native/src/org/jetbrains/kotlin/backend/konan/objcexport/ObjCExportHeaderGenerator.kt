@@ -414,6 +414,11 @@ internal class ObjCExportTranslatorImpl(
         val name = translateClassOrInterfaceName(descriptor)
         val generics = mapTypeConstructorParameters(descriptor)
         val superClassGenerics = superClassGenerics(genericExportScope)
+        val valueClassUnderlyingTypeMapped =
+                if (descriptor.isValue) {
+                    val kotlinType = descriptor.defaultType // .classValueType!!
+                    mapValueClass(descriptor.name.asString(), kotlinType, mapper.bridgeType(kotlinType), genericExportScope)
+                } else null
 
         return objCInterface(
                 name,
@@ -423,7 +428,8 @@ internal class ObjCExportTranslatorImpl(
                 superClassGenerics = superClassGenerics,
                 superProtocols = superProtocols,
                 members = members,
-                attributes = attributes
+                attributes = attributes,
+                valueClassType = valueClassUnderlyingTypeMapped
         )
     }
 
@@ -967,6 +973,16 @@ internal class ObjCExportTranslatorImpl(
                 .withNullabilityOf(kotlinType)
     }
 
+    private fun mapValueClass(
+            name: String,
+            kotlinType: KotlinType,
+            typeBridge: TypeBridge,
+            objCExportScope: ObjCExportScope
+    ): ObjCTypedef {
+        val unwrappedType = mapType(kotlinType, typeBridge, objCExportScope)
+        return ObjCTypedef(name, unwrappedType)
+    }
+
     private fun mapType(kotlinType: KotlinType, typeBridge: TypeBridge, objCExportScope: ObjCExportScope): ObjCType = when (typeBridge) {
         ReferenceBridge -> mapReferenceType(kotlinType, objCExportScope)
         is BlockPointerBridge -> mapFunctionType(kotlinType, objCExportScope, typeBridge)
@@ -1260,8 +1276,9 @@ private fun objCInterface(
         superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
         superProtocols: List<String> = emptyList(),
         members: List<Stub<*>> = emptyList(),
-        attributes: List<String> = emptyList()
-): ObjCInterface = ObjCInterfaceImpl(
+        attributes: List<String> = emptyList(),
+        valueClassType: ObjCType? = null
+): ObjCInterface  = ObjCInterfaceImpl(
         name.objCName,
         generics,
         descriptor,
@@ -1270,7 +1287,8 @@ private fun objCInterface(
         superProtocols,
         null,
         members,
-        attributes + name.toNameAttributes()
+        attributes + name.toNameAttributes(),
+        valueClassType
 )
 
 private fun objCProtocol(

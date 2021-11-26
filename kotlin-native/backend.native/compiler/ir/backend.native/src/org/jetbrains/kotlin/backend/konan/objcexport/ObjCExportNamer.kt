@@ -408,6 +408,7 @@ internal class ObjCExportNamerImpl(
             } else {
                 error("unexpected class parent: $containingDeclaration")
             }
+            if (descriptor.isValue) append("Ref")
         }.mangledBySuffixUnderscores()
     }
 
@@ -440,6 +441,7 @@ internal class ObjCExportNamerImpl(
                 } else {
                     error("unexpected class parent: $containingDeclaration")
                 }
+                if (descriptor.isValue) append("Ref")
             }.mangledBySuffixUnderscores()
         }
     }

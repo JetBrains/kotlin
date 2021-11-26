@@ -629,8 +629,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     override fun visitConstructor(declaration: IrConstructor) {
         context.log{"visitConstructor               : ${ir2string(declaration)}"}
         if (declaration.constructedClass.isInlined()) {
-            // Do not generate any ctors for value types.
-            return
+//            // Do not generate any ctors for value types.
+//            return // FIXME need this entry point for the common bridge, however init is empty
         }
 
         if (declaration.isObjCConstructor) {

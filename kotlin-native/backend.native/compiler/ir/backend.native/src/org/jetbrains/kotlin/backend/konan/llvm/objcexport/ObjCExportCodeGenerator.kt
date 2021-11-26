@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.symbolName
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -795,6 +797,10 @@ private fun ObjCExportCodeGenerator.generateAbstractObjCImp(methodBridge: Method
             unreachable()
         }
 
+private val IrFunction.isSpecial get() =
+    origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+            || origin is DECLARATION_ORIGIN_BRIDGE_METHOD
+
 private fun ObjCExportCodeGenerator.generateObjCImp(
         target: IrFunction?,
         baseMethod: IrFunction,
@@ -814,7 +820,17 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             lookupVirtualImpl(args.first(), target)
         }
 
-        call(llvmTarget, args, resultLifetime, exceptionHandler)
+        if (target.parentClassOrNull?.isInline == true
+                && !target.isSpecial
+        ) {
+            val boxClass = target.parentAsClass
+            val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
+            val obj = LLVMConstBitCast(param(0), codegen.kObjHeaderPtr)!!
+            val result = call(unboxFunction, listOf(obj), Lifetime.ARGUMENT, ExceptionHandler.Caller)
+            val fixedArgs = listOf(result) + args.drop(1)
+            call(llvmTarget, fixedArgs, resultLifetime, exceptionHandler)
+        } else
+            call(llvmTarget, args, resultLifetime, exceptionHandler)
     }
 }
 

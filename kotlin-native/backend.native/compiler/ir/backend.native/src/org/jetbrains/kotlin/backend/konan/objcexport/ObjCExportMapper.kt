@@ -143,7 +143,7 @@ internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Bool
         descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
         ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
         ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-    } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor)
+   } && !descriptor.isExpect && (!descriptor.isInlined() || descriptor.isValue) && !isHiddenByDeprecation(descriptor)
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
@@ -195,7 +195,7 @@ internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = m
     it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanFqNames.throws)
 }
 
-private fun ObjCExportMapper.bridgeType(
+internal fun ObjCExportMapper.bridgeType(
         kotlinType: KotlinType
 ): TypeBridge = kotlinType.unwrapToPrimitiveOrReference<TypeBridge>(
         eachInlinedClass = { inlinedClass, _ ->

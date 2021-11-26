@@ -53,6 +53,9 @@ object StubRenderer {
                     +"@end;"
                 }
                 is ObjCInterface -> {
+                    if (descriptor?.isValue == true) {
+                        +renderValueClass()
+                    }
                     attributes.forEach {
                         +renderAttribute(it)
                     }
@@ -163,6 +166,13 @@ object StubRenderer {
         val protocols = clazz.superProtocols
         if (protocols.isNotEmpty()) {
             protocols.joinTo(this, separator = ", ", prefix = " <", postfix = ">")
+        }
+    }
+
+    private fun ObjCInterface.renderValueClass() = buildString {
+        valueClassType?.let {
+            val unwrapped = (it as ObjCTypedef).unwrappedType.render()
+            append("typedef $unwrapped ${it.render()} __attribute__((__swift_newtype__(struct)));")
         }
     }
 

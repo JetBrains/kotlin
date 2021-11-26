@@ -137,6 +137,13 @@ sealed class ObjCPrimitiveType(
     override fun render(attrsAndName: String) = cName.withAttrsAndName(attrsAndName)
 }
 
+data class ObjCTypedef(
+        val name: String,
+        val unwrappedType: ObjCType
+) : ObjCType() {
+    override fun render(attrsAndName: String) = name
+}
+
 data class ObjCPointerType(
         val pointee: ObjCType,
         val nullable: Boolean = false
@@ -209,7 +216,7 @@ internal fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this)
 
     is ObjCNonNullReferenceType -> ObjCNullableReferenceType(this)
 
-    is ObjCNullableReferenceType, is ObjCRawType, is ObjCPrimitiveType, ObjCVoidType -> this
+    is ObjCNullableReferenceType, is ObjCRawType, is ObjCPrimitiveType, ObjCVoidType, is ObjCTypedef -> this
 }
 
 const val objcNullableAttribute = "_Nullable"
