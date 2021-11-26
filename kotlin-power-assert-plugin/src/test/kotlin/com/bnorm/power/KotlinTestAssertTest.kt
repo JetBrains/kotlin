@@ -19,7 +19,7 @@ package com.bnorm.power
 import kotlin.test.Test
 import org.jetbrains.kotlin.name.FqName
 
-class AssertLibraryTest {
+class KotlinTestAssertTest {
   @Test
   fun `test assertTrue transformation`() {
     assertMessage(

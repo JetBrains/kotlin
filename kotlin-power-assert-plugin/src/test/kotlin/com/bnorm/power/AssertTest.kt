@@ -19,7 +19,7 @@ package com.bnorm.power
 import kotlin.test.Test
 import org.jetbrains.kotlin.name.FqName
 
-class CompilerTest {
+class AssertTest {
   @Test
   fun memberFunctions() {
     assertMessage(

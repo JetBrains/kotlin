@@ -18,6 +18,7 @@ package com.bnorm.power
 
 import com.bnorm.power.delegate.FunctionDelegate
 import com.bnorm.power.delegate.LambdaFunctionDelegate
+import com.bnorm.power.delegate.SamConversionLambdaFunctionDelegate
 import com.bnorm.power.delegate.SimpleFunctionDelegate
 import com.bnorm.power.diagram.IrTemporaryVariable
 import com.bnorm.power.diagram.Node
@@ -26,18 +27,15 @@ import com.bnorm.power.diagram.buildTree
 import com.bnorm.power.diagram.info
 import com.bnorm.power.diagram.irDiagramString
 import com.bnorm.power.diagram.substring
-import com.bnorm.power.internal.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.asInlinable
-import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.asString
-import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -46,20 +44,25 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
 
 class PowerAssertCallTransformer(
@@ -122,10 +125,6 @@ class PowerAssertCallTransformer(
     val symbol = currentScope!!.scope.scopeOwnerSymbol
     val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
     return builder.diagram(expression, delegate, messageArgument, roots)
-//        .also { println(expression.dump()) }
-//        .also { println(it.dump()) }
-//        .also { println(expression.dumpKotlinLike()) }
-//        .also { println(it.dumpKotlinLike()) }
   }
 
   private fun DeclarationIrBuilder.diagram(
@@ -163,12 +162,14 @@ class PowerAssertCallTransformer(
     return when {
       messageArgument is IrConst<*> -> messageArgument
       messageArgument is IrStringConcatenation -> messageArgument
-      messageArgument != null -> irBlock {
-        +messageArgument.deepCopyWithSymbols(parent)
-          .asInlinable(this)
-          .inline(parent)
-          .patchDeclarationParents(scope.getLocalDeclarationParent())
-      }.transform(ReturnableBlockTransformer(context, scope.scopeOwnerSymbol), null)
+      messageArgument is IrFunctionExpression -> {
+        val invoke = messageArgument.type.classOrNull!!.functions
+          .filter { it.owner.name.toString() == "invoke" }
+          .single()
+        irCall(invoke).apply { dispatchReceiver = messageArgument }
+      }
+      // SAMs conversion can be unwrapped to IrFunctionExpression
+      messageArgument is IrTypeOperatorCall -> buildMessagePrefix(messageArgument.argument, roots, original)
       // TODO what should the default message be?
       roots.size == 1 && original.getValueArgument(0)!!.type.isBoolean() -> irString("Assertion failed")
       else -> null
@@ -179,7 +180,16 @@ class PowerAssertCallTransformer(
     val values = function.valueParameters
     if (values.isEmpty()) return emptyList()
 
-    return context.referenceFunctions(function.kotlinFqName)
+    // Java static functions require searching by class
+    val parentClassFunctions = (function.parentClassOrNull
+      ?.let { context.referenceClass(it.kotlinFqName) }
+      ?.functions ?: emptySequence())
+      .filter { it.owner.kotlinFqName == function.kotlinFqName }
+      .toList()
+    val possible = (context.referenceFunctions(function.kotlinFqName) + parentClassFunctions)
+      .distinct()
+
+    return possible
       .mapNotNull { overload ->
         val parameters = overload.owner.valueParameters
         if (parameters.size !in values.size..values.size + 1) return@mapNotNull null
@@ -191,6 +201,8 @@ class PowerAssertCallTransformer(
         return@mapNotNull when {
           isStringSupertype(messageParameter.type) -> SimpleFunctionDelegate(overload)
           isStringFunction(messageParameter.type) -> LambdaFunctionDelegate(overload, messageParameter)
+          isStringJavaSupplierFunction(messageParameter.type) ->
+            SamConversionLambdaFunctionDelegate(overload, messageParameter)
           else -> null
         }
       }
@@ -198,6 +210,12 @@ class PowerAssertCallTransformer(
 
   private fun isStringFunction(type: IrType): Boolean =
     type.isFunctionOrKFunction() && type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
+
+  private fun isStringJavaSupplierFunction(type: IrType): Boolean {
+    val javaSupplier = context.referenceClass(FqName("java.util.function.Supplier"))
+    return javaSupplier != null && type.isSubtypeOfClass(javaSupplier)
+      && type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
+  }
 
   private fun isStringSupertype(argument: IrTypeArgument): Boolean =
     argument is IrTypeProjection && isStringSupertype(argument.type)
