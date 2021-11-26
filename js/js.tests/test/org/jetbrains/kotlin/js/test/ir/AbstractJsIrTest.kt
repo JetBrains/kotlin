@@ -55,7 +55,7 @@ abstract class AbstractJsIrTest(
                 if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
                 if (runIc || getBoolean("kotlin.js.ir.lowerPerModule")) +JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE
                 if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
-                if (getBoolean("kotlin.js.ir.perModule")) +JsEnvironmentConfigurationDirectives.PER_MODULE
+                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
                 if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
                 if (getBoolean("kotlin.js.ir.newIr2Js", true)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
