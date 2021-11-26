@@ -139,6 +139,8 @@ class ExpressionCodegen(
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
+    override fun toString(): String = signature.toString()
+
     var finallyDepth = 0
 
     val context = classCodegen.context

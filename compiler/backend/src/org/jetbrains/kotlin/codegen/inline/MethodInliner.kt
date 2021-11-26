@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationM
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.*
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
+import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -739,6 +740,7 @@ class MethodInliner(
         try {
             InplaceArgumentsMethodTransformer().transform("fake", node)
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
+            TemporaryVariablesEliminationTransformer(inliningContext.state).transform("fake", node)
         } catch (e: Throwable) {
             throw wrapException(e, node, "couldn't inline method call")
         }
