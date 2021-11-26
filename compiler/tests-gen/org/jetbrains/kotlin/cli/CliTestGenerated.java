@@ -686,6 +686,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/newInferenceWithOldFlagImpliesSamConversions.args");
         }
 
+        @TestMetadata("newLineInPackage.args")
+        public void testNewLineInPackage() throws Exception {
+            runTest("compiler/testData/cli/jvm/newLineInPackage.args");
+        }
+
         @TestMetadata("noReflect.args")
         public void testNoReflect() throws Exception {
             runTest("compiler/testData/cli/jvm/noReflect.args");
