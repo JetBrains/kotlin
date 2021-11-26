@@ -40,10 +40,17 @@ abstract class YarnBasics : NpmApi {
                             if (yarn.ignoreScripts) "--ignore-scripts" else ""
 
             val nodeExecutable = nodeJs.requireConfigured().nodeExecutable
-            exec.environment(
-                "PATH",
-                "$nodeExecutable${File.pathSeparator}${System.getenv("PATH")}"
-            )
+            if (!yarn.ignoreScripts) {
+                val nodePath = if (nodeJs.requireConfigured().isWindows) {
+                    File(nodeExecutable).parent
+                } else {
+                    nodeExecutable
+                }
+                exec.environment(
+                    "PATH",
+                    "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
+                )
+            }
 
             val command = yarn.executable
             if (yarn.standalone) {
