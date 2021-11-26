@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilation.Companion
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -55,7 +57,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
                 specificCompilerArgs = {
                     add("-produce", "program")
                     if (entryPoint != null) add("-entry", entryPoint) else add("-generate-test-runner")
-                    settings.global.getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
+                    settings.get<GlobalSettings>().getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
                         add("-Xcache-directory=$rootCacheDir")
                     }
                 }
@@ -88,15 +90,15 @@ internal class TestCompilationFactory(private val settings: Settings) {
 
     private fun artifactFileForExecutable(modules: Set<TestModule.Exclusive>) = when (modules.size) {
         1 -> artifactFileForExecutable(modules.first())
-        else -> multiModuleArtifactFile(modules, settings.global.target.family.exeSuffix)
+        else -> multiModuleArtifactFile(modules, settings.get<GlobalSettings>().target.family.exeSuffix)
     }
 
     private fun artifactFileForExecutable(module: TestModule.Exclusive) =
-        singleModuleArtifactFile(module, settings.global.target.family.exeSuffix)
+        singleModuleArtifactFile(module, settings.get<GlobalSettings>().target.family.exeSuffix)
 
     private fun artifactFileForKlib(module: TestModule, freeCompilerArgs: TestCompilerArgs) = when (module) {
         is TestModule.Exclusive -> singleModuleArtifactFile(module, "klib")
-        is TestModule.Shared -> settings.sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
+        is TestModule.Shared -> settings.get<Binaries>().sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
     }
 
     private fun singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
@@ -142,7 +144,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
     }
 
     private fun artifactDirForPackageName(packageName: PackageFQN?): File {
-        val baseDir = settings.testBinariesDir
+        val baseDir = settings.get<Binaries>().testBinariesDir
         val outputDir = if (packageName != null) baseDir.resolve(packageName.compressedPackageName) else baseDir
 
         outputDir.mkdirs()
@@ -242,8 +244,8 @@ private class TestCompilationImpl(
         add(
             "-enable-assertions",
             "-g",
-            "-target", settings.global.target.name,
-            "-repo", settings.global.kotlinNativeHome.resolve("klib").path,
+            "-target", settings.get<GlobalSettings>().target.name,
+            "-repo", settings.get<GlobalSettings>().kotlinNativeHome.resolve("klib").path,
             "-output", expectedArtifactFile.path,
             "-Xskip-prerelease-check",
             "-Xverify-ir",
@@ -274,7 +276,7 @@ private class TestCompilationImpl(
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult) = try {
             val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(
                 compilerArgs = compilerArgs,
-                lazyKotlinNativeClassLoader = settings.global.lazyKotlinNativeClassLoader
+                lazyKotlinNativeClassLoader = settings.get<GlobalSettings>().lazyKotlinNativeClassLoader
             )
 
             val loggedCompilerCall =

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
     @Nested
     @TestMetadata("native/native.tests/testData/samples")
     @TestDataPath("$PROJECT_ROOT")
+    @UseStandardTestCaseGroupProvider()
     public class Samples {
         @Test
         public void testAllFilesPresentInSamples() throws Exception {
@@ -161,6 +163,7 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         @Nested
         @TestMetadata("native/native.tests/testData/samples/inner")
         @TestDataPath("$PROJECT_ROOT")
+        @UseStandardTestCaseGroupProvider()
         public class Inner {
             @Test
             public void testAllFilesPresentInInner() throws Exception {
@@ -178,6 +181,7 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
     @Nested
     @TestMetadata("native/native.tests/testData/samples2")
     @TestDataPath("$PROJECT_ROOT")
+    @UseStandardTestCaseGroupProvider()
     public class Samples2 {
         @Test
         public void testAllFilesPresentInSamples2() throws Exception {
