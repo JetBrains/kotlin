@@ -145,6 +145,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             }.apply {
                 parent = oldField.parent
                 initializer = context.irFactory.createExpressionBody(it)
+                correspondingPropertySymbol = oldField.correspondingPropertySymbol
             }
         }
         val originalThis = parentAsClass.thisReceiver
