@@ -62,7 +62,7 @@ fun executeAssertion(
     }
     fail("should have thrown assertion")
   } catch (t: Throwable) {
-    return t.message!!
+    return t.message ?: ""
   }
 }
 

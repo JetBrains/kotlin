@@ -16,8 +16,8 @@
 
 package com.bnorm.power
 
+import kotlin.test.Test
 import org.jetbrains.kotlin.name.FqName
-import org.junit.Test
 
 class AssertLibraryTest {
   @Test
@@ -111,7 +111,7 @@ class AssertLibraryTest {
       assertEquals(greeting, name)
                    |         |
                    |         World
-                   Hello expected:<[Hello]> but was:<[World]>
+                   Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
       PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals")))
     )
@@ -133,7 +133,7 @@ class AssertLibraryTest {
       assertEquals(greeting, name, "Message:")
                    |         |
                    |         World
-                   Hello expected:<[Hello]> but was:<[World]>
+                   Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
       PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals")))
     )
@@ -152,7 +152,7 @@ class AssertLibraryTest {
       """
       assertNotNull(name)
                     |
-                    null
+                    null ==> expected: not <null>
       """.trimIndent(),
       PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull")))
     )
@@ -172,7 +172,7 @@ class AssertLibraryTest {
       Message:
       assertNotNull(name, "Message:")
                     |
-                    null
+                    null ==> expected: not <null>
       """.trimIndent(),
       PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull")))
     )
