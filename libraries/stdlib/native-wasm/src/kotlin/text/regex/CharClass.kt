@@ -22,6 +22,8 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
+import kotlin.native.BitSet
+
 /**
  * User defined character classes (e.g. [abef]).
  */

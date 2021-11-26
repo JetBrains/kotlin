@@ -26,6 +26,7 @@ package kotlin.text.regex
 import kotlin.collections.associate
 import kotlin.native.concurrent.AtomicReference
 import kotlin.native.concurrent.freeze
+import kotlin.native.BitSet
 
 /**
  * Unicode category (i.e. Ll, Lu).

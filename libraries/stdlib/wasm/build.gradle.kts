@@ -82,7 +82,7 @@ kotlin {
     sourceSets {
         val wasmMain by getting {
             kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
-            kotlin.srcDirs("../native-wasm/")
+            kotlin.srcDirs("$rootDir/libraries/stdlib/native-wasm/src")
             kotlin.srcDirs(files(builtInsSources.map { it.destinationDir }))
         }
 
@@ -102,6 +102,7 @@ kotlin {
                 api(project(":kotlin-test:kotlin-test-wasm"))
             }
             kotlin.srcDir("$rootDir/libraries/stdlib/wasm/test/")
+            kotlin.srcDir("$rootDir/libraries/stdlib/native-wasm/test/")
         }
     }
 }

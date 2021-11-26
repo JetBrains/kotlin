@@ -113,9 +113,8 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlin-source-map-loader/.gradle",
-                "kotlin-native", // Have a separate licences manager
+                "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
-                "kotlin-native/runtime"
             )
         )
     }

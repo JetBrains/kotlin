@@ -5632,7 +5632,7 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
     task.useFilter = false
     task.testLogger = KonanTest.Logger.GTEST
 
-    def sources = UtilsKt.getFilesToCompile(project, ["harmony_regex"], [])
+    def sources = UtilsKt.getFilesToCompile(project, ["../../../libraries/stdlib/native-wasm/test/harmony_regex"], [])
 
     konanArtifacts {
         program('harmonyRegexTest', targets: [target.name]) {
