@@ -119,12 +119,32 @@ kotlinPowerAssert {
 }
 ```
 
+## Compatibility
+
+The Kotlin compiler plugin API is unstable and each new version of Kotlin can
+bring breaking changes to the APIs used by this compiler plugin. Make sure you
+are using the correct version of this plugin for whatever version of Kotlin
+used. Check the table below to find when support for a particular version of
+Kotlin was first introduced. If a version of Kotlin or this plugin is not listed
+it can be assumed to maintain compatibility with the next oldest version listed.
+
+| Kotlin Version | Plugin Version |
+| -------------- | -------------- |
+| 1.3.60         | 0.1.0          |
+| 1.3.70         | 0.3.0          |
+| 1.4.0          | 0.4.0          |
+| 1.4.20         | 0.6.0          |
+| 1.4.30         | 0.7.0          |
+| 1.5.0          | 0.8.0          |
+| 1.5.10         | 0.9.0          |
+| 1.5.20         | 0.10.0         |
+| 1.6.0          | 0.11.0         |
+
 ## Kotlin IR
 
-Using this compiler plugin only works if the code is compiled using Kotlin
-1.5.0. This plugin supports all IR based compiler backends: JVM, JS, and Native!
-Only Kotlin/JS still uses the legacy compiler backend by default, use the
-following to make sure IR is enabled.
+This plugin supports all IR based compiler backends: JVM, JS, and Native! Only
+Kotlin/JS still uses the legacy compiler backend by default, use the following
+to make sure IR is enabled.
 
 ```kotlin
 target {
