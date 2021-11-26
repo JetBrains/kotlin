@@ -249,7 +249,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     val startParameters = BuildMetricsReporterService.getStartParameters(project)
 
     @get:Internal
-    abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
+    internal abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
 
     internal fun reportingSettings() = buildMetricsReporterService.orNull?.parameters?.reportingSettings ?: ReportingSettings()
 
