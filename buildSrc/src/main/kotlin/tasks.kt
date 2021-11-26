@@ -248,6 +248,12 @@ fun Project.projectTest(
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").forUseAtConfigurationTime().orNull?.toInt()
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
+
+        JdkMajorVersion.values().forEach { version ->
+            project.getToolchainLauncherFor(version).orNull?.let {
+                environment(version.envName, it.metadata.installationPath.asFile.absolutePath)
+            }
+        }
     }.apply { configure(body) }
 }
 

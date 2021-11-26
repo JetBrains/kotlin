@@ -26,6 +26,8 @@ enum class JdkMajorVersion(
 
     fun isMandatory(): Boolean = mandatory
 
+    val envName = name
+
     companion object {
         fun fromMajorVersion(majorVersion: Int) = values().first { it.majorVersion == majorVersion }
     }
