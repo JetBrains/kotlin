@@ -592,13 +592,13 @@ private fun parseDebugPrefixMap(
     }
 }.toMap()
 
-private class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
+class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
 
 private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOptionWithValue<T>) {
     this.put(binaryOptionWithValue.option.compilerConfigurationKey, binaryOptionWithValue.value)
 }
 
-private fun parseBinaryOptions(
+fun parseBinaryOptions(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
 ): List<BinaryOptionWithValue<*>> {
