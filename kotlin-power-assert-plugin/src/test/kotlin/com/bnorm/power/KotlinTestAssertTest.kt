@@ -59,6 +59,26 @@ class KotlinTestAssertTest {
   }
 
   @Test
+  fun `test assertTrue transformation with local variable message`() {
+    assertMessage(
+      """
+      import kotlin.test.assertTrue
+      
+      fun main() {
+        val message = "Message:"
+        assertTrue(1 != 1, message)
+      }""",
+      """
+      Message:
+      assertTrue(1 != 1, message)
+                   |
+                   false
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue")))
+    )
+  }
+
+  @Test
   fun `test assertFalse transformation`() {
     assertMessage(
       """
@@ -89,6 +109,26 @@ class KotlinTestAssertTest {
       """
       Message:
       assertFalse(1 == 1, "Message:")
+                    |
+                    true
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse")))
+    )
+  }
+
+  @Test
+  fun `test assertFalse transformation with local variable message`() {
+    assertMessage(
+      """
+      import kotlin.test.assertFalse
+      
+      fun main() {
+        val message = "Message:"
+        assertFalse(1 == 1, message)
+      }""",
+      """
+      Message:
+      assertFalse(1 == 1, message)
                     |
                     true
       """.trimIndent(),
@@ -140,6 +180,29 @@ class KotlinTestAssertTest {
   }
 
   @Test
+  fun `test assertEquals transformation with local variable message`() {
+    assertMessage(
+      """
+      import kotlin.test.assertEquals
+      
+      fun main() {
+        val greeting = "Hello"
+        val name = "World"
+        val message = "Message:"
+        assertEquals(greeting, name, message)
+      }""",
+      """
+      Message:
+      assertEquals(greeting, name, message)
+                   |         |
+                   |         World
+                   Hello ==> expected: <Hello> but was: <World>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals")))
+    )
+  }
+
+  @Test
   fun `test assertNotNull transformation`() {
     assertMessage(
       """
@@ -171,6 +234,27 @@ class KotlinTestAssertTest {
       """
       Message:
       assertNotNull(name, "Message:")
+                    |
+                    null ==> expected: not <null>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull")))
+    )
+  }
+
+  @Test
+  fun `test assertNotNull transformation with local variable message`() {
+    assertMessage(
+      """
+      import kotlin.test.assertNotNull
+      
+      fun main() {
+        val name: String? = null
+        val message = "Message:"
+        assertNotNull(name, message)
+      }""",
+      """
+      Message:
+      assertNotNull(name, message)
                     |
                     null ==> expected: not <null>
       """.trimIndent(),

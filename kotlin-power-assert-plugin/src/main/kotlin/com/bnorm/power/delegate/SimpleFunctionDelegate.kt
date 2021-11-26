@@ -17,12 +17,14 @@
 package com.bnorm.power.delegate
 
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 class SimpleFunctionDelegate(
-  private val overload: IrSimpleFunctionSymbol
+  private val overload: IrSimpleFunctionSymbol,
+  override val messageParameter: IrValueParameter,
 ) : FunctionDelegate {
   override val function = overload.owner
 

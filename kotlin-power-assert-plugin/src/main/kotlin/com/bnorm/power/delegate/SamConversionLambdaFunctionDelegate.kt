@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 class SamConversionLambdaFunctionDelegate(
   private val overload: IrSimpleFunctionSymbol,
-  private val messageParameter: IrValueParameter
+  override val messageParameter: IrValueParameter,
 ) : FunctionDelegate {
   override val function = overload.owner
 

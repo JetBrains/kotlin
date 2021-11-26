@@ -40,11 +40,13 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -137,7 +139,8 @@ class PowerAssertCallTransformer(
     variables: List<IrTemporaryVariable> = listOf()
   ): IrExpression {
     if (index >= roots.size) {
-      val prefix = buildMessagePrefix(messageArgument, roots, original)?.deepCopyWithSymbols(parent)
+      val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter, roots, original)
+        ?.deepCopyWithSymbols(parent)
       val diagram = irDiagramString(file, fileSource, prefix, original, variables)
       return delegate.buildCall(this, original, arguments, diagram)
     } else {
@@ -156,20 +159,30 @@ class PowerAssertCallTransformer(
 
   private fun DeclarationIrBuilder.buildMessagePrefix(
     messageArgument: IrExpression?,
+    messageParameter: IrValueParameter,
     roots: List<Node?>,
     original: IrCall
   ): IrExpression? {
     return when {
       messageArgument is IrConst<*> -> messageArgument
       messageArgument is IrStringConcatenation -> messageArgument
-      messageArgument is IrFunctionExpression -> {
-        val invoke = messageArgument.type.classOrNull!!.functions
-          .filter { it.owner.name.toString() == "invoke" }
+      messageArgument is IrGetValue -> {
+        if (messageArgument.type.isAssignableTo(context.irBuiltIns.stringType)) {
+          return messageArgument
+        } else {
+          val invoke = messageParameter.type.classOrNull!!.functions
+            .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
+            .single()
+          irCall(invoke).apply { dispatchReceiver = messageArgument }
+        }
+      }
+      // Kotlin Lambda or SAMs conversion lambda
+      messageArgument is IrFunctionExpression || messageArgument is IrTypeOperatorCall -> {
+        val invoke = messageParameter.type.classOrNull!!.functions
+          .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
           .single()
         irCall(invoke).apply { dispatchReceiver = messageArgument }
       }
-      // SAMs conversion can be unwrapped to IrFunctionExpression
-      messageArgument is IrTypeOperatorCall -> buildMessagePrefix(messageArgument.argument, roots, original)
       // TODO what should the default message be?
       roots.size == 1 && original.getValueArgument(0)!!.type.isBoolean() -> irString("Assertion failed")
       else -> null
@@ -199,7 +212,7 @@ class PowerAssertCallTransformer(
 
         val messageParameter = parameters.last()
         return@mapNotNull when {
-          isStringSupertype(messageParameter.type) -> SimpleFunctionDelegate(overload)
+          isStringSupertype(messageParameter.type) -> SimpleFunctionDelegate(overload, messageParameter)
           isStringFunction(messageParameter.type) -> LambdaFunctionDelegate(overload, messageParameter)
           isStringJavaSupplierFunction(messageParameter.type) ->
             SamConversionLambdaFunctionDelegate(overload, messageParameter)

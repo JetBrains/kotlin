@@ -59,6 +59,26 @@ class Junit5AssertionsTest {
   }
 
   @Test
+  fun `test JUnit5 Assertions#assertTrue transformation with local variable message`() {
+    assertMessage(
+      """
+      import org.junit.jupiter.api.Assertions.assertTrue
+      
+      fun main() {
+        val message = "Message:"
+        assertTrue(1 != 1, message)
+      }""",
+      """
+      Message:
+      assertTrue(1 != 1, message)
+                   |
+                   false ==> expected: <true> but was: <false>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+    )
+  }
+
+  @Test
   fun `test JUnit5 Assertions#assertTrue transformation with message supplier`() {
     assertMessage(
       """
@@ -70,6 +90,27 @@ class Junit5AssertionsTest {
       """
       Message:
       assertTrue(1 != 1) { "Message:" }
+                   |
+                   false ==> expected: <true> but was: <false>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+    )
+  }
+
+  @Test
+  fun `test JUnit5 Assertions#assertTrue transformation with local variable message supplier`() {
+    assertMessage(
+      """
+      import java.util.function.Supplier
+      import org.junit.jupiter.api.Assertions.assertTrue
+      
+      fun main() {
+        val supplier = Supplier { "Message:" }
+        assertTrue(1 != 1, supplier)
+      }""",
+      """
+      Message:
+      assertTrue(1 != 1, supplier)
                    |
                    false ==> expected: <true> but was: <false>
       """.trimIndent(),
@@ -116,6 +157,26 @@ class Junit5AssertionsTest {
   }
 
   @Test
+  fun `test JUnit5 Assertions#assertFalse transformation with local variable message`() {
+    assertMessage(
+      """
+      import org.junit.jupiter.api.Assertions.assertFalse
+      
+      fun main() {
+        val message = "Message:"
+        assertFalse(1 == 1, message)
+      }""",
+      """
+      Message:
+      assertFalse(1 == 1, message)
+                    |
+                    true ==> expected: <false> but was: <true>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+    )
+  }
+
+  @Test
   fun `test JUnit5 Assertions#assertFalse transformation with message supplier`() {
     assertMessage(
       """
@@ -127,6 +188,27 @@ class Junit5AssertionsTest {
       """
       Message:
       assertFalse(1 == 1) { "Message:" }
+                    |
+                    true ==> expected: <false> but was: <true>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+    )
+  }
+
+  @Test
+  fun `test JUnit5 Assertions#assertFalse transformation with local variable message supplier`() {
+    assertMessage(
+      """
+      import java.util.function.Supplier
+      import org.junit.jupiter.api.Assertions.assertFalse
+      
+      fun main() {
+        val supplier = Supplier { "Message:" }
+        assertFalse(1 == 1, supplier)
+      }""",
+      """
+      Message:
+      assertFalse(1 == 1, supplier)
                     |
                     true ==> expected: <false> but was: <true>
       """.trimIndent(),
@@ -178,6 +260,29 @@ class Junit5AssertionsTest {
   }
 
   @Test
+  fun `test JUnit5 Assertions#assertEquals transformation with local variable message`() {
+    assertMessage(
+      """
+      import org.junit.jupiter.api.Assertions.assertEquals
+      
+      fun main() {
+        val greeting = "Hello"
+        val name = "World"
+        val message = "Message:"
+        assertEquals(greeting, name, message)
+      }""",
+      """
+      Message:
+      assertEquals(greeting, name, message)
+                   |         |
+                   |         World
+                   Hello ==> expected: <Hello> but was: <World>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+    )
+  }
+
+  @Test
   fun `test JUnit5 Assertions#assertEquals transformation with message supplier`() {
     assertMessage(
       """
@@ -191,6 +296,30 @@ class Junit5AssertionsTest {
       """
       Message:
       assertEquals(greeting, name) { "Message:" }
+                   |         |
+                   |         World
+                   Hello ==> expected: <Hello> but was: <World>
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+    )
+  }
+
+  @Test
+  fun `test JUnit5 Assertions#assertEquals transformation with local variable message supplier`() {
+    assertMessage(
+      """
+      import java.util.function.Supplier
+      import org.junit.jupiter.api.Assertions.assertEquals
+      
+      fun main() {
+        val greeting = "Hello"
+        val name = "World"
+        val supplier = Supplier { "Message:" }
+        assertEquals(greeting, name, supplier)
+      }""",
+      """
+      Message:
+      assertEquals(greeting, name, supplier)
                    |         |
                    |         World
                    Hello ==> expected: <Hello> but was: <World>

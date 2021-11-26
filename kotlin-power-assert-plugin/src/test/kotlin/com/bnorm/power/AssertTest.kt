@@ -78,6 +78,23 @@ assert(1 == 2) { "Not equal" }
   }
 
   @Test
+  fun customLocalVariableMessage() {
+    assertMessage(
+      """
+fun main() {
+  val lambda = { "Not equal" }
+  assert(1 == 2, lambda) 
+}""",
+      """
+Not equal
+assert(1 == 2, lambda)
+         |
+         false
+""".trimIndent()
+    )
+  }
+
+  @Test
   fun booleanExpressionsShortCircuit() {
     assertMessage(
       """
