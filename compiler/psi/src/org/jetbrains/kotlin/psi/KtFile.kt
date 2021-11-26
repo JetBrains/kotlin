@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
@@ -185,6 +186,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     override fun getStub(): KotlinFileStub? {
+        if (virtualFile !is VirtualFileWithId) return null
         val stub = super.getStub()
         if (stub is KotlinFileStub?) {
             return stub
