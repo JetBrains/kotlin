@@ -26,6 +26,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
+    // Global variables
+    val globalThis = getInternalProperty("globalThis")
+
     // Equality operations:
 
     val jsEqeq = getInternalFunction("jsEqeq")
@@ -327,6 +330,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     private fun getInternalFunction(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getJsInternalFunction(name))
+
+    private fun getInternalProperty(name: String) =
+        context.symbolTable.referenceProperty(context.getJsInternalProperty(name))
 
     private fun getInternalWithoutPackage(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getFunctions(FqName(name)).single())

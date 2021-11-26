@@ -84,9 +84,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsStatement {
-        val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
+        val owner = expression.symbol.owner
+        val ref = JsNameRef(context.getNameForValueDeclaration(owner))
         return expression.value
             .maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it).withSource(expression, context).makeStmt() }
+            .also { context.staticContext.polyfills.visitDeclaration(owner) }
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
@@ -153,6 +155,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
+            .also { data.staticContext.polyfills.visitDeclaration(expression.symbol.owner) }
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {

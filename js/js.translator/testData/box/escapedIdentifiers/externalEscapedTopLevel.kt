@@ -14,10 +14,12 @@ external object `+some+object%:` {
 }
 
 fun box(): String {
-    val a = js("2")
     assertEquals(42, `some+value`)
     assertEquals("%%++%%", `+some+object%:`.foo)
     assertEquals("something invalid", `@get something-invalid`())
+
+    `some+value` = 43
+    assertEquals(43, `some+value`)
 
     return "OK"
 }

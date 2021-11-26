@@ -45,37 +45,11 @@ fun <T : JsNode> IrWhen.toJsNode(
         }
     }
 
-// https://mathiasbynens.be/notes/globalthis
-// TODO: add DCE for globalThis polyfill declaration
-fun jsGlobalThisPolyfill(): List<JsStatement> =
-    parseJsCode(
-        """
-        (function() {
-            if (typeof globalThis === 'object') return; 
-            Object.defineProperty(Object.prototype, '__magic__', {
-                get: function() {
-                    return this;
-                },
-                configurable: true
-            });
-            __magic__.globalThis = __magic__;
-            delete Object.prototype.__magic__;
-        }());
-        """.trimIndent()
-    ) ?: emptyList()
-
 fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
     if (receiver == null || name.isValidES5Identifier()) {
         JsNameRef(JsName(name, false), receiver)
     } else {
         JsArrayAccess(receiver, JsStringLiteral(name))
-    }
-
-fun jsGlobalVarRef(ref: JsNameRef): JsExpression =
-    if (ref.qualifier != null || ref.ident.isValidES5Identifier()) {
-        ref
-    } else {
-        jsElementAccess(ref.ident, JsNameRef("globalThis"))
     }
 
 fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(JsBinaryOperator.ASG, left, right)
@@ -154,7 +128,7 @@ fun translateCall(
         ) {
             val propertyName = context.getNameForProperty(property)
             val nameRef = when (jsDispatchReceiver) {
-                null -> jsGlobalVarRef(JsNameRef(propertyName))
+                null -> JsNameRef(propertyName)
                 else -> jsElementAccess(propertyName.ident, jsDispatchReceiver)
             }
             return when (function) {
@@ -201,7 +175,7 @@ fun translateCall(
     }
 
     val ref = when (jsDispatchReceiver) {
-        null -> jsGlobalVarRef(JsNameRef(symbolName))
+        null -> JsNameRef(symbolName)
         else -> jsElementAccess(symbolName.ident, jsDispatchReceiver)
     }
 

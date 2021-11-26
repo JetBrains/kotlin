@@ -784,6 +784,12 @@ private val captureStackTraceInThrowablesPhase = makeBodyLoweringPhase(
     description = "Capture stack trace in Throwable constructors"
 )
 
+private val escapedIdentifiersLowering = makeBodyLoweringPhase(
+    ::EscapedIdentifiersLowering,
+    name = "EscapedIdentifiersLowering",
+    description = "Convert global variables with invalid names access to globalThis member expression"
+)
+
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
     { CleanupLowering() },
     name = "CleanupLowering",
@@ -903,6 +909,7 @@ val loweringList = listOf<Lowering>(
     objectUsageLoweringPhase,
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
+    escapedIdentifiersLowering,
     cleanupLoweringPhase,
     // Currently broken due to static members lowering making single-open-class
     // files non-recognizable as single-class files
