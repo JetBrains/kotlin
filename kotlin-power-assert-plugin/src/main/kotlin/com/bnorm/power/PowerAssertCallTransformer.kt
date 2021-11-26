@@ -194,9 +194,11 @@ class PowerAssertCallTransformer(
     if (values.isEmpty()) return emptyList()
 
     // Java static functions require searching by class
-    val parentClassFunctions = (function.parentClassOrNull
-      ?.let { context.referenceClass(it.kotlinFqName) }
-      ?.functions ?: emptySequence())
+    val parentClassFunctions = (
+      function.parentClassOrNull
+        ?.let { context.referenceClass(it.kotlinFqName) }
+        ?.functions ?: emptySequence()
+      )
       .filter { it.owner.kotlinFqName == function.kotlinFqName }
       .toList()
     val possible = (context.referenceFunctions(function.kotlinFqName) + parentClassFunctions)
@@ -226,8 +228,8 @@ class PowerAssertCallTransformer(
 
   private fun isStringJavaSupplierFunction(type: IrType): Boolean {
     val javaSupplier = context.referenceClass(FqName("java.util.function.Supplier"))
-    return javaSupplier != null && type.isSubtypeOfClass(javaSupplier)
-      && type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
+    return javaSupplier != null && type.isSubtypeOfClass(javaSupplier) &&
+      type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
   }
 
   private fun isStringSupertype(argument: IrTypeArgument): Boolean =

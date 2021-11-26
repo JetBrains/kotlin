@@ -16,8 +16,8 @@
 
 package com.bnorm.power
 
-import kotlin.test.Test
 import org.jetbrains.kotlin.name.FqName
+import kotlin.test.Test
 
 class AssertTest {
   @Test
@@ -86,11 +86,11 @@ fun main() {
   assert(1 == 2, lambda) 
 }""",
       """
-Not equal
-assert(1 == 2, lambda)
-         |
-         false
-""".trimIndent()
+      Not equal
+      assert(1 == 2, lambda)
+               |
+               false
+      """.trimIndent()
     )
   }
 
