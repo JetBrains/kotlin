@@ -87,21 +87,6 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");
         }
 
-        @TestMetadata("dataClassWithArrayMembers.kt")
-        public void testDataClassWithArrayMembers() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/dataClassWithArrayMembers.kt");
-        }
-
-        @TestMetadata("dataClasses.kt")
-        public void testDataClasses() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/dataClasses.kt");
-        }
-
-        @TestMetadata("dataClassesGeneric.kt")
-        public void testDataClassesGeneric() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/dataClassesGeneric.kt");
-        }
-
         @TestMetadata("delegatedGenericImplementation.kt")
         public void testDelegatedGenericImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");
@@ -192,16 +177,6 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/classes/kt19306.kt");
         }
 
-        @TestMetadata("kt31649.kt")
-        public void testKt31649() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/kt31649.kt");
-        }
-
-        @TestMetadata("lambdaInDataClassDefaultParameter.kt")
-        public void testLambdaInDataClassDefaultParameter() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/lambdaInDataClassDefaultParameter.kt");
-        }
-
         @TestMetadata("localClasses.kt")
         public void testLocalClasses() throws Exception {
             runTest("compiler/testData/ir/irText/classes/localClasses.kt");
@@ -215,11 +190,6 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("objectWithInitializers.kt")
         public void testObjectWithInitializers() throws Exception {
             runTest("compiler/testData/ir/irText/classes/objectWithInitializers.kt");
-        }
-
-        @TestMetadata("openDataClass.kt")
-        public void testOpenDataClass() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/openDataClass.kt");
         }
 
         @TestMetadata("outerClassAccess.kt")
@@ -265,6 +235,49 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("superCallsComposed.kt")
         public void testSuperCallsComposed() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCallsComposed.kt");
+        }
+
+        @TestMetadata("compiler/testData/ir/irText/classes/dataClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DataClasses extends AbstractKlibTextTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDataClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/classes/dataClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("dataClassWithArrayMembers.kt")
+            public void testDataClassWithArrayMembers() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/dataClassWithArrayMembers.kt");
+            }
+
+            @TestMetadata("dataClasses.kt")
+            public void testDataClasses() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/dataClasses.kt");
+            }
+
+            @TestMetadata("dataClassesGeneric.kt")
+            public void testDataClassesGeneric() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/dataClassesGeneric.kt");
+            }
+
+            @TestMetadata("kt31649.kt")
+            public void testKt31649() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/kt31649.kt");
+            }
+
+            @TestMetadata("lambdaInDataClassDefaultParameter.kt")
+            public void testLambdaInDataClassDefaultParameter() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/lambdaInDataClassDefaultParameter.kt");
+            }
+
+            @TestMetadata("openDataClass.kt")
+            public void testOpenDataClass() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/openDataClass.kt");
+            }
         }
     }
 
