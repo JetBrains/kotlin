@@ -923,6 +923,46 @@ class StringTest {
         assertCompareResult(GT, s1, s2, ignoreCase = true)
     }
 
+    @Test fun compareToUnicode() {
+        (Char.MIN_VALUE..Char.MAX_VALUE)
+            .map { it.toString() }
+            .zipWithNext()
+            .forEach { (first, second) ->
+                assertTrue(first.compareTo(second) < 0)
+                assertTrue(first.compareTo(first) == 0)
+                assertTrue(second.compareTo(second) == 0)
+                assertTrue(second.compareTo(first) > 0)
+            }
+    }
+
+    @Test fun orderUnicodeLongString() {
+        val range = Char.MIN_VALUE..Char.MAX_VALUE
+        val chars = buildList {
+            repeat(10) {
+                add(range.random())
+            }
+        }
+        val strings = buildList {
+            repeat(10000) {
+                add(buildString {
+                    repeat(Random.nextInt(8)) {
+                        append(chars.random())
+                    }
+                })
+            }
+        }.sorted()
+
+        assertTrue(strings.zipWithNext().all { (s1, s2) ->
+            val chars1 = s1.toCharArray()
+            val chars2 = s2.toCharArray()
+            for (i in 0 until minOf(chars1.size, chars2.size)) {
+                if (chars1[i] != chars2[i])
+                    return@all chars1[i] < chars2[i]
+            }
+            return@all chars1.size <= chars2.size
+        })
+    }
+
 
     @Test fun orderIgnoringCase() {
         val list = listOf("Beast", "Ast", "asterisk", "[]")

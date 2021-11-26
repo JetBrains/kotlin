@@ -78,6 +78,30 @@ OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
   RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::with_replacement::utf8to16>, rawString, end, charCount);
 }
 
+uint32_t mismatch(const uint16_t* first, const uint16_t* second, uint32_t size) {
+    const long* firstLong = reinterpret_cast<const long*>(first);
+    const long* secondLong = reinterpret_cast<const long*>(second);
+    constexpr int step = sizeof(long) / sizeof(uint16_t);
+    uint32_t sizeLong = size / step;
+    uint32_t iLong;
+    for (iLong = 0; iLong < sizeLong; iLong++) {
+        if (firstLong[iLong] != secondLong[iLong]) {
+            break;
+        }
+    }
+    for (uint32_t i = iLong * step; i < size; i++) {
+        if (first[i] != second[i]) {
+            return i;
+        }
+    }
+    return size;
+}
+
+template <typename T>
+int threeWayCompare(T a, T b) {
+    return (a == b) ? 0 : (a < b ? -1 : 1);
+}
+
 } // namespace
 
 extern "C" {
@@ -183,16 +207,15 @@ OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endInd
 }
 
 KInt Kotlin_String_compareTo(KString thiz, KString other) {
-  int result = memcmp(
-    CharArrayAddressOfElementAt(thiz, 0),
-    CharArrayAddressOfElementAt(other, 0),
-    (thiz->count_ < other->count_ ? thiz->count_ : other->count_) * sizeof(KChar));
-  if (result != 0) return result;
-  int diff = thiz->count_ - other->count_;
-  if (diff == 0) return 0;
-  return diff < 0 ? -1 : 1;
+    const uint16_t *first = CharArrayAddressOfElementAt(thiz, 0);
+    const uint16_t *second = CharArrayAddressOfElementAt(other, 0);
+    uint32_t minSize = std::min(thiz->count_, other->count_);
+    uint32_t mismatch_position = mismatch(first, second, minSize);
+    if (mismatch_position != minSize) {
+        return threeWayCompare(first[mismatch_position], second[mismatch_position]);
+    }
+    return threeWayCompare(thiz->count_, other->count_);
 }
-
 
 KChar Kotlin_String_get(KString thiz, KInt index) {
   // We couldn't have created a string bigger than max KInt value.
