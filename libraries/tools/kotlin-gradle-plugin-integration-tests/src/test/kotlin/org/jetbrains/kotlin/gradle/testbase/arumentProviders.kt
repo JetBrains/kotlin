@@ -133,6 +133,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
 
     companion object {
         private val jdkGradleCompatibilityMatrix = mapOf(
+            JavaVersion.VERSION_14 to GradleVersion.version(TestVersions.Gradle.G_6_3),
             JavaVersion.VERSION_15 to GradleVersion.version(TestVersions.Gradle.G_6_7),
             JavaVersion.VERSION_16 to GradleVersion.version(TestVersions.Gradle.G_7_0),
             JavaVersion.VERSION_17 to GradleVersion.version(TestVersions.Gradle.G_7_3)

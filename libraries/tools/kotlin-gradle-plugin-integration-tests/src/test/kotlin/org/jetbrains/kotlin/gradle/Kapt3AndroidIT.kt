@@ -146,6 +146,9 @@ class Kapt3Android42IT : BaseGradleIT() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
     }
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("6.7.1")
+
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             kaptOptions = kaptOptions(),

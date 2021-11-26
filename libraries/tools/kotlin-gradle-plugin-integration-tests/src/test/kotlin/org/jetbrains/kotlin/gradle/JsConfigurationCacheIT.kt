@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
+@JsGradlePluginTests
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_6_6)
 abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) : KGPBaseTest() {
     private val defaultJsOptions = BuildOptions.JsOptions(
         useIrBackend = irBackend,
@@ -89,8 +91,6 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     }
 }
 
-@JsGradlePluginTests
 class JsConfigurationCacheIT : AbstractJsConfigurationCacheIT(irBackend = false)
 
-@JsGradlePluginTests
 class JsIrConfigurationCacheIT : AbstractJsConfigurationCacheIT(irBackend = true)

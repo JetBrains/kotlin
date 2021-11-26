@@ -240,6 +240,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_6)
     @GradleTest
     @ExperimentalPathApi
     internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {

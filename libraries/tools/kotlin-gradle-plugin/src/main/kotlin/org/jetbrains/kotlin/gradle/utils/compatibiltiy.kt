@@ -31,7 +31,7 @@ import org.gradle.util.GradleVersion
 import java.io.File
 import java.io.Serializable
 
-const val minSupportedGradleVersion = "6.7.1"
+const val minSupportedGradleVersion = "6.1.1"
 
 internal fun checkGradleCompatibility(
     withComponent: String = "the Kotlin Gradle plugin",

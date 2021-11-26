@@ -13,10 +13,7 @@ import java.util.zip.ZipFile
 import kotlin.test.assertNotNull
 
 class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
-    // TODO: This suite is failing with deprecation error on Gradle <7.0 versions
-    // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("7.0")
+    override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.1")
 
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
