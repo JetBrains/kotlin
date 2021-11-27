@@ -20,13 +20,13 @@ import org.junit.runner.RunWith
 import org.junit.runners.BlockJUnit4ClassRunner
 import java.io.File
 import java.io.IOException
-import java.util.*
 
 private val METHOD_GENERATORS = listOf(
     RunTestMethodGenerator,
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,
-    SingleClassTestModelAllFilesPresentedMethodGenerator
+    SingleClassTestModelAllFilesPresentedMethodGenerator,
+    WithoutJvmInlineTestMethodGenerator,
 )
 
 object TestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {

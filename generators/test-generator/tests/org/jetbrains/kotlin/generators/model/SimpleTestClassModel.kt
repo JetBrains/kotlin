@@ -8,10 +8,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
+import org.jetbrains.kotlin.generators.util.methodModelLocator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 
 class SimpleTestClassModel(
@@ -87,16 +87,14 @@ class SimpleTestClassModel(
 
     override val methods: Collection<MethodModel> by lazy {
         if (!rootFile.isDirectory) {
-            return@lazy listOf(
-                SimpleTestMethodModel(
-                    rootFile,
-                    rootFile,
-                    filenamePattern,
-                    checkFilenameStartsLowerCase,
-                    targetBackend,
-                    skipIgnored,
-                    extractTagsFromTestFile(rootFile)
-                )
+            return@lazy methodModelLocator(
+                rootFile,
+                rootFile,
+                filenamePattern,
+                checkFilenameStartsLowerCase,
+                targetBackend,
+                skipIgnored,
+                extractTagsFromTestFile(rootFile)
             )
         }
         val result = mutableListOf<MethodModel>()
@@ -110,8 +108,8 @@ class SimpleTestClassModel(
                     if (file.isDirectory && excludeParentDirs && dirHasSubDirs(file)) {
                         continue
                     }
-                    result.add(
-                        SimpleTestMethodModel(
+                    result.addAll(
+                        methodModelLocator(
                             rootFile, file, filenamePattern,
                             checkFilenameStartsLowerCase, targetBackend, skipIgnored, extractTagsFromTestFile(file)
                         )
