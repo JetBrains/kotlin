@@ -88,7 +88,7 @@ If the second definition is called, it will be transformed into calling the same
 function but with the diagram message appended to the last parameter.
 
 This transformed function call doesn't need to throw an exception either. See
-[Advanced Usage][#advanced-usage] for some examples.
+[Advanced Usage](#advanced-usage) for some examples.
 
 ## Gradle Plugin
 
