@@ -5,10 +5,10 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.generators.util.methodModelLocator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 
 class SingleClassTestModel(
@@ -45,10 +45,8 @@ class SingleClassTestModel(
         get() = emptyList()
 
     private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
-        return listOf(
-            SimpleTestMethodModel(
-                rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList()
-            )
+        return methodModelLocator(
+            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList()
         )
     }
 
