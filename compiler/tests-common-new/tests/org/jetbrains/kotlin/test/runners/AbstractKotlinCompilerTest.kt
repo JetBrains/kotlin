@@ -81,13 +81,18 @@ abstract class AbstractKotlinCompilerTest {
         testRunner(filePath, configuration).runTest(filePath)
     }
 
-    open fun runTest(@TestDataFile filePath: String, contentModifier: (String) -> String) {
+    @JvmOverloads
+    open fun runTest(
+        @TestDataFile filePath: String,
+        actualContentModifier: (String) -> String,
+        expectedContentModifier: ((String) -> String)? = actualContentModifier
+    ) {
         class SourceTransformer(testServices: TestServices) : SourceFilePreprocessor(testServices) {
-            override fun process(file: TestFile, content: String): String = content.let(contentModifier)
+            override fun process(file: TestFile, content: String): String = content.let(actualContentModifier)
         }
         testRunner(filePath) {
             configuration.let { it() } // property configuration, not method
             useSourcePreprocessor({ SourceTransformer(it) })
-        }.runTest(filePath)
+        }.runTest(filePath, expectedFileTransformer = expectedContentModifier)
     }
 }
