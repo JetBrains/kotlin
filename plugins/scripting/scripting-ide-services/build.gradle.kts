@@ -6,16 +6,16 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.8"
+project.updateJvmTarget("1.8")
 
 publish()
 
 dependencies {
-    compile(project(":kotlin-script-runtime"))
-    compile(kotlinStdlib())
-    compileOnly(project(":idea:ide-common"))
-    compile(project(":kotlin-scripting-common"))
-    compile(project(":kotlin-scripting-jvm"))
+    api(project(":kotlin-script-runtime"))
+    api(kotlinStdlib())
+    compileOnly(project(":kotlin-scripting-ide-common"))
+    api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-jvm"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))

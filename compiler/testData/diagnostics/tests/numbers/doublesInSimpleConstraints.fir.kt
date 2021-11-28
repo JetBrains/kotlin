@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 package a
@@ -21,5 +20,5 @@ fun test() {
     val d = either(11, 2.3)
     checkSubtype<Any>(d)
 
-    val e: Float = id(1)
+    val e: Float = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(1)<!>
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfNeeded
+import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -91,7 +92,9 @@ class VariableTypeAndInitializerResolver(
                         val initializerType = resolveInitializerType(
                             scopeForInitializer, variable.initializer!!, dataFlowInfo, inferenceSession, trace, local
                         )
-                        transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace, anonymousTypeTransformers)
+                        transformAnonymousTypeIfNeeded(
+                            variableDescriptor, variable, initializerType, trace, anonymousTypeTransformers, languageVersionSettings
+                        )
                     }
 
                 else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, inferenceSession, trace, local)
@@ -122,6 +125,13 @@ class VariableTypeAndInitializerResolver(
                     val initializer = variable.initializer
                     val initializerType =
                         expressionTypingServices.safeGetType(scope, initializer!!, variableType, dataFlowInfo, inferenceSession, trace)
+                    NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(
+                        variableType,
+                        initializer,
+                        languageVersionSettings,
+                        trace,
+                        constantExpressionEvaluator.module
+                    )
                     val constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType)
                             ?: return@computeInitializer null
 
@@ -129,7 +139,8 @@ class VariableTypeAndInitializerResolver(
                         trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer))
                     }
 
-                    constant.toConstantValue(initializerType)
+                    val qqq = constant.toConstantValue(initializerType)
+                    qqq
                 },
                 null
             )
@@ -151,13 +162,15 @@ class VariableTypeAndInitializerResolver(
         )
 
         val getterReturnType = delegatedPropertyResolver.getGetValueMethodReturnType(
-            variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo
+            variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo, inferenceSession
         )
 
         val delegatedType = getterReturnType?.let { approximateType(it, local) }
             ?: ErrorUtils.createErrorType("Type from delegate")
 
-        transformAnonymousTypeIfNeeded(variableDescriptor, property, delegatedType, trace, anonymousTypeTransformers)
+        transformAnonymousTypeIfNeeded(
+            variableDescriptor, property, delegatedType, trace, anonymousTypeTransformers, languageVersionSettings
+        )
     }
 
     private fun resolveInitializerType(
@@ -176,5 +189,5 @@ class VariableTypeAndInitializerResolver(
     }
 
     private fun approximateType(type: KotlinType, local: Boolean): UnwrappedType =
-        typeApproximator.approximateDeclarationType(type, local, expressionTypingServices.languageVersionSettings)
+        typeApproximator.approximateDeclarationType(type, local)
 }

@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 // IGNORE_BACKEND: JVM
 
-inline class A(val x: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val x: Int) {
     fun f(): Int = super.hashCode()
 }
 

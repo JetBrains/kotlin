@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.File
 
 class DukatRunner(
-    val compilation: KotlinJsCompilation,
+    val npmProject: NpmProject,
     val dTsFiles: Collection<File>,
     val externalsOutputFormat: ExternalsOutputFormat,
     val destDir: File,
@@ -19,8 +19,8 @@ class DukatRunner(
     val jsInteropJvmEngine: String? = null,
     val operation: String = "Generating Kotlin/JS external declarations"
 ) {
-    fun execute() {
-        compilation.target.project.execWithProgress(operation) { exec ->
+    fun execute(services: ServiceRegistry) {
+        services.execWithProgress(operation) { exec ->
             val args = mutableListOf<String>()
 
             if (externalsOutputFormat == ExternalsOutputFormat.BINARY) {
@@ -44,7 +44,7 @@ class DukatRunner(
 
             args.addAll(dTsFiles.map { it.absolutePath })
 
-            compilation.npmProject.useTool(
+            npmProject.useTool(
                 exec,
                 "dukat/bin/dukat-cli.js",
                 listOf(),

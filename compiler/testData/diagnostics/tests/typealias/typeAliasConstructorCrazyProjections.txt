@@ -1,6 +1,6 @@
 package
 
-public val test1: [ERROR : Type for BOutIn(listOf(), null!!)]
+public val test1: [ERROR : Type for BOutIn(listOf(), null & Any)]
 public val test2: BInIn<kotlin.Nothing> /* = Bound<in kotlin.collections.List<kotlin.Nothing>, in kotlin.Nothing> */
 public fun </*0*/ T> listOf(): kotlin.collections.List<T>
 

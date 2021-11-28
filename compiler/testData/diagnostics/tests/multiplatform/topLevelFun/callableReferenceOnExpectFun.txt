@@ -7,7 +7,6 @@ package test {
     public fun test(): kotlin.Unit
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -16,3 +15,4 @@ package test {
     public fun g(/*0*/ f: () -> kotlin.String): kotlin.String
     public fun test(): kotlin.Unit
 }
+

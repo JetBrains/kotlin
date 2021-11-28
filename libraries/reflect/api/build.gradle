@@ -2,7 +2,7 @@ description = ''
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
@@ -22,7 +22,7 @@ sourceSets {
 }
 
 dependencies {
-    compile kotlinStdlib()
+    api kotlinStdlib()
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')
@@ -32,27 +32,33 @@ dependencies {
 }
 
 if (includeJava9) {
-    compileJava9Sources(
-            project, 'kotlin.reflect',
-            [sourceSets.main.output, configurations.compileOnly.filter {
-                !it.name.contains("kotlin-stdlib")
-            }]
+    configurations.register('java9PatchModule') {
+        extendsFrom(configurations.compileOnly)
+        exclude(group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib')
+        canBeResolved = true
+    }
+
+    LibrariesCommon.configureJava9Compilation(
+            project,
+            'kotlin.reflect',
+            [sourceSets.main.output, configurations.java9PatchModule]
     )
 }
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-version",
-                            "-Xallow-kotlin-package",
-                            "-Xnormalize-constructor-calls=enable",
-                            "-Xno-optimized-callable-references",
-                            "-Xno-kotlin-nothing-value-exception",
-                            "-Xopt-in=kotlin.RequiresOptIn"]
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+                "-Xno-optimized-callable-references",
+                "-Xno-kotlin-nothing-value-exception",
+                "-Xsuppress-deprecated-jvm-target-warning",
+                "-opt-in=kotlin.RequiresOptIn",
+        ]
         moduleName = "kotlin-reflection"
     }
 }
 
-configureJvmIrBackend(project)
+configureFrontendIr(project)
 
 jar {
     manifestAttributes(manifest, project, "internal")
@@ -67,5 +73,5 @@ task java9Jar(type: Jar) {
 
 artifacts {
     archives java9Jar
-    runtime java9Jar
+    runtimeElements java9Jar
 }

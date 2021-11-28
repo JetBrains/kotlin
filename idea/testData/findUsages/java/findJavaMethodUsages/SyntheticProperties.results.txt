@@ -1,2 +1,0 @@
-Value read 2 print(javaClass.something)
-Value write 4 javaClass.something++

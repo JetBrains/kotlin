@@ -8,7 +8,7 @@ expect class Foo {
     fun bar(x: Int): Int
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class Foo {
     actual val foo: String = "JVM"
@@ -16,7 +16,7 @@ actual class Foo {
     actual fun bar(x: Int): Int = x + 1
 }
 
-// MODULE: m3-js(m1-common)
+// MODULE: m3-js()()(m1-common)
 // FILE: js.kt
 actual class Foo {
     actual val foo: String = "JS"

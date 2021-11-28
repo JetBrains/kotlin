@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun find2(): Any? {
     fun visit(element: Any) {
         <!RETURN_NOT_ALLOWED!>return@find2<!> element

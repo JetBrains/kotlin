@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:OptIn(ExperimentalTypeInference::class)
 

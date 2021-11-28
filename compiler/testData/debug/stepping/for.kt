@@ -7,7 +7,7 @@ fun box() {
 
 inline fun foo(n: Int) {}
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:8 box

@@ -2,7 +2,8 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM, JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// FIR status: not supported in JVM
+// WITH_STDLIB
 
 // Note: This fails because explicit types are ignored in destructuring declarations (KT-22392).
 

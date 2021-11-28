@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -76,6 +78,33 @@ class ScriptTest : TestCase() {
         })
     }
 
+    fun testKt42530() {
+        val aClass = compileScript("kt42530.kts", StandardScriptDefinition)
+        Assert.assertNotNull(aClass)
+        val out = captureOut {
+            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
+            Assert.assertNotNull(anObj)
+        }
+        assertEqualsTrimmed("[(1, a)]", out)
+    }
+
+    fun testMetadataFlag() {
+        // Test that we're writing the flag to [Metadata.extraInt] that distinguishes scripts from other classes.
+
+        fun Class<*>.isFlagSet(): Boolean {
+            val metadata = annotations.single { it.annotationClass.java.name == Metadata::class.java.name }
+            val extraInt = metadata.javaClass.methods.single { it.name == JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME }
+            return (extraInt(metadata) as Int) and JvmAnnotationNames.METADATA_SCRIPT_FLAG != 0
+        }
+
+        val scriptClass = compileScript("metadata_flag.kts", StandardScriptDefinition)!!
+        assertTrue("Script class SHOULD have the metadata flag set", scriptClass.isFlagSet())
+        assertFalse(
+            "Non-script class in a script should NOT have the metadata flag set",
+            scriptClass.classLoader.loadClass("Metadata_flag\$RandomClass").isFlagSet()
+        )
+    }
+
     private fun compileScript(
         scriptPath: String,
         scriptDefinition: KotlinScriptDefinition,
@@ -90,6 +119,7 @@ class ScriptTest : TestCase() {
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+            configuration.updateWithBaseCompilerArguments()
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,

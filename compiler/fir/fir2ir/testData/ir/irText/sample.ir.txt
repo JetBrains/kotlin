@@ -1,0 +1,3 @@
+FILE fqName:<root> fileName:/sample.kt
+  FUN name:sample visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY

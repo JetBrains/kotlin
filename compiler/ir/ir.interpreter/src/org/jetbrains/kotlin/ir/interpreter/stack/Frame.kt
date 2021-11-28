@@ -1,79 +1,157 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.interpreter.stack
 
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.interpreter.Instruction
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
-internal interface Frame {
-    fun addVar(variable: Variable)
-    fun addAll(variables: List<Variable>)
-    fun getVariable(symbol: IrSymbol): Variable?
-    fun getAll(): List<Variable>
-    fun contains(symbol: IrSymbol): Boolean
-    fun pushReturnValue(state: State)
-    fun pushReturnValue(frame: Frame) // TODO rename to getReturnValueFrom
-    fun peekReturnValue(): State
-    fun popReturnValue(): State
-    fun hasReturnValue(): Boolean
+internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
+    private val innerStack = ArrayDeque<SubFrame>().apply { add(SubFrame(subFrameOwner)) }
+    private var currentInstruction: Instruction? = null
+
+    private val currentFrame get() = innerStack.last()
+    val currentSubFrameOwner: IrElement get() = currentFrame.owner
+
+    companion object {
+        const val NOT_DEFINED = "Not defined"
+    }
+
+    fun addSubFrame(subFrameOwner: IrElement) {
+        innerStack.add(SubFrame(subFrameOwner))
+    }
+
+    fun removeSubFrame() {
+        val state = currentFrame.peekState()
+        removeSubFrameWithoutDataPropagation()
+        if (!hasNoSubFrames() && state != null) currentFrame.pushState(state)
+    }
+
+    fun removeSubFrameWithoutDataPropagation() {
+        innerStack.removeLast()
+    }
+
+    fun hasNoSubFrames() = innerStack.isEmpty()
+    fun hasNoInstructions() = hasNoSubFrames() || (innerStack.size == 1 && innerStack.first().isEmpty())
+    fun pushInstruction(instruction: Instruction) = currentFrame.pushInstruction(instruction)
+    fun popInstruction(): Instruction = currentFrame.popInstruction().apply { currentInstruction = this }
+    fun dropInstructions() = currentFrame.dropInstructions()
+
+    fun pushState(state: State) = currentFrame.pushState(state)
+    fun popState(): State = currentFrame.popState()
+    fun peekState(): State? = currentFrame.peekState()
+
+    fun storeState(symbol: IrSymbol, state: State?) = currentFrame.storeState(symbol, state)
+    fun storeState(symbol: IrSymbol, variable: Variable) = currentFrame.storeState(symbol, variable)
+
+    private inline fun forEachSubFrame(block: (SubFrame) -> Unit) {
+        // TODO speed up reverse iteration or do it forward
+        (innerStack.lastIndex downTo 0).forEach {
+            block(innerStack[it])
+        }
+    }
+
+    fun loadState(symbol: IrSymbol): State {
+        forEachSubFrame { it.loadState(symbol)?.let { state -> return state } }
+        throw InterpreterError("$symbol not found") // TODO better message
+    }
+
+    fun rewriteState(symbol: IrSymbol, newState: State) {
+        forEachSubFrame { if (it.containsStateInMemory(symbol)) return it.rewriteState(symbol, newState) }
+    }
+
+    fun containsStateInMemory(symbol: IrSymbol): Boolean {
+        forEachSubFrame { if (it.containsStateInMemory(symbol)) return true }
+        return false
+    }
+
+    fun copyMemoryInto(newFrame: Frame) {
+        this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsStateInMemory(symbol)) newFrame.storeState(symbol, variable) }
+    }
+
+    fun copyMemoryInto(closure: StateWithClosure) {
+        getAll().reversed().forEach { (symbol, variable) -> closure.upValues[symbol] = variable }
+    }
+
+    private fun getAll(): List<Pair<IrSymbol, Variable>> = innerStack.flatMap { it.getAll() }
+
+    private fun getLineNumberForCurrentInstruction(): String {
+        irFile ?: return ""
+        val frameOwner = currentInstruction?.element
+        return when {
+            frameOwner is IrExpression || (frameOwner is IrDeclaration && frameOwner.origin == IrDeclarationOrigin.DEFINED) ->
+                ":${irFile.fileEntry.getLineNumber(frameOwner.startOffset) + 1}"
+            else -> ""
+        }
+    }
+
+    fun getFileAndPositionInfo(): String {
+        irFile ?: return NOT_DEFINED
+        val lineNum = getLineNumberForCurrentInstruction()
+        return "${irFile.name}$lineNum"
+    }
+
+    override fun toString(): String {
+        irFile ?: return NOT_DEFINED
+        val fileNameCapitalized = irFile.name.replace(".kt", "Kt").capitalizeAsciiOnly()
+        val entryPoint = innerStack.firstOrNull { it.owner is IrFunction }?.owner as? IrFunction
+        val lineNum = getLineNumberForCurrentInstruction()
+
+        return "at $fileNameCapitalized.${entryPoint?.fqNameWhenAvailable ?: "<clinit>"}(${irFile.name}$lineNum)"
+    }
 }
 
-// TODO replace exceptions with InterpreterException
-internal class InterpreterFrame(
-    private val pool: MutableList<Variable> = mutableListOf(),
-    private val typeArguments: List<Variable> = listOf()
-) : Frame {
-    private val returnStack: MutableList<State> = mutableListOf()
+private class SubFrame(val owner: IrElement) {
+    private val instructions = ArrayDeque<Instruction>()
+    private val dataStack = DataStack()
+    private val memory = mutableMapOf<IrSymbol, Variable>()
 
-    override fun addVar(variable: Variable) {
-        pool.add(variable)
+    // Methods to work with instruction
+    fun isEmpty() = instructions.isEmpty()
+    fun pushInstruction(instruction: Instruction) = instructions.addFirst(instruction)
+    fun popInstruction(): Instruction = instructions.removeFirst()
+    fun dropInstructions() = instructions.lastOrNull()?.apply { instructions.clear() }
+
+    // Methods to work with data
+    fun pushState(state: State) = dataStack.push(state)
+    fun popState(): State = dataStack.pop()
+    fun peekState(): State? = dataStack.peek()
+
+    // Methods to work with memory
+    fun storeState(symbol: IrSymbol, variable: Variable) {
+        memory[symbol] = variable
     }
 
-    override fun addAll(variables: List<Variable>) {
-        pool.addAll(variables)
+    fun storeState(symbol: IrSymbol, state: State?) {
+        memory[symbol] = Variable(state)
     }
 
-    override fun getVariable(symbol: IrSymbol): Variable? {
-        return (if (symbol is IrTypeParameterSymbol) typeArguments else pool).firstOrNull { it.symbol == symbol }
+    fun containsStateInMemory(symbol: IrSymbol): Boolean = memory[symbol] != null
+    fun loadState(symbol: IrSymbol): State? = memory[symbol]?.state
+    fun rewriteState(symbol: IrSymbol, newState: State) {
+        memory[symbol]?.state = newState
     }
 
-    override fun getAll(): List<Variable> {
-        return pool
+    fun getAll(): List<Pair<IrSymbol, Variable>> = memory.toList()
+}
+
+private class DataStack {
+    private val stack = ArrayDeque<State>()
+
+    fun push(state: State) {
+        stack.add(state)
     }
 
-    override fun contains(symbol: IrSymbol): Boolean {
-        return (typeArguments + pool).any { it.symbol == symbol }
-    }
-
-    override fun pushReturnValue(state: State) {
-        returnStack += state
-    }
-
-    override fun pushReturnValue(frame: Frame) {
-        if (frame.hasReturnValue()) this.pushReturnValue(frame.popReturnValue())
-    }
-
-    override fun hasReturnValue(): Boolean {
-        return returnStack.isNotEmpty()
-    }
-
-    override fun peekReturnValue(): State {
-        if (returnStack.isNotEmpty()) {
-            return returnStack.last()
-        }
-        throw NoSuchElementException("Return values stack is empty")
-    }
-
-    override fun popReturnValue(): State {
-        if (returnStack.isNotEmpty()) {
-            val item = returnStack.last()
-            returnStack.removeAt(returnStack.size - 1)
-            return item
-        }
-        throw NoSuchElementException("Return values stack is empty")
-    }
+    fun pop(): State = stack.removeLast()
+    fun peek(): State? = stack.lastOrNull()
 }

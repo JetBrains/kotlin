@@ -135,6 +135,7 @@ inline fun <reified T : PsiElement, reified V : PsiElement, reified U : PsiEleme
 }
 
 inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean, vararg stopAt: Class<out PsiElement>): T? {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     return PsiTreeUtil.getParentOfType(this, T::class.java, strict, *stopAt)
 }
 
@@ -497,4 +498,28 @@ fun KtExpression.isNull(): Boolean {
         returns(true) implies (this@isNull is KtConstantExpression)
     }
     return this is KtConstantExpression && this.node.elementType == KtNodeTypes.NULL
+}
+
+fun PsiElement?.unwrapParenthesesLabelsAndAnnotations(): PsiElement? {
+    var unwrapped = this
+    while (true) {
+        unwrapped = when (unwrapped) {
+            is KtParenthesizedExpression -> unwrapped.expression
+            is KtLabeledExpression -> unwrapped.baseExpression
+            is KtAnnotatedExpression -> unwrapped.baseExpression
+            else -> return unwrapped
+        }
+    }
+}
+
+fun PsiElement.unwrapParenthesesLabelsAndAnnotationsDeeply(): PsiElement {
+    var current: PsiElement = this
+    var unwrapped: PsiElement?
+
+    do {
+        unwrapped = current.parent?.unwrapParenthesesLabelsAndAnnotations()
+        current = current.parent
+    } while (unwrapped != current)
+
+    return unwrapped
 }

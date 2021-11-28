@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.SealedClassInheritorsProviderImpl
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -29,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
@@ -68,6 +65,7 @@ class DeserializedClassDescriptor(
     private val constructors = c.storageManager.createLazyValue { computeConstructors() }
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
     private val sealedSubclasses = c.storageManager.createLazyValue { computeSubclassesForSealedClass() }
+    private val inlineClassRepresentation = c.storageManager.createNullableLazyValue { computeInlineClassRepresentation() }
 
     internal val thisAsProtoContainer: ProtoContainer.Class = ProtoContainer.Class(
         classProto, c.nameResolver, c.typeTable, sourceElement,
@@ -165,10 +163,39 @@ class DeserializedClassDescriptor(
         }
 
         // This is needed because classes compiled with Kotlin 1.0 did not contain the sealed_subclass_fq_name field
-        return SealedClassInheritorsProviderImpl.computeSealedSubclasses(this, freedomForSealedInterfacesSupported = false)
+        return CliSealedClassInheritorsProvider.computeSealedSubclasses(this, allowSealedInheritorsInDifferentFilesOfSamePackage = false)
     }
 
     override fun getSealedSubclasses() = sealedSubclasses()
+
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = inlineClassRepresentation()
+
+    private fun computeInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? {
+        if (!isInlineClass()) return null
+
+        val propertyName = when {
+            classProto.hasInlineClassUnderlyingPropertyName() ->
+                c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
+            !metadataVersion.isAtLeast(1, 5, 1) -> {
+                // Before 1.5, inline classes did not have underlying property name & type in the metadata.
+                // However, they were experimental, so supposedly this logic can be removed at some point in the future.
+                val constructor = unsubstitutedPrimaryConstructor ?: error("Inline class has no primary constructor: $this")
+                constructor.valueParameters.first().name
+            }
+            else -> error("Inline class has no underlying property name in metadata: $this")
+        }
+
+        val type = classProto.inlineClassUnderlyingType(c.typeTable)?.let(c.typeDeserializer::simpleType)
+            ?: run {
+                val underlyingProperty =
+                    memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
+                        .singleOrNull { it.extensionReceiverParameter == null }
+                        ?: error("Inline class has no underlying property: $this")
+                underlyingProperty.type as SimpleType
+            }
+
+        return InlineClassRepresentation(propertyName, type)
+    }
 
     override fun toString() =
         "deserialized ${if (isExpect) "expect " else ""}class $name" // not using descriptor renderer to preserve laziness

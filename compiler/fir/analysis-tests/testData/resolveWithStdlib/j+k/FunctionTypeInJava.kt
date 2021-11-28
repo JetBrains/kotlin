@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: JavaClass.java
 public class JavaClass {
     public static void foo1(kotlin.jvm.functions.Function0<Integer> x) {}

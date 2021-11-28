@@ -81,7 +81,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
                     }
 
                     val catchBody = catch.result.transform(object : IrElementTransformer<IrValueSymbol> {
-                        override fun visitGetValue(expression: IrGetValue, data: IrValueSymbol) =
+                        override fun visitGetValue(expression: IrGetValue, data: IrValueSymbol): IrExpression =
                             if (expression.symbol == data)
                                 castedPendingException()
                             else

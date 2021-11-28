@@ -1,2 +1,12 @@
 public abstract interface InheritNullabilityJavaSubtype : R|kotlin/Any| {
+    public abstract interface Sub : R|test/InheritNullabilityJavaSubtype.Super| {
+        public abstract fun foo(): R|@EnhancedNullability kotlin/String|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        @R|org/jetbrains/annotations/NotNull|() public abstract fun foo(): R|@EnhancedNullability kotlin/CharSequence|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

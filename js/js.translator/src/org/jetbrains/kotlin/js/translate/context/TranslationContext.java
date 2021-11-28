@@ -131,8 +131,8 @@ public class TranslationContext {
             if (function.isSuspend()) {
                 ClassDescriptor continuationDescriptor =
                         DescriptorUtilKt.findContinuationClassDescriptor(
-                                getCurrentModule(), NoLookupLocation.FROM_BACKEND,
-                                getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+                                getCurrentModule(), NoLookupLocation.FROM_BACKEND
+                        );
 
                 return new ValueParameterDescriptorImpl(function, null, function.getValueParameters().size(),
                                                         Annotations.Companion.getEMPTY(), Name.identifier("continuation"),

@@ -20,4 +20,3 @@ abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
   }
 
 }
-

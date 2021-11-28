@@ -37,6 +37,6 @@ class B {
 }
 
 fun foo3(x: B) = {
-    x += { <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
+    x += { <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
     x += id { <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
 }

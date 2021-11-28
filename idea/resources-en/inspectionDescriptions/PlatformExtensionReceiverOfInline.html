@@ -1,9 +1,0 @@
-<html>
-<body>
-This inspection reports potentially unsafe calls of inline functions with flexible nullable (platform type with unknown nullability) extension receivers.
-In Kotlin 1.0 or 1.1, such calls do not include nullability check in bytecode,
-but in Kotlin 1.2, nullability check is included and can provoke NPE if actual receiver is null.
-It's recommended to add explicit <b>!!</b> if exception is what you want,
-or consider changing the function's receiver type to nullable if it should work without exceptions.
-</body>
-</html>

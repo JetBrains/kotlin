@@ -1,0 +1,2 @@
+expression: lst
+type: kotlin.collections.MutableList<kotlin.collections.List<*>>

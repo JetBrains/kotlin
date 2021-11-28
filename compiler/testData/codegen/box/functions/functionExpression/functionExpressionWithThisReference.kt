@@ -1,4 +1,3 @@
-
 fun Int.thisRef1() = fun () = this
 fun Int.thisRef2() = fun (): Int {return this}
 

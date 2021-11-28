@@ -21,12 +21,10 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
-import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -37,13 +35,20 @@ import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
+import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarHandler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.report.*
+import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
+import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
+import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
+import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
@@ -102,7 +107,7 @@ abstract class CompileServiceImplBase(
     protected val log by lazy { Logger.getLogger("compiler") }
 
     init {
-        System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
+        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
     }
 
     // wrapped in a class to encapsulate alive check logic
@@ -243,7 +248,7 @@ abstract class CompileServiceImplBase(
             runFileDir,
             makeRunFilenameString(
                 timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
+                digest = compilerId.digest(),
                 port = port.toString()
             )
         )
@@ -323,7 +328,17 @@ abstract class CompileServiceImplBase(
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                    compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
+                    val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
+
+                    val perfString = compiler.defaultPerformanceManager.renderCompilerPerformance()
+                    compilationResults?.also {
+                        (it as CompilationResults).add(
+                            CompilationResultCategory.BUILD_REPORT_LINES.code,
+                            arrayListOf(perfString)
+                        )
+                    }
+
+                    exitCode
                 }
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
@@ -601,7 +616,8 @@ abstract class CompileServiceImplBase(
             outputFiles = incrementalCompilationOptions.outputFiles,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
-            kotlinSourceFilesExtensions = allKotlinExtensions
+            kotlinSourceFilesExtensions = allKotlinExtensions,
+            classpathChanges = incrementalCompilationOptions.classpathChanges
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
@@ -646,6 +662,14 @@ class CompileServiceImpl(
 
     override fun getDaemonInfo(): CompileService.CallResult<String> = ifAlive(minAliveness = Aliveness.Dying) {
         CompileService.CallResult.Good("Kotlin daemon on port $port")
+    }
+
+    override fun getKotlinVersion(): CompileService.CallResult<String> = ifAlive {
+        try {
+            CompileService.CallResult.Good(KotlinCompilerVersion.VERSION)
+        } catch (e: Exception) {
+            CompileService.CallResult.Error("Unknown Kotlin version")
+        }
     }
 
     override fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive {
@@ -710,7 +734,7 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(res)
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun remoteCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -736,7 +760,7 @@ class CompileServiceImpl(
             }
         }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun remoteIncrementalCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -790,6 +814,7 @@ class CompileServiceImpl(
         getICReporter = { a, b, c -> getBuildReporter(a, b!!, c)}
     )
 
+    @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
     override fun leaseReplSession(
         aliveFlagPath: String?,
         targetPlatform: CompileService.TargetPlatform,
@@ -828,7 +853,7 @@ class CompileServiceImpl(
     // TODO: add more checks (e.g. is it a repl session)
     override fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
 
-    @Suppress("OverridingDeprecatedMember")
+    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
@@ -858,6 +883,9 @@ class CompileServiceImpl(
         if (facade.hasExpectActualTracker()) {
             builder.register(ExpectActualTracker::class.java, RemoteExpectActualTracker(facade, rpcProfiler))
         }
+        if (facade.hasInlineConstTracker()) {
+            builder.register(InlineConstTracker::class.java, RemoteInlineConstTracker(facade, rpcProfiler))
+        }
         if (facade.hasIncrementalResultsConsumer()) {
             builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, eventManager, rpcProfiler))
         }
@@ -868,7 +896,7 @@ class CompileServiceImpl(
         return builder.build()
     }
 
-    @Suppress("OverridingDeprecatedMember")
+    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun remoteReplLineCompile(
         sessionId: Int,
         codeLine: ReplCodeLine,
@@ -881,7 +909,7 @@ class CompileServiceImpl(
             }
         }
 
-    @Suppress("OverridingDeprecatedMember")
+    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun remoteReplLineEval(
         sessionId: Int,
         codeLine: ReplCodeLine,

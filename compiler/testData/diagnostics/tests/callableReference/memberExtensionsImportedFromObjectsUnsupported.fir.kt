@@ -14,13 +14,13 @@ class A {
 }
 
 fun test() {
-    String::ext
-    <!UNRESOLVED_REFERENCE!>Obj::ext<!>
+    String::<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>ext<!>
+    Obj::<!UNRESOLVED_REFERENCE!>ext<!>
 
-    String::ext2
-    <!UNRESOLVED_REFERENCE!>A.Companion::ext2<!>
-    <!UNRESOLVED_REFERENCE!>A::ext2<!>
+    String::<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>ext2<!>
+    A.Companion::<!UNRESOLVED_REFERENCE!>ext2<!>
+    A::<!UNRESOLVED_REFERENCE!>ext2<!>
 
-    <!UNRESOLVED_REFERENCE!>A::foo<!>
-    <!UNRESOLVED_REFERENCE!>A::bar<!>
+    A::<!UNRESOLVED_REFERENCE!>foo<!>
+    A::<!UNRESOLVED_REFERENCE!>bar<!>
 }

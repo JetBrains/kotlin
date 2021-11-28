@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 import java.io.InputStream
 
 fun InputStream.test() {
     readBytes()
 
-    <!DEPRECATION!>readBytes<!>(1)
+    <!DEPRECATION_ERROR!>readBytes<!>(1)
 }

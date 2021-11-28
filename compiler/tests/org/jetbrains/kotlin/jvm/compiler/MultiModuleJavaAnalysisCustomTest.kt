@@ -41,8 +41,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -56,7 +57,6 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.junit.Assert
 import java.io.File
-import java.util.*
 
 class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
 
@@ -86,9 +86,10 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val platformParameters = JvmPlatformParameters(
             packagePartProviderFactory = { PackagePartProvider.Empty },
             moduleByJavaClass = { javaClass ->
-                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                val moduleName = javaClass.name.asString().lowercase().first().toString()
                 modules.first { it._name == moduleName }
-            }
+            },
+            useBuiltinsProviderForModule = { false }
         )
 
         val resolverForProject = object : AbstractResolverForProject<TestModule>(
@@ -113,7 +114,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     projectContext.withModule(descriptor),
                     modulesContent(moduleInfo),
                     this,
-                    LanguageVersionSettingsImpl.DEFAULT
+                    LanguageVersionSettingsImpl.DEFAULT,
+                    CliSealedClassInheritorsProvider,
                 )
         }
 
@@ -163,8 +165,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             module ->
             val moduleDescriptor = resolverForProject.descriptorForModule(module)
 
-            checkClassInPackage(moduleDescriptor, "test", "Kotlin${module._name.toUpperCase()}")
-            checkClassInPackage(moduleDescriptor, "custom", "${module._name.toUpperCase()}Class")
+            checkClassInPackage(moduleDescriptor, "test", "Kotlin${module._name.uppercase()}")
+            checkClassInPackage(moduleDescriptor, "custom", "${module._name.uppercase()}Class")
         }
     }
 
@@ -227,7 +229,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         assert(!ErrorUtils.isError(referencedDescriptor)) { "Error descriptor: $referencedDescriptor" }
 
         val descriptorName = referencedDescriptor.name.asString()
-        val expectedModuleName = "<${descriptorName.toLowerCase().first()}>"
+        val expectedModuleName = "<${descriptorName.lowercase().first()}>"
         val moduleName = referencedDescriptor.module.name.asString()
         Assert.assertEquals(
                 "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",

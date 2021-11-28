@@ -1,8 +1,8 @@
-class A
-class B : A
+open class A
+class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!>
 
-class C(x: Int)
-<!INAPPLICABLE_CANDIDATE!>class D : C<!>
+open class C(x: Int)
+<!NO_VALUE_FOR_PARAMETER!>class D : <!SUPERTYPE_NOT_INITIALIZED!>C<!><!>
 class E : C(10)
 class F() : C(10)
 

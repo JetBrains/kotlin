@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // TODO: needs an intensive rework for new Char API
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
 import java.io.File

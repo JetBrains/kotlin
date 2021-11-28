@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
+// JVM_TARGET: 1.6
 
 @Target(AnnotationTarget.TYPE)
 annotation class A

@@ -34,6 +34,8 @@ abstract class FirScope {
     }
 
     open fun mayContainName(name: Name) = true
+
+    open val scopeOwnerLookupNames: List<String> get() = emptyList()
 }
 
 fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
@@ -59,6 +61,15 @@ fun FirTypeScope.processOverriddenFunctionsAndSelf(
     if (!processor(functionSymbol)) return ProcessorAction.STOP
 
     return processOverriddenFunctions(functionSymbol, processor)
+}
+
+fun FirTypeScope.processOverriddenPropertiesAndSelf(
+    propertySymbol: FirPropertySymbol,
+    processor: (FirPropertySymbol) -> ProcessorAction
+): ProcessorAction {
+    if (!processor(propertySymbol)) return ProcessorAction.STOP
+
+    return processOverriddenProperties(propertySymbol, processor)
 }
 
 enum class ProcessorAction {

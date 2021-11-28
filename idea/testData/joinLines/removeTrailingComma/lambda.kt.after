@@ -1,5 +1,0 @@
-fun a() {
-    val a = { a: Int, b: Int <caret>->
-
-    }
-}

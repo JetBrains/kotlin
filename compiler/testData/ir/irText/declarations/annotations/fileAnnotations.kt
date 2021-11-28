@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @file:A("File annotation")
 package test
 

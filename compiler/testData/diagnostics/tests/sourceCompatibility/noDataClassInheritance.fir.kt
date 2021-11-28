@@ -8,7 +8,7 @@ open class NotAllowed
 
 class Derived: Base(42)
 
-data class Nasty(val z: Int, val y: Int): Base(z)
+<!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class Nasty(val z: Int, val y: Int): Base(z)
 
 data class Complex(val y: Int): Allowed, NotAllowed()
 

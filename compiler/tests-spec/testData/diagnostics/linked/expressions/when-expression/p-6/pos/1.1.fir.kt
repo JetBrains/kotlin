@@ -29,7 +29,7 @@ fun case_3(value_1: Any?): String = when (value_1) {
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any): String = when (value_1) {
-    is Any? -> ""
+    <!USELESS_IS_CHECK!>is Any?<!> -> ""
     else -> ""
 }
 

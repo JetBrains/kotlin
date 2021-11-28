@@ -16,14 +16,16 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.CompileServiceImplBase
 import org.jetbrains.kotlin.daemon.CompilerSelector
@@ -229,6 +231,15 @@ class CompileServiceServerSideImpl(
             CompileService.CallResult.Good("Kotlin daemon on socketPort $port")
         }
 
+    override suspend fun getKotlinVersion(): CompileService.CallResult<String> =
+        ifAlive(minAliveness = Aliveness.Dying) {
+            try {
+                CompileService.CallResult.Good(KotlinCompilerVersion.VERSION)
+            } catch (e: Exception) {
+                CompileService.CallResult.Error("Unknown Kotlin version")
+            }
+        }
+
     override suspend fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive {
         CompileService.CallResult.Good(daemonOptions)
     }
@@ -402,7 +413,7 @@ class CompileServiceServerSideImpl(
         scheduler = CompileServiceTaskScheduler(log)
 
         // assuming logically synchronized
-        System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
+        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
         // TODO UNCOMMENT THIS : this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
 //        rmiServer = this.toRMIServer(daemonOptions, compilerId)

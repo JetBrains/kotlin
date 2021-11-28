@@ -13,12 +13,69 @@ import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.KClassValue
+
+fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
 
 
+class PsiClassRenderer private constructor(
+    private val renderInner: Boolean,
+    private val membersFilter: MembersFilter
+) {
 
-object PsiClassRenderer {
+    interface MembersFilter {
+        fun includeEnumConstant(psiEnumConstant: PsiEnumConstant): Boolean = true
+        fun includeField(psiField: PsiField): Boolean = true
+        fun includeMethod(psiMethod: PsiMethod): Boolean = true
+        fun includeClass(psiClass: PsiClass): Boolean = true
 
-    var extendedTypeRenderer = false
+        companion object {
+            val DEFAULT = object : MembersFilter {}
+        }
+    }
+
+    companion object {
+        var extendedTypeRenderer = false
+
+        fun renderClass(
+            psiClass: PsiClass,
+            renderInner: Boolean = false,
+            membersFilter: MembersFilter = MembersFilter.DEFAULT
+        ): String =
+            PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
+    }
+
+    private fun renderClass(psiClass: PsiClass): String =
+        buildString {
+            val classWord = when {
+                psiClass.isAnnotationType -> "@interface"
+                psiClass.isInterface -> "interface"
+                psiClass.isEnum -> "enum"
+                else -> "class"
+            }
+
+            append(psiClass.renderModifiers())
+            append("$classWord ")
+            append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
+            append(psiClass.typeParameters.renderTypeParams())
+            append(psiClass.extendsList.renderRefList("extends"))
+            append(psiClass.implementsList.renderRefList("implements"))
+            appendLine(" {")
+
+            if (psiClass.isEnum) {
+                append(
+                    psiClass.fields
+                        .filterIsInstance<PsiEnumConstant>()
+                        .filter { membersFilter.includeEnumConstant(it) }
+                        .joinToString(",\n") { it.renderEnumConstant() }.prependDefaultIndent()
+                )
+                append(";\n\n")
+            }
+
+            append(psiClass.renderMembers())
+
+            append("}")
+        }
 
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
     private fun PsiType.renderType(sb: StringBuffer) {
@@ -90,12 +147,19 @@ object PsiClassRenderer {
             it.name!! + bounds
         } + "> "
 
-    private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String =
-        (value as? Pair<*, *>)?.let {
-            val classId = it.first as? ClassId
-            val name = it.second as? Name
-            if (classId != null && name != null) "${classId.asSingleFqName()}.${name.asString()}" else null
-        } ?: text
+    private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String {
+        val value = value
+        if (value is Pair<*, *>) {
+            val classId = value.first as? ClassId
+            val name = value.second as? Name
+            if (classId != null && name != null)
+                return "${classId.asSingleFqName()}.${name.asString()}"
+        }
+        if (value is KClassValue.Value.NormalClass && value.arrayDimensions == 0) {
+            return "${value.classId.asSingleFqName()}.class"
+        }
+        return text
+    }
 
     private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
         is KtLightPsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
@@ -126,69 +190,41 @@ object PsiClassRenderer {
         return "$typeParams $name$paramTypes"
     }
 
-    private fun PsiEnumConstant.renderEnumConstant(renderInner: Boolean): String {
+    private fun PsiEnumConstant.renderEnumConstant(): String {
         val initializingClass = initializingClass ?: return name
 
         return buildString {
             appendLine("$name {")
-            append(initializingClass.renderMembers(renderInner))
+            append(initializingClass.renderMembers())
             append("}")
         }
     }
 
-    fun PsiClass.renderClass(renderInner: Boolean = false): String {
-        val classWord = when {
-            isAnnotationType -> "@interface"
-            isInterface -> "interface"
-            isEnum -> "enum"
-            else -> "class"
-        }
-
-        return buildString {
-            append(renderModifiers())
-            append("$classWord ")
-            append("$name /* $qualifiedName*/")
-            append(typeParameters.renderTypeParams())
-            append(extendsList.renderRefList("extends"))
-            append(implementsList.renderRefList("implements"))
-            appendLine(" {")
-
-            if (isEnum) {
-                append(
-                    fields
-                        .filterIsInstance<PsiEnumConstant>()
-                        .joinToString(",\n") { it.renderEnumConstant(renderInner) }.prependDefaultIndent()
-                )
-                append(";\n\n")
-            }
-
-            append(renderMembers(renderInner))
-
-            append("}")
-        }
-    }
-
-    private fun PsiClass.renderMembers(renderInner: Boolean): String {
+    private fun PsiClass.renderMembers(): String {
         return buildString {
             appendSorted(
                 fields
                     .filterNot { it is PsiEnumConstant }
+                    .filter { membersFilter.includeField(it) }
                     .map { it.renderVar().prependDefaultIndent() + ";\n\n" }
             )
 
             appendSorted(
                 methods
+                    .filter { membersFilter.includeMethod(it) }
                     .map { it.renderMethod().prependDefaultIndent() + "\n\n" }
             )
 
             appendSorted(
-                innerClasses.map {
-                    appendLine()
-                    if (renderInner)
-                        it.renderClass(renderInner)
-                    else
-                        "class ${it.name} ...\n\n".prependDefaultIndent()
-                }
+                innerClasses
+                    .filter { membersFilter.includeClass(it) }
+                    .map {
+                        appendLine()
+                        if (renderInner)
+                            renderClass(it, renderInner)
+                        else
+                            "class ${it.name} ...\n\n".prependDefaultIndent()
+                    }
             )
         }
     }

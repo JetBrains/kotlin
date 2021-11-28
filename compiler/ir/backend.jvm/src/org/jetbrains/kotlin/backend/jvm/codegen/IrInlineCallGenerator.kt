@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.util.render
 
 interface IrInlineCallGenerator : IrCallGenerator {
     override fun genCall(
@@ -18,13 +18,11 @@ interface IrInlineCallGenerator : IrCallGenerator {
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     ) {
-        val element = codegen.context.psiSourceManager.findPsiElement(expression, codegen.irFunction)
-            ?: codegen.context.psiSourceManager.findPsiElement(codegen.irFunction)
-        if (!codegen.state.globalInlineContext.enterIntoInlining(
-                expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor(), element)
-        ) {
-            val message = "Call is a part of inline call cycle: ${expression.render()}"
-            AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", message)
+        val element = PsiSourceManager.findPsiElement(expression, codegen.irFunction)
+            ?: PsiSourceManager.findPsiElement(codegen.irFunction)
+        val descriptor = expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor()
+        if (!codegen.state.globalInlineContext.enterIntoInlining(descriptor, element)) {
+            genCycleStub(expression.psiElement?.text ?: "<no source>", codegen)
             return
         }
         try {
@@ -40,4 +38,8 @@ interface IrInlineCallGenerator : IrCallGenerator {
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     )
+
+    fun genCycleStub(text: String, codegen: ExpressionCodegen) {
+        AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is a part of inline call cycle: $text")
+    }
 }

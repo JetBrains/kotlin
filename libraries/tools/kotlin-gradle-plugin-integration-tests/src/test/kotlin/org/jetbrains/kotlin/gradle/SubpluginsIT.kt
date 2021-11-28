@@ -9,7 +9,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
@@ -201,7 +201,12 @@ class SubpluginsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
+    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(
+        Project(
+            "android-dagger",
+            directoryPrefix = "kapt2"
+        )
+    ) {
         setupWorkingDir()
 
         gradleBuildScript("app").modify {
@@ -221,8 +226,8 @@ class SubpluginsIT : BaseGradleIT() {
         build(
             ":app:compileDebugKotlin",
             options = defaultBuildOptions().copy(
-                androidGradlePluginVersion = AGPVersion.v3_4_1,
-                androidHome = KotlinTestUtils.findAndroidSdk()
+                androidGradlePluginVersion = AGPVersion.v4_2_0,
+                androidHome = KtTestUtil.findAndroidSdk()
             )
         ) {
             assertSuccessful()
@@ -261,6 +266,38 @@ class SubpluginsIT : BaseGradleIT() {
                             "Please use an older version of kotlin-$plugin or upgrade the Kotlin Gradle plugin version to make them match."
                 )
             }
+        }
+    }
+
+    @Test
+    fun testLombokPlugin() {
+        Project("lombokProject").build("build") {
+            assertSuccessful()
+        }
+
+    }
+
+    @Test // KT-47921
+    fun testSerializationPluginOrderedFirst() = with(Project("allOpenSimple")) {
+        setupWorkingDir()
+        // Ensure that there are also allopen, noarg, and serialization plugins applied:
+        gradleBuildScript().appendText(
+            """
+            buildscript {
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-noarg:${defaultBuildOptions().kotlinVersion}")                
+                    classpath("org.jetbrains.kotlin:kotlin-serialization:${defaultBuildOptions().kotlinVersion}")                
+                }
+            }
+            apply plugin: "org.jetbrains.kotlin.plugin.noarg"
+            apply plugin: "org.jetbrains.kotlin.plugin.serialization"
+        """.trimIndent()
+        )
+
+        build("compileKotlin") {
+            assertSuccessful()
+            val xPlugin = output.split(" ").single { it.startsWith("-Xplugin") }.substringAfter("-Xplugin").split(",")
+            assertTrue("Expected serialization plugin to go first; actual order: $xPlugin") { xPlugin.first().contains("serialization") }
         }
     }
 }

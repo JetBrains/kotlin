@@ -24,6 +24,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 class CustomFramesMethodAnalyzer<V : Value>(
     owner: String, method: MethodNode, interpreter: Interpreter<V>,
     private val frameFactory: (Int, Int) -> Frame<V>
-) : MethodAnalyzer<V>(owner, method, interpreter) {
+) : FastMethodAnalyzer<V>(owner, method, interpreter) {
     override fun newFrame(nLocals: Int, nStack: Int) = frameFactory(nLocals, nStack)
 }

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 open class MyClass private constructor(val x: Int) {
@@ -10,11 +9,11 @@ open class MyClass private constructor(val x: Int) {
 
 typealias MyAlias = MyClass
 
-val test1 = <!INAPPLICABLE_CANDIDATE!>MyAlias<!>(1)
-val test1a = <!INAPPLICABLE_CANDIDATE!>MyClass<!>(1)
+val test1 = MyAlias(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+val test1a = MyClass(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
-val test2 = <!INAPPLICABLE_CANDIDATE!>MyAlias<!>("")
-val test2a = <!INAPPLICABLE_CANDIDATE!>MyClass<!>("")
+val test2 = MyAlias(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+val test2a = MyClass(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
 val test3 = MyAlias(1.0)
 val test3a = MyClass(1.0)

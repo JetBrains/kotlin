@@ -1,5 +1,0 @@
-// "Change to var" "true"
-
-class A() {
-    <caret>lateinit var foo: String
-}

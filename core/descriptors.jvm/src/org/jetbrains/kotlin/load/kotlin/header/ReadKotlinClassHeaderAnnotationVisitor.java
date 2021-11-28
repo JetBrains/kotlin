@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -51,7 +51,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     }
 
     private int[] metadataVersionArray = null;
-    private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String extraString = null;
     private int extraInt = 0;
     private String packageName = null;
@@ -59,6 +58,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] strings = null;
     private String[] incompatibleData = null;
     private KotlinClassHeader.Kind headerKind = null;
+    private String[] serializedIrFields = null;
 
     @Nullable
     public KotlinClassHeader createHeader() {
@@ -79,16 +79,21 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
+        byte[] serializedIr = null;
+        if (serializedIrFields != null) {
+            serializedIr = BitEncoding.decodeBytes(serializedIrFields);
+        }
+
         return new KotlinClassHeader(
                 headerKind,
                 metadataVersion,
-                bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INSTANCE,
                 data,
                 incompatibleData,
                 strings,
                 extraString,
                 extraInt,
-                packageName
+                packageName,
+                serializedIr
         );
     }
 
@@ -104,6 +109,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         FqName fqName = classId.asSingleFqName();
         if (fqName.equals(METADATA_FQ_NAME)) {
             return new KotlinMetadataArgumentVisitor();
+        }
+        if (fqName.equals(SERIALIZED_IR_FQ_NAME)) {
+            return new KotlinSerializedIrArgumentVisitor();
         }
 
         if (IGNORE_OLD_METADATA) return null;
@@ -140,11 +148,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
                     metadataVersionArray = (int[]) value;
-                }
-            }
-            else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
-                if (value instanceof int[]) {
-                    bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
                 }
             }
             else if (METADATA_EXTRA_STRING_FIELD_NAME.equals(string)) {
@@ -227,11 +230,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             if ("version".equals(string)) {
                 if (value instanceof int[]) {
                     metadataVersionArray = (int[]) value;
-
-                    // If there's no bytecode binary version in the class file, we assume it to be equal to the metadata version
-                    if (bytecodeVersion == null) {
-                        bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
-                    }
                 }
             }
             else if ("multifileClassName".equals(string)) {
@@ -293,6 +291,52 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
     }
 
+    private class KotlinSerializedIrArgumentVisitor implements AnnotationArgumentVisitor {
+        @Override
+        public void visit(@Nullable Name name, @Nullable Object value) {
+        }
+
+        @Override
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
+        }
+
+        @Override
+        @Nullable
+        public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
+            String string = name.asString();
+            if (SERIALIZED_IR_BYTES_FIELD_NAME.equals(string)) {
+                return serializedIrArrayVisitor();
+            }
+            else {
+                return null;
+            }
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor serializedIrArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] result) {
+                    serializedIrFields = result;
+                }
+            };
+        }
+
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Nullable
+        @Override
+        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+            return null;
+        }
+
+        @Override
+        public void visitEnd() {
+        }
+    }
+
     private abstract static class CollectStringArrayAnnotationVisitor implements AnnotationArrayArgumentVisitor {
         private final List<String> strings;
 
@@ -313,6 +357,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visitClassLiteral(@NotNull ClassLiteralValue classLiteralValue) {
+        }
+
+        @Nullable
+        @Override
+        public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+            return null;
         }
 
         @Override

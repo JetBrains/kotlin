@@ -1,6 +1,0 @@
-Resolve target: value-parameter p1: kotlin.Any?
-----------------------------------------------
-fun foo(p1: Any?, p2: Any?) {
-    /* STATEMENT DELETED: if (p1 == null && p2 == null) { print("2 null's") return } */
-    <caret>p1?.hashCode()
-}

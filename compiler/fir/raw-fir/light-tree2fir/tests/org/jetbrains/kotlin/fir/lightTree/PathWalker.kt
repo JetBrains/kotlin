@@ -11,7 +11,9 @@ fun String.walkTopDown(f: (File) -> Unit) {
     val root = File(this)
     for (file in root.walkTopDown()) {
         if (file.isDirectory) continue
-        if (file.path.contains("testData") || file.path.contains("resources")) continue
+        if (file.path.contains("kotlin-native") ||
+            file.path.contains("testData") ||
+            file.path.contains("resources")) continue
         if (file.extension != "kt") continue
 
         f(file)

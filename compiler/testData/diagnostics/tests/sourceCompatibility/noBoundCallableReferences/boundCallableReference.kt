@@ -21,5 +21,5 @@ val ok4 = E.Entry::hashCode
 fun hashCode() {}
 
 val fail3 = <!UNSUPPORTED_FEATURE!>""<!>::hashCode
-val fail4 = <!UNSUPPORTED_FEATURE!>(C)<!>::hashCode
+val fail4 = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION, UNSUPPORTED_FEATURE!>(C)<!>::hashCode
 val fail5 = <!UNSUPPORTED_FEATURE!>(C.Companion)<!>::hashCode

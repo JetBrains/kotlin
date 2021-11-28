@@ -26,11 +26,11 @@ enum class EnumClass {
         override val bar: String = "a"
     },
 
-    E2 {
+    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>E2<!> {
 
     },
 
-    E3();
+    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>E3<!>();
 
     abstract fun foo(): Int
     abstract val bar: String

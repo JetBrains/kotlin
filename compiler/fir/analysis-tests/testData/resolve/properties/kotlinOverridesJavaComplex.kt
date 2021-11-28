@@ -33,18 +33,18 @@ public interface Klass extends TypeParametersOwner {
 fun List<String>.single(): String = ""
 fun List<Int>.single(): Int = 2
 
-fun listOf(): List<String> {}
+fun listOf(): List<String> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-public class LightMember<D> : Member<D>, Light() {
+public open class LightMember<D> : Member<D>, Light() {
     override fun getName(): String = "Light"
 }
 
-public class LightClassWrapper : Light(), Klass {
+public <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class LightClassWrapper<!> : Light(), Klass {
     fun test() = typeParameters.single()
 }
 
 public abstract class Light : Field, TypeParametersOwner {
-    fun getTypeParameters() = listOf()
+    fun <!VIRTUAL_MEMBER_HIDDEN!>getTypeParameters<!>() = listOf()
 }
 
 public interface Field : Named

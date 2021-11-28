@@ -4,8 +4,8 @@ plugins {
 }
 
 val allTestsRuntime by configurations.creating
-val testCompile by configurations
-testCompile.extendsFrom(allTestsRuntime)
+val testApi by configurations
+testApi.extendsFrom(allTestsRuntime)
 val embeddableTestRuntime by configurations.creating {
     extendsFrom(allTestsRuntime)
 }
@@ -13,14 +13,12 @@ val embeddableTestRuntime by configurations.creating {
 dependencies {
     allTestsRuntime(commonDep("junit"))
     allTestsRuntime(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        allTestsRuntime(intellijDep()) { includeJars("openapi") }
-    }
     allTestsRuntime(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jna") }
-    testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+    testApi(project(":kotlin-scripting-jvm-host-unshaded"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-reflect"))
@@ -54,3 +52,9 @@ projectTest(parallel = true) {
 //    dependsOn(embeddableTestRuntime)
 //    classpath = embeddableTestRuntime
 //}
+
+projectTest(taskName = "testWithIr", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-ir")
+}

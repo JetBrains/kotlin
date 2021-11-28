@@ -34,7 +34,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.correctElementType;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
@@ -306,7 +307,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
             iv.load(secondParameterIndex, OBJECT_TYPE);
             iv.checkcast(wrapperType);
-            StackValue.unboxInlineClass(wrapperType, wrapperKotlinType, iv);
+            StackValue.unboxInlineClass(wrapperType, wrapperKotlinType, iv, typeMapper);
             iv.store(unboxedValueIndex, underlyingType.getType());
 
             return unboxedValueIndex;

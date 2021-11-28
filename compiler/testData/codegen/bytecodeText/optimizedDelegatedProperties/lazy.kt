@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val topLevelLazyVal by lazy { 1 }
 

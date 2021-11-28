@@ -26,11 +26,10 @@ L0:
     r(0) -> <v2>
     magic[UNRESOLVED_CALL](a[0]|<v1>, <v2>) -> <v3>
     magic[UNRESOLVED_CALL](a[0]++|<v3>) -> <v4>
-    magic[UNRESOLVED_CALL](a[0]++|<v3>, <v4>) -> <v5>
 L1:
-  1 <END>                                                NEXT:[<SINK>]
+  1 <END>                                              NEXT:[<SINK>]
 error:
-    <ERROR>                                              PREV:[]
+    <ERROR>                                            PREV:[]
 sink:
-    <SINK>                                               PREV:[<ERROR>, <END>]
+    <SINK>                                             PREV:[<ERROR>, <END>]
 =====================

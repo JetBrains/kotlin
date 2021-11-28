@@ -1,5 +1,5 @@
+// !OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
 // WITH_REFLECT
 
 import kotlin.reflect.jvm.*

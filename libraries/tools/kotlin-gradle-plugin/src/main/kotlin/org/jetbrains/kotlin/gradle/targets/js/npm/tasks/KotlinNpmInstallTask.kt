@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
+import org.jetbrains.kotlin.gradle.targets.js.npm.asNpmEnvironment
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 import java.io.File
 
 open class KotlinNpmInstallTask : DefaultTask() {
@@ -25,40 +24,53 @@ open class KotlinNpmInstallTask : DefaultTask() {
         }
     }
 
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-    private val resolutionManager get() = nodeJs.npmResolutionManager
-
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
-    }
+    @Transient
+    private val nodeJs: NodeJsRootExtension? = NodeJsRootPlugin.apply(project.rootProject)
+    private val resolutionManager = (nodeJs ?: unavailableValueError("nodeJs")).npmResolutionManager
 
     @Input
     val args: MutableList<String> = mutableListOf()
 
+    @get:Internal
+    val nodeModulesDir: File by lazy {
+        (nodeJs ?: unavailableValueError("nodeJs"))
+            .rootPackageDir
+            .resolve("node_modules")
+    }
+
+    init {
+        outputs.upToDateWhen {
+            nodeModulesDir.isDirectory
+        }
+    }
+
     @Suppress("unused")
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val packageJsonFiles: Collection<File> by lazy {
         resolutionManager.packageJsonFiles
     }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val preparedFiles: Collection<File> by lazy {
-        nodeJs.packageManager.preparedFiles(project)
+        (nodeJs ?: unavailableValueError("nodeJs")).packageManager.preparedFiles(nodeJs.asNpmEnvironment)
     }
 
-    // avoid using node_modules as output directory, as it is significantly slows down build
     @get:OutputFile
-    val nodeModulesState: File
-        get() = nodeJs.rootNodeModulesStateFile
-
-    @get:OutputFile
-    val yarnLock: File
-        get() = nodeJs.rootPackageDir.resolve("yarn.lock")
+    val yarnLock: File by lazy {
+        (nodeJs ?: unavailableValueError("nodeJs")).rootPackageDir.resolve("yarn.lock")
+    }
 
     @TaskAction
     fun resolve() {
-        resolutionManager.installIfNeeded(args = args)
+        resolutionManager.installIfNeeded(
+            args = args,
+            services = services,
+            logger = logger
+        )
     }
 
     companion object {

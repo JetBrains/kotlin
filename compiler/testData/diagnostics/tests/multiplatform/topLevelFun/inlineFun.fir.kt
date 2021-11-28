@@ -5,14 +5,14 @@
 inline expect fun inlineFun()
 expect fun nonInlineFun()
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual fun inlineFun() { }
+<!ACTUAL_WITHOUT_EXPECT!>actual fun inlineFun() { }<!>
 actual fun nonInlineFun() { }
 
-// MODULE: m3-js(m1-common)
+// MODULE: m3-js()()(m1-common)
 // FILE: js.kt
 
-actual inline fun inlineFun() { }
-actual inline fun nonInlineFun() { }
+actual <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() { }
+actual <!NOTHING_TO_INLINE!>inline<!> fun nonInlineFun() { }

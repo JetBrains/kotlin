@@ -140,7 +140,7 @@ public fun <T> Sequence<T>.shuffled(random: Random): Sequence<T> = sequence<T> {
     val buffer = toMutableList()
     while (buffer.isNotEmpty()) {
         val j = random.nextInt(buffer.size)
-        val last = @OptIn(ExperimentalStdlibApi::class) buffer.removeLast()
+        val last = buffer.removeLast()
         val value = if (j < buffer.size) buffer.set(j, last) else last
         yield(value)
     }
@@ -617,7 +617,7 @@ private class GeneratorSequence<T : Any>(private val getInitialValue: () -> T?, 
  *
  * The operation is _intermediate_ and _stateless_.
  *
- * [IllegalStateException] is thrown on iterating the returned sequence from the second time.
+ * [IllegalStateException] is thrown on iterating the returned sequence for the second time and the following times.
  *
  */
 public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {

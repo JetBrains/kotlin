@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 // !JVM_TARGET: 1.8
 // !JVM_DEFAULT_MODE: enable
 
 interface A<T> {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test(p: T) {
     }
 }

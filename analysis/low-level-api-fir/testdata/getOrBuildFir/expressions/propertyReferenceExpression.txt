@@ -1,0 +1,5 @@
+KT element: KtCallableReferenceExpression
+FIR element: FirCallableReferenceAccessImpl
+
+FIR element rendered:
+Q|A|::R|/A.foo|

@@ -1,1 +1,0 @@
-val v = "a${1.hashCode() /*comment*/ * 2}"

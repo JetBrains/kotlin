@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +AllowBreakAndContinueInsideWhen
 
 fun breakContinueInWhen(i: Int) {

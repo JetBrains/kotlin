@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.ir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
     }
 
     public void testAllFilesPresentInScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("classLiteralInsideFunction.kts")
@@ -64,6 +65,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
         runTest("compiler/testData/codegen/script/inline.kts");
     }
 
+    @TestMetadata("innerClass.kts")
+    public void testInnerClass() throws Exception {
+        runTest("compiler/testData/codegen/script/innerClass.kts");
+    }
+
     @TestMetadata("kt20707.kts")
     public void testKt20707() throws Exception {
         runTest("compiler/testData/codegen/script/kt20707.kts");
@@ -72,6 +78,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
     @TestMetadata("kt22029.kts")
     public void testKt22029() throws Exception {
         runTest("compiler/testData/codegen/script/kt22029.kts");
+    }
+
+    @TestMetadata("kt48025.kts")
+    public void testKt48025() throws Exception {
+        runTest("compiler/testData/codegen/script/kt48025.kts");
     }
 
     @TestMetadata("localDelegatedProperty.kts")

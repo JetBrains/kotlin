@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
 
 @Retention(AnnotationRetention.RUNTIME)
-annotation class GradleOption(val value: KClass<out DefaultValues> = DefaultValues::class)
+annotation class GradleOption(
+    val value: KClass<out DefaultValues> = DefaultValues::class,
+    val backingFieldVisibility: KVisibility = KVisibility.PRIVATE
+)

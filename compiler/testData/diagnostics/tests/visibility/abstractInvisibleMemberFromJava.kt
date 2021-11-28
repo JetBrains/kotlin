@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // FILE: base/Base.java
 package base;
@@ -14,7 +15,7 @@ public abstract class Base {
 package impl
 import base.*
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Impl<!> : Base()
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Impl<!> : Base()
 
 fun foo() {
     Impl().foo()

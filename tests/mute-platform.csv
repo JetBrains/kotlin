@@ -14,6 +14,7 @@ org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImpl
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testJvmWithJava", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testNestedDependencies", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testProjectDependency", Gradle Tests in 201,,
+org.jetbrains.kotlin.idea.caches.resolve.MultiplatformAnalysisTestGenerated.testDuplicateExpectsImplicit,Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleLineMarkerTestGenerated.testKotlinTestAnnotations, No line markers for test run,,
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testAndroidIllegalIdentifiers_inspectionData_Inspections_test, Unprocessed,,
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testTwoClasses,,, FLAKY

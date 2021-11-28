@@ -1,0 +1,10 @@
+FILE: multipleWarnings.kt
+    @R|kotlin/Suppress|(names = vararg(String(REDUNDANT_VISIBILITY_MODIFIER))) public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Suppress|(names = vararg(String(REDUNDANT_MODALITY_MODIFIER))) public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }

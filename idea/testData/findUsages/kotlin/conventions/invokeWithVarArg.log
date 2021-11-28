@@ -1,7 +1,0 @@
-Resolved p()
-Resolved p(1)
-Resolved p(1, 2)
-Searched references to pack.P
-Searched references to parameter p of pack.f(p: P) in non-Java files
-Used plain search of pack.P.invoke(vararg i: Int) in LocalSearchScope:
-    CLASS:P

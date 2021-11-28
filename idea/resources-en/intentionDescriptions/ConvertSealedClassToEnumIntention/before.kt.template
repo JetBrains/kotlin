@@ -1,9 +1,0 @@
-sealed class MyClass(val s: String = "") {
-    fun foo() {
-
-    }
-
-    object FOO : MyClass("FOO")
-    object BAR : MyClass("BAR")
-    object DEFAULT : MyClass()
-}

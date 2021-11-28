@@ -8,23 +8,23 @@ fun bar() {
         println()
     }
 
-    kotlin.suspend {
+    kotlin.<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {
 
     }
 
-    suspendLambda {
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!> {
         println()
     }
 
-    suspendLambda() {
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!>() {
         println()
     }
 
-    suspendLambda({ println() })
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!>({ println() })
 
-    suspendLambda<Unit> {
+    <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!><Unit> {
         println()
     }
 
-    val w: (suspend () -> Int) -> Any? = ::suspendLambda
+    val w: (suspend () -> Int) -> Any? = ::<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!>
 }

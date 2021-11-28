@@ -1,5 +1,5 @@
 fun test(
-    val f: String.() -> Int = { length }
+    f: String.() -> Int = { length }
 ): Int {
     return "".f()
 }

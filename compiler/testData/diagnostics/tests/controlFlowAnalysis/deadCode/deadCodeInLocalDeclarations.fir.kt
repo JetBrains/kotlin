@@ -1,13 +1,13 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testObject() {
-    object : Foo(todo()) {
+    object : <!UNREACHABLE_CODE!>Foo(<!>todo()<!UNREACHABLE_CODE!>)<!> {
         fun foo() = 1
     }
 }
 
 fun testObjectExpression() {
-    val a  = object : Foo(todo()) {
+    val <!UNUSED_VARIABLE!>a<!>  = object : <!UNREACHABLE_CODE!>Foo(<!>todo()<!UNREACHABLE_CODE!>)<!> {
         fun foo() = 1
     }
 }
@@ -15,13 +15,13 @@ fun testObjectExpression() {
 fun testObjectExpression1() {
     fun bar(i: Int, x: Any) {}
 
-    bar(1, object : Foo(todo()) {
+    bar(1, object : <!UNREACHABLE_CODE!>Foo(<!>todo()<!UNREACHABLE_CODE!>)<!> {
         fun foo() = 1
     })
 }
 
 fun testClassDeclaration() {
-    class C : Foo(todo()) {}
+    class C : <!UNREACHABLE_CODE!>Foo(<!>todo()<!UNREACHABLE_CODE!>)<!> {}
 
     bar()
 }

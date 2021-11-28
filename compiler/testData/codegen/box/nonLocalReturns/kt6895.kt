@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write

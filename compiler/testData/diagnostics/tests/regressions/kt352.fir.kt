@@ -1,16 +1,15 @@
-// !WITH_NEW_INFERENCE
 //KT-352 Function variable declaration type isn't checked inside a function body
 
 package kt352
 
-val f : (Any) -> Unit = {  -> }  //type mismatch
+val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{  -> }<!>  //type mismatch
 
 fun foo() {
-    val f : (Any) -> Unit = { -> }  //!!! no error
+    val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{ -> }<!>  //!!! no error
 }
 
 class A() {
-    val f : (Any) -> Unit = { -> }  //type mismatch
+    val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{ -> }<!>  //type mismatch
 }
 
 //more tests

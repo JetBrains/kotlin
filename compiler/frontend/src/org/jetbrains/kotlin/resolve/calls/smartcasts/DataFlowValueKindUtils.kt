@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
-import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
+import org.jetbrains.kotlin.cfg.getDeclarationDescriptorIncludingConstructors
+import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.AssignedVariablesSearcher
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
-internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): DataFlowValue.Kind {
+internal fun PropertyDescriptor.propertyKind(
+    usageModule: ModuleDescriptor?,
+    languageVersionSettings: LanguageVersionSettings
+): DataFlowValue.Kind {
     if (isVar) return DataFlowValue.Kind.MUTABLE_PROPERTY
     if (isOverridable) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
     if (!hasDefaultGetter()) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
@@ -27,11 +31,30 @@ internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): Da
         if (!areCompiledTogether(usageModule, declarationModule)) {
             return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
         }
+        if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
+                return if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClass)) {
+                    DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY
+                } else {
+                    DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
+                }
+            }
+        }
     }
     return DataFlowValue.Kind.STABLE_VALUE
 }
 
-internal fun areCompiledTogether(
+private fun PropertyDescriptor.isDeclaredInAnotherModule(usageModule: ModuleDescriptor?): Boolean {
+    if (!areCompiledTogether(usageModule, DescriptorUtils.getContainingModule(this))) {
+        return true
+    }
+    if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        return overriddenDescriptors.any { it.isDeclaredInAnotherModule(usageModule) }
+    }
+    return false
+}
+
+private fun areCompiledTogether(
     usageModule: ModuleDescriptor?,
     declarationModule: ModuleDescriptor,
 ): Boolean {
@@ -48,7 +71,7 @@ internal fun VariableDescriptor.variableKind(
     languageVersionSettings: LanguageVersionSettings
 ): DataFlowValue.Kind {
     if (this is PropertyDescriptor) {
-        return propertyKind(usageModule)
+        return propertyKind(usageModule, languageVersionSettings)
     }
 
     if (this is LocalVariableDescriptor && this.isDelegated) {
@@ -102,10 +125,8 @@ fun hasNoWritersInClosures(
     bindingContext: BindingContext
 ): Boolean {
     return writers.none { (_, writerDeclaration) ->
-        val writerDescriptor = writerDeclaration?.let {
-            ControlFlowInformationProvider.getDeclarationDescriptorIncludingConstructors(bindingContext, it)
-        }
-        writerDeclaration != null && variableContainingDeclaration != writerDescriptor
+        writerDeclaration != null &&
+                variableContainingDeclaration != writerDeclaration.getDeclarationDescriptorIncludingConstructors(bindingContext)
     }
 }
 
@@ -113,7 +134,7 @@ private fun isAccessedInsideClosureAfterAllWriters(
     writers: Set<AssignedVariablesSearcher.Writer>,
     accessElement: KtElement
 ): Boolean {
-    val parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement) ?: return false
+    val parent = accessElement.getElementParentDeclaration() ?: return false
     return writers.none { (assignment) -> !assignment.before(parent) }
 }
 
@@ -126,9 +147,7 @@ private fun isAccessedBeforeAllClosureWriters(
     // All writers should be before access element, with the exception:
     // writer which is the same with declaration site does not count
     writers.mapNotNull { it.declaration }.forEach { writerDeclaration ->
-        val writerDescriptor = ControlFlowInformationProvider.getDeclarationDescriptorIncludingConstructors(
-            bindingContext, writerDeclaration
-        )
+        val writerDescriptor = writerDeclaration.getDeclarationDescriptorIncludingConstructors(bindingContext)
         // Access is after some writerDeclaration
         if (variableContainingDeclaration != writerDescriptor && !accessElement.before(writerDeclaration)) {
             return false
@@ -156,10 +175,9 @@ private fun isAccessedInsideClosure(
     bindingContext: BindingContext,
     accessElement: KtElement
 ): Boolean {
-    val parent = ControlFlowInformationProvider.getElementParentDeclaration(accessElement)
+    val parent = accessElement.getElementParentDeclaration()
     return if (parent != null) // Access is at the same declaration: not in closure, lower: in closure
-        ControlFlowInformationProvider.getDeclarationDescriptorIncludingConstructors(bindingContext, parent) !=
-                variableContainingDeclaration
+        parent.getDeclarationDescriptorIncludingConstructors(bindingContext) != variableContainingDeclaration
     else
         false
 }

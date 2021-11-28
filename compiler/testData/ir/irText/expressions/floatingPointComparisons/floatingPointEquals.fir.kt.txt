@@ -113,3 +113,4 @@ fun Float.test6fr(x: Any): Boolean {
     else -> false
   }
 }
+

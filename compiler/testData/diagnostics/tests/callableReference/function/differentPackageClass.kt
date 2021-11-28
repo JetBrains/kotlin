@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // FILE: a.kt
 
@@ -7,7 +8,7 @@ import checkSubtype
 
 class A {
     fun foo() {}
-    fun bar(<!UNUSED_PARAMETER!>x<!>: Int) {}
+    fun bar(x: Int) {}
     fun baz() = "OK"
 }
 

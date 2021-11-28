@@ -3,17 +3,19 @@ public final class Class /* Class*/ {
   private final java.lang.String notNullVal;
 
   @org.jetbrains.annotations.NotNull()
+  private final java.lang.String privateNN;
+
+  @org.jetbrains.annotations.NotNull()
   private java.lang.String notNullVar;
 
   @org.jetbrains.annotations.Nullable()
   private final java.lang.String nullableVal;
 
   @org.jetbrains.annotations.Nullable()
-  private java.lang.String nullableVar;
-
   private final java.lang.String privateN;
 
-  private final java.lang.String privateNN;
+  @org.jetbrains.annotations.Nullable()
+  private java.lang.String nullableVar;
 
   public java.lang.String lateInitVar;
 

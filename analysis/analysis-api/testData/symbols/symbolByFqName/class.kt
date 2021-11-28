@@ -1,0 +1,3 @@
+// RUNTIME
+
+// class: kotlin/Lazy

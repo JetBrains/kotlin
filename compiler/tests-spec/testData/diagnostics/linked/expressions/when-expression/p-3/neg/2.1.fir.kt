@@ -18,7 +18,7 @@ fun case1() {
     val z = JavaEnum.Val_3
     val when1 = when (z) {
         JavaEnum.Val_1 -> { false }
-        else -> {true}
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> {true}
         JavaEnum.Val_2 -> { false }
     }
 }
@@ -28,7 +28,7 @@ fun case1() {
 fun case2() {
     val z = JavaEnum.Val_3
     val when1 = when (z) {
-        else -> {true}
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> {true}
         JavaEnum.Val_1 -> { false }
         JavaEnum.Val_2 -> { false }
     }
@@ -37,7 +37,7 @@ fun case2() {
 fun case3() {
     val z = JavaEnum.Val_3
     val when1 = when (z) {
-        else -> {true}
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> {true}
         JavaEnum.Val_1 -> { false }
         JavaEnum.Val_2 -> { false }
         else -> { true }

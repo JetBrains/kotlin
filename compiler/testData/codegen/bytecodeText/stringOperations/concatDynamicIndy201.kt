@@ -1,5 +1,5 @@
 // KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy
-// JVM_TARGET: 9
+// JVM_TARGET: 11
 fun box() {
     val z = "0"
     val result = z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +

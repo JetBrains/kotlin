@@ -2,10 +2,10 @@ package foo
 
 fun test() {
   A.d
-  A.Companion.<!HIDDEN!>f<!>
+  A.Companion.<!INVISIBLE_REFERENCE!>f<!>
   B.D
   CCC
-  CCC.classObjectVar
+  CCC.<!INVISIBLE_REFERENCE!>classObjectVar<!>
 }
 
 class A() {

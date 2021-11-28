@@ -1,0 +1,14 @@
+package
+
+public fun testStar(/*0*/ builder: Builder<*>): kotlin.Unit
+public fun </*0*/ K : Builder<K>> testTypeParam(/*0*/ builder: Builder<K>): kotlin.Unit
+
+public final class Builder</*0*/ B : Builder<B>> {
+    public constructor Builder</*0*/ B : Builder<B>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ T : B> test(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

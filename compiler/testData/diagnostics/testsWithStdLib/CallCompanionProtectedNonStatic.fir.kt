@@ -3,7 +3,7 @@ open class VeryBase {
 }
 
 open class Base {
-    protected fun foo() { 
+    protected fun foo() {
         bar() // Ok
         baz() // Ok
     }
@@ -25,14 +25,14 @@ open class Base {
             baz() // Ok
         }
     }
-    
+
     companion object : VeryBase() {
         var prop = 42
             protected set
 
         protected fun bar() {}
 
-        @JvmStatic protected fun gav() {}       
+        @JvmStatic protected fun gav() {}
 
         class Nested {
             fun fromNested() {
@@ -47,47 +47,47 @@ class Derived : Base() {
     fun test() {
         foo() // Ok
         gav() // Ok
-        bar()
-        baz()
-        prop = 0
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
+        <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>prop<!> = 0
     }
 
     inner class DerivedInner {
         fun fromDerivedInner() {
             foo() // Ok
             gav() // Ok
-            bar()
-            baz()
-            prop = 0
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>prop<!> = 0
         }
     }
 
     companion object {
         fun test2() {
             gav() // Ok
-            bar()
-            baz()
-            prop = 0
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>bar<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>baz<!>()
+            <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>prop<!> = 0
         }
     }
 }
 
 class Other {
     fun test(base: Base, derived: Derived) {
-        base.<!HIDDEN!>foo<!>()
+        base.<!INVISIBLE_REFERENCE!>foo<!>()
         base.<!UNRESOLVED_REFERENCE!>gav<!>()
         base.<!UNRESOLVED_REFERENCE!>bar<!>()
-        derived.<!HIDDEN!>foo<!>()
+        derived.<!INVISIBLE_REFERENCE!>foo<!>()
         derived.<!UNRESOLVED_REFERENCE!>gav<!>()
         derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
 
 fun top(base: Base, derived: Derived) {
-    base.<!HIDDEN!>foo<!>()
+    base.<!INVISIBLE_REFERENCE!>foo<!>()
     base.<!UNRESOLVED_REFERENCE!>bar<!>()
     base.<!UNRESOLVED_REFERENCE!>gav<!>()
-    derived.<!HIDDEN!>foo<!>()
+    derived.<!INVISIBLE_REFERENCE!>foo<!>()
     derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     derived.<!UNRESOLVED_REFERENCE!>gav<!>()
 }

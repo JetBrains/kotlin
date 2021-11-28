@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 fun <T> listOf(): List<T> = null!!
@@ -17,4 +16,4 @@ fun test2(a: () -> List<Int>) {
 
 val a: (Int) -> Unit = fun(x) { checkSubtype<Int>(x) }
 
-val b: (Int) -> Unit = fun(x: String) {}
+val b: (Int) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun(x: String) {}<!>

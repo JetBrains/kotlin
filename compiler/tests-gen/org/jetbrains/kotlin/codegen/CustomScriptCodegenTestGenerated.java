@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,12 +26,17 @@ public class CustomScriptCodegenTestGenerated extends AbstractCustomScriptCodege
     }
 
     public void testAllFilesPresentInCustomScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, true);
     }
 
     @TestMetadata("pathPattern5.kts")
     public void testPathPattern5_kts() throws Exception {
         runTest("compiler/testData/codegen/customScript/pathPattern5.kts");
+    }
+
+    @TestMetadata("providedPropsInLambda.kts")
+    public void testProvidedPropsInLambda_kts() throws Exception {
+        runTest("compiler/testData/codegen/customScript/providedPropsInLambda.kts");
     }
 
     @TestMetadata("simpleEnvVars.kts")

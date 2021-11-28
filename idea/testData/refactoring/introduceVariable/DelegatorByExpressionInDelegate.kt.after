@@ -1,8 +1,0 @@
-interface T
-
-object O : T
-
-fun foo() {
-    val o = O
-    val x = object : T by o {}
-}

@@ -1,9 +1,9 @@
-data class A {}
+data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class A<!> {}
 
-<!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>data class B {
+data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class B<!> {
     constructor()
-}<!>
+}
 
-<!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>data class C {
+data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class C<!> {
     constructor(x: Int)
-}<!>
+}

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
 import org.jetbrains.kotlin.js.dce.Context.Node
+import java.util.*
 
 fun Context.isObjectDefineProperty(function: JsExpression) = isObjectFunction(function, "defineProperty")
 
@@ -46,7 +47,7 @@ fun Context.isObjectFunction(function: JsExpression, functionName: String): Bool
 fun Context.isKotlinFunction(function: JsExpression, name: String): Boolean {
     if (function !is JsNameRef || function.ident != name) return false
     val receiver = (function.qualifier as? JsNameRef)?.name ?: return false
-    return receiver in nodes && receiver.ident.toLowerCase() == "kotlin"
+    return receiver in nodes && receiver.ident.lowercase() == "kotlin"
 }
 
 fun isSpecialFunction(expr: JsExpression, specialFunction: SpecialFunction): Boolean =
@@ -72,20 +73,21 @@ fun JsLocation.asString(): String {
     return "$simpleFileName:${startLine + 1}"
 }
 
-fun Set<Node>.extractRoots(): Set<Node> {
-    val result = mutableSetOf<Node>()
-    val visited = mutableSetOf<Node>()
-    forEach { it.original.extractRootsImpl(result, visited) }
+fun Iterable<Node>.extractReachableRoots(context: Context): Iterable<Node> {
+    context.clearVisited()
+
+    val result = mutableListOf<Node>()
+    forEach { if (it.reachable) it.original.extractRootsImpl(result, context) }
     return result
 }
 
-private fun Node.extractRootsImpl(target: MutableSet<Node>, visited: MutableSet<Node>) {
-    if (!visited.add(original)) return
-    val qualifier = original.qualifier
-    if (qualifier == null) {
+private fun Node.extractRootsImpl(target: MutableList<Node>, context: Context) {
+    if (!context.visit(original)) return
+    val parent = original.parent
+    if (parent == null) {
         target += original
     }
     else {
-        qualifier.parent.extractRootsImpl(target, visited)
+        parent.extractRootsImpl(target, context)
     }
 }

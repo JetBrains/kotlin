@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrConstructor : IrFunction(), IrSymbolDeclaration<IrConstructorSymbol> {
+abstract class IrConstructor : IrFunction() {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassConstructorDescriptor
+    abstract override val symbol: IrConstructorSymbol
 
     abstract val isPrimary: Boolean
 

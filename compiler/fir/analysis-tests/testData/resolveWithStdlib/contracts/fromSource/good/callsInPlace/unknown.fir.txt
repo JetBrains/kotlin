@@ -1,0 +1,35 @@
+FILE: unknown.kt
+    public final inline fun inlineRun(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, UNKNOWN)
+        >
+     {
+        [StubStatement]
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun myRun(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, UNKNOWN)
+        >
+     {
+        [StubStatement]
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int|
+        R|/inlineRun|(<L> = inlineRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            R|<local>/x| = Int(1)
+        }
+        )
+        R|<local>/x|.R|kotlin/Int.inc|()
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int|
+        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=UNKNOWN>  {
+            R|<local>/x| = Int(1)
+        }
+        )
+        R|<local>/x|.R|kotlin/Int.inc|()
+    }

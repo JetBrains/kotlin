@@ -6,7 +6,7 @@ public class Test {
 // FILE: test.kt
 fun ff() {
     val a = Test.FOO
-    val b = Test?.<!UNRESOLVED_REFERENCE!>FOO<!>
+    val b = <!NO_COMPANION_OBJECT!>Test<!><!UNEXPECTED_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>FOO<!>
     System.out.println(a + b)
-    System?.<!UNRESOLVED_REFERENCE!>out<!>.<!UNRESOLVED_REFERENCE!>println<!>(a + b)
+    <!NO_COMPANION_OBJECT!>System<!><!UNEXPECTED_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>out<!>.println(a + b)
 }

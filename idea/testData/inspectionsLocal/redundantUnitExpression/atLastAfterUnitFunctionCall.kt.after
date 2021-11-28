@@ -1,7 +1,0 @@
-fun test(b: Boolean): Unit = if (b) {
-    unit()
-} else {
-}
-
-fun unit() {
-}

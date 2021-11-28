@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 public class A {
     public static int foo() {return 1;}
@@ -14,6 +15,6 @@ fun foo() = ""
 
 class C: B() {
     init {
-        val <!UNUSED_VARIABLE!>a<!>: Int = foo()
+        val a: Int = foo()
     }
 }

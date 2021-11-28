@@ -1,3 +1,12 @@
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 import kotlin.test.*
 
 fun box(): String {
@@ -22,9 +31,6 @@ fun box(): String {
     return "OK"
 }
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while. The surrounding "if" gets optimized in this test (constant condition), except for Long.
-
 // 0 reversed
 // 0 iterator
 // 0 getStart
@@ -44,3 +50,10 @@ fun box(): String {
 // 1 IFLE
 // 4 IF
 // 2 LCMP
+
+// JVM_IR_TEMPLATES
+// 11 ILOAD
+// 9 ISTORE
+// 3 IADD
+// 1 ISUB
+// 1 IINC

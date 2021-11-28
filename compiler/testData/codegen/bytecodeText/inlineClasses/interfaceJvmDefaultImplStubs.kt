@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 // !JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
 // FILE: test.kt

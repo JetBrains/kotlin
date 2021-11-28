@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class C {
     fun foo(): Any? {
         @Suppress("REDUNDANT_NULLABLE")

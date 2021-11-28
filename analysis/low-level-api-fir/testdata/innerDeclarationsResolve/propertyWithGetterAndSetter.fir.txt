@@ -1,0 +1,8 @@
+FILE: propertyWithGetterAndSetter.kt
+    public final [BODY_RESOLVE] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+            ^ F|/withGetterAndSetter|
+        }
+        [BODY_RESOLVE] public set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+            F|/withGetterAndSetter| = R|<local>/value|
+        }

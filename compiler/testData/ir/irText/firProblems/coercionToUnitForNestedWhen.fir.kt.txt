@@ -18,21 +18,21 @@ private fun Reader.nextChar(): Char? {
 fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
   var ch: Char? = <this>.nextChar()
   while (when {
-    EQEQ(arg0 = ch, arg1 = null).not() -> EQEQ(arg0 = ch /*as Char */, arg1 = quote).not()
+    EQEQ(arg0 = ch, arg1 = null).not() -> EQEQ(arg0 = ch, arg1 = quote).not()
     else -> false
   }) { // BLOCK
     when {
-      EQEQ(arg0 = ch /*as Char */, arg1 = <get-BACKSLASH>()) -> { // BLOCK
+      EQEQ(arg0 = ch, arg1 = <get-BACKSLASH>()) -> { // BLOCK
         val tmp1_safe_receiver: Char? = <this>.nextChar()
         when {
           EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-          else -> tmp1_safe_receiver.let<Char, StringBuilder?>(block = local fun <anonymous>(it: Char): StringBuilder? {
+          else -> tmp1_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
             return sb.append(p0 = it)
           }
 )
         }
       }
-      else -> sb.append(p0 = ch /*as Char */)
+      else -> sb.append(p0 = ch)
     } /*~> Unit */
     ch = <this>.nextChar()
   }

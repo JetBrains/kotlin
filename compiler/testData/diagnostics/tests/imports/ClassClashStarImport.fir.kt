@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // MODULE: m1
 // FILE: a.kt
 package a
@@ -71,6 +70,6 @@ fun test(b: B) {
     val b_3 = B()
     b_3.m2()
 
-    val b_4 = <!UNRESOLVED_REFERENCE!>a<!>.<!UNRESOLVED_REFERENCE!>B<!>()
+    val b_4 = <!UNRESOLVED_REFERENCE!>a<!>.B()
     b_4.<!UNRESOLVED_REFERENCE!>m2<!>()
 }

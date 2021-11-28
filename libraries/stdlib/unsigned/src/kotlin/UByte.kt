@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,12 @@
 package kotlin
 
 import kotlin.experimental.*
+import kotlin.jvm.*
 
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-public inline class UByte @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
+@JvmInline
+public value class UByte @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
 
     companion object {
         /**
@@ -108,36 +109,127 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
     @kotlin.internal.InlineOnly
     public inline operator fun times(other: ULong): ULong = this.toULong().times(other)
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: UByte): UInt = this.toUInt().div(other.toUInt())
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: UShort): UInt = this.toUInt().div(other.toUInt())
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: UInt): UInt = this.toUInt().div(other)
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: ULong): ULong = this.toULong().div(other)
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UByte): UInt = this.toUInt().rem(other.toUInt())
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UShort): UInt = this.toUInt().rem(other.toUInt())
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UInt): UInt = this.toUInt().rem(other)
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: ULong): ULong = this.toULong().rem(other)
 
-    /** Increments this value. */
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UByte): UInt = this.toUInt().floorDiv(other.toUInt())
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UShort): UInt = this.toUInt().floorDiv(other.toUInt())
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UInt): UInt = this.toUInt().floorDiv(other)
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: ULong): ULong = this.toULong().floorDiv(other)
+
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UByte): UByte = this.toUInt().mod(other.toUInt()).toUByte()
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UShort): UShort = this.toUInt().mod(other.toUInt()).toUShort()
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UInt): UInt = this.toUInt().mod(other)
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: ULong): ULong = this.toULong().mod(other)
+
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun inc(): UByte = UByte(data.inc())
-    /** Decrements this value. */
+
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun dec(): UByte = UByte(data.dec())
 
@@ -259,8 +351,8 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
  *
  * The resulting `UByte` value has the same binary representation as this `Byte` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Byte.toUByte(): UByte = UByte(this)
 /**
@@ -271,8 +363,8 @@ public inline fun Byte.toUByte(): UByte = UByte(this)
  *
  * The resulting `UByte` value is represented by the least significant 8 bits of this `Short` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Short.toUByte(): UByte = UByte(this.toByte())
 /**
@@ -283,8 +375,8 @@ public inline fun Short.toUByte(): UByte = UByte(this.toByte())
  *
  * The resulting `UByte` value is represented by the least significant 8 bits of this `Int` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Int.toUByte(): UByte = UByte(this.toByte())
 /**
@@ -295,7 +387,7 @@ public inline fun Int.toUByte(): UByte = UByte(this.toByte())
  *
  * The resulting `UByte` value is represented by the least significant 8 bits of this `Long` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Long.toUByte(): UByte = UByte(this.toByte())

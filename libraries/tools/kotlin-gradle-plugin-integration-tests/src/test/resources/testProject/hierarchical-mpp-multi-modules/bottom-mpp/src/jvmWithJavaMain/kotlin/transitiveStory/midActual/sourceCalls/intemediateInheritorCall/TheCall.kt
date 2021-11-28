@@ -1,0 +1,7 @@
+package transitiveStory.midActual.sourceCalls.intemediateInheritorCall
+
+import transitiveStory.midActual.sourceCalls.intemediateCall.BottomActualCommonInheritor
+import transitiveStory.midActual.sourceCalls.intemediateCall.BottomActualMPPInheritor
+
+val t123 = BottomActualCommonInheritor()
+val t122 = BottomActualMPPInheritor()

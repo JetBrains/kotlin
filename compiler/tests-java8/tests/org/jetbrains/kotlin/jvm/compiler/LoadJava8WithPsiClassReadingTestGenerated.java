@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8
     }
 
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true, "typeUseAnnotations", "typeParameterAnnotations");
     }
 
     @TestMetadata("InnerClassTypeAnnotation.java")
@@ -41,15 +42,5 @@ public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8
     @TestMetadata("ParameterNames.java")
     public void testParameterNames() throws Exception {
         runTest("compiler/testData/loadJava8/compiledJava/ParameterNames.java");
-    }
-
-    @TestMetadata("TypeAnnotations.java")
-    public void testTypeAnnotations() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
-    }
-
-    @TestMetadata("TypeParameterAnnotations.java")
-    public void testTypeParameterAnnotations() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/TypeParameterAnnotations.java");
     }
 }

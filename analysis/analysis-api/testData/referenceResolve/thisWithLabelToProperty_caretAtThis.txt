@@ -1,0 +1,2 @@
+Resolved to:
+0: extension receiver of val kotlin.String.foo: kotlin.Any

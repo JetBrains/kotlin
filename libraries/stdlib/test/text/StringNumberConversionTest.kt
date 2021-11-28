@@ -289,7 +289,7 @@ class StringNumberConversionTest {
     }
 
     @Test fun shortToStringWithRadix() {
-        assertEquals("7FFF", 0x7FFF.toShort().toString(radix = 16).toUpperCase())
+        assertEquals("7FFF", 0x7FFF.toShort().toString(radix = 16).uppercase())
         assertEquals("-8000", (-0x8000).toShort().toString(radix = 16))
         assertEquals("-sfs", (-29180).toShort().toString(radix = 32))
 
@@ -328,7 +328,7 @@ class StringNumberConversionTest {
     }
 
     @Test fun ushortToStringWithRadix() {
-        assertEquals("7FFF", 0x7FFF.toUShort().toString(radix = 16).toUpperCase())
+        assertEquals("7FFF", 0x7FFF.toUShort().toString(radix = 16).uppercase())
         assertEquals("8000", 0x8000.toUShort().toString(radix = 16))
         assertEquals("ffff", UShort.MAX_VALUE.toString(radix = 16))
 

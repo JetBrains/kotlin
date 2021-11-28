@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
-import org.jetbrains.kotlin.cfg.index
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE
@@ -19,9 +17,6 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -35,6 +30,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.indexOrMinusOne
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -43,7 +40,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -58,7 +54,7 @@ abstract class AbstractCoroutineCodegen(
     element: KtElement,
     closureContext: ClosureContext,
     classBuilder: ClassBuilder,
-    private val userDataForDoResume: Map<out CallableDescriptor.UserDataKey<*>, *>? = null
+    private val userDataForInvokeSuspend: Map<out CallableDescriptor.UserDataKey<*>, *>? = null
 ) : ClosureCodegen(
     outerExpressionCodegen.state,
     element, null, closureContext, null,
@@ -68,50 +64,33 @@ abstract class AbstractCoroutineCodegen(
     protected val classDescriptor = closureContext.contextDescriptor
     protected val languageVersionSettings = outerExpressionCodegen.state.languageVersionSettings
 
-    protected val methodToImplement =
-        if (languageVersionSettings.isReleaseCoroutines())
-            createImplMethod(
-                INVOKE_SUSPEND_METHOD_NAME,
-                SUSPEND_CALL_RESULT_NAME to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
-            )
-        else
-            createImplMethod(
-                DO_RESUME_METHOD_NAME,
-                "data" to classDescriptor.builtIns.nullableAnyType,
-                "throwable" to classDescriptor.builtIns.throwable.defaultType.makeNullable()
-            )
-
-    private fun createImplMethod(name: String, vararg parameters: Pair<String, KotlinType>) =
+    protected val methodToImplement: FunctionDescriptor =
         SimpleFunctionDescriptorImpl.create(
-            classDescriptor, Annotations.EMPTY, Name.identifier(name), CallableMemberDescriptor.Kind.DECLARATION,
+            classDescriptor, Annotations.EMPTY, Name.identifier(INVOKE_SUSPEND_METHOD_NAME), CallableMemberDescriptor.Kind.DECLARATION,
             funDescriptor.source
         ).apply {
             initialize(
                 null,
                 classDescriptor.thisAsReceiverParameter,
                 emptyList(),
-                parameters.withIndex().map { (index, nameAndType) ->
-                    createValueParameterForDoResume(Name.identifier(nameAndType.first), nameAndType.second, index)
-                },
+                listOf(
+                    ValueParameterDescriptorImpl(
+                        this, null, 0, Annotations.EMPTY, Name.identifier(SUSPEND_CALL_RESULT_NAME),
+                        classDescriptor.module.getResult(classDescriptor.builtIns.anyType),
+                        declaresDefaultValue = false, isCrossinline = false, isNoinline = false, varargElementType = null,
+                        SourceElement.NO_SOURCE
+                    )
+                ),
                 builtIns.nullableAnyType,
                 Modality.FINAL,
                 DescriptorVisibilities.PUBLIC,
-                userDataForDoResume
+                userDataForInvokeSuspend
             )
         }
 
-    private fun FunctionDescriptor.createValueParameterForDoResume(name: Name, type: KotlinType, index: Int) =
-        ValueParameterDescriptorImpl(
-            this, null, index, Annotations.EMPTY, name,
-            type,
-            declaresDefaultValue = false, isCrossinline = false,
-            isNoinline = false,
-            varargElementType = null, source = SourceElement.NO_SOURCE
-        )
-
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, asmType)
-        val argTypes = args.map { it.fieldType }.plus(languageVersionSettings.continuationAsmType()).toTypedArray()
+        val argTypes = args.map { it.fieldType }.plus(CONTINUATION_ASM_TYPE).toTypedArray()
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
         val mv = v.newMethod(
@@ -126,18 +105,17 @@ abstract class AbstractCoroutineCodegen(
             iv.generateClosureFieldsInitializationFromParameters(closure, args)
 
             iv.load(0, AsmTypes.OBJECT_TYPE)
-            val hasArityParameter = !languageVersionSettings.isReleaseCoroutines() || passArityToSuperClass
-            if (hasArityParameter) {
-                iv.iconst(if (passArityToSuperClass) funDescriptor.arity else 0)
+            if (passArityToSuperClass) {
+                iv.iconst(funDescriptor.arity)
             }
 
-            iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
+            iv.load(argTypes.sumOf { it.size }, AsmTypes.OBJECT_TYPE)
 
             val parameters =
-                if (hasArityParameter)
-                    listOf(Type.INT_TYPE, languageVersionSettings.continuationAsmType())
+                if (passArityToSuperClass)
+                    listOf(Type.INT_TYPE, CONTINUATION_ASM_TYPE)
                 else
-                    listOf(languageVersionSettings.continuationAsmType())
+                    listOf(CONTINUATION_ASM_TYPE)
 
             val superClassConstructorDescriptor = Type.getMethodDescriptor(
                 Type.VOID_TYPE,
@@ -150,9 +128,7 @@ abstract class AbstractCoroutineCodegen(
             FunctionCodegen.endVisit(iv, "constructor", element)
         }
 
-        if (languageVersionSettings.isReleaseCoroutines()) {
-            v.newField(JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE, "label", "I", null, null)
-        }
+        v.newField(JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE, "label", "I", null, null)
 
         return constructor
     }
@@ -169,11 +145,9 @@ class CoroutineCodegenForLambda private constructor(
     private val forInline: Boolean
 ) : AbstractCoroutineCodegen(
     outerExpressionCodegen, element, closureContext, classBuilder,
-    userDataForDoResume = mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME to originalSuspendFunctionDescriptor)
+    userDataForInvokeSuspend = mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_INVOKE_SUSPEND to originalSuspendFunctionDescriptor)
 ) {
     private val builtIns = funDescriptor.builtIns
-
-    private val constructorCallNormalizationMode = outerExpressionCodegen.state.constructorCallNormalizationMode
 
     private val erasedInvokeFunction by lazy {
         getErasedInvokeFunction(funDescriptor).createCustomCopy { setModality(Modality.FINAL) }
@@ -217,8 +191,7 @@ class CoroutineCodegenForLambda private constructor(
             funDescriptor.typeParameters,
             funDescriptor.valueParameters,
             funDescriptor.module.getContinuationOfTypeOrAny(
-                builtIns.unitType,
-                state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+                builtIns.unitType
             ),
             funDescriptor.modality,
             DescriptorVisibilities.PUBLIC
@@ -233,14 +206,11 @@ class CoroutineCodegenForLambda private constructor(
             "too many arguments of create to have an erased signature: $argumentsNum: $typedCreate"
         }
         return typedCreate.module.resolveClassByFqName(
-            languageVersionSettings.coroutinesJvmInternalPackageFqName().child(
-                if (languageVersionSettings.isReleaseCoroutines())
-                    Name.identifier("BaseContinuationImpl")
-                else
-                    Name.identifier("CoroutineImpl")
+            StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(
+                Name.identifier("BaseContinuationImpl")
             ),
             NoLookupLocation.FROM_BACKEND
-        ).sure { "BaseContinuationImpl or CoroutineImpl is not found" }.defaultType.memberScope
+        ).sure { "BaseContinuationImpl is not found" }.defaultType.memberScope
             .getContributedFunctions(typedCreate.name, NoLookupLocation.FROM_BACKEND)
             .find { it.valueParameters.size == argumentsNum }
             .sure { "erased parent of $typedCreate is not found" }
@@ -263,7 +233,7 @@ class CoroutineCodegenForLambda private constructor(
 
     private fun ParameterDescriptor.isUnused(): Boolean =
         originalSuspendFunctionDescriptor is AnonymousFunctionDescriptor &&
-                bindingContext[BindingContext.SUSPEND_LAMBDA_PARAMETER_USED, originalSuspendFunctionDescriptor to index()] != true
+                bindingContext[BindingContext.SUSPEND_LAMBDA_PARAMETER_USED, originalSuspendFunctionDescriptor to indexOrMinusOne()] != true
 
     private val generateErasedCreate: Boolean = allFunctionParameters().size <= 1
 
@@ -367,7 +337,7 @@ class CoroutineCodegenForLambda private constructor(
             v.thisName,
             typeMapper.mapFunctionName(createCoroutineDescriptor, null),
             Type.getMethodDescriptor(
-                languageVersionSettings.continuationAsmType(),
+                CONTINUATION_ASM_TYPE,
                 *createArgumentTypes.toTypedArray()
             ),
             false
@@ -375,11 +345,7 @@ class CoroutineCodegenForLambda private constructor(
         checkcast(Type.getObjectType(v.thisName))
 
         // .doResume(Unit)
-        if (languageVersionSettings.isReleaseCoroutines()) {
-            invokeInvokeSuspendWithUnit(v.thisName)
-        } else {
-            invokeDoResumeWithUnit(v.thisName)
-        }
+        invokeInvokeSuspendWithUnit(v.thisName)
         areturn(AsmTypes.OBJECT_TYPE)
     }
 
@@ -416,7 +382,7 @@ class CoroutineCodegenForLambda private constructor(
                 if (generateErasedCreate) {
                     load(allFunctionParameters().size + 1, AsmTypes.OBJECT_TYPE)
                 } else {
-                    load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+                    load(allFunctionParameters().sumOf { typeMapper.mapType(it.type).size } + 1, AsmTypes.OBJECT_TYPE)
                 }
             }
 
@@ -450,7 +416,7 @@ class CoroutineCodegenForLambda private constructor(
                             if (parameter.type.isInlineClassType()) {
                                 load(cloneIndex, fieldInfoForCoroutineLambdaParameter.ownerType)
                                 load(index, AsmTypes.OBJECT_TYPE)
-                                StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, parameter.type, this)
+                                StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, parameter.type, this, typeMapper)
                                 putfield(
                                     fieldInfoForCoroutineLambdaParameter.ownerInternalName,
                                     fieldInfoForCoroutineLambdaParameter.fieldName,
@@ -506,7 +472,9 @@ class CoroutineCodegenForLambda private constructor(
 
             val name =
                 if (parameter is ReceiverParameterDescriptor)
-                    DescriptorAsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                    DescriptorAsmUtil.getNameForReceiverParameter(
+                        originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings
+                    )
                 else
                     (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
             val label = Label()
@@ -542,16 +510,13 @@ class CoroutineCodegenForLambda private constructor(
                 override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
                     val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                         mv, access, name, desc, null, null,
+                        containingClassInternalName = v.thisName,
                         obtainClassBuilderForCoroutineState = { v },
+                        isForNamedFunction = false,
+                        disableTailCallOptimizationForFunctionReturningUnit = false,
                         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
                         lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
                         sourceFile = element.containingKtFile.name,
-                        shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                        containingClassInternalName = v.thisName,
-                        isForNamedFunction = false,
-                        languageVersionSettings = languageVersionSettings,
-                        disableTailCallOptimizationForFunctionReturningUnit = false,
-                        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS),
                         initialVarsCountByType = varsCountByType
                     )
                     val maybeWithForInline = if (forInline)
@@ -601,21 +566,6 @@ class CoroutineCodegenForLambda private constructor(
     }
 }
 
-fun isCapturedSuspendLambda(closure: CalculatedClosure, name: String, bindingContext: BindingContext): Boolean {
-    for ((param, value) in closure.captureVariables) {
-        if (param !is ValueParameterDescriptor) continue
-        if (value.fieldName != name) continue
-        return param.type.isSuspendFunctionTypeOrSubtype
-    }
-    val classDescriptor = closure.capturedOuterClassDescriptor ?: return false
-    return isCapturedSuspendLambda(classDescriptor, name, bindingContext)
-}
-
-fun isCapturedSuspendLambda(classDescriptor: ClassDescriptor, name: String, bindingContext: BindingContext): Boolean {
-    val closure = bindingContext[CLOSURE, classDescriptor] ?: return false
-    return isCapturedSuspendLambda(closure, name, bindingContext)
-}
-
 private class AddEndLabelMethodVisitor(
     delegate: MethodVisitor,
     access: Int,
@@ -642,7 +592,7 @@ class CoroutineCodegenForNamedFunction private constructor(
     private val labelFieldStackValue by lazy {
         StackValue.field(
             FieldInfo.createForHiddenField(
-                computeLabelOwner(languageVersionSettings, v.thisName),
+                Type.getObjectType(v.thisName),
                 Type.INT_TYPE,
                 COROUTINE_LABEL_FIELD_NAME
             ),
@@ -664,43 +614,24 @@ class CoroutineCodegenForNamedFunction private constructor(
     }
 
     override fun generateClosureBody() {
-        generateResumeImpl()
-
-        if (!languageVersionSettings.isReleaseCoroutines()) {
-            generateGetLabelMethod()
-            generateSetLabelMethod()
-        }
+        generateInvokeSuspend()
 
         v.newField(
             JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            languageVersionSettings.dataFieldName(), AsmTypes.OBJECT_TYPE.descriptor, null, null
+            CONTINUATION_RESULT_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor, null, null
         )
-
-        if (!languageVersionSettings.isReleaseCoroutines()) {
-            v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-                EXCEPTION_FIELD_NAME, AsmTypes.JAVA_THROWABLE_TYPE.descriptor, null, null
-            )
-        }
     }
 
-    private fun generateResumeImpl() {
+    private fun generateInvokeSuspend() {
         functionCodegen.generateMethod(
             OtherOrigin(element),
             methodToImplement,
             object : FunctionGenerationStrategy.CodegenBased(state) {
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                     StackValue.field(
-                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), languageVersionSettings.dataFieldName(), false,
+                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), CONTINUATION_RESULT_FIELD_NAME, false,
                         StackValue.LOCAL_0
                     ).store(StackValue.local(1, AsmTypes.OBJECT_TYPE), codegen.v)
-
-                    if (!languageVersionSettings.isReleaseCoroutines()) {
-                        StackValue.field(
-                            AsmTypes.JAVA_THROWABLE_TYPE, Type.getObjectType(v.thisName), EXCEPTION_FIELD_NAME, false,
-                            StackValue.LOCAL_0
-                        ).store(StackValue.local(2, AsmTypes.JAVA_THROWABLE_TYPE), codegen.v)
-                    }
 
                     labelFieldStackValue.store(
                         StackValue.operation(Type.INT_TYPE) {
@@ -721,9 +652,16 @@ class CoroutineCodegenForNamedFunction private constructor(
                     }
 
                     val isInterfaceMethod = DescriptorUtils.isInterface(suspendFunctionJvmView.containingDeclaration)
+                    val callableAccessorMethod =
+                        typeMapper.mapToCallableMethod(
+                            context.accessibleDescriptor(suspendFunctionJvmView.unwrapFrontendVersion(), null),
+                            // Obtain default impls method for interfaces
+                            isInterfaceMethod
+                        )
+
                     val callableMethod =
                         typeMapper.mapToCallableMethod(
-                            suspendFunctionJvmView,
+                            suspendFunctionJvmView.unwrapFrontendVersion(),
                             // Obtain default impls method for interfaces
                             isInterfaceMethod
                         )
@@ -736,20 +674,20 @@ class CoroutineCodegenForNamedFunction private constructor(
 
                     if (suspendFunctionJvmView.isOverridable && !isInterfaceMethod && captureThisType != null) {
                         val owner = captureThisType.internalName
-                        val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
+                        val impl = callableAccessorMethod.getAsmMethod().getImplForOpenMethod(owner)
                         codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
                     } else {
-                        callableMethod.genInvokeInstruction(codegen.v)
+                        callableAccessorMethod.genInvokeInstruction(codegen.v)
                     }
 
                     if (inlineClassToBoxInInvokeSuspend != null) {
                         with(codegen.v) {
                             // We need to box the returned inline class in resume path.
                             // But first, check for COROUTINE_SUSPENDED, since the function can return it
-                            generateCoroutineSuspendedCheck(languageVersionSettings)
+                            generateCoroutineSuspendedCheck()
                             // Now we box the inline class
                             StackValue.coerce(AsmTypes.OBJECT_TYPE, typeMapper.mapType(inlineClassToBoxInInvokeSuspend), this)
-                            StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this)
+                            StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this, typeMapper)
                         }
                     }
 
@@ -759,40 +697,9 @@ class CoroutineCodegenForNamedFunction private constructor(
         )
     }
 
-    private fun generateGetLabelMethod() {
-        val mv = v.newMethod(
-            JvmDeclarationOrigin.NO_ORIGIN,
-            Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            "getLabel",
-            Type.getMethodDescriptor(Type.INT_TYPE),
-            null,
-            null
-        )
-
-        mv.visitCode()
-        labelFieldStackValue.put(Type.INT_TYPE, InstructionAdapter(mv))
-        mv.visitInsn(Opcodes.IRETURN)
-        mv.visitEnd()
-    }
-
-    private fun generateSetLabelMethod() {
-        val mv = v.newMethod(
-            JvmDeclarationOrigin.NO_ORIGIN,
-            Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            "setLabel",
-            Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
-            null,
-            null
-        )
-
-        mv.visitCode()
-        labelFieldStackValue.store(StackValue.local(1, Type.INT_TYPE), InstructionAdapter(mv))
-        mv.visitInsn(Opcodes.RETURN)
-        mv.visitEnd()
-    }
-
     override fun generateKotlinMetadataAnnotation() {
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { av ->
+        val publicAbi = InlineUtil.isInPublicInlineScope(classDescriptor)
+        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { av ->
             val serializer = DescriptorSerializer.createForLambda(JvmSerializerExtension(v.serializationBindings, state))
             val functionProto =
                 serializer.functionProto(

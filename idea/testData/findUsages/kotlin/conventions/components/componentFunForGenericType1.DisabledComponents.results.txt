@@ -1,1 +1,0 @@
-Value read 12 val (x, y) = f()

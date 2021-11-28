@@ -13,12 +13,12 @@ fun test() {
 val Any.bar get() = "456"
 val String.bar get() = "987"
 
-<!REDECLARATION!>val t = "".bar<!>
+val <!REDECLARATION!>t<!> = "".bar
 
 val p = Pair(0, "")
 
-class Base<T>(val x: T)
+open class Base<T>(val x: T)
 class Derived : Base<Int>(10)
 val xx = Derived().x + 1
 
-<!REDECLARATION!>val t = throw AssertionError("")<!>
+val <!REDECLARATION!>t<!> = throw AssertionError("")

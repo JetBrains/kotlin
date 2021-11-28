@@ -1,0 +1,25 @@
+plugins {
+    id "java"
+    id "kotlin"
+    id "kotlin-kapt"
+    id "kotlin-lombok"
+    id "io.freefair.lombok" version "5.3.0"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    kapt "com.google.dagger:dagger-compiler:2.33"
+}
+
+kapt {
+    keepJavacAnnotationProcessors = true
+}
+
+kotlinLombok {
+    lombokConfigurationFile file("lombok.config")
+}
+
+
+
+

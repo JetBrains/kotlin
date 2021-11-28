@@ -1,9 +1,8 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: COROUTINES
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: default argument mapping in MPP isn't designed yet
 // IGNORE_BACKEND: NATIVE
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 
 // FILE: lib.kt

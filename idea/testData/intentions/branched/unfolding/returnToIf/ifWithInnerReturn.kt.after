@@ -1,9 +1,0 @@
-fun test(b: Boolean): Int {
-    while (true) {
-        if (b) {
-            return 1
-        } else {
-            return 0
-        }
-    }
-}

@@ -13,4 +13,3 @@ fun testJEqeqNull(): Boolean {
 fun testJEqualsNull(): Boolean {
   return super.#INT_NULL /*!! Int */.equals(other = null)
 }
-

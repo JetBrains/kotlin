@@ -1,3 +1,4 @@
+warning: -Xuse-old-backend is deprecated and will be removed in a future release
 compiler/testData/cli/jvm/classAndTraitClash.kt:3:1: error: duplicate JVM class name 'test/T1$DefaultImpls' generated from: `T1$DefaultImpls`, T1
 interface  T1 {
 ^

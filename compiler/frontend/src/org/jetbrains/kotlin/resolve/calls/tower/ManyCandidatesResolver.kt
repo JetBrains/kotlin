@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -30,12 +31,17 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
     private val completedCalls = hashSetOf<ResolvedAtom>()
+    protected val nestedInferenceSessions = hashSetOf<ManyCandidatesResolver<*>>()
+
+    fun addNestedInferenceSession(inferenceSession: ManyCandidatesResolver<*>) {
+        nestedInferenceSessions.add(inferenceSession)
+    }
 
     open fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         // do nothing
     }
 
-    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
+    override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean {
         return false
     }
 
@@ -109,7 +115,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
 
             for (callInfo in listOf(goodCandidate, badCandidate)) {
                 val atomsToAnalyze = mutableListOf<ResolvedAtom>(callInfo.callResolutionResult)
-                val system = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
+                val system = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner).apply {
                     addOtherSystem(callInfo.callResolutionResult.constraintSystem)
                     /*
                      * This is needed for very stupid case, when we have some delegate with good `getValue` and bad `setValue` that
@@ -144,7 +150,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
                 )
             }
         } else {
-            val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns).apply {
+            val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner).apply {
                 addOtherSystem(currentConstraintSystem())
             }
 
@@ -163,7 +169,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         return allCandidates
     }
 
-    override fun computeCompletionMode(candidate: KotlinResolutionCandidate) = null
+    override fun computeCompletionMode(candidate: ResolutionCandidate) = null
 
     override fun resolveReceiverIndependently(): Boolean = false
 
@@ -196,7 +202,7 @@ class PSIPartialCallInfo(
 class PSICompletedCallInfo(
     override val callResolutionResult: CompletedCallResolutionResult,
     context: BasicCallResolutionContext,
-    val resolvedCall: ResolvedCall<*>,
+    val resolvedCall: NewAbstractResolvedCall<*>,
     tracingStrategy: TracingStrategy
 ) : CallInfo(callResolutionResult, context, tracingStrategy), CompletedCallInfo
 

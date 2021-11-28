@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;

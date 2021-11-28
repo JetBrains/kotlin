@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@
 
 package test.text
 
+import test.supportsNamedCapturingGroup
 import kotlin.test.*
 
 class RegexTest {
@@ -56,7 +57,7 @@ class RegexTest {
 
     @Test fun matchIgnoreCase() {
         for (input in listOf("ascii", "shrödinger"))
-            assertTrue(input.toUpperCase().matches(input.toLowerCase().toRegex(RegexOption.IGNORE_CASE)))
+            assertTrue(input.uppercase().matches(input.lowercase().toRegex(RegexOption.IGNORE_CASE)))
     }
 
     @Test fun matchSequence() {
@@ -168,6 +169,7 @@ class RegexTest {
             assertEquals("3c", m.value)
             assertEquals(3, m.groups.size)
             assertEquals(listOf("3c", "3", "c"), m.groups.map { it!!.value })
+            assertNull(m.next())
         }
     }
 
@@ -179,6 +181,55 @@ class RegexTest {
         assertEquals("aaaabbbb", regex.matchEntire(input)!!.value)
     }
 
+    @Test fun matchEntireNext() {
+        val regex = ".*".toRegex()
+        val input = "abc"
+        val match = regex.matchEntire(input)!!
+        assertEquals(input, match.value)
+        val next = assertNotNull(match.next())
+        assertEquals("", next.value)
+        assertEquals(input.length until input.length, next.range)
+        assertNull(next.next())
+    }
+
+    @Test fun matchAt() {
+        val regex = Regex("[a-z][1-5]", RegexOption.IGNORE_CASE)
+        val input = "...a4...B1"
+        val positions = 0..input.length
+
+        val matchIndices = positions.filter { index -> regex.matchesAt(input, index) }
+        assertEquals(listOf(3, 8), matchIndices)
+        val reversedIndices = positions.reversed().filter { index -> regex.matchesAt(input, index) }.reversed()
+        assertEquals(matchIndices, reversedIndices)
+
+        val matches = positions.mapNotNull { index -> regex.matchAt(input, index)?.let { index to it } }
+        assertEquals(matchIndices, matches.map { it.first })
+        matches.forEach { (index, match) ->
+            assertEquals(index..index + 1, match.range)
+            assertEquals(input.substring(match.range), match.value)
+        }
+
+        matches.zipWithNext { (_, m1), (_, m2) ->
+            assertEquals(m2.range, assertNotNull(m1.next()).range)
+        }
+        assertNull(matches.last().second.next())
+
+        for (index in listOf(-1, input.length + 1)) {
+            assertFailsWith<IndexOutOfBoundsException> { regex.matchAt(input, index) }
+            assertFailsWith<IndexOutOfBoundsException> { regex.matchesAt(input, index) }
+        }
+
+        val anchoringRegex = Regex("^[a-z]")
+        assertFalse(anchoringRegex.matchesAt(input, 3))
+        assertNull(anchoringRegex.matchAt(input, 3))
+
+        val lookbehindRegex = Regex("(?<=[a-z])\\d")
+        assertTrue(lookbehindRegex.matchesAt(input, 4))
+        assertNotNull(lookbehindRegex.matchAt(input, 4)).let { match ->
+            assertEquals("4", match.value)
+        }
+    }
+
     @Test fun escapeLiteral() {
         val literal = """[-\/\\^$*+?.()|[\]{}]"""
         assertTrue(Regex.fromLiteral(literal).matches(literal))
@@ -188,10 +239,78 @@ class RegexTest {
     @Test fun replace() {
         val input = "123-456"
         val pattern = "(\\d+)".toRegex()
+
+        // js String.prototype.replace() inserts a "$"
+        assertFailsWith<IllegalArgumentException>("$$") { pattern.replace(input, "$$") }
+        // js String.prototype.replace() inserts the matched substring
+        assertFailsWith<IllegalArgumentException>("$&") { pattern.replace(input, "$&") }
+        // js String.prototype.replace() inserts the portion of the string that precedes the matched substring
+        assertFailsWith<IllegalArgumentException>("\$`") { pattern.replace(input, "\$`") }
+        // js String.prototype.replace() inserts the portion of the string that follows the matched substring
+        assertFailsWith<IllegalArgumentException>("$'") { pattern.replace(input, "$'") }
+        // js String.prototype.replace() inserts the replacement string as a literal if it refers to a non-existing capturing group
+        assertFailsWith<RuntimeException>("$") { pattern.replace(input, "$") } // should be IAE, however jdk7 throws String IOOBE
+        assertFailsWith<IndexOutOfBoundsException>("$2") { pattern.replace(input, "$2") }
+        assertFailsWith<IllegalArgumentException>("\$name") { pattern.replace(input, "\$name") }
+        assertFailsWith<IllegalArgumentException>("\${name}") { pattern.replace(input, "\${name}") }
+        assertFailsWith<IllegalArgumentException>("$-") { pattern.replace(input, "$-") }
+
+        // inserts "$" literally
+        assertEquals("$-$", pattern.replace(input, "\\$"))
+        // inserts the matched substring
+        assertEquals("(123)-(456)", pattern.replace(input, "($0)"))
+        // inserts the first captured group
         assertEquals("(123)-(456)", pattern.replace(input, "($1)"))
 
         assertEquals("$&-$&", pattern.replace(input, Regex.escapeReplacement("$&")))
         assertEquals("X-456", pattern.replaceFirst(input, "X"))
+
+        val longInput = "0123456789ABC"
+        val longPattern = "0(1(2(3(4(5(6(7(8(9(A(B(C))))))))))))".toRegex()
+        for (groupIndex in 0..12) {
+            assertEquals(longInput.substring(groupIndex), longPattern.replace(longInput, "$$groupIndex"))
+        }
+        assertEquals(longInput.substring(1) + "3", longPattern.replace(longInput, "$13"))
+
+        // KT-38000
+        assertEquals("""\,""", ",".replace("([,])".toRegex(), """\\$1"""))
+        // KT-28378
+        assertEquals("$ 2", "2".replace(Regex("(.+)"), "\\$ $1"))
+        assertEquals("$2", "2".replace(Regex("(.+)"), "\\$$1"))
+        assertFailsWith<IllegalArgumentException> { "2".replace(Regex("(.+)"), "$ $1") }
+    }
+
+    @Test fun replaceWithNamedGroups() {
+        if (!supportsNamedCapturingGroup) {
+            assertFails {
+                val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
+                pattern.replace("123-456", "\${first}+\${second}")
+            }
+            return
+        }
+
+        val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
+
+        "123-456".let { input ->
+            assertEquals("(123-456)", pattern.replace(input, "($0)"))
+            assertEquals("123+456", pattern.replace(input, "$1+$2"))
+            // take largest legal group number reference
+            assertEquals("1230+456", pattern.replace(input, "$10+$2"))
+            assertEquals("123+456", pattern.replace(input, "$01+$2"))
+            // js refers to named capturing groups with "$<name>" syntax
+            assertFailsWith<IllegalArgumentException>("\$<first>+\$<second>") { pattern.replace(input, "\$<first>+\$<second>") }
+            assertEquals("123+456", pattern.replace(input, "\${first}+\${second}"))
+
+            // missing trailing '}'
+            assertFailsWith<IllegalArgumentException>("\${first+\${second}") { pattern.replace(input, "\${first+\${second}") }
+            assertFailsWith<IllegalArgumentException>("\${first}+\${second") { pattern.replace(input, "\${first}+\${second") }
+        }
+
+        "123-456-789-012".let { input ->
+            assertEquals("123/456-789/012", pattern.replace(input, "$1/$2"))
+            assertEquals("123/456-789/012", pattern.replace(input, "\${first}/\${second}"))
+            assertEquals("123/456-789-012", pattern.replaceFirst(input, "\${first}/\${second}"))
+        }
     }
 
     @Test fun replaceEvaluator() {
@@ -200,6 +319,18 @@ class RegexTest {
         assertEquals("/2/3/4/", pattern.replace(input, { it.value.length.toString() }))
     }
 
+    private fun testSplitEquals(expected: List<String>, input: CharSequence, regex: Regex, limit: Int = 0) {
+        assertEquals(expected, input.split(regex, limit))
+        assertEquals(expected, regex.split(input, limit))
+
+        listOf(
+            input.splitToSequence(regex, limit),
+            regex.splitToSequence(input, limit)
+        ).forEach { sequence ->
+            assertEquals(expected, sequence.toList())
+            assertEquals(expected, sequence.toList()) // assert multiple iterations over the same sequence succeed
+        }
+    }
 
     @Test fun split() {
         val input = """
@@ -207,9 +338,9 @@ class RegexTest {
          split
         """.trim()
 
-        assertEquals(listOf("some", "word", "split"), "\\s+".toRegex().split(input))
+        testSplitEquals(listOf("some", "word", "split"), input, "\\s+".toRegex())
 
-        assertEquals(listOf("name", "value=5"), "=".toRegex().split("name=value=5", limit = 2))
+        testSplitEquals(listOf("name", "value=5"), "name=value=5", "=".toRegex(), limit = 2)
 
     }
 
@@ -218,19 +349,52 @@ class RegexTest {
 
         val emptyMatch = "".toRegex()
 
-        assertEquals(input.split(""), input.split(emptyMatch))
-        assertEquals(input.split("", limit = 3), input.split(emptyMatch, limit = 3))
+        testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
+        testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
 
-        assertEquals("".split(""), "".split(emptyMatch))
+        testSplitEquals("".split(""), "", emptyMatch)
 
         val emptyMatchBeforeT = "(?=t)".toRegex()
 
-        assertEquals(listOf("", "tes", "t"), input.split(emptyMatchBeforeT))
-        assertEquals(listOf("", "test"), input.split(emptyMatchBeforeT, limit = 2))
+        testSplitEquals(listOf("", "tes", "t"), input, emptyMatchBeforeT)
+        testSplitEquals(listOf("", "test"), input, emptyMatchBeforeT, limit = 2)
 
-        assertEquals(listOf("", "tee"), "tee".split(emptyMatchBeforeT))
+        testSplitEquals(listOf("", "tee"), "tee", emptyMatchBeforeT)
     }
 
+    @Test fun splitByNoMatch() {
+        val input = "test"
+        val xMatch = "x".toRegex()
 
+        for (limit in 0..2) {
+            testSplitEquals(listOf(input), input, xMatch, limit)
+        }
+    }
+
+    @Test fun splitWithLimitOne() {
+        val input = "/12/456/7890/"
+        val regex = "\\d+".toRegex()
+
+        testSplitEquals(listOf(input), input, regex, limit = 1)
+    }
+
+    @Test fun findAllAndSplitToSequence() {
+        val input = "a12bc456def7890ghij"
+        val regex = "\\d+".toRegex()
+
+        val matches = regex.findAll(input).map { it.value }.iterator()
+        val splits = regex.splitToSequence(input).iterator()
+
+        assertEquals("12", matches.next())
+        assertEquals("a", splits.next())
+        assertEquals("456", matches.next())
+        assertEquals("bc", splits.next())
+        assertEquals("def", splits.next())
+        assertEquals("ghij", splits.next())
+        assertEquals("7890", matches.next())
+
+        assertFailsWith<NoSuchElementException> { matches.next() }
+        assertFailsWith<NoSuchElementException> { splits.next() }
+    }
 
 }

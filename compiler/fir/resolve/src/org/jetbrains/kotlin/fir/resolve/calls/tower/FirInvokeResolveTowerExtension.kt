@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class FirInvokeResolveTowerExtension(
@@ -52,6 +51,18 @@ internal class FirInvokeResolveTowerExtension(
             invokeBuiltinExtensionMode = false
         ) {
             it.runResolverForNoReceiver(invokeReceiverVariableInfo)
+        }
+    }
+
+    fun enqueueResolveTasksForSuperReceiver(info: CallInfo, receiver: FirQualifiedAccessExpression) {
+        if (info.callKind != CallKind.Function) return
+        val invokeReceiverVariableInfo = info.replaceWithVariableAccess()
+        enqueueInvokeReceiverTask(
+            info,
+            invokeReceiverVariableInfo,
+            invokeBuiltinExtensionMode = false
+        ) {
+            it.runResolverForSuperReceiver(invokeReceiverVariableInfo, receiver)
         }
     }
 
@@ -156,7 +167,9 @@ internal class FirInvokeResolveTowerExtension(
 
             val invokeFunctionInfo =
                 info.copy(
-                    explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE,
+                    explicitReceiver = invokeReceiverExpression,
+                    name = OperatorNameConventions.INVOKE,
+                    isImplicitInvoke = true,
                     candidateForCommonInvokeReceiver = invokeReceiverCandidate.takeUnless { invokeBuiltinExtensionMode }
                 ).let {
                     when {
@@ -262,8 +275,8 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         is FirRegularClassSymbol -> buildResolvedQualifierForClass(symbol, sourceElement = null)
         is FirTypeAliasSymbol -> {
             val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-            val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass
-            buildResolvedQualifierForClass(expansionRegularClass!!.symbol, sourceElement = symbol.fir.source)
+            val expansionRegularClassSymbol = type.lookupTag.toSymbolOrError(session)
+            buildResolvedQualifierForClass(expansionRegularClassSymbol, sourceElement = symbol.fir.source)
         }
         else -> throw AssertionError()
     }
@@ -276,19 +289,23 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
     extensionReceiverExpression: FirExpression,
     symbol: FirCallableSymbol<*>
 ): FirExpression {
-    return FirQualifiedAccessExpressionBuilder().apply {
+    return FirPropertyAccessExpressionBuilder().apply {
         calleeReference = FirNamedReferenceWithCandidate(
             null,
             symbol.callableId.callableName,
             candidate
         )
         dispatchReceiver = candidate.dispatchReceiverExpression()
-        this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+        this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir as FirTypedDeclaration)
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression
             // NB: this should fix problem in DFA (KT-36014)
             explicitReceiver = info.explicitReceiver
+        }
+
+        if (candidate.currentApplicability == CandidateApplicability.PROPERTY_AS_OPERATOR) {
+            nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
         }
     }.build().let(::transformQualifiedAccessUsingSmartcastInfo)
 }
@@ -330,8 +347,11 @@ private class InvokeFunctionResolveTask(
     candidateFactory,
 ) {
 
-    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup =
-        maxOf(towerGroup.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE), receiverGroup)
+    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup {
+        val invokeGroup = towerGroup.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE)
+        val max = maxOf(invokeGroup, receiverGroup)
+        return max.InvokeReceiver(receiverGroup)
+    }
 
     suspend fun runResolverForInvoke(
         info: CallInfo,

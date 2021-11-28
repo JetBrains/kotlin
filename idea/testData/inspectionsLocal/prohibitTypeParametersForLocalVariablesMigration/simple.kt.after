@@ -1,5 +1,0 @@
-// LANGUAGE_VERSION: 1.4
-
-fun main(args: Array<String>) {
-    val x = ""
-}

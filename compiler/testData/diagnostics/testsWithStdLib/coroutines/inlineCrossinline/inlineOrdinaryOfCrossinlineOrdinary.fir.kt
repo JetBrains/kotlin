@@ -21,13 +21,13 @@ inline fun test(crossinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE!>startCoroutine<!>(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 suspend fun calculate() = "OK"
 
 fun box() {
     test {
-        calculate()
+        <!ILLEGAL_SUSPEND_FUNCTION_CALL!>calculate<!>()
     }
 }

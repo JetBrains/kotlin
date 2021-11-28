@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @Target(AnnotationTarget.PROPERTY) annotation class base
 

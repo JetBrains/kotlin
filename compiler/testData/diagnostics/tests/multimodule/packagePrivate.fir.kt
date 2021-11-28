@@ -9,11 +9,11 @@ private val a = 1
 
 package p
 
-val b = <!HIDDEN!>a<!> // same package, same module
+val b = <!INVISIBLE_REFERENCE!>a<!> // same package, same module
 
 // MODULE: m2(m1)
 // FILE: c.kt
 
 package p
 
-val c = <!HIDDEN!>a<!> // same package, another module
+val c = <!INVISIBLE_REFERENCE!>a<!> // same package, another module

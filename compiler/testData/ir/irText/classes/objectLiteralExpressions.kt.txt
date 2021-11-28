@@ -1,5 +1,5 @@
 interface IFoo {
-  abstract fun foo() 
+  abstract fun foo()
 
 }
 
@@ -92,4 +92,3 @@ fun Outer.test4(): Inner {
     <no name provided>()
   }
 }
-

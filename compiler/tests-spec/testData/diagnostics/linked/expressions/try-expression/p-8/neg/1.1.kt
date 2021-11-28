@@ -12,7 +12,7 @@
  * DESCRIPTION: The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 
@@ -38,7 +38,7 @@ fun case1() {
     }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 
@@ -66,7 +66,7 @@ fun case2() {
 }
 
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 // ISSUES: KT-35494
 package testPackCase3
@@ -84,9 +84,9 @@ fun case3() {
     try {
         throwExceptionA(false)
         A(2)
-    } catch (e: ExcA) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
+    } catch (e: ExcA) <!TYPE_MISMATCH!>{
         A(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
-    }<!> catch (e: ExcB) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
+    }<!> catch (e: ExcB) <!TYPE_MISMATCH!>{
         B(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
     }<!>
 }

@@ -49,6 +49,9 @@ interface CompilerCallbackServicesFacade : Remote {
     fun hasExpectActualTracker(): Boolean
 
     @Throws(RemoteException::class)
+    fun hasInlineConstTracker(): Boolean
+
+    @Throws(RemoteException::class)
     fun hasIncrementalResultsConsumer(): Boolean
 
     @Throws(RemoteException::class)
@@ -100,6 +103,11 @@ interface CompilerCallbackServicesFacade : Remote {
     // ExpectActualTracker
     @Throws(RemoteException::class)
     fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String)
+
+    // ---------------------------------------------------
+    // InlineConstTracker
+    @Throws(RemoteException::class)
+    fun inlineConstTracker_report(filePath: String, owner: String, name: String, constType: String)
 
     // ---------------------------------------------------
     // IncrementalResultsConsumer (js)

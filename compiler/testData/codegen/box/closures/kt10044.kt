@@ -12,9 +12,8 @@ class Example : JClass {
     var result: String? = null
 
     init {
-        {
-            result = obj?.test()
-        }()
+        val lambda = { result = obj?.test() }
+        lambda()
     }
 }
 
@@ -26,9 +25,8 @@ class Example2 : JClass {
     var result: String? = null
 
     init {
-        {
-            result = obj?.test()
-        }()
+        val lambda = { result = obj?.test() }
+        lambda()
     }
 }
 

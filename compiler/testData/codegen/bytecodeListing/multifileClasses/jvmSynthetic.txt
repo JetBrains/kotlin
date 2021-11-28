@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public synthetic final class test/Foo {
+    public final static method f(): void
+    public final static @org.jetbrains.annotations.NotNull method getG(): java.lang.String
+}
+
+@kotlin.Metadata
+synthetic final class test/Foo__FKt {
+    // source: 'f.kt'
+    public final static method f(): void
+}
+
+@kotlin.Metadata
+synthetic final class test/Foo__GKt {
+    // source: 'g.kt'
+    private final static @org.jetbrains.annotations.NotNull field g: java.lang.String
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method getG(): java.lang.String
+}

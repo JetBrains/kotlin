@@ -1,7 +1,0 @@
-// SUGGESTED_NAMES: i, getX
-class A {
-    val x = i()
-    val y = i()
-
-    private fun i() = 1 + 1
-}

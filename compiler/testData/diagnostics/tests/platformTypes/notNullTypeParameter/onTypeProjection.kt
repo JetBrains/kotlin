@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 
 import java.util.*;
@@ -14,6 +15,6 @@ public class A<T> {
 // FILE: k.kt
 
 fun test(a: A<out CharSequence>) {
-    a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
-    a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
 }

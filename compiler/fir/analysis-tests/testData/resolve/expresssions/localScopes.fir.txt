@@ -1,0 +1,51 @@
+FILE: localScopes.kt
+    public open class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        local open class BaseLocal : R|Bar| {
+            public constructor(): R|BaseLocal| {
+                super<R|Bar|>()
+            }
+
+            public final fun baz(): R|kotlin/Unit| {
+            }
+
+        }
+
+        lval base: R|BaseLocal| = R|/BaseLocal.BaseLocal|()
+        R|<local>/base|.R|<local>/baz|()
+        R|<local>/base|.R|/Bar.foo|()
+        lval anonymous: R|<anonymous>| = object : R|Bar| {
+            private constructor(): R|<anonymous>| {
+                super<R|Bar|>()
+            }
+
+            public final fun baz(): R|kotlin/Unit| {
+            }
+
+        }
+
+        R|<local>/anonymous|.R|/<anonymous>.baz|()
+        R|<local>/anonymous|.R|/Bar.foo|()
+        local final class DerivedLocal : R|BaseLocal| {
+            public constructor(): R|DerivedLocal| {
+                super<R|BaseLocal|>()
+            }
+
+            public final fun gau(): R|kotlin/Unit| {
+            }
+
+        }
+
+        lval derived: R|DerivedLocal| = R|/DerivedLocal.DerivedLocal|()
+        R|<local>/derived|.R|<local>/gau|()
+        R|<local>/derived|.R|<local>/baz|()
+        R|<local>/derived|.R|/Bar.foo|()
+    }

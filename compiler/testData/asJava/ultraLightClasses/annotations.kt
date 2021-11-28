@@ -61,3 +61,5 @@ class Foo @Anno constructor(dependency: MyDependency) {
 class Example(@field:Ann val foo: String,    // annotate Java field
               @get:Ann val bar: String,      // annotate Java getter
               @param:Ann val quux: String)   // annotate Java constructor parameter
+
+class CtorAnnotations(@Anno val x: String, @param:Anno val y: String, val z: String)

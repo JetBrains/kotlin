@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 package m
@@ -13,17 +12,17 @@ fun test(i: Int?) {
         foo((l3@ i))
     }
 
-    val a: Int = l4@ ""
-    val b: Int = ("")
-    val c: Int = <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>("")
-    val d: Int = <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Long>("")
+    val a: Int = <!INITIALIZER_TYPE_MISMATCH!>l4@ ""<!>
+    val b: Int = <!INITIALIZER_TYPE_MISMATCH!>("")<!>
+    val c: Int = checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    val d: Int = <!INITIALIZER_TYPE_MISMATCH!>checkSubtype<Long>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
 
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(l4@ "")
-    <!INAPPLICABLE_CANDIDATE!>foo<!>((""))
-    foo(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(""))
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Long>(""))
-    
+    foo(l4@ <!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    foo((<!ARGUMENT_TYPE_MISMATCH!>""<!>))
+    foo(checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>""<!>))
+    foo(<!ARGUMENT_TYPE_MISMATCH!>checkSubtype<Long>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>)
+
     use(a, b, c, d)
 }
 

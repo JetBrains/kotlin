@@ -4,7 +4,10 @@ fun Array<String>.test1(): Array<String> {
 }
 
 fun Array<String>.test1Nested(): Array<String> {
-    val func = { i: Int -> { this }()}
+    val func = { i: Int ->
+        val lam = { this }
+        lam()
+    }
     return func(1)
 }
 

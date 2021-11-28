@@ -85,7 +85,7 @@ private fun checkExpressionArgument(
         if (argumentType.isMarkedNullable) {
             if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
             if (csBuilder.addSubtypeConstraintIfCompatible(argumentType.makeNotNullable(), actualExpectedType, position)) {
-                return ArgumentTypeMismatchDiagnostic(actualExpectedType, argumentType, expressionArgument)
+                return ArgumentNullabilityMismatchDiagnostic(actualExpectedType, argumentType, expressionArgument)
             }
         }
 
@@ -96,8 +96,8 @@ private fun checkExpressionArgument(
     val position = if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument) else ArgumentConstraintPositionImpl(expressionArgument)
 
     // Used only for arguments with @NotNull annotation
-    if (expectedType is NotNullTypeVariable && argumentType.isMarkedNullable) {
-        diagnosticsHolder.addDiagnostic(ArgumentTypeMismatchDiagnostic(expectedType, argumentType, expressionArgument))
+    if (expectedType is NotNullTypeParameter && argumentType.isMarkedNullable) {
+        diagnosticsHolder.addDiagnostic(ArgumentNullabilityMismatchDiagnostic(expectedType, argumentType, expressionArgument))
     }
 
     if (expressionArgument.isSafeCall) {

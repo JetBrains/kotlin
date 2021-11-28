@@ -1,8 +1,8 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    compile project(':kotlin-stdlib-jdk8')
-    testCompile project(':kotlin-test:kotlin-test-junit')
+    api project(':kotlin-stdlib-jdk8')
+    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
@@ -11,15 +11,10 @@ sourceSets {
 
 compileTestKotlin {
     kotlinOptions {
-        jdkHome = JDK_18
         freeCompilerArgs = [
-                "-Xopt-in=kotlin.ExperimentalStdlibApi",
-                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                "-Xopt-in=kotlin.time.ExperimentalTime",
+                "-opt-in=kotlin.ExperimentalStdlibApi",
+                "-opt-in=kotlin.ExperimentalUnsignedTypes",
+                "-opt-in=kotlin.time.ExperimentalTime",
         ]
     }
-}
-
-test {
-    executable = "$JDK_18/bin/java"
 }

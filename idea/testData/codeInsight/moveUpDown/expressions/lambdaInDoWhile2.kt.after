@@ -1,8 +1,0 @@
-// MOVE: up
-fun test(i: Int) {
-    do {
-        run {
-        }
-        <caret>println()
-    } while (i == 1)
-}

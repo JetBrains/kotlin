@@ -1,7 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun test() {
     fun returnMutableList(): MutableList<Int>? = null

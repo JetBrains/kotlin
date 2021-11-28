@@ -1,0 +1,3 @@
+expression: 42 / 0
+constant_value: KtErrorValue(/ by zero)
+constant: null

@@ -8,4 +8,3 @@ abstract class A<T : A<T>> : B<Collection<T>>(), C<T> {
     inner class Inner2<X> : Inner<X>(), C<X>
 }
 
-// FIR_COMPARISON

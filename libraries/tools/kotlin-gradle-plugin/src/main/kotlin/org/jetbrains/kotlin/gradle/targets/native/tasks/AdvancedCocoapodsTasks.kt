@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RelativePath
 import org.gradle.api.logging.Logger
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrievePods
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
+import java.io.IOException
 import java.io.Reader
 import java.net.URI
 import java.util.*
@@ -54,8 +56,14 @@ open class PodInstallTask : DefaultTask() {
     internal lateinit var frameworkName: Provider<String>
 
     @get:Optional
-    @get:Input
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
     internal val podfile = project.objects.property(File::class.java)
+
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
+    internal val podspec = project.objects.property(File::class.java)
 
     @get:Optional
     @get:OutputDirectory
@@ -64,41 +72,28 @@ open class PodInstallTask : DefaultTask() {
             project.provider { it.parentFile.resolve("Pods").resolve("Pods.xcodeproj") }
         }
 
-
     @TaskAction
     fun doPodInstall() {
         podfile.orNull?.parentFile?.also { podfileDir ->
-            val podInstallProcess = ProcessBuilder("pod", "install").apply {
-                directory(podfileDir)
-            }.start()
-            val podInstallRetCode = podInstallProcess.waitFor()
-            val podInstallOutput = podInstallProcess.inputStream.use { it.reader().readText() }
+            val podInstallCommand = listOf("pod", "install")
 
-            check(podInstallRetCode == 0) {
-                val specReposMessages = retrieveSpecRepos(project)?.let { MissingSpecReposMessage(it).missingMessage }
-                val cocoapodsMessages = retrievePods(project)?.map { MissingCocoapodsMessage(it, project).missingMessage }
+            runCommand(podInstallCommand,
+                       project.logger,
+                       errorHandler = { returnCode, output, _ ->
+                           CocoapodsErrorHandlingUtil.handlePodInstallError(
+                               podInstallCommand.joinToString(" "),
+                               returnCode,
+                               output,
+                               project,
+                               frameworkName.get())
+                       },
+                       exceptionHandler = { e: IOException ->
+                           CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
+                       },
+                       processConfiguration = {
+                           directory(podfileDir)
+                       })
 
-                listOfNotNull(
-                    "Executing of 'pod install' failed with code $podInstallRetCode.",
-                    "Error message:",
-                    podInstallOutput,
-                    specReposMessages?.let {
-                        """
-                            |Please, check that file "${podfile.get().path}" contains following lines in header:
-                            |$it
-                            |
-                        """.trimMargin()
-                    },
-                    cocoapodsMessages?.let {
-                        """
-                            |Please, check that each target depended on ${frameworkName.get()} contains following dependencies:
-                            |${it.joinToString("\n")}
-                            |
-                        """.trimMargin()
-                    }
-
-                ).joinToString("\n")
-            }
             with(podsXcodeProjDirProvider) {
                 check(this != null && get().exists() && get().isDirectory) {
                     "The directory 'Pods/Pods.xcodeproj' was not created as a result of the `pod install` call."
@@ -106,11 +101,6 @@ open class PodInstallTask : DefaultTask() {
             }
         }
     }
-}
-
-private interface ExtendedErrorDiagnostic {
-    fun isAppropriateOutput(output: String): Boolean
-    val message: String
 }
 
 abstract class DownloadCocoapodsTask : DefaultTask() {
@@ -133,19 +123,22 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
     }
 
     @get:Internal
-    internal val permittedFileExtensions = listOf("zip", "tar", "tgz", "tbz", "txz", "gzip", "tar.gz", "tar.bz2", "tar.xz", "jar")
+    internal val permittedFileExtensions = listOf("tar.gz", "tar.bz2", "tar.xz", "tar", "tgz", "tbz", "txz", "zip", "gzip", "jar")
 
     @TaskAction
     fun download() {
         val podLocation = podSource.get()
-        val url = podLocation.url.toString()
-        val repoUrl = url.substringBeforeLast("/")
-        val fileName = url.substringAfterLast("/")
-        val fileNameWithoutExtension = fileName.substringBefore(".")
-        val extension = fileName.substringAfter(".")
-        require(permittedFileExtensions.contains(extension)) { "Unknown file extension" }
-
-        val repo = setupRepo(repoUrl)
+        val fileName = podLocation.url.toString().substringAfterLast("/")
+        val permittedFileNameFormat = Regex(".*(\\.)(${permittedFileExtensions.joinToString("|") { it.replace(".", "\\.") }})")
+        val extension = permittedFileNameFormat.matchEntire(fileName)?.groups?.lastOrNull()?.value
+        require(extension != null) {
+            """
+                $fileName has an unsupported file extension 
+                Only the following extensions are supported: ${permittedFileExtensions.joinToString(", ")}
+            """.trimIndent()
+        }
+        val fileNameWithoutExtension = fileName.substringBeforeLast(".$extension")
+        val repo = setupRepo(podLocation)
         val dependency = createDependency(fileNameWithoutExtension, extension)
         val configuration = project.configurations.detachedConfiguration(dependency)
         val artifact = configuration.singleFile
@@ -153,8 +146,9 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
         project.repositories.remove(repo)
     }
 
-    private fun setupRepo(repoUrl: String): ArtifactRepository {
+    private fun setupRepo(podUrl: CocoapodsDependency.PodLocation.Url): ArtifactRepository {
         return project.repositories.ivy { repo ->
+            val repoUrl = podUrl.url.toString().substringBeforeLast("/")
             repo.setUrl(repoUrl)
             repo.patternLayout {
                 it.artifact("[artifact].[ext]")
@@ -162,6 +156,7 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
             repo.metadataSources {
                 it.artifact()
             }
+            repo.isAllowInsecureProtocol = podUrl.isAllowInsecureProtocol
         }
     }
 
@@ -296,21 +291,39 @@ open class PodDownloadGitTask : DownloadCocoapodsTask() {
             "${podspecLocation.url}",
             podName.get()
         )
-        runCommand(cloneAllCommand, project.logger) { directory(gitDir) }
+        runCommand(
+            cloneAllCommand,
+            project.logger,
+            errorHandler = { retCode, error, _ ->
+                CocoapodsErrorHandlingUtil.handlePodDownloadError(podName.get(), cloneAllCommand.joinToString(" "), retCode, error)
+            },
+            processConfiguration = {
+                directory(gitDir)
+            }
+        )
     }
 }
 
 private fun runCommand(
     command: List<String>,
     logger: Logger,
-    extendedErrorDiagnostic: ExtendedErrorDiagnostic? = null,
-    errorHandler: ((retCode: Int, process: Process) -> Unit)? = null,
+    errorHandler: ((retCode: Int, output: String, process: Process) -> String?)? = null,
+    exceptionHandler: ((ex: IOException) -> Unit)? = null,
     processConfiguration: ProcessBuilder.() -> Unit = { }
 ): String {
-    val process = ProcessBuilder(command)
-        .apply {
-            this.processConfiguration()
-        }.start()
+    var process: Process? = null
+    try {
+        process = ProcessBuilder(command)
+            .apply {
+                this.processConfiguration()
+            }.start()
+    } catch (e: IOException) {
+        if (exceptionHandler != null) exceptionHandler(e) else throw e
+    }
+
+    if (process == null) {
+        throw IllegalStateException("Failed to run command ${command.joinToString(" ")}")
+    }
 
     var inputText = ""
     var errorText = ""
@@ -340,12 +353,14 @@ private fun runCommand(
     )
 
     check(retCode == 0) {
-        errorHandler?.invoke(retCode, process)
+        errorHandler?.invoke(retCode, inputText.ifBlank { errorText }, process)
             ?: """
                 |Executing of '${command.joinToString(" ")}' failed with code $retCode and message: 
                 |
+                |$inputText
+                |
                 |$errorText
-                |${extendedErrorDiagnostic?.takeIf { it.isAppropriateOutput(inputText) }?.message ?: ""}
+                |
                 """.trimMargin()
     }
 
@@ -364,6 +379,7 @@ open class PodGenTask : DefaultTask() {
         }
     }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
     internal lateinit var podspec: Provider<File>
 
@@ -405,23 +421,18 @@ open class PodGenTask : DefaultTask() {
             podspec.get().absolutePath
         )
 
-        val podGenDiagnostic = object : ExtendedErrorDiagnostic {
-            override fun isAppropriateOutput(output: String): Boolean =
-                output.contains("deployment target") || output.contains("requested platforms: [\"${family.platformLiteral}\"]")
-
-            override val message: String
-                get() =
-                    """
-                        |Tip: try to configure deployment_target for ALL targets as follows:
-                        |cocoapods {
-                        |   ...
-                        |   ${family.name.toLowerCase()}.deploymentTarget = "..."
-                        |   ...
-                        |}
-                    """.trimMargin()
-        }
-
-        runCommand(podGenProcessArgs, project.logger, podGenDiagnostic) { directory(syntheticDir) }
+        runCommand(
+            podGenProcessArgs,
+            project.logger,
+            exceptionHandler = { e: IOException ->
+                CocoapodsErrorHandlingUtil.handle(e, podGenProcessArgs)
+            },
+            errorHandler = { retCode, output, _ ->
+                CocoapodsErrorHandlingUtil.handlePodGenError(podGenProcessArgs.joinToString(" "), retCode, output, family)
+            },
+            processConfiguration = {
+                directory(syntheticDir)
+            })
 
         val podsXcprojFile = podsXcodeProjDir.get()
         check(podsXcprojFile.exists() && podsXcprojFile.isDirectory) {
@@ -443,7 +454,7 @@ open class PodSetupBuildTask : DefaultTask() {
     lateinit var pod: Provider<CocoapodsDependency>
 
     @get:OutputFile
-    internal val buildSettingsFile: Provider<File> = project.provider {
+    val buildSettingsFile: Provider<File> = project.provider {
         project.cocoapodsBuildDirs
             .buildSettings
             .resolve(getBuildSettingFileName(pod.get(), sdk.get()))
@@ -480,12 +491,16 @@ private fun getBuildSettingFileName(pod: CocoapodsDependency, sdk: String): Stri
  */
 open class PodBuildTask : DefaultTask() {
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    internal lateinit var buildSettingsFile: Provider<File>
+    lateinit var buildSettingsFile: Provider<File>
+        internal set
 
     @get:Nested
     internal lateinit var pod: Provider<CocoapodsDependency>
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     internal val srcDir: FileTree
         get() = project.fileTree(
@@ -530,10 +545,10 @@ open class PodBuildTask : DefaultTask() {
 }
 
 
-internal data class PodBuildSettingsProperties(
+data class PodBuildSettingsProperties(
     internal val buildDir: String,
     internal val configuration: String,
-    internal val configurationBuildDir: String,
+    val configurationBuildDir: String,
     internal val podsTargetSrcRoot: String,
     internal val cflags: String? = null,
     internal val headerPaths: String? = null,
@@ -589,5 +604,126 @@ internal data class PodBuildSettingsProperties(
 
         private fun Properties.readNullableProperty(propertyName: String) =
             getProperty(propertyName)
+    }
+}
+
+private object CocoapodsErrorHandlingUtil {
+    fun handle(e: IOException, command: List<String>) {
+        if (e.message?.contains("No such file or directory") == true) {
+            val message = """ 
+               |'${command.take(2).joinToString(" ")}' command failed with an exception:
+               | ${e.message}
+               |        
+               |        Full command: ${command.joinToString(" ")}
+               |        
+               |        Possible reason: CocoaPods is not installed
+               |        Please check that CocoaPods v1.10 or above and cocoapods-generate plugin are installed.
+               |        
+               |        To check CocoaPods version type 'pod --version' in the terminal
+               |        
+               |        To install CocoaPods execute 'sudo gem install cocoapods'
+               |        To install cocoapod-generate execute 'sudo gem install cocoapods-generate'
+               |
+            """.trimMargin()
+            throw IllegalStateException(message)
+        } else {
+            throw e
+        }
+    }
+
+    fun handlePodInstallError(command: String, retCode: Int, error: String, project: Project, frameworkName: String): String {
+        val specReposMessages = retrieveSpecRepos(project)?.let { MissingSpecReposMessage(it).missingMessage }
+        val cocoapodsMessages = retrievePods(project)?.map { MissingCocoapodsMessage(it, project).missingMessage }
+
+        return listOfNotNull(
+            "'pod install' command failed with code $retCode.",
+            "Full command: $command",
+            "Error message:",
+            error,
+            specReposMessages?.let {
+                """
+                    |        Please, check that podfile contains following lines in header:
+                    |        $it
+                    |
+                """.trimMargin()
+            },
+            cocoapodsMessages?.let {
+                """
+                   |         Please, check that each target depended on $frameworkName contains following dependencies:
+                   |         ${it.joinToString("\n")}
+                   |        
+                """.trimMargin()
+            }
+
+        ).joinToString("\n")
+    }
+
+    fun handlePodGenError(command: String, retCode: Int, error: String, family: Family): String? {
+        var message = """
+            |'pod gen' command failed with return code: $retCode
+            |
+            |        Full command: $command
+            |
+            |        Error: ${error.lines().filter { it.contains("[!]") }.joinToString("\n")}
+            |       
+        """.trimMargin()
+
+        if (error.contains("Unknown command: `gen`")) {
+            message += """
+                |
+                |       Possible reason: cocoapod-generate is not installed
+                |       To install cocoapod-generate execute 'sudo gem install cocoapods-generate' in the terminal
+                |       
+            """.trimMargin()
+            return message
+        } else if (
+            error.contains("deployment target") ||
+            error.contains("requested platforms:") ||
+            error.contains("no platform was specified")
+        ) {
+            message += """
+                |
+                |       Possible reason: ${family.name.toLowerCase()} deployment target is not configured
+                |       Configure deployment_target for ALL targets as follows:
+                |       cocoapods {
+                |          ...
+                |          ${family.name.toLowerCase()}.deploymentTarget = "..."
+                |          ...
+                |       }
+                |       
+            """.trimMargin()
+            return message
+        } else if (
+            error.contains("Unable to add a source with url") ||
+            error.contains("Couldn't determine repo name for URL") ||
+            error.contains("Unable to find a specification")
+        ) {
+            message += """
+                |
+                |        Possible reason: spec repos are not configured correctly.
+                |        Ensure that spec repos are correctly configured for all private pod dependencies:
+                |        cocoapods {
+                |           specRepos {
+                |               url("<private spec repo url>")
+                |           }
+                |        }
+                |       
+            """.trimMargin()
+            return message
+        }
+        return null
+    }
+
+    fun handlePodDownloadError(podName: String, command: String, retCode: Int, error: String): String {
+        return """
+            |'git clone' command failed with return code: $retCode
+            |
+            |       Full command: $command
+            |
+            |       Error: ${error.lines().filter { it.contains("fatal", true) }.joinToString("\n")}
+            |       
+            |       Possible reason: source of a pod '$podName' is invalid or inaccessible
+            |       
+        """.trimMargin()
     }
 }

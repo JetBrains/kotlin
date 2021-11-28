@@ -1,2 +1,14 @@
 public abstract interface DeeplySubstitutedClassParameter2 : R|kotlin/Any| {
+    public abstract interface Middle<E : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/DeeplySubstitutedClassParameter2.Super<ft<E, E?>>| {
+    }
+    public abstract interface Sub : R|test/DeeplySubstitutedClassParameter2.Middle<ft<kotlin/String, kotlin/String?>>| {
+        public abstract fun foo(): R|ft<kotlin/String, kotlin/String?>|
+
+    }
+    public abstract interface Super<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<T, T?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

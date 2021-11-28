@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-@set:Throws(RuntimeException::class, Exception::class)
-var setter: String = ""
-    set(value) = throw Exception()

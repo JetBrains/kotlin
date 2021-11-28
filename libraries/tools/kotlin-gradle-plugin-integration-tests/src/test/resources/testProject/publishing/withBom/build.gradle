@@ -1,0 +1,25 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+}
+
+group = "org.example"
+version = "1.0"
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.12.3"))
+    implementation("com.fasterxml.jackson.core:jackson-core")
+}

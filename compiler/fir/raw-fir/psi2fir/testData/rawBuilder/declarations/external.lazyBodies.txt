@@ -1,0 +1,25 @@
+FILE: external.kt
+    public? final? external class External : R|kotlin/Any| {
+        public? constructor(): R|External| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? external fun foo(): String
+    public? final? external val x: Int
+        public? external get(): Int
+    public? final? class NotExternal : R|kotlin/Any| {
+        public? constructor(): R|NotExternal| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? external fun bar(): String
+
+        public? final? var y: Int
+            public? external get(): Int
+            public? set(value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? var z: Int
+        public? external get(): Int
+        public? external set(value: Int): R|kotlin/Unit|

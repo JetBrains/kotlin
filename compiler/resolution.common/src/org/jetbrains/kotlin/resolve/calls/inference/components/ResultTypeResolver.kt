@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
+import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -15,7 +18,8 @@ import org.jetbrains.kotlin.types.model.*
 
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         fun isProperType(type: KotlinTypeMarker): Boolean
@@ -23,13 +27,41 @@ class ResultTypeResolver(
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
+    private val isTypeInferenceForSelfTypesSupported: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
+
+    private fun Context.getDefaultTypeForSelfType(
+        constraints: List<Constraint>,
+        typeVariable: TypeVariableMarker
+    ): KotlinTypeMarker? {
+        val typeVariableConstructor = typeVariable.freshTypeConstructor() as TypeVariableTypeConstructorMarker
+        val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
+            if (constraint.position.from !is DeclaredUpperBoundConstraintPosition<*>) return@mapNotNull null
+            val typeParameter = typeVariableConstructor.typeParameter ?: return@mapNotNull null
+            extractTypeForGivenRecursiveTypeParameter(constraint.type, typeParameter)
+        }.takeIf { it.isNotEmpty() } ?: return null
+
+        return createCapturedStarProjectionForSelfType(typeVariableConstructor, typesForRecursiveTypeParameters)
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun Context.getDefaultType(
+        direction: ResolveDirection,
+        constraints: List<Constraint>,
+        typeVariable: TypeVariableMarker
+    ): KotlinTypeMarker {
+        if (isTypeInferenceForSelfTypesSupported) {
+            getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
+        }
+
+        return if (direction == ResolveDirection.TO_SUBTYPE) nothingType() else nullableAnyType()
+    }
+
     fun findResultType(c: Context, variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): KotlinTypeMarker {
         findResultTypeOrNull(c, variableWithConstraints, direction)?.let { return it }
 
         // no proper constraints
-        return run {
-            if (direction == ResolveDirection.TO_SUBTYPE) c.nothingType() else c.nullableAnyType()
-        }
+        return c.getDefaultType(direction, variableWithConstraints.constraints, variableWithConstraints.typeVariable)
     }
 
     private fun findResultTypeOrNull(
@@ -40,11 +72,37 @@ class ResultTypeResolver(
         findResultIfThereIsEqualsConstraint(c, variableWithConstraints)?.let { return it }
 
         val subType = c.findSubType(variableWithConstraints)
-        val superType = c.findSuperType(variableWithConstraints)
+        // Super type should be the most flexible, sub type should be the least one
+        val superType = c.findSuperType(variableWithConstraints).makeFlexibleIfNecessary(c, variableWithConstraints.constraints)
+
         return if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
             c.resultType(subType, superType, variableWithConstraints)
         } else {
             c.resultType(superType, subType, variableWithConstraints)
+        }
+    }
+
+    /*
+     * We propagate nullness flexibility into the result type from type variables in other constraints
+     * to prevent variable fixation into less flexible type.
+     *  Constraints:
+     *      UPPER(TypeVariable(T)..TypeVariable(T)?)
+     *      UPPER(Foo?)
+     *  Result type = makeFlexibleIfNecessary(Foo?) = Foo!
+     *
+     * We don't propagate nullness flexibility in depth as it's non-determined for now (see KT-35534):
+     *  CST(Bar<Foo>, Bar<Foo!>) = Bar<Foo!>
+     *  CST(Bar<Foo!>, Bar<Foo>) = Bar<Foo>
+     * But: CST(Foo, Foo!) = CST(Foo!, Foo) = Foo!
+     */
+    private fun KotlinTypeMarker?.makeFlexibleIfNecessary(c: Context, constraints: List<Constraint>) = with(c) {
+        when (val type = this@makeFlexibleIfNecessary) {
+            is SimpleTypeMarker -> {
+                if (constraints.any { it.type.typeConstructor().isTypeVariable() && it.type.hasFlexibleNullability() }) {
+                    createFlexibleType(type.makeSimpleTypeDefinitelyNotNullOrNotNull(), type.withNullability(true))
+                } else type
+            }
+            else -> type
         }
     }
 
@@ -108,15 +166,13 @@ class ResultTypeResolver(
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
             var commonSuperType = computeCommonSuperType(types)
 
-            if (commonSuperType.contains { it is StubTypeMarker }) {
+            if (commonSuperType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }) {
                 val typesWithoutStubs = types.filter { lowerType ->
-                    !lowerType.contains { it is StubTypeMarker }
+                    !lowerType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }
                 }
 
                 if (typesWithoutStubs.isNotEmpty()) {
                     commonSuperType = computeCommonSuperType(typesWithoutStubs)
-                } else {
-                    return null
                 }
             }
 
@@ -189,7 +245,29 @@ class ResultTypeResolver(
         val upperConstraints =
             variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
         if (upperConstraints.isNotEmpty()) {
-            val upperType = intersectTypes(upperConstraints.map { it.type })
+            val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })
+            val resultIsActuallyIntersection = intersectionUpperType.typeConstructor().isIntersection()
+
+            val isThereUnwantedIntersectedTypes = if (resultIsActuallyIntersection) {
+                val intersectionSupertypes = intersectionUpperType.typeConstructor().supertypes()
+                val intersectionClasses = intersectionSupertypes.count {
+                    it.typeConstructor().isClassTypeConstructor() && !it.typeConstructor().isInterface()
+                }
+                val areThereIntersectionFinalClasses = intersectionSupertypes.any { it.typeConstructor().isCommonFinalClassConstructor() }
+                intersectionClasses > 1 || areThereIntersectionFinalClasses
+            } else false
+
+            val upperType = if (isThereUnwantedIntersectedTypes) {
+                /*
+                 * We shouldn't infer a type variable into the intersection type if there is an explicit expected type,
+                 * otherwise it can lead to something like this:
+                 *
+                 * fun <T : String> materialize(): T = null as T
+                 * val bar: Int = materialize() // no errors, T is inferred into String & Int
+                 */
+                val filteredUpperConstraints = upperConstraints.filterNot { it.isExpectedTypePosition() }.map { it.type }
+                if (filteredUpperConstraints.isNotEmpty()) intersectTypes(filteredUpperConstraints) else intersectionUpperType
+            } else intersectionUpperType
 
             return typeApproximator.approximateToSubType(
                 upperType,

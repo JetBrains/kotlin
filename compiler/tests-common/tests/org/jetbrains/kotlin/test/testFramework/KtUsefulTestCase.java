@@ -1,59 +1,33 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.testFramework;
 
-import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
-import com.intellij.diagnostic.PerformanceWatcher;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.impl.DocumentCommitProcessor;
-import com.intellij.psi.impl.DocumentCommitThread;
-import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.testFramework.*;
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase;
-import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
-import com.intellij.util.*;
+import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.ReflectionUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.PeekableIterator;
 import com.intellij.util.containers.PeekableIteratorWrapper;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.lang.CompoundRuntimeException;
-import com.intellij.util.ui.UIUtil;
 import gnu.trove.Equality;
 import gnu.trove.THashSet;
 import junit.framework.AssertionFailedError;
@@ -79,7 +53,6 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @SuppressWarnings("ALL")
@@ -95,10 +68,6 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private Application application;
 
-    static {
-        IdeaForkJoinWorkerThreadFactory.setupPoisonFactory();
-        Logger.setFactory(TestLoggerFactory.class);
-    }
     protected static final Logger LOG = Logger.getInstance(KtUsefulTestCase.class);
 
     @NotNull
@@ -110,14 +79,12 @@ public abstract class KtUsefulTestCase extends TestCase {
     private String myTempDir;
 
     private static final String DEFAULT_SETTINGS_EXTERNALIZED;
-    private static final CodeInsightSettings defaultSettings = new CodeInsightSettings();
     static {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
 
         try {
             Element oldS = new Element("temp");
-            defaultSettings.writeExternal(oldS);
             DEFAULT_SETTINGS_EXTERNALIZED = JDOMUtil.writeElement(oldS);
         }
         catch (Exception e) {
@@ -185,14 +152,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         super.setUp();
 
         if (shouldContainTempFiles()) {
-            IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
-            String testName = null;
-            if (policy != null) {
-                testName = policy.getPerTestTempDirName();
-            }
-            if (testName == null) {
-                testName = FileUtil.sanitizeFileName(getTestName(true));
-            }
+            String testName = FileUtil.sanitizeFileName(getTestName(true));
             testName = new File(testName).getName(); // in case the test name contains file separators
             myTempDir = FileUtil.createTempDirectory(TEMP_DIR_MARKER + testName, "", false).getPath();
             FileUtil.resetCanonicalTempPathCache(myTempDir);
@@ -200,18 +160,9 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         boolean isStressTest = isStressTest();
         ApplicationInfoImpl.setInStressTest(isStressTest);
-        if (isPerformanceTest()) {
-            Timings.getStatistics();
-        }
-
+        Registry.getInstance().markAsLoaded();
         // turn off Disposer debugging for performance tests
         Disposer.setDebugMode(!isStressTest);
-
-        if (isIconRequired()) {
-            // ensure that IconLoader will use dummy empty icon
-            IconLoader.deactivate();
-            //IconManager.activate();
-        }
     }
 
     protected boolean isIconRequired() {
@@ -224,11 +175,6 @@ public abstract class KtUsefulTestCase extends TestCase {
             // don't use method references here to make stack trace reading easier
             //noinspection Convert2MethodRef
             new RunAll(
-                    () -> {
-                        if (isIconRequired()) {
-                            //IconManager.deactivate();
-                        }
-                    },
                     () -> disposeRootDisposable(),
                     () -> cleanupSwingDataStructures(),
                     () -> cleanupDeleteOnExitHookList(),
@@ -250,8 +196,7 @@ public abstract class KtUsefulTestCase extends TestCase {
                                 FileUtil.delete(new File(myTempDir));
                             }
                         }
-                    },
-                    () -> waitForAppLeakingThreads(10, TimeUnit.SECONDS)
+                    }
             ).run(ObjectUtils.notNull(mySuppressedExceptions, Collections.emptyList()));
         }
         finally {
@@ -326,39 +271,6 @@ public abstract class KtUsefulTestCase extends TestCase {
         containerMap.clear();
     }
 
-    static void doCheckForSettingsDamage(@NotNull CodeStyleSettings oldCodeStyleSettings, @NotNull CodeStyleSettings currentCodeStyleSettings) {
-        final CodeInsightSettings settings = CodeInsightSettings.getInstance();
-        // don't use method references here to make stack trace reading easier
-        //noinspection Convert2MethodRef
-        new RunAll()
-                .append(() -> {
-                    try {
-                        checkCodeInsightSettingsEqual(defaultSettings, settings);
-                    }
-                    catch (AssertionError error) {
-                        CodeInsightSettings clean = new CodeInsightSettings();
-                        for (Field field : clean.getClass().getFields()) {
-                            try {
-                                ReflectionUtil.copyFieldValue(clean, settings, field);
-                            }
-                            catch (Exception ignored) {
-                            }
-                        }
-                        throw error;
-                    }
-                })
-                .append(() -> {
-                    currentCodeStyleSettings.getIndentOptions(StdFileTypes.JAVA);
-                    try {
-                        checkCodeStyleSettingsEqual(oldCodeStyleSettings, currentCodeStyleSettings);
-                    }
-                    finally {
-                        currentCodeStyleSettings.clearCodeStyleSettings();
-                    }
-                })
-                .run();
-    }
-
     @NotNull
     public Disposable getTestRootDisposable() {
         return myTestRootDisposable;
@@ -370,22 +282,17 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         Runnable runnable = () -> {
             try {
-                TestLoggerFactory.onTestStarted();
                 super.runTest();
-                TestLoggerFactory.onTestFinished(true);
             }
             catch (InvocationTargetException e) {
-                TestLoggerFactory.onTestFinished(false);
                 e.fillInStackTrace();
                 throwables[0] = e.getTargetException();
             }
             catch (IllegalAccessException e) {
-                TestLoggerFactory.onTestFinished(false);
                 e.fillInStackTrace();
                 throwables[0] = e;
             }
             catch (Throwable e) {
-                TestLoggerFactory.onTestFinished(false);
                 throwables[0] = e;
             }
         };
@@ -398,19 +305,11 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected boolean shouldRunTest() {
-        return TestFrameworkUtil.canRunTest(getClass());
+        return true;
     }
 
     protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
-        if (runInDispatchThread()) {
-            EdtTestUtilKt.runInEdtAndWait(() -> {
-                runnable.run();
-                return null;
-            });
-        }
-        else {
-            runnable.run();
-        }
+        runnable.run();
     }
 
     protected void defaultRunBare() throws Throwable {
@@ -482,28 +381,11 @@ public abstract class KtUsefulTestCase extends TestCase {
     public void runBare() throws Throwable {
         if (!shouldRunTest()) return;
 
-        if (runInDispatchThread()) {
-            TestRunnerUtil.replaceIdeEventQueueSafely();
-            EdtTestUtil.runInEdtAndWait(this::defaultRunBare);
-        }
-        else {
-            defaultRunBare();
-        }
+        defaultRunBare();
     }
 
     protected boolean runInDispatchThread() {
-        IdeaTestExecutionPolicy policy = IdeaTestExecutionPolicy.current();
-        if (policy != null) {
-            return policy.runInDispatchThread();
-        }
         return true;
-    }
-
-    /**
-     * If you want a more shorter name than runInEdtAndWait.
-     */
-    protected void edt(@NotNull ThrowableRunnable<Throwable> runnable) {
-        EdtTestUtil.runInEdtAndWait(runnable);
     }
 
     @NotNull
@@ -794,10 +676,6 @@ public abstract class KtUsefulTestCase extends TestCase {
         Assert.fail(value + " should be equal to one of " + Arrays.toString(values));
     }
 
-    public static void printThreadDump() {
-        PerformanceWatcher.dumpThreadsToConsole("Thread dump:");
-    }
-
     public static void assertEmpty(@NotNull Object[] array) {
         assertOrderedEquals(array);
     }
@@ -867,7 +745,29 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @NotNull
     public static String getTestName(@Nullable String name, boolean lowercaseFirstLetter) {
-        return name == null ? "" : PlatformTestUtil.getTestName(name, lowercaseFirstLetter);
+        if (name == null) return "";
+        name = StringUtil.trimStart(name, "test");
+        return StringUtil.isEmpty(name) ? "" : lowercaseFirstLetter(name, lowercaseFirstLetter);
+    }
+
+    public static @NotNull String lowercaseFirstLetter(@NotNull String name, boolean lowercaseFirstLetter) {
+        if (lowercaseFirstLetter && !isAllUppercaseName(name)) {
+            name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+        }
+        return name;
+    }
+
+    public static boolean isAllUppercaseName(@NotNull String name) {
+        int uppercaseChars = 0;
+        for (int i = 0; i < name.length(); i++) {
+            if (Character.isLowerCase(name.charAt(i))) {
+                return false;
+            }
+            if (Character.isUpperCase(name.charAt(i))) {
+                uppercaseChars++;
+            }
+        }
+        return uppercaseChars >= 3;
     }
 
     @NotNull
@@ -896,15 +796,15 @@ public abstract class KtUsefulTestCase extends TestCase {
             @Nullable Supplier<String> messageProducer) {
         String fileText;
         try {
-            if (OVERWRITE_TESTDATA) {
-                VfsTestUtil.overwriteTestData(filePath, actualText);
-                //noinspection UseOfSystemOutOrSystemErr
-                System.out.println("File " + filePath + " created.");
-            }
             fileText = FileUtil.loadFile(new File(filePath), StandardCharsets.UTF_8);
         }
         catch (FileNotFoundException e) {
-            VfsTestUtil.overwriteTestData(filePath, actualText);
+            try {
+                FileUtil.writeToFile(new File(filePath), actualText);
+            }
+            catch (IOException exception) {
+                throw new AssertionError(exception);
+            }
             throw new AssertionFailedError("No output text found. File " + filePath + " created.");
         }
         catch (IOException e) {
@@ -912,7 +812,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         String expected = StringUtil.convertLineSeparators(trimBeforeComparing ? fileText.trim() : fileText);
         String actual = StringUtil.convertLineSeparators(trimBeforeComparing ? actualText.trim() : actualText);
-        if (!Comparing.equal(expected, actual)) {
+        if (!Objects.equals(expected, actual)) {
             throw new FileComparisonFailure(messageProducer == null ? null : messageProducer.get(), expected, actual, filePath);
         }
     }
@@ -938,33 +838,6 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
     }
 
-    private static void checkCodeStyleSettingsEqual(@NotNull CodeStyleSettings expected, @NotNull CodeStyleSettings settings) {
-        if (!expected.equals(settings)) {
-            Element oldS = new Element("temp");
-            expected.writeExternal(oldS);
-            Element newS = new Element("temp");
-            settings.writeExternal(newS);
-
-            String newString = JDOMUtil.writeElement(newS);
-            String oldString = JDOMUtil.writeElement(oldS);
-            Assert.assertEquals("Code style settings damaged", oldString, newString);
-        }
-    }
-
-    private static void checkCodeInsightSettingsEqual(@NotNull CodeInsightSettings oldSettings, @NotNull CodeInsightSettings settings) {
-        if (!oldSettings.equals(settings)) {
-            Element newS = new Element("temp");
-            settings.writeExternal(newS);
-            Assert.assertEquals("Code insight settings damaged", DEFAULT_SETTINGS_EXTERNALIZED, JDOMUtil.writeElement(newS));
-        }
-    }
-
-    public boolean isPerformanceTest() {
-        String testName = getName();
-        String className = getClass().getSimpleName();
-        return TestFrameworkUtil.isPerformanceTest(testName, className);
-    }
-
     /**
      * @return true for a test which performs A LOT of computations.
      * Such test should typically avoid performing expensive checks, e.g. data structure consistency complex validations.
@@ -976,86 +849,12 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     private static boolean isStressTest(String testName, String className) {
-        return TestFrameworkUtil.isPerformanceTest(testName, className) ||
-               containsStressWords(testName) ||
+        return containsStressWords(testName) ||
                containsStressWords(className);
     }
 
     private static boolean containsStressWords(@Nullable String name) {
         return name != null && (name.contains("Stress") || name.contains("Slow"));
-    }
-
-    public static void doPostponedFormatting(@NotNull Project project) {
-        DocumentUtil.writeInRunUndoTransparentAction(() -> {
-            PsiDocumentManager.getInstance(project).commitAllDocuments();
-            PostprocessReformattingAspect.getInstance(project).doPostponedFormatting();
-        });
-    }
-
-    /**
-     * Checks that code block throw corresponding exception.
-     *
-     * @param exceptionCase Block annotated with some exception type
-     */
-    protected void assertException(@NotNull AbstractExceptionCase<?> exceptionCase) {
-        assertException(exceptionCase, null);
-    }
-
-    /**
-     * Checks that code block throw corresponding exception with expected error msg.
-     * If expected error message is null it will not be checked.
-     *
-     * @param exceptionCase    Block annotated with some exception type
-     * @param expectedErrorMsg expected error message
-     */
-    @SuppressWarnings("unchecked")
-    protected void assertException(@NotNull AbstractExceptionCase exceptionCase, @Nullable String expectedErrorMsg) {
-        assertExceptionOccurred(true, exceptionCase, expectedErrorMsg);
-    }
-
-    /**
-     * Checks that the code block throws an exception of the specified class.
-     *
-     * @param exceptionClass   Expected exception type
-     * @param runnable         Block annotated with some exception type
-     */
-    public static <T extends Throwable> void assertThrows(@NotNull Class<? extends Throwable> exceptionClass,
-            @NotNull ThrowableRunnable<T> runnable) {
-        assertThrows(exceptionClass, null, runnable);
-    }
-
-    /**
-     * Checks that the code block throws an exception of the specified class with expected error msg.
-     * If expected error message is null it will not be checked.
-     *
-     * @param exceptionClass   Expected exception type
-     * @param expectedErrorMsgPart expected error message, of any
-     * @param runnable         Block annotated with some exception type
-     */
-    @SuppressWarnings({"unchecked", "SameParameterValue"})
-    public static <T extends Throwable> void assertThrows(@NotNull Class<? extends Throwable> exceptionClass,
-            @Nullable String expectedErrorMsgPart,
-            @NotNull ThrowableRunnable<T> runnable) {
-        assertExceptionOccurred(true, new AbstractExceptionCase() {
-            @Override
-            public Class<Throwable> getExpectedExceptionClass() {
-                return (Class<Throwable>)exceptionClass;
-            }
-
-            @Override
-            public void tryClosure() throws Throwable {
-                runnable.run();
-            }
-        }, expectedErrorMsgPart);
-    }
-
-    /**
-     * Checks that code block doesn't throw corresponding exception.
-     *
-     * @param exceptionCase Block annotated with some exception type
-     */
-    protected <T extends Throwable> void assertNoException(@NotNull AbstractExceptionCase<T> exceptionCase) throws T {
-        assertExceptionOccurred(false, exceptionCase, null);
     }
 
     protected void assertNoThrowable(@NotNull Runnable closure) {
@@ -1067,44 +866,6 @@ public abstract class KtUsefulTestCase extends TestCase {
             throwableName = thr.getClass().getName();
         }
         assertNull(throwableName);
-    }
-
-    private static <T extends Throwable> void assertExceptionOccurred(boolean shouldOccur,
-            @NotNull AbstractExceptionCase<T> exceptionCase,
-            String expectedErrorMsgPart) throws T {
-        boolean wasThrown = false;
-        try {
-            exceptionCase.tryClosure();
-        }
-        catch (Throwable e) {
-            Throwable cause = e;
-
-            if (shouldOccur) {
-                wasThrown = true;
-                assertInstanceOf(cause, exceptionCase.getExpectedExceptionClass());
-                if (expectedErrorMsgPart != null) {
-                    assertTrue(cause.getMessage(), cause.getMessage().contains(expectedErrorMsgPart));
-                }
-            }
-            else if (exceptionCase.getExpectedExceptionClass().equals(cause.getClass())) {
-                wasThrown = true;
-
-                //noinspection UseOfSystemOutOrSystemErr
-                System.out.println();
-                //noinspection UseOfSystemOutOrSystemErr
-                e.printStackTrace(System.out);
-
-                fail("Exception isn't expected here. Exception message: " + cause.getMessage());
-            }
-            else {
-                throw e;
-            }
-        }
-        finally {
-            if (shouldOccur && !wasThrown) {
-                fail(exceptionCase.getExpectedExceptionClass().getName() + " must be thrown.");
-            }
-        }
     }
 
     protected boolean annotatedWith(@NotNull Class<? extends Annotation> annotationClass) {
@@ -1139,27 +900,6 @@ public abstract class KtUsefulTestCase extends TestCase {
             }
         });
         file.refresh(false, true);
-    }
-
-    public static VirtualFile refreshAndFindFile(@NotNull final File file) {
-        return UIUtil.invokeAndWaitIfNeeded(() -> LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file));
-    }
-
-    public static void waitForAppLeakingThreads(long timeout, @NotNull TimeUnit timeUnit) {
-        EdtTestUtil.runInEdtAndWait(() -> {
-            Application app = ApplicationManager.getApplication();
-            if (app != null && !app.isDisposed()) {
-                FileBasedIndexImpl index = (FileBasedIndexImpl)app.getServiceIfCreated(FileBasedIndex.class);
-                if (index != null) {
-                    index.getChangedFilesCollector().waitForVfsEventsExecuted(timeout, timeUnit);
-                }
-
-                DocumentCommitThread commitThread = (DocumentCommitThread)app.getServiceIfCreated(DocumentCommitProcessor.class);
-                if (commitThread != null) {
-                    commitThread.waitForAllCommits(timeout, timeUnit);
-                }
-            }
-        });
     }
 
     protected class TestDisposable implements Disposable {

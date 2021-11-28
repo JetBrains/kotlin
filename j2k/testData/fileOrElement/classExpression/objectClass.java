@@ -1,2 +1,0 @@
-//expression
-Object.class

@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.AdSupport
+modules = AdSupport
+
+compilerOpts = -framework AdSupport
+linkerOpts = -framework AdSupport

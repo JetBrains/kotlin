@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.ir.util.*
 class FakeOverrideCopier(
     private val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
-    private val symbolRenamer: SymbolRenamer
+    private val symbolRenamer: SymbolRenamer,
+    private val makeExternal: Boolean = false,
 ) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
 
     private fun <T : IrFunction> T.transformFunctionChildren(declaration: T): T =
@@ -55,7 +56,7 @@ class FakeOverrideCopier(
             declaration.modality,
             declaration.returnType,
             isInline = declaration.isInline,
-            isExternal = false,
+            isExternal = makeExternal,
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
             isExpect = declaration.isExpect,
@@ -78,7 +79,7 @@ class FakeOverrideCopier(
             isLateinit = declaration.isLateinit,
             isDelegated = declaration.isDelegated,
             isExpect = declaration.isExpect,
-            isExternal = false
+            isExternal = makeExternal
         ).apply {
             transformAnnotations(declaration)
             this.getter = declaration.getter?.transform()

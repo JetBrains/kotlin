@@ -31,16 +31,16 @@ fun main() {
     foo1(KotlinClass::baz)
     foo2(KotlinClass::baz)
     // Ambiguity (companion/class)
-    <!AMBIGUITY!>foo3<!>(KotlinClass::baz)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(KotlinClass::baz)
 
     // Type mismatch
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(<!UNRESOLVED_REFERENCE!>KotlinClass::bar<!>)
+    <!INAPPLICABLE_CANDIDATE!>foo1<!>(KotlinClass::<!UNRESOLVED_REFERENCE!>bar<!>)
     foo2(KotlinClass::bar)
     foo3(KotlinClass::bar)
 
     foo1(KotlinClass2::bar)
     // Type mismatch
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(<!UNRESOLVED_REFERENCE!>KotlinClass2::bar<!>)
+    <!INAPPLICABLE_CANDIDATE!>foo2<!>(KotlinClass2::<!UNRESOLVED_REFERENCE!>bar<!>)
     foo3(KotlinClass2::bar)
 }
 

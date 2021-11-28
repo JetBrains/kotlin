@@ -1,6 +1,0 @@
-// "Convert member to extension" "true"
-
-actual class Foo {
-}
-
-actual val Foo.foo get() = 1

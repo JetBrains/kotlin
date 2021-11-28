@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
 /**
  * Represents a 8-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Byte private constructor(public val value: Byte) : Number(), Comparable<Byte> {
     public companion object {
         /**
@@ -209,11 +209,19 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Byte =
         (this + 1).toByte()
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Byte =
         (this - 1).toByte()
 
@@ -333,25 +341,21 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
         wasm_i32_eq(this.toInt(), other.toInt())
 
     public override fun toString(): String =
-        byteToStringImpl(this)
+        this.toInt().toString()
 
     public override inline fun hashCode(): Int =
         this.toInt()
 
-    @WasmReinterpret
+    @WasmNoOpCast
     @PublishedApi
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
 }
 
-@WasmImport("runtime", "coerceToString")
-private fun byteToStringImpl(byte: Byte): String =
-    implementedAsIntrinsic
-
 /**
  * Represents a 16-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Short private constructor(public val value: Short) : Number(), Comparable<Short> {
     public companion object {
         /**
@@ -545,11 +549,19 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Short =
         (this + 1).toShort()
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Short =
         (this - 1).toShort()
 
@@ -668,24 +680,22 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
 
-    public override fun toString(): String = shortToStringImpl(this)
+    public override fun toString(): String =
+        this.toInt().toString()
 
     public override inline fun hashCode(): Int =
         this.toInt()
 
-    @WasmReinterpret
+    @WasmNoOpCast
     @PublishedApi
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
 }
 
-@WasmImport("runtime", "coerceToString")
-private fun shortToStringImpl(x: Short): String = implementedAsIntrinsic
-
 /**
  * Represents a 32-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Int private constructor(val value: Int) : Number(), Comparable<Int> {
 
     public companion object {
@@ -885,11 +895,19 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Int =
         this + 1
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     // TODO: Fix test compiler/testData/codegen/box/functions/invoke/invoke.kt with inline dec
     public operator fun dec(): Int =
         this - 1
@@ -1042,40 +1060,36 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
         other is Int && wasm_i32_eq(this, other)
 
     public override fun toString(): String =
-        intToStringImpl(this)
+        itoa32(this, 10)
 
     public override inline fun hashCode(): Int =
         this
 
-    @WasmReinterpret
+    @WasmNoOpCast
     @PublishedApi
     internal fun reinterpretAsBoolean(): Boolean =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun reinterpretAsByte(): Byte =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun reinterpretAsShort(): Short =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun reinterpretAsChar(): Char =
         implementedAsIntrinsic
 }
 
-@WasmImport("runtime", "coerceToString")
-private fun intToStringImpl(x: Int): String =
-    implementedAsIntrinsic
-
 /**
  * Represents a 64-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Long private constructor(val value: Long) : Number(), Comparable<Long> {
 
     public companion object {
@@ -1275,11 +1289,19 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Long =
         this + 1L
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Long =
         this - 1L
 
@@ -1430,9 +1452,8 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
     public override fun equals(other: Any?): Boolean =
         other is Long && wasm_i64_eq(this, other)
 
-    // TODO: Implement proper Long.toString
     public override fun toString(): String =
-        toDouble().toString()
+        itoa64(this, 10)
 
     public override fun hashCode(): Int =
         ((this ushr 32) xor this).toInt()
@@ -1441,7 +1462,7 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Float private constructor(public val value: Float) : Number(), Comparable<Float> {
 
     public companion object {
@@ -1470,9 +1491,20 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         /**
          * A constant holding the "not a number" value of Float.
          */
-        public val NaN: Float
-            get() =
-                wasm_float_nan()
+        @Suppress("DIVISION_BY_ZERO")
+        public val NaN: Float = 0.0f / 0.0f
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -1651,11 +1683,19 @@ public class Float private constructor(public val value: Float) : Number(), Comp
     public inline operator fun rem(other: Double): Double =
         this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Float =
         this + 1.0f
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Float =
         this - 1.0f
 
@@ -1729,7 +1769,7 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         other is Float && this.equals(other)
 
     public override fun toString(): String =
-        floatToStringImpl(this)
+        dtoa(this.toDouble())
 
     public override inline fun hashCode(): Int =
         bits()
@@ -1739,14 +1779,10 @@ public class Float private constructor(public val value: Float) : Number(), Comp
     internal fun bits(): Int = implementedAsIntrinsic
 }
 
-@WasmImport("runtime", "coerceToString")
-private fun floatToStringImpl(x: Float): String =
-    implementedAsIntrinsic
-
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Double private constructor(public val value: Double) : Number(), Comparable<Double> {
 
     public companion object {
@@ -1775,10 +1811,20 @@ public class Double private constructor(public val value: Double) : Number(), Co
         /**
          * A constant holding the "not a number" value of Double.
          */
-        public val NaN: Double
-            get() =
-                wasm_double_nan()
+        @Suppress("DIVISION_BY_ZERO")
+        public val NaN: Double = 0.0 / 0.0
 
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**
@@ -1957,11 +2003,19 @@ public class Double private constructor(public val value: Double) : Number(), Co
     public operator fun rem(other: Double): Double =
         this - (wasm_f64_nearest(this / other) * other)
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Double =
         this + 1.0
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Double =
         this - 1.0
 
@@ -2038,7 +2092,7 @@ public class Double private constructor(public val value: Double) : Number(), Co
         other is Double && this.bits() == other.bits()
 
     public override fun toString(): String =
-        doubleToStringImpl(this)
+        dtoa(this)
 
     public override inline fun hashCode(): Int = bits().hashCode()
 
@@ -2047,7 +2101,3 @@ public class Double private constructor(public val value: Double) : Number(), Co
     internal fun bits(): Long =
         implementedAsIntrinsic
 }
-
-@WasmImport("runtime", "coerceToString")
-private fun doubleToStringImpl(x: Double): String =
-    implementedAsIntrinsic

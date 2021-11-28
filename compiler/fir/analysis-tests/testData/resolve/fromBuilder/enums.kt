@@ -23,7 +23,7 @@ enum class Planet(val m: Double, internal val r: Double) {
         }
     };
 
-    val g: Double = G * m / (r * r)
+    val g: Double = <!UNINITIALIZED_VARIABLE!>G<!> * m / (r * r)
 
     abstract fun sayHello()
 

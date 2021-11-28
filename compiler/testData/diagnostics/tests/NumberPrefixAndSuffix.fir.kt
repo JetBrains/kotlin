@@ -12,7 +12,7 @@ fun test(a: Any) {
     1ffoo a
     1doo a
     1ddoo a
-    1contains a
+    1<!INFIX_MODIFIER_REQUIRED!>contains<!> a
 
     1Lfoo a
     1L<!UNRESOLVED_REFERENCE!>oo<!> a
@@ -45,10 +45,10 @@ fun test(a: Any) {
     .0fin a
     .0<!UNRESOLVED_REFERENCE!>din<!> a
 
-    1is Any
+    <!USELESS_IS_CHECK!>1is Any<!>
     1as Any
     1as? Any
 
-    1!is Any
+    <!USELESS_IS_CHECK!>1!is Any<!>
     1!in a
 }

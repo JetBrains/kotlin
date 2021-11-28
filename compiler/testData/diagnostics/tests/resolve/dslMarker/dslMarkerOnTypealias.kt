@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)
 annotation class XMarker

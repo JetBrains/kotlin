@@ -1,22 +1,12 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -30,11 +20,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_DESCRIPTOR_FIELD
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.initializedDescriptorFieldName
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -45,6 +36,8 @@ class SerializableCodegenImpl(
 ) : SerializableCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
 
     private val thisAsmType = classCodegen.typeMapper.mapClass(serializableDescriptor)
+    private val fieldMissingOptimizationVersion = ApiVersion.parse("1.1")!!
+    private val useFieldMissingOptimization = canUseFieldMissingOptimization()
 
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
@@ -276,12 +269,12 @@ class SerializableCodegenImpl(
             val superProps = bindingContext.serializablePropertiesFor(superClass).serializableProperties
             val creator = buildInternalConstructorDesc(propStartVar, maskVar, classCodegen, superProps)
             invokespecial(superType, "<init>", creator, false)
-            return superProps.size to propStartVar + superProps.sumBy { it.asmType.size }
+            return superProps.size to propStartVar + superProps.sumOf { it.asmType.size }
         }
     }
 
     private fun InstructionAdapter.generateOptimizedGoldenMaskCheck(maskVar: Int) {
-        if (serializableDescriptor.isAbstractSerializableClass() || serializableDescriptor.isSealedSerializableClass()) {
+        if (serializableDescriptor.isAbstractOrSealedSerializableClass()) {
             // for abstract classes fields MUST BE checked in child classes
             return
         }
@@ -289,7 +282,7 @@ class SerializableCodegenImpl(
         val allPresentsLabel = Label()
         val maskSlotCount = properties.serializableProperties.bitMaskSlotCount()
         if (maskSlotCount == 1) {
-            val goldenMask = getGoldenMask()
+            val goldenMask = properties.goldenMask
 
             iconst(goldenMask)
             dup()
@@ -310,7 +303,7 @@ class SerializableCodegenImpl(
         } else {
             val fieldsMissingLabel = Label()
 
-            val goldenMaskList = getGoldenMaskList()
+            val goldenMaskList = properties.goldenMaskList
             goldenMaskList.forEachIndexed { i, goldenMask ->
                 val maskIndex = maskVar + i
                 // if( (goldenMask & seen) != goldenMask )
@@ -343,14 +336,14 @@ class SerializableCodegenImpl(
     }
 
     private fun InstructionAdapter.stackSerialDescriptor() {
-        if (serializableDescriptor.shouldHaveGeneratedSerializer && staticDescriptor) {
+        if (serializableDescriptor.isStaticSerializable) {
             val serializer = serializableDescriptor.classSerializer!!
             StackValue.singleton(serializer, classCodegen.typeMapper).put(kSerializerType, this)
             invokeinterface(kSerializerType.internalName, descriptorGetterName, "()${descType.descriptor}")
         } else {
             generateStaticDescriptorField()
 
-            getstatic(thisAsmType.internalName, initializedDescriptorFieldName, descType.descriptor)
+            getstatic(thisAsmType.internalName, CACHED_DESCRIPTOR_FIELD, descType.descriptor)
         }
     }
 
@@ -358,7 +351,7 @@ class SerializableCodegenImpl(
         val flags = Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_STATIC
         classCodegen.v.newField(
             OtherOrigin(classCodegen.myClass.psiOrParent), flags,
-            initializedDescriptorFieldName, descType.descriptor, null, null
+            CACHED_DESCRIPTOR_FIELD, descType.descriptor, null, null
         )
 
         val clInit = classCodegen.createOrGetClInitCodegen()
@@ -376,7 +369,7 @@ class SerializableCodegenImpl(
                 invokevirtual(descImplType.internalName, CallingConventions.addElement, "(Ljava/lang/String;Z)V", false)
             }
 
-            putstatic(thisAsmType.internalName, initializedDescriptorFieldName, descType.descriptor)
+            putstatic(thisAsmType.internalName, CACHED_DESCRIPTOR_FIELD, descType.descriptor)
         }
     }
 
@@ -403,5 +396,13 @@ class SerializableCodegenImpl(
         )
         this.gen(param.defaultValue, mapType)
         this.v.putfield(thisAsmType.internalName, prop.name.asString(), mapType.descriptor)
+    }
+
+    private fun canUseFieldMissingOptimization(): Boolean {
+        val implementationVersion = VersionReader.getVersionsForCurrentModuleFromContext(
+            currentDeclaration.module,
+            bindingContext
+        )?.implementationVersion
+        return if (implementationVersion != null) implementationVersion >= fieldMissingOptimizationVersion else false
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1461 Front-end complains on overload resolution when superclass property is accessed from string template and implicit type cast is performed
 package f
 
@@ -15,4 +16,4 @@ fun foo(sup : Super, sub : Sub) {
 }
 
 //from library
-fun println(<!UNUSED_PARAMETER!>message<!> : Any?) { throw Exception() }
+fun println(message : Any?) { throw Exception() }

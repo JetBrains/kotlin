@@ -1,0 +1,5 @@
+KT element: KtArrayAccessExpression
+FIR element: FirFunctionCallImpl
+
+FIR element rendered:
+R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(1))

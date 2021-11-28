@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import java.util.*
 
 /**
  * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KFunction2.
@@ -88,6 +87,7 @@ class FunctionClassDescriptor(
     override val annotations: Annotations get() = Annotations.EMPTY
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
 
     override fun getDeclaredTypeParameters() = parameters
 
@@ -102,7 +102,7 @@ class FunctionClassDescriptor(
                 FunctionClassKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     listOf(functionClassId)
                 FunctionClassKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, FunctionClassKind.SuspendFunction.numberedClassName(arity)))
+                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionClassKind.SuspendFunction.numberedClassName(arity)))
             }
 
             val moduleDescriptor = containingDeclaration.containingDeclaration

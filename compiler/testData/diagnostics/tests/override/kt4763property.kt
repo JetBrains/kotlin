@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface P {
     var f: Number
 }

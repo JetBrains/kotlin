@@ -1,0 +1,16 @@
+FILE: mapList.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval x: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/emptyList|<R|kotlin/Int|>()
+        lval u: R|kotlin/collections/List<kotlin/Int>| = R|<local>/x|.R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|kotlin/Int.plus|(R|<local>/it|)
+        }
+        )
+        R|<local>/u|.R|/applyX|<R|kotlin/collections/List<kotlin/Int>|>(<L> = applyX@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
+        }
+        )
+    }
+    public final inline fun <T> R|T|.applyX(block: R|T.() -> kotlin/Unit|): R|T| {
+        R|kotlin/TODO|()
+    }

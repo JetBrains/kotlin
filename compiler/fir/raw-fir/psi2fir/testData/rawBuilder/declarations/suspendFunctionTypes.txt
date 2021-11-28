@@ -1,0 +1,9 @@
+FILE: suspendFunctionTypes.kt
+    public? final? suspend fun <T> simpleRun(f: ( suspend () -> T )): T {
+        ^simpleRun f#()
+    }
+    public? final? suspend fun <T, R> List<T>.simpleMap(f: ( suspend (T) -> R )): R {
+    }
+    public? final? suspend fun <T> simpleWith(t: T, f: ( suspend T.() -> Unit )): Unit {
+        ^simpleWith t#.f#()
+    }

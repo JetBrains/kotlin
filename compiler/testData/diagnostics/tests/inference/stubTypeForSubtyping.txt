@@ -1,0 +1,3 @@
+package
+
+public fun test_1(/*0*/ s: kotlin.String?, /*1*/ flag: kotlin.Boolean): kotlin.Int?

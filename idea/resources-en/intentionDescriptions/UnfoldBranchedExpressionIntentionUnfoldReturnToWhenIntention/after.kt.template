@@ -1,5 +1,0 @@
-when (n) {
-  1 -> return "one"
-  2 -> return "two"
-  else -> return "many"
-}

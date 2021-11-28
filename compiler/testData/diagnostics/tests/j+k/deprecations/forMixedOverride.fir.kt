@@ -16,11 +16,11 @@ interface WithDeprecation {
 }
 
 class A : J(), WithDeprecation {
-    override fun foo() {}
+    override fun <!OVERRIDE_DEPRECATION("")!>foo<!>() {}
 }
 
 fun main() {
-    J().foo()
+    J().<!DEPRECATION!>foo<!>()
 
     J2().foo()
     A().foo()

@@ -18,7 +18,7 @@ abstract class JvmPlatform : SimplePlatform("JVM") {
 
 @Suppress("DEPRECATION_ERROR")
 object JvmPlatforms {
-    private val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.JVM_1_6)
+    private val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.DEFAULT)
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
         JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
@@ -31,8 +31,10 @@ object JvmPlatforms {
 
     val defaultJvmPlatform: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.DEFAULT]!!
 
-    val jvm16: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
-    val jvm18: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!
+    val jvm6: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_6]!!
+    val jvm8: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_1_8]!!
+    val jvm11: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_11]!!
+    val jvm17: TargetPlatform = jvmTargetToJdkPlatform[JvmTarget.JVM_17]!!
 
     fun jvmPlatformByTargetVersion(targetVersion: JvmTarget): TargetPlatform =
         jvmTargetToJdkPlatform[targetVersion]!!

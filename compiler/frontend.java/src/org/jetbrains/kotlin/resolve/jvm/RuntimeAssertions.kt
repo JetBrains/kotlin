@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -103,7 +103,7 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         expressionTypeWithSmartCast: KotlinType,
         c: ResolutionContext<*>
     ) {
-        if (TypeUtils.noExpectedType(c.expectedType) || c.expectedType is StubType) return
+        if (TypeUtils.noExpectedType(c.expectedType) || c.expectedType is StubTypeForBuilderInference) return
 
         val assertionInfo = RuntimeAssertionInfo.create(
             c.expectedType,

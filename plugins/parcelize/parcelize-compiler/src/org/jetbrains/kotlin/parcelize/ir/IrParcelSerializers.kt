@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase.Companion.CREATOR_NAME
 
 interface IrParcelSerializer {
     fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression
@@ -77,6 +76,20 @@ class IrWrappedIntParcelSerializer(private val parcelType: IrType) : IrParcelSer
                 irCall(conversion).apply { dispatchReceiver = value }
             }
         )
+}
+
+class IrUnsafeCoerceWrappedSerializer(
+    private val serializer: IrParcelSerializer,
+    private val wrappedType: IrType,
+    private val underlyingType: IrType,
+) : IrParcelSerializer {
+    override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
+        return unsafeCoerce(readParcelWith(serializer, parcel), underlyingType, wrappedType)
+    }
+
+    override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
+        return writeParcelWith(serializer, parcel, flags, unsafeCoerce(value, wrappedType, underlyingType))
+    }
 }
 
 // Wraps a non-null aware parceler to handle nullable types.
@@ -175,13 +188,7 @@ class IrCharSequenceParcelSerializer : IrParcelSerializer {
 // Parcel serializer for Parcelables in the same module, which accesses the writeToParcel/createFromParcel methods without reflection.
 class IrEfficientParcelableParcelSerializer(private val irClass: IrClass) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
-        val creator: IrExpression = irClass.fields.find { it.name == CREATOR_NAME }?.let { creatorField ->
-            irGetField(null, creatorField)
-        } ?: irCall(irClass.creatorGetter!!).apply {
-            dispatchReceiver = irGetObject(irClass.companionObject()!!.symbol)
-        }
-
-        return parcelableCreatorCreateFromParcel(creator, irGet(parcel))
+        return parcelableCreatorCreateFromParcel(getParcelableCreator(irClass), irGet(parcel))
     }
 
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
@@ -201,15 +208,25 @@ class IrGenericParcelableParcelSerializer(private val parcelizeType: IrType) : I
     }
 }
 
-// Fallback parcel serializer for unknown types using Parcel.readValue/writeValue.
+// Creates a serializer from a pair of parcel methods of the form reader(ClassLoader)T and writer(T)V.
 // This needs a reference to the parcelize type itself in order to find the correct class loader to use, see KT-20027.
-class IrGenericValueParcelSerializer(private val parcelizeType: IrType) : IrParcelSerializer {
+class IrParcelSerializerWithClassLoader(
+    private val parcelizeType: IrType,
+    private val reader: IrSimpleFunctionSymbol,
+    private val writer: IrSimpleFunctionSymbol
+) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
-        return parcelReadValue(irGet(parcel), classGetClassLoader(javaClassReference(parcelizeType)))
+        return irCall(reader).apply {
+            dispatchReceiver = irGet(parcel)
+            putValueArgument(0, classGetClassLoader(javaClassReference(parcelizeType)))
+        }
     }
 
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
-        return parcelWriteValue(irGet(parcel), value)
+        return irCall(writer).apply {
+            dispatchReceiver = irGet(parcel)
+            putValueArgument(0, value)
+        }
     }
 }
 
@@ -226,7 +243,6 @@ class IrCustomParcelSerializer(private val parcelerObject: IrClass) : IrParcelSe
 
 // Parcel serializer for array types. This handles both primitive array types (for ShortArray and for primitive arrays using custom element
 // parcelers) as well as boxed arrays.
-// TODO: Unsigned array types
 class IrArrayParcelSerializer(
     private val arrayType: IrType,
     private val elementType: IrType,
@@ -234,7 +250,7 @@ class IrArrayParcelSerializer(
 ) : IrParcelSerializer {
     private fun AndroidIrBuilder.newArray(size: IrExpression): IrExpression {
         val arrayConstructor: IrFunctionSymbol = if (arrayType.isBoxedArray) {
-            androidSymbols.arrayOfNulls
+            context.irBuiltIns.arrayOfNulls
         } else {
             arrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
         }

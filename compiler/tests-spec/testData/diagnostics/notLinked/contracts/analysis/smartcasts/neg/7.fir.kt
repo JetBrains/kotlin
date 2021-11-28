@@ -1,5 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_NEW_INFERENCE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 // FILE: contracts.kt
 
@@ -210,7 +209,7 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     case_1_1(value_1)
-    value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    value_1<!UNSAFE_CALL!>.<!>inv()
     case_1_2(value_1)
     value_1.inv()
     case_1_1(value_1)
@@ -220,7 +219,7 @@ fun case_1(value_1: Int?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number?) {
     case_2_1(value_1)
-    value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+    value_1<!UNSAFE_CALL!>.<!>toByte()
     case_2_2(value_1)
     value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
 }
@@ -237,16 +236,16 @@ fun case_3(value_1: Any?) {
 fun case_4(value_1: Any?) {
     case_4_1(value_1)
     value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-    <!INAPPLICABLE_CANDIDATE!>case_4_2<!>(value_1)
+    case_4_2(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)
     value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-    <!INAPPLICABLE_CANDIDATE!>case_4_3<!>(value_1)
+    case_4_3(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)
     value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Int?) {
     if (case_5_1(value_1)) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1<!UNSAFE_CALL!>.<!>inv()
         if (case_5_2(value_1)) {
             value_1.inv()
             case_5_1(value_1)
@@ -254,7 +253,7 @@ fun case_5(value_1: Int?) {
         }
     }
     if (!case_5_3(value_1)) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1<!UNSAFE_CALL!>.<!>inv()
         if (!case_5_4(value_1)) {
             value_1.inv()
             case_5_1(value_1)
@@ -262,7 +261,7 @@ fun case_5(value_1: Int?) {
         }
     }
     if (case_5_5(value_1) != null) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1<!UNSAFE_CALL!>.<!>inv()
         if (case_5_6(value_1) != null) {
             value_1.inv()
             case_5_1(value_1)
@@ -270,7 +269,7 @@ fun case_5(value_1: Int?) {
         }
     }
     if (case_5_7(value_1) == null) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1<!UNSAFE_CALL!>.<!>inv()
         if (case_5_8(value_1) == null) {
             value_1.inv()
             case_5_1(value_1)
@@ -283,25 +282,25 @@ fun case_5(value_1: Int?) {
 fun case_6(value_1: Number?) {
     when {
         case_6_1(value_1) -> {
-            value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+            value_1<!UNSAFE_CALL!>.<!>toByte()
             when { case_6_2(value_1) -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
     when {
         !case_6_3(value_1) -> {
-            value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+            value_1<!UNSAFE_CALL!>.<!>toByte()
             when { !case_6_4(value_1) -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
     when {
         case_6_5(value_1) != null -> {
-            value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+            value_1<!UNSAFE_CALL!>.<!>toByte()
             when { case_6_6(value_1) != null -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
     when {
         case_6_7(value_1) == null -> {
-            value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+            value_1<!UNSAFE_CALL!>.<!>toByte()
             when { case_6_8(value_1) == null -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
@@ -331,30 +330,30 @@ fun case_7(value_1: Any?) {
 fun case_8(value_1: Any?) {
     if (case_8_1(value_1)) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-        if (<!INAPPLICABLE_CANDIDATE!>case_8_2<!>(value_1)) {
+        if (case_8_2(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_3<!>(value_1)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            if (case_8_3(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (!case_8_4(value_1)) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-        if (!<!INAPPLICABLE_CANDIDATE!>case_8_5<!>(value_1)) {
+        if (!case_8_5(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (!<!INAPPLICABLE_CANDIDATE!>case_8_6<!>(value_1)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            if (!case_8_6(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (case_8_7(value_1) == null) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-        if (<!INAPPLICABLE_CANDIDATE!>case_8_8<!>(value_1) != null) {
+        if (case_8_8(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) != null) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_9<!>(value_1) != null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            if (case_8_9(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) != null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (case_8_10(value_1) != null) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-        if (<!INAPPLICABLE_CANDIDATE!>case_8_11<!>(value_1) == null) {
+        if (case_8_11(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) == null) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_12<!>(value_1) == null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
+            if (case_8_12(<!ARGUMENT_TYPE_MISMATCH!>value_1<!>) == null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
 }

@@ -1,0 +1,18 @@
+FILE: a.kt
+    package a
+
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|a/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: b.kt
+    package b
+
+    public final fun bar(): R|kotlin/Unit| {
+        Q|a/A|.R|a/A.foo|()
+    }

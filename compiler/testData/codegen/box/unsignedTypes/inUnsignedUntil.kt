@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 const val MaxUI = UInt.MAX_VALUE
 const val MinUI = UInt.MIN_VALUE

@@ -56,7 +56,9 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
 
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: IrDeclarationContainer?) {
         require(data != null)
-        if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE) {
+        if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
+            descriptor.kind != CallableMemberDescriptor.Kind.DELEGATION // Skip mismatching delegates, see KT-46120
+        ) {
             symbolTable.declareSimpleFunctionIfNotExists(descriptor) {
                 createFunctionStub(descriptor, it).insertDeclaration(data)
             }

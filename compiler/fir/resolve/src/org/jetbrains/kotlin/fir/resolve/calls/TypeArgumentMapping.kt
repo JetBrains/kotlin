@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
+import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 
 sealed class TypeArgumentMapping {
     abstract operator fun get(typeParameterIndex: Int): FirTypeProjection
 
     object NoExplicitArguments : TypeArgumentMapping() {
-        override fun get(typeParameterIndex: Int): FirTypeProjection = FirTypePlaceholderProjection
+        override fun get(typeParameterIndex: Int): FirTypeProjection = buildPlaceholderProjection()
     }
 
     class Mapped(private val ordered: List<FirTypeProjection>) : TypeArgumentMapping() {
         override fun get(typeParameterIndex: Int): FirTypeProjection {
-            return ordered.getOrElse(typeParameterIndex) { FirTypePlaceholderProjection }
+            return ordered.getOrElse(typeParameterIndex) { buildPlaceholderProjection() }
         }
     }
 }

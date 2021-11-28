@@ -1,4 +1,3 @@
-// FIR_IGNORE
 interface A {
     fun foo() {}
 }

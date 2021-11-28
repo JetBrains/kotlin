@@ -1,0 +1,8 @@
+depends = CFNetwork CoreFoundation DiskArbitration IOKit Security darwin libkern osx posix
+language = Objective-C
+package = platform.CoreServices
+modules = CoreServices
+
+excludedFunctions = MDItemCopyAttributeList MDQueryGetSortOptionFlagsForAttribute
+compilerOpts = -framework CoreServices
+linkerOpts = -framework CoreServices

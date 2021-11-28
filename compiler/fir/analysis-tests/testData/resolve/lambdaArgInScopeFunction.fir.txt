@@ -1,0 +1,56 @@
+FILE: lambdaArgInScopeFunction.kt
+    public final class KotlinClass : R|kotlin/Comparable<KotlinClass>| {
+        public constructor(name: R|kotlin/String|): R|KotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val name: R|kotlin/String| = R|<local>/name|
+            private get(): R|kotlin/String|
+
+        public final override operator fun compareTo(that: R|KotlinClass|): R|kotlin/Int| {
+            ^compareTo this@R|/KotlinClass|.R|/KotlinClass.name|.R|kotlin/String.compareTo|(R|<local>/that|.R|/KotlinClass.name|)
+        }
+
+    }
+    public final fun case1(kotlinClass: R|KotlinClass?|): R|kotlin/Unit| {
+        lval value: R|KotlinClass?| = R|<local>/kotlinClass|?.{ $subj$.R|kotlin/let|<R|KotlinClass|, R|KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|KotlinClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|<local>/it|
+        }
+        ) }
+        R|<local>/value|.R|/checkType|<R|KotlinClass?|>(<L> = checkType@fun R|CheckTypeInv<KotlinClass?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/_|<R|KotlinClass?|>()
+        }
+        )
+        lval lambda: R|(() -> KotlinClass)?| = R|<local>/kotlinClass|?.{ $subj$.R|kotlin/let|<R|KotlinClass|, R|() -> KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|() -> KotlinClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|KotlinClass| <inline=Unknown>  {
+                ^ R|<local>/it|
+            }
+
+        }
+        ) }
+        R|<local>/lambda|.R|/checkType|<R|(() -> KotlinClass)?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function0<KotlinClass>?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.<None of the following candidates is applicable because of receiver type mismatch: [/_]>#<R|(kotlin/Unit) -> KotlinClass?|>()
+        }
+        )
+    }
+    public final fun case2(kotlinClass: R|KotlinClass|): R|kotlin/Unit| {
+        lval value: R|KotlinClass| = R|<local>/kotlinClass|.R|kotlin/let|<R|KotlinClass|, R|KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|KotlinClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|<local>/it|
+        }
+        )
+        R|<local>/value|.R|/checkType|<R|KotlinClass|>(<L> = checkType@fun R|CheckTypeInv<KotlinClass>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/_|<R|KotlinClass|>()
+        }
+        )
+        lval lambda: R|() -> KotlinClass| = R|<local>/kotlinClass|.R|kotlin/let|<R|KotlinClass|, R|() -> KotlinClass|>(<L> = let@fun <anonymous>(it: R|KotlinClass|): R|() -> KotlinClass| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|KotlinClass| <inline=Unknown>  {
+                ^ R|<local>/it|
+            }
+
+        }
+        )
+        R|<local>/lambda|.R|/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function0<KotlinClass>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.<None of the following candidates is applicable because of receiver type mismatch: [/_]>#<R|(kotlin/Unit) -> KotlinClass?|>()
+        }
+        )
+    }

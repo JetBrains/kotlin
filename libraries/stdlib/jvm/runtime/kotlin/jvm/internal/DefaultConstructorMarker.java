@@ -5,6 +5,6 @@
 
 package kotlin.jvm.internal;
 
-final class DefaultConstructorMarker {
+public final class DefaultConstructorMarker {
     private DefaultConstructorMarker() {}
 }

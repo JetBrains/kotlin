@@ -30,6 +30,9 @@ interface IrSymbol {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 
+    @ObsoleteDescriptorBasedAPI
+    val hasDescriptor: Boolean
+
     val isBound: Boolean
 
     val signature: IdSignature?

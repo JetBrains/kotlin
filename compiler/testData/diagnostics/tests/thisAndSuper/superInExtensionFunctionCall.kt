@@ -1,6 +1,6 @@
 // No supertype at all
 
-fun Any.extension(<!UNUSED_PARAMETER!>arg<!>: Any?) {}
+fun Any.extension(arg: Any?) {}
 
 class A1 {
     fun test() {

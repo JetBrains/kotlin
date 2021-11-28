@@ -14,14 +14,16 @@ interface KotlinMangler<D : Any> {
 
     val String.hashMangle: Long
 
-    fun D.isExported(): Boolean
-    val D.mangleString: String
-    val D.signatureString: String
-    val D.fqnString: String
+    fun D.isExported(compatibleMode: Boolean): Boolean
+    fun D.mangleString(compatibleMode: Boolean): String
+    fun D.signatureString(compatibleMode: Boolean): String
+    fun D.fqnString(compatibleMode: Boolean): String
 
-    val D.hashedMangle: Long get() = mangleString.hashMangle
-    val D.signatureMangle: Long get() = signatureString.hashMangle
-    val D.fqnMangle: Long get() = fqnString.hashMangle
+    fun D.hashedMangle(compatibleMode: Boolean): Long = mangleString(compatibleMode).hashMangle
+    fun D.signatureMangle(compatibleMode: Boolean): Long = signatureString(compatibleMode).hashMangle
+    fun D.fqnMangle(compatibleMode: Boolean): Long = fqnString(compatibleMode).hashMangle
+
+    fun D.isPlatformSpecificExport(): Boolean = false
 
     val manglerName: String
 
@@ -29,11 +31,9 @@ interface KotlinMangler<D : Any> {
         override val manglerName: String
             get() = "Descriptor"
 
-        fun ClassDescriptor.isExportEnumEntry(): Boolean
-        fun ClassDescriptor.mangleEnumEntryString(): String
+        fun ClassDescriptor.mangleEnumEntryString(compatibleMode: Boolean): String
 
-        fun PropertyDescriptor.isExportField(): Boolean
-        fun PropertyDescriptor.mangleFieldString(): String
+        fun PropertyDescriptor.mangleFieldString(compatibleMode: Boolean): String
     }
 
     interface IrMangler : KotlinMangler<IrDeclaration> {

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.contracts.model
 
-import org.jetbrains.kotlin.contracts.model.structure.ESKotlinType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
+import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 
 /**
  * An abstraction of effect-generating nature of some computation.
@@ -43,4 +45,13 @@ abstract class AbstractFunctor : Functor {
     ): List<ESEffect>
 }
 
-typealias ESTypeSubstitution = Map<ESKotlinType, ESKotlinType>
+class ESTypeSubstitution(
+    val substitutor: NewTypeSubstitutor,
+    val builtIns: KotlinBuiltIns
+) {
+    companion object {
+        fun empty(builtIns: KotlinBuiltIns): ESTypeSubstitution {
+            return ESTypeSubstitution(EmptySubstitutor, builtIns)
+        }
+    }
+}

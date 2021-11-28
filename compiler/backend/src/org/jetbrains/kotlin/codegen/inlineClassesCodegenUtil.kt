@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.underlyingRepresentation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -26,9 +24,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 fun KotlinType.isInlineClassWithUnderlyingTypeAnyOrAnyN(): Boolean {
-    if (!isInlineClassType()) return false
-    val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    return classDescriptor.underlyingRepresentation()?.type?.isAnyOrNullableAny() == true
+    val classDescriptor = constructor.declarationDescriptor
+    return classDescriptor is ClassDescriptor && classDescriptor.inlineClassRepresentation?.underlyingType?.isAnyOrNullableAny() == true
 }
 
 fun CallableDescriptor.isGenericParameter(): Boolean {

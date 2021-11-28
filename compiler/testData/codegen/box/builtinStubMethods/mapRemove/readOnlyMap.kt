@@ -1,8 +1,8 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// TODO: FirModuleDescriptor provides default builtins which filters out platform-specific functions (and defaults are considered platform-specific)
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // FILE: A.java
 public class A {

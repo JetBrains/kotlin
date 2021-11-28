@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.analyzer
 
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 
 interface AbstractAnalyzerWithCompilerReport {
+    val targetEnvironment: TargetEnvironment
+
     val analysisResult: AnalysisResult
 
     fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult)

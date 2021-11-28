@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: equals.kt
 
 fun testEqeq(a: Int, b: Int) = a == b

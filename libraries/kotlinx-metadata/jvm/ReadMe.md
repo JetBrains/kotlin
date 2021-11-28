@@ -8,7 +8,7 @@ To use this library in your project, add a dependency on `org.jetbrains.kotlinx:
 
 Example usage in Maven:
 
-```
+```xml
 <project>
     <dependencies>
         <dependency>
@@ -23,13 +23,13 @@ Example usage in Maven:
 
 Example usage in Gradle:
 
-```
+```gradle
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile "org.jetbrains.kotlinx:kotlinx-metadata-jvm:$kotlinx_metadata_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-metadata-jvm:$kotlinx_metadata_version"
 }
 ```
 

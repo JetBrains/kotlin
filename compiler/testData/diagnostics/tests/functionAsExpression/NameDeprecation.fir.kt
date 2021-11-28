@@ -5,5 +5,5 @@ fun foo() {
     fun A.foo() {}
     (fun A.foo() {})
 
-    run(<!EXPRESSION_REQUIRED!>fun foo() {}<!>)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!>(<!ANONYMOUS_FUNCTION_WITH_NAME!>fun foo() {}<!>)
 }

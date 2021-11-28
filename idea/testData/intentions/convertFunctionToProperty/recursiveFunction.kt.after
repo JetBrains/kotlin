@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-val String.foo<caret>: String
-    get() = if (isEmpty()) "" else substring(1).foo

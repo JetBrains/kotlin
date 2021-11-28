@@ -13,6 +13,6 @@ enum class E {
 val ok4 = E.Entry::class
 
 val fail1 = ""::class
-val fail2 = String?::class
+val fail2 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 val fail3 = (C)::class
 val fail4 = (C.Companion)::class

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
+import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
+import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -48,6 +50,7 @@ class VariableFixationFinder(
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
+        READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         READY_FOR_FIXATION,
         READY_FOR_FIXATION_REIFIED,
     }
@@ -55,12 +58,17 @@ class VariableFixationFinder(
     private val inferenceCompatibilityModeEnabled: Boolean
         get() = languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
 
+    private val isTypeInferenceForSelfTypesSupported: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
+
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
+        isTypeInferenceForSelfTypesSupported && hasOnlyDeclaredUpperBoundSelfTypes(variable) ->
+            TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
@@ -70,7 +78,7 @@ class VariableFixationFinder(
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
         inferenceCompatibilityModeEnabled -> {
             when {
-                variableHasLowerProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+                variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
                 else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
             }
         }
@@ -141,8 +149,12 @@ class VariableFixationFinder(
         return false
     }
 
-    private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean =
-        notFixedTypeVariables[variable]?.constraints?.any { isProperArgumentConstraint(it) } ?: false
+    private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
+        // temporary hack to fail calls which contain callable references resolved though OI with uninferred type parameters
+        val areThereConstraintsWithUninferredTypeParameter = constraints.any { c -> c.type.contains { it.isUninferredParameter() } }
+        return constraints.any { isProperArgumentConstraint(it) } && !areThereConstraintsWithUninferredTypeParameter
+    }
 
     private fun Context.isProperArgumentConstraint(c: Constraint) =
         isProperType(c.type)
@@ -155,25 +167,51 @@ class VariableFixationFinder(
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
         notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
 
-    private fun Context.variableHasLowerProperConstraint(variable: TypeConstructorMarker): Boolean =
-        notFixedTypeVariables[variable]?.constraints?.let { constraints ->
-            constraints.any {
-                it.kind.isLower() && isProperArgumentConstraint(it)
-            }
-        } ?: false
-}
+    private fun Context.variableHasLowerNonNothingProperConstraint(variable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
 
-inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
-    type: KotlinTypeMarker,
-    isProper: (KotlinTypeMarker) -> Boolean
-): Boolean {
-    if (!isProper(type)) return false
-    if (type.isCapturedType()) {
-        val projection = (type as? SimpleTypeMarker)?.asCapturedType()?.typeConstructorProjection() ?: return true
-        if (projection.isStarProjection()) return true
-
-        if (!isProper(projection.getType())) return false
+        return constraints.any {
+            it.kind.isLower() && isProperArgumentConstraint(it) && !it.type.typeConstructor().isNothingConstructor()
+        }
     }
 
-    return true
+    private fun Context.hasOnlyDeclaredUpperBoundSelfTypes(variable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
+        return constraints.isNotEmpty() && constraints.all {
+            val typeConstructor = it.type.typeConstructor()
+            it.position.from is DeclaredUpperBoundConstraintPosition<*>
+                    && (hasRecursiveTypeParametersWithGivenSelfType(typeConstructor) || isRecursiveTypeParameter(typeConstructor))
+        }
+    }
+}
+
+inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(type: KotlinTypeMarker, isProper: (KotlinTypeMarker) -> Boolean) =
+    isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
+
+@OptIn(ExperimentalStdlibApi::class)
+fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(baseType: KotlinTypeMarker): Set<KotlinTypeMarker> {
+    val simpleBaseType = baseType.asSimpleType()
+
+    return buildSet {
+        val projectionType = if (simpleBaseType is CapturedTypeMarker) {
+            val typeArgument = simpleBaseType.typeConstructorProjection().takeIf { !it.isStarProjection() } ?: return@buildSet
+            typeArgument.getType().also(::add)
+        } else baseType
+        val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return@buildSet
+
+        for (i in 0 until argumentsCount) {
+            val typeArgument = projectionType.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
+            addAll(extractProjectionsForAllCapturedTypes(typeArgument.getType()))
+        }
+    }
+}
+
+fun TypeSystemInferenceExtensionContext.containsTypeVariable(type: KotlinTypeMarker, typeVariable: TypeConstructorMarker): Boolean {
+    if (type.contains { it.typeConstructor() == typeVariable }) return true
+
+    val typeProjections = extractProjectionsForAllCapturedTypes(type)
+
+    return typeProjections.any { typeProjectionsType ->
+        typeProjectionsType.contains { it.typeConstructor() == typeVariable }
+    }
 }

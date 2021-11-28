@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
@@ -13,7 +13,7 @@ fun test_1() {
 }
 
 fun test_2() {
-    sequence {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
         yield(materialize())
     }
 }
@@ -21,7 +21,7 @@ fun test_2() {
 fun test_3() {
     sequence {
         yield(materialize<Int>())
-        materialize()
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: +SafeCastCheckBoundSmartCasts
 interface SomeClass {
     val data: Any?
@@ -41,7 +40,7 @@ fun f(a: SomeClass?) {
     if (aa as? SomeSubClass != null) {
         aa = null
         // 'aa' cannot be cast to SomeSubClass
-        <!OI;DEBUG_INFO_CONSTANT!>aa<!><!UNSAFE_CALL!>.<!>hashCode()
+        aa<!UNSAFE_CALL!>.<!>hashCode()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
         (<!DEBUG_INFO_CONSTANT!>aa<!> as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
         (<!ALWAYS_NULL!>aa<!> as SomeSubClass).foo
@@ -50,7 +49,7 @@ fun f(a: SomeClass?) {
     aa = null
     if (b != null) {
         // 'aa' cannot be cast to SomeSubClass
-        <!OI;DEBUG_INFO_CONSTANT!>aa<!><!UNSAFE_CALL!>.<!>hashCode()
+        aa<!UNSAFE_CALL!>.<!>hashCode()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
         (<!DEBUG_INFO_CONSTANT!>aa<!> as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
         (<!ALWAYS_NULL!>aa<!> as SomeSubClass).foo

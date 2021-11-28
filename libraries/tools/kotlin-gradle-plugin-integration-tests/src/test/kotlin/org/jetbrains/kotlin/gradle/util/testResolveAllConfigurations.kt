@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.testbase.*
+import java.nio.file.Files
 import kotlin.test.assertTrue
 
 private const val RESOLVE_ALL_CONFIGURATIONS_TASK_NAME = "resolveAllConfigurations"
@@ -16,7 +17,7 @@ private val unresolvedConfigurationRegex = "${Regex.escape(UNRESOLVED_MARKER)}(.
 fun BaseGradleIT.Project.testResolveAllConfigurations(
     subproject: String? = null,
     skipSetup: Boolean = false,
-    excludePredicate: String = "false",
+    excludeConfigurations: List<String> = listOf(),
     options: BaseGradleIT.BuildOptions = testCase.defaultBuildOptions(),
     withUnresolvedConfigurationNames: BaseGradleIT.CompiledProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
 ) = with(testCase) {
@@ -25,8 +26,8 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
         setupWorkingDir()
         gradleBuildScript(subproject).run {
             val taskCode = when (extension) {
-                "gradle" -> generateResolveAllConfigurationsTask(excludePredicate)
-                "kts" -> generateResolveAllConfigurationsTaskKts(excludePredicate)
+                "gradle" -> generateResolveAllConfigurationsTask(excludeConfigurations)
+                "kts" -> generateResolveAllConfigurationsTaskKts(excludeConfigurations)
                 else -> error("Unexpected build script extension $extension")
             }
             appendText("\n" + taskCode)
@@ -41,13 +42,40 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
     }
 }
 
-private fun generateResolveAllConfigurationsTask(exclude: String) =
+fun TestProject.testResolveAllConfigurations(
+    subproject: String? = null,
+    skipSetup: Boolean = false,
+    excludeConfigurations: List<String> = listOf(),
+    options: BuildOptions = buildOptions,
+    withUnresolvedConfigurationNames: TestProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
+) {
+    if (!skipSetup) {
+        when {
+            Files.exists(buildGradle) -> buildGradle
+                .append("\n${generateResolveAllConfigurationsTask(excludeConfigurations)}")
+            Files.exists(buildGradleKts) -> buildGradleKts
+                .append("\n${generateResolveAllConfigurationsTaskKts(excludeConfigurations)}")
+            else -> error("Build script does not exists under $projectPath")
+        }
+    }
+
+    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, buildOptions = options) {
+        assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
+        val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
+        withUnresolvedConfigurationNames(unresolvedConfigurations)
+    }
+}
+
+private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
     """
         task $RESOLVE_ALL_CONFIGURATIONS_TASK_NAME {
             doFirst {
+                def excludeConfigs = ["default", "archives"]
+                ${computeExcludeConfigurations(excludes)}
+
                 project.configurations
                     .matching { it.canBeResolved }
-                    .matching { !{ $exclude }.call(it) }
+                    .matching { !excludeConfigs.contains(it.name) }
                     .each { configuration ->
                         try {
                             println "Resolving " + configuration.path
@@ -66,13 +94,16 @@ private fun generateResolveAllConfigurationsTask(exclude: String) =
         }
     """.trimIndent()
 
-private fun generateResolveAllConfigurationsTaskKts(exclude: String) =
+private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
     """
         tasks.create("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
             doFirst {
+                val excludeConfigs = mutableListOf("default", "archives")
+                ${computeExcludeConfigurations(excludes)}
+
                 project.configurations
                     .filter { it.isCanBeResolved }
-                    .filterNot { $exclude }
+                    .filterNot { excludeConfigs.contains(it.name) }
                     .forEach { configuration ->
                         val path = (configuration as org.gradle.api.internal.artifacts.configurations.ConfigurationInternal).path
                         try {
@@ -91,3 +122,23 @@ private fun generateResolveAllConfigurationsTaskKts(exclude: String) =
             }
         }
     """.trimIndent()
+
+private fun computeExcludeConfigurations(excludes: List<String>): String {
+    val deprecatedConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly")
+    return """
+        sourceSets.forEach { sourceSet ->
+            "${deprecatedConfigurations.joinToString()}".split(", ").toList().forEach {
+                excludeConfigs.add(sourceSet.name + it.capitalize())
+            }
+        }
+
+        "${deprecatedConfigurations.joinToString()}".split(", ").toList().forEach {
+            excludeConfigs.add(it)
+            excludeConfigs.add("test" + it.capitalize())
+        }
+
+        "${excludes.joinToString()}".split(", ").toList().forEach {
+            excludeConfigs.add(it)
+        }
+    """.trimIndent()
+}

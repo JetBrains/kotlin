@@ -1,6 +1,0 @@
-// "Simplify comparison" "true"
-fun foo(x: Int) {
-    if (true) {
-
-    }
-}

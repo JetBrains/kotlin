@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
@@ -39,32 +39,15 @@ import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.kotlin.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
+import static org.jetbrains.kotlin.resolve.ArrayFqNames.ARRAY_CALL_FQ_NAMES;
 import static org.jetbrains.kotlin.resolve.BindingContext.VALUE_PARAMETER;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnnotationClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 
 public class CompileTimeConstantUtils {
-
-    private final static Set<String> ARRAY_CALL_NAMES = SetsKt.hashSetOf(
-            "kotlin.arrayOf",
-            "kotlin.doubleArrayOf",
-            "kotlin.floatArrayOf",
-            "kotlin.longArrayOf",
-            "kotlin.intArrayOf",
-            "kotlin.charArrayOf",
-            "kotlin.shortArrayOf",
-            "kotlin.byteArrayOf",
-            "kotlin.booleanArrayOf",
-            "kotlin.emptyArray",
-            "kotlin.ubyteArrayOf",
-            "kotlin.ushortArrayOf",
-            "kotlin.uintArrayOf",
-            "kotlin.ulongArrayOf"
-    );
 
     public static void checkConstructorParametersType(@NotNull List<KtParameter> parameters, @NotNull BindingTrace trace) {
         for (KtParameter parameter : parameters) {
@@ -121,7 +104,10 @@ public class CompileTimeConstantUtils {
     }
 
     public static boolean isArrayFunctionCall(@NotNull ResolvedCall<?> resolvedCall) {
-        return ARRAY_CALL_NAMES.contains(DescriptorUtils.getFqName(resolvedCall.getCandidateDescriptor()).asString());
+        FqNameUnsafe unsafe = DescriptorUtils.getFqName(resolvedCall.getCandidateDescriptor());
+        // If the fully qualified name is unsafe, i.e., contains < or >, it shouldn't be any of `arrayOf` calls.
+        if (!unsafe.isSafe()) return false;
+        return ARRAY_CALL_FQ_NAMES.contains(unsafe.toSafe());
     }
 
     public static boolean canBeReducedToBooleanConstant(

@@ -1,4 +1,0 @@
-// "Remove 'inner' modifier" "true"
-interface A {
-    class B
-}

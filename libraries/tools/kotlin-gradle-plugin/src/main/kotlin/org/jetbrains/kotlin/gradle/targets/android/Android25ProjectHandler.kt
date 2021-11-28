@@ -14,6 +14,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Category
 import org.gradle.api.file.FileCollection
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.PathSensitivity
@@ -40,7 +41,7 @@ class Android25ProjectHandler(
     override fun wireKotlinTasks(
         project: Project,
         compilation: KotlinJvmAndroidCompilation,
-        androidPlugin: BasePlugin,
+        androidPlugin: BasePlugin<*>,
         androidExt: BaseExtension,
         variantData: BaseVariant,
         javaTask: TaskProvider<out AbstractCompile>,
@@ -59,14 +60,11 @@ class Android25ProjectHandler(
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
         kotlinTask.configure { kotlinTaskInstance ->
-            kotlinTaskInstance.inputs.files(variantData.getSourceFolders(SourceKind.JAVA)).withPathSensitivity(PathSensitivity.RELATIVE)
+            kotlinTaskInstance.classpath = project.files()
+                .from(variantData.getCompileClasspath(preJavaClasspathKey))
+                .from(Callable { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
 
-            kotlinTaskInstance.mapClasspath {
-                val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
-                kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
-            }
-
-            kotlinTaskInstance.javaOutputDir = javaTask.get().destinationDir
+            kotlinTaskInstance.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
         }
 
         // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
@@ -84,8 +82,8 @@ class Android25ProjectHandler(
         )
 
         compilation.output.classesDirs.from(
-            kotlinTask.map { it.destinationDir },
-            javaTask.map { it.destinationDir }
+            kotlinTask.flatMap { it.destinationDirectory },
+            javaTask.flatMap { it.destinationDirectory }
         )
     }
 
@@ -142,7 +140,10 @@ class Android25ProjectHandler(
         }
 
         listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
-            project.configurations.findByName(outputConfigurationName)?.usesPlatformOf(compilation.target)
+            project.configurations.findByName(outputConfigurationName)?.let { configuration ->
+                configuration.usesPlatformOf(compilation.target)
+                configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            }
         }
     }
 }

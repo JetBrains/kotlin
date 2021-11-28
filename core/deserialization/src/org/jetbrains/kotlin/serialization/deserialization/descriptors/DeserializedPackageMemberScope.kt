@@ -39,7 +39,8 @@ open class DeserializedPackageMemberScope(
     metadataVersion: BinaryVersion,
     containerSource: DeserializedContainerSource?,
     components: DeserializationComponents,
-    classNames: () -> Collection<Name>
+    private val debugName: String,
+    classNames: () -> Collection<Name>,
 ) : DeserializedMemberScope(
     components.createContext(
         packageDescriptor, nameResolver, TypeTable(proto.typeTable),
@@ -74,4 +75,6 @@ open class DeserializedPackageMemberScope(
     override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         // Do nothing
     }
+
+    override fun toString(): String = debugName
 }

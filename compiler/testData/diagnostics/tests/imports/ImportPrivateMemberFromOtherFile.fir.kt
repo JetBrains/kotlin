@@ -21,6 +21,6 @@ import A.Nested.*
 import B.JC.JC1
 
 fun test() {
-    O1
-    JC1()
+    <!INVISIBLE_REFERENCE!>O1<!>
+    <!INVISIBLE_REFERENCE!>JC1<!>()
 }

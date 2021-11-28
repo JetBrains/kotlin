@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.name
 
-import java.util.*
-
 object NameUtils {
     private val SANITIZE_AS_JAVA_INVALID_CHARACTERS = "[^\\p{L}\\p{Digit}]".toRegex()
 
@@ -39,10 +37,10 @@ object NameUtils {
 
     @JvmStatic
     private fun capitalizeAsJavaClassName(str: String): String =
-            // NB use Locale.ENGLISH so that build is locale-independent.
+            // NB `uppercase` uses Locale.ROOT and is locale-independent.
             // See Javadoc on java.lang.String.toUpperCase() for more details.
             if (Character.isJavaIdentifierStart(str[0]))
-                str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)
+                str[0].uppercase() + str.substring(1)
             else
                 "_$str"
 
@@ -52,5 +50,5 @@ object NameUtils {
             Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
 
     @JvmStatic
-    fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS_FUNCTION
+    fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS
 }

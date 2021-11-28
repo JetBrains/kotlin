@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 // CHECK_STATE_MACHINE
@@ -29,10 +29,6 @@ inline fun inlineMe(crossinline c: suspend () -> Unit) = object : SuspendRunnabl
     inline suspend fun inlineMeInner() {
         StateMachineChecker.suspendHere()
         StateMachineChecker.suspendHere()
-    }
-    // TODO: call it from run1
-    inline suspend fun inlineMeCapturing() {
-        c(); c()
     }
 }
 

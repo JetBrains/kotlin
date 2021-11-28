@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.KClass
 
-const val REPL_CODE_LINE_FIRST_NO = 1
+const val REPL_CODE_LINE_FIRST_NO = 0
 const val REPL_CODE_LINE_FIRST_GEN = 1
 
 data class ReplCodeLine(val no: Int, val generation: Int, val code: String) : Serializable {

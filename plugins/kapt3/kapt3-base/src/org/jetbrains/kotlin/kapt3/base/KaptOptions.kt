@@ -35,7 +35,15 @@ class KaptOptions(
     val flags: KaptFlags,
 
     val mode: AptMode,
-    val detectMemoryLeaks: DetectMemoryLeaksMode
+    val detectMemoryLeaks: DetectMemoryLeaksMode,
+
+    //these two config can be replaced with single function-like interface (ProcessorName -> ClassLoader),
+    // but it is hard to pass function between different classloaders
+    //if defined use it to run processors instead of creating new one
+    val processingClassLoader: ClassLoader?,
+    //construct new classloader for these processors instead of using one defined in processingClassLoader
+    val separateClassloaderForProcessors: Set<String>,
+    val processorsPerfReportFile: File?
 ) : KaptFlags {
     override fun get(flag: KaptFlag) = flags[flag]
 
@@ -60,13 +68,12 @@ class KaptOptions(
         val processingOptions: MutableMap<String, String> = mutableMapOf()
         val javacOptions: MutableMap<String, String> = mutableMapOf()
 
-        val flags: MutableSet<KaptFlag> = mutableSetOf(
-            KaptFlag.USE_LIGHT_ANALYSIS,
-            KaptFlag.INCLUDE_COMPILE_CLASSPATH
-        )
+        // Initialize this set with the flags that are enabled by default. This set may be changed later (with flags added or removed).
+        val flags: MutableSet<KaptFlag> = KaptFlag.values().filter { it.defaultValue }.toMutableSet()
 
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
+        var processorsPerfReportFile: File? = null
 
         fun build(): KaptOptions {
             val sourcesOutputDir = this.sourcesOutputDir ?: error("'sourcesOutputDir' must be set")
@@ -78,7 +85,10 @@ class KaptOptions(
                 changedFiles, compiledSources, incrementalCache, classpathChanges,
                 sourcesOutputDir, classesOutputDir, stubsOutputDir, incrementalDataOutputDir,
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
-                mode, detectMemoryLeaks
+                mode, detectMemoryLeaks,
+                processingClassLoader = null,
+                separateClassloaderForProcessors = emptySet(),
+                processorsPerfReportFile = processorsPerfReportFile
             )
         }
     }
@@ -103,18 +113,19 @@ interface KaptFlags {
     }
 }
 
-enum class KaptFlag(val description: String) {
+enum class KaptFlag(val description: String, val defaultValue: Boolean = false) {
     SHOW_PROCESSOR_TIMINGS("Show processor time"),
     VERBOSE("Verbose mode"),
     INFO_AS_WARNINGS("Info as warnings"),
-    USE_LIGHT_ANALYSIS("Use light analysis"),
+    USE_LIGHT_ANALYSIS("Use light analysis", defaultValue = true),
     CORRECT_ERROR_TYPES("Correct error types"),
     DUMP_DEFAULT_PARAMETER_VALUES("Dump default parameter values"),
     MAP_DIAGNOSTIC_LOCATIONS("Map diagnostic locations"),
     STRICT("Strict mode"),
-    INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath"),
+    INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath", defaultValue = true),
     INCREMENTAL_APT("Incremental annotation processing (apt mode)"),
-    STRIP_METADATA("Strip @Metadata annotations from stubs")
+    STRIP_METADATA("Strip @Metadata annotations from stubs"),
+    KEEP_KDOC_COMMENTS_IN_STUBS("Keep KDoc comments in stubs", defaultValue = true),
     ;
 }
 

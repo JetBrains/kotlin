@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 
-interface JavaType
+interface JavaType : ListBasedJavaAnnotationOwner
 
 interface JavaArrayType : JavaType {
     val componentType: JavaType
 }
 
-interface JavaClassifierType : JavaType, JavaAnnotationOwner {
+interface JavaClassifierType : JavaType {
     val classifier: JavaClassifier?
     val typeArguments: List<JavaType?>
 
@@ -43,3 +43,5 @@ interface JavaWildcardType : JavaType {
     val bound: JavaType?
     val isExtends: Boolean
 }
+
+fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false

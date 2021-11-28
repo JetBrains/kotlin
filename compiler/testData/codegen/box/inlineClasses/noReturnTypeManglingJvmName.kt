@@ -1,8 +1,10 @@
 // !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
-inline class S(val x: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(val x: String)
 
 class Test {
     @Suppress("INAPPLICABLE_JVM_NAME")

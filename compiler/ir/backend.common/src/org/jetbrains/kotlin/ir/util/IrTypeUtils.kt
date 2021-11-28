@@ -26,22 +26,26 @@ val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
 private val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
+fun IrType.isFunctionMarker(): Boolean = classifierOrNull?.isClassWithName("Function", kotlinPackageFqn) == true
 fun IrType.isFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("Function", kotlinPackageFqn) == true
 fun IrType.isKFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn) == true
 fun IrType.isSuspendFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn) == true
 fun IrType.isKSuspendFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn) == true
 
+fun IrClassifierSymbol.isFunctionMarker(): Boolean = this.isClassWithName("Function", kotlinPackageFqn)
 fun IrClassifierSymbol.isFunction(): Boolean = this.isClassWithNamePrefix("Function", kotlinPackageFqn)
 fun IrClassifierSymbol.isKFunction(): Boolean = this.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn)
+fun IrClassifierSymbol.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
 fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
+
+private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean {
+    val declaration = owner as IrDeclarationWithName
+    return name == declaration.name.asString() && (declaration.parent as? IrPackageFragment)?.fqName == packageFqName
+}
 
 private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
     val declaration = owner as IrDeclarationWithName
-    val name = declaration.name.asString()
-    if (!name.startsWith(prefix)) return false
-    val parent = declaration.parent as? IrPackageFragment ?: return false
-
-    return parent.fqName == packageFqName
+    return declaration.name.asString().startsWith(prefix) && (declaration.parent as? IrPackageFragment)?.fqName == packageFqName
 }
 
 fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()
@@ -53,6 +57,8 @@ fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 
 fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
+fun IrType.isAnnotation() = classOrNull?.owner?.kind == ClassKind.ANNOTATION_CLASS
+
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
 fun IrType.isSuspendFunctionOrKFunction() = isSuspendFunction() || isKSuspendFunction()
@@ -60,6 +66,8 @@ fun IrType.isSuspendFunctionOrKFunction() = isSuspendFunction() || isKSuspendFun
 fun IrType.isThrowable(): Boolean = isTypeFromKotlinPackage { name -> name.asString() == "Throwable" }
 
 fun IrType.isUnsigned(): Boolean = isTypeFromKotlinPackage { name -> UnsignedTypes.isShortNameOfUnsignedType(name) }
+
+fun IrType.isUnsignedArray(): Boolean = isTypeFromKotlinPackage { name -> UnsignedTypes.isShortNameOfUnsignedArray(name) }
 
 private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boolean): Boolean {
     if (this is IrSimpleType) {
@@ -141,8 +149,24 @@ private fun collectAllSupertypes(irType: IrSimpleType, result: MutableSet<IrSimp
 // for the class C, this function constructs:
 //      { B<List<Z>>, A<List<List<Z>>, Any }
 // where Z is a type parameter of class C.
-fun getAllSubstitutedSupertypes(irClass: IrClass): MutableSet<IrSimpleType> {
+fun getAllSubstitutedSupertypes(irClass: IrClass): Set<IrSimpleType> {
     val result = HashSet<IrSimpleType>()
     collectAllSupertypes(irClass.defaultType, result)
+    return result
+}
+
+private fun collectAllSuperclasses(irClass: IrClass, set: MutableSet<IrClass>) {
+    for (superType in irClass.superTypes) {
+        val classifier = superType.classifierOrNull as? IrClassSymbol ?: continue
+        val superClass = classifier.owner
+        if (set.add(superClass)) {
+            collectAllSuperclasses(superClass, set)
+        }
+    }
+}
+
+fun IrClass.getAllSuperclasses(): Set<IrClass> {
+    val result = HashSet<IrClass>()
+    collectAllSuperclasses(this, result)
     return result
 }

@@ -18,12 +18,18 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_SERIALIZER_PROPERTY
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_PUBLICATION_MODE_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getKSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
 import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
-import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationBodyCodegen) :
     SerializableCompanionCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
@@ -33,6 +39,63 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
             val serializableClass = getSerializableClassDescriptorByCompanion(codegen.descriptor) ?: return
             if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
                 SerializableCompanionCodegenImpl(codegen).generate()
+        }
+    }
+
+    override fun generateLazySerializerGetter(methodDescriptor: FunctionDescriptor) {
+        val fieldName = "$CACHED_SERIALIZER_PROPERTY\$delegate"
+
+        // Create field for lazy delegate
+        classCodegen.v.newField(
+            OtherOrigin(classCodegen.myClass.psiOrParent),
+            Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_STATIC,
+            fieldName,
+            kotlinLazyType.descriptor,
+            "L${kotlinLazyType.internalName}<L${kSerializerType.internalName}<*>;>;",
+            null
+        )
+
+        // create singleton lambda class
+        val lambdaType =
+            createSingletonLambda("serializer\$1", classCodegen, companionDescriptor.getKSerializer().defaultType) { lambdaCodegen ->
+                val serializerDescriptor = requireNotNull(
+                    findTypeSerializer(
+                        serializableDescriptor.module,
+                        serializableDescriptor.toSimpleType()
+                    )
+                )
+                stackValueSerializerInstance(
+                    lambdaCodegen,
+                    serializableDescriptor.module,
+                    serializableDescriptor.defaultType,
+                    serializerDescriptor,
+                    this,
+                    null
+                )
+                areturn(kSerializerType)
+            }
+
+        // initialize lazy delegate
+        val clInit = classCodegen.createOrGetClInitCodegen()
+        with(clInit.v) {
+            getstatic(threadSafeModeType.internalName, LAZY_PUBLICATION_MODE_NAME.identifier, threadSafeModeType.descriptor)
+            getstatic(lambdaType.internalName, JvmAbi.INSTANCE_FIELD, lambdaType.descriptor)
+            checkcast(function0Type)
+            invokestatic(
+                "kotlin/LazyKt",
+                "lazy",
+                "(${threadSafeModeType.descriptor}${function0Type.descriptor})${kotlinLazyType.descriptor}",
+                false
+            )
+            putstatic(classCodegen.className, fieldName, kotlinLazyType.descriptor)
+        }
+
+        // create serializer getter
+        classCodegen.generateMethod(methodDescriptor) { _, _ ->
+            getstatic(classCodegen.className, fieldName, kotlinLazyType.descriptor)
+            invokeinterface(kotlinLazyType.internalName, getLazyValueName, "()Ljava/lang/Object;")
+            checkcast(kSerializerType)
+            areturn(kSerializerType)
         }
     }
 

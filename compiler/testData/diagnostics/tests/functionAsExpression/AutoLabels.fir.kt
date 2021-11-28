@@ -7,5 +7,5 @@ fun autolabel(l: List<Int>) = l.map (fun (i: Int): Int {
 })
 
 fun unresolvedMapLabel(l: List<Int>) = l.map (l@ fun(i: Int): Int {
-    return@map 4
+    <!RETURN_NOT_ALLOWED!>return@map<!> 4
 })

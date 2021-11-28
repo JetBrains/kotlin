@@ -1,5 +1,5 @@
 fun interface KRunnable {
-  abstract fun run() 
+  abstract fun run()
 
 }
 
@@ -18,10 +18,13 @@ fun testSamConstructor(): KRunnable {
 }
 
 fun testSamCosntructorOnAdapted(): KRunnable {
-  return local fun foo1() {
-    foo1() /*~> Unit */
-  }
- /*-> KRunnable */
+  return { // BLOCK
+    local fun foo1() {
+      foo1() /*~> Unit */
+    }
+
+    ::foo1
+  } /*-> KRunnable */
 }
 
 fun testSamConversion() {
@@ -29,9 +32,11 @@ fun testSamConversion() {
 }
 
 fun testSamConversionOnAdapted() {
-  use(r = local fun foo1() {
-    foo1() /*~> Unit */
-  }
- /*-> KRunnable */)
-}
+  use(r = { // BLOCK
+    local fun foo1() {
+      foo1() /*~> Unit */
+    }
 
+    ::foo1 /*-> KRunnable */
+  })
+}

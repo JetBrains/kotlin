@@ -1,4 +1,0 @@
-Class/object property type 10 val x: foo.bar.X? = foo.bar.X()
-Package directive 4 package foo.bar
-Package member access 10 val x: foo.bar.X? = foo.bar.X()
-Usage in import 6 import foo.bar.X

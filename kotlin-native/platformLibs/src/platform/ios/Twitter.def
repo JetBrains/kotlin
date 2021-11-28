@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security Social UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.Twitter
+modules = Twitter
+
+compilerOpts = -framework Twitter
+linkerOpts = -framework Twitter

@@ -10,9 +10,9 @@ FILE: lambda.kt
         public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
-        public final fun component1(): Int
+        public final operator fun component1(): Int
 
-        public final fun component2(): Int
+        public final operator fun component2(): Int
 
         public final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
 
@@ -22,6 +22,8 @@ FILE: lambda.kt
     public? final? fun bar(): Int { LAZY_BLOCK }
     public? final? fun test(list: List<Int>): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? val simple: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val simpleWithArrow: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
     public? final? val another: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>

@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.*
+import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-abstract class IrMangleComputer(protected val builder: StringBuilder, private val mode: MangleMode) :
-    IrElementVisitor<Unit, Boolean>, KotlinMangleComputer<IrDeclaration> {
+abstract class IrMangleComputer(protected val builder: StringBuilder, private val mode: MangleMode, protected val compatibleMode: Boolean) :
+    IrElementVisitorVoid, KotlinMangleComputer<IrDeclaration> {
 
     private val typeParameterContainer = ArrayList<IrDeclaration>(4)
 
@@ -32,6 +32,8 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
     open fun IrFunction.specialValueParamPrefix(param: IrValueParameter): String = ""
 
     open fun addReturnType(): Boolean = false
+
+    protected open fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean = false
 
     abstract override fun copy(newMode: MangleMode): IrMangleComputer
 
@@ -66,13 +68,13 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
     }
 
     override fun computeMangle(declaration: IrDeclaration): String {
-        declaration.accept(this, true)
+        declaration.acceptVoid(this)
         return builder.toString()
     }
 
     private fun IrDeclaration.mangleSimpleDeclaration(name: String) {
         val l = builder.length
-        parent.accept(this@IrMangleComputer, false)
+        parent.acceptVoid(this@IrMangleComputer)
 
         if (builder.length != l) builder.appendName(MangleConstant.FQN_SEPARATOR)
 
@@ -84,7 +86,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         isRealExpect = isRealExpect or isExpect
 
         typeParameterContainer.add(container)
-        container.parent.accept(this@IrMangleComputer, false)
+        val containerParent = container.parent
+        val realParent =
+            if (containerParent is IrField && containerParent.origin == IrDeclarationOrigin.DELEGATE) containerParent.parent else containerParent
+        realParent.acceptVoid(this@IrMangleComputer)
 
         builder.appendName(MangleConstant.FUNCTION_NAME_PREFIX)
 
@@ -93,7 +98,9 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
             return
         }
 
-        builder.append(name.asString())
+        val funName = name.asString()
+
+        builder.append(funName)
 
         mangleSignature(isCtor, isStatic)
     }
@@ -121,7 +128,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
         typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
-        if (!isCtor && !returnType.isUnit() && addReturnType()) {
+        if (!isCtor && !returnType.isUnit() && (addReturnType() || addReturnTypeSpecialCase(this))) {
             mangleType(builder, returnType)
         }
     }
@@ -159,7 +166,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         when (type) {
             is IrSimpleType -> {
                 when (val classifier = type.classifier) {
-                    is IrClassSymbol -> classifier.owner.accept(copy(MangleMode.FQNAME), false)
+                    is IrClassSymbol -> classifier.owner.acceptVoid(copy(MangleMode.FQNAME))
                     is IrTypeParameterSymbol -> tBuilder.mangleTypeParameterReference(classifier.owner)
                 }
 
@@ -181,9 +188,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
                 if (type.hasQuestionMark) tBuilder.appendSignature(MangleConstant.Q_MARK)
 
-                if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
-                    tBuilder.append(MangleConstant.ENHANCED_NULLABILITY_MARK)
-                }
+                mangleTypePlatformSpecific(type, tBuilder)
             }
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
             is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
@@ -191,77 +196,117 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         }
     }
 
-    override fun visitElement(element: IrElement, data: Boolean) = error("unexpected element ${element.render()}")
+    protected open fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {}
 
-    override fun visitScript(declaration: IrScript, data: Boolean) {
-        declaration.parent.accept(this, data)
+    override fun visitElement(element: IrElement) =
+        error("unexpected element ${element.render()}")
+
+    override fun visitScript(declaration: IrScript) {
+        declaration.parent.acceptVoid(this)
     }
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Boolean) {
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
         declaration.mangleSimpleDeclaration(MangleConstant.ERROR_DECLARATION)
     }
 
-    override fun visitClass(declaration: IrClass, data: Boolean) {
+    override fun visitClass(declaration: IrClass) {
         isRealExpect = isRealExpect or declaration.isExpect
         typeParameterContainer.add(declaration)
-        declaration.mangleSimpleDeclaration(declaration.name.asString())
+
+        val className = declaration.name.asString()
+        declaration.mangleSimpleDeclaration(className)
     }
 
-    override fun visitPackageFragment(declaration: IrPackageFragment, data: Boolean) {
+    override fun visitPackageFragment(declaration: IrPackageFragment) {
         declaration.fqName.let { if (!it.isRoot) builder.appendName(it.asString()) }
     }
 
-    override fun visitProperty(declaration: IrProperty, data: Boolean) {
-        val accessor = declaration.run { getter ?: setter ?: error("Expected at least one accessor for property ${render()}") }
+    override fun visitProperty(declaration: IrProperty) {
+        val accessor = declaration.run { getter ?: setter }
+        require(accessor != null || declaration.backingField != null) {
+            "Expected at least one accessor or backing field for property ${declaration.render()}"
+        }
 
         isRealExpect = isRealExpect or declaration.isExpect
         typeParameterContainer.add(declaration)
-        declaration.parent.accept(this, false)
+        declaration.parent.acceptVoid(this)
 
-        val isStaticProperty = accessor.dispatchReceiverParameter == null && declaration.parent !is IrPackageFragment
+        val isStaticProperty = if (accessor != null)
+            accessor.let {
+                it.dispatchReceiverParameter == null && declaration.parent !is IrPackageFragment && !declaration.parent.isFacadeClass
+            }
+        else {
+            // Fake override for a Java field
+            val backingField = declaration.resolveFakeOverride()?.backingField
+                ?: error("Expected at least one accessor or a backing field for property ${declaration.render()}")
+            backingField.isStatic
+        }
 
         if (isStaticProperty) {
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
-        accessor.extensionReceiverParameter?.let {
+        accessor?.extensionReceiverParameter?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleValueParameter(builder, it)
         }
 
-        val typeParameters = accessor.typeParameters
+        val typeParameters = accessor?.typeParameters ?: emptyList()
 
         typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
         builder.append(declaration.name.asString())
     }
 
-    override fun visitField(declaration: IrField, data: Boolean) =
-        declaration.mangleSimpleDeclaration(declaration.name.asString())
+    override fun visitField(declaration: IrField) {
+        val prop = declaration.correspondingPropertySymbol
+        if (compatibleMode || prop == null) { // act as used to be (KT-48912)
+            // test compiler/testData/codegen/box/ir/serializationRegressions/anonFakeOverride.kt
+            declaration.mangleSimpleDeclaration(declaration.name.asString())
+        } else {
+            visitProperty(prop.owner)
+        }
+    }
 
-    override fun visitEnumEntry(declaration: IrEnumEntry, data: Boolean) {
+    override fun visitEnumEntry(declaration: IrEnumEntry) {
         declaration.mangleSimpleDeclaration(declaration.name.asString())
     }
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Boolean) =
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+        val klass = declaration.parentAsClass
+        val anonInitializers = klass.declarations.filterIsInstance<IrAnonymousInitializer>()
+
+        val anonName = buildString {
+            append(MangleConstant.ANON_INIT_NAME_PREFIX)
+            if (anonInitializers.size > 1) {
+                append(MangleConstant.LOCAL_DECLARATION_INDEX_PREFIX)
+                append(anonInitializers.indexOf(declaration))
+            }
+        }
+
+        declaration.mangleSimpleDeclaration(anonName)
+    }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias) =
         declaration.mangleSimpleDeclaration(declaration.name.asString())
 
-    override fun visitTypeParameter(declaration: IrTypeParameter, data: Boolean) {
-        declaration.effectiveParent().accept(this, data)
+    override fun visitTypeParameter(declaration: IrTypeParameter) {
+        declaration.effectiveParent().acceptVoid(this)
 
         builder.appendSignature(MangleConstant.TYPE_PARAM_INDEX_PREFIX)
         builder.appendSignature(declaration.index)
     }
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Boolean) {
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         isRealExpect = isRealExpect or declaration.isExpect
 
         val container = declaration.correspondingPropertySymbol?.owner ?: declaration
-        val isStatic = declaration.dispatchReceiverParameter == null && container.parent !is IrPackageFragment
+        val isStatic = declaration.dispatchReceiverParameter == null &&
+                (container.parent !is IrPackageFragment && !container.parent.isFacadeClass)
 
         declaration.mangleFunction(false, isStatic, container)
     }
 
-    override fun visitConstructor(declaration: IrConstructor, data: Boolean) =
+    override fun visitConstructor(declaration: IrConstructor) =
         declaration.mangleFunction(isCtor = true, isStatic = false, declaration)
 }

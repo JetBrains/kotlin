@@ -1,6 +1,7 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.GradleException
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.gradle.publish.PublishTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
@@ -8,13 +9,11 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.attributes.Bundling
-import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.*
 import org.gradle.api.plugins.JavaPluginExtension
@@ -22,19 +21,18 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import plugins.KotlinBuildPublishingPlugin
+import plugins.mainPublicationName
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
 
 fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
-    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testCompile"])
+    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testApi"])
 
     return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
@@ -63,55 +61,43 @@ fun Project.removeArtifacts(configuration: Configuration, task: Task) {
 
 fun Project.noDefaultJar() {
     tasks.named("jar").configure {
-        enabled = false
-        actions = emptyList()
         configurations.forEach { cfg ->
             removeArtifacts(cfg, this)
         }
     }
 }
 
-fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body)) { }
-
-fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {}): TaskProvider<T> {
-
-    tasks.named<Jar>("jar").configure {
-        removeArtifacts(configurations.getOrCreate("archives"), this)
-    }
-
-    task.configure {
+fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
+    val jarTask = tasks.named<Jar>("jar")
+    jarTask.configure {
         configurations.findByName("embedded")?.let { embedded ->
             dependsOn(embedded)
             from {
                 embedded.map(::zipTree)
             }
         }
-        setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        body()
+    }
+
+    return jarTask
+}
+
+fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
+
+    noDefaultJar()
+
+    task.configure {
+        configurations = configurations + listOf(project.configurations["embedded"])
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
 
     project.addArtifact("archives", task, task)
-    project.addArtifact("runtimeJar", task, task)
-    project.configurations.findByName("runtime")?.let {
-        project.addArtifact(it.name, task, task)
-    }
-
-    val runtimeJar = configurations.maybeCreate("runtimeJar").apply {
-        isCanBeConsumed = true
-        isCanBeResolved = false
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-        }
-    }
-
-    configurePublishedComponent {
-        withVariantsFromConfiguration(configurations[RUNTIME_ELEMENTS_CONFIGURATION_NAME]) { skip() }
-        addVariantsFromConfiguration(runtimeJar) { }
-    }
+    project.addArtifact("runtimeElements", task, task)
+    project.addArtifact("apiElements", task, task)
 
     return task
 }
@@ -122,7 +108,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     }
 
     val sourcesJar = getOrCreateTask<Jar>("sourcesJar") {
-        fun Project.mainJavaPluginSourceSet() = findJavaPluginConvention()?.sourceSets?.findByName("main")
+        fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
         fun Project.mainKotlinSourceSet() =
             (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
 
@@ -226,24 +212,20 @@ fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication
 
     val publication = extensions.findByType<PublishingExtension>()
         ?.publications
-        ?.findByName(KotlinBuildPublishingPlugin.PUBLICATION_NAME) as MavenPublication
+        ?.findByName(mainPublicationName) as MavenPublication
     publication.configure()
 }
 
-fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
-    apply<plugins.PublishedKotlinModule>()
-
-    if (artifactsRemovedDiagnosticFlag) {
-        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` or `runtimeJar()` call")
-    }
+fun Project.publishGradlePlugin() {
+    mainPublicationName = "pluginMaven"
+    publish()
 
     afterEvaluate {
-        if (configurations.findByName("classes-dirs") != null)
-            throw GradleException("classesDirsArtifact() is incompatible with publish(), see sources comments for details")
-    }
-
-    return (tasks.getByName("uploadArchives") as Upload).apply {
-        body()
+        tasks.withType<PublishTask> {
+            // Makes plugin publication task reuse poms and metadata from publication named "pluginMaven"
+            useAutomatedPublishing()
+            useGradleModuleMetadataIfAvailable()
+        }
     }
 }
 
@@ -251,6 +233,41 @@ fun Project.idePluginDependency(block: () -> Unit) {
     val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
     if (shouldActivate) {
         block()
+    }
+}
+
+fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+    idePluginDependency {
+        publishProjectJars(projects, libraryDependencies)
+    }
+    configurations.all {
+        // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
+        // plugin may depend on different versions of IDEA and it will lead to version conflict
+        exclude(module = ideModuleName())
+    }
+    dependencies {
+        projects.forEach {
+            jpsLikeJarDependency(project(it), JpsDepScope.COMPILE, { isTransitive = false }, exported = true)
+        }
+        libraryDependencies.forEach {
+            jpsLikeJarDependency(it, JpsDepScope.COMPILE, exported = true)
+        }
+    }
+}
+
+fun Project.publishTestJarsForIde(projectNames: List<String>) {
+    idePluginDependency {
+        publishTestJar(projectNames)
+    }
+    configurations.all {
+        // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
+        // plugin may depend on different versions of IDEA and it will lead to version conflict
+        exclude(module = ideModuleName())
+    }
+    dependencies {
+        for (projectName in projectNames) {
+            jpsLikeJarDependency(projectTests(projectName), JpsDepScope.COMPILE, exported = true)
+        }
     }
 }
 
@@ -292,13 +309,15 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projectName: String) {
+fun Project.publishTestJar(projects: List<String>) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
 
     dependencies {
-        fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        for (projectName in projects) {
+            fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        }
     }
 
     publish()
@@ -315,7 +334,7 @@ fun Project.publishTestJar(projectName: String) {
 
     sourcesJar {
         from {
-            project(projectName).testSourceSet.allSource
+            projects.map { project(it).testSourceSet.allSource }
         }
     }
 

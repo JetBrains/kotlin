@@ -3,9 +3,9 @@ package
 
 public expect fun foo(): kotlin.Unit
 
-
 // -- Module: <m2-jvm> --
 package
 
 public actual fun bar(): kotlin.Unit
 public actual fun foo(): kotlin.Unit
+

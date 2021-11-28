@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-// !WITH_NEW_INFERENCE
 
 package a
 

@@ -1,0 +1,31 @@
+FILE: extensionCallableReferences.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val memberVal: R|A| = R|/A.A|()
+            public get(): R|A|
+
+        public final fun memberFun(): R|A| {
+            ^memberFun R|/A.A|()
+        }
+
+    }
+    public final val R|B|.extensionVal: R|A|
+        public get(): R|A| {
+            ^ R|/A.A|()
+        }
+    public final fun R|B|.extensionFun(): R|A| {
+        ^extensionFun R|/A.A|()
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval extensionValRef: R|kotlin/reflect/KProperty1<B, A>| = Q|B|::R|/extensionVal|
+        lval extensionFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<B, A>| = Q|B|::R|/extensionFun|
+    }

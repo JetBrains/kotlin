@@ -1,8 +1,8 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: UNIT_ISSUES
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class UInt(private val value: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UInt(private val value: Int) {
     operator fun plus(other: UInt): UInt = UInt(value + other.asValue())
 
     fun asValue(): Int = value

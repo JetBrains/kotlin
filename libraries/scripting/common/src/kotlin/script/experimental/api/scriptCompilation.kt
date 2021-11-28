@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import java.io.File
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -105,6 +106,17 @@ val ScriptCompilationConfigurationKeys.implicitReceivers by PropertiesCollection
  * The map of names to the types
  */
 val ScriptCompilationConfigurationKeys.providedProperties by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
+
+/**
+ * Variable name that holds a {@link File} instance pointing to the location of the script file
+ */
+val ScriptCompilationConfigurationKeys.scriptFileLocationVariable by PropertiesCollection.key<String>()
+
+/**
+ * File pointing to the location of the script file. Note that in some cases it might not be possible
+ * to determine script file location properly - in this case the file is an empty file
+ */
+val ScriptCompilationConfigurationKeys.scriptFileLocation by PropertiesCollection.key<File>()
 
 /**
  * The list of import expressions that will be implicitly applied to the script body, the syntax is the same as for the "import" statement

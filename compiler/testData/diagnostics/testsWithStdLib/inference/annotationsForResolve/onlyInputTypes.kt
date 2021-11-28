@@ -1,6 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
-// !WITH_NEW_INFERENCE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains1(element: T): Boolean = null!!
@@ -37,12 +35,12 @@ fun test_4(list: List<Out<Int>>, x: Out<Int>, y: Out<Number>, z: Out<Any>) {
 
 fun test_5(list: List<Inv<Number>>, x: Inv<Number>, y: Inv<Int>, z: Inv<Any>) {
     list.contains1(x)
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(y)
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(z)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(y)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(z)
 }
 
 fun test_6(list: List<Inv<Int>>, x: Inv<Int>, y: Inv<Number>, z: Inv<Any>) {
     list.contains1(x)
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(y)
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(z)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(y)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(z)
 }

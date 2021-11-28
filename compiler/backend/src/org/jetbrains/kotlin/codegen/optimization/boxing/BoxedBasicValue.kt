@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import java.util.*
 
 abstract class BoxedBasicValue(type: Type) : StrictBasicValue(type) {
     abstract val descriptor: BoxedValueDescriptor
@@ -56,7 +55,7 @@ class TaintedBoxedValue(private val boxedBasicValue: CleanBoxedValue) : BoxedBas
 
 
 class BoxedValueDescriptor(
-    private val boxedType: Type,
+    boxedType: Type,
     val boxingInsn: AbstractInsnNode,
     val progressionIterator: ProgressionIteratorBasicValue?,
     val generationState: GenerationState

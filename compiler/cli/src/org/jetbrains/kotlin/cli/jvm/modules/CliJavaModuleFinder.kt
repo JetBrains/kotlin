@@ -16,15 +16,24 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 
-class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModuleFinder {
+class CliJavaModuleFinder(
+    jrtFileSystemRoot: VirtualFile?,
+    private val javaFileManager: KotlinCliJavaFileManager,
+    project: Project
+) : JavaModuleFinder {
     private val modulesRoot = jrtFileSystemRoot?.findChild("modules")
     private val userModules = linkedMapOf<String, JavaModule>()
+
+    private val allScope = GlobalSearchScope.allScope(project)
 
     fun addUserModule(module: JavaModule) {
         userModules.putIfAbsent(module.name, module)
@@ -41,7 +50,7 @@ class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModuleFinder {
 
     private fun findSystemModule(moduleRoot: VirtualFile): JavaModule.Explicit? {
         val file = moduleRoot.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) ?: return null
-        val moduleInfo = JavaModuleInfo.read(file) ?: return null
+        val moduleInfo = JavaModuleInfo.read(file, javaFileManager, allScope) ?: return null
         return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(moduleRoot, isBinary = true)), file)
     }
 }

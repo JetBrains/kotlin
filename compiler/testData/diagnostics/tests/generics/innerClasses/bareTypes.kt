@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Outer<E> {
     inner class Inner<F, G> {
         inner abstract class Inner2Base

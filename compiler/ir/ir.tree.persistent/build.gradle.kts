@@ -5,9 +5,13 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:ir.tree"))
+    implementation(project(":compiler:ir.serialization.common"))
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        this.java.srcDir("gen")
+    }
     "test" {}
 }

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: J.java
 
@@ -15,15 +14,15 @@ public class J {
 
 fun test() {
     val n = J.staticN
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(n)
-    J.staticNN = n
+    foo(<!ARGUMENT_TYPE_MISMATCH!>n<!>)
+    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>n<!>
     if (n != null) {
         foo(n)
         J.staticNN = n
     }
 
     val x: J? = null
-    J.staticNN = x
+    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
     if (x != null) {
         J.staticNN = x
     }

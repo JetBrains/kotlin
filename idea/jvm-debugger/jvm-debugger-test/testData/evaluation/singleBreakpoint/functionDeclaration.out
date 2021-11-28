@@ -1,8 +1,0 @@
-LineBreakpoint created at functionDeclaration.kt:5
-Run Java
-Connected to the target VM
-functionDeclaration.kt:5
-Compile bytecode for fun foo() {}
-Disconnected from the target VM
-
-Process finished with exit code 0

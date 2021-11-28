@@ -1,19 +1,27 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 class C {
-    inline class IC1(val s: String)
+    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+    value class IC1(val s: String)
 
     companion object {
-        inline class IC2(val s: String)
+        @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+        value class IC2(val s: String)
     }
 }
 
 object O {
-    inline class IC3(val s: String)
+    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+    value class IC3(val s: String)
 }
 
 interface I {
-    inline class IC4(val s: String)
+    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+    value class IC4(val s: String)
 }
 
 fun box(): String {

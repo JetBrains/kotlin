@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNCHECKED_CAST
 interface Trait1
 interface Trait2
 open class OClass1

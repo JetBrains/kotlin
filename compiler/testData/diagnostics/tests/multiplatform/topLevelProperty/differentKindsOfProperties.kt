@@ -24,7 +24,7 @@ expect val customAccessorVal: String
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
 expect var customAccessorVar: String
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
-    <!EXPECTED_DECLARATION_WITH_BODY!>set(<!UNUSED_PARAMETER!>value<!>)<!> {}
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
 expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 

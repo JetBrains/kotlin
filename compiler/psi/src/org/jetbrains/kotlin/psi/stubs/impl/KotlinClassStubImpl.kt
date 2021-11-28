@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
@@ -29,12 +30,13 @@ class KotlinClassStubImpl(
     type: KtClassElementType,
     parent: StubElement<out PsiElement>?,
     private val qualifiedName: StringRef?,
+    private val classId: ClassId?,
     private val name: StringRef?,
     private val superNames: Array<StringRef>,
     private val isInterface: Boolean,
     private val isEnumEntry: Boolean,
     private val isLocal: Boolean,
-    private val isTopLevel: Boolean
+    private val isTopLevel: Boolean,
 ) : KotlinStubBaseImpl<KtClass>(parent, type), KotlinClassStub {
 
     override fun getFqName(): FqName? {
@@ -54,6 +56,8 @@ class KotlinClassStubImpl(
         }
         return result
     }
+
+    override fun getClassId(): ClassId? = classId
 
     override fun isTopLevel() = isTopLevel
 }

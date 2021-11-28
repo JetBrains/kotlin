@@ -1,7 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: wrong ABSTRACT_MEMBER_NOT_IMPLEMENTED, probably provoked by override mapping error
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: A.java
 
 public class A extends AImpl implements java.util.List<String> {

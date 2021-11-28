@@ -1,6 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference
 

@@ -1,6 +1,6 @@
 // !API_VERSION: 1.3
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class A {
     fun memberFunction() {}

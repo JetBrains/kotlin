@@ -36,10 +36,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -89,7 +91,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val projectEnvironment =
                 KotlinCoreEnvironment.ProjectEnvironment(
                     rootDisposable,
-                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
+                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
+                    configuration
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
@@ -242,12 +245,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
 
+                putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, services[InlineConstTracker::class.java])
+
                 putIfNotNull(
                     JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
                     services[IncrementalCompilationComponents::class.java]
                 )
 
-                putIfNotNull(JVMConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
+                putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
             }
             setupJvmSpecificArguments(arguments)
         }
@@ -273,13 +278,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     }
 
-    override val performanceManager: CommonCompilerPerformanceManager
-        get() = error("Unsupported")
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
 
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
         val externalManager = services[CommonCompilerPerformanceManager::class.java]
         if (externalManager != null) return externalManager
-        val argument = arguments.profileCompilerCommand ?: return K2JVMCompilerPerformanceManager()
+        val argument = arguments.profileCompilerCommand ?: return defaultPerformanceManager
         return ProfilingCompilerPerformanceManager.create(argument)
     }
 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.types.model.*
 interface ConstraintStorage {
     val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
     val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+    val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>>
     val initialConstraints: List<InitialConstraint>
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<ConstraintSystemError>
@@ -45,6 +46,7 @@ interface ConstraintStorage {
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
+        override val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>> get() = emptyList()
         override val initialConstraints: List<InitialConstraint> get() = emptyList()
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<ConstraintSystemError> get() = emptyList()
@@ -143,3 +145,6 @@ fun checkConstraint(
         ConstraintKind.UPPER -> typeChecker.isSubtypeOf(context, resultType, constraintType)
     }
 }
+
+fun Constraint.replaceType(newType: KotlinTypeMarker) =
+    Constraint(kind, newType, position, typeHashCode, derivedFrom, isNullabilityConstraint, inputTypePositionBeforeIncorporation)

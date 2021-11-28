@@ -6,7 +6,7 @@
 fun case_1(x: Any?) {
     val y = run {
         if (x is Class)
-            return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any?")!>x<!>
+            return@run <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
         Class()
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>
@@ -17,7 +17,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Class?) {
     val y = run {
         x!!
-        return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
+        return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>.fun_1()
@@ -263,8 +263,8 @@ fun case_22(z: Any?) {
 fun case_23(z: Any?) {
     val y = z.run {
         when (this) {
-            true -> this!!
-            0.0 -> this as Any
+            true -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+            0.0 -> this <!USELESS_CAST!>as Any<!>
             else -> this!!
         }
     }
@@ -276,8 +276,8 @@ fun case_23(z: Any?) {
 fun case_24(z: Any?) {
     val y = z.let {
         when (it) {
-            true -> it!!
-            0.0 -> it as Any
+            true -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+            0.0 -> it <!USELESS_CAST!>as Any<!>
             else -> it!!
         }
     }
@@ -292,7 +292,7 @@ fun case_25(z: Any?) {
             true -> this
             if (true) this as Int else this as Float -> this
             return@run this as Float -> this
-            else -> this!!
+            else -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
@@ -306,7 +306,7 @@ fun case_26(z: Any?) {
             true -> it
             if (true) it as Int else it as Float -> it
             return@let it as Int -> it
-            else -> it!!
+            else -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>

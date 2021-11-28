@@ -1,8 +1,0 @@
-3 <bold>fun assignmentWithSum(n: Int): Int</bold> {
-8 	return <bold>result</bold> (in assignmentWithSum(Int))
-4 		<bold>var result</bold> = 0 (in assignmentWithSum(Int))
-4 			var result = <bold>0</bold> (in assignmentWithSum(Int))
-5 			<bold>result += n</bold> (in assignmentWithSum(Int))
-6 			<bold>result++</bold> (in assignmentWithSum(Int))
-4 				DUPLICATE: <bold>var result</bold> = 0 (in assignmentWithSum(Int))
-7 			<bold>--result</bold> (in assignmentWithSum(Int))

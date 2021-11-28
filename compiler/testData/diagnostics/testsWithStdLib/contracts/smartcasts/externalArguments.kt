@@ -1,12 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 
 import kotlin.reflect.KProperty
 
 fun testLambdaArgumentSmartCast(foo: Int?) {
     val v = run {
         if (foo != null)
-            return@run <!NI;DEBUG_INFO_SMARTCAST!>foo<!>
+            return@run <!DEBUG_INFO_SMARTCAST!>foo<!>
         15
     }
 }

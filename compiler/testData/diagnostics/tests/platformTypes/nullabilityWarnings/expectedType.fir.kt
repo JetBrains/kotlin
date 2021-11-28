@@ -23,7 +23,7 @@ fun test() {
     val platformJ = J.staticJ
 
     checkSubtype<J>(platformNN)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><J>(platformN)
+    checkSubtype<J>(<!ARGUMENT_TYPE_MISMATCH!>platformN<!>)
     checkSubtype<J>(platformJ)
 
     checkSubtype<J?>(platformNN)

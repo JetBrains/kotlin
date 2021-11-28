@@ -1,4 +1,0 @@
-// "Make 'One' 'open'" "true"
-
-actual open class One
-class Two : <caret>One()

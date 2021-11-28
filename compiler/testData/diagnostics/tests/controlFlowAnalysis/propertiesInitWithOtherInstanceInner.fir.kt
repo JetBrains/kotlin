@@ -1,5 +1,5 @@
 class Outer {
-    val outerProp: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val outerProp: String<!>
     inner class Inner(inner: Inner, outer: Outer) {
         val innerProp: String
         init {

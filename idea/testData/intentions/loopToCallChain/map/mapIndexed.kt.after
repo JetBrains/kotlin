@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'mapIndexed{}.firstOrNull{}'"
-// INTENTION_TEXT_2: "Replace with 'asSequence().mapIndexed{}.firstOrNull{}'"
-fun foo(list: List<String>): Int? {
-    <caret>return list
-        .mapIndexed { index, s -> s.length * index }
-        .firstOrNull { it > 0 }
-}

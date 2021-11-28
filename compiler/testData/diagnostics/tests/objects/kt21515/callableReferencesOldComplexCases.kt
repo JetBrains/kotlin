@@ -48,7 +48,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+        val a = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromBaseCompanion<!>::foo
     }
 }
 

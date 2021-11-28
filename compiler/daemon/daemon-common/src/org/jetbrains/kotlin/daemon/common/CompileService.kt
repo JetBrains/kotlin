@@ -81,6 +81,9 @@ interface CompileService : Remote {
     fun getDaemonInfo(): CallResult<String>
 
     @Throws(RemoteException::class)
+    fun getKotlinVersion(): CallResult<String>
+
+    @Throws(RemoteException::class)
     fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions>
 
     @Throws(RemoteException::class)

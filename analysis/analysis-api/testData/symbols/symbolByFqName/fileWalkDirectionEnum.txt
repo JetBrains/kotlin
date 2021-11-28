@@ -1,0 +1,81 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/listOf
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/collections/List<T>
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol(element)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/internal/InlineOnly()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/collections/listOf
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/collections/List<T>
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/listOf
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/collections/List<T>
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol(elements)
+  ]
+  visibility: Public
+  deprecationStatus: null

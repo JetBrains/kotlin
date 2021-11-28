@@ -41,4 +41,3 @@ fun testVarargsStar() {
 fun testCtorStar() {
   useKCallableStar(fn = C::<init>)
 }
-

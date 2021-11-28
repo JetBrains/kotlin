@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.fir.plugin.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
-object DummyNameChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirSimpleFunction) return
-        if (declaration.name.asString() == "dummy") {
-            declaration.source?.let { reporter.report(FirErrors.SYNTAX.on(it)) }
+object DummyNameChecker : FirSimpleFunctionChecker() {
+    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        val name = declaration.name.asString()
+        if (name == "dummy") {
+            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_DUMMY_NAME, name, context)
         }
     }
 }

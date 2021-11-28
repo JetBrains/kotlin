@@ -170,12 +170,12 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             // At the point when the source set in the platform module is created, the task does not exist
             val platformTasks = platformProject.tasks
                 .withType(AbstractKotlinCompile::class.java)
-                .filter { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
+                .filter { it.sourceSetName.get() == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
 
             val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
             for (platformTask in platformTasks) {
                 platformTask.source(commonSources)
-                platformTask.commonSourceSet += commonSources
+                platformTask.commonSourceSet.from(commonSources)
             }
         }
     }

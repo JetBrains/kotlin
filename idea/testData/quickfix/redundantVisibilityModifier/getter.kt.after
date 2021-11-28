@@ -1,2 +1,0 @@
-// "Remove redundant 'public' modifier" "true"
-val a get() = 0

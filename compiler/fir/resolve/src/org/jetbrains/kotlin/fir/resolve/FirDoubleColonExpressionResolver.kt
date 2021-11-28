@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.*
@@ -144,12 +144,12 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
         val resolvedExpression = expression as? FirResolvedQualifier
             ?: return null
 
-        val firClass = resolvedExpression.expandedRegularClassIfAny()
+        val firClassLikeDeclaration = resolvedExpression.symbol?.fir
             ?: return null
 
         val type = ConeClassLikeTypeImpl(
-            firClass.symbol.toLookupTag(),
-            Array(firClass.typeParameters.size) { index ->
+            firClassLikeDeclaration.symbol.toLookupTag(),
+            Array(firClassLikeDeclaration.typeParameters.size) { index ->
                 val typeArgument = expression.typeArguments.getOrNull(index)
                 if (typeArgument == null) ConeStarProjection
                 else when (typeArgument) {

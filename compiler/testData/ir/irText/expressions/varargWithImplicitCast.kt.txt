@@ -11,4 +11,3 @@ fun testSpread(a: Any): IntArray {
   }
   return intArrayOf(elements = [*a /*as IntArray */])
 }
-

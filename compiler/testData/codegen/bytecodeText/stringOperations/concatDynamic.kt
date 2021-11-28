@@ -1,5 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy-with-constants
-// JVM_TARGET: 9
+// JVM_TARGET: 11
 class A
 
 inline class IC(val x: String)

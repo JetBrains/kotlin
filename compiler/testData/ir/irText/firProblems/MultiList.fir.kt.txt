@@ -9,7 +9,7 @@ data class Some<T : Any?> {
     field = value
     get
 
-  fun component1(): T {
+  operator fun component1(): T {
     return <this>.#value
   }
 

@@ -10,32 +10,32 @@ public final class Child extends kotlin.collections.AbstractList<java.lang.Strin
     }
 
     @java.lang.Override()
-    public final boolean contains(java.lang.Object p0) {
+    public final boolean contains(java.lang.Object element) {
         return false;
     }
 
     @java.lang.Override()
-    public boolean contains(java.lang.String p0) {
+    public boolean contains(java.lang.String element) {
         return false;
     }
 
     @java.lang.Override()
-    public final int indexOf(java.lang.Object p0) {
+    public final int indexOf(java.lang.Object element) {
         return 0;
     }
 
     @java.lang.Override()
-    public int indexOf(java.lang.String p0) {
+    public int indexOf(java.lang.String element) {
         return 0;
     }
 
     @java.lang.Override()
-    public final int lastIndexOf(java.lang.Object p0) {
+    public final int lastIndexOf(java.lang.Object element) {
         return 0;
     }
 
     @java.lang.Override()
-    public int lastIndexOf(java.lang.String p0) {
+    public int lastIndexOf(java.lang.String element) {
         return 0;
     }
 }

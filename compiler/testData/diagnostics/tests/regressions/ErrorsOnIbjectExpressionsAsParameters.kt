@@ -1,4 +1,5 @@
-fun foo(<!UNUSED_PARAMETER!>a<!> : Any) {}
+// FIR_IDENTICAL
+fun foo(a : Any) {}
 
 fun test() {
   foo(object {});

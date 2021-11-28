@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -91,7 +89,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (isInterface(descriptor)) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (isInterface(descriptor) && !jvmDefaultMode.forAllMethodsWithBody) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
@@ -114,13 +112,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (isInterface(classDescriptor)) {
-            if (jvmDefaultMode == JvmDefaultMode.ENABLE && classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
-                    it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
-                }) {
-                builder.addVersionRequirement(
-                    writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
-                )
-            }
             if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
                 builder.addVersionRequirement(
                     writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
@@ -264,12 +255,15 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
         val field = getBinding(FIELD_FOR_PROPERTY, descriptor)
         val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor)
+        val delegateMethod = getBinding(DELEGATE_METHOD_FOR_PROPERTY, descriptor)
+        assert(descriptor.isDelegated || delegateMethod == null) { "non-delegated property $descriptor has delegate method" }
 
         val signature = signatureSerializer.propertySignature(
             descriptor,
             field?.second,
             field?.first?.descriptor,
             if (syntheticMethod != null) signatureSerializer.methodSignature(null, syntheticMethod) else null,
+            if (delegateMethod != null) signatureSerializer.methodSignature(null, delegateMethod) else null,
             if (getterMethod != null) signatureSerializer.methodSignature(null, getterMethod) else null,
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
         )
@@ -280,10 +274,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
         if (descriptor.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
-
-            proto.addVersionRequirement(
-                writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
-            )
         }
 
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
@@ -372,6 +362,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
             fieldName: String?,
             fieldDesc: String?,
             syntheticMethod: JvmProtoBuf.JvmMethodSignature?,
+            delegateMethod: JvmProtoBuf.JvmMethodSignature?,
             getter: JvmProtoBuf.JvmMethodSignature?,
             setter: JvmProtoBuf.JvmMethodSignature?
         ): JvmProtoBuf.JvmPropertySignature? {
@@ -384,6 +375,10 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
             if (syntheticMethod != null) {
                 signature.syntheticMethod = syntheticMethod
+            }
+
+            if (delegateMethod != null) {
+                signature.delegateMethod = delegateMethod
             }
 
             if (getter != null) {
@@ -410,9 +405,5 @@ class JvmSerializerExtension @JvmOverloads constructor(
             }
             return builder.build()
         }
-    }
-
-    override fun releaseCoroutines(): Boolean {
-        return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 }

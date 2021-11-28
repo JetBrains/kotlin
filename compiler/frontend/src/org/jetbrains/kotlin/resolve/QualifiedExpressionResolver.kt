@@ -336,6 +336,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
             (resolvedDescriptor as? TypeAliasDescriptor)?.let { it.classDescriptor ?: return null } ?: resolvedDescriptor
 
         return LazyExplicitImportScope(
+            languageVersionSettings,
             packageOrClassDescriptor,
             packageFragmentForVisibilityCheck,
             lastPart.name,
@@ -739,7 +740,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
     ) {
         referenceExpression ?: return
         if (descriptors.size > 1) {
-            val visibleDescriptors = descriptors.filter { isVisible(it, shouldBeVisibleFrom, position) }
+            val visibleDescriptors = descriptors.filter { isVisible(it, shouldBeVisibleFrom, position, languageVersionSettings) }
             when {
                 visibleDescriptors.isEmpty() -> {
                     val descriptor = descriptors.first() as DeclarationDescriptorWithVisibility
@@ -782,7 +783,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
                 } else {
                     shouldBeVisibleFrom
                 }
-            if (!isVisible(descriptor, fromToCheck, position)) {
+            if (!isVisible(descriptor, fromToCheck, position, languageVersionSettings)) {
                 trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
             }
         }
@@ -836,7 +837,8 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
 internal fun isVisible(
     descriptor: DeclarationDescriptor,
     shouldBeVisibleFrom: DeclarationDescriptor?,
-    position: QualifierPosition
+    position: QualifierPosition,
+    languageVersionSettings: LanguageVersionSettings
 ): Boolean {
     if (descriptor !is DeclarationDescriptorWithVisibility || shouldBeVisibleFrom == null) return true
 
@@ -845,7 +847,7 @@ internal fun isVisible(
         if (DescriptorVisibilities.isPrivate(visibility)) return DescriptorVisibilities.inSameFile(descriptor, shouldBeVisibleFrom)
         if (!visibility.mustCheckInImports()) return true
     }
-    return DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
+    return DescriptorVisibilityUtils.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom, languageVersionSettings)
 }
 
 internal enum class QualifierPosition {

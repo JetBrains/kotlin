@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FIR_IDENTICAL
 // FILE: nnStringVsTXArray.kt
 fun <T> useTX(x: T, fn: () -> T) = fn()

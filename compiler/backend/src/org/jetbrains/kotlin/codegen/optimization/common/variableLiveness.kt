@@ -14,9 +14,14 @@ import java.util.*
 
 class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame> {
     private val bitSet = BitSet(maxLocals)
+    private var controlFlowMerge = false
 
     override fun mergeFrom(other: VariableLivenessFrame) {
         bitSet.or(other.bitSet)
+    }
+
+    override fun markControlFlowMerge() {
+        controlFlowMerge = true
     }
 
     fun markAlive(varIndex: Int) {
@@ -29,14 +34,17 @@ class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame
 
     fun isAlive(varIndex: Int): Boolean = bitSet.get(varIndex)
 
+    fun isControlFlowMerge(): Boolean = controlFlowMerge
+
     override fun equals(other: Any?): Boolean {
         if (other !is VariableLivenessFrame) return false
-        return bitSet == other.bitSet
+        return bitSet == other.bitSet && controlFlowMerge == other.controlFlowMerge
     }
 
-    override fun hashCode() = bitSet.hashCode()
+    override fun hashCode() = bitSet.hashCode() * 31 + controlFlowMerge.hashCode()
 
-    override fun toString(): String = (0 until maxLocals).map { if (bitSet[it]) '@' else '_' }.joinToString(separator = "")
+    override fun toString(): String =
+        (if (controlFlowMerge) "*" else " ") + (0 until maxLocals).map { if (bitSet[it]) '@' else '_' }.joinToString(separator = "")
 }
 
 fun analyzeLiveness(method: MethodNode): List<VariableLivenessFrame> =

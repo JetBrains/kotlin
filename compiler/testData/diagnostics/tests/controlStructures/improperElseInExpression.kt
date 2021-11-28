@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun example() {
@@ -10,7 +9,7 @@ fun example() {
     val f = if (true) <!IMPLICIT_CAST_TO_ANY!>true<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
     {
-        if (true) <!UNUSED_EXPRESSION!>true<!>
+        if (true) true
     }();
 
     {
@@ -30,5 +29,5 @@ fun example() {
         return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) true<!>
     }
 
-    return <!NI;TYPE_MISMATCH!>if (true) <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!> else {}<!>
+    return <!TYPE_MISMATCH!>if (true) true else {}<!>
 }

@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// WITH_RUNTIME
+// WITH_STDLIB
 
 
 fun <T> List<Option<T>>.flatten(): List<T> = flatMap { it.fold(::emptyList, ::listOf) }

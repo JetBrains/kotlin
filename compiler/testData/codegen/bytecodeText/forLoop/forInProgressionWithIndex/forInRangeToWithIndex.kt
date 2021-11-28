@@ -1,4 +1,12 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 fun box(): String {
     for ((i, v) in (4..7).withIndex()) {
     }
@@ -27,3 +35,10 @@ fun box(): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+
+// JVM_IR_TEMPLATES
+// 4 ILOAD
+// 5 ISTORE
+// 1 IADD
+// 0 ISUB
+// 1 IINC

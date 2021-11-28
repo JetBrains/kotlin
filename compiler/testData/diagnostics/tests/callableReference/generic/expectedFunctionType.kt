@@ -1,8 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
+fun <K> id(x: K) = x
+
 class A1 {
     fun <T> a1(t: T): Unit {}
     fun test1(): (String) -> Unit = A1()::a1
+    fun test2(): (String) -> Unit = id(A1()::a1)
 }
 
 class A2 {
@@ -19,6 +22,6 @@ class A3<T> {
     fun test2(): (T) -> Unit = A3<T>()::a3
     fun test3(): (Int) -> String = A3<Int>()::a3
 
-    fun <R> test4(): (R) -> Unit = <!TYPE_MISMATCH!>this::<!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>a3<!><!>
+    fun <R> test4(): (R) -> Unit = this::<!TYPE_MISMATCH!>a3<!>
     fun <R> test5(): (T) -> R = this::a3
 }

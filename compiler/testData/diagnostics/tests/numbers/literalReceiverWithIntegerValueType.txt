@@ -1,0 +1,16 @@
+package
+
+public fun testByteDotCall(/*0*/ c3: C<kotlin.Byte>): kotlin.Unit
+public fun testByteOperatorInfixCall(/*0*/ c6: C<kotlin.Byte>): kotlin.Unit
+public fun testLongDotCall(/*0*/ c1: C<kotlin.Long>): kotlin.Unit
+public fun testLongOperatorInfixCall(/*0*/ c4: C<kotlin.Long>): kotlin.Unit
+public fun testShortDotCall(/*0*/ c2: C<kotlin.Short>): kotlin.Unit
+public fun testShortOperatorInfixCall(/*0*/ c5: C<kotlin.Short>): kotlin.Unit
+
+public abstract class C</*0*/ L> {
+    public constructor C</*0*/ L>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun takeT(/*0*/ x: L): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -23,21 +23,18 @@ class KaptModelBuilder : ToolingModelBuilder {
         return modelName == Kapt::class.java.name
     }
 
-    override fun buildAll(modelName: String, project: Project): Any? {
-        if (modelName == Kapt::class.java.name) {
-            val kaptTasks = project.tasks.withType(KaptTask::class.java)
-            return KaptImpl(project.name, kaptTasks.map { it.createKaptSourceSet() })
-        }
-        return null
+    override fun buildAll(modelName: String, project: Project): Any {
+        require(canBuild(modelName)) { "buildAll(\"$modelName\") has been called while canBeBuild is false" }
+        val kaptTasks = project.tasks.withType(KaptTask::class.java)
+        return KaptImpl(project.name, kaptTasks.map { it.createKaptSourceSet() })
     }
 
     companion object {
 
         private fun KaptTask.createKaptSourceSet(): KaptSourceSet {
-            val sourceSetName = kotlinCompileTask.sourceSetName
             return KaptSourceSetImpl(
-                sourceSetName,
-                if (sourceSetName.contains(
+                this.sourceSetName.get(),
+                if (this.sourceSetName.get().contains(
                         "test",
                         true
                     )

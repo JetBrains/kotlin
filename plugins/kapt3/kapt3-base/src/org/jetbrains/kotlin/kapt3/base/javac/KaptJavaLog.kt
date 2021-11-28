@@ -17,7 +17,20 @@ import javax.tools.Diagnostic
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
 import javax.tools.SimpleJavaFileObject
-import com.sun.tools.javac.util.List as JavacList
+
+interface KaptJavaLogBase {
+    val interceptorData: DiagnosticInterceptorData
+
+    val reportedDiagnostics: List<JCDiagnostic>
+
+    fun flush(kind: Log.WriterKind?)
+
+    fun flush()
+
+    class DiagnosticInterceptorData {
+        var files: Map<JavaFileObject, JCTree.JCCompilationUnit> = emptyMap()
+    }
+}
 
 class KaptJavaLog(
     private val projectBaseDir: File?,
@@ -25,9 +38,9 @@ class KaptJavaLog(
     errWriter: PrintWriter,
     warnWriter: PrintWriter,
     noticeWriter: PrintWriter,
-    val interceptorData: DiagnosticInterceptorData,
+    override val interceptorData: KaptJavaLogBase.DiagnosticInterceptorData,
     private val mapDiagnosticLocations: Boolean
-) : Log(context, errWriter, warnWriter, noticeWriter) {
+) : Log(context, errWriter, warnWriter, noticeWriter), KaptJavaLogBase {
     private val stubLineInfo = KaptStubLineInformation()
     private val javacMessages = JavacMessages.instance(context)
 
@@ -35,7 +48,7 @@ class KaptJavaLog(
         context.put(Log.outKey, noticeWriter)
     }
 
-    val reportedDiagnostics: List<JCDiagnostic>
+    override val reportedDiagnostics: List<JCDiagnostic>
         get() = _reportedDiagnostics
 
     private val _reportedDiagnostics = mutableListOf<JCDiagnostic>()
@@ -82,7 +95,7 @@ class KaptJavaLog(
             }
         }
 
-        if (mapDiagnosticLocations && sourceFile != null && targetElement.tree != null) {
+        if (mapDiagnosticLocations && sourceFile != null && targetElement?.tree != null) {
             val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
@@ -152,7 +165,7 @@ class KaptJavaLog(
 
         val formattedMessage = diagnosticFormatter.format(diagnostic, javacMessages.currentLocale)
             .lines()
-            .joinToString(LINE_SEPARATOR) { original ->
+            .joinToString(LINE_SEPARATOR, postfix = LINE_SEPARATOR) { original ->
                 // Kotlin location is put as a sub-diagnostic, so the formatter indents it with four additional spaces (6 in total).
                 // It looks weird, especially in the build log inside IntelliJ, so let's make things a bit better.
                 val trimmed = original.trimStart()
@@ -210,15 +223,12 @@ class KaptJavaLog(
             "compiler.err.already.defined",
             "compiler.err.annotation.type.not.applicable",
             "compiler.err.doesnt.exist",
+            "compiler.err.cant.resolve.location",
             "compiler.err.duplicate.annotation.missing.container",
             "compiler.err.not.def.access.package.cant.access",
             "compiler.err.package.not.visible",
             "compiler.err.not.def.public.cant.access"
         )
-    }
-
-    class DiagnosticInterceptorData {
-        var files: Map<JavaFileObject, JCTree.JCCompilationUnit> = emptyMap()
     }
 }
 
@@ -255,7 +265,7 @@ private fun JCDiagnostic.Factory.errorJava9Aware(
     }
 }
 
-private data class KotlinFileObject(val file: File) : SimpleJavaFileObject(file.toURI(), Kind.SOURCE) {
+/*private*/internal data class KotlinFileObject(val file: File) : SimpleJavaFileObject(file.toURI(), Kind.SOURCE) {
     override fun openOutputStream() = file.outputStream()
     override fun openWriter() = file.writer()
     override fun openInputStream() = file.inputStream()

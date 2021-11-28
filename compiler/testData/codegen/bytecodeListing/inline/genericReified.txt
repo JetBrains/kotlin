@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class<null>  TKt {
+    // source: 't.kt'
+    public synthetic final static <<T:Ljava/lang/Object;>(Ljava/lang/String;)V> method foo(p0: java.lang.String): void
+    public synthetic static <null> method foo$default(p0: java.lang.String, p1: int, p2: java.lang.Object): void
+}

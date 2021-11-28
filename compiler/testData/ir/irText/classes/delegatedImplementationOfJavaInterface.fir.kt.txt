@@ -3,22 +3,17 @@ class Test : J {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = j
   }
-
-  private val j: J
-    field = j
-    private get
 
   override fun takeNotNull(x: @EnhancedNullability String) {
     <this>.#<$$delegate_0>.takeNotNull(x = x)
   }
 
-  override fun takeNullable(x: @FlexibleNullability String?) {
+  override fun takeNullable(x: String?) {
     <this>.#<$$delegate_0>.takeNullable(x = x)
   }
 
-  override fun takeFlexible(x: String?) {
+  override fun takeFlexible(x: @FlexibleNullability String?) {
     <this>.#<$$delegate_0>.takeFlexible(x = x)
   }
 
@@ -28,15 +23,17 @@ class Test : J {
   }
 
   @Nullable
-  override fun returnNullable(): @FlexibleNullability String? {
+  override fun returnNullable(): String? {
     return <this>.#<$$delegate_0>.returnNullable()
   }
 
-  override fun returnsFlexible(): String? {
+  override fun returnsFlexible(): @FlexibleNullability String? {
     return <this>.#<$$delegate_0>.returnsFlexible()
   }
 
-  local /* final field */ val <$$delegate_0>: J
+  local /* final field */ val <$$delegate_0>: J = j
+  private val j: J
+    field = j
+    private get
 
 }
-

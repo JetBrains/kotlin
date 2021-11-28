@@ -5,6 +5,7 @@ public final class ClassObjectField /* ClassObjectField*/ {
   @org.jetbrains.annotations.Nullable()
   private static final java.lang.String x;
 
+  @org.jetbrains.annotations.Nullable()
   private static final java.lang.String y;
 
   public  ClassObjectField();//  .ctor()

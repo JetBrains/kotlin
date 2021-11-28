@@ -1,5 +1,0 @@
-{
-  "mainFile": "foo/test.kt",
-  "targetPackage": "bar",
-  "newName": "X"
-}

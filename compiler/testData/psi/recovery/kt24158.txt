@@ -1,0 +1,69 @@
+KtFile: kt24158.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('main')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        NULL
+          PsiElement(null)('null')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting an element
+          PsiElement(FIELD_IDENTIFIER)('$foo')
+        PsiElement(DOT)('.')
+        PsiErrorElement:Expecting an element
+          PsiElement(FIELD_IDENTIFIER)('$bar')
+        PsiElement(DOT)('.')
+        PsiErrorElement:Expecting an element
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo2')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        NULL
+          PsiElement(null)('null')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting an element
+          PsiElement(FIELD_IDENTIFIER)('$foo')
+        PsiElement(DOT)('.')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting an element
+          PsiElement(FIELD_IDENTIFIER)('$bar')
+        PsiWhiteSpace(' ')
+        PsiElement(DOT)('.')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting an element
+          PsiElement(FIELD_IDENTIFIER)('$baz')
+        PsiWhiteSpace(' ')
+        PsiElement(DOT)('.')
+        PsiErrorElement:Expecting an element
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

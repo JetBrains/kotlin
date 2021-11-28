@@ -1,5 +1,0 @@
-fun foo(param: String) {
-    val s = "${param.hashCode()<caret>}bla-bla-bla"
-}
-
-// ELEMENT: hashCode

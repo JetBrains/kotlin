@@ -1,0 +1,32 @@
+FILE: kotlinSam.kt
+    public abstract fun interface MyRunnable : R|kotlin/Any| {
+        public abstract fun foo(x: R|kotlin/Int|): R|kotlin/Boolean|
+
+    }
+    public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
+    }
+    private abstract fun interface PrivateRunnable : R|kotlin/Any| {
+        public abstract fun bar(x: R|kotlin/String|): R|kotlin/Boolean|
+
+    }
+    private final fun bar(pr: R|PrivateRunnable|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+        ))
+        R|/foo|(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+        ))
+        lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
+            ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+
+        R|/foo|(R|/MyRunnable|(R|<local>/x|))
+        R|/bar|(R|/PrivateRunnable|(<L> = PrivateRunnable@fun <anonymous>(s: R|kotlin/String|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/s|.R|kotlin/String.length|.R|kotlin/Int.compareTo|(Int(0)))
+        }
+        ))
+    }

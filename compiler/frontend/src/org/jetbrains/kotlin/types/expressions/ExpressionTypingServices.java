@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
@@ -144,7 +145,8 @@ public class ExpressionTypingServices {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull DataFlowInfo dataFlowInfo,
             @Nullable KotlinType expectedReturnType,
-            BindingTrace trace
+            BindingTrace trace,
+            @Nullable ExpressionTypingContext localContext
     ) {
         if (expectedReturnType == null) {
             expectedReturnType = functionDescriptor.getReturnType();
@@ -152,11 +154,15 @@ public class ExpressionTypingServices {
                 expectedReturnType = NO_EXPECTED_TYPE;
             }
         }
-        checkFunctionReturnType(function, ExpressionTypingContext.newContext(
+
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
-        ));
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE,
+                getLanguageVersionSettings(), expressionTypingComponents.dataFlowValueFactory,
+                localContext != null ? localContext.inferenceSession : InferenceSession.Companion.getDefault()
+        );
+
+        checkFunctionReturnType(function, context);
     }
 
     /*package*/ void checkFunctionReturnType(KtDeclarationWithBody function, ExpressionTypingContext context) {
@@ -215,7 +221,8 @@ public class ExpressionTypingServices {
             @NotNull LexicalScope outerScope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KtDeclarationWithBody function,
-            @NotNull FunctionDescriptor functionDescriptor
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable InferenceSession inferenceSession
     ) {
         KtExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
@@ -224,7 +231,7 @@ public class ExpressionTypingServices {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory, inferenceSession
         );
 
         KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo = getNewInferenceLambdaInfo(context, function);
@@ -346,8 +353,12 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
 
-            if (isFirstStatement) {
-                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope);
+            DeclarationDescriptor ownerDescriptor = scope.getOwnerDescriptor();
+
+            if (isFirstStatement && ownerDescriptor instanceof FunctionDescriptor) {
+                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(
+                        statementExpression, context.trace, (FunctionDescriptor) ownerDescriptor
+                );
                 isFirstStatement = false;
             }
         }
@@ -387,7 +398,7 @@ public class ExpressionTypingServices {
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
         }
 
-        if (KtPsiUtil.deparenthesize(statementExpression) instanceof KtLambdaExpression) {
+        if (KtPsiUtil.deparenthesize(statementExpression) instanceof KtLambdaExpression && context.contextDependency == ContextDependency.DEPENDENT) {
             KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
             if (typeInfo != null) return typeInfo;
         }
@@ -423,7 +434,8 @@ public class ExpressionTypingServices {
             @NotNull KtExpression statementExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null;
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) || context.inferenceSession instanceof BuilderInferenceSession)
+            return null;
         KtFunctionLiteral functionLiteral = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
         if (functionLiteral != null) {
             KotlinResolutionCallbacksImpl.LambdaInfo info =

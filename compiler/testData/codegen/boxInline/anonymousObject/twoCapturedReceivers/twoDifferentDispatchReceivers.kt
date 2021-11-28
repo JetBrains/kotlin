@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // IGNORE_BACKEND: JS
 // FILE: 1.kt
 
@@ -21,7 +22,6 @@ class Person(val name: String) {
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun box(): String {

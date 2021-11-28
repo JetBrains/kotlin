@@ -1,5 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
+import javax.inject.Inject
 
 repositories {
     ivy {
@@ -67,27 +68,38 @@ val prepareEmulator by task<DefaultTask> {
     dependsOn(prepareSdk)
 }
 
+interface Injected {
+    @get:Inject val fs: FileSystemOperations
+    @get:Inject val archiveOperations: ArchiveOperations
+}
+
 fun unzipSdkTask(
     sdkName: String, sdkVer: String, destinationSubdir: String, coordinatesSuffix: String,
     additionalConfig: Configuration? = null, dirLevelsToSkipOnUnzip: Int = 0, ext: String = "zip",
     prepareTask: TaskProvider<DefaultTask> = prepareSdk,
     unzipFilter: CopySpec.() -> Unit = {}
-): Task {
+): TaskProvider<Task> {
     val id = "${sdkName}_$sdkVer"
-    val cfg = configurations.create(id)
+    val createdCfg = configurations.create(id)
     val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf { it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
-    dependencies.add(cfg.name, dependency)
+    dependencies.add(createdCfg.name, dependency)
 
-    val unzipTask = task("unzip_$id") {
+    val sdkDestDir = sdkDestDir
+    val unzipTask = tasks.register("unzip_$id") {
+        val cfg = project.configurations.getByName(id)
         dependsOn(cfg)
         inputs.files(cfg)
-        val targetDir = file("$sdkDestDir/$destinationSubdir")
+        val targetDir = project.file("$sdkDestDir/$destinationSubdir")
         outputs.dirs(targetDir)
+        val injected = project.objects.newInstance<Injected>()
+        val fs = injected.fs
+        val archiveOperations = injected.archiveOperations
+        val file = cfg.singleFile
         doFirst {
-            project.copy {
+            fs.copy {
                 when (ext) {
-                    "zip" -> from(zipTree(cfg.singleFile))
-                    "tar.gz" -> from(tarTree(resources.gzip(cfg.singleFile)))
+                    "zip" -> from(archiveOperations.zipTree(file))
+                    "tar.gz" -> from(archiveOperations.tarTree(project.resources.gzip(file)))
                     else -> throw GradleException("Don't know how to handle the extension \"$ext\"")
                 }
                 unzipFilter.invoke(this)
@@ -119,6 +131,7 @@ unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", "r28.0.1", "", toolsOsDarwin)
 unzipSdkTask("sdk-tools-$toolsOsDarwin", "4333796"/*26.1.1*/, "", "")
 unzipSdkTask("build-tools", "r28.0.3", "build-tools/28.0.3", toolsOs, buildTools, 1)
+unzipSdkTask("build-tools", "r29.0.3", "build-tools/29.0.3", toolsOs, buildTools, 1)
 unzipSdkTask("emulator-$toolsOsDarwin", "5264690", "", "", prepareTask = prepareEmulator)
 unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
 if (!kotlinBuildProperties.isTeamcityBuild) {

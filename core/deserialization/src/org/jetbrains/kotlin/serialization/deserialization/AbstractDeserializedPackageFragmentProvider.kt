@@ -43,6 +43,16 @@ abstract class AbstractDeserializedPackageFragmentProvider(
         packageFragments.addIfNotNull(fragments(fqName))
     }
 
+    override fun isEmpty(fqName: FqName): Boolean {
+        val descriptor = if (fragments.isComputed(fqName)) {
+            fragments.invoke(fqName)
+        } else {
+            findPackage(fqName)
+        }
+        return descriptor == null
+    }
+
+    @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = listOfNotNull(fragments(fqName))
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = emptySet()

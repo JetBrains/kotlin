@@ -2,6 +2,7 @@
   <dictionary name="skuzmich">
     <words>
       <w>anyref</w>
+      <w>dataref</w>
       <w>ushr</w>
       <w>wasm</w>
     </words>

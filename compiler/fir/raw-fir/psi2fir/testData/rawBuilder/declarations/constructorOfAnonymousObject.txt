@@ -1,7 +1,7 @@
 FILE: constructorOfAnonymousObject.kt
     private final? fun resolveAccessorCall(suspendPropertyDescriptor: PropertyDescriptor, context: TranslationContext): ResolvedCall<PropertyDescriptor> {
         ^resolveAccessorCall object : ResolvedCall<PropertyDescriptor> {
-            private constructor(): R|<anonymous>| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<<implicit>>()
             }
 

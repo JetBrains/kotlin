@@ -60,3 +60,12 @@ fun testHighOrderFunctionCallLabelInReturn() {
         <!NOT_A_FUNCTION_LABEL!>return@L<!>
     }
 }
+
+fun testMultipleLabelsWithNestedLambda() {
+    l1@ l2@{
+        {
+            <!RETURN_NOT_ALLOWED!>return@l1<!>
+        }
+        return@l2
+    }
+}

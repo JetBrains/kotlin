@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
+import org.jetbrains.kotlin.resolve.annotations.ThrowUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -126,7 +127,6 @@ public class FunctionCodegen {
                         CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
                         function,
                         v.getThisName(),
-                        state.getConstructorCallNormalizationMode(),
                         this
                 );
             } else {
@@ -369,23 +369,22 @@ public class FunctionCodegen {
     public static void generateMethodInsideInlineClassWrapper(
             @NotNull JvmDeclarationOrigin origin,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull ClassDescriptor inlineClass,
             @NotNull MethodVisitor mv,
             @NotNull KotlinTypeMapper typeMapper
     ) {
         mv.visitCode();
 
-        Type fieldOwnerType = typeMapper.mapClass(containingDeclaration);
+        Type fieldOwnerType = typeMapper.mapClass(inlineClass);
         Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
 
-        ValueParameterDescriptor valueRepresentation = InlineClassesUtilsKt.underlyingRepresentation(containingDeclaration);
-        if (valueRepresentation == null) return;
-
-        Type fieldType = typeMapper.mapType(valueRepresentation);
+        InlineClassRepresentation<SimpleType> representation = inlineClass.getInlineClassRepresentation();
+        assert representation != null : "Not an inline class: " + inlineClass;
 
         generateDelegateToStaticErasedVersion(
-                mv, erasedMethodImpl,
-                fieldOwnerType, valueRepresentation.getName().asString(), fieldType
+                mv, erasedMethodImpl, fieldOwnerType,
+                representation.getUnderlyingPropertyName().asString(),
+                typeMapper.mapType(representation.getUnderlyingType())
         );
 
         endVisit(mv, null, origin.getElement());
@@ -481,8 +480,7 @@ public class FunctionCodegen {
         }
 
         if (!functionDescriptor.isExternal()) {
-            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen, state.getJvmDefaultMode(),
-                               state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen, state.getJvmDefaultMode());
         }
         else if (staticInCompanionObject) {
             // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
@@ -583,8 +581,7 @@ public class FunctionCodegen {
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
-            @NotNull JvmDefaultMode jvmDefaultMode,
-            boolean isReleaseCoroutines
+            @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         mv.visitCode();
 
@@ -594,8 +591,7 @@ public class FunctionCodegen {
         KotlinTypeMapper typeMapper = parentCodegen.typeMapper;
         if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, typeMapper::mapAsmMethod)) {
             generateTypeCheckBarrierIfNeeded(
-                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), null, typeMapper,
-                    isReleaseCoroutines);
+                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), null, typeMapper);
         }
 
         Label methodEntry = null;
@@ -1105,7 +1101,7 @@ public class FunctionCodegen {
             return Collections.emptyList();
         }
 
-        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(AnnotationUtilKt.JVM_THROWS_ANNOTATION_FQ_NAME);
+        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(ThrowUtilKt.JVM_THROWS_ANNOTATION_FQ_NAME);
         if (annotation == null) return Collections.emptyList();
 
         Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
@@ -1152,8 +1148,10 @@ public class FunctionCodegen {
 
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         // $default methods are never protected to be accessible from subclass nested classes
+        // TODO: maybe best to generate private default in interface as private
         int visibilityFlag =
-                DescriptorVisibilities.isPrivate(functionDescriptor.getVisibility()) || isInlineOnlyPrivateInBytecode(functionDescriptor)
+                (!isInterface(functionDescriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS) &&
+                (DescriptorVisibilities.isPrivate(functionDescriptor.getVisibility()) || isInlineOnlyPrivateInBytecode(functionDescriptor))
                 ? AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags = visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
         if (!(functionDescriptor instanceof ConstructorDescriptor &&
@@ -1428,8 +1426,7 @@ public class FunctionCodegen {
         MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv);
 
         if (delegateTo.getArgumentTypes().length > 0 && isSpecialBridge) {
-            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes(), typeMapper,
-                                             state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes(), typeMapper);
         }
 
         iv.load(0, OBJECT_TYPE);
@@ -1475,8 +1472,7 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor descriptor,
             @NotNull Type returnType,
             @Nullable Type[] delegateParameterTypes,
-            @NotNull KotlinTypeMapper typeMapper,
-            boolean isReleaseCoroutines
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription typeSafeBarrierDescription =
                 BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
@@ -1510,7 +1506,7 @@ public class FunctionCodegen {
                 } else {
                     targetBoxedType = boxType(delegateParameterTypes[i]);
                 }
-                CodegenUtilKt.generateIsCheck(iv, kotlinType, targetBoxedType, isReleaseCoroutines);
+                CodegenUtilKt.generateIsCheck(iv, kotlinType, targetBoxedType);
                 iv.ifeq(defaultBranch);
             }
         }
@@ -1685,10 +1681,11 @@ public class FunctionCodegen {
 
         // Fake overrides in interfaces should be expanded to implementation to make proper default check
         if (JvmAnnotationUtilKt.checkIsImplementationCompiledToJvmDefault(memberDescriptor, mode)) {
-            return (kind != OwnerKind.DEFAULT_IMPLS && !isSynthetic) ||
+            boolean isSyntheticInCompatibilityOrJvmDefault = isSynthetic && (mode.isCompatibility() || mode == JvmDefaultMode.ENABLE);
+            return (kind != OwnerKind.DEFAULT_IMPLS && !isSyntheticInCompatibilityOrJvmDefault) ||
                    (kind == OwnerKind.DEFAULT_IMPLS &&
-                    (isSynthetic || //TODO: move synthetic method generation into interface
-                     (mode.isCompatibility() && !JvmAnnotationUtilKt.hasJvmDefaultNoCompatibilityAnnotation(containingDeclaration))));
+                    (isSyntheticInCompatibilityOrJvmDefault ||
+                     (mode.isCompatibility() && !JvmAnnotationUtilKt.hasJvmDefaultNoCompatibilityAnnotation(containingDeclaration))) && !DescriptorVisibilities.isPrivate(memberDescriptor.getVisibility()));
         } else {
             switch (kind) {
                 case DEFAULT_IMPLS: return true;

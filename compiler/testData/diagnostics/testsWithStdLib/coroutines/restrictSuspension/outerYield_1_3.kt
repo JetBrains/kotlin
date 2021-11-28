@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // SKIP_TXT
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -8,7 +9,7 @@ import kotlin.experimental.ExperimentalTypeInference
 
 @kotlin.coroutines.RestrictsSuspension
 class RestrictedController<T> {
-    suspend fun yield(<!UNUSED_PARAMETER!>x<!>: T) {}
+    suspend fun yield(x: T) {}
 
     suspend fun anotherYield(x: T) {
         yield(x)
@@ -27,10 +28,10 @@ class RestrictedController<T> {
     }
 }
 
-fun <T> buildSequence(@BuilderInference <!UNUSED_PARAMETER!>c<!>: suspend RestrictedController<T>.() -> Unit) {}
+fun <T> buildSequence(@BuilderInference c: suspend RestrictedController<T>.() -> Unit) {}
 
 @BuilderInference
-suspend fun <T> RestrictedController<T>.yield2(<!UNUSED_PARAMETER!>x<!>: T) {}
+suspend fun <T> RestrictedController<T>.yield2(x: T) {}
 
 fun test() {
     buildSequence<Int> a@{
@@ -83,11 +84,11 @@ fun test() {
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>(1)
 
             with(this) {
-                yield("")
-                this@with.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>yield<!>("")
+                <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
+                this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
 
-                yield2("")
-                this@with.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>yield2<!>("")
+                <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
+                this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
             }
         }
     }

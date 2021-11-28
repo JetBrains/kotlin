@@ -20,7 +20,9 @@ import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.test.KotlinBaseTest
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.sourceFileProvider
 import java.io.File
 import java.util.regex.Pattern
 
@@ -34,28 +36,24 @@ private data class OldPackageAndNew(val oldFqName: FqName, val newFqName: FqName
 
 internal fun patchFilesAndAddTest(
     testFile: File,
-    testFiles: List<KotlinBaseTest.TestFile>,
+    module: TestModule,
+    services: TestServices,
     filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
-): FqName? {
-    if (testFiles.any { it.name.endsWith(".java") }) {
-        //TODO support java files
-        return null
-    }
-    val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
-    if (ktFiles.isEmpty()) return null
-
+): FqName {
     val newPackagePrefix = testFile.path.replace("\\\\|-|\\.|/".toRegex(), "_")
     val oldPackage = Ref<FqName>()
     val isJvmName = Ref<Boolean>(false)
+    val testFiles = module.files
     val isSingle = testFiles.size == 1
     val resultFiles = testFiles.map {
         val fileName = if (isSingle) it.name else testFile.name.substringBeforeLast(".kt") + "/" + it.name
+        val content = services.sourceFileProvider.getContentOfSourceFile(it)
         TestClassInfo(
             fileName,
-            changePackage(newPackagePrefix, it.content, oldPackage, isJvmName),
+            changePackage(newPackagePrefix, content, oldPackage, isJvmName),
             oldPackage.get(),
             isJvmName.get(),
-            getGeneratedClassName(File(fileName), it.content, newPackagePrefix, oldPackage.get())
+            getGeneratedClassName(File(fileName), content, newPackagePrefix, oldPackage.get())
         )
     }
     val packages =

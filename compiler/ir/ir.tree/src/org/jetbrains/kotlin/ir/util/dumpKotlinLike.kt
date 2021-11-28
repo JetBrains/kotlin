@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -29,9 +33,22 @@ import org.jetbrains.kotlin.utils.Printer
  *     * IMPLICIT_DYNAMIC_CAST -- expr /*~> dynamic */
  *     * REINTERPRET_CAST -- expr /*=> Type */
  */
-fun IrElement.dumpKotlinLike(options: KotlinLikeDumpOptions = KotlinLikeDumpOptions()): String {
+fun IrElement.dumpKotlinLike(options: KotlinLikeDumpOptions = KotlinLikeDumpOptions()): String =
+    dumpKotlinLike(this, KotlinLikeDumper::printElement, options)
+
+fun IrType.dumpKotlinLike(): String =
+    dumpKotlinLike(this, KotlinLikeDumper::printType)
+
+fun IrTypeArgument.dumpKotlinLike(): String =
+    dumpKotlinLike(this, KotlinLikeDumper::printTypeArgument)
+
+private inline fun <T> dumpKotlinLike(
+    target: T,
+    print: KotlinLikeDumper.(T) -> Unit,
+    options: KotlinLikeDumpOptions = KotlinLikeDumpOptions()
+): String {
     val sb = StringBuilder()
-    accept(KotlinLikeDumper(Printer(sb, 1, "  "), options), null)
+    KotlinLikeDumper(Printer(sb, 1, "  "), options).print(target)
     return sb.toString()
 }
 
@@ -44,6 +61,7 @@ class KotlinLikeDumpOptions(
     // TODO support
     val labelPrintingStrategy: LabelPrintingStrategy = LabelPrintingStrategy.NEVER,
     val printFakeOverridesStrategy: FakeOverridesStrategy = FakeOverridesStrategy.ALL,
+    val printElseAsTrue: Boolean = false,
     /*
     TODO add more options:
      always print visibility?
@@ -98,6 +116,18 @@ enum class FakeOverridesStrategy {
  */
 
 private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
+    fun printElement(element: IrElement) {
+        element.accept(this, null)
+    }
+
+    fun printType(type: IrType) {
+        type.printTypeWithNoIndent()
+    }
+
+    fun printTypeArgument(typeArg: IrTypeArgument) {
+        typeArg.printTypeArgumentWithNoIndent()
+    }
+
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         val e = "/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */"
         if (element is IrExpression) {
@@ -110,9 +140,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: IrDeclaration?) {
+        p.println("// MODULE: ${declaration.name.asString()}")
         declaration.acceptChildren(this, null)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFile(declaration: IrFile, data: IrDeclaration?) {
         if (options.printRegionsPerFile) p.println("//region block: ${declaration.name}")
 
@@ -176,11 +208,18 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(declaration.name.asString())
 
         declaration.printTypeParametersWithNoIndent()
+        // TODO no test
         if (declaration.superTypes.isNotEmpty()) {
-            for ((i, type) in declaration.superTypes.withIndex()) {
+            var first = true
+            for (type in declaration.superTypes) {
                 if (type.isAny()) continue
 
-                p.printWithNoIndent(if (i > 0) ", " else " : ")
+                if (!first) {
+                    p.printWithNoIndent(", ")
+                } else {
+                    p.printWithNoIndent(" : ")
+                    first = false
+                }
 
                 type.printTypeWithNoIndent()
             }
@@ -250,7 +289,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             else ->
                 Modality.FINAL
         }
-        p(modality, defaultModality) { name.toLowerCase() }
+        p(modality, defaultModality) { name.lowercase() }
         p(isExternal, "external")
         p(isFakeOverride, customModifier("fake"))
         p(isOverride, "override")
@@ -269,7 +308,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isData, "data")
         p(isCompanion, "companion")
         p(isFunInterface, "fun")
-        p(classKind) { name.toLowerCase().replace('_', ' ') + if (this == ClassKind.ENUM_ENTRY) " class" else "" }
+        p(classKind) { name.lowercase().replace('_', ' ') + if (this == ClassKind.ENUM_ENTRY) " class" else "" }
         p(isInfix, "infix")
         p(isOperator, "operator")
     }
@@ -379,6 +418,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO don't print `Any?` as upper bound?
         printAnnotationsWithNoIndent()
         when (this) {
+            is IrDefinitelyNotNullType -> {
+                p.printWithNoIndent("(")
+                original.printTypeWithNoIndent()
+                p.printWithNoIndent(" & Any)")
+            }
             is IrSimpleType -> {
                 // TODO abbreviation
 
@@ -389,14 +433,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     arguments.forEachIndexed { i, typeArg ->
                         p(i > 0, ",")
 
-                        when (typeArg) {
-                            is IrStarProjection ->
-                                p.printWithNoIndent("*")
-                            is IrTypeProjection -> {
-                                typeArg.variance.printVarianceWithNoIndent()
-                                typeArg.type.printTypeWithNoIndent()
-                            }
-                        }
+                        typeArg.printTypeArgumentWithNoIndent()
                     }
                     p.printWithNoIndent(">")
                 }
@@ -409,6 +446,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 p.printWithNoIndent("ErrorType")
             else ->
                 p.printWithNoIndent("??? /* ERROR: unknown type: ${this.javaClass.simpleName} */")
+        }
+    }
+
+    private fun IrTypeArgument.printTypeArgumentWithNoIndent() {
+        when (this) {
+            is IrStarProjection ->
+                p.printWithNoIndent("*")
+            is IrTypeProjection -> {
+                variance.printVarianceWithNoIndent()
+                type.printTypeWithNoIndent()
+            }
         }
     }
 
@@ -577,9 +625,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 returnType.printTypeWithNoIndent()
             }
             printWhereClauseIfNeededWithNoIndent()
-            p.printWithNoIndent(" ")
 
-            body?.accept(this@KotlinLikeDumper, null)
+            body?.let {
+                p.printWithNoIndent(" ")
+                it.accept(this@KotlinLikeDumper, null)
+            }
         } else {
             p.printlnWithNoIndent()
         }
@@ -684,9 +734,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.printWithNoIndent(declaration.name.asString())
 
-        declaration.getter?.returnType?.let {
+        val backingField = declaration.backingField
+
+        if (backingField != null && !declaration.isDelegated) {
             p.printWithNoIndent(": ")
-            it.printTypeWithNoIndent()
+            backingField.type.printTypeWithNoIndent()
+        } else {
+            declaration.getter?.returnType?.let {
+                p.printWithNoIndent(": ")
+                it.printTypeWithNoIndent()
+            }
         }
 
         /* TODO better rendering for
@@ -991,8 +1048,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     ) {
         // TODO flag to omit comment block?
         val delegatingClass = symbol.owner.parentAsClass
-        // TODO don't crash when parent isn't class
-        val currentClass = data?.parentAsClass
+        val currentClass = data?.parent as? IrClass
         val delegatingClassName = delegatingClass.name.asString()
 
         val name = if (data is IrConstructor) {
@@ -1206,7 +1262,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
         p.printIndent()
         if ((branch.condition as? IrConst<*>)?.value == true) {
-            p.printWithNoIndent("else")
+            p.printWithNoIndent(if (options.printElseAsTrue) "true" else "else")
         } else {
             p.printWithNoIndent("/* else */ ")
             branch.condition.accept(this, data)

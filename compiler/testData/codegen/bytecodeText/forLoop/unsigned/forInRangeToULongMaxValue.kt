@@ -1,4 +1,14 @@
-// WITH_RUNTIME
+// WITH_STDLIB
+
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 const val M = ULong.MAX_VALUE
 
 fun f(a: ULong): Int {
@@ -19,3 +29,10 @@ fun f(a: ULong): Int {
 // 2 IF
 // 0 INVOKESTATIC kotlin/ULong.constructor-impl
 // 0 INVOKE\w+ kotlin/ULong.(un)?box-impl
+
+// JVM_IR_TEMPLATES
+// 1 ILOAD
+// 1 ISTORE
+// 0 IADD
+// 0 ISUB
+// 1 IINC

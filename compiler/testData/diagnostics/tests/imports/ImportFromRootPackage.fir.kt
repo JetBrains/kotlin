@@ -15,7 +15,7 @@ fun foo(): Klass {
     return Klass()
 }
 
-// FILE: anotherFromRootPackage.kt
+// FILE: yetAnotherFromRootPackage.kt
 package pkg
 
 import Klass

@@ -5,20 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.artifacts.ResolvedDependency
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.gradle.api.file.FileSystemOperations
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal class GradleNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
+internal abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
+
+    // TODO: replace by injected service org.gradle.api.file.FileSystemOperations once min support Gradle is 6.2
+    // https://github.com/gradle/gradle/commit/d02b9d84c08dba64775fb9581e3280f88d319a21
+    @Transient
+    lateinit var fs: FileSystemOperationsCompat
+
+    override val type: String
+        get() = "gradle"
+
+    // TODO: replace by injected service org.gradle.api.file.ArchiveOperations once min supported Gradle is 6.6
+    @Transient
+    lateinit var archiveOperations: ArchiveOperationsCompat
+
     override fun buildImportedPackage(
         name: String,
         version: String,
         file: File
     ): File? {
-        val module = GradleNodeModuleBuilder(project, name, version, listOf(file), this)
+        val module = GradleNodeModuleBuilder(fs, archiveOperations, name, version, listOf(file), parameters.cacheDir.get().asFile)
         module.visitArtifacts()
         return module.rebuild()
     }

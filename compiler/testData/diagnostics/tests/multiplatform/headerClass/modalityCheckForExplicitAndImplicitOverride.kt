@@ -14,7 +14,7 @@ expect class Foo3 {
     val x: String
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: jvm.kt
 

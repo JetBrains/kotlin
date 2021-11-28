@@ -82,7 +82,6 @@ class Test1 : IBase {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = BaseImpl
   }
 
   override fun foo(x: Int, s: String) {
@@ -97,7 +96,7 @@ class Test1 : IBase {
     (<this>.#<$$delegate_0>, <this>).qux()
   }
 
-  local /* final field */ val <$$delegate_0>: IBase
+  local /* final field */ val <$$delegate_0>: IBase = BaseImpl
 
 }
 
@@ -106,8 +105,6 @@ class Test2 : IBase, IOther {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = BaseImpl
-    <this>.#<$$delegate_1> = otherImpl(x0 = "", y0 = 42)
   }
 
   override fun foo(x: Int, s: String) {
@@ -122,7 +119,7 @@ class Test2 : IBase, IOther {
     (<this>.#<$$delegate_0>, <this>).qux()
   }
 
-  local /* final field */ val <$$delegate_0>: IBase
+  local /* final field */ val <$$delegate_0>: IBase = BaseImpl
   override val x: String
     override get(): String {
       return <this>.#<$$delegate_1>.<get-x>()
@@ -149,7 +146,6 @@ class Test2 : IBase, IOther {
       (<this>.#<$$delegate_1>, <this>).<set-z2>(<set-?> = <set-?>)
     }
 
-  local /* final field */ val <$$delegate_1>: IOther
+  local /* final field */ val <$$delegate_1>: IOther = otherImpl(x0 = "", y0 = 42)
 
 }
-

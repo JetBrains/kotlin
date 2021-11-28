@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public final class AC {
+    // source: 'AC.kt'
+    private final field number: int
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getNumber(): java.lang.Number
+}
+
+@kotlin.Metadata
+public interface AI {
+    // source: 'AI.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getNumber(): java.lang.Number
+}

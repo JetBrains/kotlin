@@ -88,6 +88,10 @@ enum class StringAnonymizationPolicy : ValueAnonymizer<String> {
     SAFE {
         override fun anonymize(t: String) = t
     },
+    ANONYMIZE_IN_IDE {
+        override fun anonymize(t: String) = t
+        override fun anonymizeOnIdeSize() = true
+    },
     SHA_256 {
         override fun anonymize(t: String) = sha256(t)
     },

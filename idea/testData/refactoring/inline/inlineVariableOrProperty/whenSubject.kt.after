@@ -1,7 +1,0 @@
-fun test(s: String) {
-    when (s.length) {
-        1 -> println("one")
-        2 -> println("two")
-        else -> println(s.length)
-    }
-}

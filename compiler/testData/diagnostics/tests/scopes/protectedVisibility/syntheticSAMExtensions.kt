@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: abc/A.java
 package abc;
 public class A {
@@ -21,7 +20,7 @@ class B : A() {
         }
 
         if (d.x is B) {
-            <!OI;SMARTCAST_IMPOSSIBLE!>d.x<!>.<!NI;INVISIBLE_MEMBER!>foo<!> {}
+            d.x.<!INVISIBLE_MEMBER!>foo<!> {}
         }
     }
 }

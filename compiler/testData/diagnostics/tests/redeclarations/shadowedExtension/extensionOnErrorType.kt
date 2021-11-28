@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 interface G<T> {
     fun foo()
     val bar: Int

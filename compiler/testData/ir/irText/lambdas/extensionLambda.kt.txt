@@ -4,4 +4,3 @@ fun test1(): Int {
   }
 )
 }
-

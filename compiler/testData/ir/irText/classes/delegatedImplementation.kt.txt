@@ -1,7 +1,7 @@
 interface IBase {
-  abstract fun foo(x: Int, s: String) 
-  abstract fun bar(): Int 
-  abstract fun String.qux() 
+  abstract fun foo(x: Int, s: String)
+  abstract fun bar(): Int
+  abstract fun String.qux()
 
 }
 
@@ -120,22 +120,9 @@ class Test2 : IBase, IOther {
   }
 
   private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
-  override val Byte.z1: Int
-    override get(): Int {
-      return (<this>.#$$delegate_1, <this>).<get-z1>()
-    }
-
   override val x: String
     override get(): String {
       return <this>.#$$delegate_1.<get-x>()
-    }
-
-  override var Byte.z2: Int
-    override get(): Int {
-      return (<this>.#$$delegate_1, <this>).<get-z2>()
-    }
-    override set(<set-?>: Int) {
-      (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
     }
 
   override var y: Int
@@ -146,5 +133,17 @@ class Test2 : IBase, IOther {
       <this>.#$$delegate_1.<set-y>(<set-?> = <set-?>)
     }
 
-}
+  override val Byte.z1: Int
+    override get(): Int {
+      return (<this>.#$$delegate_1, <this>).<get-z1>()
+    }
 
+  override var Byte.z2: Int
+    override get(): Int {
+      return (<this>.#$$delegate_1, <this>).<get-z2>()
+    }
+    override set(<set-?>: Int) {
+      (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
+    }
+
+}

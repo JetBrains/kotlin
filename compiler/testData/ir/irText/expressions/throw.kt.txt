@@ -9,4 +9,3 @@ fun testImplicitCast(a: Any) {
     }
   }
 }
-

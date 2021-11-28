@@ -15,7 +15,7 @@ fun test_2(x: Int?) {
     } else {
         x
     }
-    y.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    y<!UNSAFE_CALL!>.<!>inc()
 }
 
 fun test_3(x: Int?) {

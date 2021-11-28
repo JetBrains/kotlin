@@ -1,6 +1,0 @@
-// Object: to be implemented
-actual object Object {
-    actual fun foo(): String {
-        TODO("Not yet implemented")
-    }
-}

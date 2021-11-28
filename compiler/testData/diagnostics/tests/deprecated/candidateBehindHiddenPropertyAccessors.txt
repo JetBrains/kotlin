@@ -1,0 +1,22 @@
+package
+
+public val v1: kotlin.String = ""
+public val v2: kotlin.String = ""
+public var v3: kotlin.String
+public var v4: kotlin.String
+public var v5: kotlin.String
+public var v6: kotlin.String
+public fun test(/*0*/ c: C): kotlin.Unit
+
+public final class C {
+    public constructor C()
+    @get:kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final val v1: kotlin.String
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final val v2: kotlin.String = ""
+    @get:kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final var v3: kotlin.String
+    @set:kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final var v4: kotlin.String
+    @get:kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") @set:kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final var v5: kotlin.String
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final var v6: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

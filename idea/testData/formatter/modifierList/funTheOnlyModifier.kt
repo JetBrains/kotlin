@@ -1,4 +1,0 @@
-private
-fun foo() {
-}
-

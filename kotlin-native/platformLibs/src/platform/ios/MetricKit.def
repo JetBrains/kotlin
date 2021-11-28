@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.MetricKit
+modules = MetricKit
+
+compilerOpts = -framework MetricKit
+linkerOpts = -framework MetricKit

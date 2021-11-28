@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +RestrictRetentionForExpressionAnnotations
 
 @Target(AnnotationTarget.EXPRESSION)
@@ -5,9 +6,9 @@
 annotation class TestRetentionSource
 
 @Target(AnnotationTarget.EXPRESSION)
-<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION!>@Retention(AnnotationRetention.BINARY)<!>
+<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR!>@Retention(AnnotationRetention.BINARY)<!>
 annotation class TestRetentionBinary
 
 @Target(AnnotationTarget.EXPRESSION)
-<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION!>@Retention(AnnotationRetention.RUNTIME)<!>
+<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR!>@Retention(AnnotationRetention.RUNTIME)<!>
 annotation class TestRetentionRuntime

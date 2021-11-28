@@ -1,5 +1,6 @@
+// WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
-//WITH_RUNTIME
 package test
 
 var res = ""
@@ -11,7 +12,6 @@ inline fun inlineFun(vararg s : () -> String = arrayOf({ "OK" })) {
 }
 
 // FILE: 2.kt
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun box(): String {

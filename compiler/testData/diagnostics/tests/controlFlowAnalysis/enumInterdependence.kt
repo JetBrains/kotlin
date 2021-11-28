@@ -1,6 +1,7 @@
 enum class A(val v: A) {
     A1(<!UNINITIALIZED_ENUM_ENTRY!>A2<!>),
-    A2(A1)
+    A2(A1),
+    A3(A3)
 }
 
 enum class D(val x: Int) {

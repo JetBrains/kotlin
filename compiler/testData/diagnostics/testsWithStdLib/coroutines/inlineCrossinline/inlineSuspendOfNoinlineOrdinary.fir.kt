@@ -20,7 +20,7 @@ suspend inline fun test(noinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE!>startCoroutine<!>(EmptyContinuation)
+    c.startCoroutine(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {
@@ -32,7 +32,7 @@ suspend fun calculate() = "OK"
 fun box() {
     builder {
         test {
-            calculate()
+            <!NON_LOCAL_SUSPENSION_POINT!>calculate<!>()
         }
     }
 }

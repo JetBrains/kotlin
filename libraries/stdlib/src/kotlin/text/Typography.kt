@@ -32,9 +32,11 @@ public object Typography {
     /** The character &#xA9; */
     public const val copyright: Char = '\u00A9'
     /** The character &#xAB; */
-    public const val leftGuillemete: Char = '\u00AB'
+    @SinceKotlin("1.6")
+    public const val leftGuillemet: Char = '\u00AB'
     /** The character &#xBB; */
-    public const val rightGuillemete: Char = '\u00BB'
+    @SinceKotlin("1.6")
+    public const val rightGuillemet: Char = '\u00BB'
     /** The character &#xAE; */
     public const val registered: Char = '\u00AE'
     /** The character &#xB0; */
@@ -87,4 +89,14 @@ public object Typography {
     public const val lessOrEqual: Char = '\u2264'
     /** The character &#x2265; */
     public const val greaterOrEqual: Char = '\u2265'
+
+    /** The character &#xAB; */
+    @Deprecated("This constant has a typo in the name. Use leftGuillemet instead.", ReplaceWith("Typography.leftGuillemet"))
+    @DeprecatedSinceKotlin("1.6")
+    public const val leftGuillemete: Char = '\u00AB'
+
+    /** The character &#xBB; */
+    @Deprecated("This constant has a typo in the name. Use rightGuillemet instead.", ReplaceWith("Typography.rightGuillemet"))
+    @DeprecatedSinceKotlin("1.6")
+    public const val rightGuillemete: Char = '\u00BB'
 }

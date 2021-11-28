@@ -27,6 +27,6 @@ fun foo() {
     r.remAssign(1)
 
     val m = JustMod
-    <!UNRESOLVED_REFERENCE!>m %= 1<!>
+    m <!UNRESOLVED_REFERENCE!>%=<!> 1
     m.modAssign(1)
 }

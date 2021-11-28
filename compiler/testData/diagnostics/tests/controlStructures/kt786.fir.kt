@@ -6,10 +6,10 @@ fun foo() : Int {
     var z = 0
     when(d) {
         5, 3 -> z++
-        else -> { z = -1000 }
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> { z = -1000 }
         return z -> 34
     }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 //test unreachable code
 fun fff(): Int {

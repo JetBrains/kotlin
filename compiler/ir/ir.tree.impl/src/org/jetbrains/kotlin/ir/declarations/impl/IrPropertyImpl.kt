@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -41,8 +42,6 @@ abstract class IrPropertyCommonImpl(
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -52,6 +51,8 @@ abstract class IrPropertyCommonImpl(
     override var getter: IrSimpleFunction? = null
 
     override var setter: IrSimpleFunction? = null
+
+    override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
 
     override var metadata: MetadataSource? = null
 
@@ -74,6 +75,7 @@ class IrPropertyImpl(
     isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
     containerSource
@@ -100,6 +102,7 @@ class IrFakeOverridePropertyImpl(
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
     containerSource = null,
@@ -114,14 +117,16 @@ class IrFakeOverridePropertyImpl(
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor
-        get() = _symbol?.descriptor ?: WrappedPropertyDescriptor()
+        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun acquireSymbol(symbol: IrPropertySymbol): IrProperty {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
         symbol.bind(this)
-        (symbol.descriptor as? WrappedPropertyDescriptor)?.bind(this)
         return this
     }
+
+    override val isBound: Boolean
+        get() = _symbol != null
 }

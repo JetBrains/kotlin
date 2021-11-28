@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.ir.builders
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -57,16 +54,14 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         nameHint: String? = null,
         isMutable: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+        startOffset: Int,
+        endOffset: Int
     ): IrVariable {
         val name = Name.identifier(getNameForTemporary(nameHint))
-        val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(
-            startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), name,
+            startOffset, endOffset, origin, IrVariableSymbolImpl(), name,
             irType, isMutable, isConst = false, isLateinit = false
         ).apply {
-            descriptor.bind(this)
             parent = getLocalDeclarationParent()
         }
     }

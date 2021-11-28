@@ -1,0 +1,249 @@
+digraph smartcastInByClause_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+
+    subgraph cluster_1 {
+        color=red
+        3 [label="Enter property" style="filled" fillcolor=red];
+        4 [label="Access variable R|<local>/path|"];
+        5 [label="Exit property" style="filled" fillcolor=red];
+    }
+    3 -> {4};
+    4 -> {5};
+    5 -> {11} [color=green];
+
+    subgraph cluster_2 {
+        color=red
+        6 [label="Enter property" style="filled" fillcolor=red];
+        7 [label="Access variable R|<local>/index|"];
+        8 [label="Exit property" style="filled" fillcolor=red];
+    }
+    6 -> {7};
+    7 -> {8};
+    8 -> {12} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        9 [label="Enter class A" style="filled" fillcolor=red];
+        10 [label="Part of class initialization"];
+        11 [label="Part of class initialization"];
+        12 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    9 -> {10} [color=green];
+    10 -> {11} [style=dotted];
+    10 -> {3} [color=green];
+    10 -> {3} [style=dashed];
+    11 -> {12} [style=dotted];
+    11 -> {6} [color=green];
+    11 -> {6} [style=dashed];
+
+    subgraph cluster_4 {
+        color=red
+        13 [label="Enter class Base" style="filled" fillcolor=red];
+        14 [label="Exit class Base" style="filled" fillcolor=red];
+    }
+    13 -> {14} [color=green];
+
+    subgraph cluster_5 {
+        color=red
+        15 [label="Enter function <init>" style="filled" fillcolor=red];
+        16 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        17 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    15 -> {16};
+    16 -> {17};
+
+    subgraph cluster_6 {
+        color=red
+        18 [label="Enter property" style="filled" fillcolor=red];
+        19 [label="Access variable R|<local>/index|"];
+        20 [label="Exit property" style="filled" fillcolor=red];
+    }
+    18 -> {19};
+    19 -> {20};
+    20 -> {23} [color=green];
+
+    subgraph cluster_7 {
+        color=red
+        21 [label="Enter class Derived" style="filled" fillcolor=red];
+        22 [label="Part of class initialization"];
+        23 [label="Exit class Derived" style="filled" fillcolor=red];
+    }
+    21 -> {22} [color=green];
+    22 -> {23} [style=dotted];
+    22 -> {18} [color=green];
+    22 -> {18} [style=dashed];
+
+    subgraph cluster_8 {
+        color=red
+        24 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            25 [label="Enter block"];
+            26 [label="Access variable R|<local>/a|"];
+            27 [label="Enter safe call"];
+            28 [label="Access variable R|/A.path|"];
+            29 [label="Exit safe call"];
+            30 [label="Exit lhs of ?:"];
+            31 [label="Enter rhs of ?:"];
+            32 [label="Const: Null(null)"];
+            33 [label="Jump: ^test Null(null)"];
+            34 [label="Stub" style="filled" fillcolor=gray];
+            35 [label="Lhs of ?: is not null"];
+            36 [label="Exit ?:"];
+            37 [label="Variable declaration: lval path: R|kotlin/String|"];
+            38 [label="Access variable R|<local>/a|"];
+            39 [label="Access variable R|/A.index|"];
+            40 [label="Function call: R|/takeInt|(...)"];
+            41 [label="Enter anonymous object"];
+            subgraph cluster_10 {
+                color=blue
+                48 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                49 [label="Part of class initialization"];
+                50 [label="Part of class initialization"];
+                51 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+            }
+            42 [label="Exit anonymous object"];
+            43 [label="Exit anonymous object expression"];
+            44 [label="Jump: ^test object : R|Base| {
+    private constructor(): R|<anonymous>| {
+        super<R|kotlin/Any|>()
+    }
+
+    local final field <$$delegate_0>: R|Base| = R|/Derived.Derived|(R|<local>/a|.R|/A.index|)
+
+    public final val x: R|kotlin/Int| = R|<local>/a|.R|/A.index|
+        public get(): R|kotlin/Int|
+
+    public final fun foo(): R|kotlin/Unit| {
+        R|/takeInt|(R|<local>/a|.R|/A.index|)
+    }
+
+}
+"];
+            45 [label="Stub" style="filled" fillcolor=gray];
+            46 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        47 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    26 -> {29} [color=red];
+    26 -> {31} [color=green];
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {35 31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {47};
+    33 -> {34} [style=dotted];
+    34 -> {36} [style=dotted];
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    40 -> {52 55 60 64} [color=red];
+    41 -> {42} [color=red];
+    41 -> {48} [color=green];
+    41 -> {48} [style=dashed];
+    42 -> {43};
+    42 -> {52 64} [color=green];
+    42 -> {52 64} [style=dashed];
+    43 -> {44};
+    44 -> {47};
+    44 -> {45} [style=dotted];
+    45 -> {46} [style=dotted];
+    46 -> {47} [style=dotted];
+    48 -> {49} [color=green];
+    49 -> {50} [style=dotted];
+    49 -> {55} [color=green];
+    49 -> {55} [style=dashed];
+    50 -> {51} [style=dotted];
+    50 -> {60} [color=green];
+    50 -> {60} [style=dashed];
+    51 -> {42} [color=green];
+
+    subgraph cluster_11 {
+        color=red
+        52 [label="Enter function <init>" style="filled" fillcolor=red];
+        53 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        54 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    52 -> {53};
+    53 -> {54};
+
+    subgraph cluster_12 {
+        color=red
+        55 [label="Enter field" style="filled" fillcolor=red];
+        56 [label="Access variable R|<local>/a|"];
+        57 [label="Access variable R|/A.index|"];
+        58 [label="Function call: R|/Derived.Derived|(...)"];
+        59 [label="Exit field" style="filled" fillcolor=red];
+    }
+    55 -> {56};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+    59 -> {50} [color=green];
+
+    subgraph cluster_13 {
+        color=red
+        60 [label="Enter property" style="filled" fillcolor=red];
+        61 [label="Access variable R|<local>/a|"];
+        62 [label="Access variable R|/A.index|"];
+        63 [label="Exit property" style="filled" fillcolor=red];
+    }
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {51} [color=green];
+
+    subgraph cluster_14 {
+        color=red
+        64 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_15 {
+            color=blue
+            65 [label="Enter block"];
+            66 [label="Access variable R|<local>/a|"];
+            67 [label="Access variable R|/A.index|"];
+            68 [label="Function call: R|/takeInt|(...)"];
+            69 [label="Exit block"];
+        }
+        70 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {68};
+    68 -> {69};
+    69 -> {70};
+
+    subgraph cluster_16 {
+        color=red
+        71 [label="Enter function takeInt" style="filled" fillcolor=red];
+        subgraph cluster_17 {
+            color=blue
+            72 [label="Enter block"];
+            73 [label="Exit block"];
+        }
+        74 [label="Exit function takeInt" style="filled" fillcolor=red];
+    }
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+
+}

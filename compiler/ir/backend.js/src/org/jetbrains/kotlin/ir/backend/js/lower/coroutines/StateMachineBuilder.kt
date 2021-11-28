@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -77,7 +77,8 @@ class StateMachineBuilder(
     private val exStateSymbolSetter: IrSimpleFunction,
     private val stateSymbolSetter: IrSimpleFunction,
     private val thisSymbol: IrValueParameterSymbol,
-    private val suspendResult: IrVariableSymbol
+    private val getSuspendResultAsType: (IrType) -> IrExpression,
+    private val setSuspendResultValue: (IrExpression) -> IrStatement
 ) : IrElementVisitorVoid {
 
     private val loopMap = mutableMapOf<IrLoop, LoopBounds>()
@@ -270,7 +271,6 @@ class StateMachineBuilder(
     }
 
     private fun implicitCast(value: IrExpression, toType: IrType) = JsIrBuilder.buildImplicitCast(value, toType)
-    private fun reinterpretCast(value: IrExpression, toType: IrType) = JsIrBuilder.buildReinterpretCast(value, toType)
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
@@ -295,11 +295,11 @@ class StateMachineBuilder(
                 }
             }
 
-            addStatement(JsIrBuilder.buildSetVariable(suspendResult, reinterpretCast(result, anyN), unit))
+            addStatement(setSuspendResultValue(result))
 
-            val irReturn = JsIrBuilder.buildReturn(function, JsIrBuilder.buildGetValue(suspendResult), nothing)
+            val irReturn = JsIrBuilder.buildReturn(function, getSuspendResultAsType(anyN), nothing)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(suspendResult))
+                putValueArgument(0, getSuspendResultAsType(anyN))
                 putValueArgument(1, JsIrBuilder.buildCall(context.ir.symbols.coroutineSuspendedGetter))
             }
 
@@ -318,18 +318,17 @@ class StateMachineBuilder(
             unboxState?.let { buildUnboxingState(it, continueState, expectedType) }
 
             updateState(continueState)
-            val functionReturnType = expression.symbol.owner.returnType
-            addStatement(reinterpretCast(JsIrBuilder.buildGetValue(suspendResult), functionReturnType))
+            addStatement(getSuspendResultAsType(expression.type))
         }
     }
 
     private fun buildUnboxingState(unboxState: SuspendState, continueState: SuspendState, expectedType: IrType) {
         unboxState.successors += continueState
         updateState(unboxState)
-        val result = JsIrBuilder.buildGetValue(suspendResult)
+        val result = getSuspendResultAsType(anyN)
         val tmp = JsIrBuilder.buildVar(expectedType, function.owner, name = "unboxed", initializer = result)
         addStatement(tmp)
-        addStatement(JsIrBuilder.buildSetVariable(suspendResult, reinterpretCast(JsIrBuilder.buildGetValue(tmp.symbol), anyN), anyN))
+        addStatement(setSuspendResultValue(JsIrBuilder.buildGetValue(tmp.symbol)))
 
         doDispatch(continueState)
     }
@@ -486,6 +485,44 @@ class StateMachineBuilder(
         if (expression !in suspendableNodes) return addStatement(expression)
         expression.acceptChildrenVoid(this)
         transformLastExpression { expression.apply { argument = it } }
+    }
+
+    override fun visitVararg(expression: IrVararg) {
+        if (expression !in suspendableNodes) return addStatement(expression)
+        val spreadIndices = mutableSetOf<Int>()
+        val arguments: Array<IrExpression?> = expression.elements
+            .mapIndexed { index, item ->
+                if (item is IrSpreadElement) {
+                    spreadIndices.add(index)
+                    item.expression
+                } else {
+                    item as IrExpression
+                }
+            }
+            .toTypedArray()
+        val newArgs = transformArguments(arguments)
+            .mapIndexed { index, item ->
+                requireNotNull(item)
+                if (index in spreadIndices) {
+                    IrSpreadElementImpl(
+                        item.startOffset,
+                        item.endOffset,
+                        item
+                    )
+                } else {
+                    item
+                }
+            }
+            .toList()
+        addStatement(
+            IrVarargImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                expression.varargElementType,
+                newArgs
+            )
+        )
     }
 
     private fun transformArguments(arguments: Array<IrExpression?>): Array<IrExpression?> {

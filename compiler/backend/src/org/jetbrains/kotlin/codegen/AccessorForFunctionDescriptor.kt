@@ -50,7 +50,7 @@ class AccessorForFunctionDescriptor(
         if (calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) {
             userDataMap = LinkedHashMap<CallableDescriptor.UserDataKey<*>, Any>()
             userDataMap[INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION] =
-                    calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
+                calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
         }
     }
 

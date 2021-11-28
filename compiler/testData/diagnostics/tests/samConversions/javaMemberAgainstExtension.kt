@@ -28,3 +28,4 @@ fun <T> test2(r: Runnable, o: Observer<T>, l: LiveData<T>) {
     val c = l.observe({}) {} // conversion for all arguments
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
 }
+

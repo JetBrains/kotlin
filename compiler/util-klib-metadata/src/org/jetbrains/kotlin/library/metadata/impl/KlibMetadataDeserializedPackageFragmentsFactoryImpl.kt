@@ -6,12 +6,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataCachedPackageFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataDeserializedPackageFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
-import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.exportForwardDeclarations
+import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 // TODO decouple and move interop-specific logic back to Kotlin/Native.
 open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDeserializedPackageFragmentsFactory {
@@ -34,8 +31,18 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
     ) = packageFragmentNames.flatMap {
         val fqName = FqName(it)
         val parts = library.packageMetadataParts(fqName.asString())
+        val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
         parts.map { partName ->
-            KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
+            if (isBuiltInModule)
+                BuiltInKlibMetadataDeserializedPackageFragment(
+                    fqName,
+                    library,
+                    packageAccessedHandler,
+                    storageManager,
+                    moduleDescriptor,
+                    partName
+                ) else
+                KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
         }
     }
 
@@ -125,7 +132,7 @@ class ClassifierAliasingPackageFragmentDescriptor(
     private val memberScope = object : MemberScopeImpl() {
 
         override fun getContributedClassifier(name: Name, location: LookupLocation) =
-            targets.firstNotNullResult {
+            targets.firstNotNullOfOrNull {
                 if (it.hasTopLevelClassifier(name)) {
                     it.getMemberScope().getContributedClassifier(name, location)
                 } else {

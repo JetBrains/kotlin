@@ -20,7 +20,7 @@ import p1.*
 import p2.*
 
 fun test1(): Int {
-    val r = <!AMBIGUITY!>foo<!>(42)
+    val r = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(42)
     return r
 }
 
@@ -30,5 +30,5 @@ import p2.*
 
 fun test2(): Int {
     val r = foo(42)
-    return r
+    return <!RETURN_TYPE_MISMATCH!>r<!>
 }

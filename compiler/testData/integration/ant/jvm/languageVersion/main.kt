@@ -1,7 +1,1 @@
-fun test() {
-    while (true) {
-        when {
-            true -> break
-        }
-    }
-}
+interface A : suspend () -> Unit

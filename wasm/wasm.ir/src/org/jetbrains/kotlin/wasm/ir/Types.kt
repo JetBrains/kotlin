@@ -15,13 +15,12 @@ sealed class WasmType(
 // TODO: Remove this type.
 object WasmUnreachableType : WasmType("unreachable", -0x40)
 object WasmI32 : WasmType("i32", -0x1)
-object WasmI1 : WasmType("i32", -0x1)
 object WasmI64 : WasmType("i64", -0x2)
 object WasmF32 : WasmType("f32", -0x3)
 object WasmF64 : WasmType("f64", -0x4)
 object WasmV128 : WasmType("v128", -0x5)
 object WasmI8 : WasmType("i8", -0x6)
-object WasmI16 : WasmType("i8", -0x7)
+object WasmI16 : WasmType("i16", -0x7)
 object WasmFuncRef : WasmType("funcref", -0x10)
 object WasmExternRef : WasmType("externref", -0x11)
 object WasmAnyRef : WasmType("anyref", -0x12)
@@ -32,10 +31,10 @@ class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x15)
 
 @Suppress("unused")
 object WasmI31Ref : WasmType("i31ref", -0x16)
-class WasmRtt(val depth: Int, val heapType: WasmHeapType) : WasmType("rtt", -0x17)
+class WasmRtt(val depth: Int, val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmType("rtt", -0x17)
 
 @Suppress("unused")
-object WasmExnRef : WasmType("exnref", -0x18)
+object WasmDataRef : WasmType("dataref", -0x19)
 
 sealed class WasmHeapType {
     class Type(val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmHeapType() {
@@ -51,6 +50,8 @@ sealed class WasmHeapType {
 
         @Suppress("unused")
         object ExnH : Simple("exn", -0x18)
+
+        object Data : Simple("data", -0x19)
 
         override fun toString(): String {
             return "Simple:$name(${code.toString(16)})"

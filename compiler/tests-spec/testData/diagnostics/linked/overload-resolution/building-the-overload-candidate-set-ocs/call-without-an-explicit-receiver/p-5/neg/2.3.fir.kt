@@ -2,21 +2,21 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE
 // SKIP_TXT
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 import testsCase1.*
 
 public fun <T> emptyArray(): Array<T> = TODO()
 fun <T> Case1.emptyArray(): Array<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackageCase1Explicit
 import testsCase1.*
 
 fun <T> Case1.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libPackageCase1ExplicitDuplicate
 import testsCase1.*
 
@@ -40,6 +40,6 @@ import libPackageCase1ExplicitDuplicate.emptyArray
 class Case1(){
 
     fun case1() {
-        <!AMBIGUITY!>emptyArray<!><Int>()
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>emptyArray<!><Int>()
     }
 }

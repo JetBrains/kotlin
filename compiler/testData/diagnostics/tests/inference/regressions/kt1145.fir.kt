@@ -8,10 +8,10 @@ import checkSubtype
 
 fun test(numbers: Iterable<Int>) {
     val s = numbers.map{it.toString()}.fold(""){it, it2 -> it + it2}
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(s)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
 
 //from library
-fun <T, R> Iterable<T>.map(transform : (T) -> R) : List<R> {}
+fun <T, R> Iterable<T>.map(transform : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {}
+fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

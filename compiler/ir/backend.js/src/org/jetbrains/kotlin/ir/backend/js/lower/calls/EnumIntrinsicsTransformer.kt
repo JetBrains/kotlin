@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -27,7 +28,10 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         if (!enum.isEnumClass) return call
         val staticMethod = enum.findDeclaration(staticMethodPredicate)
         if (staticMethod == null || !staticMethod.isStaticMethodOfClass)
-            throw IllegalStateException("Enum class should have static method for ${call.symbol.owner.name}")
+            compilationException(
+                "Enum class should have static method for ${call.symbol.owner.name}",
+                call
+            )
 
         return irCall(call, staticMethod.symbol)
     }

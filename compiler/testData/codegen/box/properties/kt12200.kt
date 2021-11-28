@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-//WITH_RUNTIME
+// WITH_STDLIB
 
 class ThingTemplate {
     val prop = 0

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
@@ -19,6 +18,6 @@ fun <K, V> B<K>.star(p: KProperty1<*, V>): B<V> = TODO()
 fun <R : A> B<R>.test(){
     foo(A::bla)
     bar(A::bla)
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>baz<!>(<!NI;TYPE_MISMATCH!>A::bla<!>)
+    baz(<!TYPE_MISMATCH!>A::bla<!>)
     star(A::bla)
 }

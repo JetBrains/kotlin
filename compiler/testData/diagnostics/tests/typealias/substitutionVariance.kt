@@ -7,17 +7,17 @@ class Inv<T>
 typealias In1<T> = In<T>
 typealias In2<T> = In<<!REDUNDANT_PROJECTION!>in<!> T>
 typealias In3<T> = In<<!CONFLICTING_PROJECTION!>out<!> T>
-typealias In4<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = In<*>
+typealias In4<T> = In<*>
 
 typealias Out1<T> = Out<T>
 typealias Out2<T> = Out<<!CONFLICTING_PROJECTION!>in<!> T>
 typealias Out3<T> = Out<<!REDUNDANT_PROJECTION!>out<!> T>
-typealias Out4<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = Out<*>
+typealias Out4<T> = Out<*>
 
 typealias Inv1<T> = Inv<T>
 typealias Inv2<T> = Inv<in T>
 typealias Inv3<T> = Inv<out T>
-typealias Inv4<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = Inv<*>
+typealias Inv4<T> = Inv<*>
 
 val inv1: Inv1<Int> = Inv<Int>()
 
@@ -65,3 +65,6 @@ fun invOut_Inv(x: Inv3<Int>) = x
 fun invOut_In(x: <!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>Inv3<in Int><!>) = x
 fun invOut_Out(x: Inv3<out Int>) = x
 fun invOut_Star(x: Inv3<*>) = x
+
+fun nested_conflicting_type_argument(x: In<Out<<!CONFLICTING_PROJECTION!>in<!> Int>>) = x
+fun nested_redundant_type_argument(x: In<Out<<!REDUNDANT_PROJECTION!>out<!> Int>>) = x

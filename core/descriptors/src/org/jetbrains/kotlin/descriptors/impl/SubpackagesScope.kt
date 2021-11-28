@@ -66,4 +66,6 @@ open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, priv
         p.popIndent()
         p.println("}")
     }
+
+    override fun toString(): String = "subpackages of $fqName from $moduleDescriptor"
 }

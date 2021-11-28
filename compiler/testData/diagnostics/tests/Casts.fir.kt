@@ -7,7 +7,7 @@ fun test() : Unit {
   checkSubtype<Int?>(x)
   checkSubtype<Int>(y)
   checkSubtype<Int>(x as Int)
-  checkSubtype<Int>(y as Int)
+  checkSubtype<Int>(y <!USELESS_CAST!>as Int<!>)
   checkSubtype<Int?>(x as Int?)
   checkSubtype<Int?>(y as Int?)
   checkSubtype<Int?>(x as? Int)
@@ -18,6 +18,6 @@ fun test() : Unit {
   val s = "" as Any
   ("" as String?)?.length
   (data@("" as String?))?.length
-  (@MustBeDocumented()( "" as String?))?.length
+  (<!WRONG_ANNOTATION_TARGET!>@MustBeDocumented()<!>( "" as String?))?.length
   Unit
 }

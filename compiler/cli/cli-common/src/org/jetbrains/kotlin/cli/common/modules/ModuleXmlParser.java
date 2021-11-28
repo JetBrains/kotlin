@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.modules;
 
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +30,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -59,18 +61,12 @@ public class ModuleXmlParser {
             @NotNull String xmlFile,
             @NotNull MessageCollector messageCollector
     ) {
-        FileInputStream stream = null;
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            stream = new FileInputStream(xmlFile);
+        try (FileInputStream stream = new FileInputStream(xmlFile)) {
             return new ModuleXmlParser(messageCollector).parse(new BufferedInputStream(stream));
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             MessageCollectorUtil.reportException(messageCollector, e);
             return ModuleChunk.EMPTY;
-        }
-        finally {
-            StreamUtil.closeStream(stream);
         }
     }
 

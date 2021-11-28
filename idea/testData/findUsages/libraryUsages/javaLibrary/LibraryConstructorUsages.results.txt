@@ -1,1 +1,0 @@
-New instance creation 11 Foo(1)

@@ -58,15 +58,6 @@ public expect fun Float.toRawBits(): Int
 public expect fun Float.Companion.fromBits(bits: Int): Float
 
 
-// From concurrent.kt
-
-@Deprecated("Synchronization on any object is not supported on every platform and will be removed from the common standard library soon.", level = DeprecationLevel.ERROR)
-@Suppress("NO_ACTUAL_FOR_EXPECT")
-public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
-
-
-
-
 // from lazy.kt
 
 public expect fun <T> lazy(initializer: () -> T): Lazy<T>

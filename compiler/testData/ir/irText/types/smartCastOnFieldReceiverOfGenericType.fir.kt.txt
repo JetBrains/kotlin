@@ -8,3 +8,4 @@ fun testGetField(a: Any): String {
   a as JCell<String> /*~> Unit */
   return a /*as JCell<String> */.#value /*!! String */
 }
+

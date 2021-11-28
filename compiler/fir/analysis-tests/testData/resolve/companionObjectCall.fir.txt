@@ -1,0 +1,79 @@
+FILE: companionObjectCall.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun case1(a: R|A?|): R|kotlin/Unit| {
+        lval test: R|kotlin/String?| = R|<local>/a|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/String|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            Q|Case1|.R|/Case1.Companion.invoke|(R|<local>/it|)
+            Q|Case1|.R|/Case1.Companion.invoke|(R|<local>/it|)
+            ^ Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
+        }
+        ) }
+        Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
+        Q|Case1|.R|/Case1.Companion.invoke|(a = R|/A.A|())
+    }
+    public final class Case1 : R|kotlin/Any| {
+        private constructor(a: R|kotlin/String|): R|Case1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Case1.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(a: R|A|): R|kotlin/String| {
+                ^invoke String()
+            }
+
+        }
+
+    }
+    public final fun case2(a: R|A|): R|kotlin/Unit| {
+        Q|Case2|.R|/Case2.Companion.invoke|(R|<local>/a|)
+        Q|Case2|.R|/Case2.Companion.invoke|(a = R|<local>/a|)
+    }
+    public final class Case2 : R|kotlin/Any| {
+        public constructor(): R|Case2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Case2.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(a: R|A|): R|kotlin/String| {
+                ^invoke String()
+            }
+
+        }
+
+    }
+    public final fun case3(a: R|A|): R|kotlin/Unit| {
+        Q|Case3.Companion|.R|/Case3.Companion.invoke|(R|<local>/a|)
+        Q|Case3.Companion|.R|/Case3.Companion.invoke|(parameterA = R|<local>/a|)
+    }
+    public final class Case3 : R|kotlin/Any| {
+        public constructor(): R|Case3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Case3.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(parameterA: R|A|): R|kotlin/String| {
+                ^invoke String()
+            }
+
+        }
+
+    }

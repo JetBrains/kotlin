@@ -22,18 +22,20 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrErrorDeclarationImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val descriptor: DeclarationDescriptor
+    private val _descriptor: DeclarationDescriptor?,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrErrorDeclaration() {
-    override var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+    override val descriptor: DeclarationDescriptor
+        get() = _descriptor ?: this.toIrBasedDescriptor()
 
-    override val factory: IrFactory
-        get() = IrFactoryImpl
+    override var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

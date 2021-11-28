@@ -1,4 +1,0 @@
-// MOVE: right
-@A(2, <caret>1)
-fun foo() {
-}

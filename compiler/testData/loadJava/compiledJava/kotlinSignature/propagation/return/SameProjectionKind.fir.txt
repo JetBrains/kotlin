@@ -1,2 +1,12 @@
 public abstract interface SameProjectionKind : R|kotlin/Any| {
+    public abstract interface Sub : R|test/SameProjectionKind.Super| {
+        public abstract fun foo(): R|ft<kotlin/collections/MutableCollection<out ft<kotlin/Number, kotlin/Number?>>, kotlin/collections/Collection<out ft<kotlin/Number, kotlin/Number?>>?>|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<kotlin/collections/MutableCollection<out ft<kotlin/Number, kotlin/Number?>>, kotlin/collections/Collection<out ft<kotlin/Number, kotlin/Number?>>?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

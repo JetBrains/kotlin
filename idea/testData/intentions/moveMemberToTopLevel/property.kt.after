@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-val foo: Int = 1

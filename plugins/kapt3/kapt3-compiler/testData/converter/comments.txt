@@ -69,6 +69,25 @@ public final class Test {
         super();
     }
 
+    /**
+     * method().
+     */
+    public final void method() {
+    }
+
+    /**
+     * method(int).
+     */
+    public final void method(int a) {
+    }
+
+    /**
+     * method(String).
+     */
+    public final void method(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getProp2() {
         return null;
@@ -88,25 +107,6 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getProp3() {
         return null;
-    }
-
-    /**
-     * method().
-     */
-    public final void method() {
-    }
-
-    /**
-     * method(int).
-     */
-    public final void method(int a) {
-    }
-
-    /**
-     * method(String).
-     */
-    public final void method(@org.jetbrains.annotations.NotNull()
-    java.lang.String a) {
     }
 
     /**

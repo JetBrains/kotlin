@@ -1,8 +1,8 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR
+// WITH_STDLIB
 
-inline class IC(val i: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IC(val i: Int) {
     init {
         counter += i
     }

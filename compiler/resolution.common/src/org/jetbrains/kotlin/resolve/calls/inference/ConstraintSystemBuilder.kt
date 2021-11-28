@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.types.model.*
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
     fun registerVariable(variable: TypeVariableMarker)
     fun markPostponedVariable(variable: TypeVariableMarker)
+    fun markCouldBeResolvedWithUnrestrictedBuilderInference()
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
     fun removePostponedVariables()
 
@@ -45,6 +47,8 @@ interface ConstraintSystemOperation {
     fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker>
 
     fun addOtherSystem(otherSystem: ConstraintStorage)
+
+    val errors: List<ConstraintSystemError>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {

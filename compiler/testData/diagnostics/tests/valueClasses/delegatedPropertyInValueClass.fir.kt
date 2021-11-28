@@ -1,3 +1,4 @@
+// !SKIP_JAVAC
 // !LANGUAGE: +InlineClasses
 
 package kotlin.jvm
@@ -25,9 +26,9 @@ object VarObject {
 
 @JvmInline
 value class Z(val data: Int) {
-    val testVal by Val()
-    var testVar by Var()
+    val testVal by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>Val()<!>
+    var testVar by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>Var()<!>
 
-    val testValBySingleton by ValObject
-    var testVarBySingleton by VarObject
+    val testValBySingleton by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>ValObject<!>
+    var testVarBySingleton by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>VarObject<!>
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -21,7 +22,9 @@ class DescriptorByIdSignatureFinder(
     private val lookupMode: LookupMode
 ) {
     init {
-        assert(lookupMode != LookupMode.MODULE_ONLY || moduleDescriptor is ModuleDescriptorImpl)
+        assert(lookupMode != LookupMode.MODULE_ONLY || moduleDescriptor is ModuleDescriptorImpl) {
+            "Incorrect lookup mode $lookupMode for $moduleDescriptor"
+        }
     }
 
     /**
@@ -42,9 +45,31 @@ class DescriptorByIdSignatureFinder(
     fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
         when (signature) {
             is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
-            is IdSignature.PublicSignature -> findDescriptorForPublicSignature(signature)
+            is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)
+            is IdSignature.CompositeSignature -> resolveCompositeSignature(signature)
             else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")
         }
+
+    private fun resolveCompositeSignature(signature: IdSignature.CompositeSignature): DeclarationDescriptor? {
+        val container = findDescriptorBySignature(signature.nearestPublicSig())
+        val inner = signature.inner
+        if (inner is IdSignature.LocalSignature) {
+
+            fun isTypeParameterSig(fqn: String): Boolean =
+                fqn == MangleConstant.TYPE_PARAMETER_MARKER_NAME || fqn == MangleConstant.TYPE_PARAMETER_MARKER_NAME_SETTER
+
+            if (isTypeParameterSig(inner.localFqn)) {
+                val tpIndex = inner.index()
+                if (container is CallableDescriptor) {
+                    return container.typeParameters[tpIndex]
+                }
+                if (container is ClassifierDescriptorWithTypeParameters) {
+                    return container.declaredTypeParameters[tpIndex]
+                }
+            }
+        }
+        return container
+    }
 
     private fun findDescriptorForAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
         val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor
@@ -89,7 +114,7 @@ class DescriptorByIdSignatureFinder(
         }
     }
 
-    private fun findDescriptorForPublicSignature(signature: IdSignature.PublicSignature): DeclarationDescriptor? {
+    private fun findDescriptorForPublicSignature(signature: IdSignature.CommonSignature): DeclarationDescriptor? {
         val nameSegments = signature.nameSegments
         val toplevelDescriptors = performLookup(nameSegments, signature.packageFqName())
             .ifEmpty { return null }
@@ -117,8 +142,8 @@ class DescriptorByIdSignatureFinder(
                             if (isConstructorName(current)) addAll(classDescriptor.constructors)
                             addAll(memberScope.getContributedFunctions(current, NoLookupLocation.FROM_BACKEND))
                             addAll(memberScope.getContributedVariables(current, NoLookupLocation.FROM_BACKEND))
-                            addAll(classDescriptor.staticScope.getContributedDescriptors { it == current })
                         }
+                        addAll(classDescriptor.staticScope.getContributedDescriptors().filter { it.name == current })
                     }
                 }
             }
@@ -140,7 +165,7 @@ class DescriptorByIdSignatureFinder(
                 // We don't compute id for typealiases and classes.
                 candidate is ClassDescriptor || candidate is TypeAliasDescriptor
             } else {
-                val candidateHash = with(mangler) { candidate.signatureMangle }
+                val candidateHash = with(mangler) { candidate.signatureMangle(compatibleMode = false) }
                 candidateHash == id
             }
         }

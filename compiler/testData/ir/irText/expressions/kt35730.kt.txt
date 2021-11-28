@@ -17,4 +17,3 @@ fun test() {
   Derived.foo()
   Derived.foo()
 }
-

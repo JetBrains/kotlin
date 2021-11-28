@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
@@ -23,8 +22,8 @@ fun test1() {
 fun <T> test2() {
     bar<Wrapper, Int, String>(Wrapper::fooReturnString).checkType { _<Tripple<Wrapper, Int, String>>() }
     bar<Wrapper, T, String>(Wrapper::fooReturnString).checkType { _<Tripple<Wrapper, T, String>>() }
-    bar<Wrapper, T, T>(<!NI;TYPE_MISMATCH!>Wrapper::<!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>fooReturnString<!><!>)
-    bar<Wrapper, Int, Int>(<!NI;TYPE_MISMATCH!>Wrapper::<!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>fooReturnString<!><!>)
+    bar<Wrapper, T, T>(<!TYPE_MISMATCH!>Wrapper::fooReturnString<!>)
+    bar<Wrapper, Int, Int>(<!TYPE_MISMATCH!>Wrapper::fooReturnString<!>)
 
     bar<Wrapper, Int, T>(Wrapper::fooTakeInt).checkType { _<Tripple<Wrapper, Int, T>>() }
     bar<Wrapper, Int, String>(Wrapper::fooTakeInt).checkType { _<Tripple<Wrapper, Int, String>>() }

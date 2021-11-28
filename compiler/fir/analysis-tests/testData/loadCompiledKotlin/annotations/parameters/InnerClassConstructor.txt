@@ -11,7 +11,7 @@ public final class Outer : R|kotlin/Any| {
         public final val y: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public constructor(@R|test/A|(s = String(inner)) y: R|kotlin/String|): R|test/Outer.Inner|
+        public test/Outer.constructor(@R|test/A|(s = String(inner)) y: R|kotlin/String|): R|test/Outer.Inner|
 
     }
 

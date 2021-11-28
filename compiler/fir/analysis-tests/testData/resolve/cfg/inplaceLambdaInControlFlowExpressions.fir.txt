@@ -1,0 +1,36 @@
+FILE: inplaceLambdaInControlFlowExpressions.kt
+    public final fun <K> materialize(): R|K| {
+        ^materialize Null(null)!!
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval x: R|kotlin/String| = when () {
+            Boolean(true) ->  {
+                R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ R|/materialize|<R|kotlin/String|>()
+                }
+                )
+            }
+            else ->  {
+                String()
+            }
+        }
+
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval x: R|kotlin/String| = try {
+            R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ R|/materialize|<R|kotlin/String|>()
+            }
+            )
+        }
+        catch (e: R|kotlin/Exception|) {
+            String()
+        }
+
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval x: R|kotlin/String| = R|kotlin/run|<R|kotlin/String?|>(<L> = run@fun <anonymous>(): R|kotlin/String?| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/materialize|<R|kotlin/String?|>()
+        }
+        )!!
+    }

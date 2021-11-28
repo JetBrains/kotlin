@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: uint.kt
 

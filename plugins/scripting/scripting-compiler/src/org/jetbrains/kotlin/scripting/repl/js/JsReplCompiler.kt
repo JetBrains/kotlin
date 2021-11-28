@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,9 +19,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 class JsReplCompiler(private val environment: KotlinCoreEnvironment) : ReplCompiler {
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
-        return JsReplCompilationState(
+        return JsReplCompilerState(
             lock,
-            NameTables(emptyList()),
+            NameTables(emptyList(), mappedNames = mutableMapOf()),
             readLibrariesFromConfiguration(environment.configuration),
             ReplCodeAnalyzerBase.ResettableAnalyzerState(),
             SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
@@ -33,13 +33,13 @@ class JsReplCompiler(private val environment: KotlinCoreEnvironment) : ReplCompi
     }
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
-        val compilationState = state.asState(JsReplCompilationState::class.java)
+        val compilationState = state.asState(JsReplCompilerState::class.java)
         return JsCoreScriptingCompiler(
             environment,
             compilationState.nameTables,
             compilationState.symbolTable,
             compilationState.dependencies,
-            compilationState.replState
+            compilationState
         ).compile(codeLine)
     }
 }

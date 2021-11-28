@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
@@ -25,5 +25,5 @@ fun test(s: SelectorFor<State>): Double {
     val e = s { return p1 }
     e checkType { _<AbstractSelector<State, Nothing>>() }
 
-    <!OI;UNREACHABLE_CODE!>return<!> null!!
+    return null!!
 }

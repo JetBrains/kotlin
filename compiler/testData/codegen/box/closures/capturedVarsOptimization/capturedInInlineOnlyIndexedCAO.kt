@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Host(var value: String) {
     operator fun get(i: Int, j: Int, k: Int) = value

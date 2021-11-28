@@ -6,13 +6,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:resolve"))
-
-    /*
-     * We can't remove this dependency until we use
-     *   diagnostics framework from FE 1.0
-     */
-    implementation(project(":compiler:frontend"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi"))
 
     compileOnly(project(":kotlin-reflect-api"))
@@ -35,6 +32,11 @@ dependencies {
 
 val generationRoot = projectDir.resolve("gen")
 
+// Add modules for js and native checkers here
+val platformGenerationRoots = listOf(
+    "checkers.jvm"
+).map { projectDir.resolve(it).resolve("gen") }
+
 val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
 
     val generatorRoot = "$projectDir/checkers-component-generator/src/"
@@ -44,9 +46,10 @@ val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
     }
 
     inputs.files(generatorConfigurationFiles)
-    outputs.dirs(generationRoot)
+    outputs.dirs(generationRoot, *platformGenerationRoots.toTypedArray())
 
-    args(generationRoot)
+    args(generationRoot, *platformGenerationRoots.toTypedArray())
+    workingDir = rootDir
     classpath = generatorClasspath
     main = "org.jetbrains.kotlin.fir.checkers.generator.MainKt"
     systemProperties["line.separator"] = "\n"

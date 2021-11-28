@@ -12,6 +12,10 @@ fun f1() {}
 @Anno2(i = intArrayOf(1))
 fun f2() {}
 
+@Anno1(s = arrayOf(elements = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>"foo"<!>))
+@Anno2(i = intArrayOf(elements = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>intArrayOf(1)<!>))
+fun f3() {}
+
 fun foo(vararg ints: Int) {}
 
 fun test() {

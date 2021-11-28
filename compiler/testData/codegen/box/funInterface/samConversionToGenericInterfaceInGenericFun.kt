@@ -1,3 +1,4 @@
+
 fun interface FunIFace<T, R> {
     fun call(ic: T): R
 }

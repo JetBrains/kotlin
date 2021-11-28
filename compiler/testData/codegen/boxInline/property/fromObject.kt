@@ -1,5 +1,5 @@
+// WITH_STDLIB
 // FILE: 1.kt
-// WITH_RUNTIME
 package test
 
 open class A(var result: String) {

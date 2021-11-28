@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: No annotations found on type argument
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 

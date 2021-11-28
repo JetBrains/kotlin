@@ -1,0 +1,12 @@
+package
+
+package test {
+    public val prop1: kotlin.Float = 1.0.toFloat()
+    public val prop2: kotlin.Float = 1.0.toFloat()
+    public val prop3: kotlin.Float = 0.1.toFloat()
+    public val prop4: kotlin.Float = 0.1.toFloat()
+    public val prop5: kotlin.Float = 1.0.toFloat()
+    public val prop6: kotlin.Float = 1.0.toFloat()
+    public val prop7: kotlin.Float = 0.1.toFloat()
+    public val prop8: kotlin.Float = 0.1.toFloat()
+}

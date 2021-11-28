@@ -26,5 +26,6 @@ data class IrTranslationResultValue(
     val strings: ByteArray,
     val declarations: ByteArray,
     val bodies: ByteArray,
-    val fqn: ByteArray
+    val fqn: ByteArray,
+    val debugInfo: ByteArray?
 )

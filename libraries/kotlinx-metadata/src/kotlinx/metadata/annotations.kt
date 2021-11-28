@@ -15,39 +15,53 @@ package kotlinx.metadata
  * @param arguments explicitly specified arguments to the annotation; does not include default values for annotation parameters
  *                  (specified in the annotation class declaration)
  */
-data class KmAnnotation(val className: ClassName, val arguments: Map<String, KmAnnotationArgument<*>>)
+data class KmAnnotation(val className: ClassName, val arguments: Map<String, KmAnnotationArgument>)
 
 /**
  * Represents an argument to the annotation.
- *
- * @param T the type of the value of this argument
  */
-sealed class KmAnnotationArgument<out T : Any> {
+sealed class KmAnnotationArgument {
     /**
-     * The value of this argument.
+     * A kind of annotation argument, whose value is directly accessible via [value].
+     * This is possible for annotation arguments of primitive types, unsigned types and strings.
+     *
+     * @param T the type of the value of this argument
      */
-    abstract val value: T
-
-    data class ByteValue(override val value: Byte) : KmAnnotationArgument<Byte>()
-    data class CharValue(override val value: Char) : KmAnnotationArgument<Char>()
-    data class ShortValue(override val value: Short) : KmAnnotationArgument<Short>()
-    data class IntValue(override val value: Int) : KmAnnotationArgument<Int>()
-    data class LongValue(override val value: Long) : KmAnnotationArgument<Long>()
-    data class FloatValue(override val value: Float) : KmAnnotationArgument<Float>()
-    data class DoubleValue(override val value: Double) : KmAnnotationArgument<Double>()
-    data class BooleanValue(override val value: Boolean) : KmAnnotationArgument<Boolean>()
-
-    data class UByteValue(override val value: Byte) : KmAnnotationArgument<Byte>()
-    data class UShortValue(override val value: Short) : KmAnnotationArgument<Short>()
-    data class UIntValue(override val value: Int) : KmAnnotationArgument<Int>()
-    data class ULongValue(override val value: Long) : KmAnnotationArgument<Long>()
-
-    data class StringValue(override val value: String) : KmAnnotationArgument<String>()
-    data class KClassValue(override val value: ClassName) : KmAnnotationArgument<ClassName>()
-    data class EnumValue(val enumClassName: ClassName, val enumEntryName: String) : KmAnnotationArgument<String>() {
-        override val value: String = "$enumClassName.$enumEntryName"
+    sealed class LiteralValue<out T : Any> : KmAnnotationArgument() {
+        /**
+         * The value of this argument.
+         */
+        abstract val value: T
     }
 
-    data class AnnotationValue(override val value: KmAnnotation) : KmAnnotationArgument<KmAnnotation>()
-    data class ArrayValue(override val value: List<KmAnnotationArgument<*>>) : KmAnnotationArgument<List<KmAnnotationArgument<*>>>()
+    data class ByteValue(override val value: Byte) : LiteralValue<Byte>()
+    data class CharValue(override val value: Char) : LiteralValue<Char>()
+    data class ShortValue(override val value: Short) : LiteralValue<Short>()
+    data class IntValue(override val value: Int) : LiteralValue<Int>()
+    data class LongValue(override val value: Long) : LiteralValue<Long>()
+    data class FloatValue(override val value: Float) : LiteralValue<Float>()
+    data class DoubleValue(override val value: Double) : LiteralValue<Double>()
+    data class BooleanValue(override val value: Boolean) : LiteralValue<Boolean>()
+
+    // TODO: remove @ExperimentalUnsignedTypes once bootstrap stdlib has stable unsigned types.
+    @ExperimentalUnsignedTypes
+    data class UByteValue(override val value: UByte) : LiteralValue<UByte>()
+
+    @ExperimentalUnsignedTypes
+    data class UShortValue(override val value: UShort) : LiteralValue<UShort>()
+
+    @ExperimentalUnsignedTypes
+    data class UIntValue(override val value: UInt) : LiteralValue<UInt>()
+
+    @ExperimentalUnsignedTypes
+    data class ULongValue(override val value: ULong) : LiteralValue<ULong>()
+
+    data class StringValue(override val value: String) : LiteralValue<String>()
+
+    data class KClassValue(val className: ClassName, val arrayDimensionCount: Int) : KmAnnotationArgument()
+
+    data class EnumValue(val enumClassName: ClassName, val enumEntryName: String) : KmAnnotationArgument()
+
+    data class AnnotationValue(val annotation: KmAnnotation) : KmAnnotationArgument()
+    data class ArrayValue(val elements: List<KmAnnotationArgument>) : KmAnnotationArgument()
 }

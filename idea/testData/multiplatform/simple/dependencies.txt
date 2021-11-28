@@ -1,8 +1,0 @@
-MODULE d1 { platform=[JVM, JS, Native]; root=d1 }
-MODULE d2 { platform=[JVM, JS, Native]; root=d2 }
-MODULE d3 { platform=[JVM]; root=d3 }
-MODULE d4 { platform=[JVM]; root=d4 }
-
-d2 -> d1 { kind=DEPENDS_ON }
-d3 -> d2 { kind=DEPENDS_ON }
-d4 -> d3 { kind=DEPENDS_ON }

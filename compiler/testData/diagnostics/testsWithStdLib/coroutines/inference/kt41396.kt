@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -EXPERIMENTAL_API_USAGE_ERROR -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// !DIAGNOSTICS: -OPT_IN_USAGE_ERROR -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 
 fun <T, R> Flow<T>.transformLatest(@BuilderInference transform: suspend FlowCollector<R>.(value: T) -> Unit) = null as Flow<R>
 

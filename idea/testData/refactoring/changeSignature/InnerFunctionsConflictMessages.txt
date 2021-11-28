@@ -1,3 +1,0 @@
-Duplicating local variable 'y'
-Duplicating parameter 'y'
-Function already exists: 'local final fun inner2(x: Int, y: Int): Any defined in outer'

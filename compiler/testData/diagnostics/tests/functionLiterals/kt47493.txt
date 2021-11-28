@@ -1,0 +1,5 @@
+package
+
+public fun box(): kotlin.String
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -15,47 +17,54 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import java.util.concurrent.Callable
 
+internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
 internal const val ALL_RUNTIME_METADATA_CONFIGURATION_NAME = "allSourceSetsRuntimeDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = PropertiesProvider(rootProject).enableGranularSourceSetsMetadata == true
+    get() = project.topLevelExtension is KotlinPm20ProjectExtension || with(PropertiesProvider(rootProject)) {
+        mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
+                hierarchicalStructureSupport ||
+                enableGranularSourceSetsMetadata == true
+    }
+
+internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
+    get() = project.topLevelExtension is KotlinPm20ProjectExtension || with(PropertiesProvider(rootProject)) {
+        when {
+            !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
+            else -> true
+        }
+    }
 
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
 
-class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
+class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<AbstractKotlinCompilation<*>, KotlinMetadataTarget>(
         createDefaultSourceSets = false,
-        createTestCompilation = false,
-        kotlinPluginVersion = kotlinPluginVersion
+        createTestCompilation = false
     ) {
     companion object {
         internal const val ALL_METADATA_JAR_NAME = "allMetadataJar"
 
         internal fun transformGranularMetadataTaskName(sourceSetName: String) =
             lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
-
-        internal fun dependsOnWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
-            sourceSet.dependsOn.toMutableSet().apply {
-                addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
-            }
     }
 
     override fun configureTarget(target: KotlinMetadataTarget) {
@@ -88,6 +97,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             target.project.configurations.getByName(target.apiElementsConfigurationName).run {
                 attributes.attribute(USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                attributes.attribute(CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
                 /** Note: to add this artifact here is enough to avoid duplicate artifacts in this configuration: the default artifact
                  * won't be added (later) if there's already an artifact in the configuration, see
                  * [KotlinOnlyTargetConfigurator.configureArchivesAndComponent] */
@@ -103,7 +113,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     override fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
         val project = compilation.target.project
 
-        /** See [createTransformedMetadataClasspath] and its usage. */
+        /** See [createMetadataDependencyTransformationClasspath] and its usage. */
         if (project.isKotlinGranularMetadataEnabled && compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME)
             compilation.compileDependencyFiles = project.files()
         else
@@ -112,25 +122,11 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun buildCompilationProcessor(compilation: AbstractKotlinCompilation<*>): KotlinCompilationProcessor<*> = when (compilation) {
         is KotlinCommonCompilation -> {
-            val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-            KotlinCommonSourceSetProcessor(compilation, tasksProvider, kotlinPluginVersion)
+            val tasksProvider = KotlinTasksProvider()
+            KotlinCommonSourceSetProcessor(compilation, tasksProvider)
         }
         is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
         else -> error("unsupported compilation type ${compilation::class.qualifiedName}")
-    }
-
-    private inner class NativeSharedCompilationProcessor(
-        override val kotlinCompilation: KotlinSharedNativeCompilation
-    ) : KotlinCompilationProcessor<KotlinNativeCompile>(kotlinCompilation) {
-
-        private val nativeTargetConfigurator = KotlinNativeTargetConfigurator<KotlinNativeTarget>(kotlinPluginVersion)
-
-        override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
-            with(nativeTargetConfigurator) {
-                project.createKlibCompilationTask(kotlinCompilation)
-            }
-
-        override fun run() = Unit
     }
 
     override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
@@ -233,7 +229,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         val generateMetadata = project.createGenerateProjectStructureMetadataTask()
 
         allMetadataJar.configure {
-            it.from(generateMetadata.map { it.resultXmlFile }) { spec ->
+            it.from(generateMetadata.map { it.resultFile }) { spec ->
                 spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME }
             }
         }
@@ -259,7 +255,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
              * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
              */
             if (isSharedNativeCompilation) {
-                sourceSet.getSourceSetHierarchy().forEach { hierarchySourceSet ->
+                sourceSet.withAllDependsOnSourceSets().forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(
                         sourceSetDependencyConfigurationByScope(hierarchySourceSet, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
                     )
@@ -276,6 +272,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
                 usesPlatformOf(target)
                 attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
         }
     }
@@ -290,9 +287,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         val compilationName = sourceSet.name
 
-        val platformCompilations = compilationsBySourceSets(project).getValue(sourceSet)
+        val platformCompilations = compilationsBySourceSets(project)
+            .getValue(sourceSet).filter { it.target.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
 
-        val isNativeSourceSet = platformCompilations.all { compilation -> compilation.target is KotlinNativeTarget }
+        val isNativeSourceSet = isSharedNativeSourceSet(project, sourceSet)
 
         val compilationFactory: KotlinCompilationFactory<out AbstractKotlinCompilation<*>> = when {
             isNativeSourceSet -> KotlinSharedNativeCompilationFactory(
@@ -310,6 +308,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             if (!isHostSpecific) {
                 val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
                 allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
+                if (this is KotlinSharedNativeCompilation) {
+                    project.includeCommonizedCInteropMetadata(allMetadataJar, this)
+                }
             } else {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
@@ -331,10 +332,14 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             listOf(sourceSet)
         ) { }
 
-        compilation.compileDependencyFiles += createTransformedMetadataClasspath(
+        compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
             project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
             compilation
         )
+
+        if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
+            compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
+        }
     }
 
     private fun setupDependencyTransformationForSourceSet(
@@ -343,20 +348,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         isSourceSetPublished: Boolean
     ) {
         KotlinDependencyScope.values().forEach { scope ->
-            val allMetadataConfiguration = project.configurations.getByName(
-                when (scope) {
-                    KotlinDependencyScope.RUNTIME_ONLY_SCOPE -> ALL_RUNTIME_METADATA_CONFIGURATION_NAME
-                    else -> ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                }
-            )
-
             val granularMetadataTransformation = GranularMetadataTransformation(
                 project,
                 sourceSet,
                 listOf(scope),
-                allMetadataConfiguration,
                 lazy {
-                    dependsOnWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
+                    dependsOnClosureWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                         .map { checkNotNull(it.dependencyTransformations[scope]) }
                 }
             )
@@ -425,97 +422,34 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         }
     }
 
-    private fun createTransformedMetadataClasspath(
+    private fun createMetadataDependencyTransformationClasspath(
         fromFiles: Configuration,
         compilation: AbstractKotlinCompilation<*>
     ): FileCollection {
         val project = compilation.target.project
 
-        // Adjust metadata compilation to support source set hierarchies, i.e. use both the outputs of dependsOn source set compilation
-        // and their dependencies metadata transformed for compilation:
-        return project.files(
-            project.provider {
-                val sourceSet = compilation.defaultSourceSet
+        val sourceSet = compilation.defaultSourceSet
 
-                val transformationTaskHolders = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
-                    project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
-                }
-
-                val allResolutionsByComponentId: Map<ComponentIdentifier, List<MetadataDependencyResolution>> =
-                    mutableMapOf<ComponentIdentifier, MutableList<MetadataDependencyResolution>>().apply {
-                        transformationTaskHolders.forEach {
-                            val resolutions = it.get().metadataDependencyResolutions
-                            resolutions.forEach { resolution ->
-                                getOrPut(resolution.dependency.id) { mutableListOf() }.add(resolution)
-                            }
-                        }
-                    }
-
-                val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
-                    transformationTaskHolders.flatMap { it.get().filesByResolution.toList() }.toMap()
-
-                val dependsOnCompilationOutputs = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
-                    val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
-                    dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
-                }
-
-                val artifactView = fromFiles.incoming.artifactView { view ->
-                    view.componentFilter { id ->
-                        allResolutionsByComponentId[id].let { resolutions ->
-                            resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
-                        }
-                    }
-                }
-
-                mutableSetOf<Any /* File | FileCollection */>().apply {
-                    addAll(dependsOnCompilationOutputs)
-                    artifactView.artifacts.forEach { artifact ->
-                        val resolutions = allResolutionsByComponentId[artifact.id.componentIdentifier]
-                        if (resolutions == null) {
-                            add(artifact.file)
-                        } else {
-                            val chooseVisibleSourceSets =
-                                resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-
-                            if (chooseVisibleSourceSets.isNotEmpty()) {
-                                // Wrap the list into a FileCollection, as some older Gradle version failed to resolve the classpath
-                                add(project.files(chooseVisibleSourceSets.map { transformedFilesByResolution.getValue(it) }))
-                            } else if (resolutions.any { it is MetadataDependencyResolution.KeepOriginalDependency }) {
-                                add(artifact.file)
-                            } // else: all dependency transformations exclude this dependency as unrequested; don't add any files
-                        }
-                    }
-
-                    // Add a build dependency on the granular metadata transformations of the dependency source sets
-                    add(project.files().builtBy(transformationTaskHolders))
-                }
+        val dependsOnCompilationOutputs = lazy {
+            sourceSet.withAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
+                val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
+                dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
             }
-        )
-        /*
-        val transformedFilesByOriginalFiles = project.provider {
-            transformationTaskHolders
-                .flatMap { it.get().filesByOriginalFiles.toList() }
-                .groupBy({ it.first }, valueTransform = { it.second })
         }
 
-        val builtBySet = mutableSetOf<FileCollection>()
-        val resultFiles = project.files(Callable {
-            val originalFiles = fromFiles.toSet()
-            val filesToAdd = mutableSetOf<File>()
-            val filesToExclude = mutableSetOf<File>()
-
-            transformedFilesByOriginalFiles.get().forEach { (original, replacement) ->
-                if (original.all { it in originalFiles }) {
-                    builtBySet.addAll(replacement)
-                    filesToAdd += replacement.flatMap { it.files }
-                    filesToExclude += original
-                }
+        val resolvedMetadataFilesProviders = lazy {
+            val transformationTaskHolders = sourceSet.withAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
+                project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
             }
+            transformationTaskHolders.map { SourceSetResolvedMetadataProvider(it) }
+        }
 
-            originalFiles - filesToExclude + filesToAdd
-        })
-        return resultFiles.builtBy(builtBySet)
-         */
+        return createMetadataDependencyTransformationClasspath(
+            project,
+            fromFiles,
+            dependsOnCompilationOutputs,
+            resolvedMetadataFilesProviders
+        )
     }
 
     private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {
@@ -525,10 +459,8 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             isCanBeResolved = false
             usesPlatformOf(target)
 
-            attributes.attribute(
-                USAGE_ATTRIBUTE,
-                KotlinUsages.producerApiUsage(target)
-            ) // 'kotlin-api' usage
+            attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 
             val commonMainApiConfiguration = project.sourceSetDependencyConfigurationByScope(
                 project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME),
@@ -539,12 +471,96 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             project.artifacts.add(name, project.tasks.getByName(target.legacyArtifactsTaskName))
         }
     }
-
-    private fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
-        project.registerTask("generateProjectStructureMetadata") { task ->
-            task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
-        }
 }
+
+internal class NativeSharedCompilationProcessor(
+    override val kotlinCompilation: KotlinNativeFragmentMetadataCompilationData
+) : KotlinCompilationProcessor<KotlinNativeCompile>(kotlinCompilation) {
+
+    override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
+        KotlinNativeTargetConfigurator.createKlibCompilationTask(kotlinCompilation)
+
+    override fun run() = Unit
+}
+
+internal fun Project.createGenerateProjectStructureMetadataTask(module: KotlinGradleModule): TaskProvider<GenerateProjectStructureMetadata> =
+    project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
+        task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
+    }
+
+internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
+    project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->
+        task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
+    }
+
+internal interface ResolvedMetadataFilesProvider {
+    val buildDependencies: Iterable<TaskProvider<*>>
+    val metadataResolutions: Iterable<MetadataDependencyResolution>
+    val metadataFilesByResolution: Map<out MetadataDependencyResolution, FileCollection>
+}
+
+internal fun createMetadataDependencyTransformationClasspath(
+    project: Project,
+    fromFiles: Configuration,
+    parentCompiledMetadataFiles: Lazy<Iterable<FileCollection>>,
+    metadataResolutionProviders: Lazy<Iterable<ResolvedMetadataFilesProvider>>,
+): FileCollection {
+    return project.files(
+        Callable {
+            val allResolutionsByComponentId: Map<ComponentIdentifier, List<MetadataDependencyResolution>> =
+                mutableMapOf<ComponentIdentifier, MutableList<MetadataDependencyResolution>>().apply {
+                    metadataResolutionProviders.value.forEach {
+                        it.metadataResolutions.forEach { resolution ->
+                            getOrPut(resolution.dependency.id) { mutableListOf() }.add(resolution)
+                        }
+                    }
+                }
+
+            val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
+                metadataResolutionProviders.value.flatMap { it.metadataFilesByResolution.toList() }.toMap()
+
+            val artifactView = fromFiles.incoming.artifactView { view ->
+                view.componentFilter { id ->
+                    allResolutionsByComponentId[id].let { resolutions ->
+                        resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
+                    }
+                }
+            }
+
+            mutableSetOf<Any /* File | FileCollection */>().apply {
+                addAll(metadataResolutionProviders.value.map { project.files().builtBy(it.buildDependencies) })
+                addAll(parentCompiledMetadataFiles.value)
+                artifactView.artifacts.forEach { artifact ->
+                    val resolutions = allResolutionsByComponentId[artifact.id.componentIdentifier]
+                    if (resolutions == null) {
+                        add(artifact.file)
+                    } else {
+                        val chooseVisibleSourceSets = resolutions.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
+
+                        if (chooseVisibleSourceSets.isNotEmpty()) {
+                            // Wrap the list into a FileCollection, as some older Gradle version failed to resolve the classpath
+                            add(project.files(chooseVisibleSourceSets.map { transformedFilesByResolution.getValue(it) }))
+                        } else if (resolutions.any { it is MetadataDependencyResolution.KeepOriginalDependency }) {
+                            add(artifact.file)
+                        } // else: all dependency transformations exclude this dependency as unrequested; don't add any files
+                    }
+                }
+            }
+        }
+    )
+}
+
+internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSet): Boolean {
+    val compilations = compilationsBySourceSets(project)[sourceSet].orEmpty()
+    return compilations.isNotEmpty() && compilations.all {
+        it.platformType == KotlinPlatformType.common || it.platformType == KotlinPlatformType.native
+    }
+}
+
+internal fun dependsOnClosureWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
+    sourceSet.resolveAllDependsOnSourceSets().toMutableSet().apply {
+        addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
+    }
 
 /**
  * @return All common source sets that can potentially be published. Right now, not all combinations of platforms actually
@@ -552,6 +568,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
  * Those compilations will be created but the corresponding tasks will be disabled.
  */
 internal fun getCommonSourceSetsForMetadataCompilation(project: Project): Set<KotlinSourceSet> {
+    if (!project.shouldCompileIntermediateSourceSetsToMetadata)
+        return setOf(project.multiplatformExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
+
     val compilationsBySourceSet: Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
         compilationsBySourceSets(project)
 
@@ -594,6 +613,7 @@ internal fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsage
 internal fun Project.filesWithUnpackedArchives(from: FileCollection, extensions: Set<String>): FileCollection =
     project.files(project.provider {
         from.mapNotNull {
+            @Suppress("IMPLICIT_CAST_TO_ANY")
             if (it.extension in extensions) {
                 if (it.exists()) project.zipTree(it) else null
             } else it

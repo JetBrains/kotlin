@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.model.*
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionContext) : TypeSystemInferenceExtensionContext by ctx {
+abstract class AbstractTypeApproximator(
+    val ctx: TypeSystemInferenceExtensionContext,
+    protected val languageVersionSettings: LanguageVersionSettings,
+) : TypeSystemInferenceExtensionContext by ctx {
 
     private class ApproximationResult(val type: KotlinTypeMarker?)
 
@@ -81,7 +86,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
         return cachedValue(type, conf, toSuper = true) {
             approximateTo(
-                prepareType(type), conf, { upperBound() },
+                AbstractTypeChecker.prepareType(ctx, type), conf, { upperBound() },
                 referenceApproximateToSuperType, depth
             )
         }
@@ -92,7 +97,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
         return cachedValue(type, conf, toSuper = false) {
             approximateTo(
-                prepareType(type), conf, { lowerBound() },
+                AbstractTypeChecker.prepareType(ctx, type), conf, { lowerBound() },
                 referenceApproximateToSubType, depth
             )
         }
@@ -162,6 +167,21 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         }
     }
 
+    private fun approximateLocalTypes(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, toSuper: Boolean): SimpleTypeMarker? {
+        if (!toSuper) return null
+        if (!conf.localTypes) return null
+        val constructor = type.typeConstructor()
+        val needApproximate = conf.localTypes && constructor.isLocalType()
+        if (!needApproximate) return null
+        val superConstructor = constructor.supertypes().first().typeConstructor()
+        val typeCheckerContext = newTypeCheckerState(
+            errorTypesEqualToAnything = false,
+            stubTypesEqualToAnything = false
+        )
+        return AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor).first()
+            .withNullability(type.isMarkedNullable())
+    }
+
     private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructorMarker): Boolean {
         // We consider intersection as Nothing only if one of it's component is a primitive number type
         // It's intentional we're not trying to prove population of some type as it was in OI
@@ -204,7 +224,8 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED -> if (!thereIsApproximation) return null else intersectTypes(newTypes)
             TypeApproximatorConfiguration.IntersectionStrategy.TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
             // commonSupertypeCalculator should handle flexible types correctly
-            TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE -> {
+            TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE,
+            TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE -> {
                 if (!toSuper) return type.defaultResult(toSuper = false)
                 val resultType = commonSuperType(newTypes)
                 approximateToSuperType(resultType, conf) ?: resultType
@@ -250,7 +271,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         }
         val baseSubType = type.lowerType() ?: nothingType()
 
-        if (conf.capturedType(ctx, type)) {
+        if (!conf.capturedType(ctx, type)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".
@@ -326,7 +347,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                 null
         }
 
-        return null // simple classifier type
+        return approximateLocalTypes(type, conf, toSuper) // simple classifier type
     }
 
     private fun approximateDefinitelyNotNullType(
@@ -338,8 +359,14 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         val originalType = type.original()
         val approximatedOriginalType =
             if (toSuper) approximateToSuperType(originalType, conf, depth) else approximateToSubType(originalType, conf, depth)
+        val typeWithErasedNullability = originalType.withNullability(false)
 
-        return if (conf.definitelyNotNullType) {
+        // Approximate T!! into T if T is already not-null (has not-null upper bounds)
+        if (originalType.typeConstructor().isTypeParameterTypeConstructor() && !typeWithErasedNullability.isNullableType()) {
+            return typeWithErasedNullability
+        }
+
+        return if (conf.definitelyNotNullType || languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
             approximatedOriginalType?.makeDefinitelyNotNullOrNotNull()
         } else {
             if (toSuper)
@@ -423,13 +450,26 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                      * In<Foo> <: In<subType(Foo)>
                      * Inv<in Foo> <: Inv<in subType(Foo)>
                      */
-                    val approximatedArgument = argumentType.let {
-                        if (isApproximateDirectionToSuper(effectiveVariance, toSuper)) {
-                            approximateToSuperType(it, conf, depth)
+                    val approximatedArgument = if (isApproximateDirectionToSuper(effectiveVariance, toSuper)) {
+                        val approximatedType = approximateToSuperType(argumentType, conf, depth)
+                        if (conf.intersection == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
+                            && argumentType.typeConstructor().isIntersection()
+                            && parameter.getUpperBounds().all { AbstractTypeChecker.isSubtypeOf(ctx, argumentType, it) }
+                        ) {
+                            val intersectedUpperBounds = intersectTypes(parameter.getUpperBounds())
+                            if (approximatedType == null
+                                || !AbstractTypeChecker.isSubtypeOf(ctx, approximatedType, intersectedUpperBounds)
+                            ) {
+                                intersectedUpperBounds
+                            } else {
+                                approximatedType
+                            }
                         } else {
-                            approximateToSubType(it, conf, depth)
+                            approximatedType ?: continue@loop
                         }
-                    } ?: continue@loop
+                    } else {
+                        approximateToSubType(argumentType, conf, depth) ?: continue@loop
+                    }
 
                     if (
                         conf.intersection != TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED &&
@@ -512,10 +552,11 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             }
         }
 
-        if (newArguments.all { it == null }) return null
+        if (newArguments.all { it == null }) return approximateLocalTypes(type, conf, toSuper)
 
         val newArgumentsList = List(type.argumentsCount()) { index -> newArguments[index] ?: type.getArgument(index) }
-        return type.replaceArguments(newArgumentsList)
+        val approximatedType = type.replaceArguments(newArgumentsList)
+        return approximateLocalTypes(approximatedType, conf, toSuper) ?: approximatedType
     }
 
     private fun KotlinTypeMarker.defaultResult(toSuper: Boolean) = if (toSuper) nullableAnyType() else {
@@ -527,4 +568,10 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
     // Nothing or Nothing!
     private fun KotlinTypeMarker.isTrivialSub() = lowerBoundIfFlexible().isNothing()
+
+    override fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? {
+        with(ctx) {
+            return typeParameter()
+        }
+    }
 }

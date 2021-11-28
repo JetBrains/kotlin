@@ -3,11 +3,11 @@
 //FILE:a.kt
 package test_visibility
 
-protected class ProtectedClass
-protected interface ProtectedTrait
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> class ProtectedClass
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> interface ProtectedTrait
 
-protected val protected_val : Int = 4
-protected fun protected_fun() {}
+<!WRONG_MODIFIER_TARGET!>protected<!> val protected_val : Int = 4
+<!WRONG_MODIFIER_TARGET!>protected<!> fun protected_fun() {}
 
 private val private_val : Int = 4
 private fun private_fun() {}
@@ -40,8 +40,8 @@ class B {
 }
 
 fun test3(a: A) {
-    a.<!HIDDEN!>v<!> //todo .bMethod()
-    a.<!HIDDEN!>f<!>(0, 1) //todo .bMethod()
+    a.<!INVISIBLE_REFERENCE!>v<!> //todo .bMethod()
+    a.<!INVISIBLE_REFERENCE!>f<!>(0, 1) //todo .bMethod()
 }
 
 interface T
@@ -54,7 +54,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!HIDDEN, HIDDEN!>i<!>++
+    c.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>i<!>++
 }
 
 class D : C() {
@@ -72,13 +72,13 @@ class E : C() {
 
 class F : C() {
     fun test8(c: C) {
-        doSmth(c.i)
+        doSmth(c.<!INVISIBLE_REFERENCE!>i<!>)
     }
 }
 
 class G : T {
     fun test8(c: C) {
-        doSmth(c.<!HIDDEN!>i<!>)
+        doSmth(c.<!INVISIBLE_REFERENCE!>i<!>)
     }
 }
 
@@ -91,5 +91,5 @@ import test_visibility.*
 
 fun test() {
     internal_fun()
-    <!HIDDEN!>private_fun<!>()
+    <!INVISIBLE_REFERENCE!>private_fun<!>()
 }

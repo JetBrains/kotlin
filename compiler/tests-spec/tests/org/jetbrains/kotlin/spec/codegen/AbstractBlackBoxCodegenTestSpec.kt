@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.spec.codegen
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
@@ -15,8 +16,9 @@ import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.packagePattern
 import org.jetbrains.kotlin.spec.utils.validators.BlackBoxTestTypeValidator
 import org.jetbrains.kotlin.spec.utils.validators.SpecTestValidationException
 import org.junit.Assert
-import java.io.*
+import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     companion object {
         private const val CODEGEN_BOX_TESTDATA_PATH = "$SPEC_TESTDATA_PATH/codegen/box"

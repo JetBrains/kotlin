@@ -1,7 +1,7 @@
 function createA() {
     function ADerived() {
     }
-    ADerived.prototype = Object.create(JS_TESTS.A.prototype);
+    ADerived.prototype = Object.create(main.A.prototype);
     ADerived.prototype.foo = function(n) {
         return 24;
     };
@@ -11,7 +11,7 @@ function createA() {
 function createB() {
     function BDerived() {
     }
-    BDerived.prototype = Object.create(JS_TESTS.B.prototype);
+    BDerived.prototype = Object.create(main.B.prototype);
     BDerived.prototype.bar = function(n) {
         return this.foo(n);
     };

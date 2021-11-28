@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -65,4 +66,7 @@ public interface PropertyDescriptor extends VariableDescriptorWithAccessors, Cal
     @NotNull
     @Override
     CopyBuilder<? extends PropertyDescriptor> newCopyBuilder();
+
+    @Nullable
+    KotlinType getInType();
 }

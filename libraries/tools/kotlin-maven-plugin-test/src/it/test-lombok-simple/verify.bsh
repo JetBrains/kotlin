@@ -1,0 +1,4 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLineThatContains("Applied plugin: 'lombok'");
+assertFileExists("target/test-lombok-simple-1.0-SNAPSHOT.jar");

@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
@@ -38,7 +38,7 @@ class IrLazyClass(
     override val isFun: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator
-) : IrClass(), IrLazyDeclarationBase {
+) : IrClass(), IrLazyDeclarationBase, DeserializableClass {
     init {
         symbol.bind(this)
     }
@@ -47,39 +47,61 @@ class IrLazyClass(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override var thisReceiver: IrValueParameter? by lazyVar {
+    override var thisReceiver: IrValueParameter? by lazyVar(stubGenerator.lock) {
         typeTranslator.buildWithScope(this) {
             descriptor.thisAsReceiverParameter.generateReceiverParameterStub().apply { parent = this@IrLazyClass }
         }
     }
 
 
-    override val declarations: MutableList<IrDeclaration> by lazyVar {
+    override val declarations: MutableList<IrDeclaration> by lazyVar(stubGenerator.lock) {
         ArrayList<IrDeclaration>().also {
             typeTranslator.buildWithScope(this) {
                 generateChildStubs(descriptor.constructors, it)
-                generateMemberStubs(descriptor.defaultType.memberScope, it)
-                generateMemberStubs(descriptor.staticScope, it)
+                generateChildStubs(descriptor.defaultType.memberScope.getContributedDescriptors(), it)
+                generateChildStubs(descriptor.staticScope.getContributedDescriptors(), it)
             }
-        }.also {
-            it.forEach {
-                it.parent = this //initialize parent for non lazy cases
-            }
+        }.onEach {
+            it.parent = this //initialize parent for non lazy cases
         }
     }
 
-    override var typeParameters: List<IrTypeParameter> by lazyVar {
+    private fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, declarations: MutableList<IrDeclaration>) {
+        descriptors.mapNotNullTo(declarations) { descriptor ->
+            if (shouldBuildStub(descriptor)) stubGenerator.generateMemberStub(descriptor) else null
+        }
+    }
+
+    private fun shouldBuildStub(descriptor: DeclarationDescriptor): Boolean =
+        descriptor !is DeclarationDescriptorWithVisibility ||
+                !DescriptorVisibilities.isPrivate(descriptor.visibility) ||
+                isObject && descriptor is ClassConstructorDescriptor
+
+    override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
             stubGenerator.generateOrGetTypeParameterStub(it)
         }
     }
 
-    override var superTypes: List<IrType> by lazyVar {
+    override var superTypes: List<IrType> by lazyVar(stubGenerator.lock) {
         typeTranslator.buildWithScope(this) {
             // TODO get rid of code duplication, see ClassGenerator#generateClass
             descriptor.typeConstructor.supertypes.mapNotNullTo(arrayListOf()) {
                 it.toIrType()
             }
+        }
+    }
+
+    override var sealedSubclasses: List<IrClassSymbol> by lazyVar(stubGenerator.lock) {
+        descriptor.sealedSubclasses.map { sealedSubclassDescriptor ->
+            // NB 'generateClassStub' would return an existing class if it's already present in symbol table
+            stubGenerator.generateClassStub(sealedSubclassDescriptor).symbol
+        }
+    }
+
+    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>? by lazyVar(stubGenerator.lock) {
+        descriptor.inlineClassRepresentation?.mapUnderlyingType {
+            it.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${render()}")
         }
     }
 
@@ -92,4 +114,12 @@ class IrLazyClass(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    private var irLoaded: Boolean? = null
+
+    override fun loadIr(): Boolean {
+        assert(parent is IrPackageFragment)
+        return irLoaded ?:
+            stubGenerator.extensions.deserializeClass(this, stubGenerator, parent, allowErrorNodes = false).also { irLoaded = it }
+    }
 }

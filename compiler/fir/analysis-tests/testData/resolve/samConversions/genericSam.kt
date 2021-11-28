@@ -21,9 +21,9 @@ fun main() {
         x.toInt().toString()
     }
 
-    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo2<!> { x: Int ->
+    JavaUsage.foo2 <!ARGUMENT_TYPE_MISMATCH!>{ x: Int ->
         x.toString()
-    }
+    }<!>
 
     JavaUsage.foo3(
         { x ->

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun foo(a: String, b: Int = 5): String {
     return a + b

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun <reified T> jaggedArrayOfNulls(): Array<Array<T>?> = arrayOfNulls<Array<T>>(1)
 

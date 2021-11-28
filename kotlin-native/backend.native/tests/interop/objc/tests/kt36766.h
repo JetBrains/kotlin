@@ -1,0 +1,1 @@
+void kt36766(void (^block)()) {}

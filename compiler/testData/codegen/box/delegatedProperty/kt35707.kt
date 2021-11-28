@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // ISSUE: KT-35707
 
 import kotlin.reflect.KProperty

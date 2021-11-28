@@ -1,4 +1,0 @@
-/*
- * Comment
- */
-@file:Some("Hi")

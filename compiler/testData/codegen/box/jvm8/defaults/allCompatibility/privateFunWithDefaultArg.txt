@@ -1,0 +1,51 @@
+@kotlin.Metadata
+public final class Foo$DefaultImpls {
+    // source: 'privateFunWithDefaultArg.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
+    public final inner class Foo$DefaultImpls
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class Foo$bar$1 {
+    // source: 'privateFunWithDefaultArg.kt'
+    enclosing method Foo.bar()Ljava/lang/String;
+    synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
+    field L$0: java.lang.Object
+    field label: int
+    synthetic final field this$0: Foo
+    inner (anonymous) class Foo$bar$1
+    method <init>(p0: Foo, p1: kotlin.jvm.internal.Ref$ObjectRef, p2: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface Foo {
+    // source: 'privateFunWithDefaultArg.kt'
+    inner (anonymous) class Foo$bar$1
+    public synthetic static method access$bar$jd(p0: Foo): java.lang.String
+    public @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+    public synthetic static method foo$default(p0: Foo, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    private method foo(p0: java.lang.String): java.lang.String
+    public synthetic static method fooSuspend$default(p0: Foo, p1: java.lang.String, p2: kotlin.coroutines.Continuation, p3: int, p4: java.lang.Object): java.lang.Object
+    private method fooSuspend(p0: java.lang.String, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final inner class Foo$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class PrivateFunWithDefaultArgKt$box$1 {
+    // source: 'privateFunWithDefaultArg.kt'
+    enclosing method PrivateFunWithDefaultArgKt.box()Ljava/lang/String;
+    inner (anonymous) class PrivateFunWithDefaultArgKt$box$1
+    method <init>(): void
+}
+
+@kotlin.Metadata
+public final class PrivateFunWithDefaultArgKt {
+    // source: 'privateFunWithDefaultArg.kt'
+    inner (anonymous) class PrivateFunWithDefaultArgKt$box$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+}

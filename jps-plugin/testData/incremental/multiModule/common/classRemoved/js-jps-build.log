@@ -3,11 +3,6 @@
 Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
-Cleaning output files:
-  out/production/module2/module2.js
-  out/production/module2/module2.meta.js
-  out/production/module2/module2/foo/foo.kjsm
-End of files
 Building module2
 Marked as dirty by Kotlin:
   module2/src/B.kt
@@ -16,6 +11,9 @@ Marked as dirty by Kotlin:
   module2/src/useAfoo.kt
   module2/src/useBbar.kt
 Cleaning output files:
+  out/production/module2/module2.js
+  out/production/module2/module2.meta.js
+  out/production/module2/module2/foo/foo.kjsm
   out/production/module2/module2/use/use.kjsm
 End of files
 Compiling files:

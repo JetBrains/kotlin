@@ -76,6 +76,11 @@ public final class IrConstructorCall extends
             bitField0_ |= 0x00000004;
             break;
           }
+          case 32: {
+            bitField0_ |= 0x00000008;
+            originName_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -155,10 +160,26 @@ public final class IrConstructorCall extends
     return memberAccess_;
   }
 
+  public static final int ORIGIN_NAME_FIELD_NUMBER = 4;
+  private int originName_;
+  /**
+   * <code>optional int32 origin_name = 4;</code>
+   */
+  public boolean hasOriginName() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>optional int32 origin_name = 4;</code>
+   */
+  public int getOriginName() {
+    return originName_;
+  }
+
   private void initFields() {
     symbol_ = 0L;
     constructorTypeArgumentsCount_ = 0;
     memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
+    originName_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -198,6 +219,9 @@ public final class IrConstructorCall extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, memberAccess_);
     }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeInt32(4, originName_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -218,6 +242,10 @@ public final class IrConstructorCall extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(3, memberAccess_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, originName_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -319,6 +347,8 @@ public final class IrConstructorCall extends
       bitField0_ = (bitField0_ & ~0x00000002);
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
+      originName_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -354,6 +384,10 @@ public final class IrConstructorCall extends
         to_bitField0_ |= 0x00000004;
       }
       result.memberAccess_ = memberAccess_;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        to_bitField0_ |= 0x00000008;
+      }
+      result.originName_ = originName_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -368,6 +402,9 @@ public final class IrConstructorCall extends
       }
       if (other.hasMemberAccess()) {
         mergeMemberAccess(other.getMemberAccess());
+      }
+      if (other.hasOriginName()) {
+        setOriginName(other.getOriginName());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -534,6 +571,38 @@ public final class IrConstructorCall extends
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000004);
+      return this;
+    }
+
+    private int originName_ ;
+    /**
+     * <code>optional int32 origin_name = 4;</code>
+     */
+    public boolean hasOriginName() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional int32 origin_name = 4;</code>
+     */
+    public int getOriginName() {
+      return originName_;
+    }
+    /**
+     * <code>optional int32 origin_name = 4;</code>
+     */
+    public Builder setOriginName(int value) {
+      bitField0_ |= 0x00000008;
+      originName_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 origin_name = 4;</code>
+     */
+    public Builder clearOriginName() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      originName_ = 0;
+      
       return this;
     }
 

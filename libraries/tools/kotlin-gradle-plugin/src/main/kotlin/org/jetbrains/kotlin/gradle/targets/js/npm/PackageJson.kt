@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.gson.*
 import org.gradle.api.GradleException
-import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
+import java.io.Serializable
 
 // Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
     var name: String,
     var version: String
-) {
+) : Serializable {
     internal val customFields = mutableMapOf<String, Any?>()
 
     val empty: Boolean
@@ -108,13 +105,21 @@ class PackageJson(
 
         packageJsonFile.ensureParentDirsCreated()
         val jsonTree = gson.toJsonTree(this)
+        val previous = if (packageJsonFile.exists()) {
+            packageJsonFile.reader().use {
+                JsonParser.parseReader(it)
+            }
+        } else null
+
         customFields
             .forEach { (key, value) ->
                 val valueElement = gson.toJsonTree(value)
                 jsonTree.asJsonObject.add(key, valueElement)
             }
-        packageJsonFile.writer().use {
-            gson.toJson(jsonTree, it)
+        if (jsonTree != previous) {
+            packageJsonFile.writer().use {
+                gson.toJson(jsonTree, it)
+            }
         }
     }
 }
@@ -124,37 +129,39 @@ fun fromSrcPackageJson(packageJson: File?): PackageJson? =
         Gson().fromJson(it, PackageJson::class.java)
     }
 
-fun packageJson(
-    npmProject: NpmProject,
-    npmDependencies: Collection<NpmDependency>
+internal fun packageJson(
+    name: String,
+    version: String,
+    main: String,
+    npmDependencies: Collection<NpmDependencyDeclaration>,
+    packageJsonHandlers: List<PackageJson.() -> Unit>
 ): PackageJson {
-    val compilation = npmProject.compilation
 
     val packageJson = PackageJson(
-        npmProject.name,
-        fixSemver(compilation.target.project.version.toString())
+        name,
+        fixSemver(version)
     )
 
-    packageJson.main = npmProject.main
+    packageJson.main = main
 
     val dependencies = mutableMapOf<String, String>()
 
     npmDependencies.forEach {
-        val module = it.key
+        val module = it.name
         dependencies[module] = chooseVersion(module, dependencies[module], it.version)
     }
 
     npmDependencies.forEach {
-        val dependency = dependencies.getValue(it.key)
+        val dependency = dependencies.getValue(it.name)
         when (it.scope) {
-            NpmDependency.Scope.NORMAL -> packageJson.dependencies[it.key] = dependency
-            NpmDependency.Scope.DEV -> packageJson.devDependencies[it.key] = dependency
-            NpmDependency.Scope.OPTIONAL -> packageJson.optionalDependencies[it.key] = dependency
-            NpmDependency.Scope.PEER -> packageJson.peerDependencies[it.key] = dependency
+            NpmDependency.Scope.NORMAL -> packageJson.dependencies[it.name] = dependency
+            NpmDependency.Scope.DEV -> packageJson.devDependencies[it.name] = dependency
+            NpmDependency.Scope.OPTIONAL -> packageJson.optionalDependencies[it.name] = dependency
+            NpmDependency.Scope.PEER -> packageJson.peerDependencies[it.name] = dependency
         }
     }
 
-    compilation.packageJsonHandlers.forEach {
+    packageJsonHandlers.forEach {
         it(packageJson)
     }
 

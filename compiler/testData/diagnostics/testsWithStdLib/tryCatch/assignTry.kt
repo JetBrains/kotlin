@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class ExcA : Exception()
@@ -12,8 +11,8 @@ fun test2() {
     catch (e: ExcA) {
         null
     }
-    catch (e: ExcB) <!NI;TYPE_MISMATCH!>{
-        <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>10<!>
+    catch (e: ExcB) <!TYPE_MISMATCH!>{
+        10
     }<!>
     s<!UNSAFE_CALL!>.<!>length
 }
@@ -39,13 +38,13 @@ fun test4() {
         null
     }
     finally {
-        <!UNUSED_EXPRESSION!>""<!>
+        ""
     }
     s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test5() {
-    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>s<!>: String? =<!> try {
+    <!UNREACHABLE_CODE!>val s: String? =<!> try {
         ""
     }
     catch (e: ExcA) {
@@ -105,7 +104,7 @@ fun test10() {
     val x = try {
         ""
     } finally {
-        <!UNUSED_EXPRESSION!>42<!>
+        42
     }
     x.length
 }

@@ -31,7 +31,7 @@ fun box() : String {
     if (c1 != 1) {
         return "2"
     }
-    <!VARIABLE_EXPECTED!>a<!> *= 3 // a = a * 3, shouldn't be able to do this on val
+    <!VAL_REASSIGNMENT!>a<!> *= 3 // a = a * 3, shouldn't be able to do this on val
     if (c0 != 2) {
         return "3"
     }

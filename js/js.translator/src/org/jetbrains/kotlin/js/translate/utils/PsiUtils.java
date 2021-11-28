@@ -1,38 +1,20 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.js.backend.ast.JsLocation;
-import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -119,19 +101,5 @@ public final class PsiUtils {
         }
 
         return resolvedCall.getCandidateDescriptor();
-    }
-
-    @NotNull
-    public static JsLocation extractLocationFromPsi(@NotNull PsiElement element, @NotNull SourceFilePathResolver pathResolver)
-            throws IOException {
-        PsiFile psiFile = element.getContainingFile();
-        int offset = element.getNode().getStartOffset();
-        Document document = psiFile.getViewProvider().getDocument();
-        assert document != null;
-        int sourceLine = document.getLineNumber(offset);
-        int sourceColumn = offset - document.getLineStartOffset(sourceLine);
-
-        File file = new File(psiFile.getViewProvider().getVirtualFile().getPath());
-        return new JsLocation(pathResolver.getPathRelativeToSourceRoots(file), sourceLine, sourceColumn);
     }
 }

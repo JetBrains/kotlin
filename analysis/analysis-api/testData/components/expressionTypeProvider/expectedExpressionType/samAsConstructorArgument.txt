@@ -1,0 +1,2 @@
+expression: { println("hello1") }
+expected type: ft<java/lang/Runnable, java/lang/Runnable?>

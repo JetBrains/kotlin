@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <T> assertEquals(a: T, b: T) {
     if (a != b) throw AssertionError("$a != $b")
 }

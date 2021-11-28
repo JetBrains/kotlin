@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 interface Foo
 interface Bar : Foo
 
@@ -16,11 +15,11 @@ val foo: Foo = run {
 val foofoo: Foo = run {
     val x = foo()
     if (x == null) throw Exception()
-    x
+    <!ARGUMENT_TYPE_MISMATCH!>x<!>
 }
 
 val bar: Bar = run {
     val x = foo()
     if (x == null) throw Exception()
-    x
+    <!ARGUMENT_TYPE_MISMATCH!>x<!>
 }

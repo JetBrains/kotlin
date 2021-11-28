@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
-// WITH_RUNTIME
+// WITH_STDLIB
 // SKIP_TXT
 
 import kotlinx.serialization.Serializable

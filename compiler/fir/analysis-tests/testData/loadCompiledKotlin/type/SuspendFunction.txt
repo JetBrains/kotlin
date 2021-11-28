@@ -1,8 +1,16 @@
 public final fun test1(): R|suspend () -> kotlin/Unit|
 
+public final fun test1N(): R|(suspend () -> kotlin/Unit)?|
+
 public final fun test2(): R|suspend kotlin/Int.() -> kotlin/Int|
+
+public final fun test2N(): R|(suspend kotlin/Int.() -> kotlin/Int)?|
 
 public final fun test3(): R|kotlin/collections/List<kotlin/coroutines/SuspendFunction0<kotlin/Unit>>|
 
+public final fun test3N(): R|kotlin/collections/List<kotlin/coroutines/SuspendFunction0<kotlin/Unit>?>|
+
 public final fun test4(): R|suspend () -> kotlin/coroutines/SuspendFunction0<kotlin/Unit>|
+
+public final fun test4N(): R|(suspend () -> kotlin/coroutines/SuspendFunction0<kotlin/Unit>?)?|
 

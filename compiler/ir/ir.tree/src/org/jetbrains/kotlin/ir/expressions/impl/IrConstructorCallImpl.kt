@@ -88,7 +88,11 @@ class IrConstructorCallImpl(
             return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
         }
 
-        fun fromSymbolOwner(type: IrType, constructorSymbol: IrConstructorSymbol, origin: IrStatementOrigin? = null) =
+        fun fromSymbolOwner(
+            type: IrType,
+            constructorSymbol: IrConstructorSymbol,
+            origin: IrStatementOrigin? = null
+        ): IrConstructorCallImpl =
             fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
                 origin

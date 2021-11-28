@@ -7,31 +7,32 @@ plugins {
     kotlin("jvm")
 }
 
-val kotlinpAsmVersion = "8.0.1"
+val kotlinpAsmVersion = "9.0"
 
 val shadows by configurations.creating
 
 repositories {
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
 }
 
 dependencies {
     compileOnly(project(":kotlinx-metadata"))
     compileOnly(project(":kotlinx-metadata-jvm"))
-    compile("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
+    implementation("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 
     testCompileOnly(project(":kotlinx-metadata"))
     testCompileOnly(project(":kotlinx-metadata-jvm"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":generators:test-generator"))
+    testImplementation(commonDep("junit:junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":generators:test-generator"))
 
-    testRuntime(project(":kotlinx-metadata-jvm", configuration = "runtime"))
+    testRuntimeOnly(project(":kotlinx-metadata-jvm"))
 
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
+    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer", "idea_rt") }
 
-    shadows(project(":kotlinx-metadata-jvm", configuration = "runtime"))
+    shadows(project(":kotlinx-metadata-jvm"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 }
 
@@ -68,6 +69,6 @@ tasks {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 }

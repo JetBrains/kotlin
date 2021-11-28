@@ -22,6 +22,9 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
 
+import static org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION;
+import static org.jetbrains.kotlin.KtNodeTypes.SAFE_ACCESS_EXPRESSION;
+
 public interface KtTokens {
     KtToken EOF   = new KtToken("EOF");
 
@@ -112,6 +115,7 @@ public interface KtTokens {
     KtSingleValueToken EXCLEQ      = new KtSingleValueToken("EXCLEQ", "!=");
     KtSingleValueToken EXCLEXCL    = new KtSingleValueToken("EXCLEXCL", "!!");
     KtSingleValueToken ANDAND      = new KtSingleValueToken("ANDAND", "&&");
+    KtSingleValueToken AND         = new KtSingleValueToken("AND", "&");
     KtSingleValueToken OROR        = new KtSingleValueToken("OROR", "||");
     KtSingleValueToken SAFE_ACCESS = new KtSingleValueToken("SAFE_ACCESS", "?.");
     KtSingleValueToken ELVIS       = new KtSingleValueToken("ELVIS", "?:");
@@ -265,4 +269,6 @@ public interface KtTokens {
 
     TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
     TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
+    TokenSet INCREMENT_AND_DECREMENT = TokenSet.create(PLUSPLUS, MINUSMINUS);
+    TokenSet QUALIFIED_ACCESS = TokenSet.create(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION);
 }

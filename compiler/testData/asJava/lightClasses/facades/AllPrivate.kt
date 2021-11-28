@@ -1,5 +1,5 @@
 // p.AllPrivate
-// WITH_RUNTIME
+// WITH_STDLIB
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AllPrivate")
 

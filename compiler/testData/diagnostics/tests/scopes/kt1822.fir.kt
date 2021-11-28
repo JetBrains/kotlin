@@ -6,7 +6,7 @@ open class C {
 }
 
 interface T {
-    protected fun foo() {}
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun foo() {}
 }
 
 class G : C(), T {
@@ -18,7 +18,7 @@ open class A {
 }
 
 interface B {
-    protected fun foo() {}
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun foo() {}
 }
 
 interface D {

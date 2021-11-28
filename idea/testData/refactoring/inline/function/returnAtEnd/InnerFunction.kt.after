@@ -1,7 +1,0 @@
-fun main() {
-    object {
-        fun bar(): String {
-            return ""
-        }
-    }
-}

@@ -1,3 +1,0 @@
-expect class A {
-    fun String.c(a: Int)
-}

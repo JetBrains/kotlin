@@ -3,9 +3,12 @@ buildscript {
       'kotlin': [
           'stdlib': [
               'common': "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version",
-              'jdk': "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
-          ],
+              'jdk': "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+          ]
       ],
+      'other' : [
+          'ap_example': "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+      ]
   ]
 
   repositories {

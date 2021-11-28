@@ -1,3 +1,3 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val anonymous = fun() { println() }

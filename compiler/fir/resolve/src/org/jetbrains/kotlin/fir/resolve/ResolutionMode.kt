@@ -15,22 +15,72 @@ sealed class ResolutionMode {
     object ContextDependent : ResolutionMode()
     object ContextDependentDelegate : ResolutionMode()
     object ContextIndependent : ResolutionMode()
+
     // TODO: it's better not to use WithExpectedType(FirImplicitTypeRef)
-    class WithExpectedType(val expectedTypeRef: FirTypeRef) : ResolutionMode()
+    class WithExpectedType(
+        val expectedTypeRef: FirTypeRef,
+        val mayBeCoercionToUnitApplied: Boolean = false,
+        val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+    ) : ResolutionMode()
 
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode()
 
     class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode()
+
+    class WithExpectedTypeFromCast(
+        val expectedTypeRef: FirTypeRef,
+    ) : ResolutionMode()
+
+    /**
+     * This resolution mode is similar to
+     * WithExpectedType, but it's ok if the
+     * types turn out to be incompatible.
+     * Consider the following examples with
+     * properties and their backing fields:
+     *
+     * val items: List<T>
+     *     field = mutableListOf()
+     *
+     * val s: String
+     *     field = 10
+     *     get() = ...
+     *
+     * In these examples we should try using
+     * the property type information while
+     * resolving the initializer, but it's ok
+     * if it's not applicable.
+     */
+    class WithSuggestedType(
+        val suggestedTypeRef: FirTypeRef,
+    ) : ResolutionMode()
 }
 
-fun withExpectedType(expectedTypeRef: FirTypeRef?): ResolutionMode =
-    expectedTypeRef?.let { ResolutionMode.WithExpectedType(it) } ?: ResolutionMode.ContextDependent
+fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {
+    is ResolutionMode.WithExpectedType -> expectedTypeRef
+    is ResolutionMode.ContextIndependent -> components.noExpectedType
+    is ResolutionMode.WithExpectedTypeFromCast -> expectedTypeRef.takeIf { allowFromCast }
+    is ResolutionMode.WithSuggestedType -> suggestedTypeRef
+    else -> null
+}
 
-fun withExpectedType(coneType: ConeKotlinType): ResolutionMode {
+fun withExpectedType(expectedTypeRef: FirTypeRef?, expectedTypeMismatchIsReportedInChecker: Boolean = false): ResolutionMode =
+    expectedTypeRef?.let {
+        ResolutionMode.WithExpectedType(
+            it,
+            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
+        )
+    } ?: ResolutionMode.ContextDependent
+
+@JvmName("withExpectedTypeNullable")
+fun withExpectedType(coneType: ConeKotlinType?, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
+    return coneType?.let { withExpectedType(it, mayBeCoercionToUnitApplied) } ?: ResolutionMode.ContextDependent
+}
+
+fun withExpectedType(coneType: ConeKotlinType, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
     val typeRef = buildResolvedTypeRef {
         type = coneType
     }
-    return ResolutionMode.WithExpectedType(typeRef)
+    return ResolutionMode.WithExpectedType(typeRef, mayBeCoercionToUnitApplied)
 }
 
 fun FirDeclarationStatus.mode(): ResolutionMode =

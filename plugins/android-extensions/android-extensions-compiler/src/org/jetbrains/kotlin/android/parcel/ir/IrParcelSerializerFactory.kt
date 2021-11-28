@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.android.parcel.serializers.RAWVALUE_ANNOTATION_FQNAM
 import org.jetbrains.kotlin.backend.jvm.codegen.psiElement
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
@@ -119,7 +119,10 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
 
                 val arrayType =
                     if (classifier.defaultType.isPrimitiveArray()) classifier.defaultType else irBuiltIns.arrayClass.typeWith(elementType)
-                return IrArrayParcelSerializer(arrayType, elementType, get(elementType, scope, parcelizeType, strict()))
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    IrArrayParcelSerializer(arrayType, elementType, get(elementType, scope, parcelizeType, strict()))
+                )
             }
 
             // This will only be hit if we have a custom serializer for booleans

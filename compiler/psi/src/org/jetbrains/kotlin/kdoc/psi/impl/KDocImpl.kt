@@ -10,13 +10,14 @@ import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC, buffer), KDoc {
 
@@ -37,10 +38,10 @@ class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC,
         getChildrenOfType<KDocSection>().firstOrNull { it.name == name }
 
     override fun findSectionByTag(tag: KDocKnownTag): KDocSection? =
-        findSectionByName(tag.name.toLowerCase())
+        findSectionByName(tag.name.toLowerCaseAsciiOnly())
 
     override fun findSectionByTag(tag: KDocKnownTag, subjectName: String): KDocSection? =
         getChildrenOfType<KDocSection>().firstOrNull {
-            it.name == tag.name.toLowerCase() && it.getSubjectName() == subjectName
+            it.name == tag.name.toLowerCaseAsciiOnly() && it.getSubjectName() == subjectName
         }
 }

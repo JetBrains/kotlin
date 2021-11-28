@@ -1,1 +1,0 @@
-fun foo(<spot>vararg a: String</spot>): Int = a.size

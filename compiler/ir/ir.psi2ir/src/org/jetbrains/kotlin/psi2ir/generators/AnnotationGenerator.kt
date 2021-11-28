@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -16,6 +17,10 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildrenVoid(this)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase) {
@@ -33,6 +38,9 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
         // For interface functions implemented by delegation,
         // front-end (incorrectly) copies annotations from corresponding interface members.
         if (declaration is IrProperty && declaration.origin == IrDeclarationOrigin.DELEGATED_MEMBER) return
+
+        // Don't generate annotations for anonymous initializers
+        if (declaration is IrAnonymousInitializer) return
 
         // Delegate field is mapped to a new property descriptor with annotations of the original property delegate
         // (see IrPropertyDelegateDescriptorImpl), but annotations on backing fields should be processed manually here

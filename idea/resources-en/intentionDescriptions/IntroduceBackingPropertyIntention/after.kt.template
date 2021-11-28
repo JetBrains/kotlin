@@ -1,8 +1,0 @@
-class Foo {
-    private var <spot>_x</spot> = ""
-    var x: String
-        get() = _x
-        set(value) {
-            _x = value
-        }
-}

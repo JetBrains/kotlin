@@ -1,4 +1,0 @@
-fun test() {
-    Foo()
-    foo()
-}

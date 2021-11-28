@@ -31,6 +31,6 @@ fun main() {
 
 
     val rawA = rawADerived.bar()
-    rawA.x = strList
-    rawA.<!INAPPLICABLE_CANDIDATE!>foo<!>("", strList)
+    rawA.x = <!ASSIGNMENT_TYPE_MISMATCH!>strList<!>
+    rawA.foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>strList<!>)
 }

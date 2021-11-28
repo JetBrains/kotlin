@@ -17,16 +17,11 @@
 // usages in build scripts are not tracked properly
 @file:Suppress("unused")
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.register
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =
@@ -35,16 +30,26 @@ private fun Project.kotlinBuildLocalDependenciesDir(): File =
 
 private fun Project.kotlinBuildLocalRepoDir(): File = kotlinBuildLocalDependenciesDir().resolve("repo")
 
-private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
+fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
+    Ide.Kind.IntelliJ -> "ideaIC"
+}
+
+private fun Project.ideModuleVersion(forIde: Boolean) = when (IdeVersionConfigurator.currentIde.kind) {
+    Ide.Kind.AndroidStudio -> rootProject.findProperty("versions.androidStudioBuild")
     Ide.Kind.IntelliJ -> {
-        if (kotlinBuildProperties.intellijUltimateEnabled) "ideaIU" else "ideaIC"
+        if (forIde) {
+            intellijSdkVersionForIde()
+                ?: error("Please specify 'attachedIntellijVersion' in your local.properties")
+        } else {
+            rootProject.findProperty("versions.intellijSdk")
+        }
     }
 }
 
-private fun Project.ideModuleVersion() = when (IdeVersionConfigurator.currentIde.kind) {
-    Ide.Kind.AndroidStudio -> rootProject.findProperty("versions.androidStudioBuild")
-    Ide.Kind.IntelliJ -> rootProject.findProperty("versions.intellijSdk")
+fun Project.intellijSdkVersionForIde(): String? {
+    val majorVersion = kotlinBuildProperties.getOrNull("attachedIntellijVersion") as? String ?: return null
+    return rootProject.findProperty("versions.intellijSdk.forIde.$majorVersion") as? String
 }
 
 fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactRepository = ivy {
@@ -58,6 +63,7 @@ fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactReposit
 
         artifact("[organisation]/[module]/[revision]/artifacts/lib/[artifact](-[classifier]).[ext]")
         artifact("[organisation]/[module]/[revision]/artifacts/[artifact](-[classifier]).[ext]")
+        artifact("[organisation]/intellij-core/[revision]/artifacts/[artifact](-[classifier]).[ext]")
         artifact("[organisation]/${project.ideModuleName()}/[revision]/artifacts/plugins/[module]/lib/[artifact](-[classifier]).[ext]") // bundled plugins
         artifact("[organisation]/sources/[artifact]-[revision](-[classifier]).[ext]")
         artifact("[organisation]/[module]/[revision]/[artifact](-[classifier]).[ext]")
@@ -68,15 +74,13 @@ fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactReposit
     }
 }
 
-fun Project.intellijDep(module: String? = null) = "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion()}"
+@JvmOverloads
+fun Project.intellijDep(module: String? = null, forIde: Boolean = false) =
+    "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion(forIde)}"
 
 fun Project.intellijCoreDep() = "kotlin.build:intellij-core:${rootProject.extra["versions.intellijSdk"]}"
 
 fun Project.jpsStandalone() = "kotlin.build:jps-standalone:${rootProject.extra["versions.intellijSdk"]}"
-
-fun Project.nodeJSPlugin() = "kotlin.build:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}"
-
-fun Project.androidDxJar() = "org.jetbrains.kotlin:android-dx:${rootProject.extra["versions.androidBuildTools"]}"
 
 fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
 
@@ -95,11 +99,7 @@ fun Project.kotlinxCollectionsImmutable() = "org.jetbrains.kotlinx:kotlinx-colle
  */
 fun Project.intellijRuntimeAnnotations() = "kotlin.build:intellij-runtime-annotations:${rootProject.extra["versions.intellijSdk"]}"
 
-fun Project.intellijPluginDep(plugin: String) = intellijDep(plugin)
-
-fun Project.intellijUltimateDep() = intellijDep("ideaIU")
-
-fun Project.intellijUltimatePluginDep(plugin: String) = intellijDep(plugin)
+fun Project.intellijPluginDep(plugin: String, forIde: Boolean = false) = intellijDep(plugin, forIde)
 
 fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = null) {
     names.forEach {
@@ -127,7 +127,7 @@ object IntellijRootUtils {
     fun getIntellijRootDir(project: Project): File = with(project.rootProject) {
         return File(
             getRepositoryRootDir(this),
-            "${ideModuleName()}/${ideModuleVersion()}/artifacts"
+            "${ideModuleName()}/${ideModuleVersion(forIde = false)}/artifacts"
         )
     }
 }
@@ -139,83 +139,4 @@ fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFi
         rootProject = project.rootProject
     )
 
-fun Project.isIntellijCommunityAvailable() =
-    !(rootProject.extra["intellijUltimateEnabled"] as Boolean) || rootProject.extra["intellijSeparateSdks"] as Boolean
-
-fun Project.isIntellijUltimateSdkAvailable() = (rootProject.extra["intellijUltimateEnabled"] as Boolean)
-
 fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
-
-fun Project.intellijUltimateRootDir() =
-    if (isIntellijUltimateSdkAvailable())
-        File(kotlinBuildLocalRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
-    else
-        throw GradleException("intellij ultimate SDK is not available")
-
-fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: DependencyHandlerScope.() -> Unit) {
-    if (!rootProject.extra.has("versions.androidStudioRelease")) {
-        block()
-    }
-}
-
-fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, body: JavaExec.() -> Unit): TaskProvider<JavaExec> {
-
-    return tasks.register<JavaExec>(name) {
-        val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
-
-        classpath = mainSourceSet.runtimeClasspath
-
-        mainClass.set("com.intellij.idea.Main")
-
-        workingDir = File(intellijRootDir(), "bin")
-
-        jvmArgs(
-            "-Xmx1250m",
-            "-XX:ReservedCodeCacheSize=240m",
-            "-XX:+HeapDumpOnOutOfMemoryError",
-            "-ea",
-            "-Didea.debug.mode=true",
-            "-Didea.system.path=$ideaSandboxDir",
-            "-Didea.config.path=$ideaSandboxConfigDir",
-            "-Didea.tooling.debug=true",
-            "-Dfus.internal.test.mode=true",
-            "-Dapple.laf.useScreenMenuBar=true",
-            "-Dapple.awt.graphics.UseQuartz=true",
-            "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${ideaPluginDir.absolutePath}"
-        )
-
-        if (Platform[201].orHigher() && !isIntellijUltimateSdkAvailable()) {
-            jvmArgs("-Didea.platform.prefix=Idea")
-        }
-
-        if (rootProject.findProperty("versions.androidStudioRelease") != null) {
-            jvmArgs("-Didea.platform.prefix=AndroidStudio")
-        }
-
-        if (project.hasProperty("noPCE")) {
-            jvmArgs("-Didea.ProcessCanceledException=disabled")
-        }
-
-        jvmArgs("-Didea.is.internal=${project.findProperty("idea.is.internal") ?: true}")
-
-        project.findProperty("idea.args")?.let { arguments ->
-            jvmArgs(arguments.toString().split(" "))
-        }
-
-        args()
-
-        doFirst {
-            val disabledPluginsFile = File(ideaSandboxConfigDir, "disabled_plugins.txt")
-            val disabledPluginsContents = disabledPluginsFile.takeIf { it.isFile }?.readLines()
-            val filteredContents = disabledPluginsContents?.filterNot { it.contains("org.jetbrains.kotlin") }
-            if (filteredContents != null && filteredContents.size != disabledPluginsContents.size) {
-                with(disabledPluginsFile.printWriter()) {
-                    filteredContents.forEach(this::println)
-                }
-            }
-        }
-
-        body()
-    }
-}

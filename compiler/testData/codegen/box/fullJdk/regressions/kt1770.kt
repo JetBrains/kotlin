@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 //This front-end problem test added to box ones only cause of FULL_JDK support
 import org.w3c.dom.Element

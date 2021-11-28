@@ -12,7 +12,7 @@ package test {
     public fun f8(): test.Marker?
     public fun f9(/*0*/ m: test.Marker0 /* = test.Marker */): kotlin.Unit
 
-    @kotlin.RequiresOptIn(level = Level.ERROR) public final annotation class M : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.ERROR) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class M : kotlin.Annotation {
         public constructor M()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

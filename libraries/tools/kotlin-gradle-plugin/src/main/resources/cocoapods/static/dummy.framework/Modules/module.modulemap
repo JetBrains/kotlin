@@ -1,0 +1,6 @@
+framework module dummy {
+  umbrella header "placeholder.h"
+
+  export *
+  module * { export * }
+}

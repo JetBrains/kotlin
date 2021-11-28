@@ -11,3 +11,4 @@ interface I {
 }
 
 // LAZINESS:NoLaziness
+// FIR_COMPARISON

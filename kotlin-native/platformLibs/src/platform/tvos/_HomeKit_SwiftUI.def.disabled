@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform._HomeKit_SwiftUI
+modules = _HomeKit_SwiftUI
+compilerOpts = -framework _HomeKit_SwiftUI
+linkerOpts = -framework _HomeKit_SwiftUI
+#Disabled: Unavailable

@@ -1,0 +1,10 @@
+depends = CoreFoundation Security darwin posix
+language = Objective-C
+package = platform.Network
+modules = Network
+
+compilerOpts = -framework Network
+linkerOpts = -framework Network
+
+excludedFunctions = _nw_data_transfer_report_all_paths
+excludedMacros = NW_ALL_PATHS

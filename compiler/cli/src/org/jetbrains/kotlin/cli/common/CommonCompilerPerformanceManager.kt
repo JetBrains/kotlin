@@ -22,6 +22,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var startGCData = mutableMapOf<String, GCData>()
 
     private var irTranslationStart: Long = 0
+    private var irLoweringStart: Long = 0
     private var irGenerationStart: Long = 0
 
     private var targetDescription: String? = null
@@ -88,6 +89,19 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         )
     }
 
+    open fun notifyIRLoweringStarted() {
+        irLoweringStart = PerformanceCounter.currentTime()
+    }
+
+    open fun notifyIRLoweringFinished() {
+        val time = deltaTime(irLoweringStart)
+        measurements += IRMeasurement(
+            lines,
+            TimeUnit.NANOSECONDS.toMillis(time),
+            IRMeasurement.Kind.LOWERING
+        )
+    }
+
     open fun notifyIRGenerationStarted() {
         irGenerationStart = PerformanceCounter.currentTime()
     }
@@ -145,5 +159,13 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
         constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
+    }
+
+    fun renderCompilerPerformance(): String {
+        val relevantMeasurements = getMeasurementResults().filter {
+            it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
+        }
+
+        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
     }
 }

@@ -16,7 +16,7 @@ interface WithDeprecation {
 }
 
 class A : J(), WithDeprecation {
-    override fun foo() {}
+    override fun <!OVERRIDE_DEPRECATION("This deprecation won't be inherited in future releases. ")!>foo<!>() {}
 }
 
 fun main() {

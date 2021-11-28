@@ -250,12 +250,11 @@ class TypeAliasExpander(
                 val unsubstitutedArgument = unsubstitutedType.arguments[i]
                 val typeParameter = unsubstitutedType.constructor.parameters[i]
                 if (shouldCheckBounds) {
-                    checkBoundsInTypeAlias(
-                        reportStrategy,
+                    reportStrategy.boundsViolationInSubstitution(
+                        typeSubstitutor,
                         unsubstitutedArgument.type,
                         substitutedArgument.type,
-                        typeParameter,
-                        typeSubstitutor
+                        typeParameter
                     )
                 }
             }
@@ -264,26 +263,6 @@ class TypeAliasExpander(
 
     companion object {
         private const val MAX_RECURSION_DEPTH = 100
-
-        fun checkBoundsInTypeAlias(
-            reportStrategy: TypeAliasExpansionReportStrategy,
-            unsubstitutedArgument: KotlinType,
-            typeArgument: KotlinType,
-            typeParameterDescriptor: TypeParameterDescriptor,
-            substitutor: TypeSubstitutor
-        ) {
-            for (bound in typeParameterDescriptor.upperBounds) {
-                val substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT)
-                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
-                    reportStrategy.boundsViolationInSubstitution(
-                        substitutedBound,
-                        unsubstitutedArgument,
-                        typeArgument,
-                        typeParameterDescriptor
-                    )
-                }
-            }
-        }
 
         private fun assertRecursionDepth(recursionDepth: Int, typeAliasDescriptor: TypeAliasDescriptor) {
             if (recursionDepth > MAX_RECURSION_DEPTH) {

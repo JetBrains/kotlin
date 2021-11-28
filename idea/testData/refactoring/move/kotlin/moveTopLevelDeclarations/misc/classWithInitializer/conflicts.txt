@@ -1,1 +1,0 @@
-Class Test uses class X which will be inaccessible after move

@@ -21,15 +21,17 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailRecursionCalls
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrFunction) {
-            // TODO Shouldn't this be done after local declarations lowering?
             // Lower local declarations
             irBody.acceptChildrenVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
@@ -52,24 +53,30 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
 
                 override fun visitFunction(declaration: IrFunction) {
                     declaration.acceptChildrenVoid(this)
-                    lowerTailRecursionCalls(context, declaration, useProperComputationOrderOfTailrecDefaultParameters())
+                    lowerTailRecursionCalls(declaration)
                 }
             })
 
-            lowerTailRecursionCalls(context, container, useProperComputationOrderOfTailrecDefaultParameters())
+            lowerTailRecursionCalls(container)
         }
     }
 
-    open fun useProperComputationOrderOfTailrecDefaultParameters() = true
+    open val useProperComputationOrderOfTailrecDefaultParameters: Boolean
+        get() = true
+
+    open fun followFunctionReference(reference: IrFunctionReference): Boolean = false
+
+    open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
+        IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 }
 
-private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunction, properComputationOrderOfTailrecDefaultParameters: Boolean) {
-    val tailRecursionCalls = collectTailRecursionCalls(irFunction)
+private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
+    val tailRecursionCalls = collectTailRecursionCalls(irFunction, ::followFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return
     }
 
-    val oldBody = irFunction.body as IrBlockBody
+    val oldBody = irFunction.body as? IrBlockBody ?: return
     val oldBodyStatements = ArrayList(oldBody.statements)
     val builder = context.createIrBuilder(irFunction.symbol).at(oldBody)
 
@@ -78,8 +85,8 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     oldBody.statements.clear()
     oldBody.statements += builder.irBlockBody {
         // Define variables containing current values of parameters:
-        val parameterToVariable = parameters.associate {
-            it to createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+        val parameterToVariable = parameters.associateWith {
+            createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
         }
         // (these variables are to be updated on any tail call).
 
@@ -89,17 +96,12 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
 
             body = irBlock(startOffset, endOffset, resultType = context.irBuiltIns.unitType) {
                 // Read variables containing current values of parameters:
-                val parameterToNew = parameters.associate {
-                    val variable = parameterToVariable[it]!!
-                    it to createTmpVariable(irGet(variable), nameHint = it.symbol.suggestVariableName())
+                val parameterToNew = parameters.associateWith {
+                    createTmpVariable(irGet(parameterToVariable[it]!!), nameHint = it.symbol.suggestVariableName())
                 }
-
                 val transformer = BodyTransformer(
-                    builder, irFunction, loop,
-                    parameterToNew, parameterToVariable, tailRecursionCalls,
-                    properComputationOrderOfTailrecDefaultParameters
+                    this@lowerTailRecursionCalls, builder, irFunction, loop, parameterToNew, parameterToVariable, tailRecursionCalls
                 )
-
                 oldBodyStatements.forEach {
                     +it.transformStatement(transformer)
                 }
@@ -111,74 +113,61 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
 }
 
 private class BodyTransformer(
-    val builder: IrBuilderWithScope,
-    val irFunction: IrFunction,
-    val loop: IrLoop,
-    val parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
-    val parameterToVariable: Map<IrValueParameter, IrVariable>,
-    val tailRecursionCalls: Set<IrCall>,
-    val properComputationOrderOfTailrecDefaultParameters: Boolean
-) : IrElementTransformerVoid() {
+    private val lowering: TailrecLowering,
+    private val builder: IrBuilderWithScope,
+    irFunction: IrFunction,
+    private val loop: IrLoop,
+    parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
+    private val parameterToVariable: Map<IrValueParameter, IrVariable>,
+    private val tailRecursionCalls: Set<IrCall>,
+) : VariableRemapper(parameterToNew) {
 
     val parameters = irFunction.explicitParameters
-
-    override fun visitGetValue(expression: IrGetValue): IrExpression {
-        expression.transformChildrenVoid(this)
-        val value = parameterToNew[expression.symbol.owner] ?: return expression
-        return builder.at(expression).irGet(value)
-    }
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         if (expression !in tailRecursionCalls) {
             return expression
         }
-
         return builder.at(expression).genTailCall(expression)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        if (lowering.followFunctionReference(expression)) {
+            expression.symbol.owner.body?.transformChildrenVoid(this)
+        }
+        return super.visitFunctionReference(expression)
     }
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
         // Get all specified arguments:
-        val parameterToArgument = expression.getArgumentsWithIr().map { (parameter, argument) ->
-            parameter to argument
+        val parameterToArgument = expression.getArgumentsWithIr().associateTo(mutableMapOf()) { (parameter, argument) ->
+            // Note that we create `val`s for those parameters so that if some default value contains an object
+            // that captures another parameter, it won't capture it as a mutable ref.
+            parameter to irTemporary(argument)
         }
+        // Create new null-initialized variables for all other values in case of forward references:
+        //   fun f(x: () -> T = { y }, y: T = ...) // in `f()`, `x()` returns `null`
+        val defaultValuedParameters = parameters.filter { it !in parameterToArgument }
+        defaultValuedParameters.associateWithTo(parameterToArgument) {
+            // Note that we intentionally keep the original type of the parameter for the variable even though that violates type safety
+            // if it's non-null. This ensures that capture parameters have the same types for all copies of `x`.
+            irTemporary(lowering.nullConst(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type))
+        }
+        // Now replace those variables with ones containing actual default values. Unused null-valued temporaries will hopefully
+        // be optimized out later.
+        val remapper = VariableRemapper(parameterToArgument)
+        defaultValuedParameters.let { if (lowering.useProperComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
+            .associateWithTo(parameterToArgument) { parameter ->
+                val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
+                irTemporary(originalDefaultValue.deepCopyWithVariables().patchDeclarationParents(parent).transform(remapper, null))
+            }
 
-        // For each specified argument set the corresponding variable to it in the correct order:
+        // Copy the new `val`s into the `var`s declared outside the loop:
         parameterToArgument.forEach { (parameter, argument) ->
             at(argument)
-            // Note that argument can use values of parameters, so it is important that
-            // references to parameters are mapped using `parameterToNew`, not `parameterToVariable`.
-            +irSet(parameterToVariable[parameter]!!.symbol, argument)
+            +irSet(parameterToVariable[parameter]!!.symbol, irGet(argument))
         }
-
-        val specifiedParameters = parameterToArgument.map { (parameter, _) -> parameter }.toSet()
-
-        // For each unspecified argument set the corresponding variable to default:
-        parameters
-            .filter { it !in specifiedParameters }
-            .let { if (properComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
-            .forEach { parameter ->
-
-                val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
-
-                // Copy default value, mapping parameters to variables containing freshly computed arguments:
-                val defaultValue = originalDefaultValue
-                    .deepCopyWithVariables()
-                    .transform(object : IrElementTransformerVoid() {
-
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            expression.transformChildrenVoid(this)
-
-                            val variable = parameterToVariable[expression.symbol.owner] ?: return expression
-                            return IrGetValueImpl(
-                                expression.startOffset, expression.endOffset, variable.type,
-                                variable.symbol, expression.origin
-                            )
-                        }
-                    }, data = null)
-
-                +irSet(parameterToVariable[parameter]!!.symbol, defaultValue)
-            }
 
         // Jump to the entry:
         +irContinue(loop)

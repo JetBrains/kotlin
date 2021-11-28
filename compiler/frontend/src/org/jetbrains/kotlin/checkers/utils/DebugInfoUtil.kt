@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -150,7 +150,7 @@ object DebugInfoUtil {
                         target = "[" + labelTargets.size + " elements]"
                     }
                 }
-                if (MAY_BE_UNRESOLVED.contains(referencedNameElementType)) {
+                if (MAY_BE_UNRESOLVED.contains(referencedNameElementType) || (expression is KtNameReferenceExpression && expression.isPlaceholder)) {
                     return
                 }
                 val resolved = target != null
@@ -205,7 +205,7 @@ object DebugInfoUtil {
     }
 
     abstract class DebugInfoReporter {
-        fun preProcessReference(expression: KtReferenceExpression) {
+        fun preProcessReference(@Suppress("UNUSED_PARAMETER") expression: KtReferenceExpression) {
             // do nothing
         }
 

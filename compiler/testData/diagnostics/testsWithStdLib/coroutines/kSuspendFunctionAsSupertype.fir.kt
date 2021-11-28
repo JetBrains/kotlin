@@ -1,5 +1,6 @@
+// !LANGUAGE: -SuspendFunctionAsSupertype
 // SKIP_TXT
 
 import kotlin.reflect.*
 
-class A: KSuspendFunction0<Unit> {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class A<!>: KSuspendFunction0<Unit> {}

@@ -78,6 +78,6 @@ class ESReceiverWithDataFlowValue(
  */
 class ESLambda(val lambda: KtLambdaExpression) : AbstractESValue(null) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T {
-        throw IllegalStateException("Lambdas shouldn't be visited by ESExpressionVisitor")
+        return visitor.visitLambda(this)
     }
 }

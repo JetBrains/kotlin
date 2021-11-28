@@ -1,7 +1,0 @@
-3 class A(<bold>n: Int</bold>) { (in A(Int))
-4 	val x = <bold>n</bold> (in A.x)
-4 		<bold>val x</bold> = n (in A)
-9 	y = <bold>n</bold> (in A)
-6 		<bold>val y: Int</bold> (in A)
-11 	bar(<bold>n</bold>) (in A)
-14 		fun bar(<bold>m: Int</bold>) { (in A.bar(Int))

@@ -521,7 +521,7 @@ KtFile: PropertiesWithFunctionReceivers.kt
         PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('set')
+    PsiElement(set)('set')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
   PsiErrorElement:Expecting a top level declaration

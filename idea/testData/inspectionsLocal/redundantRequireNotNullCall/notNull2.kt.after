@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-fun test(s: String?) {
-    if (s != null) {
-        println(1)
-        println(2)
-    }
-}

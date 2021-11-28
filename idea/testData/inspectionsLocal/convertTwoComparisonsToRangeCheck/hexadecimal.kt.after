@@ -1,4 +1,0 @@
-fun test(c: Int) {
-    if (c in 0xd801..0xdbff) {
-    }
-}

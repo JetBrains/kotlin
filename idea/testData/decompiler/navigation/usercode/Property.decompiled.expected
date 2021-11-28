@@ -1,5 +1,0 @@
-ClassWithAbstractAndOpenMembers.class
-public abstract class <1>ClassWithAbstractAndOpenMembers public constructor() {
-    public abstract val abstractVal: kotlin.String
-
-    public abstract var <2><3>abstractVar: kotlin.String

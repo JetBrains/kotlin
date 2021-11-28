@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     if (!(1 in 0 until 10)) return "Fail 1 in"

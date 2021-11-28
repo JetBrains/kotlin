@@ -14,7 +14,7 @@ package a.d
 
 import b.d.*
 
-fun foo(arg: Other): Another
+<!NON_MEMBER_FUNCTION_NO_BODY!>fun foo(arg: Other): Another<!>
 
 fun bar() {
     baz()

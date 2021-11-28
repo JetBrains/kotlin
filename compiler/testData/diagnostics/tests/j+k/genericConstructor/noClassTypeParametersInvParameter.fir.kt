@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: A.java
 
 public class A {
@@ -10,12 +9,12 @@ public class A {
 class Inv<T>
 
 fun test(x: Inv<Int>, y: Inv<String>) {
-    <!INAPPLICABLE_CANDIDATE!>A<!>("", x)
+    A("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     A("", y)
 
-    <!INAPPLICABLE_CANDIDATE!>A<!><String>("", x)
+    A<String>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>A<!><Any>("", x)
+    A<Any>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     A<String>("", y)
-    <!INAPPLICABLE_CANDIDATE!>A<!><CharSequence>("", y)
+    A<CharSequence>("", <!ARGUMENT_TYPE_MISMATCH!>y<!>)
 }

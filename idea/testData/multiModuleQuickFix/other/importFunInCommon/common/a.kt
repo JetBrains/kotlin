@@ -1,6 +1,0 @@
-
-package foo
-
-fun foo() {
-
-}

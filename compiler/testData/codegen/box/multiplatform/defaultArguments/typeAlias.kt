@@ -1,5 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: common.kt
 
 expect annotation class Foo(val z: String = "OK")

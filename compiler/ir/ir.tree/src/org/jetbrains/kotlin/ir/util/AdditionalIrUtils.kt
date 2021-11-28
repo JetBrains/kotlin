@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -58,11 +59,9 @@ val IrClass.classId: ClassId?
 val IrDeclaration.nameForIrSerialization: Name
     get() = when (this) {
         is IrDeclarationWithName -> this.name
-        is IrConstructor -> SPECIAL_INIT_NAME
+        is IrConstructor -> SpecialNames.INIT
         else -> error(this)
     }
-
-private val SPECIAL_INIT_NAME = Name.special("<init>")
 
 val IrValueParameter.isVararg get() = this.varargElementType != null
 
@@ -70,11 +69,12 @@ val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
 
 val IrFunction.isReal get() = !(this is IrSimpleFunction && isFakeOverride)
 
-fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
+fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDeclaration<S>): Boolean {
     if (this == other) return true
 
     this.overriddenSymbols.forEach {
-        if (it.owner.overrides(other)) {
+        @Suppress("UNCHECKED_CAST")
+        if ((it.owner as IrOverridableDeclaration<S>).overrides(other)) {
             return true
         }
     }
@@ -84,6 +84,9 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
 
 private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
+
+fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
+    annotationClass.hasEqualFqName(fqName)
 
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.fqName
@@ -101,7 +104,7 @@ fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
     firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
 
-val IrDeclaration.fileEntry: SourceManager.FileEntry
+val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
         when (it) {
             is IrFile -> it.fileEntry
@@ -130,6 +133,8 @@ val IrDeclaration.isTopLevelDeclaration get() =
     parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
 
 val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNames.NO_NAME_PROVIDED
+
+val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name == SpecialNames.NO_NAME_PROVIDED
 
 val IrDeclaration.isLocal: Boolean
     get() {
@@ -172,15 +177,16 @@ val File.lineStartOffsets: IntArray
         return buffer.toIntArray()
     }
 
-val SourceManager.FileEntry.lineStartOffsets
-    get() = File(name).let {
-        if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0)
+val IrFileEntry.lineStartOffsets: IntArray
+    get() = when (this) {
+        is PsiIrFileEntry -> this.getLineOffsets()
+        else -> File(name).let { if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0) }
     }
 
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
     private val lineStartOffsets: IntArray = intArrayOf()
-) : SourceManager.FileEntry {
+) : IrFileEntry {
 
     private val MAX_SAVED_LINE_NUMBERS = 50
 
@@ -228,7 +234,7 @@ private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
     return properties.firstOrNull()
 }
 
-private fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
+fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
 
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =

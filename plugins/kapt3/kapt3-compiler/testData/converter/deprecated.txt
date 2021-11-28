@@ -30,17 +30,17 @@ public final class Foo {
     }
 
     @java.lang.Deprecated()
-    public final int getFoo() {
-        return 0;
-    }
-
-    @java.lang.Deprecated()
     public final int getProp() {
         return 0;
     }
 
     @java.lang.Deprecated()
     public static void getProp$annotations() {
+    }
+
+    @java.lang.Deprecated()
+    public final int getFoo() {
+        return 0;
     }
 
     @java.lang.Deprecated()

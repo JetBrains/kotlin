@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.ReservedCheckingKt;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
@@ -349,7 +349,7 @@ public class ValueArgumentsToParametersMapper {
             else {
                 LeafPsiElement spread = valueArgument.getSpreadElement();
                 if (spread != null) {
-                    candidateCall.getTrace().report(NON_VARARG_SPREAD.on(spread));
+                    candidateCall.getTrace().report(NON_VARARG_SPREAD.onError(spread));
                     setStatus(WEAK_ERROR);
                 }
                 ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);

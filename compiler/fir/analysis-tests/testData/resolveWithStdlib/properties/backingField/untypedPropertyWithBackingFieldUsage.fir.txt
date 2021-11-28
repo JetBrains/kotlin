@@ -1,0 +1,63 @@
+FILE: untypedPropertyWithBackingFieldUsage.kt
+    public final val simpleNoTypeBlock: <ERROR TYPE REF: Unresolved name: field>
+        public get(): <ERROR TYPE REF: Unresolved name: field> {
+            ^ <Unresolved name: field>#
+        }
+    public final val simpleNoTypeExpression: <ERROR TYPE REF: Unresolved name: field>
+        public get(): <ERROR TYPE REF: Unresolved name: field> {
+            ^ <Unresolved name: field>#
+        }
+    public final val simpleTypeBlock: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ F|/simpleTypeBlock|
+        }
+    public final val simpleTypeExpression: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ F|/simpleTypeExpression|
+        }
+    public final val withFieldNoTypeBlock: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ <Unresolved name: field>#.R|kotlin/text/toInt|()
+        }
+    public final val withFieldNoTypeExpression: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ <Unresolved name: field>#.R|kotlin/text/toInt|()
+        }
+    public final val withFieldTypeBlock: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ F|/withFieldTypeBlock|.R|kotlin/Double.toInt|()
+        }
+    public final val withFieldTypeExpression: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ F|/withFieldTypeExpression|.R|kotlin/Double.toInt|()
+        }
+    public final val minimalFieldWithInitializer: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        private <explicit backing field>: R|kotlin/Int| = Int(1)
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+    public final val minimalFieldWithNoInitializer: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        private <explicit backing field>: R|kotlin/Int|
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+    public final val constWithFieldNoTypeBlock: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ Int(10)
+        }
+    public final val constWithFieldNoTypeExpression: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ Int(10)
+        }
+    public final val constWithFieldTypeBlock: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ Int(10)
+        }
+    public final val constWithFieldTypeExpression: R|kotlin/Int|
+        private <explicit backing field>: R|kotlin/Double| = Double(3.14)
+        public get(): R|kotlin/Int| {
+            ^ Int(10)
+        }

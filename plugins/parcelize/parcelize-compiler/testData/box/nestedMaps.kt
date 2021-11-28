@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -20,7 +20,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val second = readFromParcel<Data>(parcel)
+    val second = parcelableCreator<Data>().createFromParcel(parcel)
     assert(second.data.size == 1)
     val entry = second.data.entries.single()
     assert(Arrays.equals(entry.key, arrayOf(0)))

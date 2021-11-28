@@ -1,0 +1,32 @@
+[direct super types]
+kotlin.collections.List<kotlin.String!>
+kotlin.collections.MutableCollection<kotlin.String!>
+kotlin.collections.Collection<kotlin.String!>?
+
+[approximated direct super types]
+kotlin.collections.List<kotlin.String!>
+kotlin.collections.MutableCollection<kotlin.String!>
+kotlin.collections.Collection<kotlin.String!>?
+
+[all super types]
+kotlin.collections.List<kotlin.String!>
+kotlin.collections.MutableCollection<kotlin.String!>
+kotlin.collections.Collection<kotlin.String!>?
+kotlin.collections.Collection<kotlin.String!>
+kotlin.collections.MutableIterable<kotlin.String!>
+kotlin.collections.Iterable<kotlin.String!>?
+kotlin.collections.Iterable<kotlin.String!>
+kotlin.Any?
+kotlin.Any
+
+[approximated all super types]
+kotlin.collections.List<kotlin.String!>
+kotlin.collections.MutableCollection<kotlin.String!>
+kotlin.collections.Collection<kotlin.String!>?
+kotlin.collections.Collection<kotlin.String!>
+kotlin.collections.MutableIterable<kotlin.String!>
+kotlin.collections.Iterable<kotlin.String!>?
+kotlin.collections.Iterable<kotlin.String!>
+kotlin.Any?
+kotlin.Any
+

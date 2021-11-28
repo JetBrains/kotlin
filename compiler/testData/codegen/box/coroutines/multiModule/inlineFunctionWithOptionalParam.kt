@@ -1,3 +1,5 @@
+// WITH_COROUTINES
+// WITH_STDLIB
 // MODULE: lib
 // FILE: lib.kt
 inline fun foo(x: String = "OK"): String {
@@ -5,9 +7,9 @@ inline fun foo(x: String = "OK"): String {
 }
 
 // MODULE: main(lib, support)
-// FILE: main.kt
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

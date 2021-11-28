@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // MODULE: m1
 // FILE: a.kt
@@ -18,5 +17,5 @@ import p.*
 class A
 
 fun test() {
-    val a: A = B().a
+    val a: A = <!INITIALIZER_TYPE_MISMATCH!>B().a<!>
 }

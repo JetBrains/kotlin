@@ -1,4 +1,4 @@
-@file:Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+@file:Suppress("OPT_IN_USAGE_ERROR")
 
 @OptionalExpectation
 expect annotation class Optional(val value: String)

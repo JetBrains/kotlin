@@ -1,0 +1,5 @@
+rootProject.name = 'kotlin-stdlib-docs'
+
+include 'kotlin_native'
+include 'kotlin_big'
+include 'ant'

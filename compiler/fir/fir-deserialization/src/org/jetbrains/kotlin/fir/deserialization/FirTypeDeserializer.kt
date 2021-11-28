@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -36,12 +37,13 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 class FirTypeDeserializer(
-    val session: FirSession,
+    val moduleData: FirModuleData,
     val nameResolver: NameResolver,
     val typeTable: TypeTable,
     val annotationDeserializer: AbstractAnnotationDeserializer,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
-    val parent: FirTypeDeserializer?
+    val parent: FirTypeDeserializer?,
+    val containingSymbol: FirBasedSymbol<*>?
 ) {
     private val typeParameterDescriptors: Map<Int, FirTypeParameterSymbol> = if (typeParameterProtos.isNotEmpty()) {
         LinkedHashMap<Int, FirTypeParameterSymbol>()
@@ -66,10 +68,12 @@ class FirTypeDeserializer(
                     typeParameterNames[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {
-                    session = this@FirTypeDeserializer.session
+                    moduleData = this@FirTypeDeserializer.moduleData
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = FirDeclarationOrigin.Library
                     this.name = name
                     this.symbol = symbol
+                    this.containingDeclarationSymbol = containingSymbol
                     variance = proto.variance.convertVariance()
                     isReified = proto.reified
                 }
@@ -79,7 +83,7 @@ class FirTypeDeserializer(
             for ((index, proto) in typeParameterProtos.withIndex()) {
                 val builder = builders[index]
                 builder.apply {
-                    proto.upperBoundList.mapTo(bounds) {
+                    proto.upperBounds(typeTable).mapTo(bounds) {
                         buildResolvedTypeRef { type = type(it) }
                     }
                     addDefaultBoundIfNecessary()
@@ -103,7 +107,7 @@ class FirTypeDeserializer(
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         val annotations = annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-        val attributes = annotations.computeTypeAttributes()
+        val attributes = annotations.computeTypeAttributes(moduleData.session)
         return type(proto, attributes)
     }
 
@@ -132,9 +136,16 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeLookupTagBasedType? {
+    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeSimpleKotlinType? {
         val constructor = typeSymbol(proto) ?: return null
-        if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable)
+        if (constructor is ConeTypeParameterLookupTag) {
+            return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
+                if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
+                    ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext)
+                else
+                    it
+            }
+        }
         if (constructor !is ConeClassLikeLookupTag) return null
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
@@ -158,7 +169,7 @@ class FirTypeDeserializer(
     ): ConeClassLikeType? {
         fun ConeClassLikeType.isContinuation(): Boolean {
             if (this.typeArguments.size != 1) return false
-            if (this.lookupTag.classId != CONTINUATION_INTERFACE_CLASS_ID) return false
+            if (this.lookupTag.classId != StandardClassIds.Continuation) return false
             return true
         }
 
@@ -182,7 +193,7 @@ class FirTypeDeserializer(
         attributes: ConeAttributes
     ): ConeClassLikeType {
         val result =
-            when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
+            when ((functionTypeConstructor.toSymbol(moduleData.session)?.fir as FirTypeParameterRefsOwner).typeParameters.size - arguments.size) {
                 0 -> createSuspendFunctionTypeForBasicCase(functionTypeConstructor, arguments, isNullable, attributes)
                 1 -> {
                     val arity = arguments.size - 1

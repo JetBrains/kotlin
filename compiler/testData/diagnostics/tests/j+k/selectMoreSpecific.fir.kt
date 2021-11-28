@@ -11,6 +11,6 @@ public class A {
 // FILE: main.kt
 
 fun foo(a: A) {
-    a.<!AMBIGUITY!>foo<!>() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-    A.<!AMBIGUITY!>bar<!>() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<String>() }
+    A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<String>() }
 }

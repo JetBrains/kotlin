@@ -18,7 +18,6 @@ package p {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -39,7 +38,6 @@ package p {
     }
 }
 
-
 // -- Module: <m3> --
 package
 
@@ -50,3 +48,4 @@ public final class Foo : p.A<kotlin.String>, p.B {
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

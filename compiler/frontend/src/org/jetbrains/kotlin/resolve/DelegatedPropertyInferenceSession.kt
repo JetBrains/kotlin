@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -32,10 +34,23 @@ class DelegatedPropertyInferenceSession(
     postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     callComponents: KotlinCallComponents,
-    builtIns: KotlinBuiltIns
+    builtIns: KotlinBuiltIns,
+    override val parentSession: InferenceSession?
 ) : ManyCandidatesResolver<FunctionDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
+    init {
+        if (parentSession is ManyCandidatesResolver<*>) {
+            parentSession.addNestedInferenceSession(this)
+        }
+    }
+
+    fun getNestedBuilderInferenceSessions(): List<BuilderInferenceSession> {
+        val builderInferenceSessions = nestedInferenceSessions.filterIsInstance<BuilderInferenceSession>()
+        val delegatedPropertyInferenceSessions = nestedInferenceSessions.filterIsInstance<DelegatedPropertyInferenceSession>()
+
+        return builderInferenceSessions + delegatedPropertyInferenceSessions.map { it.getNestedBuilderInferenceSessions() }.flatten()
+    }
 
     override fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         val csBuilder = commonSystem.getBuilder()
@@ -87,13 +102,18 @@ class DelegatedPropertyInferenceSession(
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
+    override fun initializeLambda(lambda: ResolvedLambdaAtom) {}
+
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
 
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
 }
 
-class InferenceSessionForExistingCandidates(private val resolveReceiverIndependently: Boolean) : InferenceSession {
-    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
+class InferenceSessionForExistingCandidates(
+    private val resolveReceiverIndependently: Boolean,
+    override val parentSession: InferenceSession?
+) : InferenceSession {
+    override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean {
         return !ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)
     }
 
@@ -116,8 +136,10 @@ class InferenceSessionForExistingCandidates(private val resolveReceiverIndepende
     }
 
     override fun computeCompletionMode(
-        candidate: KotlinResolutionCandidate
+        candidate: ResolutionCandidate
     ): ConstraintSystemCompletionMode? = null
 
     override fun resolveReceiverIndependently(): Boolean = resolveReceiverIndependently
+
+    override fun initializeLambda(lambda: ResolvedLambdaAtom) {}
 }

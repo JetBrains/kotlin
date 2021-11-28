@@ -1,0 +1,14 @@
+package test
+
+public open class Basic {
+    public constructor Basic()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) @kotlin.annotation.Retention(value = ...) public final annotation class A : kotlin.Annotation {
+        public final val value: kotlin.String
+            public final fun <get-value>(): kotlin.String
+    }
+
+    public interface G</*0*/ @test.Basic.A(value = "") T : kotlin.Any!> {
+        public abstract fun </*0*/ @test.Basic.A(value = "abc") R : kotlin.Any!> foo(/*0*/ R!): kotlin.Unit
+    }
+}

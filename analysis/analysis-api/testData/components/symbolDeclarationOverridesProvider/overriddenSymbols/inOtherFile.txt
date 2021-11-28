@@ -1,0 +1,4 @@
+ALL:
+  B.foo(x: Int): Int
+DIRECT:
+  B.foo(x: Int): Int

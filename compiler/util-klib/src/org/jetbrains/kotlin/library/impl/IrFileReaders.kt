@@ -36,6 +36,36 @@ abstract class IrArrayReader(private val buffer: ReadBuffer) {
 class IrArrayFileReader(file: File) : IrArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
 class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
+class IrIntArrayMemoryReader(bytes: ByteArray) {
+
+    val array = run {
+        val buffer = ReadBuffer.MemoryBuffer(bytes)
+
+        val result = IntArray(buffer.int)
+
+        for (i in result.indices) {
+            result[i] = buffer.int
+        }
+
+        result
+    }
+}
+
+class IrLongArrayMemoryReader(bytes: ByteArray) {
+
+    val array = run {
+        val buffer = ReadBuffer.MemoryBuffer(bytes)
+
+        val result = LongArray(buffer.int)
+
+        for (i in result.indices) {
+            result[i] = buffer.long
+        }
+
+        result
+    }
+}
+
 abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
     private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
@@ -69,12 +99,12 @@ abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     fun tableItemBytes(row: Int, column: Int): ByteArray {
         val rowOffset = indexToOffset[row]
 
-        val collumnOffsets = indexIndexToOffset.getOrPut(row) {
+        val columnOffsets = indexIndexToOffset.getOrPut(row) {
             readOffsets(rowOffset)
         }
 
-        val dataOffset = collumnOffsets[column]
-        val dataSize = collumnOffsets[column + 1] - dataOffset
+        val dataOffset = columnOffsets[column]
+        val dataSize = columnOffsets[column + 1] - dataOffset
         val result = ByteArray(dataSize)
 
         buffer.position = rowOffset + dataOffset
@@ -122,6 +152,16 @@ abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val
             result[key] = offset to size
         }
 
+        return result
+    }
+
+    fun tableItemBytes(idx: Int): ByteArray {
+        val rowOffset = indexToOffset[idx]
+        val nextOffset = indexToOffset[idx + 1]
+        val size = nextOffset - rowOffset
+        val result = ByteArray(size)
+        buffer.position = rowOffset
+        buffer.get(result, 0, size)
         return result
     }
 
@@ -188,3 +228,6 @@ class DeclarationIrMultiTableFileReader(file: File) :
 
 class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) :
     IrMultiTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })
+
+
+fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }

@@ -9,10 +9,10 @@ public final class M1 {
         super();
     }
 
-    public static final void bar() {
+    public static final void foo() {
     }
 
-    public static final void foo() {
+    public static final void bar() {
     }
 }
 

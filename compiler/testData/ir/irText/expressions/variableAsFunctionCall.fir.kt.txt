@@ -9,7 +9,7 @@ fun test1(f: Function0<Unit>) {
   return f.invoke()
 }
 
-fun test2(f: @ExtensionFunctionType @ExtensionFunctionType Function1<String, Unit>) {
+fun test2(f: @ExtensionFunctionType Function1<String, Unit>) {
   return f.invoke(p1 = "hello")
 }
 

@@ -6,8 +6,8 @@ fun test() {
     while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!>) {}
     l@ while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@l<!>) {}
 
-    do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>)
-    l@ do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>)
+    do {} while (continue)
+    l@ do {} while (continue@l)
 
     //KT-5704
     var i = 0

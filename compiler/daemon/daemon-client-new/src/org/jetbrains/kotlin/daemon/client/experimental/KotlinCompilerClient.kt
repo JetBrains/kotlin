@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
-import io.ktor.network.sockets.Socket
+import io.ktor.network.sockets.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSessionAsync
@@ -44,13 +45,13 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
 
-    val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
+    val verboseReporting = CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value != null
 
     private val log = Logger.getLogger("KotlinCompilerClient")
 
     override fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
     // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
-        System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
+        CompilerSystemProperties.COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY.value
             ?.let(String::trimQuotes)
             ?.takeUnless(String::isBlank)
             ?.let(::File)
@@ -210,8 +211,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         }
     }
 
-    val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
-
     data class ClientOptions(
         var stop: Boolean = false
     ) : OptionsGroup {
@@ -220,11 +219,11 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     }
 
     private fun configureClientOptions(opts: ClientOptions): ClientOptions {
-        System.getProperty(COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY)?.let {
+        CompilerSystemProperties.COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY.value?.let {
             val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
             if (unrecognized.any())
                 throw IllegalArgumentException(
-                    "Unrecognized client options passed via property $COMPILE_DAEMON_OPTIONS_PROPERTY: " + unrecognized.joinToString(" ") +
+                    "Unrecognized client options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(" ") +
                             "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() })
                 )
         }
@@ -361,7 +360,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     }
 
     private fun detectCompilerClasspath(): List<String>? =
-        System.getProperty("java.class.path")
+        CompilerSystemProperties.JAVA_CLASS_PATH.value
             ?.split(File.pathSeparator)
             ?.map { File(it).parentFile }
             ?.distinct()
@@ -439,6 +438,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
             .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
+        @Suppress("DEPRECATION") // TODO: replace with maxWithOrNull as soon as minimal version of Gradle that we support has Kotlin 1.4+.
         aliveWithMetadata.maxWith(comparator)
             ?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }
             ?.let {
@@ -455,12 +455,12 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets
     ): Boolean {
-        val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-        val serverHostname = System.getProperty(JAVA_RMI_SERVER_HOSTNAME) ?: error("$JAVA_RMI_SERVER_HOSTNAME is not set!")
+        val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
+        val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
         val platformSpecificOptions = listOf(
             // hide daemon window
             "-Djava.awt.headless=true",
-            "-D$JAVA_RMI_SERVER_HOSTNAME=$serverHostname"
+            "-D${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
         )
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
@@ -509,13 +509,13 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
             }
         try {
             // trying to wait for process
-            val daemonStartupTimeout = System.getProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY)?.let {
+            val daemonStartupTimeout = CompilerSystemProperties.COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY.value?.let {
                 try {
                     it.toLong()
                 } catch (e: Exception) {
                     reportingTargets.report(
                         DaemonReportCategory.INFO,
-                        "unable to interpret $COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms"
+                        "unable to interpret ${CompilerSystemProperties.COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY.property} property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms"
                     )
                     null
                 }

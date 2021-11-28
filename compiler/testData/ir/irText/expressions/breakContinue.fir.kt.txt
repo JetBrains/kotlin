@@ -1,8 +1,12 @@
 fun test1() {
   while (true) break
-  dobreak  while (true)
+  { // BLOCK
+    dobreak    while (true)
+  }
   while (true) continue
-  docontinue  while (true)
+  { // BLOCK
+    docontinue    while (true)
+  }
 }
 
 fun test2() {

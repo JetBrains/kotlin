@@ -18,7 +18,7 @@ class PsiElementFinderByType(
         return visitElement(root, 0)
     }
 
-    fun visitElement(element: PsiElement, currentDepth: Int): PsiElement? {
+    private fun visitElement(element: PsiElement, currentDepth: Int): PsiElement? {
         if (element.node.elementType in types) {
             if (index == 0) {
                 return element
@@ -28,11 +28,12 @@ class PsiElementFinderByType(
 
         if (currentDepth == depth) return null
 
-        for (children in element.allChildren) {
-            val result = visitElement(children, currentDepth + 1)
+        for (child in element.allChildren) {
+            val result = visitElement(child, currentDepth + 1)
             if (result != null) return result
         }
 
         return null
     }
+
 }

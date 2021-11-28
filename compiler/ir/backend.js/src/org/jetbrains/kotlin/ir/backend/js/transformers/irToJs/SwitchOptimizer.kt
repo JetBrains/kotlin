@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class SwitchOptimizer(private val context: JsGenerationContext, private val lastStatementTransformer: (JsStatement) -> JsStatement) {
+class SwitchOptimizer(private val context: JsGenerationContext, private val isExpression: Boolean, private val lastStatementTransformer: (JsStatement) -> JsStatement) {
 
     // TODO: reimplement optimization on top of IR
-    constructor(context: JsGenerationContext) : this(context, { it })
+    constructor(context: JsGenerationContext) : this(context, isExpression = false, { it })
 
     private val jsEqeqeq = context.staticContext.backendContext.intrinsics.jsEqeqeq
     private val jsEqeq = context.staticContext.backendContext.intrinsics.jsEqeq
@@ -69,16 +69,17 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val last
                 if (constExpr !is IrConst<*>) return false
                 if (!constExpr.isTrueConstant()) return false
 
-                when (branchExpr) {
+                return when (branchExpr) {
                     is IrWhen -> checkForPrimitiveOrPattern(branchExpr, constants)
-                    is IrCall -> {
-                        val constant = tryToExtractEqeqeqConst(branchExpr) ?: return false
-                        constants += constant
+                    is IrCall -> when (val constant = tryToExtractEqeqeqConst(branchExpr)) {
+                        null -> false
+                        else -> {
+                            constants += constant
+                            true
+                        }
                     }
-                    else -> return false
+                    else -> false
                 }
-
-                return true
             }
 
             if (!checkBranchIsOrPattern(thenBranch.result, thenBranch.condition)) return false
@@ -143,19 +144,27 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val last
                 JsDefault().also { jsCases += it }
             }
 
-            val jsBody = case.body.accept(stmtTransformer, context).asBlock()
-            var lastStatement = jsBody.statements.lastOrNull()
+            val lastStatement = if (isExpression) {
+                val expression = case.body.accept(exprTransformer, context).makeStmt()
+                val lastStatement = lastStatementTransformer(expression)
+                jsCase.statements += lastStatement
+                lastStatement
+            } else {
+                val jsBody = case.body.accept(stmtTransformer, context).asBlock()
+                var lastStatement = jsBody.statements.lastOrNull()
 
-            if (lastStatement != null) {
-                lastStatement = lastStatementTransformer(lastStatement)
-                jsBody.statements[jsBody.statements.lastIndex] = lastStatement
+                if (lastStatement != null) {
+                    lastStatement = lastStatementTransformer(lastStatement)
+                    jsBody.statements[jsBody.statements.lastIndex] = lastStatement
+                }
+
+                jsCase.statements += jsBody.statements
+                lastStatement
             }
 
             if (lastStatement !is JsBreak && lastStatement !is JsContinue && lastStatement !is JsReturn && lastStatement !is JsThrow) {
-                jsBody.statements += JsBreak()
+                jsCase.statements += JsBreak()
             }
-
-            jsCase.statements += jsBody.statements
         }
 
         return JsSwitch(jsExpr, jsCases)

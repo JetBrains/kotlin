@@ -1,9 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BOUND_RECEIVER
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 // WITH_REFLECT
 
-inline class Foo(val x: String) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val x: String) {
     fun bar(f: Foo, i: Int): Foo = Foo(x + f.x + i)
 }
 

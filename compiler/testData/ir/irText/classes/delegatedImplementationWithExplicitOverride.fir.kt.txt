@@ -24,17 +24,14 @@ class C : IFooBar {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = FooBarImpl
-  }
-
-  override fun bar() {
   }
 
   override fun foo() {
     <this>.#<$$delegate_0>.foo()
   }
 
-  local /* final field */ val <$$delegate_0>: IFooBar
+  local /* final field */ val <$$delegate_0>: IFooBar = FooBarImpl
+  override fun bar() {
+  }
 
 }
-

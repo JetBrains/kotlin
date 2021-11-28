@@ -1,0 +1,46 @@
+FILE: K1.kt
+    public open class KotlinOuter : R|kotlin/Any| {
+        public constructor(): R|KotlinOuter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open inner class KotlinInner : R|kotlin/Any| {
+            public KotlinOuter.constructor(): R|KotlinOuter.KotlinInner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: K2.kt
+    public final class K2 : R|J1| {
+        public constructor(): R|K2| {
+            super<R|J1|>()
+        }
+
+        public final fun main(): R|kotlin/Unit| {
+            this@R|/K2|.R|/KotlinOuter.bar|()
+            this@R|/K2|.R|/J1.baz|()
+        }
+
+        public final inner class K3 : R|J1.J2| {
+            public K2.constructor(): R|K2.K3| {
+                this@R|/K2|.super<R|J1.J2|>()
+            }
+
+            public final fun main(): R|kotlin/Unit| {
+                this@R|/K2.K3|.R|/KotlinOuter.KotlinInner.foo|()
+                this@R|/K2.K3|.R|/J1.J2.bazbaz|()
+                this@R|/K2|.R|/KotlinOuter.bar|()
+                this@R|/K2|.R|/J1.baz|()
+            }
+
+        }
+
+    }

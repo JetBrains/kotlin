@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //  !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 // TODO Uncomment all the examples when there will be no problems with light classes
 //package `foo.bar`

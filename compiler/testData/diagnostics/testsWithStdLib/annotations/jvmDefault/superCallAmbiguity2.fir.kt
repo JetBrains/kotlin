@@ -1,6 +1,6 @@
 // !JVM_TARGET: 1.8
 interface A {
-    @JvmDefault
+    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!><!>
     fun test()
 }
 
@@ -9,9 +9,9 @@ interface B{
     }
 }
 
-interface AB: A, B
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface AB<!>: A, B
 
-interface BA: B, A
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface BA<!>: B, A
 
 class C : A, B {
     override fun test() {
@@ -25,7 +25,7 @@ class D : B, A {
     }
 }
 
-class E: B, A {
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class E<!>: B, A {
     fun foo() {
         super<B>.test()
     }

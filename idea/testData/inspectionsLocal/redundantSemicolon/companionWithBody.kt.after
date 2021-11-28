@@ -1,7 +1,0 @@
-class Test {
-    companion object {}
-
-    inline fun test() {}
-}
-
-fun Test.Companion.foo() {}

@@ -1,0 +1,22 @@
+FILE: labelAndReceiverForInfix.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final infix fun R|() -> kotlin/Unit|.foo(x: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        .R|/foo|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/A.bar|()
+            ^@foo Unit
+        }
+        )
+    }

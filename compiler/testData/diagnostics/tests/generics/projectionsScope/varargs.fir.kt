@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A<T> {
@@ -6,8 +5,8 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>, y: Array<out CharSequence>) {
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>("", "", "")
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>(*y)
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    a.foo(*<!ARGUMENT_TYPE_MISMATCH!>y<!>)
     // TODO: TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS probably redundant
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>(*y, "")
+    a.foo(*<!ARGUMENT_TYPE_MISMATCH!>y<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }

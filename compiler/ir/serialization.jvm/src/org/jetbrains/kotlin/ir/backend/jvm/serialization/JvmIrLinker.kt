@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -17,15 +15,16 @@ import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
@@ -34,16 +33,16 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
-    logger: LoggingContext,
-    builtIns: IrBuiltIns,
+    messageLogger: IrMessageLogger,
+    typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
-    override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
-    private val manglerDesc: JvmManglerDesc
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
+    private val manglerDesc: JvmDescriptorMangler
+) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JvmManglerIr), builtIns)
+    // TODO: provide friend modules
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem, emptyMap())
 
     private val javaName = Name.identifier("java")
 
@@ -51,17 +50,17 @@ class JvmIrLinker(
         moduleDescriptor.name.asString().startsWith("<dependencies of ")
 
     // TODO: implement special Java deserializer
-    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
+    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy): IrModuleDeserializer {
         if (klib != null) {
             assert(moduleDescriptor.getCapability(KlibModuleOrigin.CAPABILITY) != null)
-            return JvmModuleDeserializer(moduleDescriptor, klib, strategy)
+            return JvmModuleDeserializer(moduleDescriptor, klib, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, strategyResolver)
         }
 
         return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
     }
 
-    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy) :
-        KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy)
+    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, libraryAbiVersion: KotlinAbiVersion, strategyResolver: (String) -> DeserializationStrategy) :
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {
@@ -121,7 +120,7 @@ class JvmIrLinker(
     }
 
     private inner class MetadataJVMModuleDeserializer(moduleDescriptor: ModuleDescriptor, dependencies: List<IrModuleDeserializer>) :
-        IrModuleDeserializer(moduleDescriptor) {
+        IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
         // TODO: implement proper check whether `idSig` belongs to this module
         override fun contains(idSig: IdSignature): Boolean = true
@@ -154,7 +153,6 @@ class JvmIrLinker(
         }
 
         override fun declareIrSymbol(symbol: IrSymbol) {
-            assert(symbol.isPublicApi || symbol.descriptor.isJavaDescriptor())
             if (symbol is IrFieldSymbol) {
                 declareJavaFieldStub(symbol)
             } else {

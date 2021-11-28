@@ -1,19 +1,25 @@
 package test
 
-interface Some
+interface Some {
+    fun test() = 10
+}
 
 abstract class My<T : Some> {
-    inner class T
+    open class T
 
     abstract val x: T
 
-    abstract fun foo(arg: T)
+    // Wouldn't work for the inner class T
+    fun foo(arg: T) = arg.test() + x.test()
 
     abstract val y: My.T
 
     abstract val z: test.My.T
 
-    class Some : <!OTHER_ERROR, UNRESOLVED_REFERENCE!>T<!>()
+    // Would work for the type parameter T
+    fun boo() = y.<!UNRESOLVED_REFERENCE!>test<!>() + z.<!UNRESOLVED_REFERENCE!>test<!>()
+
+    class Some : T()
 }
 
-abstract class Your<T : Some> : <!OTHER_ERROR!>T<!>
+abstract class Your<T : Some> : <!SUPERTYPE_NOT_A_CLASS_OR_INTERFACE!>T<!>

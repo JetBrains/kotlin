@@ -65,7 +65,7 @@ abstract class KlibPropertyExtensionVisitor : KmPropertyExtensionVisitor {
 
     abstract fun visitUniqId(uniqId: UniqId)
 
-    abstract fun visitCompileTimeValue(value: KmAnnotationArgument<*>)
+    abstract fun visitCompileTimeValue(value: KmAnnotationArgument)
 
     override val type: KmExtensionType
         get() = TYPE

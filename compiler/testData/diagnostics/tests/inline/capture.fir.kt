@@ -25,7 +25,7 @@ inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {
     {
         s(11)
         s.invoke(11)
-        s invoke 11
+        s <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
     }()
 }
 
@@ -33,7 +33,7 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit) {
     {
         s(11)
         s.invoke(11)
-        s invoke 11
+        s <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
     }()
 }
 
@@ -46,6 +46,6 @@ inline fun testExtension(s: (p: Int) -> Unit) {
 
 inline fun inlineFunWrongExtension(s: (p: Int) -> Unit) {
     {
-        s.noInlineExt(11)
+        s.<!USAGE_IS_NOT_INLINABLE!>noInlineExt<!>(11)
     } ()
 }

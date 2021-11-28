@@ -1,6 +1,0 @@
-public class Foo {
-    public static void main(String[] args) {
-        Person person = new Person("M", "S");
-        System.out.println(person.toString());
-    }
-}

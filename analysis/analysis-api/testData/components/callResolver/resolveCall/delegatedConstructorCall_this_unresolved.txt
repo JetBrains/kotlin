@@ -1,0 +1,4 @@
+KtDelegatedConstructorCall:
+argumentMapping = {  }
+targetFunction = ERR<None of the following functions are applicable: [/Sub.Sub, /Sub.Sub], [<constructor>(p: kotlin.Int): Sub, <constructor>(i: kotlin.Int, j: kotlin.Int): Sub]>
+kind = THIS_CALL

@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
@@ -30,6 +29,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
+        addBuildEventsListenerRegistryMock(project)
         project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 
         project.plugins.apply("kotlin-multiplatform")

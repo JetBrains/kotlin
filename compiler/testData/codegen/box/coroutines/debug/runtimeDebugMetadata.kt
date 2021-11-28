@@ -1,6 +1,6 @@
 // This test depends on line numbers.
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 // WITH_COROUTINES
 

@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -31,16 +34,19 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmPlatformParameters(
     val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
     val moduleByJavaClass: (JavaClass) -> ModuleInfo?,
     // params: referenced module info of target class, context module info of current resolver
     val resolverForReferencedModule: ((ModuleInfo, ModuleInfo) -> ResolverForModule?)? = null,
+    val useBuiltinsProviderForModule: (ModuleInfo) -> Boolean
 ) : PlatformAnalysisParameters
 
 
@@ -54,7 +60,8 @@ class JvmResolverForModuleFactory(
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        sealedInheritorsProvider: SealedClassInheritorsProvider
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -106,18 +113,19 @@ class JvmResolverForModuleFactory(
             targetEnvironment,
             lookupTracker,
             ExpectActualTracker.DoNothing,
+            InlineConstTracker.DoNothing,
             packagePartProvider,
             languageVersionSettings,
-            useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
+            sealedInheritorsProvider = sealedInheritorsProvider,
+            useBuiltInsProvider = platformParameters.useBuiltinsProviderForModule(moduleInfo)
         )
-
-        val resolveSession = container.get<ResolveSession>()
-        val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 
         val providersForModule = arrayListOf(
-            resolveSession.packageFragmentProvider,
-            javaDescriptorResolver.packageFragmentProvider
+            container.get<ResolveSession>().packageFragmentProvider,
+            container.get<JavaDescriptorResolver>().packageFragmentProvider,
         )
+
+        providersForModule.addIfNotNull(container.tryGetService(JvmBuiltInsPackageFragmentProvider::class.java))
 
         providersForModule +=
             PackageFragmentProviderExtension.getInstances(project)
@@ -127,6 +135,9 @@ class JvmResolverForModuleFactory(
                     )
                 }
 
-        return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
+        return ResolverForModule(
+            CompositePackageFragmentProvider(providersForModule, "CompositeProvider@JvmResolver for $moduleDescriptor"),
+            container
+        )
     }
 }

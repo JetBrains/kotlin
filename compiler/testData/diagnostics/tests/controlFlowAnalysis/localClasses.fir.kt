@@ -7,7 +7,7 @@ fun f() {
 
             fun loc1(): Int {
                 val x1_ = "" // ok: unused
-            }
+            <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
         }
 
         fun f() {
@@ -15,12 +15,12 @@ fun f() {
 
             fun loc2(): Int {
                 val x2_ = "" // error: should be UNUSED_VARIABLE
-            }
+            <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
         }
 
         val v: String
             get() {
                 val x3 = "" // ok: unused
-            }
+            <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
     }
 }

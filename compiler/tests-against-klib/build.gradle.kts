@@ -7,9 +7,12 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    testCompile(projectTests(":compiler:visualizer"))
-    testCompile(projectTests(":generators:test-generator"))
+    api(kotlinStdlib())
+    testApi(projectTests(":generators:test-generator"))
+    testApi(projectTests(":compiler:tests-common"))
+
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

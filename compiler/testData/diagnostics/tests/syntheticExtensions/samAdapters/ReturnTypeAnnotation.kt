@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun foo(javaInterface: JavaInterface) {
     val value = javaInterface.compute { "" }

@@ -1,6 +1,7 @@
+// WITH_REFLECT
+// NO_CHECK_LAMBDA_INLINING
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// WITH_REFLECT
 package test
 
 public abstract class A<T>
@@ -23,7 +24,6 @@ inline fun <reified T> foo3(x: Any, y: Any): Boolean {
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun box(): String {

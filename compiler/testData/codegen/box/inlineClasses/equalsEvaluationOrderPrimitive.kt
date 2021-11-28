@@ -1,8 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
-// !LANGUAGE: +InlineClasses
 
-inline class A(val x: Int = 0)
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val x: Int = 0)
 
 var i = 0
 

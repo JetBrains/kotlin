@@ -16,5 +16,11 @@ kotlin {
             }
         }
         binaries.executable()
+
+        compilations.named("main") {
+            packageJson {
+                customField("customField", mapOf("one" to 1, "two" to 2))
+            }
+        }
     }
 }

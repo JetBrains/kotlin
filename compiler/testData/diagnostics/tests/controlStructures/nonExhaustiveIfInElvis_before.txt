@@ -1,0 +1,7 @@
+package
+
+public fun test_1(/*0*/ x: kotlin.String?, /*1*/ y: kotlin.String?): kotlin.Unit
+public fun test_2(/*0*/ x: kotlin.String?, /*1*/ y: kotlin.String?): kotlin.Unit
+public fun test_3(/*0*/ x: kotlin.String?, /*1*/ y: kotlin.String?): kotlin.Unit
+public fun test_4(/*0*/ x: kotlin.String?, /*1*/ y: kotlin.String?): kotlin.Unit
+

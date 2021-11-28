@@ -69,9 +69,8 @@ class KotlinBuildStatHandler {
     }
 
     internal fun reportGlobalMetrics(gradle: Gradle, sessionLogger: BuildSessionLogger) {
-        System.getProperty("os.name")?.also {
-            sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name"))
-        }
+        sessionLogger.report(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
+        System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
         sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
         sessionLogger.report(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
         sessionLogger.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
@@ -83,15 +82,12 @@ class KotlinBuildStatHandler {
 
         gradle.taskGraph.whenReady() { taskExecutionGraph ->
             val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-            report(sessionLogger, BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"), null)
-            report(sessionLogger, BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"), null)
             report(sessionLogger, BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"), null)
         }
 
         fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
-        if (buildSrcExists(gradle.rootProject)) {
-            sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, true)
-        }
+        sessionLogger.report(BooleanMetrics.BUILD_SRC_EXISTS, buildSrcExists(gradle.rootProject))
+
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
                 for (configuration in project.configurations) {
@@ -101,7 +97,7 @@ class KotlinBuildStatHandler {
                     when (configurationName) {
                         "kapt" -> {
                             sessionLogger.report(BooleanMetrics.ENABLED_KAPT, true)
-                            dependencies?.forEach { dependency ->
+                            for (dependency in dependencies) {
                                 when (dependency.group) {
                                     "com.google.dagger" -> sessionLogger.report(BooleanMetrics.ENABLED_DAGGER, true)
                                     "com.android.databinding" -> sessionLogger.report(BooleanMetrics.ENABLED_DATABINDING, true)
@@ -126,13 +122,14 @@ class KotlinBuildStatHandler {
                         }
                     }
                 }
+                val taskNames = project.tasks.names
 
                 sessionLogger.report(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
                 sessionLogger.report(BooleanMetrics.KOTLIN_KTS_USED, project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false)
-                sessionLogger.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, project.tasks.names.size.toLong())
+                sessionLogger.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
                 sessionLogger.report(
                     NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
-                    project.tasks.names.count { name ->
+                    taskNames.count { name ->
                         try {
                             project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
                         } catch (_: Exception) {

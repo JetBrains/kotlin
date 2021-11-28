@@ -1,7 +1,6 @@
 // !LANGUAGE: -RefinedSamAdaptersPriority -NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// !WITH_NEW_INFERENCE
 
 // FILE: Foo.java
 import kotlin.Unit;
@@ -18,5 +17,5 @@ public class Foo {
 
 // FILE: 1.kt
 fun bar() {
-    Foo().<!AMBIGUITY!>test<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    Foo().<!OVERLOAD_RESOLUTION_AMBIGUITY!>test<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 }

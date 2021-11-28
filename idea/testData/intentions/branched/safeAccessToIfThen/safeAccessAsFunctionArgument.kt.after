@@ -1,7 +1,0 @@
-fun f(s: Int?) {
-}
-
-fun main(args: Array<String>) {
-    val x: String? = "foo"
-    f(if (x != null) x.length else null)
-}

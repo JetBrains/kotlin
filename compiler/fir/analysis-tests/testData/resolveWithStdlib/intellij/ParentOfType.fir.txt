@@ -1,0 +1,6 @@
+FILE: ParentOfType.kt
+    public final fun <T : R|kotlin/Number|> R|kotlin/Any|.parentOfTypes(vararg classes: R|kotlin/Array<out kotlin/reflect/KClass<out T>>|): R|T?| {
+        throw R|java/lang/IllegalStateException.IllegalStateException|()
+    }
+    public final val some: R|kotlin/Number?| = String(123).R|/parentOfTypes|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(vararg(<getClass>(Q|kotlin/Int|), <getClass>(Q|kotlin/Double|)))
+        public get(): R|kotlin/Number?|

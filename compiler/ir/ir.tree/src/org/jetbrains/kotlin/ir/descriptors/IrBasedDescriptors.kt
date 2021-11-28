@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -30,11 +28,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
 /* Descriptors that serve purely as a view into IR structures.
    Created each time at the borderline between IR-based and descriptor-based code (such as inliner).
-   Compared to WrappedDescriptors, no method calls ever return true descriptors.
+   Compared to WrappedDescriptors, no method calls ever return true descriptors, except when
+   unbound symbols are encountered (see `Ir...Symbol.toIrBasedDescriptorIfPossible()`).
  */
 
 abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : DeclarationDescriptor {
@@ -89,16 +89,15 @@ abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : D
         }
     }
 
-    override fun getContainingDeclaration() = getContainingDeclaration(owner)
+    override fun getContainingDeclaration(): DeclarationDescriptor =
+        getContainingDeclaration(owner)
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is IrBasedDeclarationDescriptor<*>) return false
-        return owner == other.owner
-    }
+    override fun equals(other: Any?): Boolean =
+        other is IrBasedDeclarationDescriptor<*> && owner == other.owner
 
-    override fun hashCode(): Int {
-        return owner.hashCode()
-    }
+    override fun hashCode(): Int = owner.hashCode()
+
+    override fun toString(): String = javaClass.simpleName + ": " + owner.render()
 }
 
 fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
@@ -108,9 +107,12 @@ fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
     is IrLocalDelegatedProperty -> toIrBasedDescriptor()
     is IrFunction -> toIrBasedDescriptor()
     is IrClass -> toIrBasedDescriptor()
+    is IrAnonymousInitializer -> parentAsClass.toIrBasedDescriptor()
     is IrEnumEntry -> toIrBasedDescriptor()
     is IrProperty -> toIrBasedDescriptor()
     is IrField -> toIrBasedDescriptor()
+    is IrTypeAlias -> toIrBasedDescriptor()
+    is IrErrorDeclaration -> toIrBasedDescriptor()
     else -> error("Unknown declaration kind")
 }
 
@@ -264,6 +266,8 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
             override fun getDeclarationDescriptor() = this@IrBasedTypeParameterDescriptor
 
             override fun getBuiltIns() = module.builtIns
+
+            override fun isSameClassifier(classifier: ClassifierDescriptor): Boolean = declarationDescriptor === classifier
         }
     }
 
@@ -300,6 +304,7 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
         visitor!!.visitTypeParameterDescriptor(this, null)
     }
 
+    override fun toString(): String = super.toString() + "\nParent: $containingDeclaration"
 }
 
 fun IrTypeParameter.toIrBasedDescriptor() = IrBasedTypeParameterDescriptor(this)
@@ -356,7 +361,7 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
 
     override fun isConst(): Boolean = false
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).toIrBasedDescriptor()
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).toIrBasedDescriptor()
 
     override fun isLateInit(): Boolean = false
 
@@ -610,6 +615,9 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
         TODO("not implemented")
     }
 
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? =
+        owner.inlineClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
+
     override fun getOriginal() = this
 
     override fun isExpect() = false
@@ -656,6 +664,27 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 }
 
 fun IrClass.toIrBasedDescriptor() = IrBasedClassDescriptor(this)
+
+class LazyTypeConstructor(
+    val classDescriptor: ClassDescriptor,
+    val parametersBuilder: () -> List<TypeParameterDescriptor>,
+    val superTypesBuilder: () -> List<KotlinType>,
+    storageManager: StorageManager
+) : AbstractClassTypeConstructor(storageManager) {
+    val parameters_ by lazy { parametersBuilder() }
+    val superTypes_ by lazy { superTypesBuilder() }
+
+    override fun getParameters() = parameters_
+
+    override fun computeSupertypes() = superTypes_
+
+    override fun isDenotable() = true
+
+    override fun getDeclarationDescriptor() = classDescriptor
+
+    override val supertypeLoopChecker: SupertypeLoopChecker
+        get() = SupertypeLoopChecker.EMPTY
+}
 
 open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrBasedDeclarationDescriptor<IrEnumEntry>(owner) {
     override fun getName() = owner.name
@@ -712,6 +741,8 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
     override fun getSealedSubclasses(): Collection<ClassDescriptor> {
         TODO("not implemented")
     }
+
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = TODO("not implemented")
 
     override fun getOriginal() = this
 
@@ -853,6 +884,8 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         TODO("not implemented")
     }
 
+    override fun getInType(): KotlinType? = setter?.valueParameters?.get(0)?.type
+
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
@@ -933,6 +966,8 @@ open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDe
         visitor.visitTypeAliasDescriptor(this, null)
     }
 }
+
+fun IrTypeAlias.toIrBasedDescriptor() = IrBasedTypeAliasDescriptor(this)
 
 open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedDeclarationDescriptor<IrField>(owner) {
     override fun getModality() = if (owner.isFinal) Modality.FINAL else Modality.OPEN
@@ -1029,10 +1064,31 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     override fun getBackingField(): FieldDescriptor? = null // TODO
     override fun getDelegateField(): FieldDescriptor? = null // TODO
 
+    override fun getInType(): KotlinType? = setter?.valueParameters?.get(0)?.type
+
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
 fun IrField.toIrBasedDescriptor() = IrBasedFieldDescriptor(this)
+
+class IrBasedErrorDescriptor(owner: IrErrorDeclaration) : IrBasedDeclarationDescriptor<IrErrorDeclaration>(owner) {
+    override fun getName(): Name = error("IrBasedErrorDescriptor.getName: Should not be reached")
+
+    override fun getOriginal(): DeclarationDescriptorWithSource =
+        error("IrBasedErrorDescriptor.getOriginal: Should not be reached")
+
+    override fun getContainingDeclaration(): DeclarationDescriptor =
+        error("IrBasedErrorDescriptor.getContainingDeclaration: Should not be reached")
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+        error("IrBasedErrorDescriptor.accept: Should not be reached")
+    }
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+    }
+}
+
+fun IrErrorDeclaration.toIrBasedDescriptor() = IrBasedErrorDescriptor(this)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDescriptor {
@@ -1060,9 +1116,9 @@ private fun makeKotlinType(
     hasQuestionMark: Boolean
 ): SimpleType =
     when (classifier) {
-        is IrTypeParameterSymbol -> classifier.owner.toIrBasedDescriptor().defaultType
+        is IrTypeParameterSymbol -> classifier.toIrBasedDescriptorIfPossible().defaultType
         is IrClassSymbol -> {
-            val classDescriptor = classifier.owner.toIrBasedDescriptor()
+            val classDescriptor = classifier.toIrBasedDescriptorIfPossible()
             val kotlinTypeArguments = arguments.mapIndexed { index, it ->
                 when (it) {
                     is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
@@ -1094,3 +1150,20 @@ private fun makeKotlinType(
         }
         else -> error("unknown classifier kind $classifier")
     }
+
+/* When IR-based descriptors are used from Psi2Ir, symbols may be unbound, thus we may need to resort to real descriptors. */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrClassSymbol.toIrBasedDescriptorIfPossible(): ClassDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrTypeParameterSymbol.toIrBasedDescriptorIfPossible(): TypeParameterDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrSimpleFunctionSymbol.toIrBasedDescriptorIfPossible(): FunctionDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrPropertySymbol.toIrBasedDescriptorIfPossible(): PropertyDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor

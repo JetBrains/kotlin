@@ -1,4 +1,4 @@
-val Class<*>.test: Array<out Field?>?
-  get(): Array<out Field?>? {
+val Class<*>.test: @FlexibleNullability Array<out @FlexibleNullability Field?>?
+  get(): @FlexibleNullability Array<out @FlexibleNullability Field?>? {
     return <this>.getDeclaredFields()
   }

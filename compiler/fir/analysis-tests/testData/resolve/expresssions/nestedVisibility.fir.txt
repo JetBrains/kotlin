@@ -1,0 +1,72 @@
+FILE: nestedVisibility.kt
+    public open class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final class PrivateNested : R|kotlin/Any| {
+            public constructor(): R|Outer.PrivateNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        private final inner class PrivateInner : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.PrivateInner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        protected final class ProtectedNested : R|kotlin/Any| {
+            public constructor(): R|Outer.ProtectedNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        protected final inner class ProtectedInner : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.ProtectedInner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class PublicNested : R|kotlin/Any| {
+            public constructor(): R|Outer.PublicNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final inner class PublicInner : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.PublicInner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|Outer| {
+        public constructor(): R|Derived| {
+            super<R|Outer|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            Q|Outer|.<HIDDEN: /Outer.PrivateNested.PrivateNested is invisible>#()
+            this@R|/Derived|.super<R|Outer|>.<HIDDEN: /Outer.PrivateInner.PrivateInner is invisible>#()
+            Q|Outer|.R|/Outer.ProtectedNested.ProtectedNested|()
+            this@R|/Derived|.super<R|Outer|>.R|/Outer.ProtectedInner.ProtectedInner|()
+            Q|Outer|.R|/Outer.PublicNested.PublicNested|()
+            this@R|/Derived|.super<R|Outer|>.R|/Outer.PublicInner.PublicInner|()
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|Outer|.<HIDDEN: /Outer.PrivateNested.PrivateNested is invisible>#()
+        R|/Outer.Outer|().<HIDDEN: /Outer.PrivateInner.PrivateInner is invisible>#()
+        Q|Outer|.<HIDDEN: /Outer.ProtectedNested.ProtectedNested is invisible>#()
+        R|/Outer.Outer|().<HIDDEN: /Outer.ProtectedInner.ProtectedInner is invisible>#()
+        Q|Outer|.R|/Outer.PublicNested.PublicNested|()
+        R|/Outer.Outer|().R|/Outer.PublicInner.PublicInner|()
+    }

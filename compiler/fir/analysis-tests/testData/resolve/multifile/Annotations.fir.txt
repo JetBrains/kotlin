@@ -1,0 +1,97 @@
+FILE: annotations.kt
+    package annotations
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|)) public final annotation class Simple : R|kotlin/Annotation| {
+        public constructor(): R|annotations/Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class WithInt : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Int|): R|annotations/WithInt| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Int| = R|<local>/value|
+            public get(): R|kotlin/Int|
+
+    }
+    public final annotation class WithString : R|kotlin/Annotation| {
+        public constructor(s: R|kotlin/String|): R|annotations/WithString| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final annotation class Complex : R|kotlin/Annotation| {
+        public constructor(wi: R|annotations/WithInt|, ws: R|annotations/WithString|): R|annotations/Complex| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val wi: R|annotations/WithInt| = R|<local>/wi|
+            public get(): R|annotations/WithInt|
+
+        public final val ws: R|annotations/WithString| = R|<local>/ws|
+            public get(): R|annotations/WithString|
+
+    }
+    public final annotation class VeryComplex : R|kotlin/Annotation| {
+        public constructor(f: R|kotlin/Float|, d: R|kotlin/Double|, b: R|kotlin/Boolean|, l: R|kotlin/Long|, n: R|kotlin/Int?|): R|annotations/VeryComplex| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val f: R|kotlin/Float| = R|<local>/f|
+            public get(): R|kotlin/Float|
+
+        public final val d: R|kotlin/Double| = R|<local>/d|
+            public get(): R|kotlin/Double|
+
+        public final val b: R|kotlin/Boolean| = R|<local>/b|
+            public get(): R|kotlin/Boolean|
+
+        public final val l: R|kotlin/Long| = R|<local>/l|
+            public get(): R|kotlin/Long|
+
+        public final val n: R|kotlin/Int?| = R|<local>/n|
+            public get(): R|kotlin/Int?|
+
+    }
+FILE: main.kt
+    @FILE:R|annotations/Simple|()
+    package test
+
+    @R|annotations/WithInt|(value = Int(42)) public abstract class First : R|kotlin/Any| {
+        public constructor(): R|test/First| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|annotations/Simple|() public abstract fun foo(@R|annotations/WithString|(s = String(abc)) arg: R|@R|annotations/Simple|()  kotlin/Double|): R|kotlin/Unit|
+
+        @R|annotations/Complex|(wi = R|annotations/WithInt.WithInt|(Int(7)), ws = R|annotations/WithString.WithString|(String())) public abstract val v: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    @R|annotations/WithString|(s = String(xyz)) public final class Second : R|@R|annotations/WithInt|(value = Int(0))  test/First| {
+        public constructor(y: R|kotlin/Char|): R|test/Second| {
+            super<R|@R|annotations/WithInt|(value = Int(0))  test/First|>()
+        }
+
+        public final val y: R|kotlin/Char| = R|<local>/y|
+            public get(): R|kotlin/Char|
+
+        public final override fun foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
+        }
+
+        public final override val v: R|kotlin/String|
+            @R|annotations/Simple|() public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        @R|annotations/WithString|(s = String(constructor)) public constructor(): R|test/Second| {
+            this<R|test/Second|>(Char(10))
+        }
+
+    }
+    @R|annotations/WithInt|(value = Int(24)) @R|annotations/VeryComplex|(f = Float(3.14), d = Double(6.67E-11), b = Boolean(false), l = Long(123456789012345), n = Null(null)) public final typealias Third = R|@R|annotations/Simple|()  test/Second|

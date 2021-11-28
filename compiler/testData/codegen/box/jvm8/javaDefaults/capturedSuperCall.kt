@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: IBase.java
 
 interface IBase {
@@ -8,7 +9,6 @@ interface IBase {
 }
 
 // FILE: Kotlin.kt
-// JVM_TARGET: 1.8
 open class Base {
     fun foo() = "OK"
 }

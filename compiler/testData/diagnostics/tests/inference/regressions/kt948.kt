@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 //KT-948 Make type inference work with sure()/!!
@@ -12,8 +11,8 @@ fun <T> emptyList() : List<T>? = ArrayList<T>()
 
 fun foo() {
     // type arguments shouldn't be required
-    val <!UNUSED_VARIABLE!>l<!> : List<Int> = emptyList()!!
-    val <!UNUSED_VARIABLE!>l1<!> = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()!!
+    val l : List<Int> = emptyList()!!
+    val l1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()!!
 
     checkSubtype<List<Int>>(emptyList()!!)
     checkSubtype<List<Int>?>(emptyList())

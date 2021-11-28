@@ -1,0 +1,23 @@
+package
+
+public fun box(): kotlin.String
+
+package test {
+
+    public open class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public object X : test.A {
+        private constructor X()
+        public final inline fun doTest(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -1,0 +1,1 @@
+char **externPtr = 0;

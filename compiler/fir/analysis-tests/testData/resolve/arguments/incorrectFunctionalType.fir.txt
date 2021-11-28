@@ -1,0 +1,9 @@
+FILE: incorrectFunctionalType.kt
+    public final fun foo(func: R|kotlin/Int.(kotlin/Int) -> kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun R|kotlin/Int|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ this@R|special/anonymous|.R|kotlin/Int.plus|(R|<local>/it|)
+        }
+        )
+    }

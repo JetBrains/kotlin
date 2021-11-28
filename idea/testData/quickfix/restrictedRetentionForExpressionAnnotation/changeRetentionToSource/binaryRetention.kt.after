@@ -1,4 +1,0 @@
-// "Change existent retention to SOURCE" "true"
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.EXPRESSION)
-annotation class Ann

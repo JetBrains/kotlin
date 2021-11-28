@@ -2,8 +2,8 @@
 public final class C {
     // source: 'jvmName.kt'
     public method <init>(): void
-    public final @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(): java.lang.Object
-    public final @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final @kotlin.jvm.JvmName(name="test") @org.jetbrains.annotations.NotNull method test(): java.lang.Object
+    public final @kotlin.jvm.JvmName(name="test") @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.jvm.JvmInline
@@ -28,9 +28,9 @@ public final class Foo {
 @kotlin.Metadata
 public final class JvmNameKt {
     // source: 'jvmName.kt'
-    public final static @kotlin.jvm.JvmName method bar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static @kotlin.jvm.JvmName method baz(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static @kotlin.jvm.JvmName method extensionFun(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(): java.lang.Object
-    public final static @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final static @kotlin.jvm.JvmName(name="bar") method bar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static @kotlin.jvm.JvmName(name="baz") method baz(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static @kotlin.jvm.JvmName(name="extensionFun") method extensionFun(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static @kotlin.jvm.JvmName(name="test") @org.jetbrains.annotations.NotNull method test(): java.lang.Object
+    public final static @kotlin.jvm.JvmName(name="test") @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }

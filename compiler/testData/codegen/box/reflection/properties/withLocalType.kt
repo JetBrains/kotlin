@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.reflect.full.declaredMemberProperties
 
 fun box(): String {

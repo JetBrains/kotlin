@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: api.kt
 
@@ -7,6 +7,7 @@ package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
 annotation class E
 
 @E

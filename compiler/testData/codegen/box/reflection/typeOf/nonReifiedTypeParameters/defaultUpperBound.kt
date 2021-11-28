@@ -1,7 +1,7 @@
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_TEXT
 package test
 
 import kotlin.reflect.typeOf

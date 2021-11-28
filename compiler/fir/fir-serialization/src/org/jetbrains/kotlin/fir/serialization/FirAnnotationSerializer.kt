@@ -6,26 +6,34 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
-    fun serializeAnnotation(annotation: FirAnnotationCall): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
-        val annotationSymbol = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)
-        val annotationClass = annotationSymbol?.fir ?: error("Annotation type is not a class: ${annotationSymbol?.fir}")
+    fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
+        val lookupTag = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
+            ?: error { "Annotation without proper lookup tag: ${annotation.annotationTypeRef.coneType}" }
 
-        id = stringTable.getFqNameIndex(annotationClass)
+        id = lookupTag.toSymbol(session)?.let { stringTable.getFqNameIndex(it.fir) }
+            ?: stringTable.getQualifiedClassNameIndex(lookupTag.classId)
 
-        for (argumentExpression in annotation.argumentList.arguments) {
-            if (argumentExpression !is FirNamedArgumentExpression) continue
+        fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
-            argument.nameId = stringTable.getStringIndex(argumentExpression.name.asString())
-            argument.setValue(valueProto(argumentExpression.toConstantValue() ?: continue))
+            argument.nameId = stringTable.getStringIndex(parameterName.asString())
+            argument.setValue(valueProto(argumentExpression.toConstantValue() ?: return))
             addArgument(argument)
+        }
+
+        for ((name, argument) in annotation.argumentMapping.mapping) {
+            addArgument(argument, name)
         }
     }.build()
 

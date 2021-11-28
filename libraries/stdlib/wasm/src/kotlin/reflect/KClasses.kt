@@ -5,4 +5,5 @@
 
 package kotlin.reflect
 
-internal actual val KClass<*>.qualifiedOrSimpleName: String? get() = TODO("Wasm stdlib: KClass<*>.qualifiedOrSimpleName")
+internal actual val KClass<*>.qualifiedOrSimpleName: String?
+    get() = simpleName

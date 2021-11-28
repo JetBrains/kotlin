@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A {
     <!WRONG_MODIFIER_TARGET!>sealed<!> fun foo()
     <!WRONG_MODIFIER_TARGET!>sealed<!> var bar: Unit

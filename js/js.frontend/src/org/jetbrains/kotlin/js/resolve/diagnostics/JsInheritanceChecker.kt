@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -36,8 +37,7 @@ object JsInheritanceChecker : DeclarationChecker {
             isOverridingExternalWithOptionalParams(descriptor)
         ) {
             context.trace.report(ErrorsJs.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS.on(declaration))
-        }
-        else if (descriptor is ClassDescriptor && !descriptor.isEffectivelyExternal()) {
+        } else if (descriptor is ClassDescriptor && !descriptor.isEffectivelyExternal()) {
             val fakeOverriddenMethod = findFakeMethodOverridingExternalWithOptionalParams(descriptor)
             if (fakeOverriddenMethod != null) {
                 context.trace.report(ErrorsJs.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE.on(declaration, fakeOverriddenMethod))
@@ -45,7 +45,7 @@ object JsInheritanceChecker : DeclarationChecker {
         }
 
         if (descriptor is ClassDescriptor &&
-            descriptor.defaultType.immediateSupertypes().any { it.isBuiltinFunctionalTypeOrSubtype }
+            descriptor.defaultType.immediateSupertypes().any { it.isBuiltinFunctionalTypeOrSubtype && !it.isSuspendFunctionTypeOrSubtype }
         ) {
             context.trace.report(ErrorsJs.IMPLEMENTING_FUNCTION_INTERFACE.on(declaration as KtClassOrObject))
         }
@@ -63,8 +63,8 @@ object JsInheritanceChecker : DeclarationChecker {
 
     private fun findFakeMethodOverridingExternalWithOptionalParams(cls: ClassDescriptor): FunctionDescriptor? {
         val members = cls.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
-                .mapNotNull { it as? FunctionDescriptor }
-                .filter { it.containingDeclaration == cls && !it.kind.isReal && it.overriddenDescriptors.size > 1 }
+            .mapNotNull { it as? FunctionDescriptor }
+            .filter { it.containingDeclaration == cls && !it.kind.isReal && it.overriddenDescriptors.size > 1 }
 
         return members.firstOrNull { isOverridingExternalWithOptionalParams(it) }
     }

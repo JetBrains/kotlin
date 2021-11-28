@@ -8,7 +8,7 @@ expect open class Container {
     internal fun internalFun()
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: foo/Foo.java
 

@@ -63,7 +63,7 @@ digraph complexPostponedCfg_kt {
                             }
                             34 [label="Call arguments union" style="filled" fillcolor=yellow];
                             35 [label="Postponed exit from lambda"];
-                            36 [label="Function call: R|kotlin/with|<R|FirFunctionCall|, R|kotlin/Boolean|>(...)"];
+                            36 [label="Function call: R|kotlin/with|<R|FirFunctionCall|, R|kotlin/Unit|>(...)"];
                             37 [label="Exit block"];
                         }
                         38 [label="Exit function anonymousFunction" style="filled" fillcolor=red];

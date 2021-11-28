@@ -1,7 +1,0 @@
-fun bar(s: String) {}
-
-fun foo() {
-    val t = "Test"
-
-    bar(t)
-}

@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProhibitOperatorMod
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {

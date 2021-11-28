@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.PEER
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -24,19 +26,34 @@ abstract class YarnBasics : NpmApi {
     }
 
     fun yarnExec(
-        project: Project,
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NpmEnvironment,
+        yarn: YarnEnv,
         dir: File,
         description: String,
         args: List<String>
     ) {
-        val nodeJs = NodeJsRootPlugin.apply(project)
-        val yarnPlugin = YarnPlugin.apply(project)
+        services.execWithProgress(description) { exec ->
+            val arguments = args +
+                    if (logger.isDebugEnabled) "--verbose" else "" +
+                            if (yarn.ignoreScripts) "--ignore-scripts" else ""
 
-        project.execWithProgress(description) { exec ->
-            exec.executable = nodeJs.requireConfigured().nodeExecutable
-            exec.args = listOf(yarnPlugin.requireConfigured().home.resolve("bin/yarn.js").absolutePath) +
-                    args +
-                    if (project.logger.isDebugEnabled) "--verbose" else ""
+            val nodeExecutable = nodeJs.nodeExecutable
+            exec.environment(
+                "PATH",
+                "$nodeExecutable${File.pathSeparator}${System.getenv("PATH")}"
+            )
+
+            val command = yarn.executable
+            if (yarn.standalone) {
+                exec.executable = command
+                exec.args = arguments
+            } else {
+                exec.executable = nodeExecutable
+                exec.args = listOf(command) + arguments
+            }
+
             exec.workingDir = dir
         }
 

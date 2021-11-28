@@ -1,0 +1,5 @@
+KT element: KtPackageDirective
+FIR element: FirPackageDirectiveImpl
+
+FIR element rendered:
+package a.b.c

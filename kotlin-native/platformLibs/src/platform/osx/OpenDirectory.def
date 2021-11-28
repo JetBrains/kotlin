@@ -1,0 +1,9 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.OpenDirectory
+modules = OpenDirectory
+
+compilerOpts = -framework OpenDirectory
+linkerOpts = -framework OpenDirectory
+
+excludedFunctions = kODAuthenticationTypeClearTextReadOnly kODAuthenticationTypeSetCertificateHashAsCurrent

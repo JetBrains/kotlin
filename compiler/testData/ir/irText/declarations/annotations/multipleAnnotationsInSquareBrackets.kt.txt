@@ -1,15 +1,27 @@
-annotation class A1 : Annotation {
-  constructor() /* primary */ 
+open annotation class A1 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
-annotation class A2 : Annotation {
-  constructor() /* primary */ 
+open annotation class A2 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
-annotation class A3 : Annotation {
-  constructor() /* primary */ 
+open annotation class A3 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -18,4 +30,3 @@ annotation class A3 : Annotation {
 @A3
 fun test() {
 }
-

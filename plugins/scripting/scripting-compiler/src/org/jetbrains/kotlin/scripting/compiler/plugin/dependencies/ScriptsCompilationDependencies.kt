@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.host.FileBasedScriptSource
 
@@ -32,7 +33,8 @@ data class ScriptsCompilationDependencies(
 fun collectScriptsCompilationDependencies(
     configuration: CompilerConfiguration,
     project: Project,
-    initialSources: Iterable<KtFile>
+    initialSources: Iterable<KtFile>,
+    providedConfiguration: ScriptCompilationConfiguration? = null
 ): ScriptsCompilationDependencies {
     val collectedClassPath = ArrayList<File>()
     val collectedSources = ArrayList<KtFile>()
@@ -44,7 +46,7 @@ fun collectScriptsCompilationDependencies(
         while (true) {
             val newRemainingSources = ArrayList<KtFile>()
             for (source in remainingSources) {
-                when (val refinedConfiguration = importsProvider.getScriptConfigurationResult(source)) {
+                when (val refinedConfiguration = importsProvider.getScriptConfigurationResult(source, providedConfiguration)) {
                     null -> {}
                     is ResultWithDiagnostics.Failure -> {
                         collectedSourceDependencies.add(ScriptsCompilationDependencies.SourceDependencies(source, refinedConfiguration))

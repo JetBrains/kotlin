@@ -1,4 +1,0 @@
-Extension receiver type 3 fun <T> T.foo(t: T, list: List<T>): T {
-Function return types 3 fun <T> T.foo(t: T, list: List<T>): T {
-Parameter type 3 fun <T> T.foo(t: T, list: List<T>): T {
-Type parameter 3 fun <T> T.foo(t: T, list: List<T>): T {

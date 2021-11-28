@@ -1,4 +1,0 @@
-class C<W extends I> {
-    abstract class B<X extends I, Y> extends A<X, I, Z<Y>> {
-    }
-}

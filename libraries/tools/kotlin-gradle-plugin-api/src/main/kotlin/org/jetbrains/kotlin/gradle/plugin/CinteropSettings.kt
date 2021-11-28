@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 
 interface CInteropSettings : Named {
 
@@ -22,7 +23,7 @@ interface CInteropSettings : Named {
     }
 
     // TODO: Provide an interface for native compilations.
-    val compilation: KotlinCompilation<KotlinCommonOptions>
+    val compilation: KotlinCompilationData<out KotlinCommonOptions>
 
     val dependencyConfigurationName: String
     var dependencyFiles: FileCollection

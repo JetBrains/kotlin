@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 
-object UselessCallOnNotNullChecker : FirQualifiedAccessChecker() {
+object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
     // todo: add 'call may be reduced' in cases like 's?.isNullOrEmpty()' where 's: String? = ""'
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val method = expression.getCallableId() ?: return
@@ -28,7 +28,7 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessChecker() {
         if ("$calleePackageName.$calleeName" !in triggerOn) return
 
         if (calleeOn.getNullability() == ConeNullability.NOT_NULL) {
-            reporter.report(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL)
+            reporter.reportOn(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL, context)
         }
     }
 
@@ -36,9 +36,9 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessChecker() {
         ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId
 
     private fun FirExpression.getPackage() =
-        (typeRef as? FirResolvedTypeRef)?.coneType?.classId?.packageFqName.toString()
+        typeRef.coneType.classId?.packageFqName.toString()
 
-    private fun FirExpression.getNullability() = (typeRef as FirResolvedTypeRef).type.nullability
+    private fun FirExpression.getNullability() = typeRef.coneType.nullability
 
 
     private val triggerOn = setOf(

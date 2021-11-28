@@ -131,7 +131,8 @@ enum class TableTimeUnit(val postfixText: String, val nsMultiplier: Double, val 
     }
 }
 
-inline class TableTimeUnitConversion(val value: Double) {
+@JvmInline
+value class TableTimeUnitConversion(val value: Double) {
     infix fun to(dest: TableTimeUnit): Double {
         return value * dest.nsMultiplier
     }

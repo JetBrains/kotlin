@@ -52,11 +52,11 @@ fun fn() {
     PropertyHolder().test4
     PropertyHolder().<!DEPRECATION!>test4<!> = ""
 
-    val <!UNUSED_VARIABLE!>a<!> = PropertyHolder().<!DEPRECATION!>x<!>
-    val <!UNUSED_VARIABLE!>b<!> = PropertyHolder().<!DEPRECATION!>name<!>
+    val a = PropertyHolder().<!DEPRECATION!>x<!>
+    val b = PropertyHolder().<!DEPRECATION!>name<!>
     PropertyHolder().<!DEPRECATION!>name<!> = "value"
 
-    val <!UNUSED_VARIABLE!>d<!> = PropertyHolder().valDelegate
+    val d = PropertyHolder().valDelegate
     PropertyHolder().varDelegate = 1
 }
 

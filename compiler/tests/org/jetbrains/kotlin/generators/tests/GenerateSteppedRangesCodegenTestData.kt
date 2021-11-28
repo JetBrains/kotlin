@@ -177,9 +177,7 @@ object GenerateSteppedRangesCodegenTestData {
                 if (shouldIgnoreForJvmIR) {
                     println("// IGNORE_BACKEND: JVM_IR")
                 }
-                println("// DONT_TARGET_EXACT_BACKEND: WASM")
-                println("// KJS_WITH_FULL_RUNTIME")
-                println("// WITH_RUNTIME")
+                println("// WITH_STDLIB")
                 if (asLiteral && KT_34166_AFFECTED_FILENAMES.contains(fileName)) {
                     println(KT_34166_HEADER)
                 }
@@ -242,7 +240,7 @@ object GenerateSteppedRangesCodegenTestData {
 
     private fun PrintWriter.printTestForFunctionAndType(builder: TestBuilder, function: Function, type: Type, asLiteral: Boolean) {
         val shouldFail = (builder.expectedValuesOrFailIfNull == null)
-        val listVarName = type.type.toLowerCase() + "List"
+        val listVarName = type.type.lowercase() + "List"
         if (shouldFail) {
             println("    assertFailsWith<IllegalArgumentException> {")
         } else {
@@ -253,7 +251,7 @@ object GenerateSteppedRangesCodegenTestData {
         if (asLiteral) {
             println("$indent    for (i in ${builder.buildFullLiteral(type, function)}) {")
         } else {
-            val progressionVarName = type.type.toLowerCase() + "Progression"
+            val progressionVarName = type.type.lowercase() + "Progression"
             println("$indent    val $progressionVarName = ${builder.buildRangeOnlyExpression(type, function)}")
             println("$indent    for (i in ${builder.buildOnTopOfRangeOnlyVariable(progressionVarName, type)}) {")
         }

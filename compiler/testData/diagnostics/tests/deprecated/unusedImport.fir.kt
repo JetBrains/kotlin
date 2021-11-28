@@ -7,4 +7,4 @@ interface A
 
 // FILE: B.kt
 
-import test.A
+import <!DEPRECATION!>test.A<!>

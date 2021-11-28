@@ -1,0 +1,6 @@
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}

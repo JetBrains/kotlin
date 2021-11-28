@@ -4,10 +4,10 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:backend-common"))
-    compile(project(":compiler:ir.tree"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:backend-common"))
+    api(project(":compiler:ir.tree"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
@@ -19,7 +19,7 @@ sourceSets {
 tasks {
     val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
         kotlinOptions {
-            freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         }
     }
 }

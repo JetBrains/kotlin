@@ -12,7 +12,7 @@ public class Test {
         return null;
     }
     public Test(Runnable r, String... strs) {}
-    public Test(Runnable r, Runnable r, String... strs) {}
+    public Test(Runnable r1, Runnable r2, String... strs) {}
 }
 
 // FILE: main.kt
@@ -20,19 +20,19 @@ fun main(x2: Runnable) {
     val x1 = {}
     val x3 = arrayOf<String>()
 
-    Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>({}, arrayOf())
+    Test.foo1({}, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
     Test.foo1({}, *arrayOf())
     Test.foo1({}, *x3)
-    Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>({}, arrayOf(""))
+    Test.foo1({}, <!ARGUMENT_TYPE_MISMATCH!>arrayOf("")<!>)
 
-    Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>(x1, arrayOf())
+    Test.foo1(x1, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
     Test.foo1(x1, *arrayOf())
-    Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>(x2, arrayOf())
+    Test.foo1(x2, <!ARGUMENT_TYPE_MISMATCH!>arrayOf()<!>)
     Test.foo1(x2, *arrayOf())
 
-    Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>(x1, x3)
+    Test.foo1(x1, <!ARGUMENT_TYPE_MISMATCH!>x3<!>)
     Test.foo1(x1, *x3)
-    Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>(x2, arrayOf(""))
+    Test.foo1(x2, <!ARGUMENT_TYPE_MISMATCH!>arrayOf("")<!>)
     Test.foo1(x2, *arrayOf(""))
 
     val i1 = <!NONE_APPLICABLE!>Test<!>({}, arrayOf())

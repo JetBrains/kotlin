@@ -19,14 +19,38 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class ChangesCollector {
     private val removedMembers = hashMapOf<FqName, MutableSet<String>>()
+    private val changedParents = hashMapOf<FqName, MutableSet<FqName>>()
     private val changedMembers = hashMapOf<FqName, MutableSet<String>>()
     private val areSubclassesAffected = hashMapOf<FqName, Boolean>()
+
+    //TODO for test only: ProtoData or ProtoBuf
+    private val storage = hashMapOf<FqName, ProtoData>()
+    private val removed = ArrayList<FqName>()
+
+    //TODO change to immutable map
+    fun protoDataChanges(): Map<FqName, ProtoData> = storage
+    fun protoDataRemoved(): List<FqName> = removed
+
+    companion object {
+        fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>) =
+            members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
+
+        fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {
+            return proto.getNonPrivateNames(
+                nameResolver,
+                ProtoBuf.Class::getConstructorList,
+                ProtoBuf.Class::getFunctionList,
+                ProtoBuf.Class::getPropertyList
+            ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
+        }
+    }
 
     fun changes(): List<ChangeInfo> {
         val changes = arrayListOf<ChangeInfo>()
@@ -47,11 +71,15 @@ class ChangesCollector {
             changes.add(ChangeInfo.SignatureChanged(fqName, areSubclassesAffected))
         }
 
+        for ((fqName, changedParents) in changedParents) {
+            changes.add(ChangeInfo.ParentsChanged(fqName, changedParents))
+        }
+
         return changes
     }
 
     private fun <T, R> MutableMap<T, MutableSet<R>>.getSet(key: T) =
-            getOrPut(key) { HashSet() }
+        getOrPut(key) { HashSet() }
 
     private fun collectChangedMember(scope: FqName, name: String) {
         changedMembers.getSet(scope).add(name)
@@ -73,18 +101,42 @@ class ChangesCollector {
         }
     }
 
-    fun collectProtoChanges(oldData: ProtoData?, newData: ProtoData?, collectAllMembersForNewClass: Boolean = false) {
+    fun collectProtoChanges(oldData: ProtoData?, newData: ProtoData?, collectAllMembersForNewClass: Boolean = false, packageProtoKey: String? = null) {
         if (oldData == null && newData == null) {
             throw IllegalStateException("Old and new value are null")
         }
 
+        if (newData != null) {
+            when (newData) {
+                is ClassProtoData -> {
+                    val fqName = newData.nameResolver.getClassId(newData.proto.fqName).asSingleFqName()
+                    storage[fqName] = newData
+                }
+                is PackagePartProtoData -> {
+                    //TODO fqName is not unique. It's package and can be present in both java and kotlin
+                    val fqName = newData.packageFqName
+                    storage[packageProtoKey?.let { FqName(it) } ?: fqName] = newData
+                }
+            }
+        } else if (oldData != null) {
+            when (oldData) {
+                is ClassProtoData -> {
+                    removed.add(oldData.nameResolver.getClassId(oldData.proto.fqName).asSingleFqName())
+                }
+                is PackagePartProtoData -> {
+                    //TODO fqName is not unique. It's package and can be present in both java and kotlin
+                    removed.add(packageProtoKey?.let { FqName(it) } ?: oldData.packageFqName)
+                }
+            }
+        }
+
         if (oldData == null) {
-            newData!!.collectAll(isRemoved = false, collectAllMembersForNewClass = collectAllMembersForNewClass)
+            newData!!.collectAll(isRemoved = false, isAdded = true, collectAllMembersForNewClass = collectAllMembersForNewClass)
             return
         }
 
         if (newData == null) {
-            oldData.collectAll(isRemoved = true)
+            oldData.collectAll(isRemoved = true, isAdded = false)
             return
         }
 
@@ -98,6 +150,7 @@ class ChangesCollector {
                             collectSignature(oldData, diff.areSubclassesAffected)
                         }
                         collectChangedMembers(fqName, diff.changedMembersNames)
+                        addChangedParents(fqName, diff.changedSupertypes)
                     }
                     is PackagePartProtoData -> {
                         collectSignature(oldData, areSubclassesAffected = true)
@@ -118,32 +171,32 @@ class ChangesCollector {
         }
     }
 
-    private fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
-            members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
+    fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>) =
+        members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
 
-    private fun ProtoData.collectAll(isRemoved: Boolean, collectAllMembersForNewClass: Boolean = false) =
+    //TODO remember all sealed parent classes
+    private fun ProtoData.collectAll(isRemoved: Boolean, isAdded: Boolean, collectAllMembersForNewClass: Boolean = false) =
         when (this) {
             is PackagePartProtoData -> collectAllFromPackage(isRemoved)
-            is ClassProtoData -> collectAllFromClass(isRemoved, collectAllMembersForNewClass)
+            is ClassProtoData -> collectAllFromClass(isRemoved, isAdded, collectAllMembersForNewClass)
         }
 
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
         val memberNames =
-                proto.getNonPrivateNames(
-                        nameResolver,
-                        ProtoBuf.Package::getFunctionList,
-                        ProtoBuf.Package::getPropertyList
-                )
+            proto.getNonPrivateNames(
+                nameResolver,
+                ProtoBuf.Package::getFunctionList,
+                ProtoBuf.Package::getPropertyList
+            )
 
         if (isRemoved) {
             collectRemovedMembers(packageFqName, memberNames)
-        }
-        else {
+        } else {
             collectChangedMembers(packageFqName, memberNames)
         }
     }
 
-    private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean, collectAllMembersForNewClass: Boolean = false) {
+    private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean, isAdded: Boolean, collectAllMembersForNewClass: Boolean = false) {
         val classFqName = nameResolver.getClassId(proto.fqName).asSingleFqName()
         val kind = Flags.CLASS_KIND.get(proto.flags)
 
@@ -153,8 +206,7 @@ class ChangesCollector {
             val collectMember = if (isRemoved) this@ChangesCollector::collectRemovedMember else this@ChangesCollector::collectChangedMember
             collectMember(classFqName.parent(), classFqName.shortName().asString())
             memberNames.forEach { collectMember(classFqName, it) }
-        }
-        else {
+        } else {
             if (!isRemoved && collectAllMembersForNewClass) {
                 val memberNames = getNonPrivateMemberNames()
                 memberNames.forEach { this@ChangesCollector.collectChangedMember(classFqName, it) }
@@ -162,15 +214,23 @@ class ChangesCollector {
 
             collectSignature(classFqName, areSubclassesAffected = true)
         }
+
+        if (isRemoved || isAdded) {
+            collectChangedParents(classFqName, proto.supertypeList)
+        }
     }
 
-    private fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {
-        return proto.getNonPrivateNames(
-                nameResolver,
-                ProtoBuf.Class::getConstructorList,
-                ProtoBuf.Class::getFunctionList,
-                ProtoBuf.Class::getPropertyList
-        ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
+    private fun addChangedParents(fqName: FqName, parents: Collection<FqName>) {
+        if (parents.isNotEmpty()) {
+            changedParents.getOrPut(fqName) { HashSet() }.addAll(parents)
+        }
+    }
+
+    private fun ClassProtoData.collectChangedParents(fqName: FqName, parents: Collection<ProtoBuf.Type>) {
+        val changedParentsFqNames = parents.map { type ->
+            nameResolver.getClassId(type.className).asSingleFqName()
+        }
+        addChangedParents(fqName, changedParentsFqNames)
     }
 
     fun collectMemberIfValueWasChanged(scope: FqName, name: String, oldValue: Any?, newValue: Any?) {
@@ -180,8 +240,7 @@ class ChangesCollector {
 
         if (oldValue != null && newValue == null) {
             collectRemovedMember(scope, name)
-        }
-        else if (oldValue != newValue) {
+        } else if (oldValue != newValue) {
             collectChangedMember(scope, name)
         }
     }

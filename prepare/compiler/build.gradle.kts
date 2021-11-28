@@ -1,5 +1,6 @@
 @file:Suppress("HasPlatformType")
 
+import org.gradle.internal.jvm.Jvm
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -7,10 +8,9 @@ description = "Kotlin Compiler"
 plugins {
     // HACK: java plugin makes idea import dependencies on this project as source (with empty sources however),
     // this prevents reindexing of kotlin-compiler.jar after build on every change in compiler modules
-    java
+    `java-library`
 }
 
-val JDK_18: String by rootProject.extra
 
 val fatJarContents by configurations.creating {
     isCanBeResolved = true
@@ -38,9 +38,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-val compile by configurations  // maven plugin writes pom compile scope from compile configuration by default
+val api by configurations
 val proguardLibraries by configurations.creating {
-    extendsFrom(compile)
+    extendsFrom(api)
 }
 
 // Libraries to copy to the lib directory
@@ -80,10 +80,8 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing",
     ":kotlin-annotation-processing-cli",
     ":kotlin-annotation-processing-runtime",
-    ":kotlin-annotations-android",
     ":kotlin-annotations-jvm",
     ":kotlin-ant",
-    ":kotlin-coroutines-experimental-compat",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
     // TODO: uncomment when new daemon will be put back into dist
@@ -116,12 +114,12 @@ val distCompilerPluginProjects = listOf(
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
-    ":kotlinx-serialization-compiler-plugin"
+    ":kotlinx-serialization-compiler-plugin",
+    ":plugins:lombok:lombok-compiler-plugin"
 )
 
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
-    ":kotlin-coroutines-experimental-compat",
     ":kotlin-script-runtime",
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-test:kotlin-test-junit",
@@ -137,10 +135,10 @@ configurations.all {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-reflect"))
-    compile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    api(kotlinStdlib())
+    api(project(":kotlin-script-runtime"))
+    api(project(":kotlin-reflect"))
+    api(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -184,7 +182,7 @@ dependencies {
         sources(project(":kotlin-stdlib-js", configuration = "distSources"))
         sources(project(":kotlin-reflect", configuration = "sources"))
 
-        distStdlibMinimalForTests(project(":kotlin-stdlib:jvm-minimal-for-test"))
+        distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
         distJSContents(project(":kotlin-stdlib-js", configuration = "distJs"))
         distJSContents(project(":kotlin-test:kotlin-test-js", configuration = "distJs"))
@@ -209,11 +207,7 @@ dependencies {
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
 
-    if (Platform.P202()) {
-        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
-    } else if (Platform.P203.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
-    }
+    fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
 
     fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
 
@@ -267,7 +261,7 @@ val packCompiler by task<Jar> {
 val proguard by task<CacheableProguardTask> {
     dependsOn(packCompiler)
 
-    jdkHome = File(JDK_18)
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 
     configuration("$projectDir/compiler.pro")
 
@@ -293,9 +287,23 @@ val proguard by task<CacheableProguardTask> {
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraries)
     libraryjars(
         files(
-            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!),
-            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar", jdkHome = jdkHome!!),
-            toolsJarFile(jdkHome = jdkHome!!)
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/rt.jar",
+                    "../Classes/classes.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            },
+            javaLauncher.map {
+                firstFromJavaHomeThatExists(
+                    "jre/lib/jsse.jar",
+                    "../Classes/jsse.jar",
+                    jdkHome = it.metadata.installationPath.asFile
+                )
+            },
+            javaLauncher.map {
+                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+            }
         )
     )
 
@@ -336,24 +344,32 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
 
     from(buildNumber)
 
+    val binFiles = files("$rootDir/compiler/cli/bin")
     into("bin") {
-        from(files("$rootDir/compiler/cli/bin"))
+        from(binFiles)
     }
 
+    val licenseFiles = files("$rootDir/license")
     into("license") {
-        from(files("$rootDir/license"))
+        from(licenseFiles)
     }
 
+    val compilerBaseName = compilerBaseName
+    val jarFiles = files(jar)
+    val librariesFiles = files(libraries)
+    val librariesStripVersionFiles = files(librariesStripVersion)
+    val sourcesFiles = files(sources)
+    val compilerPluginsFiles = files(compilerPlugins)
     into("lib") {
-        from(jar) { rename { "$compilerBaseName.jar" } }
-        from(libraries)
-        from(librariesStripVersion) {
+        from(jarFiles) { rename { "$compilerBaseName.jar" } }
+        from(librariesFiles)
+        from(librariesStripVersionFiles) {
             rename {
                 it.replace(Regex("-\\d.*\\.jar\$"), ".jar")
             }
         }
-        from(sources)
-        from(compilerPlugins) {
+        from(sourcesFiles)
+        from(compilerPluginsFiles) {
             rename { it.removePrefix("kotlin-") }
         }
     }

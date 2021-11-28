@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class A<T>
 class B<T>
@@ -11,7 +10,7 @@ fun bar(b: B<in A<out Number>>, bOut: B<out A<out Number>>, bOut2: B<out A<Numbe
     foo(b)
     foo<Number>(b)
 
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>baz<!>(<!NI;TYPE_MISMATCH!>bOut<!>)
+    baz(<!TYPE_MISMATCH!>bOut<!>)
     baz<Number>(<!TYPE_MISMATCH!>bOut<!>)
 
     baz(bOut2)

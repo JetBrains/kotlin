@@ -29,7 +29,7 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is private in file
-'public' subclass exposes its 'private' supertype A
+'public' subclass exposes its 'private-in-file' supertype A
 
 ================ Step #2 =================
 

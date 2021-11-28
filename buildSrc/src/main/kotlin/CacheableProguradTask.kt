@@ -4,32 +4,36 @@
  */
 
 import groovy.lang.Closure
+import org.gradle.api.JavaVersion
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.internal.jvm.Jvm
-import org.gradle.internal.jvm.inspection.JvmVersionDetector
+import org.gradle.jvm.toolchain.JavaLauncher
+import org.gradle.kotlin.dsl.property
 import proguard.ClassSpecification
 import java.io.File
-import javax.inject.Inject
-
 
 @CacheableTask
-open class CacheableProguardTask @Inject constructor(
-    private val jvmVersionDetector: JvmVersionDetector
-) : proguard.gradle.ProGuardTask() {
+open class CacheableProguardTask : proguard.gradle.ProGuardTask() {
 
-    @Internal
-    var jdkHome: File? = null
+    @get:Internal
+    val javaLauncher: Property<JavaLauncher> = project.objects.property()
+
+    @get:Internal
+    val jdkHomePath: Provider<File> = javaLauncher.map { it.metadata.installationPath.asFile }
 
     @get:Optional
     @get:Input
-    internal val jdkMajorVersion: String?
-        get() = jdkHome?.let { jvmVersionDetector.getJavaVersion(Jvm.forHome(jdkHome)) }?.majorVersion
+    internal val jdkMajorVersion: Provider<JavaVersion> = javaLauncher.map {
+        JavaVersion.toVersion(it.metadata.languageVersion.toString())
+    }
 
     @CompileClasspath
-    override fun getLibraryJarFileCollection(): FileCollection = super.getLibraryJarFileCollection().filter { libraryFile ->
-        jdkHome?.let { !libraryFile.absoluteFile.startsWith(it.absoluteFile) } ?: true
-    }
+    override fun getLibraryJarFileCollection(): FileCollection = super.getLibraryJarFileCollection()
+        .filter { libraryFile ->
+            jdkHomePath.orNull?.let { !libraryFile.absoluteFile.startsWith(it.absoluteFile) } ?: true
+        }
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)

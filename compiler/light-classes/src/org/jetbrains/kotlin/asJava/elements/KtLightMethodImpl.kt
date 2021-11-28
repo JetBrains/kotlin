@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.elements
@@ -158,19 +147,21 @@ open class KtLightMethodImpl protected constructor(
         get() = (dummyDelegate ?: clsDelegate).memberIndex
 
     /* comparing origin and member index should be enough to determine equality:
-            for compiled elements origin contains delegate
-            for source elements index is unique to each member
-            */
-    override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is KtLightMethodImpl &&
-                        this.name == other.name &&
-                        this.containingClass == other.containingClass &&
-                        this.lightMemberOrigin == other.lightMemberOrigin &&
-                        this.memberIndex == other.memberIndex)
+        for compiled elements origin contains delegate
+        for source elements index is unique to each member
+    */
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtLightMethodImpl &&
+            other.javaClass == javaClass &&
+            other.containingClass == containingClass &&
+            other.lightMemberOrigin == lightMemberOrigin &&
+            other.dummyDelegate == dummyDelegate &&
+            other.memberIndex == memberIndex
 
-    override fun hashCode(): Int = ((name.hashCode() * 31 + (lightMemberOrigin?.hashCode()
-        ?: 0)) * 31 + containingClass.hashCode()) * 31 + (memberIndex?.hashCode() ?: 0)
+    override fun hashCode(): Int = name.hashCode()
+        .times(31).plus(lightMemberOrigin.hashCode())
+        .times(31).plus(containingClass.hashCode())
+        .times(31).plus(memberIndex.hashCode())
 
     override fun getDefaultValue() = (clsDelegate as? PsiAnnotationMethod)?.defaultValue
 

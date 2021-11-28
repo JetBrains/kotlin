@@ -1,3 +1,0 @@
-[NotNull Values]
-9 	<bold>val y</bold> = b.foo() (in test(A, B,…))
-9 		<bold>val y</bold> = b.foo() (in test(A, B,…))

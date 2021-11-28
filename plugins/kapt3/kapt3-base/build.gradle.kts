@@ -4,10 +4,10 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     compileOnly(toolsJarApi())
 
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 

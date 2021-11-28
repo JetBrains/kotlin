@@ -1,5 +1,0 @@
-// "Add 'inline' to function 'foo'" "true"
-
-inline fun foo(<caret>crossinline body: () -> Unit) {
-
-}

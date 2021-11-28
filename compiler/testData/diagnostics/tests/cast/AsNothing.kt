@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Nothing can be cast to Nothing
 fun foo(x: String) {
     x <!CAST_NEVER_SUCCEEDS!>as<!> Nothing

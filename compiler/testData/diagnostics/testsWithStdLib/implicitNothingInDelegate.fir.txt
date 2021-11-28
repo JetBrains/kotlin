@@ -1,0 +1,18 @@
+FILE: implicitNothingInDelegate.kt
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))) public final operator fun <V, V1 : R|V|> R|kotlin/collections/Map<in kotlin/String, @Exact V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V1| {
+        ^getValue Null(null)!!
+    }
+    public final val m2: R|kotlin/collections/Map<kotlin/String, *>| = R|kotlin/collections/mapOf|<R|kotlin/String|, R|kotlin/String|>(String(baz).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(bat)))
+        public get(): R|kotlin/collections/Map<kotlin/String, *>|
+    public final val bar: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|/m2|.R|/getValue|<R|kotlin/Any?|, R|kotlin/String|>(Null(null), ::R|/bar|)
+        }
+    public final fun foo(): R|kotlin/Unit| {
+        lval m1: R|kotlin/collections/Map<kotlin/String, kotlin/Any>| = R|kotlin/collections/mapOf|<R|kotlin/String|, R|kotlin/String|>(String(foo).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(bar)))
+        lval foo: R|kotlin/String|by R|<local>/m1|
+        lval baz: R|kotlin/String|by R|/m2|
+        R|kotlin/io/println|(R|<local>/foo|)
+        R|kotlin/io/println|(R|<local>/baz|)
+        R|kotlin/io/println|(R|/bar|)
+    }

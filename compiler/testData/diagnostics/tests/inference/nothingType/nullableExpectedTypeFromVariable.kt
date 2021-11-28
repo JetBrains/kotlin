@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !LANGUAGE: +NewInference
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class Foo<T> {
     private fun append(map: MutableMap<String, T>, field: String, appendedValue: T?) {

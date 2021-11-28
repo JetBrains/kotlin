@@ -1,10 +1,11 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
@@ -39,5 +40,5 @@ package usage3
 
 import api.*
 
-@Anno(MEANING)
+@Anno(<!OPT_IN_USAGE!>MEANING<!>)
 fun usage() {}

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-20423
 // !LANGUAGE: +SealedInterfaces +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
@@ -14,4 +15,4 @@ class A : Base()
 
 package a
 
-class B : <!INVISIBLE_MEMBER, SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
+class B : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()

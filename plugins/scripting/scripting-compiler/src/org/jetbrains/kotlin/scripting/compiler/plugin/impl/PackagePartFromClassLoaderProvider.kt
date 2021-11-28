@@ -19,7 +19,7 @@ class PackagePartFromClassLoaderProvider(
     languageVersionSettings: LanguageVersionSettings,
     messageCollector: MessageCollector
 ) : JvmPackagePartProviderBase<String>() {
-    private val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<String>> = SmartList()
 

@@ -1,0 +1,61 @@
+FILE: funInterfaceDeclaration.kt
+    public abstract fun interface Test1 : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+        public abstract fun boo(): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test2 : R|kotlin/Any| {
+    }
+    public abstract fun interface Test3 : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test4 : R|kotlin/Any| {
+        public abstract fun <T> foo(a: R|T|): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test5 : R|kotlin/Any| {
+        public abstract fun foo(a: R|kotlin/Int| = Int(5)): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test6 : R|kotlin/Any| {
+        public abstract suspend fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test7 : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test8 : R|Test7| {
+        public abstract fun boo(): R|kotlin/Unit|
+
+    }
+    public abstract interface Test9 : R|kotlin/Any| {
+        public open fun num(m: R|kotlin/Int|): R|kotlin/Int| {
+            ^num R|<local>/m|.R|kotlin/Int.times|(R|<local>/m|)
+        }
+
+    }
+    public abstract fun interface Test10 : R|Test9| {
+        public abstract fun test(): R|kotlin/Unit|
+
+    }
+    public abstract interface Test11 : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract fun interface Test12 : R|Test11| {
+        public abstract fun test(): R|kotlin/Unit|
+
+    }
+    public abstract interface Test14 : R|kotlin/Any| {
+        public abstract suspend fun test(): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Test15 : R|Test14| {
+    }

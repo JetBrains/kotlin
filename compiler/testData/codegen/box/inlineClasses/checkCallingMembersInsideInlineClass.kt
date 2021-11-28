@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Foo(val x: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val x: Int) {
     fun empty() = ""
     fun withParam(a: String) = a
     fun withInlineClassParam(f: Foo) = f.toString()

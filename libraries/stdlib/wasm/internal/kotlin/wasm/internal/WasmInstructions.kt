@@ -9,17 +9,16 @@
 
 package kotlin.wasm.internal
 
+import kotlin.wasm.internal.reftypes.anyref
+import kotlin.wasm.internal.reftypes.dataref
+import kotlin.wasm.internal.reftypes.funcref
+import kotlin.wasm.internal.reftypes.i31ref
+
 @WasmOp(WasmOp.UNREACHABLE)
 internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
-internal fun wasm_float_nan(): Float =
-    implementedAsIntrinsic
-
-internal fun wasm_double_nan(): Double =
-    implementedAsIntrinsic
-
-internal fun <From, To> wasm_ref_cast(a: From): To =
+internal fun <To> wasm_ref_cast(a: Any?): To =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_EQ)
@@ -254,6 +253,8 @@ public external fun wasm_ref_is_null(a: Any?): Boolean
 @WasmOp(WasmOp.REF_EQ)
 public external fun wasm_ref_eq(a: Any?, b: Any?): Boolean
 
+@WasmOp(WasmOp.REF_TEST)
+public external fun <T> wasm_ref_test(a: Any?): Boolean
 
 // ---
 
@@ -287,11 +288,17 @@ public external fun wasm_f64_convert_i64_s(a: Long): Double
 @WasmOp(WasmOp.F64_PROMOTE_F32)
 public external fun wasm_f64_promote_f32(a: Float): Double
 
+@WasmOp(WasmOp.F32_REINTERPRET_I32)
+public external fun wasm_f32_reinterpret_i32(a: Int): Float
+
+@WasmOp(WasmOp.F64_REINTERPRET_I64)
+public external fun wasm_f64_reinterpret_i64(a: Long): Double
+
 @WasmOp(WasmOp.I32_REINTERPRET_F32)
 public external fun wasm_i32_reinterpret_f32(a: Float): Int
 
-@WasmOp(WasmOp.F32_REINTERPRET_I32)
-public external fun wasm_f32_reinterpret_i32(a: Int): Float
+@WasmOp(WasmOp.I64_REINTERPRET_F64)
+public external fun wasm_i64_reinterpret_f64(a: Double): Long
 
 @WasmOp(WasmOp.I32_TRUNC_SAT_F32_S)
 public external fun wasm_i32_trunc_sat_f32_s(a: Float): Int
@@ -307,3 +314,45 @@ public external fun wasm_i64_trunc_sat_f64_s(a: Double): Long
 
 @WasmOp(WasmOp.I32_LOAD)
 public external fun wasm_i32_load(x: Int): Int
+
+@WasmOp(WasmOp.I32_LOAD16_U)
+public external fun wasm_i32_load16_u(x: Int): Int
+
+@WasmOp(WasmOp.I32_STORE)
+public external fun wasm_i32_store(addr: Int, i: Int): Unit
+
+@WasmOp(WasmOp.I32_STORE16)
+public external fun wasm_i32_store16(addr: Int, c: Char): Unit
+
+@WasmOp(WasmOp.I32_CLZ)
+public external fun wasm_i32_clz(a: Int): Int
+
+@WasmOp(WasmOp.I64_CLZ)
+public external fun wasm_i64_clz(a: Long): Long
+
+@WasmOp(WasmOp.I64_POPCNT)
+public external fun wasm_i64_popcnt(a: Long): Long
+
+@WasmOp(WasmOp.I64_CTZ)
+public external fun wasm_i64_ctz(a: Long): Long
+
+
+// Reference type operators
+
+@WasmOp(WasmOp.REF_IS_FUNC)
+internal external fun wasm_ref_is_func(x: anyref): Boolean
+
+@WasmOp(WasmOp.REF_IS_DATA)
+internal external fun wasm_ref_is_data(x: anyref): Boolean
+
+@WasmOp(WasmOp.REF_IS_I31)
+internal external fun wasm_ref_is_i31(x: anyref): Boolean
+
+@WasmOp(WasmOp.REF_AS_FUNC)
+internal external fun wasm_ref_as_func(x: anyref): funcref
+
+@WasmOp(WasmOp.REF_AS_DATA)
+internal external fun wasm_ref_as_data(x: anyref): dataref
+
+@WasmOp(WasmOp.REF_AS_I31)
+internal external fun wasm_ref_as_i31(x: anyref): i31ref

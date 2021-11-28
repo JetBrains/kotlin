@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Target(AnnotationTarget.CONSTRUCTOR) annotation class base
 
 <!WRONG_ANNOTATION_TARGET!>@base<!> annotation class derived

@@ -1,7 +1,0 @@
-class A {
-    var i: Int
-
-    init {
-         <spot>i = 5</spot>
-    }
-}

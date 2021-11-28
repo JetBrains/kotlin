@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,16 +22,21 @@ import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.kotlinType
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
@@ -39,20 +44,18 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
 open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
-    KtLightClassImpl(classOrObject) {
+    KtLightClassImpl(classOrObject, support.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)) {
 
     private class KtUltraLightClassModifierList(
         private val containingClass: KtLightClassForSourceDeclaration,
-        private val support: KtUltraLightSupport,
+        support: KtUltraLightSupport,
         private val computeModifiers: () -> Set<String>
-    ) :
-        KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
+    ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
         private val modifiers by lazyPub { computeModifiers() }
 
         override fun hasModifierProperty(name: String): Boolean =
@@ -100,7 +103,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun createImplementsList(): PsiReferenceList? = createInheritanceList(forExtendsList = false)
 
-    private fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList? {
+    private fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList {
 
         val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
@@ -282,7 +285,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     parameter.isMutable,
                     forceStatic = false,
                     onlyJvmStatic = false,
-                    createAsAnnotationMethod = isAnnotationType
+                    createAsAnnotationMethod = isAnnotationType,
+                    isJvmRecord = classOrObject.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME),
                 )
             )
         }
@@ -482,7 +486,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return create(it) }
+        containingClass?.let { return create(it, jvmDefaultMode) }
 
         val containingBlock = classOrObject.parent as? KtBlockExpression
         val containingScript = containingBlock?.parent as? KtScript
@@ -509,4 +513,16 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         return super.getTextRange()
     }
+
+    override fun getOwnInnerClasses(): List<PsiClass> = super.getOwnInnerClasses().let { superOwnInnerClasses ->
+        if (shouldGenerateRepeatableAnnotationContainer) {
+            superOwnInnerClasses + KtUltraLightClassForRepeatableAnnotationContainer(classOrObject, support)
+        } else
+            superOwnInnerClasses
+    }
+
+    private val shouldGenerateRepeatableAnnotationContainer: Boolean
+        get() = isAnnotationType &&
+                classOrObject.hasAnnotation(StandardNames.FqNames.repeatable) &&
+                !classOrObject.hasAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION)
 }

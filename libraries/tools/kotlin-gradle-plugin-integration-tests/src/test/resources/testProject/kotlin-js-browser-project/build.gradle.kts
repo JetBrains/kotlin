@@ -8,6 +8,6 @@ version = "1.0"
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
 }

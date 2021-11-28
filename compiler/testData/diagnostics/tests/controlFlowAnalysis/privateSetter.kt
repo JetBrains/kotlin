@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class X(s : String) {
     public var n: String = s
         private set

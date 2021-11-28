@@ -1,24 +1,18 @@
 apply plugin: 'kotlin'
 apply plugin: 'jps-compatible'
 
-configurePublishing(project)
+configureGradlePluginPublishing(project)
 
 pill {
     variant = 'FULL'
 }
 
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    options.fork = false
-}
-
 dependencies {
     compileOnly project(':kotlin-gradle-plugin')
-    compile project(':kotlin-gradle-plugin-api')
+    api project(':kotlin-gradle-plugin-api')
 
     compileOnly kotlinStdlib()
-    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    compileOnly project(':kotlin-compiler-embeddable')
 
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }

@@ -1,0 +1,40 @@
+Maze:
+I~~$
+Result: Path found
+
+Maze:
+I O $
+Result: No path
+
+Maze:
+O  $         
+O  ~         
+O  ~         
+O  ~         
+O  ~~~~~~~~~I
+Result: Path found
+
+Maze:
+OOOOOOOOOOO
+O $~~~~~  O
+OOOOOOO~OOO
+O    ~~~  O
+OOOOO~OOOOO
+O~~~~~    O
+O~OOOOOOOOO
+O~~~~~~  OO
+OOOOOO~~~IO
+Result: Path found
+
+Maze:
+OOOOOOOOOOOOOOOOO
+O  ~~~          O
+O$~~O~          O
+OOOOO~          O
+O ~~~~          O
+O ~OOOOOOOOOOOOOO
+O ~         O I O
+O ~~~~~~~~~~~~~ O
+OOOOOOOOOOOOOOOOO
+Result: Path found
+

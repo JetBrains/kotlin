@@ -10,8 +10,10 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
@@ -21,18 +23,19 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 
-open class BaseConverter(
+abstract class BaseConverter(
     baseSession: FirSession,
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    val offset: Int,
     context: Context<LighterASTNode> = Context()
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
+    abstract val offset: Int
+
     protected val implicitType = buildImplicitTypeRef()
 
-    override fun LighterASTNode.toFirSourceElement(kind: FirFakeSourceElementKind?): FirLightSourceElement {
+    override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
-        return toFirLightSourceElement(tree, kind ?: FirRealSourceElementKind, startOffset, endOffset)
+        return toKtLightSourceElement(tree, kind ?: context.forcedElementSourceKind ?: KtRealSourceElementKind, startOffset, endOffset)
     }
 
     override val LighterASTNode.elementType: IElementType
@@ -44,7 +47,7 @@ open class BaseConverter(
     override val LighterASTNode.unescapedValue: String
         get() {
             val escape = this.asText
-            return escapedStringToCharacter(escape)?.toString()
+            return escapedStringToCharacter(escape).value?.toString()
                 ?: escape.replace("\\", "").replace("u", "\\u")
         }
 
@@ -53,6 +56,9 @@ open class BaseConverter(
     }
 
     override fun LighterASTNode.getLabelName(): String? {
+        if (tokenType == KtNodeTypes.FUN) {
+            return getParent()?.getLabelName()
+        }
         this.forEachChildren {
             when (it.tokenType) {
                 KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "")
@@ -74,6 +80,15 @@ open class BaseConverter(
         }
 
         return null
+    }
+
+    protected fun LighterASTNode.getFirstChildExpressionUnwrapped(): LighterASTNode? {
+        val expression = getFirstChildExpression() ?: return null
+        return if (expression.tokenType == KtNodeTypes.PARENTHESIZED) {
+            expression.getFirstChildExpressionUnwrapped()
+        } else {
+            expression
+        }
     }
 
     private fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
@@ -123,6 +138,16 @@ open class BaseConverter(
 
     fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
+    }
+
+    fun LighterASTNode.getParents(): Sequence<LighterASTNode> {
+        var node = this
+        return sequence {
+            while (true) {
+                yield(node)
+                node = node.getParent() ?: break
+            }
+        }
     }
 
     fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {

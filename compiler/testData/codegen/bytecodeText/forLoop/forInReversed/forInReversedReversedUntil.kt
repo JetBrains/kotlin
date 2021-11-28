@@ -1,3 +1,12 @@
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 import kotlin.test.*
 
 fun box(): String {
@@ -41,3 +50,10 @@ fun box(): String {
 // 3 getFirst
 // 3 getLast
 // 3 getStep
+
+// JVM_IR_TEMPLATES
+// 24 ILOAD
+// 12 ISTORE
+// 4 IADD
+// 1 ISUB
+// 0 IINC

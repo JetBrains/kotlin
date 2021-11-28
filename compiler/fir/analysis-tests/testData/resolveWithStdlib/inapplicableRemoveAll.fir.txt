@@ -1,0 +1,7 @@
+FILE: inapplicableRemoveAll.kt
+    public final fun test(list: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit| {
+        R|<local>/list|.R|kotlin/collections/removeAll|<R|kotlin/String|>(<L> = removeAll@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ R|<local>/it|.R|kotlin/text/isEmpty|()
+        }
+        )
+    }

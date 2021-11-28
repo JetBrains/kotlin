@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
@@ -14,3 +15,5 @@ abstract class FirQualifierResolver : FirSessionComponent {
     abstract fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>?
     abstract fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
 }
+
+val FirSession.qualifierResolver: FirQualifierResolver by FirSession.sessionComponentAccessor()

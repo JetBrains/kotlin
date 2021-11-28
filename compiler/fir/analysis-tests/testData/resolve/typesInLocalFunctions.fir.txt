@@ -1,0 +1,33 @@
+FILE: typesInLocalFunctions.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(): R|() -> kotlin/Boolean| {
+        lval s: R|Some| = R|/Some.Some|()
+        when () {
+            Boolean(true) ->  {
+                ^foo fun <anonymous>(): R|kotlin/Boolean| <inline=Unknown>  {
+                    ^ when () {
+                        (R|<local>/s| is R|Some|) ->  {
+                            Boolean(true)
+                        }
+                        else ->  {
+                            Boolean(false)
+                        }
+                    }
+
+                }
+
+            }
+            else ->  {
+                ^foo fun <anonymous>(): R|kotlin/Boolean| <inline=Unknown>  {
+                    ^ Boolean(true)
+                }
+
+            }
+        }
+
+    }

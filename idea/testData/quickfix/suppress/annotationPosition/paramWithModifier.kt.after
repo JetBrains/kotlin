@@ -1,3 +1,0 @@
-// "Suppress 'REDUNDANT_NULLABLE' for parameter p" "true"
-
-fun foo(@Suppress("REDUNDANT_NULLABLE") vararg p: String?<caret>?) = null

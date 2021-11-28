@@ -24,7 +24,8 @@ digraph postponedLambdas_kt {
             color=blue
             5 [label="Enter block"];
             6 [label="Access variable R|<local>/a|"];
-            7 [label="Postponed enter to lambda"];
+            7 [label="Access variable R|<local>/b|"];
+            8 [label="Postponed enter to lambda"];
             subgraph cluster_4 {
                 color=blue
                 13 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
@@ -36,8 +37,7 @@ digraph postponedLambdas_kt {
                 }
                 17 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            8 [label="Postponed exit from lambda"];
-            9 [label="Access variable R|<local>/b|"];
+            9 [label="Postponed exit from lambda"];
             10 [label="Function call: R|/foo|(...)"];
             11 [label="Exit block"];
         }
@@ -46,10 +46,10 @@ digraph postponedLambdas_kt {
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    7 -> {13};
-    7 -> {8} [color=red];
-    7 -> {13} [style=dashed];
-    8 -> {9};
+    7 -> {8};
+    8 -> {13};
+    8 -> {9} [color=red];
+    8 -> {13} [style=dashed];
     9 -> {10};
     10 -> {11};
     11 -> {12};
@@ -57,7 +57,7 @@ digraph postponedLambdas_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {8} [color=green];
+    17 -> {9} [color=green];
     17 -> {13} [color=green style=dashed];
 
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.tests.di
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cfg.ControlFlowInformationProviderImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.getValue
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatformAnalyzerServices) {
@@ -43,6 +45,8 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
         )
         useImpl<AnnotationResolverImpl>()
         useInstance(ModuleStructureOracle.SingleModule)
+        useInstance(ControlFlowInformationProviderImpl.Factory)
+        useInstance(InlineConstTracker.DoNothing)
     })
 }
 

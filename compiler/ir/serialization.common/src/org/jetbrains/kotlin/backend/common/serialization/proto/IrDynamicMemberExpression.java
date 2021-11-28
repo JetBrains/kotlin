@@ -105,16 +105,16 @@ public final class IrDynamicMemberExpression extends
   }
 
   private int bitField0_;
-  public static final int MEMBERNAME_FIELD_NUMBER = 1;
+  public static final int MEMBER_NAME_FIELD_NUMBER = 1;
   private int memberName_;
   /**
-   * <code>required int32 memberName = 1;</code>
+   * <code>required int32 member_name = 1;</code>
    */
   public boolean hasMemberName() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 memberName = 1;</code>
+   * <code>required int32 member_name = 1;</code>
    */
   public int getMemberName() {
     return memberName_;
@@ -370,19 +370,19 @@ public final class IrDynamicMemberExpression extends
 
     private int memberName_ ;
     /**
-     * <code>required int32 memberName = 1;</code>
+     * <code>required int32 member_name = 1;</code>
      */
     public boolean hasMemberName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 memberName = 1;</code>
+     * <code>required int32 member_name = 1;</code>
      */
     public int getMemberName() {
       return memberName_;
     }
     /**
-     * <code>required int32 memberName = 1;</code>
+     * <code>required int32 member_name = 1;</code>
      */
     public Builder setMemberName(int value) {
       bitField0_ |= 0x00000001;
@@ -391,7 +391,7 @@ public final class IrDynamicMemberExpression extends
       return this;
     }
     /**
-     * <code>required int32 memberName = 1;</code>
+     * <code>required int32 member_name = 1;</code>
      */
     public Builder clearMemberName() {
       bitField0_ = (bitField0_ & ~0x00000001);

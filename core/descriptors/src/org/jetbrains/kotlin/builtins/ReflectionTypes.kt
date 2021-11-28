@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.K_FUNCTION_PREFIX
 import org.jetbrains.kotlin.builtins.StandardNames.K_SUSPEND_FUNCTION_PREFIX
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import kotlin.reflect.KProperty
 
 class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
@@ -35,7 +36,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
     private class ClassLookup(val numberOfTypeParameters: Int) {
         operator fun getValue(types: ReflectionTypes, property: KProperty<*>): ClassDescriptor {
-            return types.find(property.name.capitalize(), numberOfTypeParameters)
+            return types.find(property.name.capitalizeAsciiOnly(), numberOfTypeParameters)
         }
     }
 
@@ -203,7 +204,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
                        || shortName == "KCallable" || shortName == "KAnnotatedElement"
 
             }
-            if (packageName == BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME_RELEASE) {
+            if (packageName == BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME) {
                 return shortName.startsWith("Function") // FunctionN, Function
                         || shortName.startsWith("SuspendFunction")
             }

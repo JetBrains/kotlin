@@ -1,0 +1,7 @@
+depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon Photos QuartzCore Security UIKit UniformTypeIdentifiers UserNotifications darwin posix
+language = Objective-C
+package = platform.PhotosUI
+modules = PhotosUI
+
+compilerOpts = -framework PhotosUI
+linkerOpts = -framework PhotosUI

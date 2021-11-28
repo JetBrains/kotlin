@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.samWithReceiver
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSamWithReceiverTest : AbstractDiagnosticsTest() {
     private companion object {
         private val TEST_ANNOTATIONS = listOf("SamWithReceiver")

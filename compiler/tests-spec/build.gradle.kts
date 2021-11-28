@@ -4,18 +4,25 @@ plugins {
 }
 
 dependencies {
-    testCompile(projectTests(":compiler"))
-    testCompileOnly(intellijDep()) {
-        includeJars("groovy", "groovy-xml", rootProject = rootProject)
-    }
-    testCompile(intellijDep()) {
-        includeJars("gson", rootProject = rootProject)
+    testApi(projectTests(":compiler"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+
+    testApi(intellijDep()) {
+        includeJars("gson", "groovy", "groovy-xml", rootProject = rootProject)
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijDep()) {
+        includeJars("streamex", rootProject = rootProject)
+    }
+
     testRuntimeOnly(intellijPluginDep("java"))
-    compile("org.jsoup:jsoup:1.10.3")
-    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    testRuntime(project(":kotlin-reflect"))
+    api("org.jsoup:jsoup:1.14.2")
+    if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
+
+    testApiJUnit5(vintageEngine = true)
 }
 
 sourceSets {
@@ -23,8 +30,11 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+testsJar()
+
 projectTest(parallel = true) {
     workingDir = rootDir
+    dependsOn(":dist")
 }
 
 val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
@@ -35,10 +45,10 @@ val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.
 
 val specConsistencyTests by task<Test> {
     workingDir = rootDir
-
     filter {
         includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
+    useJUnitPlatform()
 }
 
 tasks.named<Test>("test") {

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.serialization.constant
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -30,7 +30,7 @@ internal sealed class ConstantValue<out T>(open val value: T) {
 internal abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 internal abstract class UnsignedValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
-internal class AnnotationValue(value: FirAnnotationCall) : ConstantValue<FirAnnotationCall>(value) {
+internal class AnnotationValue(value: FirAnnotation) : ConstantValue<FirAnnotation>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitAnnotationValue(this, data)
 }
 
@@ -53,7 +53,7 @@ internal class ByteValue(value: Byte) : IntegerValueConstant<Byte>(value) {
 internal class CharValue(value: Char) : IntegerValueConstant<Char>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitCharValue(this, data)
 
-    override fun toString(): String = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
+    override fun toString(): String = "\\u%04X ('%s')".format(value.code, getPrintablePart(value))
 
     private fun getPrintablePart(c: Char): String = when (c) {
         '\b' -> "\\b"
@@ -138,7 +138,7 @@ internal class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(valu
             is Value.LocalClass -> return value.type
             is Value.NormalClass -> {
                 val (classId, arrayDimensions) = value.value
-                val klass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
+                val klass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass ?: return null
                 var type: ConeKotlinType = klass.defaultType().replaceArgumentsWithStarProjections()
                 repeat(arrayDimensions) {
                     type = type.createArrayType()

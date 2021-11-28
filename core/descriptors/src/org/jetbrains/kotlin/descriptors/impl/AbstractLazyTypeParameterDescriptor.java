@@ -29,6 +29,7 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
     public AbstractLazyTypeParameterDescriptor(
             @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Variance variance,
             boolean isReified,
@@ -36,7 +37,7 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             @NotNull SourceElement source,
             @NotNull SupertypeLoopChecker supertypeLoopChecker
     ) {
-        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source,
+        super(storageManager, containingDeclaration, annotations, name, variance, isReified, index, source,
               supertypeLoopChecker);
     }
 

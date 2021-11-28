@@ -6,25 +6,22 @@
 package org.jetbrains.kotlin.serialization.js
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -127,6 +124,7 @@ object KotlinJavascriptSerializationUtil {
                 ModuleKind.AMD -> JsProtoBuf.Library.Kind.AMD
                 ModuleKind.COMMON_JS -> JsProtoBuf.Library.Kind.COMMON_JS
                 ModuleKind.UMD -> JsProtoBuf.Library.Kind.UMD
+                ModuleKind.ES -> error("Es modules serialization")
             }
             if (builder.kind != moduleProtoKind) {
                 builder.kind = moduleProtoKind
@@ -172,7 +170,7 @@ object KotlinJavascriptSerializationUtil {
             if (descriptor.module != module) return true
 
             if (descriptor is MemberDescriptor && descriptor.isExpect) {
-                return !(descriptor is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))
+                return !(descriptor is ClassDescriptor && OptionalAnnotationUtil.shouldGenerateExpectClass(descriptor))
             }
 
             return false
@@ -238,7 +236,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     fun serializeHeader(
-        module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
+        @Suppress("UNUSED_PARAMETER") module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
     ): JsProtoBuf.Header {
         val header = JsProtoBuf.Header.newBuilder()
 
@@ -248,20 +246,6 @@ object KotlinJavascriptSerializationUtil {
 
         if (languageVersionSettings.isPreRelease()) {
             header.flags = 1
-        }
-
-        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlags.experimental)
-        if (experimentalAnnotationFqNames.isNotEmpty()) {
-            val stringTable = StringTableImpl()
-            for (fqName in experimentalAnnotationFqNames) {
-                val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED) ?: continue
-                header.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
-                    id = stringTable.getFqNameIndex(descriptor)
-                })
-            }
-            val (strings, qualifiedNames) = stringTable.buildProto()
-            header.strings = strings
-            header.qualifiedNames = qualifiedNames
         }
 
         // TODO: write JS code binary version

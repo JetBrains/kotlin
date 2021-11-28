@@ -28,10 +28,12 @@ public final class State {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
+    @kotlin.jvm.JvmOverloads()
     public State(int someInt, long someLong) {
         super();
     }
 
+    @kotlin.jvm.JvmOverloads()
     public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
     java.lang.String someString) {
         super();

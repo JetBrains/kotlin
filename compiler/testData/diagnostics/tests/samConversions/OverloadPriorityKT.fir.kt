@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
+// !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces +SamConversionForKotlinFunctions +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
@@ -21,10 +21,9 @@ interface K {
 }
 
 fun test(k: K) {
-    k.<!AMBIGUITY!>foo<!> { <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    k.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" } <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 
-    k.<!AMBIGUITY!>bas<!> { <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Any?>() }; "" } <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    k.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bas<!> { <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any?>() }; "" } <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 
-    // NI: TODO
-    k.bar { it checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } checkType { _<Int>() }
+    k.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }

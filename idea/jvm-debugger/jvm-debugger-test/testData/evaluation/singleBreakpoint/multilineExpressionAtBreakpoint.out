@@ -1,8 +1,0 @@
-LineBreakpoint created at multilineExpressionAtBreakpoint.kt:5
-Run Java
-Connected to the target VM
-multilineExpressionAtBreakpoint.kt:5
-Compile bytecode for 1 + 1
-Disconnected from the target VM
-
-Process finished with exit code 0

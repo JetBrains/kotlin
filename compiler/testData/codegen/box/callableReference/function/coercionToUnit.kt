@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference
-
 fun foo(s: String): Boolean {
     if (s != "kotlin") throw AssertionError(s)
     return true

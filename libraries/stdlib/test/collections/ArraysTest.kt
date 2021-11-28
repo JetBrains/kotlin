@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -502,7 +502,7 @@ class ArraysTest {
         // for each arr with size > 0  arr.average() = arr.sum().toDouble() / arr.size()
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun indexOfInPrimitiveArrays() {
         expect(-1) { byteArrayOf(1, 2, 3).indexOf(0) }
         expect(0) { byteArrayOf(1, 2, 3).indexOf(1) }
@@ -1156,7 +1156,7 @@ class ArraysTest {
             assertEquals(expected, FloatArray(size) { it.toFloat() }.scan("") { acc, e -> acc + e.toInt() })
             assertEquals(expected, DoubleArray(size) { it.toDouble() }.scan("") { acc, e -> acc + e.toInt() })
             assertEquals(
-                expected.map { it.map { c -> c.toInt() % 2 == 0 }.joinToString(separator = "") },
+                expected.map { it.map { c -> c.code % 2 == 0 }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.scan("") { acc, e -> acc + e }
             )
         }
@@ -1177,7 +1177,7 @@ class ArraysTest {
             assertEquals(expected, FloatArray(size) { it.toFloat() }.runningFold("") { acc, e -> acc + e.toInt() })
             assertEquals(expected, DoubleArray(size) { it.toDouble() }.runningFold("") { acc, e -> acc + e.toInt() })
             assertEquals(
-                expected.map { it.map { c -> c.toInt() % 2 == 0 }.joinToString(separator = "") },
+                expected.map { it.map { c -> c.code % 2 == 0 }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.runningFold("") { acc, e -> acc + e }
             )
         }
@@ -1199,7 +1199,7 @@ class ArraysTest {
             )
             assertEquals(
                 expected,
-                CharArray(size) { it.toChar() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+                CharArray(size) { Char(it) }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.code}]" }
             )
             assertEquals(
                 expected,
@@ -1222,7 +1222,7 @@ class ArraysTest {
                 DoubleArray(size) { it.toDouble() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.map { it.map { c -> if (c.isAsciiLetter()) c.toInt() % 2 != 0 else c }.joinToString(separator = "") },
+                expected.map { it.map { c -> if (c.isAsciiLetter()) c.code % 2 != 0 else c }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
             )
         }
@@ -1244,7 +1244,7 @@ class ArraysTest {
             )
             assertEquals(
                 expected,
-                CharArray(size) { it.toChar() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+                CharArray(size) { Char(it) }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.code}]" }
             )
             assertEquals(
                 expected,
@@ -1267,7 +1267,7 @@ class ArraysTest {
                 DoubleArray(size) { it.toDouble() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.map { it.map { c -> if (c.isAsciiLetter()) c.toInt() % 2 != 0 else c }.joinToString(separator = "") },
+                expected.map { it.map { c -> if (c.isAsciiLetter()) c.code % 2 != 0 else c }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
             )
         }
@@ -1288,8 +1288,8 @@ class ArraysTest {
                 ByteArray(size) { it.toByte() }.runningReduce { acc, e -> (acc + e).toByte() }
             )
             assertEquals(
-                expected.map { it.toChar() },
-                CharArray(size) { it.toChar() }.runningReduce { acc, e -> acc + e.toInt() }
+                expected.map { Char(it) },
+                CharArray(size) { Char(it) }.runningReduce { acc, e -> acc + e.code }
             )
             assertEquals(
                 expected.map { it.toShort() },
@@ -1332,8 +1332,8 @@ class ArraysTest {
                 expected.map { it.toByte() },
                 ByteArray(size) { it.toByte() }.runningReduceIndexed { index, acc, e -> (index * (acc + e)).toByte() })
             assertEquals(
-                expected.map { it.toChar() },
-                CharArray(size) { it.toChar() }.runningReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
+                expected.map { Char(it) },
+                CharArray(size) { Char(it) }.runningReduceIndexed { index, acc, e -> (index * (acc.code + e.code)).let(::Char) }
             )
             assertEquals(
                 expected.map { it.toShort() },
@@ -1369,7 +1369,7 @@ class ArraysTest {
         assertEquals(mapOf("Alice" to 5, "Bob" to 3, "Carol" to 5), itemsWithTheirLength)
 
         val updatedLength = items.copyOfRange(1, 3)
-            .associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.toLowerCase().count { it in "aeuio" } }
+            .associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.lowercase().count { it in "aeuio" } }
 
         assertEquals(mapOf("Alice" to 5, "Bob" to 1, "Carol" to 2), updatedLength)
     }
@@ -1470,7 +1470,8 @@ class ArraysTest {
         doTest(build = { map {'a' + it}.toCharArray() },        reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { reverse() }, snapshot = { toList() })
-        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { reverse() }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toUInt()}.toUIntArray() },     reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toULong()}.toULongArray() },   reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toUByte()}.toUByteArray() },   reverse = { reverse() }, snapshot = { toList() })
@@ -1503,6 +1504,7 @@ class ArraysTest {
         }
 
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
 
         doTest(build = { map {it}.toIntArray() },               reverse = { from, to -> reverse(from, to) }, snapshot = { toList() })
@@ -1928,6 +1930,7 @@ class ArraysTest {
         testStableSort({ sort(1, 5) }, { sort(1, 5) })
         testStableSort({ sort(0, 6) }, { sort(0, 6) })
         doTest(build = { map {it.toString()}.toTypedArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
 
         doTest(build = { map {it}.toIntArray() }, sort = { from, to -> sort(from, to) }, snapshot = { toList() })
@@ -1971,6 +1974,7 @@ class ArraysTest {
         testStableSort({ sortDescending(1, 5) }, { sortDescending(1, 5) })
         testStableSort({ sortDescending(0, 6) }, { sortDescending(0, 6) })
         doTest(build = { map {it.toString()}.toTypedArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
+        @Suppress("USELESS_CAST")
         doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
 
         doTest(build = { map {it}.toIntArray() }, sortDescending = { from, to -> sortDescending(from, to) }, snapshot = { toList() })
@@ -1997,6 +2001,7 @@ class ArraysTest {
             checkSorted<Array<String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
         }
 
+        @Suppress("USELESS_CAST")
         with (arrayData("ac", "aD", "aba") { toList().toTypedArray() as Array<out String> }) {
             checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
             checkSorted<Array<out String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
@@ -2124,7 +2129,7 @@ class ArraysTest {
     }
 
     private data class Text(val data: String) : Comparable<Text> {
-        override fun compareTo(other: Text): Int = data.compareTo(other.data)
+        override fun compareTo(other: Text): Int = data compareTo other.data
     }
 
     private fun testStableSort(stableSort: Array<Text>.() -> Unit, intSort: Array<Int>.() -> Unit) {
@@ -2177,7 +2182,7 @@ class ArraysTest {
         testShuffle(numbers.map(Int::toShort).toShortArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map(Int::toFloat).toFloatArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map(Int::toDouble).toDoubleArray(), { shuffle() }, { toList() })
-        testShuffle(numbers.map(Int::toChar).toCharArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(::Char).toCharArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map { it % 2 == 0 }.toBooleanArray(), { shuffle() }, { toList() })
 
         testShuffle(numbers.map(Int::toUInt).toUIntArray(), { shuffle() }, { toList() })
@@ -2207,7 +2212,7 @@ class ArraysTest {
         testShuffleR(numbers.map(Int::toShort).toShortArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toFloat).toFloatArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toDouble).toDoubleArray(), { r -> shuffle(r) }, { toList() })
-        testShuffleR(numbers.map(Int::toChar).toCharArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(::Char).toCharArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map { it % 2 == 0 }.toBooleanArray(), { r -> shuffle(r) }, { toList() })
 
         testShuffleR(numbers.map(Int::toUInt).toUIntArray(), { r -> shuffle(r) }, { toList() })
@@ -2244,7 +2249,7 @@ class ArraysTest {
 
         testFailures(BooleanArray(5) { it % 2 == 0 }, BooleanArray::fill, true, 5)
         testFailures(ByteArray(5) { it.toByte() }, ByteArray::fill, 0.toByte(), 5)
-        testFailures(CharArray(5) { it.toChar() }, CharArray::fill, 0.toChar(), 5)
+        testFailures(CharArray(5) { Char(it) }, CharArray::fill, Char(0), 5)
         testFailures(FloatArray(5) { it.toFloat() }, FloatArray::fill, 0.0f, 5)
         testFailures(DoubleArray(5) { it.toDouble() }, DoubleArray::fill, 0.0, 5)
         testFailures(ShortArray(5) { it.toShort() }, ShortArray::fill, 0.toShort(), 5)
@@ -2278,7 +2283,7 @@ class ArraysTest {
 
         test(array, BooleanArray::fill, operations, IntArray::toBooleanArray, { this % 2 == 0 }, BooleanArray::contentEquals)
         test(array, ByteArray::fill, operations, IntArray::toByteArray, Int::toByte, ByteArray::contentEquals)
-        test(array, CharArray::fill, operations, IntArray::toCharArray, Int::toChar, CharArray::contentEquals)
+        test(array, CharArray::fill, operations, IntArray::toCharArray, ::Char, CharArray::contentEquals)
         test(array, FloatArray::fill, operations, IntArray::toFloatArray, Int::toFloat, FloatArray::contentEquals)
         test(array, DoubleArray::fill, operations, IntArray::toDoubleArray, Int::toDouble, DoubleArray::contentEquals)
         test(array, ShortArray::fill, operations, IntArray::toShortArray, Int::toShort, ShortArray::contentEquals)
@@ -2297,7 +2302,7 @@ class ArraysTest {
 
 private fun IntArray.toBooleanArray() = BooleanArray(size) { get(it) % 2 == 0 }
 private fun IntArray.toByteArray() = ByteArray(size) { get(it).toByte() }
-private fun IntArray.toCharArray() = CharArray(size) { get(it).toChar() }
+private fun IntArray.toCharArray() = CharArray(size) { Char(get(it)) }
 private fun IntArray.toFloatArray() = FloatArray(size) { get(it).toFloat() }
 private fun IntArray.toDoubleArray() = DoubleArray(size) { get(it).toDouble() }
 private fun IntArray.toShortArray() = ShortArray(size) { get(it).toShort() }

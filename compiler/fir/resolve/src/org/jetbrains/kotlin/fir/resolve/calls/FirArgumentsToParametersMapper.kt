@@ -5,22 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.isOperator
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
+import org.jetbrains.kotlin.fir.resolve.getAsForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashMap
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -41,6 +39,8 @@ data class ArgumentMapping(
                 is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
                     argumentToParameterMapping[it] = valueParameter
                 }
+                ResolvedCallArgument.DefaultArgument -> {
+                }
             }
         }
         return argumentToParameterMapping
@@ -55,26 +55,35 @@ private val EmptyArgumentMapping = ArgumentMapping(linkedMapOf(), emptyList())
 
 fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
-    function: FirFunction<*>,
+    function: FirFunction,
     originScope: FirScope?,
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
     }
-    val externalArgument: FirExpression? = arguments.lastOrNull { it is FirLambdaArgumentExpression }
-    var argumentsInParenthesis: List<FirExpression> = if (externalArgument == null) {
-        arguments
-    } else {
-        arguments.subList(0, arguments.size - 1)
+
+    val nonLambdaArguments: MutableList<FirExpression> = mutableListOf()
+    val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
+    var externalArgument: FirExpression? = null
+    for (argument in arguments) {
+        if (argument is FirLambdaArgumentExpression) {
+            if (externalArgument == null) {
+                externalArgument = argument
+            } else {
+                excessLambdaArguments.add(argument)
+            }
+        } else {
+            nonLambdaArguments.add(argument)
+        }
     }
 
-    // If this is an overloading indexed access operator, it could have default values or a vararg parameter in the middle.
+    // If this is an indexed access set operator, it could have default values or a vararg parameter in the middle.
     // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
-    if ((function as? FirSimpleFunction)?.isOperator == true &&
-        function.name == Name.identifier("set") &&
+    val isIndexedSetOperator = function is FirSimpleFunction && function.isOperator && function.name == OperatorNameConventions.SET
+    if (isIndexedSetOperator &&
         function.valueParameters.any { it.defaultValue != null || it.isVararg }
     ) {
-        val v = argumentsInParenthesis.last()
+        val v = nonLambdaArguments.last()
         if (v !is FirNamedArgumentExpression) {
             val namedV = buildNamedArgumentExpression {
                 source = v.source
@@ -82,24 +91,28 @@ fun BodyResolveComponents.mapArguments(
                 isSpread = false
                 name = function.valueParameters.last().name
             }
-            argumentsInParenthesis = argumentsInParenthesis.dropLast(1) + listOf(namedV)
+            nonLambdaArguments.removeAt(nonLambdaArguments.size - 1)
+            nonLambdaArguments.add(namedV)
         }
     }
 
-    val processor = FirCallArgumentsProcessor(function, this, originScope)
-    processor.processArgumentsInParenthesis(argumentsInParenthesis)
+    val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator)
+    processor.processNonLambdaArguments(nonLambdaArguments)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
     }
+    processor.processExcessLambdaArguments(excessLambdaArguments)
     processor.processDefaultsAndRunChecks()
 
     return ArgumentMapping(processor.result, processor.diagnostics ?: emptyList())
 }
 
 private class FirCallArgumentsProcessor(
-    private val function: FirFunction<*>,
+    private val useSiteSession: FirSession,
+    private val function: FirFunction,
     private val bodyResolveComponents: BodyResolveComponents,
     private val originScope: FirScope?,
+    private val isIndexedSetOperator: Boolean
 ) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
@@ -109,19 +122,21 @@ private class FirCallArgumentsProcessor(
         private set
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
+    val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
+        function.getAsForbiddenNamedArgumentsTarget(useSiteSession)
+    }
+
     private enum class State {
         POSITION_ARGUMENTS,
         VARARG_POSITION,
         NAMED_ONLY_ARGUMENTS
     }
 
-    fun processArgumentsInParenthesis(arguments: List<FirExpression>) {
+    fun processNonLambdaArguments(arguments: List<FirExpression>) {
         for (argument in arguments) {
-            val argumentName = argument.argumentName
-
             // process position argument
-            if (argumentName == null) {
-                if (processPositionArgument(argument)) {
+            if (argument !is FirNamedArgumentExpression) {
+                if (processPositionArgument(argument, isLastArgument = argument === arguments.last())) {
                     state = State.VARARG_POSITION
                 }
             }
@@ -131,7 +146,7 @@ private class FirCallArgumentsProcessor(
                     completeVarargPositionArguments()
                 }
 
-                processNamedArgument(argument, argumentName)
+                processNamedArgument(argument)
             }
         }
         if (state == State.VARARG_POSITION) {
@@ -140,13 +155,31 @@ private class FirCallArgumentsProcessor(
     }
 
     // return true, if it was mapped to vararg parameter
-    private fun processPositionArgument(argument: FirExpression): Boolean {
+    private fun processPositionArgument(argument: FirExpression, isLastArgument: Boolean): Boolean {
         if (state == State.NAMED_ONLY_ARGUMENTS) {
             addDiagnostic(MixingNamedAndPositionArguments(argument))
             return false
         }
 
-        val parameter = parameters.getOrNull(currentPositionedParameterIndex)
+        // The last parameter of an indexed set operator should be reserved for the last argument (the assigned value).
+        // We don't want the assigned value mapped to an index parameter if some of the index arguments are absent.
+        val assignedParameterIndex = if (isIndexedSetOperator) {
+            val lastParameterIndex = parameters.lastIndex
+            when {
+                isLastArgument -> lastParameterIndex
+                currentPositionedParameterIndex >= lastParameterIndex -> {
+                    // This is an extra index argument that should NOT be mapped to the parameter for the assigned value.
+                    -1
+                }
+                else -> {
+                    // This is an index argument that can be properly mapped.
+                    currentPositionedParameterIndex
+                }
+            }
+        } else {
+            currentPositionedParameterIndex
+        }
+        val parameter = parameters.getOrNull(assignedParameterIndex)
         if (parameter == null) {
             addDiagnostic(TooManyArguments(argument, function))
             return false
@@ -165,14 +198,14 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    private fun processNamedArgument(argument: FirExpression, name: Name) {
-        if (!function.hasStableParameterNames) {
-            addDiagnostic(NamedArgumentNotAllowed(argument, function))
+    private fun processNamedArgument(argument: FirNamedArgumentExpression) {
+        forbiddenNamedArgumentsTarget?.let {
+            addDiagnostic(NamedArgumentNotAllowed(argument, function, it))
         }
 
         val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
         state = State.NAMED_ONLY_ARGUMENTS
-        val parameter = findParameterByName(argument, name) ?: return
+        val parameter = findParameterByName(argument) ?: return
 
         result[parameter]?.let {
             addDiagnostic(ArgumentPassedTwice(argument, parameter, it))
@@ -209,6 +242,10 @@ private class FirCallArgumentsProcessor(
         result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
     }
 
+    fun processExcessLambdaArguments(excessLambdaArguments: List<FirExpression>) {
+        excessLambdaArguments.forEach { arg -> addDiagnostic(ManyLambdaExpressionArguments(arg)) }
+    }
+
     fun processDefaultsAndRunChecks() {
         for ((parameter, resolvedArgument) in result) {
             if (!parameter.isVararg) {
@@ -222,12 +259,15 @@ private class FirCallArgumentsProcessor(
 
         for ((index, parameter) in parameters.withIndex()) {
             if (!result.containsKey(parameter)) {
-                if (bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(parameter, function, originScope, index)) {
-                    result[parameter] = ResolvedCallArgument.DefaultArgument
-                } else if (parameter.isVararg) {
-                    result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())
-                } else {
-                    addDiagnostic(NoValueForParameter(parameter, function))
+                when {
+                    bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(
+                        useSiteSession, bodyResolveComponents.scopeSession, parameter, function, originScope, index
+                    ) ->
+                        result[parameter] = ResolvedCallArgument.DefaultArgument
+                    parameter.isVararg ->
+                        result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())
+                    else ->
+                        addDiagnostic(NoValueForParameter(parameter, function))
                 }
             }
         }
@@ -254,8 +294,8 @@ private class FirCallArgumentsProcessor(
         return nameToParameter!![name]
     }
 
-    private fun findParameterByName(argument: FirExpression, name: Name): FirValueParameter? {
-        val parameter = getParameterByName(name)
+    private fun findParameterByName(argument: FirNamedArgumentExpression): FirValueParameter? {
+        val parameter = getParameterByName(argument.name)
 
         // TODO
 //        if (descriptor is CallableMemberDescriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
@@ -290,17 +330,8 @@ private class FirCallArgumentsProcessor(
     }
 
     private val FirExpression.isSpread: Boolean
-        get() = this is FirSpreadArgumentExpression && isSpread
+        get() = this is FirWrappedArgumentExpression && isSpread
 
     private val parameters: List<FirValueParameter>
         get() = function.valueParameters
-
-    private val FirExpression.argumentName: Name?
-        get() = (this as? FirNamedArgumentExpression)?.name
-
-    // TODO: handle functions with non-stable parameter names, see also
-    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
-    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
-    private val FirFunction<*>.hasStableParameterNames: Boolean
-        get() = true
 }

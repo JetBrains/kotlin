@@ -1,42 +1,43 @@
+// !SKIP_JAVAC
 package kotlin.sub
 
 @Deprecated("", ReplaceWith(""))
 @DeprecatedSinceKotlin(warningSince = "1.0", errorSince = "1.1", hiddenSince = "1.2")
 fun good() {}
 
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@<!DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED!>DeprecatedSinceKotlin<!>()<!>
 class Clazz
 
 @Deprecated("", level = DeprecationLevel.WARNING)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@<!DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>DeprecatedSinceKotlin<!>()<!>
 fun fooWarning() {}
 
 @Deprecated("", ReplaceWith(""), DeprecationLevel.WARNING)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@<!DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>DeprecatedSinceKotlin<!>()<!>
 fun fooDefaultWarning() {}
 
 @Deprecated("", level = DeprecationLevel.ERROR)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@<!DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>DeprecatedSinceKotlin<!>()<!>
 fun fooError() {}
 
 @Deprecated("", level = DeprecationLevel.HIDDEN)
-@DeprecatedSinceKotlin()
+<!DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS!>@<!DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL!>DeprecatedSinceKotlin<!>()<!>
 fun fooHidden() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.0")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.0")<!>
 fun fooWarningIsGreater1() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = "1.1", hiddenSince = "1.0")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin(warningSince = "1.1", hiddenSince = "1.0")<!>
 fun fooWarningIsGreater2() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.3", hiddenSince = "1.2")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.3", hiddenSince = "1.2")<!>
 fun fooErrorIsGreater() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("1.2", "1.1", "1.1")
+<!DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS!>@DeprecatedSinceKotlin("1.2", "1.1", "1.1")<!>
 fun fooDefault() {}
 
 @Deprecated("")

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("Class")
 open class Obsolete {
     fun use() {}
@@ -23,8 +24,8 @@ class Properties {
     var y : <!DEPRECATION!>Obsolete<!> = <!DEPRECATION!>Obsolete<!>()
 
     var n : <!DEPRECATION!>Obsolete<!>
-        get() = <!DEPRECATION!>Obsolete<!>()
-        set(<!UNUSED_PARAMETER!>value<!>) {}
+    get() = <!DEPRECATION!>Obsolete<!>()
+    set(value) {}
 }
 
 fun param(param: <!DEPRECATION!>Obsolete<!>) { param.use() }

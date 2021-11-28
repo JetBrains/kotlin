@@ -11,7 +11,7 @@ fun case_1(value_1: SealedClass): Int = when (value_1) {
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: SealedClass): String = when (value_1) {
-    is SealedClass -> ""
+    <!USELESS_IS_CHECK!>is SealedClass<!> -> ""
 }
 
 // TESTCASE NUMBER: 3
@@ -62,7 +62,7 @@ fun case_7(value_1: SealedClassEmpty): String = when (value_1) {
  * ISSUES: KT-22996
  */
 fun case_8(value: SealedClass?): String = when (value) {
-    is SealedChild1, !is SealedChild3?, is SealedChild3? -> ""
+    is SealedChild1, !is SealedChild3?, <!USELESS_IS_CHECK!>is SealedChild3?<!> -> ""
 }
 
 /*
@@ -72,5 +72,5 @@ fun case_8(value: SealedClass?): String = when (value) {
  */
 fun case_9(value: SealedClass?): String = when (value) {
     is SealedChild1, !is SealedChild3 -> ""
-    is SealedChild3? -> ""
+    <!USELESS_IS_CHECK!>is SealedChild3?<!> -> ""
 }

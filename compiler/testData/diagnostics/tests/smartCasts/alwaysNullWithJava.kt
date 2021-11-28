@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // FILE: My.java
 
 public class My {
@@ -11,7 +11,6 @@ public class My {
 fun test() {
     val my = My.create()
     if (my == null) {
-        <!OI;DEBUG_INFO_CONSTANT!>my<!><!UNSAFE_CALL!>.<!>foo()
+        my<!UNSAFE_CALL!>.<!>foo()
     }
 }
-

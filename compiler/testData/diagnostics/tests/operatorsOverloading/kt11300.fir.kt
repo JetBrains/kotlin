@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 class A {
     operator fun get(x: Int): Int = x
@@ -7,7 +6,7 @@ class A {
 
 fun main() {
     val a = A()
-    a[1]++
-    a[1] += 3
-    a[1] = a[1] + 3
+    <!OPERATOR_MODIFIER_REQUIRED!>a[1]<!>++
+    a[1] <!UNRESOLVED_REFERENCE!>+=<!> 3
+    <!OPERATOR_MODIFIER_REQUIRED!>a[1]<!> = a[1] + 3
 }

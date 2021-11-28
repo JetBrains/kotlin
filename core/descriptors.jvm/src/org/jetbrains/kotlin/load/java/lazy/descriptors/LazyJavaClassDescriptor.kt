@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.toDescriptorVisibility
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -67,6 +68,10 @@ class LazyJavaClassDescriptor(
         }
     }
 
+    val moduleAnnotations by lazy {
+        classId?.let { outerContext.components.javaModuleResolver.getAnnotationsForModuleOwnerOfClass(it) }
+    }
+
     private val kind = when {
         jClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
         jClass.isInterface -> ClassKind.INTERFACE
@@ -76,8 +81,11 @@ class LazyJavaClassDescriptor(
 
     private val modality =
         if (jClass.isAnnotationType || jClass.isEnum) Modality.FINAL
-        // TODO: replace false with jClass.isSealed when it will be properly supported in platform
-        else Modality.convertFromFlags(sealed = false, jClass.isSealed || jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
+        else Modality.convertFromFlags(
+            sealed = jClass.isSealed,
+            abstract = jClass.isSealed || jClass.isAbstract || jClass.isInterface,
+            open = !jClass.isFinal
+        )
 
     private val visibility = jClass.visibility
     private val isInner = jClass.outerClass != null && !jClass.isStatic
@@ -190,6 +198,8 @@ class LazyJavaClassDescriptor(
         emptyList()
     }
 
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {
@@ -208,16 +218,18 @@ class LazyJavaClassDescriptor(
 
             for (javaType in javaTypes) {
                 val kotlinType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                if (kotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
+                val enhancedKotlinType = c.components.signatureEnhancement.enhanceSuperType(kotlinType, c)
+
+                if (enhancedKotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
                     incomplete.add(javaType)
                 }
 
-                if (kotlinType.constructor == purelyImplementedSupertype?.constructor) {
+                if (enhancedKotlinType.constructor == purelyImplementedSupertype?.constructor) {
                     continue
                 }
 
-                if (!KotlinBuiltIns.isAnyOrNullableAny(kotlinType)) {
-                    result.add(kotlinType)
+                if (!KotlinBuiltIns.isAnyOrNullableAny(enhancedKotlinType)) {
+                    result.add(enhancedKotlinType)
                 }
             }
 

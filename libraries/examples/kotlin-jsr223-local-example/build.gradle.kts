@@ -12,18 +12,18 @@ pill {
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-compiler-embeddable"))
-    compile(project(":kotlin-script-util"))
-    runtime(project(":kotlin-scripting-compiler-embeddable"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(commonDep("junit:junit"))
-    testRuntime(project(":kotlin-reflect"))
+    api(kotlinStdlib())
+    api(project(":kotlin-script-runtime"))
+    api(project(":kotlin-compiler-embeddable"))
+    api(project(":kotlin-script-util"))
+    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testApi(commonDep("junit:junit"))
+    testRuntimeOnly(project(":kotlin-reflect"))
     compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":core:util.runtime")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":daemon-common")) // TODO: fix import (workaround for jps build)
-    testRuntime(project(":kotlin-scripting-compiler-embeddable"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
 }
 
 projectTest()

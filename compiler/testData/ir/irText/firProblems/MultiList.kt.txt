@@ -65,4 +65,3 @@ class FinalList : SomeList<String> {
   }
 
 }
-

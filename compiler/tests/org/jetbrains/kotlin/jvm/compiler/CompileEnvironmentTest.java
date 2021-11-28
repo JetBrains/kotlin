@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.Assert;
 
 import java.io.File;
@@ -39,7 +39,7 @@ public class CompileEnvironmentTest extends TestCase {
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             ExitCode exitCode = new K2JVMCompiler().exec(
                     System.out,
-                    KotlinTestUtils.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
+                    KtTestUtil.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
                     "-d", out.getAbsolutePath(),
                     "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath()

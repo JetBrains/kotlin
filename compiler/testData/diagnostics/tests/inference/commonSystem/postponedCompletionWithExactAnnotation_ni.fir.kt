@@ -5,7 +5,7 @@ interface ISample
 
 fun <K> elvisSimple(x: K?, y: K): K = y
 
-@Suppress("INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "HIDDEN")
 fun <K> elvisExact(x: K?, y: K): @kotlin.internal.Exact K = y
 
 fun <T : Number> materialize(): T? = null

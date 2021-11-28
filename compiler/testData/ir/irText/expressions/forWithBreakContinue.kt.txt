@@ -67,4 +67,3 @@ fun testForContinue2(ss: List<String>) {
     }
   }
 }
-

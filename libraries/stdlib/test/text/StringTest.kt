@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,9 @@ package test.text
 import kotlin.test.*
 import test.*
 import test.collections.behaviors.iteratorBehavior
-import test.collections.behaviors.setBehavior
 import test.collections.compare
 import kotlin.math.sign
+import kotlin.native.concurrent.SharedImmutable
 import kotlin.random.Random
 
 
@@ -18,6 +18,7 @@ fun createString(content: String): CharSequence = content
 fun createStringBuilder(content: String): CharSequence = StringBuilder((content as Any).toString()) // required for Rhino JS
 
 
+@SharedImmutable
 val charSequenceBuilders = listOf(::createString, ::createStringBuilder)
 
 fun withOneCharSequenceArg(f: ((String) -> CharSequence) -> Unit) {
@@ -46,13 +47,13 @@ fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun testStringFromChars(expected: String, chars: CharArray, offset: Int, length: Int) {
         assertEquals(expected, String(chars, offset, length))
         assertEquals(expected, chars.concatToString(startIndex = offset, endIndex = offset + length))
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun testStringFromChars(expected: String, chars: CharArray) {
         assertEquals(expected, String(chars))
         assertEquals(expected, chars.concatToString())
@@ -63,7 +64,7 @@ class StringTest {
         testStringFromChars("Kotlin", chars, 0, chars.size)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun stringFromCharArraySlice() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n', ' ', 'r', 'u', 'l', 'e', 's')
         testStringFromChars("rule", chars, 7, 4)
@@ -77,7 +78,7 @@ class StringTest {
         assertTrue(longConcatString.all { it == 'k' })
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun stringFromCharArray() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
         testStringFromChars("Kotlin", chars)
@@ -98,7 +99,7 @@ class StringTest {
         testStringFromChars("Ŭᎍ🀺", chars, 3, 4)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun stringFromCharArrayOutOfBounds() {
         fun test(chars: CharArray) {
             assertFailsWith<IndexOutOfBoundsException> { String(chars, -1, 1) }
@@ -122,6 +123,19 @@ class StringTest {
         assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(-1) }
         assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(0, 6) }
         assertFailsWith<IllegalArgumentException> { s.toCharArray(3, 1) }
+
+        // Array modifications must not affect original string
+        val a = s.toCharArray()
+        for (i in a.indices) {
+            a[i] = ' '
+        }
+        assertContentEquals(charArrayOf(' ', ' ', ' ', ' ', ' '), a)
+        val a13 = s.toCharArray(1, 3)
+        for (i in a13.indices) {
+            a13[i] = ' '
+        }
+        assertContentEquals(charArrayOf(' ', ' '), a13)
+        assertEquals("hello", s)
     }
 
     @Test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
@@ -288,18 +302,28 @@ class StringTest {
     }
 
     @Test fun capitalize() {
-        assertEquals("A", "A".capitalize())
-        assertEquals("A", "a".capitalize())
-        assertEquals("Abcd", "abcd".capitalize())
-        assertEquals("Abcd", "Abcd".capitalize())
+        fun testCapitalize(expected: String, string: String) {
+            @Suppress("DEPRECATION")
+            assertEquals(expected, string.capitalize())
+            assertEquals(expected, string.replaceFirstChar { it.uppercase() })
+        }
+        testCapitalize("A", "A")
+        testCapitalize("A", "a")
+        testCapitalize("Abcd", "abcd")
+        testCapitalize("Abcd", "Abcd")
     }
 
     @Test fun decapitalize() {
-        assertEquals("a", "A".decapitalize())
-        assertEquals("a", "a".decapitalize())
-        assertEquals("abcd", "abcd".decapitalize())
-        assertEquals("abcd", "Abcd".decapitalize())
-        assertEquals("uRL", "URL".decapitalize())
+        fun testDecapitalize(expected: String, string: String) {
+            @Suppress("DEPRECATION")
+            assertEquals(expected, string.decapitalize())
+            assertEquals(expected, string.replaceFirstChar { it.lowercase() })
+        }
+        testDecapitalize("a", "A")
+        testDecapitalize("a", "a")
+        testDecapitalize("abcd", "abcd")
+        testDecapitalize("abcd", "Abcd")
+        testDecapitalize("uRL", "URL")
     }
 
     @Test fun slice() {
@@ -830,6 +854,11 @@ class StringTest {
         assertFalse("sample".equals(null, ignoreCase = true))
         assertTrue(null.equals(null, ignoreCase = true))
         assertTrue(null.equals(null, ignoreCase = false))
+
+        // Tests that characters are compared one by one
+        val s1 = "\uFB00"  // uppercase() == "FF"
+        val s2 = "\u0066\u0066" // "ff"
+        assertFalse(s1.equals(s2, ignoreCase = true))
     }
 
     @Test fun compareToIgnoreCase() {
@@ -838,7 +867,7 @@ class StringTest {
             val result = v1.compareTo(v2, ignoreCase = ignoreCase).sign
             assertEquals(expectedResult, result, "Comparing '$v1' with '$v2', ignoreCase = $ignoreCase")
             if (expectedResult == 0)
-                assertTrue(v1.equals(v2, ignoreCase = ignoreCase))
+                assertTrue(v1.equals(v2, ignoreCase = ignoreCase), "'$v1'=='$v2' should be consistent with ordering, ignoreCase = $ignoreCase")
             if (!ignoreCase)
                 assertEquals(v1.compareTo(v2).sign, result)
         }
@@ -877,6 +906,21 @@ class StringTest {
                 assertCompareResult(EQ, item1, item2, ignoreCase = true)
             }
         }
+
+        CharTest.equalIgnoreCaseGroups
+            .filterNot { "i" in it }
+            .forEach { equalGroup ->
+                for (char1 in equalGroup) {
+                    for (char2 in equalGroup) {
+                        assertCompareResult(EQ, char1.toString(), char2.toString(), ignoreCase = true)
+                    }
+                }
+            }
+
+        // Tests that characters are compared one by one
+        val s1 = "\uFB00"  // uppercase().lowercase() == "ff"
+        val s2 = "\u0067"  // "g"
+        assertCompareResult(GT, s1, s2, ignoreCase = true)
     }
 
 
@@ -899,19 +943,21 @@ class StringTest {
 
         fun testIgnoreCase(chars: String) {
             for ((i, c) in chars.withIndex()) {
-                val message = "Char: $c (${c.toInt()})"
+                val message = "Char: $c (${c.code})"
                 val expectOneReplaced = chars.replaceRange(i..i, "_")
                 val expectAllReplaced = "_".repeat(chars.length)
                 assertEquals(expectOneReplaced, chars.replace(c, '_'), message)
                 assertEquals(expectAllReplaced, chars.replace(c, '_', ignoreCase = true), "$message, ignoreCase")
                 assertEquals(expectOneReplaced, chars.replace(c.toString(), "_"), "$message, as string")
                 assertEquals(expectAllReplaced, chars.replace(c.toString(), "_", ignoreCase = true), "$message, as string, ignoreCase")
+                assertEquals(expectOneReplaced, chars.replace(Regex(Regex.escape(c.toString())), "_"), "$message, as regex")
+                assertEquals(expectAllReplaced, chars.replace(Regex(Regex.escape(c.toString()), RegexOption.IGNORE_CASE), "_"), "$message, as regex, ignoreCase")
             }
         }
 
-        testIgnoreCase("üÜ")
-        testIgnoreCase("öÖ")
-        testIgnoreCase("äÄ")
+        CharTest.equalIgnoreCaseGroups
+            .filterNot { "i" in it } // not supported by JS
+            .forEach { testIgnoreCase(it) }
     }
 
     @Test fun replaceFirst() {
@@ -1229,7 +1275,7 @@ class StringTest {
 
         assertEquals(listOf<Boolean>(), arg1("").map { it.isAsciiUpperCase() })
 
-        assertEquals(listOf(97, 98, 99), arg1("abc").map { it.toInt() })
+        assertEquals(listOf(97, 98, 99), arg1("abc").map { it.code })
     }
 
     @Test fun mapTo() = withOneCharSequenceArg { arg1 ->
@@ -1249,7 +1295,7 @@ class StringTest {
         assertEquals(arrayListOf<Boolean>(), result3)
 
         val result4 = arrayListOf<Int>()
-        val return4 = arg1("abc").mapTo(result4, { it.toInt() })
+        val return4 = arg1("abc").mapTo(result4, { it.code })
         assertEquals(result4, return4)
         assertEquals(arrayListOf(97, 98, 99), result4)
     }
@@ -1407,18 +1453,18 @@ class StringTest {
     @Test
     fun runningReduce() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            val expected = listOf(0, 1, 3, 6).take(size).map { it.toChar() }
-            val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
-            assertEquals(expected, source.runningReduce { acc, e -> acc + e.toInt() })
+            val expected = listOf(0, 1, 3, 6).take(size).map { Char(it) }
+            val source = arg1((Char(0) until Char(size)).joinToString(separator = ""))
+            assertEquals(expected, source.runningReduce { acc, e -> acc + e.code })
         }
     }
 
     @Test
     fun runningReduceIndexed() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            val expected = listOf(0, 1, 6, 27).take(size).map { it.toChar() }
-            val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
-            assertEquals(expected, source.runningReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() })
+            val expected = listOf(0, 1, 6, 27).take(size).map { Char(it) }
+            val source = arg1((Char(0) until Char(size)).joinToString(separator = ""))
+            assertEquals(expected, source.runningReduceIndexed { index, acc, e -> Char(index * (acc.code + e.code)) })
         }
     }
 
@@ -1448,7 +1494,7 @@ class StringTest {
         assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
 
         val data3 = "a1/b".toList()
-        val result3 = data3.joinToString() { it.toUpperCase().toString() }
+        val result3 = data3.joinToString() { it.uppercase() }
         assertEquals("A, 1, /, B", result3)
     }
 
@@ -1693,5 +1739,81 @@ ${"    "}
         }.let {
             assertEquals(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet())
         }
+    }
+
+    @Test
+    fun lowercase() {
+        assertEquals("", "".lowercase())
+
+        // ASCII
+        for (index in 0..25) {
+            val lower = ('a' + index).toString()
+            val upper = ('A' + index).toString()
+            assertEquals(lower, lower.lowercase())
+            assertEquals(lower, upper.lowercase())
+        }
+
+        // Incorrect surrogate chars
+        assertEquals("\uDE5F\uD801\uDC4F\uDCB0\uD806\uD81B", "\uDE5F\uD801\uDC27\uDCB0\uD806\uD81B".lowercase())
+    }
+
+    @Test
+    fun uppercase() {
+        assertEquals("", "".uppercase())
+
+        // ASCII
+        for (index in 0..25) {
+            val lower = ('a' + index).toString()
+            val upper = ('A' + index).toString()
+            assertEquals(upper, lower.uppercase())
+            assertEquals(upper, upper.uppercase())
+        }
+
+        // Surrogate pairs
+        assertEquals("\uD802\uDEBC\uD801\uDC00", "\uD802\uDEBC\uD801\uDC28".uppercase())
+
+        // Incorrect surrogate chars
+        assertEquals("\uDEBC\uD801\uDC00\uD802", "\uDEBC\uD801\uDC28\uD802".uppercase())
+
+        // Special Casing
+        assertEquals("\u0399\u0308\u0301\u0053\u0053", "\u0390\u00DF".uppercase())
+    }
+
+    @Test
+    fun contentEquals() = withTwoCharSequenceArgs { arg1, arg2 ->
+        infix fun String?.contentEquals(other: String?): Boolean {
+            return this?.let { arg1(it) } contentEquals other?.let { arg2(it) }
+        }
+
+        assertTrue("" contentEquals "")
+        assertTrue("1" contentEquals "1")
+        assertFalse("12" contentEquals "1")
+        assertFalse("1" contentEquals "12")
+
+        assertTrue("sample" contentEquals "sample")
+        assertFalse("Sample" contentEquals "sample")
+        assertFalse("sample" contentEquals "Sample")
+        assertFalse("sample" contentEquals null)
+        assertFalse(null contentEquals "sample")
+        assertTrue(null contentEquals null)
+    }
+
+    @Test
+    fun contentEqualsIgnoreCase() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.contentEquals(other: String, ignoreCase: Boolean): Boolean {
+            return arg1(this).contentEquals(arg2(other), ignoreCase)
+        }
+
+        assertTrue("".contentEquals("", ignoreCase = false))
+        assertTrue("".contentEquals("", ignoreCase = true))
+        assertTrue("1".contentEquals("1", ignoreCase = false))
+        assertTrue("1".contentEquals("1", ignoreCase = true))
+
+        assertFalse("sample".contentEquals("Sample", ignoreCase = false))
+        assertTrue("sample".contentEquals("Sample", ignoreCase = true))
+        assertFalse("sample".contentEquals(null, ignoreCase = false))
+        assertFalse("sample".contentEquals(null, ignoreCase = true))
+        assertTrue(null.contentEquals(null, ignoreCase = true))
+        assertTrue(null.contentEquals(null, ignoreCase = false))
     }
 }

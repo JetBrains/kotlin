@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -269,6 +270,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         if (classOrObject.isLocal) return false
         if (classDescriptor.isInlineClass()) return false
         if (shouldHideConstructorDueToInlineClassTypeValueParameters(constructorDescriptor)) return false
+        if (DescriptorUtils.isSealedClass(classDescriptor)) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 

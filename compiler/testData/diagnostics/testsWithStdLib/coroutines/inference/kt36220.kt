@@ -1,6 +1,6 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// FIR_IDENTICAL
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -13,8 +13,8 @@ class TypeDefinition<KotlinType : Any> {
 fun <KotlinType : Any> defineType(@BuilderInference definition: TypeDefinition<KotlinType>.() -> Unit): Unit = TODO()
 
 fun main() {
-    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>defineType<!> {
+    defineType {
         parse { it.toInt() }
-        serialize { <!OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>.<!OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>toString<!>() }
+        serialize { it.toString() }
     }
 }

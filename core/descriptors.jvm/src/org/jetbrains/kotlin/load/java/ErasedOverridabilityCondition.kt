@@ -43,7 +43,7 @@ class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
 
         if (signatureTypes.any { it.arguments.isNotEmpty() && it.unwrap() !is RawTypeImpl }) return Result.UNKNOWN
 
-        var erasedSuper = superDescriptor.substitute(RawSubstitution.buildSubstitutor()) ?: return Result.UNKNOWN
+        var erasedSuper = superDescriptor.substitute(RawSubstitution().buildSubstitutor()) ?: return Result.UNKNOWN
 
         if (erasedSuper is SimpleFunctionDescriptor && erasedSuper.typeParameters.isNotEmpty()) {
             // Only simple functions are supported now for erased overrides

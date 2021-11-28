@@ -94,6 +94,16 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
     val sealedSubclasses: MutableList<ClassName> = ArrayList(0)
 
     /**
+     * Name of the underlying property, if this class is `inline`.
+     */
+    var inlineClassUnderlyingPropertyName: String? = null
+
+    /**
+     * Type of the underlying property, if this class is `inline`.
+     */
+    var inlineClassUnderlyingType: KmType? = null
+
+    /**
      * Version requirements on this class.
      */
     val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
@@ -140,6 +150,13 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         sealedSubclasses.add(name)
     }
 
+    override fun visitInlineClassUnderlyingPropertyName(name: String) {
+        inlineClassUnderlyingPropertyName = name
+    }
+
+    override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor =
+        KmType(flags).also { inlineClassUnderlyingType = it }
+
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
@@ -163,6 +180,8 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         nestedClasses.forEach(visitor::visitNestedClass)
         enumEntries.forEach(visitor::visitEnumEntry)
         sealedSubclasses.forEach(visitor::visitSealedSubclass)
+        inlineClassUnderlyingPropertyName?.let(visitor::visitInlineClassUnderlyingPropertyName)
+        inlineClassUnderlyingType?.let { visitor.visitInlineClassUnderlyingType(it.flags)?.let(it::accept) }
         versionRequirements.forEach { visitor.visitVersionRequirement()?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()
@@ -517,7 +536,7 @@ class KmTypeAlias(
     val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
     private val extensions: List<KmTypeAliasExtension> =
-        MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeAliasExtension)
+        MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createTypeAliasExtension)
 
     override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
@@ -565,17 +584,18 @@ class KmValueParameter(
     var name: String
 ) : KmValueParameterVisitor() {
     /**
-     * Type of the value parameter, if this is **not** a `vararg` parameter.
+     * Type of the value parameter.
+     * If this is a `vararg` parameter of type `X`, returns the type `Array<out X>`.
      */
-    var type: KmType? = null
+    lateinit var type: KmType
 
     /**
-     * Type of the value parameter, if this is a `vararg` parameter.
+     * Type of the `vararg` value parameter, or `null` if this is not a `vararg` parameter.
      */
     var varargElementType: KmType? = null
 
     private val extensions: List<KmValueParameterExtension> =
-        MetadataExtensions.INSTANCES.map(MetadataExtensions::createValueParameterExtension)
+        MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createValueParameterExtension)
 
     override fun visitType(flags: Flags): KmTypeVisitor =
         KmType(flags).also { type = it }
@@ -592,7 +612,7 @@ class KmValueParameter(
      * @param visitor the visitor which will visit data in this value parameter
      */
     fun accept(visitor: KmValueParameterVisitor) {
-        type?.let { visitor.visitType(it.flags)?.let(it::accept) }
+        visitor.visitType(type.flags)?.let(type::accept)
         varargElementType?.let { visitor.visitVarargElementType(it.flags)?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()

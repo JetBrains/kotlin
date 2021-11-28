@@ -16,7 +16,7 @@ fun foo() {}
 @Foo5
 fun bar() {}
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: Bar1.java
 

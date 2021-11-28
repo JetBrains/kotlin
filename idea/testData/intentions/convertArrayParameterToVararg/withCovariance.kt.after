@@ -1,2 +1,0 @@
-// INTENTION_TEXT: Convert to vararg parameter
-fun <T> test(vararg a: T) = a.size

@@ -1,6 +1,7 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+// WITH_EXTENDED_CHECKERS
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
@@ -12,7 +13,7 @@ fun case_1(x: Any?) {
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Any) {
-    if (x is Number || x !is Number || x is Number) {
+    if (x is Number || x !is Number || <!USELESS_IS_CHECK!>x is Number<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>toByte<!>()
     }
@@ -20,7 +21,7 @@ fun case_2(x: Any) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
-    if (x is Boolean || x !is Boolean is Boolean) {
+    if (x is Boolean || <!USELESS_IS_CHECK!>x !is Boolean is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
@@ -28,7 +29,7 @@ fun case_3(x: Any?) {
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Any) {
-    if (x !is EnumClass || x !is EnumClass || x is EnumClass || x is EnumClass) {
+    if (x !is EnumClass || <!USELESS_IS_CHECK!>x !is EnumClass<!> || <!USELESS_IS_CHECK!>x is EnumClass<!> || <!USELESS_IS_CHECK!>x is EnumClass<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>fun_1<!>()
     }
@@ -46,7 +47,7 @@ fun case_5(x: Any?) {
 
 // TESTCASE NUMBER: 6
 fun case_6(x: Any?) {
-    if (!(x is Object) || !!(x !is Object)) {
+    if (!(x is Object) || !!(<!USELESS_IS_CHECK!>x !is Object<!>)) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
@@ -54,7 +55,7 @@ fun case_6(x: Any?) {
 
 // TESTCASE NUMBER: 7
 fun case_7(x: Any) {
-    if (!(x is DeepObject.A.B.C.D.E.F.G.J) || !!!!!!(x is DeepObject.A.B.C.D.E.F.G.J)) {
+    if (!(x is DeepObject.A.B.C.D.E.F.G.J) || !!!!!!(<!USELESS_IS_CHECK!>x is DeepObject.A.B.C.D.E.F.G.J<!>)) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
@@ -70,8 +71,8 @@ fun case_8(x: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?) {
-    if (!!!(x !is TypealiasNullableStringIndirect?)) else {
-        if (!(x !is TypealiasNullableStringIndirect?)) else {
+    if (!!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
+        if (!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>get<!>(0)
         }
@@ -105,7 +106,7 @@ inline fun <reified T, reified K>case_12(x: Any?) {
     if (x !is T) {
         if (x is T is K) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
     }
 }
@@ -115,7 +116,7 @@ inline fun <reified T, reified K>case_13(x: Any?) {
     if (x !is T) {
         if (x !is K) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
     }
 }
@@ -125,7 +126,7 @@ inline fun <reified T, reified K>case_14(x: Any?) {
     if (x is K) else {
         if (x !is T) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
     }
 }
@@ -135,7 +136,7 @@ inline fun <reified T, reified K>case_15(x: Any?) {
     if (x !is T) {
         if (x is K) else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
     }
 }

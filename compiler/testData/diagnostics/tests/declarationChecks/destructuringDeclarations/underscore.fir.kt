@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 class A {
     operator fun component1() = 1
@@ -11,39 +10,39 @@ class C {
 
 fun test() {
     for ((x, _) in C()) {
-        foo(x, _)
+        foo(x, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     for ((_, y) in C()) {
-        foo(_, y)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, y)
     }
 
     for ((_, _) in C()) {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(_, _)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     for ((_ : Int, _ : String) in C()) {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(_, _)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     for ((_ : String, _ : Int) in C()) {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(_, _)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     val (x, _) = A()
     val (_, y) = A()
 
     foo(x, y)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(x, _)
-    foo(_, y)
+    foo(x, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
+    foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, y)
 
     val (`_`, z) = A()
 
-    foo(_, z)
+    foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, z)
 
     val (_, `_`) = A()
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(_, y)
+    foo(<!ARGUMENT_TYPE_MISMATCH, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, y)
 
     val (unused, _) = A()
 }

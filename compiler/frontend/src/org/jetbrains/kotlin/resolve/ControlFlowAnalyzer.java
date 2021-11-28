@@ -37,17 +37,20 @@ public class ControlFlowAnalyzer {
     private final KotlinBuiltIns builtIns;
     private final LanguageVersionSettings languageVersionSettings;
     private final PlatformDiagnosticSuppressor diagnosticSuppressor;
+    private final ControlFlowInformationProvider.Factory controlFlowInformationProviderFactory;
 
     public ControlFlowAnalyzer(
             @NotNull BindingTrace trace,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull LanguageVersionSettings languageVersionSettings,
-            @NotNull PlatformDiagnosticSuppressor diagnosticSuppressor
+            @NotNull PlatformDiagnosticSuppressor diagnosticSuppressor,
+            @NotNull ControlFlowInformationProvider.Factory controlFlowInformationProviderFactory
     ) {
         this.trace = trace;
         this.builtIns = builtIns;
         this.languageVersionSettings = languageVersionSettings;
         this.diagnosticSuppressor = diagnosticSuppressor;
+        this.controlFlowInformationProviderFactory = controlFlowInformationProviderFactory;
     }
 
     public void process(@NotNull BodiesResolveContext c) {
@@ -80,7 +83,9 @@ public class ControlFlowAnalyzer {
 
     private void checkSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
         ControlFlowInformationProvider controlFlowInformationProvider =
-                new ControlFlowInformationProvider(constructor, trace, languageVersionSettings, diagnosticSuppressor);
+                controlFlowInformationProviderFactory.createControlFlowInformationProvider(
+                        constructor, trace, languageVersionSettings, diagnosticSuppressor
+                );
         controlFlowInformationProvider.checkDeclaration();
         controlFlowInformationProvider.checkFunction(builtIns.getUnitType());
     }
@@ -88,9 +93,10 @@ public class ControlFlowAnalyzer {
     private void checkDeclarationContainer(@NotNull BodiesResolveContext c, KtDeclarationContainer declarationContainer) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
-        ControlFlowInformationProvider controlFlowInformationProvider = new ControlFlowInformationProvider(
-                (KtElement) declarationContainer, trace, languageVersionSettings, diagnosticSuppressor
-        );
+        ControlFlowInformationProvider controlFlowInformationProvider =
+                controlFlowInformationProviderFactory.createControlFlowInformationProvider(
+                        (KtElement) declarationContainer, trace, languageVersionSettings, diagnosticSuppressor
+                );
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             controlFlowInformationProvider.checkForLocalClassOrObjectMode();
             return;
@@ -113,7 +119,9 @@ public class ControlFlowAnalyzer {
             @NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KotlinType expectedReturnType
     ) {
         ControlFlowInformationProvider controlFlowInformationProvider =
-                new ControlFlowInformationProvider(function, trace, languageVersionSettings, diagnosticSuppressor);
+                controlFlowInformationProviderFactory.createControlFlowInformationProvider(
+                        function, trace, languageVersionSettings, diagnosticSuppressor
+                );
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             controlFlowInformationProvider.checkForLocalClassOrObjectMode();
             return;

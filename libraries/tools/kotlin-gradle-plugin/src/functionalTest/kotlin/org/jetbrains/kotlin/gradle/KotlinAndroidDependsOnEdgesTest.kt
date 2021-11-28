@@ -19,7 +19,8 @@ import kotlin.test.assertEquals
 class KotlinAndroidDependsOnEdgesTest {
     @Test
     fun `default android source set declares dependsOn commonMain`() {
-        val project = ProjectBuilder.builder().build()
+        val project = createProject()
+
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
@@ -59,7 +60,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
     @Test
     fun `custom dependsOn edges`() {
-        val project = ProjectBuilder.builder().build()
+        val project = createProject()
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
@@ -105,6 +106,10 @@ class KotlinAndroidDependsOnEdgesTest {
             "Expected androidAndroidTest to only depend on commonTest"
         )
     }
+
+    private fun createProject() = ProjectBuilder.builder().build()
+        .also { addBuildEventsListenerRegistryMock(it) }
+
 }
 
 private fun Iterable<KotlinSourceSet>.sorted() = this.sortedBy { it.name }

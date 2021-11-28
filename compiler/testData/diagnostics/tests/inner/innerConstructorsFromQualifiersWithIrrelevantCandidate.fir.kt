@@ -12,16 +12,16 @@ class Outer {
 
         fun baz() {
             // Diagnostic here could be better (why can't I call the constructor above?)
-            Inner()
-            Inner(1)
+            Inner(<!NO_VALUE_FOR_PARAMETER!>)<!>
+            Inner(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
             Inner("")
         }
     }
 }
 
 fun foo() {
-    Outer.<!INAPPLICABLE_CANDIDATE!>Inner<!>()
-    Outer.<!INAPPLICABLE_CANDIDATE!>Inner<!>(1)
+    Outer.Inner(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Outer.Inner(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     Outer.Inner("")
 }
 
@@ -31,8 +31,8 @@ import abc.Outer.Inner
 import abc.Outer.Companion.Inner
 
 fun bar() {
-    Inner()
-    Inner(1)
+    Inner(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Inner(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     Inner("")
 
     with(Outer()) {

@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
+
 fun Boolean.foo() = 1
 fun Byte.foo() = 2
 fun Short.foo() = 3

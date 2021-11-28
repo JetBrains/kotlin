@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JS_IR
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // PROPERTY_LAZY_INITIALIZATION
 // KJS_WITH_FULL_RUNTIME
 
 // FILE: A.kt
 val a1 = "a".let {
+    throw Error()
     it + "a"
 }
 
@@ -39,5 +40,5 @@ fun box(): String {
     C.values()
     C.valueOf("OK")
     val baz = b
-    return if (js("typeof a1") == "undefined") "OK" else "fail"
+    return "OK"
 }

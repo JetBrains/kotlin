@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Target(AnnotationTarget.LOCAL_VARIABLE) annotation class base
 
 <!WRONG_ANNOTATION_TARGET!>@base<!> annotation class derived

@@ -16,16 +16,16 @@ public abstract class A<T, V> {
 
 class Inv<T>
 
-open class B<V> : A<Any, V>() {
-    override fun take(value: V): String {
+open <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B<!><V> : A<Any, V>() {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun take(value: V): String {
         return ""
     }
 
-    override fun takeInv(value: Inv<V>): String = ""
+    <!NOTHING_TO_OVERRIDE!>override<!> fun takeInv(value: Inv<V>): String = ""
 }
 
 fun test_1(b: B<Int>, x: Int, inv: Inv<Int>) {
-    b.take(x)
-    b.<!INAPPLICABLE_CANDIDATE!>take<!>(null)
-    b.takeInv(inv)
+    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>take<!>(x)
+    b.<!NONE_APPLICABLE!>take<!>(null)
+    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>takeInv<!>(inv)
 }

@@ -1,0 +1,1 @@
+-Xbuild-file=$TESTDATA_DIR$/modulesWithDependencyCycle.xml

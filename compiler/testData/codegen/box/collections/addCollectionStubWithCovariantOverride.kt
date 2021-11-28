@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 abstract class AbstractAdd {
     abstract fun add(s: String): Any
 }

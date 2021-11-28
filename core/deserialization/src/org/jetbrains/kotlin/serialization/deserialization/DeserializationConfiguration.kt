@@ -15,7 +15,7 @@ interface DeserializationConfiguration {
     val reportErrorsOnPreReleaseDependencies: Boolean
         get() = false
 
-    val reportErrorsOnIrDependencies: Boolean
+    val allowUnstableDependencies: Boolean
         get() = false
 
     val typeAliasesAllowed: Boolean
@@ -25,9 +25,6 @@ interface DeserializationConfiguration {
         get() = true
 
     val readDeserializedContracts: Boolean
-        get() = false
-
-    val releaseCoroutines: Boolean
         get() = false
 
     /**

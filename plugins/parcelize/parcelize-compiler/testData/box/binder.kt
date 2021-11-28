@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // See KT-38103
 // There is no such thing as a readStrongInterface method to deserialize arbitrary IIinterface implementations
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -37,5 +37,5 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val test2 = readFromParcel<ServiceContainer>(parcel)
+    parcelableCreator<ServiceContainer>().createFromParcel(parcel)
 }

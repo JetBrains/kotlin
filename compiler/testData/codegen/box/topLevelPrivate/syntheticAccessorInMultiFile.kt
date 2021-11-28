@@ -1,16 +1,16 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("TestKt")
 package test
+
+fun <T> eval(fn: () -> T) = fn()
 
 private val prop = "O"
 
 private fun test() = "K"
 
 fun box(): String {
-    return {
-        prop + test()
-    }()
+    return eval { prop + test() }
 }

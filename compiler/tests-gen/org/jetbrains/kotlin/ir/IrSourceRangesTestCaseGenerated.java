@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
     }
 
     public void testAllFilesPresentInSourceRanges() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("augmentedAssignmentWithExpression.kt")
@@ -38,9 +39,24 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         runTest("compiler/testData/ir/sourceRanges/comments.kt");
     }
 
+    @TestMetadata("elvis.kt")
+    public void testElvis() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/elvis.kt");
+    }
+
     @TestMetadata("kt17108.kt")
     public void testKt17108() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
+    }
+
+    @TestMetadata("kt24258.kt")
+    public void testKt24258() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/kt24258.kt");
+    }
+
+    @TestMetadata("postfixIncrementDecrement.kt")
+    public void testPostfixIncrementDecrement() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
     }
 
     @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
@@ -52,7 +68,7 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classFuns.kt")

@@ -14,11 +14,11 @@ interface C : A, B { // Warning here, this is correct
 }
 
 fun test(c: C) {
-    c.<!INAPPLICABLE_CANDIDATE!>foo<!>(b1 = 1, b2 = 1.0)
-    c.<!INAPPLICABLE_CANDIDATE!>foo<!>(a1 = 1, b2 = 1.0)
+    c.foo(<!NAMED_PARAMETER_NOT_FOUND!>b1<!> = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+    c.foo(a1 = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0<!NO_VALUE_FOR_PARAMETER!>)<!>
     c.foo(a1 = 1, a2 = 1.0)
     c.foo(a1 = 1, a2 = 1.0)
-    c.<!INAPPLICABLE_CANDIDATE!>bar<!>(a1 = 1, a2 = 1.0, b3= "")
-    c.<!INAPPLICABLE_CANDIDATE!>baz<!>(a1 = 1, b2 = 1.0, a3 = "", b4 = 2, a5 = "")
-    c.<!INAPPLICABLE_CANDIDATE!>baz<!>(a1 = 1, a2 = 1.0, a3 = "", b4 = 2, a5 = "")
+    c.bar(a1 = 1, a2 = 1.0, <!NAMED_PARAMETER_NOT_FOUND!>b3<!>= ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    c.baz(a1 = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0, a3 = "", <!NAMED_PARAMETER_NOT_FOUND!>b4<!> = 2, a5 = ""<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+    c.baz(a1 = 1, a2 = 1.0, a3 = "", <!NAMED_PARAMETER_NOT_FOUND!>b4<!> = 2, a5 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

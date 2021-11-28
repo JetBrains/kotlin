@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 fun <T> underlying(a: IC): T = bar(a) {
     (it.value as FooHolder).value as T
@@ -32,7 +32,9 @@ interface Foo
 
 class FooHolder(val value: Any): Foo
 
-inline class IC(val value: FooHolder): Foo {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IC(val value: FooHolder): Foo {
     fun <T> dispatchValue(): T = (value as FooHolder).value as T
 }
 

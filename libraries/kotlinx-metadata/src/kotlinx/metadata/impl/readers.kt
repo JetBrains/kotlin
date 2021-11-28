@@ -6,6 +6,7 @@
 package kotlinx.metadata.impl
 
 import kotlinx.metadata.*
+import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.impl.extensions.MetadataExtensions
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -92,6 +93,13 @@ fun ProtoBuf.Class.accept(
         v.visitSealedSubclass(c.className(sealedSubclassFqName))
     }
 
+    if (hasInlineClassUnderlyingPropertyName()) {
+        v.visitInlineClassUnderlyingPropertyName(c[inlineClassUnderlyingPropertyName])
+    }
+    loadInlineClassUnderlyingType(c)?.let { underlyingType ->
+        v.visitInlineClassUnderlyingType(underlyingType.typeFlags)?.let { underlyingType.accept(it, c) }
+    }
+
     for (versionRequirement in versionRequirementList) {
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
@@ -101,6 +109,18 @@ fun ProtoBuf.Class.accept(
     }
 
     v.visitEnd()
+}
+
+private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoBuf.Type? {
+    val type = inlineClassUnderlyingType(c.types)
+    if (type != null) return type
+
+    if (!hasInlineClassUnderlyingPropertyName()) return null
+
+    // Kotlin compiler doesn't write underlying type to metadata in case it can be loaded from the underlying property.
+    return propertyList
+        .singleOrNull { it.receiverType(c.types) == null && c[it.name] == c[inlineClassUnderlyingPropertyName] }
+        ?.returnType(c.types)
 }
 
 fun ProtoBuf.Package.accept(

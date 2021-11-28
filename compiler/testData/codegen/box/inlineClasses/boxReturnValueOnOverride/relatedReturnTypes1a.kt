@@ -1,9 +1,12 @@
+// WITH_STDLIB
 
 interface IQ {
     fun ok(): String
 }
 
-inline class X(val t: IQ): IQ {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val t: IQ): IQ {
     override fun ok(): String = t.ok()
 }
 

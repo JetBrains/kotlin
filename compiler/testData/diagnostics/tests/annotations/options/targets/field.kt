@@ -1,5 +1,4 @@
-// !WITH_NEW_INFERENCE
-@Target(AnnotationTarget.FIELD) 
+@Target(AnnotationTarget.FIELD)
 annotation class Field
 
 <!WRONG_ANNOTATION_TARGET!>@Field<!>
@@ -28,7 +27,7 @@ abstract class My(<!WRONG_ANNOTATION_TARGET!>@Field<!> arg: Int, @Field val w: I
     fun foo() {}
 
     <!WRONG_ANNOTATION_TARGET!>@Field<!>
-    val v: Int by <!UNRESOLVED_REFERENCE!>Delegates<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>lazy<!> { 42 }
+    val v: Int by <!UNRESOLVED_REFERENCE!>Delegates<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>lazy<!> { 42 }
 }
 
 enum class Your {

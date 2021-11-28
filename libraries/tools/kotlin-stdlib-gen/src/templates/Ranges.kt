@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -44,8 +44,8 @@ object RangeOps : TemplateGroupBase() {
         defaultBuilder {
             sourceFile(SourceFile.Ranges)
             if (primitive in PrimitiveType.unsignedPrimitives) {
-                since("1.3")
-                annotation("@ExperimentalUnsignedTypes")
+                sinceAtLeast("1.5")
+                wasExperimental("ExperimentalUnsignedTypes")
                 sourceFile(SourceFile.URanges)
             }
         }
@@ -160,7 +160,7 @@ object RangeOps : TemplateGroupBase() {
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
         if (rangeType.isIntegral() != itemType.isIntegral()) {
             val message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed."
-            deprecate(Deprecation(message, warningSince = "1.3", errorSince = "1.4"))
+            deprecate(Deprecation(message, warningSince = "1.3", errorSince = "1.4", hiddenSince = "1.5"))
         }
 
         platformName("${rangeType.name.decapitalize()}RangeContains")

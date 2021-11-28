@@ -18,45 +18,91 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.ReportLevel
+import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isSubpackageOf
 
-class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
+class JavaTypeEnhancementStateParser(
+    private val collector: MessageCollector,
+    private val kotlinVersion: KotlinVersion
+) {
     fun parse(
         jsr305Args: Array<String>?,
         supportCompatqualCheckerFrameworkAnnotations: String?,
-        jspecifyState: String?
+        jspecifyState: String?,
+        nullabilityAnnotations: Array<String>?
     ): JavaTypeEnhancementState {
-        val jsr305State = parseJsr305State(jsr305Args)
-
-        val enableCompatqualCheckerFrameworkAnnotations = when (supportCompatqualCheckerFrameworkAnnotations) {
-            "enable" -> true
-            "disable" -> false
-            null -> null
+        val nullabilityAnnotationReportLevels = parseNullabilityAnnotationReportLevels(nullabilityAnnotations)
+        val compatqualCheckerFrameworkAnnotationsReportLevel = when (supportCompatqualCheckerFrameworkAnnotations) {
+            "enable" -> ReportLevel.STRICT
+            "disable" -> ReportLevel.IGNORE
+            null -> getReportLevelForAnnotation(
+                CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE,
+                nullabilityAnnotationReportLevels,
+                kotlinVersion
+            )
             else -> {
                 collector.report(
                     CompilerMessageSeverity.ERROR,
                     "Unrecognized -Xsupport-compatqual-checker-framework-annotations option: $supportCompatqualCheckerFrameworkAnnotations. Possible values are 'enable'/'disable'"
                 )
-                null
+                getReportLevelForAnnotation(
+                    CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE,
+                    nullabilityAnnotationReportLevels,
+                    kotlinVersion
+                )
+            }
+        }
+        val jsr305Settings = parseJsr305State(jsr305Args)
+        val jspecifyReportLevel = parseJspecifyReportLevel(jspecifyState, nullabilityAnnotationReportLevels)
+
+        return JavaTypeEnhancementState(jsr305Settings) {
+            when {
+                it.isSubpackageOf(JSPECIFY_ANNOTATIONS_PACKAGE) -> jspecifyReportLevel
+                it.isSubpackageOf(CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE) -> compatqualCheckerFrameworkAnnotationsReportLevel
+                else -> getReportLevelForAnnotation(it, nullabilityAnnotationReportLevels, kotlinVersion)
+            }
+        }
+    }
+
+    private fun parseNullabilityAnnotationReportLevels(item: String): Pair<FqName, ReportLevel>? {
+        if (!item.startsWith("@")) {
+            reportUnrecognizedReportLevel(item, NULLABILITY_ANNOTATIONS_COMPILER_OPTION)
+            return null
+        }
+
+        val (name, state) = parseAnnotationWithReportLevel(item, NULLABILITY_ANNOTATIONS_COMPILER_OPTION) ?: return null
+
+        return name to state
+    }
+
+    private fun parseNullabilityAnnotationReportLevels(nullabilityAnnotations: Array<String>?): NullabilityAnnotationStates<ReportLevel> {
+        if (nullabilityAnnotations.isNullOrEmpty())
+            return NullabilityAnnotationStates.EMPTY
+
+        val annotationsWithReportLevels = mutableMapOf<FqName, ReportLevel>()
+
+        for (item in nullabilityAnnotations) {
+            val (name, state) = parseNullabilityAnnotationReportLevels(item) ?: continue
+            val current = annotationsWithReportLevels[name]
+            if (current == null) {
+                annotationsWithReportLevels[name] = state
+            } else if (current != state) {
+                reportDuplicateAnnotation("@$name:${current.description}", item, NULLABILITY_ANNOTATIONS_COMPILER_OPTION)
+                continue
             }
         }
 
-        val jspecifyReportLevel = parseJspecifyReportLevel(jspecifyState)
-
-        val state = JavaTypeEnhancementState(
-            jsr305State.global ?: ReportLevel.WARN, jsr305State.migration, jsr305State.usedDefined,
-            enableCompatqualCheckerFrameworkAnnotations =
-            enableCompatqualCheckerFrameworkAnnotations
-                ?: JavaTypeEnhancementState.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE,
-            jspecifyReportLevel = jspecifyReportLevel
-        )
-        return if (state == JavaTypeEnhancementState.DISABLED_JSR_305) JavaTypeEnhancementState.DISABLED_JSR_305 else state
+        return NullabilityAnnotationStatesImpl(annotationsWithReportLevels)
     }
 
+    private fun parseJspecifyReportLevel(
+        jspecifyState: String?,
+        nullabilityAnnotationReportLevels: NullabilityAnnotationStates<ReportLevel>
+    ): ReportLevel {
+        if (jspecifyState == null)
+            return getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE, nullabilityAnnotationReportLevels, kotlinVersion)
 
-    private fun parseJspecifyReportLevel(jspecifyState: String?): ReportLevel {
-        if (jspecifyState == null) return JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
         val reportLevel = ReportLevel.findByDescription(jspecifyState)
 
         if (reportLevel == null) {
@@ -64,37 +110,33 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                 CompilerMessageSeverity.ERROR,
                 "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'disable'/'warn'/'strict'"
             )
-            return JavaTypeEnhancementState.DEFAULT_REPORT_LEVEL_FOR_JSPECIFY
+            return getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE, nullabilityAnnotationReportLevels, kotlinVersion)
         }
 
         return reportLevel
     }
 
-    private data class Jsr305State(
-        val global: ReportLevel?,
-        val migration: ReportLevel?,
-        val usedDefined: Map<String, ReportLevel>
-    )
-
-    private fun parseJsr305State(args: Array<String>?): Jsr305State {
+    private fun parseJsr305State(args: Array<String>?): Jsr305Settings {
         var global: ReportLevel? = null
         var migration: ReportLevel? = null
-        val userDefined = mutableMapOf<String, ReportLevel>()
+        val userDefined = mutableMapOf<FqName, ReportLevel>()
+        val compilerOption = "-Xjsr305"
+        val defaultSettings = getDefaultJsr305Settings(kotlinVersion)
 
         fun parseJsr305UnderMigration(item: String): ReportLevel? {
             val rawState = item.split(":").takeIf { it.size == 2 }?.get(1)
-            return ReportLevel.findByDescription(rawState) ?: reportUnrecognizedJsr305(item).let { null }
+            return ReportLevel.findByDescription(rawState) ?: reportUnrecognizedReportLevel(item, compilerOption).let { null }
         }
 
         args?.forEach { item ->
             when {
                 item.startsWith("@") -> {
-                    val (name, state) = parseJsr305UserDefined(item) ?: return@forEach
+                    val (name, state) = parseAnnotationWithReportLevel(item, compilerOption) ?: return@forEach
                     val current = userDefined[name]
                     if (current == null) {
                         userDefined[name] = state
                     } else if (current != state) {
-                        reportDuplicateJsr305("@$name:${current.description}", item)
+                        reportDuplicateAnnotation("@$name:${current.description}", item, compilerOption)
                         return@forEach
                     }
                 }
@@ -103,7 +145,7 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                     if (migration == null) {
                         migration = state
                     } else if (migration != state) {
-                        reportDuplicateJsr305("under-migration:${migration?.description}", item)
+                        reportDuplicateAnnotation("under-migration:${migration?.description}", item, compilerOption)
                         return@forEach
                     }
                 }
@@ -120,34 +162,50 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                     if (global == null) {
                         global = ReportLevel.findByDescription(item)
                     } else if (global!!.description != item) {
-                        reportDuplicateJsr305(global!!.description, item)
+                        reportDuplicateAnnotation(global!!.description, item, compilerOption)
                         return@forEach
                     }
                 }
             }
         }
-        return Jsr305State(global, migration, userDefined)
+
+        val globalLevel = global ?: defaultSettings.globalLevel
+
+        return Jsr305Settings(
+            globalLevel = globalLevel,
+            migrationLevel = migration ?: getDefaultMigrationJsr305ReportLevelForGivenGlobal(globalLevel),
+            userDefinedLevelForSpecificAnnotation = userDefined.takeIf { it.isNotEmpty() }
+                ?: defaultSettings.userDefinedLevelForSpecificAnnotation
+        )
     }
 
-    private fun reportUnrecognizedJsr305(item: String) {
-        collector.report(CompilerMessageSeverity.ERROR, "Unrecognized -Xjsr305 value: $item")
+    private fun reportUnrecognizedReportLevel(item: String, sourceCompilerOption: String) {
+        collector.report(CompilerMessageSeverity.ERROR, "Unrecognized $sourceCompilerOption value: $item")
     }
 
-    private fun reportDuplicateJsr305(first: String, second: String) {
-        collector.report(CompilerMessageSeverity.ERROR, "Conflict duplicating -Xjsr305 value: $first, $second")
+    private fun reportDuplicateAnnotation(first: String, second: String, sourceCompilerOption: String) {
+        collector.report(CompilerMessageSeverity.ERROR, "Conflict duplicating $sourceCompilerOption value: $first, $second")
     }
 
-    private fun parseJsr305UserDefined(item: String): Pair<String, ReportLevel>? {
+    private fun parseAnnotationWithReportLevel(item: String, sourceCompilerOption: String): Pair<FqName, ReportLevel>? {
         val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 } ?: run {
-            reportUnrecognizedJsr305(item)
+            reportUnrecognizedReportLevel(item, sourceCompilerOption)
             return null
         }
 
         val state = ReportLevel.findByDescription(rawState) ?: run {
-            reportUnrecognizedJsr305(item)
+            reportUnrecognizedReportLevel(item, sourceCompilerOption)
             return null
         }
 
-        return name to state
+        return FqName(name) to state
+    }
+
+    companion object {
+        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion.CURRENT)
+        private const val NULLABILITY_ANNOTATIONS_COMPILER_OPTION = "-Xnullability-annotations"
+
+        fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String): Pair<FqName, ReportLevel> =
+            DEFAULT.parseNullabilityAnnotationReportLevels(nullabilityAnnotations)!!
     }
 }

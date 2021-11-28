@@ -68,6 +68,13 @@ open class FrameMapBase<T : Any> {
         return Mark(currentSize)
     }
 
+    fun skipTo(target: Int): Mark {
+        return mark().also {
+            if (currentSize < target)
+                currentSize = target
+        }
+    }
+
     inner class Mark(private val myIndex: Int) {
 
         fun dropTo() {

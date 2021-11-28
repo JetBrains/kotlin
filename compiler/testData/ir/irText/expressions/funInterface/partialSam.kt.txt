@@ -1,5 +1,5 @@
 fun interface Fn<T : Any?, R : Any?> {
-  abstract fun run(s: String, i: Int, t: T): R 
+  abstract fun run(s: String, i: Int, t: T): R
 
 }
 
@@ -64,4 +64,3 @@ fun test(j: J) {
   }
  /*-> Fn<String, Int> */, f2 = <get-fis>()) /*~> Unit */
 }
-

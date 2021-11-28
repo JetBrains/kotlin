@@ -5,7 +5,7 @@
 
 expect fun ok(x: Int, y: String = "")
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual fun ok(x: Int, y: String) {}

@@ -27,4 +27,3 @@ val test2: Function1<List<String>, Unit>
 val test3: Function1<Int, Unit>
   field = Host::objectMember/*<Int>()*/
   get
-

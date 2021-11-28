@@ -60,13 +60,13 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendInstr(wasmInstr: WasmInstr) {
         val op = wasmInstr.operator
-        if (op == WasmOp.END || op == WasmOp.ELSE)
+        if (op == WasmOp.END || op == WasmOp.ELSE || op == WasmOp.CATCH)
             indent--
 
         newLine()
         stringBuilder.append(wasmInstr.operator.mnemonic)
 
-        if (op == WasmOp.BLOCK || op == WasmOp.LOOP || op == WasmOp.IF || op == WasmOp.ELSE)
+        if (op == WasmOp.BLOCK || op == WasmOp.LOOP || op == WasmOp.IF || op == WasmOp.ELSE || op == WasmOp.CATCH || op == WasmOp.TRY)
             indent++
 
         if (wasmInstr.operator in setOf(WasmOp.CALL_INDIRECT, WasmOp.TABLE_INIT)) {
@@ -82,10 +82,10 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
-            is WasmImmediate.ConstI32 -> appendElement(x.value.toString().toLowerCase())
-            is WasmImmediate.ConstI64 -> appendElement(x.value.toString().toLowerCase())
-            is WasmImmediate.ConstF32 -> appendElement(f32Str(x).toLowerCase())
-            is WasmImmediate.ConstF64 -> appendElement(f64Str(x).toLowerCase())
+            is WasmImmediate.ConstI32 -> appendElement(x.value.toString().lowercase())
+            is WasmImmediate.ConstI64 -> appendElement(x.value.toString().lowercase())
+            is WasmImmediate.ConstF32 -> appendElement(f32Str(x).lowercase())
+            is WasmImmediate.ConstF64 -> appendElement(f64Str(x).lowercase())
             is WasmImmediate.SymbolI32 -> appendElement(x.value.owner.toString())
             is WasmImmediate.MemArg -> {
                 appendOffset(x.offset)
@@ -100,6 +100,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.DataIdx -> appendElement(x.value.toString())
             is WasmImmediate.TableIdx -> appendElement(x.value.toString())
             is WasmImmediate.LabelIdx -> appendElement(x.value.toString())
+            is WasmImmediate.TagIdx -> appendElement(x.value.toString())
             is WasmImmediate.LabelIdxVector ->
                 x.value.forEach { appendElement(it.toString()) }
 
@@ -212,6 +213,7 @@ class WasmIrToText : SExpressionBuilder() {
                         is WasmMemory -> appendMemory(it)
                         is WasmTable -> appendTable(it)
                         is WasmGlobal -> appendGlobal(it)
+                        is WasmTag -> appendTag(it)
                         else -> error("Unknown import kind ${it::class}")
                     }
                 }
@@ -223,6 +225,7 @@ class WasmIrToText : SExpressionBuilder() {
                 elements.forEach { appendWasmElement(it) }
                 startFunction?.let { appendStartFunction(it) }
                 data.forEach { appendData(it) }
+                tags.forEach { appendTag(it) }
             }
         }
     }
@@ -400,6 +403,19 @@ class WasmIrToText : SExpressionBuilder() {
         }
     }
 
+    private fun appendTag(wasmTag: WasmTag) {
+        newLineList("tag") {
+            appendModuleFieldReference(wasmTag)
+
+            wasmTag.importPair?.appendImportPair()
+
+            sameLineList("param") {
+                wasmTag.type.parameterTypes.forEach { appendType(it) }
+            }
+            assert(wasmTag.type.resultTypes.isEmpty()) { "must be as per spec" }
+        }
+    }
+
     private fun appendLocal(local: WasmLocal) {
         newLineList(if (local.isParameter) "param" else "local") {
             appendLocalReference(local)
@@ -442,7 +458,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmRtt ->
                 sameLineList("rtt") {
                     appendElement(type.depth.toString())
-                    appendHeapType(type.heapType)
+                    appendModuleFieldReference(type.type.owner)
                 }
 
             WasmUnreachableType -> {
@@ -485,6 +501,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmElement -> "elem"
             is WasmGlobal -> "g"
             is WasmTypeDeclaration -> "type"
+            is WasmTag -> "tag"
         }
 
         appendElement("\$${sanitizeWatIdentifier(field.name)}___${indexSpaceKind}_$id")

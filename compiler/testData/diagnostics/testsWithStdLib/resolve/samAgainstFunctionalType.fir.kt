@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 // FILE: StaticOverrides.java
@@ -24,7 +23,7 @@ public class StaticOverrides {
 // FILE: test.kt
 
 fun test() {
-    StaticOverrides.A.<!AMBIGUITY!>foo<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Boolean>() }
+    StaticOverrides.A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Boolean>() }
     StaticOverrides.B.foo {} checkType { _<String>() }
-    StaticOverrides.C.<!AMBIGUITY!>foo<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Boolean>() }
+    StaticOverrides.C.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Boolean>() }
 }

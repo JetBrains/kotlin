@@ -1,0 +1,7 @@
+depends = AudioToolbox CFNetwork CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.CoreAudioKit
+modules = CoreAudioKit
+
+compilerOpts = -framework CoreAudioKit
+linkerOpts = -framework CoreAudioKit

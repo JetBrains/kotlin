@@ -8,8 +8,7 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
+    mavenCentral()
 }
 
 group = "org.jetbrains.kotlin.sample.native"

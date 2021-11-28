@@ -5,12 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Signature
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
-class JsBridgesConstruction(context: JsCommonBackendContext) : BridgesConstruction(context) {
-    override fun getFunctionSignature(function: IrSimpleFunction): Signature =
-        jsFunctionSignature(function)
+class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<JsIrBackendContext>(context) {
+    override fun getFunctionSignature(function: IrSimpleFunction): String =
+        jsFunctionSignature(function, context)
+
+    override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
+        if (bridge.hasStableJsName(context))
+            JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
+        else
+            JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
 }

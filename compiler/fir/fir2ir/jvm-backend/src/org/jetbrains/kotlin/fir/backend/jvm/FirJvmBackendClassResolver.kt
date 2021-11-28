@@ -9,17 +9,17 @@ import org.jetbrains.kotlin.codegen.JvmBackendClassResolver
 import org.jetbrains.kotlin.codegen.classId
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmBackendClassResolver(val components: Fir2IrComponents) : JvmBackendClassResolver {
-    @ObsoleteDescriptorBasedAPI
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
         if (type.sort != Type.OBJECT) return emptyList()
 
-        val symbol = components.session.firSymbolProvider.getClassLikeSymbolByFqName(type.classId) ?: return emptyList()
+        val symbol = components.session.symbolProvider.getClassLikeSymbolByClassId(type.classId) ?: return emptyList()
         require(symbol is FirClassSymbol<*>)
         return listOf(components.classifierStorage.getIrClassSymbol(symbol).descriptor)
     }

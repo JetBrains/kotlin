@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -34,13 +36,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * It is also not guaranteed that each returned call is detected as tail recursion by the frontend.
  * However any returned call can be correctly optimized as tail recursion.
  */
-fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
+fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (IrFunctionReference) -> Boolean): Set<IrCall> {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return emptySet()
     }
 
-    val result = mutableSetOf<IrCall>()
+    val isUnitReturn = irFunction.returnType.isUnit()
 
+    val result = mutableSetOf<IrCall>()
     val visitor = object : IrElementVisitor<Unit, ElementKind> {
 
         override fun visitElement(element: IrElement, data: ElementKind) {
@@ -70,17 +73,32 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
             expression.value.accept(this, valueKind)
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: ElementKind) {
+        override fun visitExpressionBody(body: IrExpressionBody, data: ElementKind) =
+            body.acceptChildren(this, data)
+
+        override fun visitBlockBody(body: IrBlockBody, data: ElementKind) =
+            visitStatementContainer(body, data)
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: ElementKind) =
+            visitStatementContainer(expression, data)
+
+        private fun visitStatementContainer(expression: IrStatementContainer, data: ElementKind) {
             expression.statements.forEachIndexed { index, irStatement ->
-                val statementKind = if (index == expression.statements.lastIndex) {
+                val statementKind = when {
                     // The last statement defines the result of the container expression, so it has the same kind.
-                    data
-                } else {
-                    ElementKind.NOT_SURE
+                    index == expression.statements.lastIndex -> data
+                    // In a Unit-returning function, any statement directly followed by a `return` is a tail statement.
+                    isUnitReturn && expression.statements[index + 1].let {
+                        it is IrReturn && it.returnTargetSymbol == irFunction.symbol && it.value.isUnitRead()
+                    } -> ElementKind.TAIL_STATEMENT
+                    else -> ElementKind.NOT_SURE
                 }
                 irStatement.accept(this, statementKind)
             }
         }
+
+        private fun IrExpression.isUnitRead(): Boolean =
+            this is IrGetObjectValue && symbol.signature == IdSignatureValues.unit
 
         override fun visitWhen(expression: IrWhen, data: ElementKind) {
             expression.branches.forEach {
@@ -107,6 +125,13 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
                 // Overridden functions using default arguments at tail call are not included: KT-4285
                 return
             }
+            val dispatchReceiverType = irFunction.dispatchReceiverParameter?.type
+            if (dispatchReceiverType?.classOrNull?.owner?.kind?.isSingleton == true) {
+                // Dispatch receiver type is singleton and hence it can't be changed and the call must be tailrec.
+                result.add(expression)
+                return
+            }
+
 
             expression.dispatchReceiver?.let {
                 if (it !is IrGetValue || it.symbol.owner != irFunction.dispatchReceiverParameter) {
@@ -121,25 +146,25 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
             }
 
             result.add(expression)
-
         }
 
-    }
-
-    val body = irFunction.body
-    if (body !is IrBlockBody) {
-        return emptySet() // TODO: should an assert be here instead?
-    }
-
-    body.statements.forEachIndexed { index, irStatement ->
-        val kind = if (index == body.statements.lastIndex && irFunction.returnType.isUnit()) {
-            ElementKind.TAIL_STATEMENT
-        } else {
-            ElementKind.NOT_SURE
+        override fun visitFunctionReference(expression: IrFunctionReference, data: ElementKind) {
+            expression.acceptChildren(this, ElementKind.NOT_SURE)
+            // This should match inline lambdas:
+            //   tailrec fun foo() {
+            //     run { return foo() } // non-local return from `foo`, so this *is* a tail call
+            //   }
+            // Whether crossinline lambdas are matched is unimportant, as they can't contain any returns
+            // from `foo` anyway.
+            if (followFunctionReference(expression)) {
+                // If control reaches end of lambda, it will *not* end the current function by default,
+                // so the lambda's body itself is not a tail statement.
+                expression.symbol.owner.body?.accept(this, ElementKind.NOT_SURE)
+            }
         }
-        irStatement.accept(visitor, kind)
     }
 
+    irFunction.body?.accept(visitor, ElementKind.TAIL_STATEMENT)
     return result
 }
 

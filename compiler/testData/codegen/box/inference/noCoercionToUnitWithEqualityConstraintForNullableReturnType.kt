@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: UNIT_ISSUES
 
 class Inv<T>(val x: T?)
 

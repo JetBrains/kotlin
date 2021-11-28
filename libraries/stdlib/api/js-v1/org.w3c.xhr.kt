@@ -135,6 +135,7 @@ public abstract external class XMLHttpRequestEventTarget : org.w3c.dom.events.Ev
     public open var ontimeout: ((org.w3c.dom.events.Event) -> dynamic)? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface XMLHttpRequestResponseType {
     public companion object of XMLHttpRequestResponseType {
     }

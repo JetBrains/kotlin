@@ -1,0 +1,6 @@
+-Xenhance-type-parameter-types-to-def-not-null
+$TESTDATA_DIR$/kt49209.kt
+$TESTDATA_DIR$/kt49209
+$FOREIGN_JAVA8_ANNOTATIONS_DIR$
+-d
+$TEMP_DIR$

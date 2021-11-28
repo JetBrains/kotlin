@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    compile(gradleApi())
-    compile(project(":kotlin-gradle-plugin-api"))
-    compile(project(":native:kotlin-native-utils"))
+    api(gradleApi())
+    api(project(":kotlin-gradle-plugin-api"))
+    api(project(":native:kotlin-native-utils"))
 }
 
 val generateMppTargetContainerWithPresets by generator(

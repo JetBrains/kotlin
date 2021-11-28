@@ -1,6 +1,0 @@
-class Test {
-    override fun equals(other: Any?): Boolean {
-        if (this !== other) return false
-        return true
-    }
-}

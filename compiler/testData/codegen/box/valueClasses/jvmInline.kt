@@ -1,7 +1,6 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
-// IGNORE_DEXING
-// IGNORE_BACKEND: WASM
+// WITH_STDLIB
+// IGNORE_BACKEND: ANDROID
+// IGNORE_BACKEND: NATIVE
 
 // FILE: 1.kt
 
@@ -993,7 +992,9 @@ suspend fun test() {
 }
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(Continuation(EmptyCoroutineContext) {})
+    c.startCoroutine(Continuation(EmptyCoroutineContext) {
+        it.getOrThrow()
+    })
 }
 
 fun box(): String {

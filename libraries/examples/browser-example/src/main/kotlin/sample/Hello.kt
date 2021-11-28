@@ -1,6 +1,6 @@
 package sample
 
-import kotlin.browser.document
+import kotlinx.browser.document
 
 fun myApp() {
     val element = document.getElementById("foo")

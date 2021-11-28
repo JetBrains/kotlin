@@ -1,12 +1,13 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
-// !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JS, JS_IR
+
+// IGNORE_BACKEND: JS, JS_IR, WASM
 // IGNORE_BACKEND: JS_IR_ES6
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
+// WASM_MUTE_REASON: IGNORED_IN_JS
 
-inline class Id(val id: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Id(val id: String)
 
 fun throws() {
     throw RuntimeException()

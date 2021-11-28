@@ -1,8 +1,8 @@
+// WITH_COROUTINES
+// WITH_STDLIB
+// FULL_JDK
 // TARGET_BACKEND: JVM
 // FILE: flow.kt
-// FULL_JDK
-// WITH_RUNTIME
-// WITH_COROUTINES
 
 package flow
 

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // CHECK_CASES_COUNT: function=bar1 count=6
 // CHECK_IF_COUNT: function=bar1 count=0
 // CHECK_CASES_COUNT: function=bar2 count=6

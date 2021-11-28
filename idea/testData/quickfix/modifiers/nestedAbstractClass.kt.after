@@ -1,6 +1,0 @@
-// "Add 'inner' modifier" "true"
-class A() {
-    inner class B() {
-        abstract inner class C
-    }
-}

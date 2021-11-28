@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo(s: Any?): String {
     val t = when {
         // To resolve: String U Nothing? = String?
@@ -31,7 +30,7 @@ fun baz(s: String?, r: String?): String {
 }
 
 fun withNull(s: String?): String {
-    val t = s ?: null
+    val t = s <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     // Error: nullable
-    return t
+    return <!RETURN_TYPE_MISMATCH!>t<!>
 }

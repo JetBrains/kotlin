@@ -34,4 +34,3 @@ fun box(): String {
     zz.zz()
     return result
 }
-

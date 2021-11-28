@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -41,6 +42,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
     ) {
         val rootDisposable = Disposer.newDisposable()
         val messageCollector = createMessageCollector()
+        val performanceManager = object : CommonCompilerPerformanceManager(presentableName = "test") {}
         try {
             val configuration = CompilerConfiguration().apply {
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -50,6 +52,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
 
                 put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, destDir)
                 put(CommonConfigurationKeys.MODULE_NAME, "module for built-ins serialization")
+                put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
             }
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

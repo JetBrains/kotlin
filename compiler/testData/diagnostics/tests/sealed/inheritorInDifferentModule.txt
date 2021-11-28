@@ -11,13 +11,12 @@ package a {
     }
 
     public sealed class Base {
-        internal constructor Base()
+        protected constructor Base()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
-
 
 // -- Module: <m2> --
 package
@@ -31,3 +30,4 @@ package a {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

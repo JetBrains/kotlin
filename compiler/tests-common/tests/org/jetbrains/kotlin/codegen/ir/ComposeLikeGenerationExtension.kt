@@ -24,6 +24,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrStatement
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
-import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -149,12 +148,11 @@ class ComposeLikeDefaultArgumentRewriter(
         declaration.valueParameters.forEach { param ->
             newParameters.add(
                 if (param.defaultValue != null) {
-                    val descriptor = WrappedValueParameterDescriptor()
                     val result = IrValueParameterImpl(
                         param.startOffset,
                         param.endOffset,
                         param.origin,
-                        IrValueParameterSymbolImpl(descriptor),
+                        IrValueParameterSymbolImpl(),
                         param.name,
                         index = param.index,
                         type = defaultParameterType(param),
@@ -167,7 +165,6 @@ class ComposeLikeDefaultArgumentRewriter(
                         it.defaultValue = param.defaultValue
                         it.parent = declaration
                     }
-                    descriptor.bind(result)
                     parameterMapping[param] = result
                     result
                 } else param
@@ -210,7 +207,7 @@ class ComposeLikeDefaultArgumentRewriter(
         val type = param.type
         return when {
             type.isPrimitiveType() -> type
-            type.isInlined() -> type
+            type.isInlineClassType() -> type
             else -> type.makeNullable()
         }
     }
@@ -277,7 +274,7 @@ class ComposeLikeDefaultArgumentRewriter(
     }
 
     private fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.symbols.getBinaryOperator(name, this, paramType)
+        context.irBuiltIns.getBinaryOperator(name, this, paramType)
 
     private fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         return irCall(

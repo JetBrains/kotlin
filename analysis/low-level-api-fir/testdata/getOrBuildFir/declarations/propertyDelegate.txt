@@ -1,0 +1,8 @@
+KT element: KtPropertyDelegate
+FIR element: FirFunctionCallImpl
+
+FIR element rendered:
+R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+    ^ Int(1)
+}
+)

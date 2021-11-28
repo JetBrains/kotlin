@@ -1,10 +1,10 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty
 
 abstract class MainActivity : DIAware1() {
-    val bar: Bar by instance1()
+    val bar: Bar by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>instance1<!>()
 }
 
 class Bar

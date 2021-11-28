@@ -17,15 +17,15 @@ dependencies {
     embedded(project(":compiler:cli-common")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(project(":daemon-common-new")) { isTransitive = false }
-    embedded(projectRuntimeJar(":kotlin-daemon-client"))
+    embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     
-    testCompile(project(":compiler:cli-common"))
-    testCompile(project(":daemon-common"))
-    testCompile(project(":daemon-common-new"))
-    testCompile(projectRuntimeJar(":kotlin-daemon-client"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testApi(project(":compiler:cli-common"))
+    testApi(project(":daemon-common"))
+    testApi(project(":daemon-common-new"))
+    testApi(project(":kotlin-daemon-client"))
+    testApi(commonDep("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
     testCompilerClasspath(project(":kotlin-compiler"))
     testCompilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
@@ -40,10 +40,12 @@ sourceSets {
 }
 
 projectTest {
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
     doFirst {
-        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-        systemProperty("compilerClasspath", testCompilerClasspath.asPath)
-        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
+        systemProperty("compilerClasspath", testCompilerClasspathProvider.get())
+        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
 

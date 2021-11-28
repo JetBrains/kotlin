@@ -475,7 +475,7 @@ class Collections {
         fun distinctAndDistinctBy() {
             val list = listOf('a', 'A', 'b', 'B', 'A', 'a')
             assertPrints(list.distinct(), "[a, A, b, B]")
-            assertPrints(list.distinctBy { it.toUpperCase() }, "[a, b]")
+            assertPrints(list.distinctBy { it.uppercaseChar() }, "[a, b]")
         }
 
         @Sample
@@ -523,7 +523,7 @@ class Collections {
             assertPrints(numbers.joinToString(prefix = "<", postfix = ">", separator = "•"), "<1•2•3•4•5•6>")
 
             val chars = charArrayOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q')
-            assertPrints(chars.joinToString(limit = 5, truncated = "...!") { it.toUpperCase().toString() }, "A, B, C, D, E, ...!")
+            assertPrints(chars.joinToString(limit = 5, truncated = "...!") { it.uppercaseChar().toString() }, "A, B, C, D, E, ...!")
         }
 
         @Sample
@@ -596,6 +596,33 @@ class Collections {
             val deltas = values.zipWithNext { a, b -> b - a }
 
             assertPrints(deltas, "[3, 5, 7, 9, 11]")
+        }
+
+        @Sample
+        @Suppress("UNUSED_VARIABLE")
+        fun firstNotNullOf() {
+            data class Rectangle(val height: Int, val width: Int) {
+                val area: Int get() = height * width
+            }
+
+            val rectangles = listOf(
+                Rectangle(3, 4),
+                Rectangle(1, 8),
+                Rectangle(6, 3),
+                Rectangle(4, 3),
+                Rectangle(5, 7)
+            )
+
+            val largeArea = rectangles.firstNotNullOf { it.area.takeIf { area -> area >= 15 } }
+            val largeAreaOrNull = rectangles.firstNotNullOfOrNull { it.area.takeIf { area -> area >= 15 } }
+
+            assertPrints(largeArea, "18")
+            assertPrints(largeAreaOrNull, "18")
+
+            assertFailsWith<NoSuchElementException> { val evenLargerArea = rectangles.firstNotNullOf { it.area.takeIf { area -> area >= 50 } } }
+            val evenLargerAreaOrNull = rectangles.firstNotNullOfOrNull { it.area.takeIf { area -> area >= 50 } }
+
+            assertPrints(evenLargerAreaOrNull, "null")
         }
     }
 

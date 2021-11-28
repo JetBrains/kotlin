@@ -1,8 +1,0 @@
-fun foo(s: String){ }
-
-fun bar(ss: String) {
-    foo(ss)<caret>
-}
-
-//ELEMENT: ss
-//CHAR: \t

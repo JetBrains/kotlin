@@ -1,7 +1,0 @@
-fun foo(f: () -> Unit) {}
-
-fun bar(a: Int = 42) {}
-
-fun test() {
-    foo <caret>{ bar() }
-}

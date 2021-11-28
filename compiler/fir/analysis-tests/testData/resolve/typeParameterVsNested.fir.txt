@@ -1,0 +1,52 @@
+FILE: typeParameterVsNested.kt
+    package test
+
+    public abstract interface Some : R|kotlin/Any| {
+        public open fun test(): R|kotlin/Int| {
+            ^test Int(10)
+        }
+
+    }
+    public abstract class My<T : R|test/Some|> : R|kotlin/Any| {
+        public constructor<T : R|test/Some|>(): R|test/My<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class T : R|kotlin/Any| {
+            public constructor(): R|test/My.T| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public abstract val x: R|T|
+            public get(): R|T|
+
+        public final fun foo(arg: R|T|): R|kotlin/Int| {
+            ^foo R|<local>/arg|.R|test/Some.test|().R|kotlin/Int.plus|(this@R|test/My|.R|test/My.x|.R|test/Some.test|())
+        }
+
+        public abstract val y: R|test/My.T|
+            public get(): R|test/My.T|
+
+        public abstract val z: R|test/My.T|
+            public get(): R|test/My.T|
+
+        public final fun boo(): R|kotlin/String| {
+            ^boo this@R|test/My|.R|test/My.y|.<Unresolved name: test>#().R|kotlin/plus|(this@R|test/My|.R|test/My.z|.<Unresolved name: test>#())
+        }
+
+        public final class Some : R|test/My.T| {
+            public constructor(): R|test/My.Some| {
+                super<R|T|>()
+            }
+
+        }
+
+    }
+    public abstract class Your<T : R|test/Some|> : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
+        public constructor<T : R|test/Some|>(): R|test/Your<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

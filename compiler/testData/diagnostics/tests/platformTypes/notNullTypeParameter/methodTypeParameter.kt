@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: A.java
 
 import org.jetbrains.annotations.NotNull;
@@ -11,9 +10,9 @@ public class A {
 // FILE: k.kt
 
 fun test() {
-    A.<!OI;TYPE_INFERENCE_INCORPORATION_ERROR!>bar<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")
+    A.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")
 
     A.bar<String>(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")
     A.bar<String?>(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")
-    A.<!OI;TYPE_INFERENCE_INCORPORATION_ERROR!>bar<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>, A.platformString())
+    A.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, A.platformString())
 }

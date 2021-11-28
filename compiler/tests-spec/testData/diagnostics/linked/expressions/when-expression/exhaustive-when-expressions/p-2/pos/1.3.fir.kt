@@ -53,7 +53,7 @@ fun case_6(value_1: SealedClass?): String = when (value_1) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: SealedClassSingle): String = when (value_1) {
-    is SealedClassSingle -> ""
+    <!USELESS_IS_CHECK!>is SealedClassSingle<!> -> ""
     else -> ""
 }
 

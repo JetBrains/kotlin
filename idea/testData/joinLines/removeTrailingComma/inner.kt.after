@@ -1,3 +1,0 @@
-fun a(a: Int, b: Any = fun(a: Int)<caret>) {
-
-}

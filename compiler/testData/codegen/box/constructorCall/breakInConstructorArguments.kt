@@ -1,6 +1,5 @@
-// !LANGUAGE: -NormalizeConstructorCalls
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 fun box(): String {
     var count = 0
@@ -13,7 +12,7 @@ fun box(): String {
     }
 
     val result = log.toString()
-    if (result != "<clinit>ij<init>") return "Fail: '$result'"
+    if (result != "ij<clinit><init>") return "Fail: '$result'"
 
     return "OK"
 }

@@ -1,14 +1,13 @@
-// !WITH_NEW_INFERENCE
 fun <T> test(t: T): String? {
     if (t != null) {
-        return t<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
+        return <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>t<!UNNECESSARY_SAFE_CALL!>?.<!>toString()<!>
     }
     return <!DEBUG_INFO_CONSTANT!>t<!>?.toString()
 }
 
 fun <T> T.testThis(): String? {
     if (this != null) {
-        return this<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
+        return <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>toString()<!>
     }
-    return <!OI;DEBUG_INFO_CONSTANT!>this<!>?.toString()
+    return this?.toString()
 }

@@ -4,15 +4,15 @@
 
 expect class B {
     class N {
-        fun body() {}
-        expect fun extraHeader()
+        <!EXPECTED_DECLARATION_WITH_BODY!>fun body()<!> {}
+        <!WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
     }
 }
 
 expect class C {
-    expect class N
-    expect enum class E
-    expect inner class I
+    <!WRONG_MODIFIER_TARGET!>expect<!> class N
+    <!WRONG_MODIFIER_TARGET!>expect<!> enum class E
+    <!WRONG_MODIFIER_TARGET!>expect<!> inner class I
 }
 
 expect class D {
@@ -23,7 +23,7 @@ expect class E {
     class N
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class B {
@@ -39,7 +39,7 @@ actual class C {
     actual inner class I
 }
 
-actual class D
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 
 actual class E {
     class N

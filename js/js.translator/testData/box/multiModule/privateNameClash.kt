@@ -12,7 +12,7 @@ open class A {
     fun foo() = x
 }
 
-// MODULE: lib-old
+// MODULE: lib_old
 // FILE: lib.kt
 package lib
 
@@ -22,7 +22,7 @@ open class A {
 
 inline fun check() = true
 
-// MODULE: main(lib-old)
+// MODULE: main(lib_old)
 // FILE: main.kt
 package main
 

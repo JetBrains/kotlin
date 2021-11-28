@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
@@ -21,7 +21,7 @@ class B {
 fun main() {
     fun println() {}
     // All parameters in SAM adapter of `foo` have functional types
-    B().foo(<!OI;TYPE_MISMATCH!>{ println() }<!>, B.bar())
+    B().foo({ println() }, B.bar())
     // So you should use SAM constructors when you want to use mix lambdas and Java objects
     B().foo(Runnable { println() }, B.bar())
     B().foo({ println() }, { it: Any? -> it == null } )

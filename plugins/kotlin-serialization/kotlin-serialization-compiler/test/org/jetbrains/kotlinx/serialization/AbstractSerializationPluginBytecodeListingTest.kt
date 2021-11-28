@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlinx.serialization
 
-import junit.framework.TestCase
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSerializationPluginBytecodeListingTest : AbstractAsmLikeInstructionListingTest() {
-    private val runtimeLibraryPath = getSerializationLibraryRuntimeJar()
+    private val coreLibraryPath = getSerializationCoreLibraryJar()
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         SerializationComponentRegistrar.registerExtensions(environment.project)
-        environment.updateClasspath(listOf(JvmClasspathRoot(runtimeLibraryPath!!)))
+        environment.updateClasspath(listOf(JvmClasspathRoot(coreLibraryPath!!)))
     }
 }

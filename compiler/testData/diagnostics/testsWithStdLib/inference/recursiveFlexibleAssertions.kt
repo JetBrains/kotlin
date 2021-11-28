@@ -75,5 +75,5 @@ fun test() {
     }
     // TODO: FIR
     // {AbstractAssert<*, out Any!>! & EnumerableAssert<*, {Comparable<*> & java.io.Serializable!}>!} with unfolded flexible nullability
-    <!DEBUG_INFO_EXPRESSION_TYPE("({AbstractAssert<*, out (kotlin.Any..kotlin.Any?)> & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>}..{AbstractAssert<*, out (kotlin.Any..kotlin.Any?)>? & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>?})")!>assertion<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("({AbstractAssert<*, out (Any..Any?)> & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>}..{AbstractAssert<*, out (Any..Any?)>? & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>?})")!>assertion<!>
 }

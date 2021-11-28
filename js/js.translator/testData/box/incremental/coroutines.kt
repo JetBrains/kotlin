@@ -1,6 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1302
+// WITH_STDLIB
 // FILE: a.kt
-// WITH_RUNTIME
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

@@ -13,3 +13,5 @@ class A {
         @JvmSynthetic get
         @JvmSynthetic set
 }
+
+// FIR_COMPARISON

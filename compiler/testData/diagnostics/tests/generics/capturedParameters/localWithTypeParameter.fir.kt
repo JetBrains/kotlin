@@ -15,8 +15,8 @@ class Q {
     private var x = foo<CharSequence, Number>()()
 
     fun bar() {
-        x.e.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><CharSequence>() }
-        x.f.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Number>() }
+        x.e.checkType { _<CharSequence>() }
+        x.f.checkType { _<Number>() }
         x.g.checkType { _<Number>() }
     }
 }

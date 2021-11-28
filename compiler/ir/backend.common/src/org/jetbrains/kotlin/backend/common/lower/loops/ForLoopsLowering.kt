@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.dump
@@ -94,11 +97,14 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  */
-class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+class ForLoopsLowering(
+    val context: CommonBackendContext,
+    private val loopBodyTransformer: ForLoopBodyTransformer? = null
+) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
-        val transformer = RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop)
+        val transformer = RangeLoopTransformer(context, container as IrSymbolOwner, oldLoopToNewLoop, loopBodyTransformer)
         irBody.transformChildrenVoid(transformer)
 
         // Update references in break/continue.
@@ -111,10 +117,25 @@ class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     }
 }
 
+/**
+ * Abstract class for additional for-loop bodies transformations.
+ */
+abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
+
+    abstract fun transform(
+        context: CommonBackendContext,
+        loopBody: IrExpression,
+        loopVariable: IrVariable,
+        forLoopHeader: ForLoopHeader,
+        loopComponents: Map<Int, IrVariable>
+    )
+}
+
 private class RangeLoopTransformer(
     val context: CommonBackendContext,
     val container: IrSymbolOwner,
-    val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>
+    val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>,
+    val loopBodyTransformer: ForLoopBodyTransformer? = null
 ) : IrElementTransformerVoidWithContext() {
 
     private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
@@ -142,26 +163,30 @@ private class RangeLoopTransformer(
             return super.visitBlock(expression)  // Not a for-loop block.
         }
 
-        with(expression.statements) {
-            assert(size == 2) { "Expected 2 statements in for-loop block, was:\n${expression.dump()}" }
-            val iteratorVariable = get(0) as IrVariable
-            assert(iteratorVariable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) { "Expected FOR_LOOP_ITERATOR origin for iterator variable, was:\n${iteratorVariable.dump()}" }
-            val loopHeader = headerProcessor.extractHeader(iteratorVariable)
-                ?: return super.visitBlock(expression)  // The iterable in the header is not supported.
-            val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
-
-            val oldLoop = get(1) as IrWhileLoop
-            assert(oldLoop.origin == IrStatementOrigin.FOR_LOOP_INNER_WHILE) { "Expected FOR_LOOP_INNER_WHILE origin for while loop, was:\n${oldLoop.dump()}" }
-            val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
-                ?: return super.visitBlock(expression)  // Cannot lower the loop.
-
-            // We can lower both the header and while loop.
-            // Update mapping from old to new loop so we can later update references in break/continue.
-            oldLoopToNewLoop[oldLoop] = newLoop
-
-            set(0, loweredHeader)
-            set(1, loopReplacementExpression)
+        val statements = expression.statements
+        assert(statements.size == 2) { "Expected 2 statements in for-loop block, was:\n${expression.dump()}" }
+        val iteratorVariable = statements[0] as IrVariable
+        assert(iteratorVariable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) {
+            "Expected FOR_LOOP_ITERATOR origin for iterator variable, was:\n${iteratorVariable.dump()}"
         }
+        val oldLoop = statements[1] as IrWhileLoop
+        assert(oldLoop.origin == IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
+            "Expected FOR_LOOP_INNER_WHILE origin for while loop, was:\n${oldLoop.dump()}"
+        }
+
+        val loopHeader = headerProcessor.extractHeader(iteratorVariable)
+            ?: return super.visitBlock(expression)  // The iterable in the header is not supported.
+        val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
+
+        val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
+            ?: return super.visitBlock(expression)  // Cannot lower the loop.
+
+        // We can lower both the header and while loop.
+        // Update mapping from old to new loop so we can later update references in break/continue.
+        oldLoopToNewLoop[oldLoop] = newLoop
+
+        statements[0] = loweredHeader
+        statements[1] = loopReplacementExpression
 
         return super.visitBlock(expression)
     }
@@ -186,9 +211,8 @@ private class RangeLoopTransformer(
 
     private fun lowerWhileLoop(loop: IrWhileLoop, loopHeader: ForLoopHeader): LoopReplacement? {
         val loopBodyStatements = (loop.body as? IrContainerExpression)?.statements ?: return null
-        val (mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices) = gatherLoopVariableInfo(
-            loopBodyStatements
-        )
+        val (mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices) =
+            gatherLoopVariableInfo(loopBodyStatements)
 
         if (loopHeader.consumesLoopVariableComponents && mainLoopVariable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
             // We determine if there is a destructuring declaration by checking if the main loop variable is temporary.
@@ -236,7 +260,7 @@ private class RangeLoopTransformer(
                 mainLoopVariable.endOffset,
                 context.irBuiltIns.unitType,
                 IrStatementOrigin.FOR_LOOP_NEXT,
-                loopHeader.initializeIteration(mainLoopVariable, loopVariableComponents, this)
+                loopHeader.initializeIteration(mainLoopVariable, loopVariableComponents, this, this@RangeLoopTransformer.context)
             )
         }
 
@@ -256,6 +280,9 @@ private class RangeLoopTransformer(
             } else {
                 it
             }
+        }
+        if (newBody != null && loopBodyTransformer != null) {
+            loopBodyTransformer.transform(context, newBody, mainLoopVariable, loopHeader, loopVariableComponents)
         }
 
         return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset), loop, newBody)

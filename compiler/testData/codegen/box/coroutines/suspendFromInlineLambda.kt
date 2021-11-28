@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
 import kotlin.coroutines.*
@@ -26,13 +26,12 @@ fun box(): String {
 
     builder {
         result += "-"
-        foo {
-            result += suspendHere(it).toString()
-        }
+        foo { result += suspendHere(it).toString() }
+        foo(fun(it: Int) { result += suspendHere(it).toString() })
         result += "+"
     }
 
-    if (result != "-24+") return "fail: $result"
+    if (result != "-2424+") return "fail: $result"
 
     return "OK"
 }

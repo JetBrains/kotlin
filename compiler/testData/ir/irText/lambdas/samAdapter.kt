@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
+// TARGET_BACKEND: JVM
 
 fun test1() {
     val hello = Runnable { println("Hello, world!") }

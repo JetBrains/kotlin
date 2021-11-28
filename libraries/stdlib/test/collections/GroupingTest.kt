@@ -30,7 +30,7 @@ class GroupingTest {
         verifyGrouping(elements.asSequence().groupingBy(keySelector))
 
         val charSeq = "some sequence of chars"
-        verifyGrouping(charSeq.groupingBy { it.toInt() }, charSeq.toList(), charSeq.map { it.toInt() })
+        verifyGrouping(charSeq.groupingBy { it.code }, charSeq.toList(), charSeq.map { it.code })
     }
 
     // aggregate and aggregateTo operations are not tested, but they're used in every other operation

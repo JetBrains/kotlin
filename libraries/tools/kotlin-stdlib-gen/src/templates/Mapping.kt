@@ -409,6 +409,7 @@ object Mapping : TemplateGroupBase() {
             when (containerFamily) {
                 Iterables -> include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
                 Sequences -> include(Sequences, Iterables, ArraysOfObjects)
+                else -> {}
             }
         } builder {
             inlineOnly()
@@ -447,6 +448,7 @@ object Mapping : TemplateGroupBase() {
             when (containerFamily) {
                 Iterables -> include(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
                 Sequences -> include(Sequences, Iterables, ArraysOfObjects)
+                else -> {}
             }
         } builder {
             inlineOnly()

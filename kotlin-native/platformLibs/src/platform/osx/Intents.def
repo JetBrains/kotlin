@@ -1,0 +1,6 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreLocation CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.Intents
+modules = Intents
+compilerOpts = -framework Intents
+linkerOpts = -framework Intents

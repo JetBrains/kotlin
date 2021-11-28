@@ -146,6 +146,7 @@ public expect fun Throwable.printStackTrace(): Unit
  * suppressed in order to deliver this exception.
  */
 @SinceKotlin("1.4")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public expect fun Throwable.addSuppressed(exception: Throwable)
 
 /**

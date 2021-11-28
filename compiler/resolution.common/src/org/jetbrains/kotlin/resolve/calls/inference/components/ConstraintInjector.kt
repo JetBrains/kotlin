@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
@@ -34,27 +34,32 @@ class ConstraintInjector(
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
         fun addError(error: ConstraintSystemError)
+
+        fun addMissedConstraints(
+            position: IncorporationConstraintPosition,
+            constraints: MutableList<Pair<TypeVariableMarker, Constraint>>
+        )
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
         val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position).also { c.addInitialConstraint(it) }
-        val typeCheckerContext = TypeCheckerContext(c, IncorporationConstraintPosition(position, initialConstraint))
+        val typeCheckerState = TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(position, initialConstraint))
 
         updateAllowedTypeDepth(c, lowerType)
         updateAllowedTypeDepth(c, upperType)
 
-        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, typeCheckerContext)
+        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, typeCheckerState)
     }
 
     private fun Context.addInitialEqualityConstraintThroughSubtyping(
         a: KotlinTypeMarker,
         b: KotlinTypeMarker,
-        typeCheckerContext: TypeCheckerContext
+        typeCheckerState: TypeCheckerStateForConstraintInjector
     ) {
         updateAllowedTypeDepth(this, a)
         updateAllowedTypeDepth(this, b)
-        addSubTypeConstraintAndIncorporateIt(this, a, b, typeCheckerContext)
-        addSubTypeConstraintAndIncorporateIt(this, b, a, typeCheckerContext)
+        addSubTypeConstraintAndIncorporateIt(this, a, b, typeCheckerState)
+        addSubTypeConstraintAndIncorporateIt(this, b, a, typeCheckerState)
     }
 
     fun addInitialEqualityConstraint(c: Context, a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) = with(c) {
@@ -64,74 +69,122 @@ class ConstraintInjector(
             else -> return
         }
         val initialConstraint = InitialConstraint(typeVariable, equalType, EQUALITY, position).also { c.addInitialConstraint(it) }
-        val typeCheckerContext = TypeCheckerContext(c, IncorporationConstraintPosition(position, initialConstraint))
+        val typeCheckerState = TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(position, initialConstraint))
 
         // We add constraints like `T? == Foo!` in the old way
         if (!typeVariable.isSimpleType() || typeVariable.isMarkedNullable()) {
-            addInitialEqualityConstraintThroughSubtyping(typeVariable, equalType, typeCheckerContext)
+            addInitialEqualityConstraintThroughSubtyping(typeVariable, equalType, typeCheckerState)
             return
         }
 
         updateAllowedTypeDepth(c, equalType)
-        addEqualityConstraintAndIncorporateIt(c, typeVariable, equalType, typeCheckerContext)
+        addEqualityConstraintAndIncorporateIt(c, typeVariable, equalType, typeCheckerState)
     }
 
     private fun addSubTypeConstraintAndIncorporateIt(
         c: Context,
         lowerType: KotlinTypeMarker,
         upperType: KotlinTypeMarker,
-        typeCheckerContext: TypeCheckerContext
+        typeCheckerState: TypeCheckerStateForConstraintInjector
     ) {
-        typeCheckerContext.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
-        typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
+        typeCheckerState.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
+        typeCheckerState.runIsSubtypeOf(lowerType, upperType)
 
-        processConstraints(c, typeCheckerContext)
+        // Missed constraints are constraints which we skipped in the constraints processor by mistake (incorrect optimization)
+        val missedConstraints = processConstraints(c, typeCheckerState)
+
+        if (missedConstraints != null) {
+            c.addMissedConstraints(typeCheckerState.position, missedConstraints)
+        }
     }
 
     private fun addEqualityConstraintAndIncorporateIt(
         c: Context,
         typeVariable: KotlinTypeMarker,
         equalType: KotlinTypeMarker,
-        typeCheckerContext: TypeCheckerContext
+        typeCheckerState: TypeCheckerStateForConstraintInjector
     ) {
-        typeCheckerContext.setConstrainingTypesToPrintDebugInfo(typeVariable, equalType)
-        typeCheckerContext.addEqualityConstraint(typeVariable.typeConstructor(c), equalType)
+        typeCheckerState.setConstrainingTypesToPrintDebugInfo(typeVariable, equalType)
+        typeCheckerState.addEqualityConstraint(typeVariable.typeConstructor(c), equalType)
 
-        processConstraints(c, typeCheckerContext)
+        // Missed constraints are constraints which we skipped in the constraints processor by mistake (incorrect optimization)
+        val missedConstraints = processConstraints(c, typeCheckerState)
+
+        if (missedConstraints != null) {
+            c.addMissedConstraints(typeCheckerState.position, missedConstraints)
+        }
     }
 
-    private fun processConstraints(c: Context, typeCheckerContext: TypeCheckerContext) {
-        while (typeCheckerContext.hasConstraintsToProcess()) {
-            for ((typeVariable, constraint) in typeCheckerContext.extractAllConstraints()!!) {
-                if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
+    fun processMissedConstraints(
+        c: Context,
+        position: IncorporationConstraintPosition,
+        missedConstraints: List<Pair<TypeVariableMarker, Constraint>>
+    ) {
+        val properConstraintsProcessingEnabled =
+            languageVersionSettings.supportsFeature(LanguageFeature.ProperTypeInferenceConstraintsProcessing)
 
-                val constraints =
-                    c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
+        // If proper constraints processing is enabled, then we don't have missed constraints
+        if (properConstraintsProcessingEnabled) return
 
-                // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
-                val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint)
-                val positionFrom = constraint.position.from
-                val constraintToIncorporate = when {
-                    wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
-                    positionFrom is FixVariableConstraintPosition<*> && positionFrom.variable == typeVariable && constraint.kind == EQUALITY ->
-                        addedOrNonRedundantExistedConstraint
-                    else -> null
-                }
+        val typeCheckerState = TypeCheckerStateForConstraintInjector(c, position)
+        for ((variable, constraint) in missedConstraints) {
+            typeCheckerState.addPossibleNewConstraint(variable, constraint)
+        }
+        processConstraints(c, typeCheckerState, skipProperEqualityConstraints = false)
+    }
 
-                if (constraintToIncorporate != null) {
-                    constraintIncorporator.incorporate(typeCheckerContext, typeVariable, constraintToIncorporate)
+    private fun processConstraints(
+        c: Context,
+        typeCheckerState: TypeCheckerStateForConstraintInjector,
+        skipProperEqualityConstraints: Boolean = true
+    ): MutableList<Pair<TypeVariableMarker, Constraint>>? {
+        val properConstraintsProcessingEnabled =
+            languageVersionSettings.supportsFeature(LanguageFeature.ProperTypeInferenceConstraintsProcessing)
+
+        while (typeCheckerState.hasConstraintsToProcess()) {
+            processGivenConstraints(c, typeCheckerState, typeCheckerState.extractAllConstraints()!!)
+
+            val contextOps = c as? ConstraintSystemOperation
+
+            val useIncorrectOptimization = skipProperEqualityConstraints && !properConstraintsProcessingEnabled
+
+            if (!useIncorrectOptimization) continue
+
+            // Optimization below is wrong and it's going to be removed after finished the corresponding deprecation cycle
+            val hasProperEqualityConstraintForEachVariable = contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
+                typeVariable.value.constraints.any { constraint ->
+                    constraint.kind == EQUALITY && contextOps.isProperType(constraint.type)
                 }
             }
 
-            val contextOps = c as? ConstraintSystemOperation
-            if (!typeCheckerContext.hasConstraintsToProcess() ||
-                (contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
-                    typeVariable.value.constraints.any { constraint ->
-                        constraint.kind == EQUALITY && contextOps.isProperType(constraint.type)
-                    }
-                })
-            ) {
-                break
+            if (hasProperEqualityConstraintForEachVariable) return typeCheckerState.extractAllConstraints()
+        }
+        return null
+    }
+
+    private fun processGivenConstraints(
+        c: Context,
+        typeCheckerState: TypeCheckerStateForConstraintInjector,
+        constraintsToProcess: MutableList<Pair<TypeVariableMarker, Constraint>>
+    ) {
+        for ((typeVariable, constraint) in constraintsToProcess) {
+            if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
+
+            val constraints =
+                c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerState.fixedTypeVariable(typeVariable)
+
+            // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
+            val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint)
+            val positionFrom = constraint.position.from
+            val constraintToIncorporate = when {
+                wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
+                positionFrom is FixVariableConstraintPosition<*> && positionFrom.variable == typeVariable && constraint.kind == EQUALITY ->
+                    addedOrNonRedundantExistedConstraint
+                else -> null
+            }
+
+            if (constraintToIncorporate != null) {
+                constraintIncorporator.incorporate(typeCheckerState, typeVariable, constraintToIncorporate)
             }
         }
     }
@@ -164,8 +217,21 @@ class ConstraintInjector(
     private fun Context.isAllowedType(type: KotlinTypeMarker) =
         type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
 
-    private inner class TypeCheckerContext(val c: Context, val position: IncorporationConstraintPosition) :
-        AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+    private inner class TypeCheckerStateForConstraintInjector(
+        baseState: TypeCheckerState,
+        val c: Context,
+        val position: IncorporationConstraintPosition
+    ) : TypeCheckerStateForConstraintSystem(
+        c,
+        baseState.kotlinTypePreparator,
+        baseState.kotlinTypeRefiner
+    ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+        constructor(c: Context, position: IncorporationConstraintPosition) : this(
+            c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
+            c,
+            position
+        )
+
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
 
@@ -192,26 +258,6 @@ class ConstraintInjector(
             baseUpperType = upperType
         }
 
-        val baseContext: AbstractTypeCheckerContext = newBaseTypeCheckerContext(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
-
-        override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
-            return baseContext.substitutionSupertypePolicy(type)
-        }
-
-        override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
-            return baseContext.areEqualTypeConstructors(c1, c2)
-        }
-
-        override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-            return baseContext.prepareType(type)
-        }
-
-        override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-            return with(constraintIncorporator.utilContext) {
-                type.refineType()
-            }
-        }
-
         fun runIsSubtypeOf(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
@@ -220,7 +266,7 @@ class ConstraintInjector(
         ) {
             fun isSubtypeOf(upperType: KotlinTypeMarker) =
                 AbstractTypeChecker.isSubtypeOf(
-                    this@TypeCheckerContext as AbstractTypeCheckerContext,
+                    this@TypeCheckerStateForConstraintInjector as TypeCheckerState,
                     lowerType,
                     upperType,
                     isFromNullabilityConstraint
@@ -261,13 +307,18 @@ class ConstraintInjector(
         override fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker) =
             addConstraint(typeVariable, type, EQUALITY, false)
 
-        private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker) =
-            when ((type as? CapturedTypeMarker)?.captureStatus()) {
-                null, CaptureStatus.FROM_EXPRESSION -> false
+        private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker): Boolean {
+            val capturedType = type as? CapturedTypeMarker ?: return false
+
+            if (capturedType.isOldCapturedType()) return false
+
+            return when (capturedType.captureStatus()) {
+                CaptureStatus.FROM_EXPRESSION -> false
                 CaptureStatus.FOR_SUBTYPING -> true
                 CaptureStatus.FOR_INCORPORATION ->
                     error("Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint())
             }
+        }
 
         private fun addConstraint(
             typeVariableConstructor: TypeConstructorMarker,

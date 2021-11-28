@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /** Look for when-constructs where subject is enum entry.
@@ -53,9 +50,14 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
             return super.visitBlock(expression)
         }
         val subject = expression.statements[0]
-        if (subject !is IrVariable || subject.type.getClass()?.kind != ClassKind.ENUM_CLASS) {
+        if (subject !is IrVariable) {
             return super.visitBlock(expression)
         }
+        val subjectClass = subject.type.getClass()
+        if (subjectClass == null || subjectClass.kind != ClassKind.ENUM_CLASS || subjectClass.isEffectivelyExternal()) {
+            return super.visitBlock(expression)
+        }
+
         // Will be initialized only when we found a branch that compares
         // subject with compile-time known enum entry.
         val subjectOrdinalProvider = lazy {

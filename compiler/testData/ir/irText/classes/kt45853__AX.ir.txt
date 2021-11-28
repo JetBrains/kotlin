@@ -1,0 +1,33 @@
+CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<unbound IrClassPublicSymbolImpl>; <root>.X]
+  $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.AX
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:<root>.AX [primary]
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:<unbound IrClassPublicSymbolImpl> [fake_override,operator]
+    overridden:
+      public open fun equals (other: kotlin.Any?): <unbound IrClassPublicSymbolImpl> [fake_override,operator] declared in <root>.A
+      public open fun equals (other: kotlin.Any?): <unbound IrClassPublicSymbolImpl> [fake_override,operator] declared in <root>.X
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+    overridden:
+      public open fun hashCode (): <unbound IrClassPublicSymbolImpl> [fake_override] declared in <root>.A
+      public open fun hashCode (): <unbound IrClassPublicSymbolImpl> [fake_override] declared in <root>.X
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassPublicSymbolImpl> [fake_override]
+    overridden:
+      public open fun toString (): <unbound IrClassPublicSymbolImpl> [fake_override] declared in <root>.A
+      public open fun toString (): <unbound IrClassPublicSymbolImpl> [fake_override] declared in <root>.X
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN FAKE_OVERRIDE name:getA visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:<root>.X? [fake_override]
+    overridden:
+      public abstract fun getA (): <root>.X? declared in <root>.X
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.X
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
+    overridden:
+      public abstract a: <root>.A? [val]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN <> ($this:<root>.AX) returnType:<root>.AX?
+      annotations:
+        <unbound>
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
+      overridden:
+        public abstract fun <get-a> (): <root>.A? declared in <root>.A
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:<root>.AX

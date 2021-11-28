@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirElvisExpressionImpl(
-    override val source: FirSourceElement?,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val source: KtSourceElement?,
+    override val annotations: MutableList<FirAnnotation>,
     override var calleeReference: FirReference,
     override var lhs: FirExpression,
     override var rhs: FirExpression,
@@ -37,7 +37,7 @@ internal class FirElvisExpressionImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         transformCalleeReference(transformer, data)
         transformLhs(transformer, data)
@@ -51,17 +51,17 @@ internal class FirElvisExpressionImpl(
     }
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        calleeReference = calleeReference.transformSingle(transformer, data)
+        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
     override fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        lhs = lhs.transformSingle(transformer, data)
+        lhs = lhs.transform(transformer, data)
         return this
     }
 
     override fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        rhs = rhs.transformSingle(transformer, data)
+        rhs = rhs.transform(transformer, data)
         return this
     }
 

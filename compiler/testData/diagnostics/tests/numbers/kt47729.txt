@@ -1,0 +1,11 @@
+package
+
+public fun takeAny(/*0*/ value: kotlin.Any): kotlin.Unit
+public fun takeAnyX(/*0*/ value: kotlin.Any?): kotlin.Unit
+public fun </*0*/ A> takeGeneric(/*0*/ value: A): kotlin.Unit
+public fun </*0*/ A> takeGenericX(/*0*/ value: A?): kotlin.Unit
+public fun takeInt(/*0*/ value: kotlin.Int): kotlin.Unit
+public fun takeIntX(/*0*/ value: kotlin.Int?): kotlin.Unit
+public fun takeLong(/*0*/ value: kotlin.Long): kotlin.Unit
+public fun takeLongX(/*0*/ value: kotlin.Long?): kotlin.Unit
+public fun test_1(): kotlin.Unit

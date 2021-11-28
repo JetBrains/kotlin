@@ -70,7 +70,8 @@ open class InternalSubpluginOption(key: String, value: String) : SubpluginOption
     message = "This interface will be removed due to performance considerations. " +
             "Please use the KotlinCompilerPluginSupportPlugin interface instead " +
             "and remove the META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin entry.",
-    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin")
+    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin"),
+    level = DeprecationLevel.ERROR
 )
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean
@@ -123,6 +124,14 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
 
     fun getCompilerPluginId(): String
     fun getPluginArtifact(): SubpluginArtifact
+
+    /**
+     * Kotlin/Native-specific plugin artifact.
+     *
+     * If Gradle is configured to use Kotlin/Native embeddable compiler jar
+     * (with `kotlin.native.useEmbeddableCompilerJar=true` project property),
+     * then [getPluginArtifact] is used instead.
+     */
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 

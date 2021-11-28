@@ -1,7 +1,0 @@
-open class A {
-    private fun foo() {}
-
-    fun bar(a: A) {
-        a.foo()
-    }
-}

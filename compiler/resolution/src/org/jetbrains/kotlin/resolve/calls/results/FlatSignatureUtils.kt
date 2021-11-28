@@ -43,6 +43,28 @@ fun <T> FlatSignature.Companion.createFromReflectionType(
     )
 }
 
+
+@JvmName("createWithConvertedTypes")
+fun <T> FlatSignature.Companion.create(
+    origin: T,
+    descriptor: CallableDescriptor,
+    numDefaults: Int,
+    parameterTypes: List<TypeWithConversion?>,
+): FlatSignature<T> {
+    val extensionReceiverType = descriptor.extensionReceiverParameter?.type
+
+    return FlatSignature(
+        origin,
+        descriptor.typeParameters,
+        valueParameterTypes = extensionReceiverType?.let { listOf(TypeWithConversion(it)) }.orEmpty() + parameterTypes,
+        hasExtensionReceiver = extensionReceiverType != null,
+        hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+        numDefaults = numDefaults,
+        isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+        isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+    )
+}
+
 fun <T> FlatSignature.Companion.create(
     origin: T,
     descriptor: CallableDescriptor,
@@ -54,8 +76,7 @@ fun <T> FlatSignature.Companion.create(
     return FlatSignature(
         origin,
         descriptor.typeParameters,
-        valueParameterTypes =
-        listOfNotNull(extensionReceiverType) + parameterTypes,
+        valueParameterTypes = listOfNotNull(extensionReceiverType) + parameterTypes,
         hasExtensionReceiver = extensionReceiverType != null,
         hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
         numDefaults = numDefaults,
@@ -64,10 +85,18 @@ fun <T> FlatSignature.Companion.create(
     )
 }
 
-fun <D : CallableDescriptor> FlatSignature.Companion.createFromCallableDescriptor(
-    descriptor: D
-): FlatSignature<D> =
-    create(descriptor, descriptor, numDefaults = 0, parameterTypes = descriptor.valueParameters.map { it.argumentValueType })
+fun <D : CallableDescriptor> FlatSignature.Companion.createFromCallableDescriptor(descriptor: D): FlatSignature<D> =
+    FlatSignature(
+        descriptor,
+        descriptor.typeParameters,
+        valueParameterTypes = listOfNotNull(descriptor.extensionReceiverParameter?.type)
+                + descriptor.valueParameters.map { it.argumentValueType },
+        hasExtensionReceiver = descriptor.extensionReceiverParameter?.type != null,
+        hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+        numDefaults = 0,
+        isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+        isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+    )
 
 fun <D : CallableDescriptor> FlatSignature.Companion.createForPossiblyShadowedExtension(descriptor: D): FlatSignature<D> =
     FlatSignature(

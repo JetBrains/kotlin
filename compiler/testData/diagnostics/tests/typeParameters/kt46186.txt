@@ -1,0 +1,107 @@
+package
+
+public fun </*0*/ T : View1> findViewById1(): T
+public inline fun </*0*/ reified T : View3> findViewById10(): T where T : View5
+public fun </*0*/ T : View2> findViewById11(): T
+public fun </*0*/ T : View2> findViewById2(): T
+public inline fun </*0*/ reified T : View1> findViewById3(): T
+public inline fun </*0*/ reified T : View2> findViewById4(): T
+public fun </*0*/ T : View3> findViewById5(): T
+public inline fun </*0*/ reified T : View3> findViewById6(): T
+public fun </*0*/ T : View4> findViewById7(): T
+public inline fun </*0*/ reified T : View4> findViewById8(): T
+public fun </*0*/ T : View3> findViewById9(): T where T : View5
+public fun test1(): I
+public fun test10(): I
+public fun test11(): View4
+public fun test2(): I
+public fun test3(): I
+public fun test4(): I
+public fun test5(): I
+public fun test6(): I
+public fun test7(): I
+public fun test8(): I
+public fun test9(): I
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ T : A> f(): T where T : B
+    public final fun g(): A
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Obj {
+    private constructor Obj()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ T : I> findViewById1(): T
+    public final inline fun </*0*/ reified T : View3> findViewById10(): T where T : View5
+    public final fun </*0*/ T : View2> findViewById11(): T
+    public final fun </*0*/ T : I> findViewById2(): T
+    public final inline fun </*0*/ reified T : I> findViewById3(): T
+    public final inline fun </*0*/ reified T : I> findViewById4(): T
+    public final fun </*0*/ T : I> findViewById5(): T
+    public final inline fun </*0*/ reified T : I> findViewById6(): T
+    public final fun </*0*/ T : I> findViewById7(): T
+    public final inline fun </*0*/ reified T : I> findViewById8(): T
+    public final fun </*0*/ T : View3> findViewById9(): T where T : View5
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test1(): View1
+    public final fun test10(): View1
+    public final fun test11(): View4
+    public final fun test2(): View2
+    public final fun test3(): View1
+    public final fun test4(): View2
+    public final fun test5(): View3
+    public final fun test6(): View3
+    public final fun test7(): View4
+    public final fun test8(): View4
+    public final fun test9(): View1
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class View1 {
+    public constructor View1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class View2 {
+    public constructor View2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface View3 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class View4 {
+    public constructor View4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface View5 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

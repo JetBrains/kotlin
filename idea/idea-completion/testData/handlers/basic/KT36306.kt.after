@@ -1,5 +1,0 @@
-//INVOCATION_COUNT: 2
-fun main() {
-    "java.lang.Integer"
-}
-//ELEMENT: Integer

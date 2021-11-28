@@ -2,8 +2,13 @@ const val ONE: Int
   field = 1
   get
 
-annotation class A : Annotation {
-  constructor(x: Int) /* primary */ 
+open annotation class A : Annotation {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val x: Int
     field = x
     get
@@ -17,4 +22,3 @@ fun test1() {
 @A(x = 2)
 fun test2() {
 }
-

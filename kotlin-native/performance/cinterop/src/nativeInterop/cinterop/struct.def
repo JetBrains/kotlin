@@ -1,0 +1,97 @@
+package = org.jetbrains.structsBenchmarks
+strictEnums = WeekDay
+
+---
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+enum WeekDay {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
+
+int isWeekEnd(enum WeekDay day) {
+    if (day == Saturday || day == Sunday)
+        return 1;
+    return 0;
+}
+
+enum WeekDay getWeekDay(const char* date) {
+    if (strstr(date, "Sunday") != NULL) {
+        return Sunday;
+    } else if (strstr(date, "Monday") != NULL) {
+        return Monday;
+    } else if (strstr(date, "Tuesday") != NULL) {
+        return Tuesday;
+    } else if (strstr(date, "Wednesday") != NULL) {
+        return Wednesday;
+    } else if (strstr(date, "Thursday") != NULL) {
+        return Thursday;
+    } else if (strstr(date, "Friday") != NULL) {
+        return Friday;
+    } else if (strstr(date, "Saturday") != NULL) {
+        return Saturday;
+    }
+    abort();
+}
+
+struct ElementS {
+    long long integer;
+    float floatValue;
+    char string[32];
+
+    int (*contains)(const struct ElementS*, const struct ElementS*);
+};
+
+int elementContains(const struct ElementS* self, const struct ElementS* other) {
+    if (self == NULL || other == NULL) {
+        return 0;
+    }
+    if (strstr(self->string, other->string) != NULL) {
+        return 1;
+    }
+    return 0;
+}
+
+union ElementU {
+    long long integer;
+    float floatValue;
+    char string[32];
+};
+
+union ElementU multiplyElementU(union ElementU element, int coefficient) {
+    union ElementU newElement;
+    newElement.integer = coefficient * element.integer;
+    return newElement;
+}
+
+struct ElementS multiplyElementS(struct ElementS element, int coefficient) {
+    struct ElementS newElement;
+    newElement.integer = coefficient * element.integer;
+    newElement.floatValue = coefficient * element.floatValue;
+    int i = 0;
+    while (element.string[i] != '\0')  {
+        newElement.string[i] = coefficient * element.string[i];
+        i++;
+    }
+    return newElement;
+}
+
+union ElementU* sumElementUPtr(const union ElementU* first, const union ElementU* second) {
+    if (first == NULL || second == NULL) {
+        return NULL;
+    }
+    union ElementU* newElement = (union ElementU*)malloc(sizeof(union ElementU));
+    newElement->integer = first->integer + second->integer;
+    return newElement;
+}
+
+struct ElementS* sumElementSPtr(const struct ElementS* first, const struct ElementS* second) {
+    if (first == NULL || second == NULL) {
+        return NULL;
+    }
+    struct ElementS* newElement = (struct ElementS*)malloc(sizeof(struct ElementS));
+    newElement->integer = first->integer + second->integer;
+    newElement->floatValue = first->floatValue + second->floatValue;
+    sprintf(newElement->string, "%d", newElement->integer);
+    return newElement;
+
+}

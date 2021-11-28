@@ -1,18 +1,18 @@
 // !JVM_TARGET: 1.8
 // FILE: 1.kt
 interface A {
-    @JvmDefault
+    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!><!>
     fun test() {
     }
 }
 
 // FILE: 2.kt
-interface B : A {
+interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>B<!> : A {
 
 }
 
 interface C : B {
-    @JvmDefault
+    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!><!>
     override fun test() {
         super.test()
     }
@@ -23,7 +23,7 @@ open class Foo : B {
         super.test()
     }
 }
-open class Foo2 : B
+open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo2<!> : B
 
 open class Bar : Foo2() {
     override fun test() {
@@ -37,26 +37,26 @@ open class Bar2 : Bar() {
     }
 }
 
-class ManySupers: Foo2(), B {
+class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers<!>: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.test()
-        super.<!UNRESOLVED_REFERENCE!>test<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.test()
     }
 }
 
-class ManySupers2: Foo2(), C {
+class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers2<!>: Foo2(), C {
     fun foo() {
         super<Foo2>.test()
         super<C>.test()
-        super.<!UNRESOLVED_REFERENCE!>test<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.test()
     }
 }
 
-class ManySupers3: Bar2(), C {
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers3<!><!>: Bar2(), C {
     fun foo() {
         super<Bar2>.test()
         super<C>.test()
-        super.<!UNRESOLVED_REFERENCE!>test<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.test()
     }
 }

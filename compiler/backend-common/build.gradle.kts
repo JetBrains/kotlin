@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
+    api(project(":core:descriptors"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 

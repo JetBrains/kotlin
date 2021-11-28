@@ -38,7 +38,7 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
 
     @Override
     public String getName() {
-        return SpecialNames.ANONYMOUS;
+        return SpecialNames.ANONYMOUS_STRING;
     }
 
     @Override

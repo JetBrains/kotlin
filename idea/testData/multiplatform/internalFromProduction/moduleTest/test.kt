@@ -1,3 +1,0 @@
-fun usage() {
-    internalFromMain()
-}

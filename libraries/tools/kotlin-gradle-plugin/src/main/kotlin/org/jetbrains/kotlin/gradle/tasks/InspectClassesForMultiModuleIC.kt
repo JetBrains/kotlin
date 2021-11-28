@@ -31,6 +31,8 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile.get()
     }
 
+    @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     internal val sourceSetOutputClassesDir by lazy {
         project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.findByName(sourceSetName)?.output?.classesDirs
@@ -39,17 +41,15 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     @get:Internal
     internal val fileTrees
         get() = sourceSetOutputClassesDir?.map {
-            if (isGradleVersionAtLeast(6, 0)) {
-                objects.fileTree().from(it).include("**/*.class")
-            } else {
-                project.fileTree(it).include("**/*.class")
-            }
+            objects.fileTree().from(it).include("**/*.class")
         }
 
     @get:Internal
     internal val objects = project.objects
 
     @Suppress("MemberVisibilityCanBePrivate")
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     internal val classFiles: FileCollection
         get() {

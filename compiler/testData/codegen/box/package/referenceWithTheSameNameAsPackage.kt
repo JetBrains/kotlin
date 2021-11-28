@@ -1,9 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
-
+// WITH_STDLIB
 // FILE: messages/foo.kt
 
 package messages

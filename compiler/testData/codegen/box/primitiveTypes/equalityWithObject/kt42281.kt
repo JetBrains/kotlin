@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     return if (run { 123 != intArrayOf() as Any }) "OK" else "Fail"

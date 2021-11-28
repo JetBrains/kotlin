@@ -13,7 +13,7 @@
  */
 
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 
@@ -36,7 +36,7 @@ class Case1() {
     var a: A = A()
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 

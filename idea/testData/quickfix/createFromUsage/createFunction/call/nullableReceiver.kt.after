@@ -1,8 +1,0 @@
-// "Create extension function 'String?.notExistingFun'" "true"
-fun context(p: String?) {
-    p.notExistingFun()
-}
-
-private fun String?.notExistingFun() {
-    TODO("Not yet implemented")
-}

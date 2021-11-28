@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 interface CapturedTypeConstructor : CapturedTypeConstructorMarker, TypeConstructor {
@@ -122,7 +122,7 @@ fun TypeSubstitution.wrapWithCapturingSubstitution(needApproximation: Boolean = 
             this.arguments.zip(this.parameters).map {
                 it.first.createCapturedIfNeeded(it.second)
             }.toTypedArray(),
-            approximateCapturedTypes = needApproximation
+            approximateContravariantCapturedTypes = needApproximation
         )
     else
         object : DelegatedTypeSubstitution(this@wrapWithCapturingSubstitution) {

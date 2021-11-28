@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="TestDataPluginSettings">
+    <option name="testDataFiles">
+      <array>
+        <option value="$PROJECT_DIR$/compiler/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData" />
+        <option value="$PROJECT_DIR$/compiler/tests-spec/testData" />
+        <option value="$PROJECT_DIR$/js/js.translator/testData" />
+        <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/fir/fir-plugin-prototype/testData" />
+      </array>
+    </option>
+  </component>
+</project>

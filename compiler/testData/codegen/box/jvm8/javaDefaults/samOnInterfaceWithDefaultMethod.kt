@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: JavaCall.java
 
 class JavaCall {
@@ -23,7 +24,6 @@ interface Test {
 }
 
 // FILE: sam.kt
-// JVM_TARGET: 1.8
 
 fun box(): String {
     val lambda = { "X" }

@@ -1,3 +1,0 @@
-package ppp
-
-object OOOOO

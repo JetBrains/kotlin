@@ -17,7 +17,7 @@ fun check() {
     val x = null!!
 }
 
-fun nonLocalReturn() = run { return }
+fun nonLocalReturn() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
     fun bar() = null!!
@@ -45,7 +45,7 @@ interface Base {
 
 class Derived : Base {
     // Ok for override
-    
+
     override val x = null!!
 
     override fun foo() = null!!

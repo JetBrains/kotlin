@@ -1,5 +1,36 @@
 # kotlinx-metadata-jvm
 
+## 0.4.0
+
+- Update to Kotlin 1.6 with metadata version 1.6, support reading/writing metadata of version 1.7 which will be used in Kotlin 1.7.
+- Add `JvmPropertyExtensionVisitor.visitSyntheticMethodForDelegate` for optimized delegated properties (KT-39055).
+- Add JVM-specific class flags:
+  - `JvmClassExtensionVisitor.visitJvmFlags`
+  - `JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE`
+  - `JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE`
+- [`KT-48965`](https://youtrack.jetbrains.com/issue/KT-48965) Make the type of `KmValueParameter.type` non-null `KmType`
+- Remove unused `JvmTypeAliasExtensionVisitor` and `JvmValueParameterExtensionVisitor`
+- Fix type flags (suspend, definitely non-null) on underlying type of inline class available via `KmClass.inlineClassUnderlyingType`
+
+## 0.3.0
+
+- Update to Kotlin 1.5 with metadata version 1.5.
+  Note: metadata of version 1.5 is readable by Kotlin compiler/reflection of versions 1.4 and later.
+- Breaking change: improve API of annotation arguments.
+  `KmAnnotationArgument` doesn't have `val value: T` anymore, it was moved to a subclass named `KmAnnotationArgument.LiteralValue<T>`.
+  The property `value` is:
+  - renamed to `annotation` in `AnnotationValue`
+  - renamed to `elements` in `ArrayValue`
+  - removed in favor of `enumClassName`/`enumEntryName` in `EnumValue`
+  - removed in favor of `className`/`arrayDimensionCount` in `KClassValue`
+  - changed type from signed to unsigned integer types in `UByteValue`, `UShortValue`, `UIntValue`, `ULongValue`
+- [`KT-44783`](https://youtrack.jetbrains.com/issue/KT-44783) Add Flag.IS_VALUE for value classes
+  - Breaking change: `Flag.IS_INLINE` is deprecated, use `Flag.IS_VALUE` instead
+- Breaking change: deprecate `KotlinClassHeader.bytecodeVersion` and `KotlinClassHeader`'s constructor that takes a bytecode version array.
+  Related to ['KT-41758`](https://youtrack.jetbrains.com/issue/KT-41758).
+- [`KT-45594`](https://youtrack.jetbrains.com/issue/KT-45594) KClass annotation argument containing array of classes is not read/written correctly
+- [`KT-45635`](https://youtrack.jetbrains.com/issue/KT-45635) Add underlying property name & type for inline classes
+
 ## 0.2.0
 
 - ['KT-41011`](https://youtrack.jetbrains.com/issue/KT-41011) Using KotlinClassMetadata.Class.Writer with metadata version < 1.4 will write incorrect version requirement table

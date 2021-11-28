@@ -1,0 +1,52 @@
+FILE: lambdaInWhenBranch.kt
+    private sealed class Sealed : R|kotlin/Any| {
+        protected constructor(): R|Sealed| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    private final data class SubClass1 : R|Sealed| {
+        public constructor(t: R|kotlin/String|): R|SubClass1| {
+            super<R|Sealed|>()
+        }
+
+        public final val t: R|kotlin/String| = R|<local>/t|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(t: R|kotlin/String| = this@R|/SubClass1|.R|/SubClass1.t|): R|SubClass1|
+
+    }
+    private final data class SubClass2 : R|Sealed| {
+        public constructor(): R|SubClass2| {
+            super<R|Sealed|>()
+        }
+
+        public final fun copy(): R|SubClass2|
+
+    }
+    private final fun foo(p: R|Sealed|): R|kotlin/Unit| {
+        when (R|<local>/p|) {
+            ($subj$ is R|SubClass1|) ->  {
+                String().R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ R|<local>/it|
+                }
+                )
+            }
+            ($subj$ is R|SubClass2|) ->  {
+                String()
+            }
+        }
+
+        R|<local>/p|.<Unresolved name: t>#
+        when (R|<local>/p|) {
+            ($subj$ is R|SubClass1|) ->  {
+                R|<local>/p|.R|/SubClass1.t|
+            }
+            ($subj$ is R|SubClass2|) ->  {
+                String(2)
+            }
+        }
+        .R|kotlin/String.length|
+    }

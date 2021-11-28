@@ -1,8 +1,8 @@
 class B {
-    companion <!REDECLARATION!>object A<!> {
+    companion object <!REDECLARATION!>A<!> {
     }
 
-    <!REDECLARATION!>val A = this<!>
+    val <!REDECLARATION!>A<!> = this
 }
 
 class C {

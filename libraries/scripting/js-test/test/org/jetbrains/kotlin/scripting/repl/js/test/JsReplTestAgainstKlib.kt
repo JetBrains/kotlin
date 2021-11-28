@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,14 +20,14 @@ class JsReplTestAgainstKlib : AbstractJsReplTest() {
 
     private var dependencyCode: String? = null
 
-    override fun createCompilationState(): JsReplCompilationState {
-        val nameTables = NameTables(emptyList())
+    override fun createCompilationState(): JsReplCompilerState {
+        val nameTables = NameTables(emptyList(), mappedNames = mutableMapOf())
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
         val dependencyCompiler = JsScriptDependencyCompiler(environment.configuration, nameTables, symbolTable)
         val dependencies = readLibrariesFromConfiguration(environment.configuration)
         dependencyCode = dependencyCompiler.compile(dependencies)
 
-        return JsReplCompilationState(
+        return JsReplCompilerState(
             ReentrantReadWriteLock(),
             nameTables,
             dependencies,

@@ -80,7 +80,7 @@ abstract class KotlinCompilerBaseTask : Task() {
         fillSpecificArguments()
     }
 
-    final override fun execute() {
+    override fun execute() {
         fillArguments()
 
         val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader().loadClass(compilerFqName)

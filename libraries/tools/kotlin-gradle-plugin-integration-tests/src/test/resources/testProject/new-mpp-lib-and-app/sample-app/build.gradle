@@ -1,7 +1,7 @@
 buildscript {
 	repositories {
 		mavenLocal()
-		jcenter()
+		mavenCentral()
 	}
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -12,7 +12,7 @@ apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
     // NB: Build of this module depends on 'sample-lib' publication. You need to add the local
     // repository where 'sample-lib' artifacts are published.
 }
@@ -46,6 +46,10 @@ kotlin {
         }
     }
 
+    js('nodeJs')
+
+    wasm()
+
     targets {
         fromPreset(presets.jvm, 'jvm6') {
         	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
@@ -61,7 +65,7 @@ kotlin {
                 }
              }
         }
-        fromPreset(presets.js, 'nodeJs')
+
         fromPreset(presets.linuxX64, 'linux64')
 
         configure([linux64]) {

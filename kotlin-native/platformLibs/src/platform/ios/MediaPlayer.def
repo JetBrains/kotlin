@@ -1,0 +1,9 @@
+depends = AVFoundation CFNetwork CoreFoundation CoreGraphics CoreImage CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.MediaPlayer
+headers = MediaPlayer/MediaPlayer.h
+
+headerFilter = MediaPlayer/**
+
+compilerOpts = -framework MediaPlayer
+linkerOpts = -framework MediaPlayer

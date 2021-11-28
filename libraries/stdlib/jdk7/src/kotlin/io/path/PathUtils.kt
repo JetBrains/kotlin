@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,13 +15,14 @@ import java.nio.file.*
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.NoSuchFileException
 import java.nio.file.attribute.*
+import kotlin.jvm.Throws
 
 /**
  * Returns the name of the file or directory denoted by this path as a string,
  * or an empty string if this path has zero path elements.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public val Path.name: String
     get() = fileName?.toString().orEmpty()
 
@@ -29,8 +30,8 @@ public val Path.name: String
  * Returns the [name][Path.name] of this file or directory without an extension,
  * or an empty string if this path has zero path elements.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public val Path.nameWithoutExtension: String
     get() = fileName?.toString()?.substringBeforeLast(".") ?: ""
 
@@ -38,8 +39,8 @@ public val Path.nameWithoutExtension: String
  * Returns the extension of this path (not including the dot),
  * or an empty string if it doesn't have one.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public val Path.extension: String
     get() = fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
@@ -51,8 +52,8 @@ public val Path.extension: String
  *
  * This property is a synonym to [Path.toString] function.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline val Path.pathString: String
     get() = toString()
@@ -61,18 +62,19 @@ public inline val Path.pathString: String
  * Returns the string representation of this path using the invariant separator '/'
  * to separate names in the path.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public val Path.invariantSeparatorsPathString: String
     get() {
         val separator = fileSystem.separator
         return if (separator != "/") toString().replace(separator, "/") else toString()
     }
 
-// TODO: raise deprecation level and make inline-only
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-@Deprecated("Use invariantSeparatorsPathString property instead.", ReplaceWith("invariantSeparatorsPathString"))
+@Deprecated("Use invariantSeparatorsPathString property instead.", ReplaceWith("invariantSeparatorsPathString"),
+            level = DeprecationLevel.ERROR)
+@kotlin.internal.InlineOnly
 public inline val Path.invariantSeparatorsPath: String
     get() = invariantSeparatorsPathString
 
@@ -86,8 +88,8 @@ public inline val Path.invariantSeparatorsPath: String
  *
  * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.absolute(): Path = toAbsolutePath()
 
@@ -100,8 +102,8 @@ public inline fun Path.absolute(): Path = toAbsolutePath()
  *
  * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.absolutePathString(): String = toAbsolutePath().toString()
 
@@ -115,8 +117,8 @@ public inline fun Path.absolutePathString(): String = toAbsolutePath().toString(
  *
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public fun Path.relativeTo(base: Path): Path = try {
     PathRelativizer.tryRelativeTo(this, base)
 } catch (e: IllegalArgumentException) {
@@ -131,8 +133,8 @@ public fun Path.relativeTo(base: Path): Path = try {
  *
  * @return the relative path from [base] to this, or `this` if this and base paths have different roots.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public fun Path.relativeToOrSelf(base: Path): Path =
     relativeToOrNull(base) ?: this
 
@@ -144,8 +146,8 @@ public fun Path.relativeToOrSelf(base: Path): Path =
  *
  * @return the relative path from [base] to this, or `null` if this and base paths have different roots.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 public fun Path.relativeToOrNull(base: Path): Path? = try {
     PathRelativizer.tryRelativeTo(this, base)
 } catch (e: IllegalArgumentException) {
@@ -209,8 +211,9 @@ private object PathRelativizer {
  *
  * @see Files.copy
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
@@ -248,8 +251,9 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  *
  * @see Files.copy
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     return Files.copy(this, target, *options)
@@ -265,8 +269,8 @@ public inline fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
  *
  * @see Files.exists
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exists(this, *options)
 
@@ -280,8 +284,8 @@ public inline fun Path.exists(vararg options: LinkOption): Boolean = Files.exist
  *
  * @see Files.notExists
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.notExists(this, *options)
 
@@ -292,8 +296,8 @@ public inline fun Path.notExists(vararg options: LinkOption): Boolean = Files.no
  *
  * @see Files.isRegularFile
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = Files.isRegularFile(this, *options)
 
@@ -306,8 +310,8 @@ public inline fun Path.isRegularFile(vararg options: LinkOption): Boolean = File
  *
  * @see Files.isDirectory
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.isDirectory(this, *options)
 
@@ -316,8 +320,8 @@ public inline fun Path.isDirectory(vararg options: LinkOption): Boolean = Files.
  *
  * @see Files.isSymbolicLink
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
 
@@ -326,8 +330,8 @@ public inline fun Path.isSymbolicLink(): Boolean = Files.isSymbolicLink(this)
  *
  * @see Files.isExecutable
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
 
@@ -339,8 +343,9 @@ public inline fun Path.isExecutable(): Boolean = Files.isExecutable(this)
  *
  * @see Files.isHidden
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
 
@@ -349,8 +354,8 @@ public inline fun Path.isHidden(): Boolean = Files.isHidden(this)
  *
  * @see Files.isReadable
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
 
@@ -359,8 +364,8 @@ public inline fun Path.isReadable(): Boolean = Files.isReadable(this)
  *
  * @see Files.isWritable
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
 
@@ -369,8 +374,9 @@ public inline fun Path.isWritable(): Boolean = Files.isWritable(this)
  *
  * @see Files.isSameFile
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.isSameFileAs(other: Path): Boolean = Files.isSameFile(this, other)
 
@@ -385,8 +391,9 @@ public inline fun Path.isSameFileAs(other: Path): Boolean = Files.isSameFile(thi
  *
  * @see Files.newDirectoryStream
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
     return Files.newDirectoryStream(this, glob).use { it.toList() }
 }
@@ -404,8 +411,9 @@ public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
  *
  * @see Files.newDirectoryStream
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Sequence<Path>) -> T): T {
     return Files.newDirectoryStream(this, glob).use { block(it.asSequence()) }
@@ -422,8 +430,9 @@ public inline fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Seque
  *
  * @see Files.newDirectoryStream
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.forEachDirectoryEntry(glob: String = "*", action: (Path) -> Unit) {
     return Files.newDirectoryStream(this, glob).use { it.forEach(action) }
@@ -435,8 +444,9 @@ public inline fun Path.forEachDirectoryEntry(glob: String = "*", action: (Path) 
  * @throws IOException if an I/O error occurred.
  * @see Files.size
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.fileSize(): Long =
     Files.size(this)
@@ -449,8 +459,9 @@ public inline fun Path.fileSize(): Long =
  *
  * @see Files.delete
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.deleteExisting() {
     Files.delete(this)
@@ -465,8 +476,9 @@ public inline fun Path.deleteExisting() {
  *
  * @see Files.deleteIfExists
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.deleteIfExists() =
     Files.deleteIfExists(this)
@@ -487,8 +499,9 @@ public inline fun Path.deleteIfExists() =
  *
  * @see Files.createDirectory
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectory(this, *attributes)
@@ -508,8 +521,9 @@ public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Pat
  *
  * @see Files.createDirectories
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectories(this, *attributes)
@@ -529,8 +543,9 @@ public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): P
  *
  * @see Files.move
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
     Files.move(this, target, *options)
@@ -549,8 +564,9 @@ public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
  *
  * @see Files.move
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.moveTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
@@ -562,8 +578,9 @@ public inline fun Path.moveTo(target: Path, overwrite: Boolean = false): Path {
  *
  * @see Files.getFileStore
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.fileStore(): FileStore =
     Files.getFileStore(this)
@@ -581,8 +598,9 @@ public inline fun Path.fileStore(): FileStore =
  * @throws IllegalArgumentException if the attribute name is not specified or is not recognized.
  * @see Files.getAttribute
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getAttribute(attribute: String, vararg options: LinkOption): Any? =
     Files.getAttribute(this, attribute, *options)
@@ -602,8 +620,9 @@ public inline fun Path.getAttribute(attribute: String, vararg options: LinkOptio
  * @throws ClassCastException if the attribute value is not of the expected type
  * @see Files.setAttribute
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.setAttribute(attribute: String, value: Any?, vararg options: LinkOption): Path =
     Files.setAttribute(this, attribute, value, *options)
@@ -618,8 +637,8 @@ public inline fun Path.setAttribute(attribute: String, value: Any?, vararg optio
  *
  * @see Files.getFileAttributeView
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <reified V : FileAttributeView> Path.fileAttributesViewOrNull(vararg options: LinkOption): V? =
     Files.getFileAttributeView(this, V::class.java, *options)
@@ -634,8 +653,8 @@ public inline fun <reified V : FileAttributeView> Path.fileAttributesViewOrNull(
  *
  * @see Files.getFileAttributeView
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <reified V : FileAttributeView> Path.fileAttributesView(vararg options: LinkOption): V =
     Files.getFileAttributeView(this, V::class.java, *options) ?: fileAttributeViewNotAvailable(this, V::class.java)
@@ -652,8 +671,9 @@ internal fun fileAttributeViewNotAvailable(path: Path, attributeViewClass: Class
  * @throws UnsupportedOperationException if the given attributes type [A] is not supported.
  * @see Files.readAttributes
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <reified A : BasicFileAttributes> Path.readAttributes(vararg options: LinkOption): A =
     Files.readAttributes(this, A::class.java, *options)
@@ -673,8 +693,9 @@ public inline fun <reified A : BasicFileAttributes> Path.readAttributes(vararg o
  * @throws IllegalArgumentException if no attributes are specified or an unrecognized attribute is specified.
  * @see Files.readAttributes
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.readAttributes(attributes: String, vararg options: LinkOption): Map<String, Any?> =
     Files.readAttributes(this, attributes, *options)
@@ -686,8 +707,9 @@ public inline fun Path.readAttributes(attributes: String, vararg options: LinkOp
  *
  * @see Files.getLastModifiedTime
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getLastModifiedTime(vararg options: LinkOption): FileTime =
     Files.getLastModifiedTime(this, *options)
@@ -699,8 +721,9 @@ public inline fun Path.getLastModifiedTime(vararg options: LinkOption): FileTime
  *
  * @see Files.setLastModifiedTime
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.setLastModifiedTime(value: FileTime): Path =
     Files.setLastModifiedTime(this, value)
@@ -712,8 +735,9 @@ public inline fun Path.setLastModifiedTime(value: FileTime): Path =
  *
  * @see Files.getOwner
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getOwner(vararg options: LinkOption): UserPrincipal? =
     Files.getOwner(this, *options)
@@ -725,8 +749,9 @@ public inline fun Path.getOwner(vararg options: LinkOption): UserPrincipal? =
  *
  * @see Files.setOwner
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.setOwner(value: UserPrincipal): Path =
     Files.setOwner(this, value)
@@ -738,8 +763,9 @@ public inline fun Path.setOwner(value: UserPrincipal): Path =
  *
  * @see Files.getPosixFilePermissions
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.getPosixFilePermissions(vararg options: LinkOption): Set<PosixFilePermission> =
     Files.getPosixFilePermissions(this, *options)
@@ -751,8 +777,9 @@ public inline fun Path.getPosixFilePermissions(vararg options: LinkOption): Set<
  *
  * @see Files.setPosixFilePermissions
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>): Path =
     Files.setPosixFilePermissions(this, value)
@@ -769,8 +796,9 @@ public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>):
  *
  * @see Files.createLink
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.createLinkPointingTo(target: Path): Path =
     Files.createLink(this, target)
@@ -788,8 +816,9 @@ public inline fun Path.createLinkPointingTo(target: Path): Path =
  *
  * @see Files.createSymbolicLink
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.createSymbolicLinkPointingTo(target: Path, vararg attributes: FileAttribute<*>): Path =
     Files.createSymbolicLink(this, target, *attributes)
@@ -803,8 +832,9 @@ public inline fun Path.createSymbolicLinkPointingTo(target: Path, vararg attribu
  *
  * @see Files.readSymbolicLink
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.readSymbolicLink(): Path =
     Files.readSymbolicLink(this)
@@ -821,8 +851,9 @@ public inline fun Path.readSymbolicLink(): Path =
  *
  * @see Files.createFile
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
     Files.createFile(this, *attributes)
@@ -839,8 +870,9 @@ public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
  *
  * @see Files.createTempFile
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun createTempFile(prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
     Files.createTempFile(prefix, suffix, *attributes)
@@ -859,8 +891,9 @@ public inline fun createTempFile(prefix: String? = null, suffix: String? = null,
  *
  * @see Files.createTempFile
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 public fun createTempFile(directory: Path?, prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
     if (directory != null)
         Files.createTempFile(directory, prefix, suffix, *attributes)
@@ -878,8 +911,9 @@ public fun createTempFile(directory: Path?, prefix: String? = null, suffix: Stri
  *
  * @see Files.createTempDirectory
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun createTempDirectory(prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
     Files.createTempDirectory(prefix, *attributes)
@@ -897,8 +931,9 @@ public inline fun createTempDirectory(prefix: String? = null, vararg attributes:
  *
  * @see Files.createTempDirectory
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
+@Throws(IOException::class)
 public fun createTempDirectory(directory: Path?, prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
     if (directory != null)
         Files.createTempDirectory(directory, prefix, *attributes)
@@ -910,8 +945,8 @@ public fun createTempDirectory(directory: Path?, prefix: String? = null, vararg 
  *
  * This operator is a shortcut for the [Path.resolve] function.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline operator fun Path.div(other: Path): Path =
     this.resolve(other)
@@ -921,8 +956,8 @@ public inline operator fun Path.div(other: Path): Path =
  *
  * This operator is a shortcut for the [Path.resolve] function.
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline operator fun Path.div(other: String): Path =
     this.resolve(other)
@@ -933,8 +968,8 @@ public inline operator fun Path.div(other: String): Path =
  *
  * @see Paths.get
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path(path: String): Path =
     Paths.get(path)
@@ -945,8 +980,8 @@ public inline fun Path(path: String): Path =
  *
  * @see Paths.get
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun Path(base: String, vararg subpaths: String): Path =
     Paths.get(base, *subpaths)
@@ -956,8 +991,8 @@ public inline fun Path(base: String, vararg subpaths: String): Path =
  *
  * @see Paths.get
  */
-@SinceKotlin("1.4")
-@ExperimentalPathApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalPathApi::class)
 @kotlin.internal.InlineOnly
 public inline fun URI.toPath(): Path =
     Paths.get(this)

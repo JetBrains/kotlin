@@ -3,8 +3,8 @@ public interface A {
     // source: 'defaultImpls.kt'
 }
 
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
 @kotlin.Metadata
 public annotation class Anno {
     // source: 'defaultImpls.kt'

@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun call(vararg x: Any?) {}
@@ -15,5 +14,5 @@ fun test1() {
 }
 
 fun test2() {
-    ::foo.call({ x -> println(x::class) })
+    ::foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ x -> println(x::class) })
 }

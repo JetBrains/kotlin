@@ -7,40 +7,47 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSymbolOwner
-import org.jetbrains.kotlin.fir.analysis.cfa.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.types.isFunctionalType
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.coneType
 
 object UnusedChecker : FirControlFlowChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
-        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(checkerContext)?.takeIf {
-                !it.symbol.classId.isLocal
-            } != null
-        ) return
-        val properties = LocalPropertyCollector.collect(graph)
+    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+        if (graph.declaration?.getContainingClassSymbol(context.session)?.takeIf { !it.isLocal } != null) return
+        val (properties, _) = LocalPropertyAndCapturedWriteCollector.collect(graph)
         if (properties.isEmpty()) return
 
-        val data = ValueWritesWithoutReading(properties).getData(graph)
-        graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter))
+        val data = ValueWritesWithoutReading(context.session, properties).getData(graph)
+        graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter, context))
     }
 
     class CfaVisitor(
         val data: Map<CFGNode<*>, PathAwareVariableStatusInfo>,
-        val reporter: DiagnosticReporter
+        val reporter: DiagnosticReporter,
+        val context: CheckerContext
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
@@ -52,7 +59,7 @@ object UnusedChecker : FirControlFlowChecker() {
                 if (data == VariableStatus.ONLY_WRITTEN_NEVER_READ) {
                     // todo: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
                     val source = node.fir.lValue.source
-                    reporter.report(source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ)
+                    reporter.reportOn(source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
                     // To avoid duplicate reports, stop investigating remaining paths once reported.
                     break
                 }
@@ -61,26 +68,30 @@ object UnusedChecker : FirControlFlowChecker() {
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
             val variableSymbol = node.fir.symbol
+            if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
 
-                val variableSource = variableSymbol.fir.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }
+                variableSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+                @OptIn(SymbolInternals::class)
+                val variable = variableSymbol.fir
+                val variableSource = variable.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }
                 when {
                     data == VariableStatus.UNUSED -> {
                         if ((node.fir.initializer as? FirFunctionCall)?.isIterator != true) {
-                            reporter.report(variableSource, FirErrors.UNUSED_VARIABLE)
+                            reporter.reportOn(variableSource, FirErrors.UNUSED_VARIABLE, context)
                             break
                         }
                     }
                     data.isRedundantInit -> {
-                        val source = variableSymbol.fir.initializer?.source
-                        reporter.report(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT)
+                        val source = variable.initializer?.source
+                        reporter.reportOn(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
                         break
                     }
                     data == VariableStatus.ONLY_WRITTEN_NEVER_READ -> {
-                        reporter.report(variableSource, FirErrors.VARIABLE_NEVER_READ)
+                        reporter.reportOn(variableSource, FirErrors.VARIABLE_NEVER_READ, context)
                         break
                     }
                     else -> {
@@ -151,6 +162,7 @@ object UnusedChecker : FirControlFlowChecker() {
     }
 
     private class ValueWritesWithoutReading(
+        private val session: FirSession,
         private val localProperties: Set<FirPropertySymbol>
     ) : ControlFlowGraphVisitor<PathAwareVariableStatusInfo, Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>>() {
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
@@ -173,7 +185,7 @@ object UnusedChecker : FirControlFlowChecker() {
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            if (node.fir.source?.kind is FirFakeSourceElementKind) return dataForNode
+            if (node.fir.source?.kind is KtFakeSourceElementKind) return dataForNode
             val symbol = node.fir.symbol
             return update(dataForNode, symbol) { prev ->
                 when (prev) {
@@ -240,10 +252,14 @@ object UnusedChecker : FirControlFlowChecker() {
 
         private fun visitAnnotation(
             dataForNode: PathAwareVariableStatusInfo,
-            annotation: FirAnnotationCall,
+            annotation: FirAnnotation,
         ): PathAwareVariableStatusInfo {
-            val qualifiedAccesses = annotation.argumentList.arguments.mapNotNull { it as? FirQualifiedAccess }.toTypedArray()
-            return visitQualifiedAccesses(dataForNode, *qualifiedAccesses)
+            return if (annotation is FirAnnotationCall) {
+                val qualifiedAccesses = annotation.argumentList.arguments.mapNotNull { it as? FirQualifiedAccess }.toTypedArray()
+                visitQualifiedAccesses(dataForNode, *qualifiedAccesses)
+            } else {
+                dataForNode
+            }
         }
 
         private fun visitQualifiedAccesses(
@@ -251,7 +267,6 @@ object UnusedChecker : FirControlFlowChecker() {
             vararg qualifiedAccesses: FirQualifiedAccess,
         ): PathAwareVariableStatusInfo {
             fun retrieveSymbol(qualifiedAccess: FirQualifiedAccess): FirPropertySymbol? {
-                if (qualifiedAccess.source?.kind is FirFakeSourceElementKind) return null
                 val reference = qualifiedAccess.calleeReference as? FirResolvedNamedReference ?: return null
                 val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return null
                 return if (symbol !in localProperties) null else symbol
@@ -263,6 +278,23 @@ object UnusedChecker : FirControlFlowChecker() {
             status.isRead = true
 
             return update(dataForNode, *symbols) { status }
+        }
+
+        override fun visitFunctionCallNode(
+            node: FunctionCallNode,
+            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+        ): PathAwareVariableStatusInfo {
+            val dataForNode = visitNode(node, data)
+            val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return dataForNode
+            val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
+            val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
+                localProperties.find { it.name == reference.name && it.resolvedReturnTypeRef.coneType.isFunctionalType(session) }
+            } else null
+            symbol ?: return dataForNode
+
+            val status = VariableStatus.READ
+            status.isRead = true
+            return update(dataForNode, symbol) { status }
         }
 
         private fun update(
@@ -287,6 +319,9 @@ object UnusedChecker : FirControlFlowChecker() {
         }
     }
 
-    private val FirPropertySymbol.isLoopIterator
-        get() = fir.initializer?.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
+    private val FirPropertySymbol.isLoopIterator: Boolean
+        get() {
+            @OptIn(SymbolInternals::class)
+            return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+        }
 }

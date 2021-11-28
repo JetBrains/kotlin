@@ -1,0 +1,39 @@
+package
+
+public fun </*0*/ K> id(/*0*/ x: K): K
+public fun </*0*/ K> materialize(): K
+public fun </*0*/ K> select(/*0*/ vararg values: K /*kotlin.Array<out K>*/): K
+
+package bar {
+    public fun testInference(/*0*/ a: foo.A, /*1*/ b: foo.B): kotlin.Unit
+    public fun testSmartcast(/*0*/ x: kotlin.Any): kotlin.Unit
+}
+
+package foo {
+    public fun testInference(/*0*/ a: foo.A, /*1*/ b: foo.B): kotlin.Unit
+    public fun testSmartcast(/*0*/ x: kotlin.Any): kotlin.Unit
+
+    public open class A : foo.PackagePrivateInterface {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class B : foo.PackagePrivateInterface {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ interface PackagePrivateInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

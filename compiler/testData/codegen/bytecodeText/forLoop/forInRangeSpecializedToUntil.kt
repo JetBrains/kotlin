@@ -23,5 +23,10 @@ fun test(): Int {
 
 // JVM_IR_TEMPLATES
 // 1 IF_ICMPGT
-// 1 IF_ICMPNE
+// 1 IF_ICMPEQ
 // 2 IF
+// 7 ILOAD
+// 4 ISTORE
+// 1 IINC
+// 1 IADD
+// 1 ISUB

@@ -1,7 +1,8 @@
+// WITH_STDLIB
 // FILE: 1.kt
-// WITH_RUNTIME
 
 package test
+
 inline fun stub() {
 
 }
@@ -16,5 +17,3 @@ import test.*
 fun box(): String {
     return prop
 }
-
-// FILE: 2.smap

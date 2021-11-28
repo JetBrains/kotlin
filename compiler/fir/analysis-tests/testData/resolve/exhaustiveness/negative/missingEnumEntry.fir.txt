@@ -1,0 +1,63 @@
+FILE: missingEnumEntry.kt
+    public final enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+        private constructor(): R|SomeEnum| {
+            super<R|kotlin/Enum<SomeEnum>|>()
+        }
+
+        public final static enum entry A: R|SomeEnum|
+        public final static enum entry B: R|SomeEnum|
+        public final static fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        }
+
+    }
+    public final fun test_1(enum: R|SomeEnum|): R|kotlin/Unit| {
+        lval x: R|kotlin/Unit| = when (R|<local>/enum|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
+                Int(1)
+            }
+        }
+
+        lval y: R|kotlin/Int| = when (R|<local>/enum|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.B|) ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun test_2(enum: R|SomeEnum?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Unit| = when (R|<local>/enum|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.B|) ->  {
+                Int(2)
+            }
+        }
+
+        lval y: R|kotlin/Int| = when (R|<local>/enum|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Null(null)) ->  {
+                Int(3)
+            }
+        }
+
+    }
+    public final fun test_3(enum: R|SomeEnum|): R|kotlin/Unit| {
+        when (R|<local>/enum|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
+                Int(1)
+            }
+        }
+
+    }

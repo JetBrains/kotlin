@@ -1,0 +1,82 @@
+FILE: returns.kt
+    public final fun test_0(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: length>#
+    }
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+                ^test_1 Unit
+            }
+        }
+
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|A| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract interface C : R|A| {
+        public abstract fun baz(): R|kotlin/Unit|
+
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|B|) ->  {
+                R|<local>/x|.R|/B.bar|()
+            }
+            (R|<local>/x| is R|C|) ->  {
+                R|<local>/x|.R|/C.baz|()
+            }
+            else ->  {
+                ^test_2 Unit
+            }
+        }
+
+        R|<local>/x|.R|/A.foo|()
+        R|<local>/x|.<Unresolved name: bar>#()
+        R|<local>/x|.<Unresolved name: baz>#()
+    }
+    public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|B|) ->  {
+                R|<local>/x|.R|/B.bar|()
+            }
+            (R|<local>/x| is R|C|) ->  {
+                R|<local>/x|.R|/C.baz|()
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: foo>#()
+        R|<local>/x|.<Unresolved name: bar>#()
+        R|<local>/x|.<Unresolved name: baz>#()
+    }
+    public final fun <T> runHigherOrder(f: R|() -> T|): R|T| {
+        ^runHigherOrder R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final val R|kotlin/String|.ext: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ this@R|/ext|.R|kotlin/String.length|
+        }
+    public final fun test_4(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval s: R|kotlin/String?| = (R|<local>/a| as? R|kotlin/String|)
+        lval length: R|kotlin/Int| = R|<local>/s|?.{ $subj$.R|/ext| } ?: ^test_4 Unit
+        R|/runHigherOrder|<R|kotlin/Int|>(<L> = runHigherOrder@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/s|.R|kotlin/String.length|
+        }
+        )
+    }

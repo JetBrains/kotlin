@@ -5,21 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 internal class CandidateFactoriesAndCollectors(
     // Common calls
@@ -31,7 +21,7 @@ internal class CandidateFactoriesAndCollectors(
 internal class TowerLevelHandler {
 
     // Try to avoid adding additional state here
-    private var processResult = ProcessorAction.NONE
+    private var processResult = ProcessResult.SCOPE_EMPTY
 
     fun handleLevel(
         collector: CandidateCollector,
@@ -40,8 +30,8 @@ internal class TowerLevelHandler {
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
         towerLevel: SessionBasedTowerLevel
-    ): ProcessorAction {
-        processResult = ProcessorAction.NONE
+    ): ProcessResult {
+        processResult = ProcessResult.SCOPE_EMPTY
         val processor =
             TowerScopeLevelProcessor(
                 info,
@@ -53,18 +43,18 @@ internal class TowerLevelHandler {
 
         when (info.callKind) {
             CallKind.VariableAccess -> {
-                processResult += towerLevel.processPropertiesByName(info.name, processor)
+                processResult += towerLevel.processPropertiesByName(info, processor)
 
                 if (!collector.isSuccess() && towerLevel is ScopeTowerLevel && towerLevel.extensionReceiver == null) {
-                    processResult += towerLevel.processObjectsByName(info.name, processor)
+                    processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
             CallKind.Function -> {
-                processResult += towerLevel.processFunctionsByName(info.name, processor)
+                processResult += towerLevel.processFunctionsByName(info, processor)
             }
             CallKind.CallableReference -> {
-                processResult += towerLevel.processFunctionsByName(info.name, processor)
-                processResult += towerLevel.processPropertiesByName(info.name, processor)
+                processResult += towerLevel.processFunctionsByName(info, processor)
+                processResult += towerLevel.processPropertiesByName(info, processor)
             }
             else -> {
                 throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
@@ -80,39 +70,15 @@ private class TowerScopeLevelProcessor(
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,
     val group: TowerGroup
-) : TowerScopeLevel.TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>> {
+) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
     override fun consumeCandidate(
-        symbol: AbstractFirBasedSymbol<*>,
+        symbol: FirBasedSymbol<*>,
         dispatchReceiverValue: ReceiverValue?,
         extensionReceiverValue: ReceiverValue?,
         scope: FirScope,
-        builtInExtensionFunctionReceiverValue: ReceiverValue?
+        builtInExtensionFunctionReceiverValue: ReceiverValue?,
+        objectsByName: Boolean
     ) {
-        // Check explicit extension receiver for default package members
-        if (symbol is FirNamedFunctionSymbol && dispatchReceiverValue == null &&
-            extensionReceiverValue != null &&
-            callInfo.explicitReceiver !is FirResolvedQualifier &&
-            symbol.callableId.packageName.startsWith(defaultPackage)
-        ) {
-            val extensionReceiverType = extensionReceiverValue.type as? ConeClassLikeType
-            if (extensionReceiverType != null) {
-                val declarationReceiverType = (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef?.coneType
-                if (declarationReceiverType is ConeClassLikeType) {
-                    if (!AbstractTypeChecker.isSubtypeOf(
-                            candidateFactory.context.session.typeContext,
-                            extensionReceiverType,
-                            declarationReceiverType.lookupTag.constructClassType(
-                                declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
-                                isNullable = true
-                            )
-                        )
-                    ) {
-                        return
-                    }
-                }
-            }
-        }
-        // ---
         resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
                 callInfo,
@@ -121,7 +87,8 @@ private class TowerScopeLevelProcessor(
                 scope,
                 dispatchReceiverValue,
                 extensionReceiverValue,
-                builtInExtensionFunctionReceiverValue
+                builtInExtensionFunctionReceiverValue,
+                objectsByName
             ), candidateFactory.context
         )
     }

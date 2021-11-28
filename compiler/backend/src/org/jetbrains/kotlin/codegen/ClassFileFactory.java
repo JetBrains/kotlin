@@ -26,25 +26,18 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.AnalysisFlags;
 import org.jetbrains.kotlin.config.JvmAnalysisFlags;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
-import org.jetbrains.kotlin.metadata.serialization.StringTable;
-import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.StringTableImpl;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -58,16 +51,18 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
-    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<>();
+    private final List<ClassFileFactoryFinalizerExtension> finalizers;
+    private final Map<String, OutAndSourceFileList> generators = Collections.synchronizedMap(new LinkedHashMap<>());
 
     private boolean isDone = false;
 
     private final Set<File> sourceFiles = new HashSet<>();
     private final PackagePartRegistry packagePartRegistry = new PackagePartRegistry();
 
-    public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
+    public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory, @NotNull List<ClassFileFactoryFinalizerExtension> finalizers) {
         this.state = state;
         this.builderFactory = builderFactory;
+        this.finalizers = finalizers;
     }
 
     public GenerationState getGenerationState() {
@@ -119,6 +114,9 @@ public class ClassFileFactory implements OutputFileCollection {
         if (!isDone) {
             isDone = true;
             writeModuleMappings();
+            for (ClassFileFactoryFinalizerExtension extension : finalizers) {
+                extension.finalizeClassFactory(this);
+            }
         }
     }
 
@@ -132,11 +130,6 @@ public class ClassFileFactory implements OutputFileCollection {
 
         StringTableImpl stringTable = new StringTableImpl();
         ClassFileUtilsKt.addDataFromCompiledModule(builder, packagePartRegistry, stringTable, state);
-
-        List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlags.getExperimental());
-        if (!experimental.isEmpty()) {
-            writeExperimentalMarkers(state.getModule(), builder, experimental, stringTable);
-        }
 
         Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> tables = stringTable.buildProto();
         builder.setStringTable(tables.getFirst());
@@ -159,26 +152,6 @@ public class ClassFileFactory implements OutputFileCollection {
                 return new String(asBytes(factory), StandardCharsets.UTF_8);
             }
         });
-    }
-
-    private static void writeExperimentalMarkers(
-            @NotNull ModuleDescriptor module,
-            @NotNull JvmModuleProtoBuf.Module.Builder builder,
-            @NotNull List<String> experimental,
-            @NotNull StringTable stringTable
-    ) {
-        for (String fqName : experimental) {
-            ClassDescriptor descriptor =
-                    DescriptorUtilKt.resolveClassByFqName(module, new FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED);
-            if (descriptor != null) {
-                ProtoBuf.Annotation.Builder annotation = ProtoBuf.Annotation.newBuilder();
-                ClassId classId = DescriptorUtilsKt.getClassId(descriptor);
-                if (classId != null) {
-                    annotation.setId(stringTable.getQualifiedClassNameIndex(classId.asString(), false));
-                    builder.addAnnotation(annotation);
-                }
-            }
-        }
     }
 
     @NotNull
@@ -264,7 +237,7 @@ public class ClassFileFactory implements OutputFileCollection {
         return new MultifileClassCodegenImpl(state, files, facadeFqName);
     }
 
-    private void registerSourceFiles(Collection<KtFile> files) {
+    public void registerSourceFiles(@NotNull Collection<KtFile> files) {
         sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
     }
 
@@ -272,6 +245,7 @@ public class ClassFileFactory implements OutputFileCollection {
     private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
         List<File> result = new ArrayList<>(psiFiles.size());
         for (PsiFile psiFile : psiFiles) {
+            if (psiFile == null) continue;
             VirtualFile virtualFile = psiFile.getVirtualFile();
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
             // a non-physical file cannot be processed by make
@@ -345,7 +319,9 @@ public class ClassFileFactory implements OutputFileCollection {
 
         @Override
         public byte[] asBytes(ClassBuilderFactory factory) {
-            return factory.asBytes(classBuilder);
+            synchronized(this) {
+                return factory.asBytes(classBuilder);
+            }
         }
 
         @Override

@@ -27,6 +27,7 @@ enum class WasmImmediateKind {
     DATA_IDX,
     TABLE_IDX,
     LABEL_IDX,
+    TAG_IDX,
     LABEL_IDX_VECTOR,
     ELEM_IDX,
 
@@ -62,7 +63,7 @@ sealed class WasmImmediate {
         constructor(value: WasmGlobal) : this(WasmSymbol(value))
     }
 
-    class TypeIdx(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
+    class TypeIdx(val value: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmImmediate() {
         constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
     }
 
@@ -73,9 +74,12 @@ sealed class WasmImmediate {
     }
 
     class DataIdx(val value: Int) : WasmImmediate()
-    class TableIdx(val value: Int) : WasmImmediate()
+    class TableIdx(val value: WasmSymbolReadOnly<Int>) : WasmImmediate() {
+        constructor(value: Int) : this(WasmSymbol(value))
+    }
 
     class LabelIdx(val value: Int) : WasmImmediate()
+    class TagIdx(val value: Int) : WasmImmediate()
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
 
@@ -304,6 +308,12 @@ enum class WasmOp(
     RETURN("return", 0x0F),
     CALL("call", 0x10, FUNC_IDX),
     CALL_INDIRECT("call_indirect", 0x11, listOf(TYPE_IDX, TABLE_IDX)),
+    TRY("try", 0x06, BLOCK_TYPE),
+    CATCH("catch", 0x07, TAG_IDX),
+    CATCH_ALL("catch_all", 0x19),
+    DELEGATE("delegate", 0x18, LABEL_IDX),
+    THROW("throw", 0x08, TAG_IDX),
+    RETHROW("rethrow", 0x09, LABEL_IDX),
 
     // Parametric
     DROP("drop", 0x1A),
@@ -350,15 +360,33 @@ enum class WasmOp(
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
-    RTT_CANON("rtt.canon", 0xFB_30, HEAP_TYPE),
+    RTT_CANON("rtt.canon", 0xFB_30, TYPE_IDX),
 
-    // TODO: GC spec also has "depth" and "input heap type" immediates. V8 currently implements without them.
-    RTT_SUB("rtt.sub", 0xFB_31, HEAP_TYPE),
-    REF_TEST("ref.test", 0xFB_40, listOf(HEAP_TYPE, HEAP_TYPE)),
-    REF_CAST("ref.cast", 0xFB_41, listOf(HEAP_TYPE, HEAP_TYPE)),
+    RTT_SUB("rtt.sub", 0xFB_31, TYPE_IDX),
+    REF_TEST("ref.test", 0xFB_40),
+    REF_CAST("ref.cast", 0xFB_41),
 
-    // TODO: GC spec also has two heap type immediates. V8 currently implements without them.
     BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
+
+    BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb43, listOf(LABEL_IDX)),
+
+    REF_IS_FUNC("ref.is_func", 0xfb50),
+    REF_IS_DATA("ref.is_data", 0xfb51),
+    REF_IS_I31("ref.is_i31", 0xfb52),
+    REF_AS_FUNC("ref.as_func", 0xfb58),
+    REF_AS_DATA("ref.as_data", 0xfb59),
+    REF_AS_I31("ref.as_i31", 0xfb5a),
+
+    BR_ON_FUNC("br_on_func", 0xfb60, listOf(LABEL_IDX)),
+    BR_ON_DATA("br_on_data", 0xfb61, listOf(LABEL_IDX)),
+    BR_ON_I31("br_on_i31", 0xfb62, listOf(LABEL_IDX)),
+
+    BR_ON_NON_FUNC("br_on_non_func", 0xfb63, listOf(LABEL_IDX)),
+    BR_ON_NON_DATA("br_on_non_data", 0xfb64, listOf(LABEL_IDX)),
+    BR_ON_NON_I31("br_on_non_i31", 0xfb65, listOf(LABEL_IDX)),
+
+    // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
+    GET_UNIT("call", 0x10, FUNC_IDX)
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())

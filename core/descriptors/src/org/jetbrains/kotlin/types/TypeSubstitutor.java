@@ -55,6 +55,42 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
     }
 
     @NotNull
+    public TypeSubstitutor replaceWithNonApproximatingSubstitution() {
+        if (!(substitution instanceof IndexedParametersSubstitution) || !substitution.approximateContravariantCapturedTypes()) return this;
+
+        return new TypeSubstitutor(
+                new IndexedParametersSubstitution(
+                        ((IndexedParametersSubstitution) substitution).getParameters(),
+                        ((IndexedParametersSubstitution) substitution).getArguments(),
+                        false
+                )
+        );
+    }
+
+    @NotNull
+    public TypeSubstitutor replaceWithContravariantApproximatingSubstitution() {
+        if (substitution instanceof SubstitutionWithCapturedTypeApproximation) {
+            return new TypeSubstitutor(
+                    new SubstitutionWithContravariantCapturedTypeApproximation(
+                            ((SubstitutionWithCapturedTypeApproximation) substitution).getSubstitution()
+                    )
+            );
+        }
+
+        if (substitution instanceof IndexedParametersSubstitution && !substitution.approximateContravariantCapturedTypes()) {
+            return new TypeSubstitutor(
+                    new IndexedParametersSubstitution(
+                            ((IndexedParametersSubstitution) substitution).getParameters(),
+                            ((IndexedParametersSubstitution) substitution).getArguments(),
+                            true
+                    )
+            );
+        }
+
+        return this;
+    }
+
+    @NotNull
     public static TypeSubstitutor createChainedSubstitutor(@NotNull TypeSubstitution first, @NotNull TypeSubstitution second) {
         return create(DisjointKeysUnionTypeSubstitution.create(first, second));
     }
@@ -150,9 +186,13 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                     typeParameter,
                     recursionDepth + 1
             );
+            if (substitution.isStarProjection()) return substitution;
 
             KotlinType substitutedEnhancement = substitute(enhancement, originalProjection.getProjectionKind());
-            KotlinType resultingType = TypeWithEnhancementKt.wrapEnhancement(substitution.getType().unwrap(), substitutedEnhancement);
+            KotlinType resultingType = TypeWithEnhancementKt.wrapEnhancement(
+                    substitution.getType().unwrap(),
+                    substitutedEnhancement instanceof TypeWithEnhancement ? ((TypeWithEnhancement) substitutedEnhancement).getEnhancement() : substitutedEnhancement
+            );
 
             return new TypeProjectionImpl(substitution.getProjectionKind(), resultingType);
         }
@@ -168,7 +208,7 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                 null;
 
         Variance originalProjectionKind = originalProjection.getProjectionKind();
-        if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeVariable(type)) {
+        if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeParameter(type)) {
             FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
             TypeProjection substitutedLower =
                     unsafeSubstitute(
@@ -215,12 +255,12 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                 }
             }
             KotlinType substitutedType;
-            CustomTypeVariable typeVariable = TypeCapabilitiesKt.getCustomTypeVariable(type);
+            CustomTypeParameter customTypeParameter = TypeCapabilitiesKt.getCustomTypeParameter(type);
             if (replacement.isStarProjection()) {
                 return replacement;
             }
-            else if (typeVariable != null) {
-                substitutedType = typeVariable.substitutionResult(replacement.getType());
+            else if (customTypeParameter != null) {
+                substitutedType = customTypeParameter.substitutionResult(replacement.getType());
             }
             else {
                 // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
@@ -302,7 +342,9 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
         KotlinType substitutedAbbreviation = null;
         SimpleType abbreviation = SpecialTypesKt.getAbbreviation(type);
         if (abbreviation != null) {
-            substitutedAbbreviation = substitute(abbreviation, Variance.INVARIANT);
+            // We shouldn't approximate abbreviation at the top-level as they can't be projected: below we substitute this always as invariant
+            TypeSubstitutor substitutorForAbbreviation = replaceWithNonApproximatingSubstitution();
+            substitutedAbbreviation = substitutorForAbbreviation.substitute(abbreviation, Variance.INVARIANT);
         }
 
         List<TypeProjection> substitutedArguments = substituteTypeArguments(

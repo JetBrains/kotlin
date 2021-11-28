@@ -12,22 +12,17 @@ import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 internal class MethodNodeExaminer(
-    val languageVersionSettings: LanguageVersionSettings,
     containingClassInternalName: String,
     val methodNode: MethodNode,
     suspensionPoints: List<SuspensionPoint>,
@@ -41,7 +36,6 @@ internal class MethodNodeExaminer(
     private val popsBeforeSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
     private val areturnsAfterSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
     private val meaningfulSuccessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
-    private val meaningfulPredecessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
 
     init {
         if (!disableTailCallOptimizationForFunctionReturningUnit) {
@@ -54,10 +48,8 @@ internal class MethodNodeExaminer(
             for (pop in popsBeforeUnitInstances) {
                 val units = pop.meaningfulSuccessors()
                 val allUnitsAreSafe = units.all { unit ->
-                    // check no other predecessor exists
-                    unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
-                            // check they have only returns among successors
-                            unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
+                    // check they have only returns among successors
+                    unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
                 }
                 if (!allUnitsAreSafe) continue
                 // save them all to the properties
@@ -76,35 +68,22 @@ internal class MethodNodeExaminer(
     private fun AbstractInsnNode.isAreturnAfterSafeUnitInstance(): Boolean = this in areturnsAfterSafeUnitInstances
 
     private fun AbstractInsnNode.meaningfulSuccessors(): List<AbstractInsnNode> = meaningfulSuccessorsCache.getOrPut(this) {
-        meaningfulSuccessorsOrPredecessors(true)
-    }
-
-    private fun AbstractInsnNode.meaningfulPredecessors(): List<AbstractInsnNode> = meaningfulPredecessorsCache.getOrPut(this) {
-        meaningfulSuccessorsOrPredecessors(false)
-    }
-
-    private fun AbstractInsnNode.meaningfulSuccessorsOrPredecessors(isSuccessors: Boolean): List<AbstractInsnNode> {
         fun AbstractInsnNode.isMeaningful() = isMeaningful && opcode != Opcodes.NOP && opcode != Opcodes.GOTO && this !is LineNumberNode
-
-        fun AbstractInsnNode.getIndices() =
-            if (isSuccessors) controlFlowGraph.getSuccessorsIndices(this)
-            else controlFlowGraph.getPredecessorsIndices(this)
 
         val visited = mutableSetOf<AbstractInsnNode>()
         fun dfs(insn: AbstractInsnNode) {
             if (insn in visited) return
             visited += insn
             if (!insn.isMeaningful()) {
-                for (succIndex in insn.getIndices()) {
+                for (succIndex in controlFlowGraph.getSuccessorsIndices(insn)) {
                     dfs(methodNode.instructions[succIndex])
                 }
             }
         }
-
-        for (succIndex in getIndices()) {
+        for (succIndex in controlFlowGraph.getSuccessorsIndices(this)) {
             dfs(methodNode.instructions[succIndex])
         }
-        return visited.filter { it.isMeaningful() }
+        visited.filter { it.isMeaningful() }
     }
 
     fun replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks() {
@@ -116,7 +95,7 @@ internal class MethodNodeExaminer(
                 val label = Label()
                 methodNode.instructions.insertBefore(pop, withInstructionAdapter {
                     dup()
-                    loadCoroutineSuspendedMarker(languageVersionSettings)
+                    loadCoroutineSuspendedMarker()
                     ifacmpne(label)
                     areturn(AsmTypes.OBJECT_TYPE)
                     mark(label)
@@ -159,8 +138,8 @@ internal class MethodNodeExaminer(
      * @return indices of safely reachable returns for each instruction in the method node
      */
     private fun findSafelyReachableReturns(): Array<Set<Int>?> {
-        val insns = methodNode.instructions
-        val reachableReturnsIndices = Array(insns.size()) init@{ index ->
+        val insns = methodNode.instructions.toArray()
+        val reachableReturnsIndices = Array(insns.size) init@{ index ->
             val insn = insns[index]
 
             if (insn.opcode == Opcodes.ARETURN && !insn.isAreturnAfterSafeUnitInstance()) {
@@ -173,7 +152,7 @@ internal class MethodNodeExaminer(
             }
 
             if (!insn.isMeaningful || insn.opcode in SAFE_OPCODES || insn.isInvisibleInDebugVarInsn(methodNode) || isInlineMarker(insn)
-                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance()
+                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance() || insn.isCheckcastObject()
             ) {
                 setOf()
             } else null
@@ -182,7 +161,7 @@ internal class MethodNodeExaminer(
         var changed: Boolean
         do {
             changed = false
-            for (index in 0 until insns.size()) {
+            for (index in insns.indices.reversed()) {
                 if (insns[index].opcode == Opcodes.ARETURN) continue
 
                 @Suppress("RemoveExplicitTypeArguments")
@@ -204,6 +183,9 @@ internal class MethodNodeExaminer(
         return reachableReturnsIndices
     }
 }
+
+private fun AbstractInsnNode.isCheckcastObject(): Boolean =
+    opcode == Opcodes.CHECKCAST && (this as TypeInsnNode).desc == AsmTypes.OBJECT_TYPE.internalName
 
 private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {
     val insns = methodNode.instructions
@@ -243,6 +225,11 @@ private class TcoInterpreter(private val suspensionPoints: List<SuspensionPoint>
     }
 
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
+        // Assume, that CHECKCAST Object does not break tail-call optimization
+        // TODO: Investigate, whether any CHECKCAST is safe in terms of tail-call optimization
+        if (value is FromSuspensionPointValue && insn.isCheckcastObject()) {
+            return value
+        }
         return super.unaryOperation(insn, value).convert(insn)
     }
 

@@ -15,7 +15,7 @@ inline fun foo(f: () -> Unit) {
     f()
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:14 box
 // test.kt:15 box

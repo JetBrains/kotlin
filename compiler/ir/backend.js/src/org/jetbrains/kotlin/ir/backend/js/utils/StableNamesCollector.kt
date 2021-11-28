@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isPropertyAccessor
-import org.jetbrains.kotlin.ir.util.isPropertyField
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -73,18 +68,17 @@ class StableNamesCollector : IrElementVisitorVoid {
             return null
         }
 
-        val importedFromModuleOnly =
-            declaration.getJsModule() != null && !declaration.isJsNonModule()
+        val importedFromModuleOnly = declaration.isImportedFromModuleOnly()
 
         val jsName = declaration.getJsName()
-        val jsQualifier = declaration.getJsQualifier()
+        val jsQualifier = declaration.fileOrNull?.getJsQualifier()
 
         return when {
             importedFromModuleOnly ->
                 null
 
             jsQualifier != null ->
-                jsQualifier.split('1')[0]
+                jsQualifier.substringBefore('.')
 
             jsName != null ->
                 jsName
@@ -120,5 +114,5 @@ val RESERVED_IDENTIFIERS = setOf(
     "Math", "String", "Boolean", "Date", "Array", "RegExp", "JSON", "Map",
 
     // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
-    "require", "define", "module", "window", "self"
+    "require", "define", "module", "window", "self", "globalThis"
 )

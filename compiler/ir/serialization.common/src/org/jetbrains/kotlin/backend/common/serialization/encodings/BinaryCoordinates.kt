@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.encodings
 
-inline class BinaryCoordinates(private val decoded: BinaryLattice) {
+@JvmInline
+value class BinaryCoordinates(private val decoded: BinaryLattice) {
     private fun diff(): Int = decoded.second
 
     val startOffset: Int get() = decoded.first
@@ -13,8 +14,8 @@ inline class BinaryCoordinates(private val decoded: BinaryLattice) {
 
     companion object {
         fun encode(startOffset: Int, endOffset: Int): Long {
-            assert(startOffset <= endOffset)
-            return BinaryLattice.encode(startOffset, endOffset - startOffset)
+//            assert(startOffset <= endOffset)
+            return BinaryLattice.encode(startOffset, Math.abs(endOffset - startOffset))
         }
 
         fun decode(code: Long) = BinaryCoordinates(BinaryLattice.decode(code)).also { assert(it.startOffset <= it.endOffset) }

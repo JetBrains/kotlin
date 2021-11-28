@@ -39,14 +39,20 @@ public class DescriptorVisibilities {
         }
 
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             if (DescriptorUtils.isTopLevelDeclaration(what) && hasContainingSourceFile(from)) {
                 return inSameFile(what, from);
             }
 
             if (what instanceof ConstructorDescriptor) {
                 ClassifierDescriptorWithTypeParameters classDescriptor = ((ConstructorDescriptor) what).getContainingDeclaration();
-                if (DescriptorUtils.isSealedClass(classDescriptor)
+                if (useSpecialRulesForPrivateSealedConstructors
+                    && DescriptorUtils.isSealedClass(classDescriptor)
                     && DescriptorUtils.isTopLevelDeclaration(classDescriptor)
                     && from instanceof ConstructorDescriptor
                     && DescriptorUtils.isTopLevelDeclaration(from.getContainingDeclaration())
@@ -99,8 +105,13 @@ public class DescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility PRIVATE_TO_THIS = new DelegatedDescriptorVisibility(Visibilities.PrivateToThis.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (PRIVATE.isVisible(thisObject, what, from)) {
+        public boolean isVisible(
+                @Nullable ReceiverValue thisObject,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
+            if (PRIVATE.isVisible(thisObject, what, from, useSpecialRulesForPrivateSealedConstructors)) {
                 // See Visibility.isVisible contract
                 if (thisObject == ALWAYS_SUITABLE_RECEIVER) return true;
                 if (thisObject == IRRELEVANT_RECEIVER) return false;
@@ -121,7 +132,8 @@ public class DescriptorVisibilities {
         public boolean isVisible(
                 @Nullable ReceiverValue receiver,
                 @NotNull DeclarationDescriptorWithVisibility what,
-                @NotNull DeclarationDescriptor from
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
         ) {
             ClassDescriptor givenDescriptorContainingClass = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
             ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
@@ -148,7 +160,7 @@ public class DescriptorVisibilities {
                 return true;
             }
 
-            return isVisible(receiver, what, fromClass.getContainingDeclaration());
+            return isVisible(receiver, what, fromClass.getContainingDeclaration(), useSpecialRulesForPrivateSealedConstructors);
         }
 
         private boolean doesReceiverFitForProtectedVisibility(
@@ -179,7 +191,12 @@ public class DescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility INTERNAL = new DelegatedDescriptorVisibility(Visibilities.Internal.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             ModuleDescriptor whatModule = DescriptorUtils.getContainingModule(what);
             ModuleDescriptor fromModule = DescriptorUtils.getContainingModule(from);
 
@@ -196,7 +213,12 @@ public class DescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility PUBLIC = new DelegatedDescriptorVisibility(Visibilities.Public.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             return true;
         }
     };
@@ -204,7 +226,12 @@ public class DescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility LOCAL = new DelegatedDescriptorVisibility(Visibilities.Local.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             throw new IllegalStateException("This method shouldn't be invoked for LOCAL visibility");
         }
     };
@@ -212,7 +239,12 @@ public class DescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility INHERITED = new DelegatedDescriptorVisibility(Visibilities.Inherited.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             throw new IllegalStateException("Visibility is unknown yet"); //This method shouldn't be invoked for INHERITED visibility
         }
     };
@@ -221,7 +253,12 @@ public class DescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility INVISIBLE_FAKE = new DelegatedDescriptorVisibility(Visibilities.InvisibleFake.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             return false;
         }
     };
@@ -232,7 +269,8 @@ public class DescriptorVisibilities {
     public static final DescriptorVisibility UNKNOWN = new DelegatedDescriptorVisibility(Visibilities.Unknown.INSTANCE) {
         @Override
         public boolean isVisible(
-                @Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from
+                @Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
         ) {
             return false;
         }
@@ -244,23 +282,36 @@ public class DescriptorVisibilities {
     private DescriptorVisibilities() {
     }
 
-    public static boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-        return findInvisibleMember(receiver, what, from) == null;
+    public static boolean isVisible(
+            @Nullable ReceiverValue receiver,
+            @NotNull DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptor from,
+            boolean useSpecialRulesForPrivateSealedConstructors
+    ) {
+        return findInvisibleMember(receiver, what, from, useSpecialRulesForPrivateSealedConstructors) == null;
     }
 
     /**
      * @see DescriptorVisibility.isVisible contract
      */
-    public static boolean isVisibleIgnoringReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-        return findInvisibleMember(ALWAYS_SUITABLE_RECEIVER, what, from) == null;
+    public static boolean isVisibleIgnoringReceiver(
+            @NotNull DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptor from,
+            boolean useSpecialRulesForPrivateSealedConstructors
+    ) {
+        return findInvisibleMember(ALWAYS_SUITABLE_RECEIVER, what, from, useSpecialRulesForPrivateSealedConstructors) == null;
     }
 
     /**
      * @see DescriptorVisibility.isVisible contract
      * @see DescriptorVisibilities.RECEIVER_DOES_NOT_EXIST
      */
-    public static boolean isVisibleWithAnyReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-        return findInvisibleMember(IRRELEVANT_RECEIVER, what, from) == null;
+    public static boolean isVisibleWithAnyReceiver(
+            @NotNull DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptor from,
+            boolean useSpecialRulesForPrivateSealedConstructors
+    ) {
+        return findInvisibleMember(IRRELEVANT_RECEIVER, what, from, useSpecialRulesForPrivateSealedConstructors) == null;
     }
 
     // Note that this method returns false if `from` declaration is `init` initializer
@@ -277,11 +328,12 @@ public class DescriptorVisibilities {
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
             @Nullable ReceiverValue receiver,
             @NotNull DeclarationDescriptorWithVisibility what,
-            @NotNull DeclarationDescriptor from
+            @NotNull DeclarationDescriptor from,
+            boolean useSpecialRulesForPrivateSealedConstructors
     ) {
         DeclarationDescriptorWithVisibility parent = (DeclarationDescriptorWithVisibility) what.getOriginal();
         while (parent != null && parent.getVisibility() != LOCAL) {
-            if (!parent.getVisibility().isVisible(receiver, parent, from)) {
+            if (!parent.getVisibility().isVisible(receiver, parent, from, useSpecialRulesForPrivateSealedConstructors)) {
                 return parent;
             }
             parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
@@ -289,7 +341,12 @@ public class DescriptorVisibilities {
 
         if (what instanceof TypeAliasConstructorDescriptor) {
             DeclarationDescriptorWithVisibility invisibleUnderlying =
-                    findInvisibleMember(receiver, ((TypeAliasConstructorDescriptor) what).getUnderlyingConstructorDescriptor(), from);
+                    findInvisibleMember(
+                            receiver,
+                            ((TypeAliasConstructorDescriptor) what).getUnderlyingConstructorDescriptor(),
+                            from,
+                            useSpecialRulesForPrivateSealedConstructors
+                    );
             if (invisibleUnderlying != null) return invisibleUnderlying;
         }
 

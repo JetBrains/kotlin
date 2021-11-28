@@ -5,6 +5,7 @@ import java.util.zip.ZipFile
 
 plugins {
     base
+    `java-base`
 }
 
 val runtimeElements by configurations.creating {
@@ -15,17 +16,16 @@ val runtimeElements by configurations.creating {
     }
 }
 
-val JDK_18: String by rootProject.extra
-val toolsJarFile = toolsJarFile(jdkHome = File(JDK_18)) ?: error("Couldn't find tools.jar in $JDK_18")
-val usedInternalApiPackages = listOf(
-    "com/sun/tools/javac" // Used in KAPT
-)
-
 val toolsJarStubs by tasks.registering {
+    val toolsJarFile = toolsJar().singleFile
     inputs.file(toolsJarFile)
 
     val outDir = buildDir.resolve(name)
     outputs.dir(outDir)
+
+    val usedInternalApiPackages = listOf(
+        "com/sun/tools/javac" // Used in KAPT
+    )
 
     doLast {
         outDir.deleteRecursively()

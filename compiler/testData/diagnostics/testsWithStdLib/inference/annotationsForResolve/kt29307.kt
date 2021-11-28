@@ -1,10 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 // ISSUE: KT-29307
 
 fun test_1(map: Map<String, String>) {
-    val x = <!NI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>map[<!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>]<!> // OK
+    val x = <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>map[42]<!> // OK
 }
 
 open class A
@@ -12,7 +10,7 @@ open class A
 class B : A()
 
 fun test_2(map: Map<A, String>) {
-    val x = <!NI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>map[<!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>]<!>
+    val x = <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>map[42]<!>
 }
 
 fun test_3(m: Map<*, String>) {

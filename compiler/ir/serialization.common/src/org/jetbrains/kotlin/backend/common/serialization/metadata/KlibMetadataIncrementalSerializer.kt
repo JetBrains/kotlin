@@ -24,9 +24,10 @@ class KlibMetadataIncrementalSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
     project: Project,
+    exportKDoc: Boolean,
     skipExpects: Boolean,
     allowErrorTypes: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, skipExpects, allowErrorTypes = allowErrorTypes) {
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, allowErrorTypes = allowErrorTypes) {
 
     fun serializePackageFragment(
         module: ModuleDescriptor,

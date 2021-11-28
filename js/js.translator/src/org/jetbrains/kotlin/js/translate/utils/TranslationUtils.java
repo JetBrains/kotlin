@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.config.CoroutineLanguageVersionSettingsUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElementKt;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -74,7 +74,7 @@ public final class TranslationUtils {
         JsExpression functionExpression = function;
         if (InlineUtil.isInline(descriptor)) {
             InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context);
-            PsiElement sourceInfo = KotlinSourceElementKt.getPsi(descriptor.getSource());
+            PsiElement sourceInfo = PsiSourceElementKt.getPsi(descriptor.getSource());
             functionExpression = metadata.functionWithMetadata(context, sourceInfo);
         }
 
@@ -396,8 +396,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static ClassDescriptor getCoroutineBaseClass(@NotNull TranslationContext context) {
-        FqName className = CoroutineLanguageVersionSettingsUtilKt.coroutinesPackageFqName(context.getLanguageVersionSettings())
-                .child(Name.identifier("CoroutineImpl"));
+        FqName className = StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl"));
         ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(
                 context.getCurrentModule(), ClassId.topLevel(className));
         assert descriptor != null;

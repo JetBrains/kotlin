@@ -8,19 +8,19 @@ fun test() {
     foo(1, 2.0, true)
     foo(1, third = true)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>()
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(0, 0.0, false, "")
+    foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    foo(0, 0.0, false, <!TOO_MANY_ARGUMENTS!>""<!>)
 
     bar(1, third = true)
     bar(1, 2.0, true)
     bar(1, 2.0, true, "my")
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(1, true)
+    bar(1, true<!NO_VALUE_FOR_PARAMETER!>)<!>
 
     baz(1)
     baz(1, "my", "yours")
     baz(1, z = true)
 
-    <!INAPPLICABLE_CANDIDATE!>baz<!>(0, "", false)
+    baz(0, "", <!ARGUMENT_TYPE_MISMATCH!>false<!>)
 }
 

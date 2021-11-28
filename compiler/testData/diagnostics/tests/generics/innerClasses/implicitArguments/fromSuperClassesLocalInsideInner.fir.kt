@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
 
@@ -12,7 +11,7 @@ class Outer<T> {
                     fun a() = A<T, F, E, X, Y, Z>()
                 }
 
-                typealias LocalAlias<W> = <!UNRESOLVED_REFERENCE!>A<T, F, E, X, Y, W><!>
+                typealias LocalAlias<W> = A<T, F, E, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, W>
             }
 
             class Derived : LocalOuter<Double, Short>() {
@@ -29,7 +28,7 @@ class Outer<T> {
                     fun a() = A<T, F, Any, X, Y, Z>()
                 }
 
-                typealias LocalAlias2<W> = <!UNRESOLVED_REFERENCE!>A<T, F, Any, X, Y, W><!>
+                typealias LocalAlias2<W> = A<T, F, Any, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, W>
             }
 
             class Derived2 : LocalOuter2<Double, Short>() {
@@ -43,17 +42,17 @@ class Outer<T> {
             var x = foobar<String>()
             x = foobar<String>()
 
-            x().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, String, Double, Short, Long>>() }
-            x().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, String, Double, Short, Char>>() }
+            x().foo().a() checkType { _<A<T, F, String, Double, Short, Long>>() }
+            x().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<T, F, String, Double, Short, Char>>() }
 
-            x = foobar<Int>()
-            x = z.foobar<String>()
+            x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
+            x = <!ASSIGNMENT_TYPE_MISMATCH!>z.foobar<String>()<!>
 
             var y = noParameters()
             y = noParameters()
 
             y().foo().a() checkType { _<A<T, F, Any, Double, Short, Long>>() }
-            y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Char>>() }
+            y().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<T, F, Any, Double, Short, Char>>() }
         }
     }
 }

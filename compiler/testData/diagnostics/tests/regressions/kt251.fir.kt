@@ -1,23 +1,22 @@
-// !WITH_NEW_INFERENCE
 class A() {
     var x: Int = 0
         get() = "s"
-        set(value: String) {
-            field = value
+        set(value: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
+            field = <!ASSIGNMENT_TYPE_MISMATCH!>value<!>
         }
     val y: Int
-        get(): String = "s"
+        get(): <!WRONG_GETTER_RETURN_TYPE("kotlin/Int; kotlin/String")!>String<!> = "s"
     val z: Int
         get() {
             return "s"
         }
 
     var a: Any = 1
-        set(v: String) {
+        set(v: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
             field = v
         }
     val b: Int
-        get(): Any = "s"
+        get(): <!WRONG_GETTER_RETURN_TYPE!>Any<!> = "s"
     val c: Int
         get() {
             return 1
@@ -27,7 +26,7 @@ class A() {
             return field
         }
     val e = 1
-        get(): String {
+        get(): <!WRONG_GETTER_RETURN_TYPE!>String<!> {
             return field
         }
 

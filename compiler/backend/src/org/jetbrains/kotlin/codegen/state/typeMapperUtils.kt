@@ -87,11 +87,6 @@ fun CallableMemberDescriptor.createTypeParameterWithNewName(
     return newDescriptor
 }
 
-fun KotlinType.removeExternalProjections(): KotlinType {
-    val newArguments = arguments.map { TypeProjectionImpl(Variance.INVARIANT, it.type) }
-    return replace(newArguments)
-}
-
 fun isInlineClassConstructorAccessor(descriptor: FunctionDescriptor): Boolean =
     descriptor is AccessorForConstructorDescriptor &&
             descriptor.calleeDescriptor.constructedClass.isInlineClass()

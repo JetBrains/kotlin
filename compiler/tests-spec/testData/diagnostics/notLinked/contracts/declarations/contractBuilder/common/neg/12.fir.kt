@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 // FILE: builder.kt
 
@@ -8,7 +8,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1, 2, 3
 inline fun ContractBuilder.callsInPlaceEffectBuilder(block: () -> Unit) =
-    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 
 fun ContractBuilder.returnsEffectBuilder(value_1: Int?) =
     returns(true) implies (value_1 != null)
@@ -26,7 +26,7 @@ inline fun case_1(block: () -> Unit) {
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    contract { callsInPlaceEffectBuilder(block) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlaceEffectBuilder(block)<!> }
     return block()
 }
 

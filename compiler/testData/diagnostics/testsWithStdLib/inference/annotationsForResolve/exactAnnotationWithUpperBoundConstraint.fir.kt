@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -DEBUG_INFO_CONSTANT -UNUSED_EXPRESSION
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K, V, V1 : V?>
+fun <@kotlin.internal.OnlyInputTypes K, V, V1 : V?>
     Map<out K, @kotlin.internal.Exact V>.getOrDefault_Exact(key: K, defaultValue: V1): V1 = TODO()
 
 fun test() {
@@ -13,5 +13,5 @@ fun test() {
     val r2 = map.getOrDefault_Exact("y", null as Int?)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>r2<!>
 
-    map.getOrDefault_Exact("y", "string")
+    map.getOrDefault_Exact("y", <!ARGUMENT_TYPE_MISMATCH!>"string"<!>)
 }

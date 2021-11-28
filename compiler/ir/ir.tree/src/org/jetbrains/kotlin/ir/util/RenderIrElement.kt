@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 fun IrElement.render() =
     accept(RenderIrElementVisitor(), null)
 
-class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrElementVisitor<String, Nothing?> {
+class RenderIrElementVisitor(private val normalizeNames: Boolean = false, private val verboseErrorTypes: Boolean = true) : IrElementVisitor<String, Nothing?> {
     private val nameMap: MutableMap<IrVariableSymbol, String> = mutableMapOf()
     private var temporaryIndex: Int = 0
 
@@ -54,9 +55,16 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         }
         append(annotationClassName)
 
+        if (irAnnotation.typeArgumentsCount != 0) {
+            (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
+                irAnnotation.getTypeArgument(i)?.let { renderType(it) } ?: "null"
+            }
+        }
+
         if (irAnnotation.valueArgumentsCount == 0) return
 
         val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
+
         var first = true
         append("(")
         for (i in 0 until irAnnotation.valueArgumentsCount) {
@@ -103,7 +111,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         when (this) {
             is IrDynamicType -> "dynamic"
 
-            is IrErrorType -> "IrErrorType"
+            is IrErrorType -> "IrErrorType(${if (verboseErrorTypes) originalKotlinType else null})"
+
+            is IrDefinitelyNotNullType -> "{${original.render()} & Any}"
 
             is IrSimpleType -> buildTrimEnd {
                 append(classifier.renderClassifierFqn())
@@ -566,9 +576,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
         "SPREAD_ELEMENT"
 
-    // TODO do we need a special support for IrReturnableBlock here?
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-        "BLOCK type=${expression.type.render()} origin=${expression.origin}"
+        "${if (expression is IrReturnableBlock) "RETURNABLE_" else ""}BLOCK type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitComposite(expression: IrComposite, data: Nothing?): String =
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
@@ -645,6 +654,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                 "type=${expression.type.render()} origin=${expression.origin} " +
                 "reflectionTarget=${renderReflectionTarget(expression)}"
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: Nothing?): String =
+        "RAW_FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+
     private fun renderReflectionTarget(expression: IrFunctionReference) =
         if (expression.symbol == expression.reflectionTarget)
             "<same>"
@@ -716,6 +728,16 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
         "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
+
+    override fun visitConstantArray(expression: IrConstantArray, data: Nothing?): String =
+        "CONSTANT_ARRAY type=${expression.type.render()}"
+
+    override fun visitConstantObject(expression: IrConstantObject, data: Nothing?): String =
+        "CONSTANT_OBJECT type=${expression.type.render()} constructor=${expression.constructor.renderReference()}"
+
+    override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?): String =
+        "CONSTANT_PRIMITIVE type=${expression.type.render()}"
+
 
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }

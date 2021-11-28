@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Base
 
 class TestProperty : Base {

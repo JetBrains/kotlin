@@ -24,22 +24,21 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.commons.Method
-import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
-        JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
-        JvmDeclarationOriginKind.DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
-        JvmDeclarationOriginKind.DELEGATION,
-        JvmDeclarationOriginKind.BRIDGE
+    JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
+    JvmDeclarationOriginKind.DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
+    JvmDeclarationOriginKind.DELEGATION,
+    JvmDeclarationOriginKind.BRIDGE
 )
 
 private val PREDEFINED_SIGNATURES = listOf(
-        "getClass()Ljava/lang/Class;",
-        "notify()V",
-        "notifyAll()V",
-        "wait()V",
-        "wait(J)V",
-        "wait(JI)V"
+    "getClass()Ljava/lang/Class;",
+    "notify()V",
+    "notifyAll()V",
+    "wait()V",
+    "wait(J)V",
+    "wait(JI)V"
 ).map { signature ->
     RawSignature(signature.substringBefore('('), signature.substring(signature.indexOf('(')), MemberKind.METHOD)
 }
@@ -49,7 +48,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     bindingContext: BindingContext,
     private val diagnostics: DiagnosticSink,
     moduleName: String,
-    languageVersionSettings: LanguageVersionSettings,
+    val languageVersionSettings: LanguageVersionSettings,
     useOldInlineClassesManglingScheme: Boolean,
     shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
@@ -77,8 +76,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         val elements = LinkedHashSet<PsiElement>()
         if (noOwnImplementations) {
             elements.addIfNotNull(data.classOrigin.element)
-        }
-        else {
+        } else {
             for (origin in data.signatureOrigins) {
                 var element = origin.element
 
@@ -96,9 +94,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     override fun onClassDone(
-            classOrigin: JvmDeclarationOrigin,
-            classInternalName: String,
-            signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
+        classOrigin: JvmDeclarationOrigin,
+        classInternalName: String,
+        signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
     ) {
         reportDiagnosticsTasks.add {
             reportClashingWithPredefinedSignatures(classOrigin, classInternalName, signatures)
@@ -107,14 +105,15 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     private fun reportClashingWithPredefinedSignatures(
-            classOrigin: JvmDeclarationOrigin,
-            classInternalName: String,
-            signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
+        classOrigin: JvmDeclarationOrigin,
+        classInternalName: String,
+        signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
     ) {
         for (predefinedSignature in PREDEFINED_SIGNATURES) {
-            if (!signatures.containsKey(predefinedSignature)) continue
+            val signature = signatures[predefinedSignature]
+            if (signature.isEmpty()) continue
 
-            val origins = signatures[predefinedSignature] + JvmDeclarationOrigin.NO_ORIGIN
+            val origins = signature + JvmDeclarationOrigin.NO_ORIGIN
 
             val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, predefinedSignature, origins) ?: continue
             diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))
@@ -122,9 +121,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     private fun reportClashingSignaturesInHierarchy(
-            classOrigin: JvmDeclarationOrigin,
-            classInternalName: String,
-            signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
+        classOrigin: JvmDeclarationOrigin,
+        classInternalName: String,
+        signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
     ) {
         val descriptor = classOrigin.descriptor
         if (descriptor !is ClassDescriptor) return
@@ -141,31 +140,31 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         for ((rawSignature, origins) in groupedBySignature.entrySet()) {
             if (origins.size <= 1) continue
 
-            val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, rawSignature, origins)
-
-            when (diagnostic) {
+            when (val diagnostic = computeDiagnosticToReport(classOrigin, classInternalName, rawSignature, origins)) {
                 is ConflictingDeclarationError.AccidentalOverride -> {
                     diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(diagnostic.element, diagnostic.data))
                 }
                 is ConflictingDeclarationError.ConflictingInheritedJvmDeclarations -> {
                     diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(diagnostic.element, diagnostic.data))
                 }
+                null -> {}
             }
         }
     }
 
     private sealed class ConflictingDeclarationError(val element: PsiElement, val data: ConflictingJvmDeclarationsData) {
         class AccidentalOverride(element: PsiElement, data: ConflictingJvmDeclarationsData) :
-                ConflictingDeclarationError(element, data)
+            ConflictingDeclarationError(element, data)
+
         class ConflictingInheritedJvmDeclarations(element: PsiElement, data: ConflictingJvmDeclarationsData) :
-                ConflictingDeclarationError(element, data)
+            ConflictingDeclarationError(element, data)
     }
 
     private fun computeDiagnosticToReport(
-            classOrigin: JvmDeclarationOrigin,
-            classInternalName: String,
-            rawSignature: RawSignature,
-            origins: Collection<JvmDeclarationOrigin>
+        classOrigin: JvmDeclarationOrigin,
+        classInternalName: String,
+        rawSignature: RawSignature,
+        origins: Collection<JvmDeclarationOrigin>
     ): ConflictingDeclarationError? {
         var memberElement: PsiElement? = null
         var ownNonFakeCount = 0
@@ -211,19 +210,17 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             if (member is PropertyDescriptor) {
                 processMember(member.getter)
                 processMember(member.setter)
-            }
-            else if (member is FunctionDescriptor) {
+            } else if (member is FunctionDescriptor) {
                 val signatures =
-                        if (member.kind == FAKE_OVERRIDE)
-                            member.overriddenTreeUniqueAsSequence(useOriginal = true)
-                                    // drop the root (itself)
-                                    .drop(1)
-                                    .mapTo(HashSet()) { it.asRawSignature() }
-                        else
-                            setOf(member.asRawSignature())
+                    if (member.kind == FAKE_OVERRIDE)
+                        member.overriddenTreeUniqueAsSequence(useOriginal = true)
+                            // drop the root (itself)
+                            .drop(1)
+                            .mapTo(HashSet()) { it.asRawSignature() }
+                    else
+                        setOf(member.asRawSignature())
 
-                signatures.forEach {
-                    rawSignature ->
+                signatures.forEach { rawSignature ->
                     groupedBySignature.putValue(rawSignature, OtherOrigin(member))
                 }
             }
@@ -232,10 +229,10 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         descriptor.defaultType.memberScope.getContributedDescriptors().forEach(::processMember)
         descriptor.getParentJavaStaticClassScope()?.run {
             getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
-                    .filter {
-                        it is FunctionDescriptor && DescriptorVisibilities.isVisibleIgnoringReceiver(it, descriptor)
-                    }
-                    .forEach(::processMember)
+                .filter {
+                    it is FunctionDescriptor && DescriptorVisibilityUtils.isVisibleIgnoringReceiver(it, descriptor, languageVersionSettings)
+                }
+                .forEach(::processMember)
         }
 
         return groupedBySignature

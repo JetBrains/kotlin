@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 fun foo(): Array<Boolean> {
     return arrayOf(
         0.0 / 0 == 0.0 / 0,

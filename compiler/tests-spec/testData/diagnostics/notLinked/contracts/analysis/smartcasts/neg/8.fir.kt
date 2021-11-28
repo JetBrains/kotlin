@@ -1,5 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_NEW_INFERENCE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 // FILE: contracts.kt
 
@@ -26,7 +25,7 @@ fun case_4(value_1: Number, block: (() -> Unit)?): Boolean? {
         returns(null) implies (block == null)
     }<!>
 
-    return value_1 == null
+    return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // TESTCASE NUMBER: 5
@@ -49,7 +48,7 @@ fun <T> T?.case_6(value_1: Number, value_2: String?): Boolean? {
         returnsNotNull() implies (value_2 == null)
     }<!>
 
-    return value_1 == null
+    return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
 
 // FILE: main.kt
@@ -59,32 +58,32 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     funWithReturns(value_1 !is Number?)
-    <!AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     if (funWithReturnsTrue(value_1 !is Number)) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
-        if (funWithReturnsNotNull(value_1 is Int) == null) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        if (funWithReturnsNotNull(value_1 is Int) == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
     if (!funWithReturnsFalse(value_1 !is Number?)) {
-        <!AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
         funWithReturns(value_1 !is Number)
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
-        if (funWithReturnsNull(value_1 !is Int) == null) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        if (funWithReturnsNull(value_1 !is Int) == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?, value_2: Any?) {
     if (!value_1.case_3(value_1, value_2 is Number?)) {
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
         println(value_1)
     } else if (value_1.case_3(value_1, value_2 is Number?)) {
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     } else {
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -101,14 +100,14 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Number?, value_2: String?) {
-    when (value_2.case_5(value_1)) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_2.case_5(value_1)) {
         true -> {
-            println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+            println(value_2<!UNSAFE_CALL!>.<!>length)
             println(value_1.toByte())
         }
         false -> {
-            println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+            println(value_2<!UNSAFE_CALL!>.<!>length)
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }
@@ -117,12 +116,12 @@ fun case_5(value_1: Number?, value_2: String?) {
 fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
     when (value_3.case_6(value_1, value_2)) {
         true -> {
-            println(value_3.equals(""))
-            println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+            println(value_3.equals("")) // OK because `value_3` is `Nothing?` and `equals` resolves to `kotlin/text/equals`, which has `String?` as receiver type.
+            println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         false -> {
-            <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
-            println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
+            println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         null -> {
             println(value_1.inv())

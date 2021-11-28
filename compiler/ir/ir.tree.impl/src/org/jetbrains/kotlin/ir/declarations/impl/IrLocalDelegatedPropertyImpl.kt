@@ -20,14 +20,12 @@ class IrLocalDelegatedPropertyImpl(
     override val symbol: IrLocalDelegatedPropertySymbol,
     override val name: Name,
     override var type: IrType,
-    override val isVar: Boolean
+    override val isVar: Boolean,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrLocalDelegatedProperty() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

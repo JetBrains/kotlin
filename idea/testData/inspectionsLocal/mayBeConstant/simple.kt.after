@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-const val x = 1

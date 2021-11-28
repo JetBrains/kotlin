@@ -3,7 +3,7 @@ class A {
 
     }
 
-    companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {
+    <!MANY_COMPANION_OBJECTS!>companion<!> <!REDECLARATION!>object<!> {
 
     }
 }
@@ -13,7 +13,7 @@ class B {
 
     }
 
-    companion <!MANY_COMPANION_OBJECTS!>object B<!> {
+    <!MANY_COMPANION_OBJECTS!>companion<!> object B {
 
     }
 }

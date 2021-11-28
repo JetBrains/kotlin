@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.Variance
 
 interface IrFactory {
+    val stageController: StageController
+
     fun createAnonymousInitializer(
         startOffset: Int,
         endOffset: Int,
@@ -70,7 +72,7 @@ interface IrFactory {
     fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
-        descriptor: DeclarationDescriptor,
+        descriptor: DeclarationDescriptor? = null,
     ): IrErrorDeclaration
 
     fun createField(
@@ -237,4 +239,6 @@ interface IrFactory {
         endOffset: Int,
         initializer: IrBlockBody.() -> Unit,
     ): IrBlockBody
+
+    fun unlistFunction(f: IrFunction) {}
 }

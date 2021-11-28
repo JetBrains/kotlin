@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 object Outer {
     private var x
@@ -7,7 +6,7 @@ object Outer {
                 get() = 0
 
             override fun get(index: Int): Char {
-                <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><CharSequence>(x)
+                checkSubtype<CharSequence>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
                 return ' '
             }
 

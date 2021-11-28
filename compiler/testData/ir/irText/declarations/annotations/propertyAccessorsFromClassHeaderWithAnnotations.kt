@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class A(val x: String)
 
 class C(

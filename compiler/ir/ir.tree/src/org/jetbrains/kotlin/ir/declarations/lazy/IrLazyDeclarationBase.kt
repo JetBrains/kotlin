@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.ReadWriteProperty
 
@@ -36,28 +35,19 @@ interface IrLazyDeclarationBase : IrDeclaration {
             isHidden = false, isAssignable = false
         )
 
-    fun generateMemberStubs(memberScope: MemberScope, container: MutableList<IrDeclaration>) {
-        generateChildStubs(memberScope.getContributedDescriptors(), container)
-    }
-
-    fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, declarations: MutableList<IrDeclaration>) {
-        descriptors.mapNotNullTo(declarations) { descriptor ->
-            if (descriptor is DeclarationDescriptorWithVisibility && DescriptorVisibilities.isPrivate(descriptor.visibility)) null
-            else stubGenerator.generateMemberStub(descriptor)
-        }
-    }
-
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar {
+    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
-    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar {
+    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar(stubGenerator.lock, ::lazyParent)
+
+    fun lazyParent(): IrDeclarationParent {
         val currentDescriptor = descriptor
 
         val containingDeclaration =
             ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
 
-        when (containingDeclaration) {
+        return when (containingDeclaration) {
             is PackageFragmentDescriptor -> run {
                 val parent = this.takeUnless { it is IrClass }?.let {
                     stubGenerator.generateOrGetFacadeClass(descriptor)

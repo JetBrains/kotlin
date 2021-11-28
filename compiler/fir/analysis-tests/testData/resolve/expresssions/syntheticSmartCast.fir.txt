@@ -1,0 +1,63 @@
+FILE: test.kt
+    public final class AnotherClass : R|kotlin/Any| {
+        public constructor(bar: R|kotlin/CharSequence?|, foo: R|kotlin/Int|): R|AnotherClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val bar: R|kotlin/CharSequence?| = R|<local>/bar|
+            public get(): R|kotlin/CharSequence?|
+
+        public final val foo: R|kotlin/Int| = R|<local>/foo|
+            public get(): R|kotlin/Int|
+
+        public final fun baz(): R|kotlin/Any| {
+            ^baz Boolean(true)
+        }
+
+    }
+    public final fun test1(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } ?: ^test1 Unit
+        R|<local>/x|.R|/AnotherClass.bar|
+    }
+    public final fun test2(x: R|SomeClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence| = R|<local>/x|?.{ $subj$.R|/SomeClass.bar| } ?: ^test2 Unit
+        R|<local>/x|.R|/SomeClass.bar|
+    }
+    public final fun test3(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence?| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| }
+        when () {
+            !=(R|<local>/bar|, Null(null)) ->  {
+                R|<local>/x|.R|/AnotherClass.bar|.R|kotlin/CharSequence.length|
+            }
+        }
+
+    }
+    public final fun test4(x: R|SomeClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence?| = R|<local>/x|?.{ $subj$.R|/SomeClass.bar| }
+        when () {
+            !=(R|<local>/bar|, Null(null)) ->  {
+                R|<local>/x|.R|/SomeClass.bar|.<Inapplicable(UNSAFE_CALL): kotlin/CharSequence.length>#
+            }
+        }
+
+    }
+    public final fun test5(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/String| = (R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } as? R|kotlin/String|) ?: ^test5 Unit
+        R|<local>/x|.R|/AnotherClass.foo|
+    }
+    public final fun test6(x: R|SomeClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/String| = (R|<local>/x|?.{ $subj$.R|/SomeClass.bar| } as? R|kotlin/String|) ?: ^test6 Unit
+        R|<local>/x|.R|/SomeClass.foo|
+    }
+    public final fun test7(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval baz: R|kotlin/Boolean| = (R|<local>/x|?.{ $subj$.R|/AnotherClass.baz|() } as? R|kotlin/Boolean|) ?: ^test7 Unit
+        R|<local>/x|.R|/AnotherClass.foo|
+    }
+    public final fun test8(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval bar: R|kotlin/CharSequence| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } ?: ^test8 Unit
+        R|<local>/x|.R|/AnotherClass.foo|
+    }
+    public final fun test9(x: R|AnotherClass?|): R|kotlin/Unit| {
+        lval baz: R|kotlin/Any| = R|<local>/x|?.{ $subj$.R|/AnotherClass.baz|() } ?: ^test9 Unit
+        R|<local>/x|.R|/AnotherClass.foo|
+    }

@@ -132,6 +132,10 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         initialized = true;
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     public void addUpperBound(@NotNull KotlinType bound) {
         checkUninitialized();
         doAddUpperBound(bound);

@@ -183,7 +183,10 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         }
 
         return compositePackageFragmentAddend?.let {
-            CompositePackageFragmentProvider(listOf(it, provider))
+            CompositePackageFragmentProvider(
+                listOf(it, provider),
+                "CompositeProvider@KlibMetadataModuleDescriptorFactory for $moduleDescriptor"
+            )
         } ?: provider
     }
 

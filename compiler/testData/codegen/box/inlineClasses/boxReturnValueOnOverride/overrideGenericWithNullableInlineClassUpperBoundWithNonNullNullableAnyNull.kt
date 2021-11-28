@@ -1,7 +1,10 @@
 // IGNORE_BACKEND: JS_IR
+// WITH_STDLIB
 // IGNORE_BACKEND: JS_IR_ES6
 
-inline class X(val x: Any?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val x: Any?)
 
 interface IFoo<out T : X?> {
     fun foo(): T

@@ -15,29 +15,24 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.context.*
-import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
+import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -49,7 +44,7 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
@@ -112,6 +107,11 @@ class DoubleColonExpressionResolver(
             c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"))
         } else {
             val result = resolveDoubleColonLHS(expression, c)
+
+            if (c.inferenceSession is BuilderInferenceSession && result?.type?.contains { it is StubTypeForBuilderInference } == true) {
+                c.inferenceSession.addOldCallableReferenceCalls(expression)
+            }
+
             if (result != null && !result.type.isError) {
                 val inherentType = result.type
                 val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
@@ -540,10 +540,22 @@ class DoubleColonExpressionResolver(
 
         val (lhs, resolutionResults) = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
+        val doesSomeExtensionReceiverContainsStubType =
+            resolutionResults != null && resolutionResults.resultingCalls.any { resolvedCall ->
+                resolvedCall.extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
+            }
+
+        val unrestrictedBuilderInferenceSupported = languageVersionSettings.supportsFeature(LanguageFeature.UnrestrictedBuilderInference)
+
+        if (doesSomeExtensionReceiverContainsStubType && !unrestrictedBuilderInferenceSupported) {
+            c.trace.reportDiagnosticOnce(TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE.on(expression))
+            return noTypeInfo(c)
+        }
+
         val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
 
-        if (c.inferenceSession is CoroutineInferenceSession && result?.contains { it is StubType } == true) {
-            c.inferenceSession.addSimpleCall(expression)
+        if (c.inferenceSession is BuilderInferenceSession && result?.contains { it is StubTypeForBuilderInference } == true) {
+            c.inferenceSession.addOldCallableReferenceCalls(expression)
         }
 
         return dataFlowAnalyzer.checkType(createTypeInfo(result, dataFlowInfo), expression, c)
@@ -637,9 +649,9 @@ class DoubleColonExpressionResolver(
             bigAritySupport.shouldCheckLanguageVersionSettings &&
             !languageVersionSettings.supportsFeature(LanguageFeature.FunctionTypesWithBigArity)
         ) {
-            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(
-                expression, LanguageFeature.FunctionTypesWithBigArity to languageVersionSettings
-            ))
+            context.trace.report(
+                UNSUPPORTED_FEATURE.on(expression, LanguageFeature.FunctionTypesWithBigArity to languageVersionSettings)
+            )
         }
     }
 
@@ -650,7 +662,7 @@ class DoubleColonExpressionResolver(
         mutable: Boolean = true
     ) {
         val localVariable = LocalVariableDescriptor(
-            context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"), referenceType,
+            context.scope.ownerDescriptor, Annotations.EMPTY, SpecialNames.ANONYMOUS, referenceType,
             mutable, false, expression.toSourceElement()
         )
 
@@ -681,12 +693,8 @@ class DoubleColonExpressionResolver(
     ) {
         val descriptor =
             if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor else null
-        if (descriptor is PropertyDescriptor && descriptor.isBuiltInCoroutineContext(languageVersionSettings)) {
+        if (descriptor is PropertyDescriptor && descriptor.isBuiltInCoroutineContext()) {
             context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend property"))
-        } else if (descriptor is FunctionDescriptor && descriptor.isSuspend
-            && !context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-        ) {
-            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend function"))
         }
 
         val expressionResult = lhsResult as? DoubleColonLHS.Expression ?: return
@@ -706,7 +714,8 @@ class DoubleColonExpressionResolver(
         receiver: Receiver?,
         reference: KtSimpleNameExpression,
         outerContext: ResolutionContext<*>,
-        resolutionMode: ResolveArgumentsMode
+        resolutionMode: ResolveArgumentsMode,
+        lhs: DoubleColonLHS?
     ): ResolutionResultsAndTraceCommitCallback? {
         // we should preserve information about `call` because callable references are analyzed two times,
         // otherwise there will be not completed calls in trace
@@ -723,7 +732,12 @@ class DoubleColonExpressionResolver(
                 outerContext.replaceTraceAndCache(temporaryTrace)
 
         val resolutionResults = callResolver.resolveCallForMember(
-            reference, BasicCallResolutionContext.create(newContext, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE)
+            reference,
+            BasicCallResolutionContext.create(
+                newContext.replaceCallPosition(CallPosition.CallableReferenceRhs(lhs)),
+                call,
+                CheckArgumentTypesMode.CHECK_CALLABLE_TYPE
+            )
         )
 
         return when {
@@ -749,7 +763,7 @@ class DoubleColonExpressionResolver(
         if (lhsType == null) {
             if (!expression.isEmptyLHS) return null
 
-            return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode)
+            return tryResolveRHSWithReceiver("resolve callable reference with empty LHS", null, reference, c, mode, lhs)
                 ?.apply { commitTrace() }?.results
         }
 
@@ -766,14 +780,14 @@ class DoubleColonExpressionResolver(
                     if (qualifier is ClassQualifier) {
                         yieldIfNotNull(
                             tryResolveRHSWithReceiver(
-                                "resolve unbound callable reference in static scope", qualifier, reference, c, mode
+                                "resolve unbound callable reference in static scope", qualifier, reference, c, mode, lhs
                             )
                         )
                     }
 
                     yieldIfNotNull(
                         tryResolveRHSWithReceiver(
-                            "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode
+                            "resolve unbound callable reference with receiver", TransientReceiver(lhsType), reference, c, mode, lhs
                         )
                     )
                 }
@@ -781,7 +795,7 @@ class DoubleColonExpressionResolver(
                     val expressionReceiver = ExpressionReceiver.create(expression.receiverExpression!!, lhsType, c.trace.bindingContext)
                     yieldIfNotNull(
                         tryResolveRHSWithReceiver(
-                            "resolve bound callable reference", expressionReceiver, reference, c, mode
+                            "resolve bound callable reference", expressionReceiver, reference, c, mode, lhs
                         )
                     )
 
@@ -792,7 +806,7 @@ class DoubleColonExpressionResolver(
                             val qualifier = ClassQualifier(calleeExpression, classifier)
                             yieldIfNotNull(
                                 tryResolveRHSWithReceiver(
-                                    "resolve object callable reference in static scope", qualifier, reference, c, mode
+                                    "resolve object callable reference in static scope", qualifier, reference, c, mode, lhs
                                 )
                             )
                         }
@@ -826,7 +840,7 @@ class DoubleColonExpressionResolver(
         ): Boolean {
             val receiver = receiverTypeFor(descriptor, lhs)?.let(::TransientReceiver)
             val setter = descriptor.setter
-            return descriptor.isVar && (setter == null || DescriptorVisibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
+            return descriptor.isVar && (setter == null || DescriptorVisibilities.isVisible(receiver, setter, scopeOwnerDescriptor, false))
         }
 
         fun createKCallableTypeForReference(

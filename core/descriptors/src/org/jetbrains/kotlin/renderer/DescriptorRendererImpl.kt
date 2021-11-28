@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValu
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
-import java.util.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class DescriptorRendererImpl(
     val options: DescriptorRendererOptionsImpl
@@ -37,7 +37,6 @@ internal class DescriptorRendererImpl(
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
         withOptions {
             excludedTypeAnnotationClasses += listOf(StandardNames.FqNames.extensionFunctionType)
-            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.ALWAYS_PARENTHESIZED
         } as DescriptorRendererImpl
     }
 
@@ -236,19 +235,26 @@ internal class DescriptorRendererImpl(
     private fun StringBuilder.renderDefaultType(type: KotlinType) {
         this.renderAnnotations(type)
 
-        if (type.isError) {
-            if (type is UnresolvedType && presentableUnresolvedTypes) {
-                append(type.presentableName)
-            } else {
-                if (type is ErrorType && !informativeErrorType) {
+        val originalTypeOfDefNotNullType = (type as? DefinitelyNotNullType)?.original
+
+        when {
+            type.isError -> {
+                if (type is UnresolvedType && presentableUnresolvedTypes) {
                     append(type.presentableName)
                 } else {
-                    append(type.constructor.toString()) // Debug name of an error type is more informative
+                    if (type is ErrorType && !informativeErrorType) {
+                        append(type.presentableName)
+                    } else {
+                        append(type.constructor.toString()) // Debug name of an error type is more informative
+                    }
                 }
+                append(renderTypeArguments(type.arguments))
             }
-            append(renderTypeArguments(type.arguments))
-        } else {
-            renderTypeConstructorAndArguments(type)
+            type is StubTypeForBuilderInference ->
+                append(type.originalTypeVariable.toString())
+            originalTypeOfDefNotNullType is StubTypeForBuilderInference ->
+                append(originalTypeOfDefNotNullType.originalTypeVariable.toString())
+            else -> renderTypeConstructorAndArguments(type)
         }
 
         if (type.isMarkedNullable) {
@@ -256,7 +262,7 @@ internal class DescriptorRendererImpl(
         }
 
         if (type.isDefinitelyNotNullType) {
-            append("!!")
+            append(" & Any")
         }
     }
 
@@ -286,7 +292,11 @@ internal class DescriptorRendererImpl(
 
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String = when (val cd = typeConstructor.declarationDescriptor) {
         is TypeParameterDescriptor, is ClassDescriptor, is TypeAliasDescriptor -> renderClassifierName(cd)
-        null -> typeConstructor.toString()
+        null -> {
+            if (typeConstructor is IntersectionTypeConstructor) {
+                typeConstructor.makeDebugNameForIntersectionType { if (it is StubTypeForBuilderInference) it.originalTypeVariable else it }
+            } else typeConstructor.toString()
+        }
         else -> error("Unexpected classifier: " + cd::class.java)
     }
 
@@ -323,7 +333,7 @@ internal class DescriptorRendererImpl(
                 insert(lengthBefore, '(')
             } else {
                 if (hasAnnotations) {
-                    assert(last() == ' ')
+                    assert(last().isWhitespace())
                     if (get(lastIndex - 1) != ')') {
                         // last annotation rendered without parenthesis - need to add them otherwise parsing will be incorrect
                         insert(lastIndex, "()")
@@ -380,11 +390,7 @@ internal class DescriptorRendererImpl(
         if (descriptor is PackageFragmentDescriptor || descriptor is PackageViewDescriptor) {
             return
         }
-        if (descriptor is ModuleDescriptor) {
-            append(" is a module")
-            return
-        }
-
+        
         val containingDeclaration = descriptor.containingDeclaration
         if (containingDeclaration != null && containingDeclaration !is ModuleDescriptor) {
             append(" ").append(renderMessage("defined in")).append(" ")
@@ -494,7 +500,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderModality(modality: Modality, builder: StringBuilder, defaultModality: Modality) {
         if (!renderDefaultModality && modality == defaultModality) return
-        renderModifier(builder, DescriptorRendererModifier.MODALITY in modifiers, modality.name.toLowerCase())
+        renderModifier(builder, DescriptorRendererModifier.MODALITY in modifiers, modality.name.toLowerCaseAsciiOnly())
     }
 
     private fun MemberDescriptor.implicitModalityWithoutExtensions(): Modality {
@@ -538,7 +544,7 @@ internal class DescriptorRendererImpl(
     private fun renderMemberKind(callableMember: CallableMemberDescriptor, builder: StringBuilder) {
         if (DescriptorRendererModifier.MEMBER_KIND !in modifiers) return
         if (verbose && callableMember.kind != CallableMemberDescriptor.Kind.DECLARATION) {
-            builder.append("/*").append(callableMember.kind.name.toLowerCase()).append("*/ ")
+            builder.append("/*").append(callableMember.kind.name.toLowerCaseAsciiOnly()).append("*/ ")
         }
     }
 

@@ -21,65 +21,48 @@ import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CLEAR_CACHE_METHOD_NAME
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.ON_DESTROY_METHOD_NAME
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
-import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
         interceptedFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
         diagnostics: DiagnosticSink
-    ): ClassBuilderFactory {
-        return AndroidOnDestroyClassBuilderFactory(interceptedFactory, bindingContext)
-    }
+    ): ClassBuilderFactory = AndroidOnDestroyClassBuilderFactory(interceptedFactory)
 
     abstract fun getGlobalCacheImpl(element: KtElement): CacheImplementation
 
-    private inner class AndroidOnDestroyClassBuilderFactory(
-        private val delegateFactory: ClassBuilderFactory,
-        val bindingContext: BindingContext
-    ) : ClassBuilderFactory {
+    private inner class AndroidOnDestroyClassBuilderFactory(delegate: ClassBuilderFactory) : DelegatingClassBuilderFactory(delegate) {
+        override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder =
+            AndroidOnDestroyCollectorClassBuilder(delegate.newClassBuilder(origin), origin.hasCache)
 
-        override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
-            return AndroidOnDestroyCollectorClassBuilder(delegateFactory.newClassBuilder(origin), bindingContext)
-        }
-
-        override fun getClassBuilderMode() = delegateFactory.classBuilderMode
-
-        override fun asText(builder: ClassBuilder?): String? {
-            return delegateFactory.asText((builder as AndroidOnDestroyCollectorClassBuilder).delegateClassBuilder)
-        }
-
-        override fun asBytes(builder: ClassBuilder?): ByteArray? {
-            return delegateFactory.asBytes((builder as AndroidOnDestroyCollectorClassBuilder).delegateClassBuilder)
-        }
-
-        override fun close() {
-            delegateFactory.close()
-        }
+        private val JvmDeclarationOrigin.hasCache: Boolean
+            get() = descriptor is ClassDescriptor && element is KtElement &&
+                    ContainerOptionsProxy.create(descriptor as ClassDescriptor).let {
+                        it.containerType.isFragment && (it.cache ?: getGlobalCacheImpl(element as KtElement)).hasCache
+                    }
     }
 
-    private inner class AndroidOnDestroyCollectorClassBuilder(
-        internal val delegateClassBuilder: ClassBuilder,
-        val bindingContext: BindingContext
+    private class AndroidOnDestroyCollectorClassBuilder(
+        private val delegate: ClassBuilder,
+        private val hasCache: Boolean
     ) : DelegatingClassBuilder() {
-        private var currentClass: KtClass? = null
-        private var currentClassName: String? = null
+        private lateinit var currentClassName: String
+        private lateinit var superClassName: String
+        private var hasOnDestroy = false
 
-        override fun getDelegate() = delegateClassBuilder
+        override fun getDelegate() = delegate
 
         override fun defineClass(
             origin: PsiElement?,
@@ -90,11 +73,25 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
             superName: String,
             interfaces: Array<out String>
         ) {
-            if (origin is KtClass) {
-                currentClass = origin
-                currentClassName = name
-            }
+            currentClassName = name
+            superClassName = superName
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
+        }
+
+        override fun done() {
+            if (hasCache && !hasOnDestroy) {
+                val mv = newMethod(
+                    JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PUBLIC or Opcodes.ACC_SYNTHETIC, ON_DESTROY_METHOD_NAME, "()V",
+                    null, null
+                )
+                mv.visitCode()
+                mv.visitVarInsn(Opcodes.ALOAD, 0)
+                mv.visitMethodInsn(Opcodes.INVOKESPECIAL, superClassName, ON_DESTROY_METHOD_NAME, "()V", false)
+                mv.visitInsn(Opcodes.RETURN)
+                mv.visitMaxs(1, 1)
+                mv.visitEnd()
+            }
+            super.done()
         }
 
         override fun newMethod(
@@ -105,37 +102,18 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
             signature: String?,
             exceptions: Array<out String>?
         ): MethodVisitor {
-            return object : MethodVisitor(Opcodes.API_VERSION, super.newMethod(origin, access, name, desc, signature, exceptions)) {
+            val mv = super.newMethod(origin, access, name, desc, signature, exceptions)
+            if (!hasCache || name != ON_DESTROY_METHOD_NAME || desc != "()V") return mv
+            hasOnDestroy = true
+            return object : MethodVisitor(Opcodes.API_VERSION, mv) {
                 override fun visitInsn(opcode: Int) {
                     if (opcode == Opcodes.RETURN) {
-                        generateClearCacheMethodCall()
+                        visitVarInsn(Opcodes.ALOAD, 0)
+                        visitMethodInsn(Opcodes.INVOKEVIRTUAL, currentClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
                     }
-
                     super.visitInsn(opcode)
-                }
-
-                private fun generateClearCacheMethodCall() {
-                    val currentClass = currentClass
-                    if (name != ON_DESTROY_METHOD_NAME || currentClass == null) return
-                    if (Type.getArgumentTypes(desc).isNotEmpty()) return
-                    if (Type.getReturnType(desc) != Type.VOID_TYPE) return
-
-                    val containerType = currentClassName?.let { Type.getObjectType(it) } ?: return
-
-                    val container = bindingContext.get(BindingContext.CLASS, currentClass) ?: return
-                    val entityOptions = ContainerOptionsProxy.create(container)
-                    if (!entityOptions.containerType.isFragment || !(entityOptions.cache ?: getGlobalCacheImpl(currentClass)).hasCache) return
-
-                    val iv = InstructionAdapter(this)
-                    iv.load(0, containerType)
-                    iv.invokevirtual(currentClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
                 }
             }
         }
-
-        override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor {
-            return AbstractClassBuilder.EMPTY_RECORD_VISITOR
-        }
     }
-
 }

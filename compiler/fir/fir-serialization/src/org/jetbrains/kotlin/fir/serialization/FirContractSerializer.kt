@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 
 class FirContractSerializer {
     fun serializeContractOfFunctionIfAny(
-        function: FirFunction<*>,
+        function: FirFunction,
         proto: ProtoBuf.Function.Builder,
         parentSerializer: FirElementSerializer
     ) {
@@ -178,7 +178,7 @@ class FirContractSerializer {
                 ): ProtoBuf.Expression.Builder {
                     val builder = ProtoBuf.Expression.newBuilder()
 
-                    val indexOfParameter = valueParameterReference.parameterIndex
+                    val indexOfParameter = valueParameterReference.parameterIndex + 1
                     builder.valueParameterReference = indexOfParameter
 
                     return builder

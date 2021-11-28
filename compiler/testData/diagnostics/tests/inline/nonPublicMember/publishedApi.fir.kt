@@ -1,12 +1,12 @@
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 
-inline fun call(<!EXPOSED_PARAMETER_TYPE!>a: A<!>) {
-    a.test()
+inline fun call(a: A) {
+    a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>test<!>()
 
-    privateFun()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()
 
-    internalFun()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalFun<!>()
 }
 
 @PublishedApi

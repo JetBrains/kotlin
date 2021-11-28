@@ -1,5 +1,8 @@
+// WITH_STDLIB
 
-inline class X(val x: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val x: Any)
 
 interface IBar {
     fun bar(): Any

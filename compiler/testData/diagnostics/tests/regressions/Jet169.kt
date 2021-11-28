@@ -1,4 +1,4 @@
-fun set(<!UNUSED_PARAMETER!>key<!> : String, <!UNUSED_PARAMETER!>value<!> : String) {
+fun set(key : String, value : String) {
   val a : String? = ""
   when (a) {
     "" -> <!DEBUG_INFO_SMARTCAST!>a<!>.get(0)

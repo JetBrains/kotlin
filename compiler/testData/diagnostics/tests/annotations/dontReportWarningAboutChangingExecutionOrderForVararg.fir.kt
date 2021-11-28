@@ -7,7 +7,7 @@ fun foo1() {}
 @Anno(x = ["a", "b"], y = "a")
 fun foo2() {}
 
-<!INAPPLICABLE_CANDIDATE!>@Anno(x = arrayOf(arrayOf("a"), arrayOf("b")), y = "a")<!>
+@Anno(x = <!ARGUMENT_TYPE_MISMATCH!>arrayOf(arrayOf("a"), arrayOf("b"))<!>, y = "a")
 fun foo3() {}
 
 @Anno(x = arrayOf("a", "b"), y = "a")

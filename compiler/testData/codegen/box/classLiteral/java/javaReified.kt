@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 inline fun <reified T : Any> check(expected: String) {
     val clazz = T::class.java!!

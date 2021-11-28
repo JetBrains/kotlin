@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 // Issue: KT-20849
 
@@ -40,7 +39,7 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut1(typeFrom: Context<out T>): T {
-    return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: <!OI;TYPE_MISMATCH!>kotlin.Unit<!><!>
+    return <!TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: kotlin.Unit<!>
 }
 
 fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
@@ -91,9 +90,9 @@ interface Worker<out T>
 interface RenderContext<StateT, in OutputT : Any>
 
 val emptyOrNull: List<Nothing>? = null
-val x = emptyOrNull?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>get<!>(0)
+val x = emptyOrNull?.get(0)
 
-val errorCompletion = { <!UNUSED_ANONYMOUS_PARAMETER!>e<!>: Throwable -> throw Exception() }
+val errorCompletion = { e: Throwable -> throw Exception() }
 
 fun test1() {
     errorCompletion(Exception("fail"))

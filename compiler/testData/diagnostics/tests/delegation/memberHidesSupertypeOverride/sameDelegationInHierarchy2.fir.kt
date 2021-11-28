@@ -14,7 +14,7 @@ class Delegate : Derived {
 public open class MyClass : Base by Delegate()
 
 fun box(): String {
-    object : MyClass(), Derived by Delegate() {
+    <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>object<!> : MyClass(), Derived by Delegate() {
     }
     return "OK"
 }

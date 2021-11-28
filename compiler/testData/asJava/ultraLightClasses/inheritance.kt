@@ -29,5 +29,3 @@ private class Private {
     override val overridesNothing: Boolean
         get() = false
 }
-
-// FIR_COMPARISON

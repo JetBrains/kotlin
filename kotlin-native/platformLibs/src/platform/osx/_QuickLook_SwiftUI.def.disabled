@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._QuickLook_SwiftUI
+
+modules = _QuickLook_SwiftUI
+compilerOpts = -framework _QuickLook_SwiftUI
+linkerOpts = -framework _QuickLook_SwiftUI
+#Disabled: Unavailable

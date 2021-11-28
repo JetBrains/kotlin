@@ -1,4 +1,5 @@
-// WITH_RUNTIME
+// !DIAGNOSTICS: -OPT_IN_USAGE
+// WITH_STDLIB
 // SKIP_TXT
 
 import kotlinx.serialization.*

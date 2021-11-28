@@ -31,7 +31,7 @@ class SerialInfoImplJvmIrGenerator(
     override val compilerContext: SerializationPluginContext
         get() = context
 
-    private val jvmNameClass = context.referenceClass(DescriptorUtils.JVM_NAME)!!.owner
+    private val jvmNameClass get() = context.referenceClass(DescriptorUtils.JVM_NAME)!!.owner
 
     private val implGenerated = mutableSetOf<IrClass>()
     private val annotationToImpl = mutableMapOf<IrClass, IrClass>()

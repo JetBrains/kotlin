@@ -1,5 +1,0 @@
-fun foo() {
-    <spot>a.setFoo(1)
-    a.setBar(2)
-    a.setBaz(3)</spot>
-}

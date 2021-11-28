@@ -1,4 +1,0 @@
-4 fun foo(<bold>p: Any</bold>) (in I.foo(Any))
-8 	override fun foo(<bold>p: Any</bold>) { (in C.foo(Any))
-9 		val v = <bold>p</bold> (in C.foo(Any))
-9 			<bold>val v</bold> = p (in C.foo(Any))

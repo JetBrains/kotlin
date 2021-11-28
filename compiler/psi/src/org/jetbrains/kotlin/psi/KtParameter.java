@@ -140,8 +140,39 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return getParent() instanceof KtForExpression;
     }
 
+    private <T extends PsiElement> boolean checkParentOfParentType(Class<T> klass) {
+        // `parent` is supposed to be [KtParameterList]
+        PsiElement parent = getParent();
+        if (parent == null) {
+            return false;
+        }
+        return klass.isInstance(parent.getParent());
+    }
+
     public boolean isCatchParameter() {
-        return getParent().getParent() instanceof KtCatchClause;
+        return checkParentOfParentType(KtCatchClause.class);
+    }
+
+    /**
+     * For example,
+     *   lambdaConsumer { lambdaParameter ->
+     *     ...
+     *   }
+     *
+     * @return [true] if this [KtParameter] is a parameter of a lambda.
+     */
+    public boolean isLambdaParameter() {
+        return checkParentOfParentType(KtFunctionLiteral.class);
+    }
+
+    /**
+     * For example,
+     *   fun foo(lambdaArgument: (functionTypeParameter: T, ...) -> R) { ... }
+     *
+     * @return [true] if this [KtParameter] is a parameter of a function type.
+     */
+    public boolean isFunctionTypeParameter() {
+        return checkParentOfParentType(KtFunctionType.class);
     }
 
     @Nullable

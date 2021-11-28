@@ -10,7 +10,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskState
 import java.util.HashMap
 
-BuildTimeReporter.configure(gradle)
+if (isConfigurationCacheDisabled) {
+    BuildTimeReporter.configure(gradle)
+}
 
 private class BuildTimeReporter(
     private val kotlinCompileClass: Class<*>,
@@ -94,14 +96,14 @@ private class BuildTimeReporter(
         val totalTimeSec = totalTimeNs.toDouble() / secondInNs
         if (totalTimeSec < 1) return
 
-        log.warn("Build time for tasks:")
+        log.info("Build time for tasks:")
         for (category in TaskCategory.values()) {
             val timeNs = categoryTimeNs[category] ?: 0L
             val timeSec = timeNs.toDouble() / secondInNs
             if (timeSec < 1) continue
 
             val percent = timeSec / totalTimeSec * 100
-            log.warn("${category.description()}: ${timeSec.asShortString()}s (${percent.asShortString()}% of total time)")
+            log.info("${category.description()}: ${timeSec.asShortString()}s (${percent.asShortString()}% of total time)")
         }
     }
 }

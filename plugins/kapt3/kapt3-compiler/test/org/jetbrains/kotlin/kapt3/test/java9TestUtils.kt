@@ -18,25 +18,17 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.SystemInfoRt
-import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
 interface CustomJdkTestLauncher {
-    fun doTestWithJdk9(mainClass: Class<*>, arg: String) {
-        // Already under Java 9
-        if (isJava9OrLater()) return
-
-        doTestCustomJdk(mainClass, arg, KotlinTestUtils.getJdk9Home())
-    }
-
     fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
         if (isJava9OrLater()) return
-        KotlinTestUtils.getJdk11Home()?.let { doTestCustomJdk(mainClass, arg, it) }
+        KtTestUtil.getJdk11Home().let { doTestCustomJdk(mainClass, arg, it) }
     }
 
     private fun doTestCustomJdk(mainClass: Class<*>, arg: String, javaHome: File) {
@@ -49,7 +41,7 @@ interface CustomJdkTestLauncher {
         val currentJavaHome = System.getProperty("java.home")
 
         val classpath = collectClasspath(AbstractClassFileToSourceStubConverterTest::class.java.classLoader)
-            .filter { it.protocol.toLowerCase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
+            .filter { it.protocol.lowercase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
             .map { it.path }
 
         val command = arrayOf(

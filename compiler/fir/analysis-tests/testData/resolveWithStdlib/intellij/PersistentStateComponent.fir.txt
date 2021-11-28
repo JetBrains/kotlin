@@ -1,0 +1,19 @@
+FILE: use.kt
+    public final class BeforeRunTask<T> : R|kotlin/Any| {
+        public constructor<T>(): R|BeforeRunTask<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface PersistentStateComponent<T> : R|kotlin/Any| {
+    }
+    public final fun <T> deserializeAndLoadState(component: R|PersistentStateComponent<T>|, clazz: R|java/lang/Class<T>| = Q|ComponentSerializationUtil|.R|/ComponentSerializationUtil.getStateClass|<R|ft<T & Any, T?>|>(<getClass>(R|<local>/component|).R|kotlin/jvm/java|<R|CapturedType(out PersistentStateComponent<T>)|>)): R|kotlin/Unit| {
+    }
+    public final fun use(beforeRunTask: R|BeforeRunTask<*>|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/beforeRunTask| is R|PersistentStateComponent<*>|) ->  {
+                R|/deserializeAndLoadState|<R|CapturedType(*)|>(R|<local>/beforeRunTask|)
+            }
+        }
+
+    }

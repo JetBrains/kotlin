@@ -30,4 +30,3 @@ object Thing : Base {
   }
 
 }
-

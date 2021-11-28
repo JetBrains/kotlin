@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 <!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface First
 // Now inspection
 abstract interface Second

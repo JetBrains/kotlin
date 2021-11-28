@@ -23,6 +23,7 @@ import gnu.trove.THashSet
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilityUtils.isVisibleIgnoringReceiver
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -240,7 +241,7 @@ class LazyImportScope(
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
-        return DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor) == includeVisible
+        return isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor, components.languageVersionSettings) == includeVisible
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {

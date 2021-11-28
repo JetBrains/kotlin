@@ -54,8 +54,9 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         }
     }
 
+    @Deprecated("Provided so that subclasses inherit this function", level = DeprecationLevel.HIDDEN)
     @JsName("toJSON")
-    open fun toJSON(): Any = this.toArray()
+    protected fun toJSON(): Any = this.toArray()
 
 
     /**

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.lang.annotation.*
 
 <!DEPRECATED_JAVA_ANNOTATION!>@java.lang.annotation.Target(ElementType.PACKAGE)<!>

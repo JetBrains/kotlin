@@ -31,6 +31,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b?.getParent()
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>b?.getParent()<!>
     }
 }

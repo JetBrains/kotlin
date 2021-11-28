@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreLocation CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.CloudKit
+modules = CloudKit
+
+compilerOpts = -framework CloudKit
+linkerOpts = -framework CloudKit

@@ -4,13 +4,13 @@ plugins {
 }
 
 dependencies {
-    compile(project(":examples:scripting-jvm-simple-script"))
-    compile(project(":kotlin-scripting-jvm-host-unshaded"))
-    compile(project(":kotlin-script-util"))
+    api(project(":examples:scripting-jvm-simple-script"))
+    api(project(":kotlin-scripting-jvm-host-unshaded"))
+    api(project(":kotlin-script-util"))
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(project(":kotlin-reflect"))
-    testCompile(commonDep("junit"))
+    testApi(commonDep("junit"))
 }
 
 sourceSets {

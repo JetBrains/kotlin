@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun x(): Boolean { return true }
 
 public fun foo(pp: Any): Int {

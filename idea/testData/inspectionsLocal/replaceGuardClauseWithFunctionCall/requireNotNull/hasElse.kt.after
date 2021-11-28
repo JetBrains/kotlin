@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-fun test(foo: Int?) {
-    <caret>requireNotNull(foo) { "test" }
-    println(1)
-}

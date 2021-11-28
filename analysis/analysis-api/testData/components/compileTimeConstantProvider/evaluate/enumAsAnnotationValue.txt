@@ -1,0 +1,3 @@
+expression: Color.R
+constant_value: KtEnumEntryConstantValue(/Color.R)
+constant: null

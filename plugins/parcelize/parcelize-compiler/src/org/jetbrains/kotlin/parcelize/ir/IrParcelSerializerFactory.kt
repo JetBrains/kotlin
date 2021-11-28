@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.parcelize.ir
 import org.jetbrains.kotlin.backend.jvm.codegen.psiElement
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.parcelize.RAW_VALUE_ANNOTATION_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
 
-class IrParcelSerializerFactory(symbols: AndroidSymbols) {
+class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
     /**
      * Resolve the given [irType] to a corresponding [IrParcelSerializer]. This depends on the TypeParcelers which
      * are currently in [scope], as well as the type of the enclosing Parceleable class [parcelizeType], which is needed
@@ -34,7 +34,6 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             return IrCustomParcelSerializer(parceler)
         }
 
-        // TODO inline classes
         val classifier = irType.erasedUpperBound
         val classifierFqName = classifier.fqNameWhenAvailable?.asString()
         when (classifierFqName) {
@@ -44,9 +43,13 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             "kotlin.CharSequence", "java.lang.CharSequence" ->
                 return charSequenceSerializer
             "android.os.Bundle" ->
-                return bundleSerializer
+                return IrParcelSerializerWithClassLoader(parcelizeType, symbols.parcelReadBundle, symbols.parcelWriteBundle)
             "android.os.PersistableBundle" ->
-                return persistableBundleSerializer
+                return IrParcelSerializerWithClassLoader(
+                    parcelizeType,
+                    symbols.parcelReadPersistableBundle,
+                    symbols.parcelWritePersistableBundle
+                )
 
             // Non-nullable built-in serializers
             "kotlin.Byte", "java.lang.Byte" ->
@@ -71,6 +74,16 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
                 return wrapNullableSerializerIfNeeded(irType, sizeSerializer)
             "android.util.SizeF" ->
                 return wrapNullableSerializerIfNeeded(irType, sizeFSerializer)
+
+            // Unsigned primitive types
+            "kotlin.UByte" ->
+                return wrapNullableSerializerIfNeeded(irType, ubyteSerializer)
+            "kotlin.UShort" ->
+                return wrapNullableSerializerIfNeeded(irType, ushortSerializer)
+            "kotlin.UInt" ->
+                return wrapNullableSerializerIfNeeded(irType, uintSerializer)
+            "kotlin.ULong" ->
+                return wrapNullableSerializerIfNeeded(irType, ulongSerializer)
 
             // Built-in non-parameterized container types.
             "kotlin.IntArray" ->
@@ -97,6 +110,19 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             "android.util.SparseBooleanArray" ->
                 if (!scope.hasCustomSerializer(irBuiltIns.booleanType))
                     return sparseBooleanArraySerializer
+
+            // Unsigned array types
+            "kotlin.UByteArray" ->
+                return ubyteArraySerializer
+            "kotlin.UShortArray" ->
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    ushortArraySerializer
+                )
+            "kotlin.UIntArray" ->
+                return uintArraySerializer
+            "kotlin.ULongArray" ->
+                return ulongArraySerializer
         }
 
         // Generic container types
@@ -242,14 +268,15 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
                 throw IllegalArgumentException("Illegal type, could not find a specific serializer for ${irType.render()}")
 
             else ->
-                return IrGenericValueParcelSerializer(parcelizeType)
+                return IrParcelSerializerWithClassLoader(parcelizeType, symbols.parcelReadValue, symbols.parcelWriteValue)
         }
     }
 
     private fun wrapNullableSerializerIfNeeded(irType: IrType, serializer: IrParcelSerializer) =
         if (irType.isNullable()) IrNullAwareParcelSerializer(serializer) else serializer
 
-    private val irBuiltIns: IrBuiltIns = symbols.irBuiltIns
+    private val irBuiltIns: IrBuiltIns
+        get() = symbols.irBuiltIns
 
     private val stringArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArray, symbols.parcelWriteStringArray)
     private val stringListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArrayList, symbols.parcelWriteStringList)
@@ -275,6 +302,42 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
     private val booleanSerializer = IrWrappedIntParcelSerializer(irBuiltIns.booleanType)
     private val shortSerializer = IrWrappedIntParcelSerializer(irBuiltIns.shortType)
     private val charSerializer = IrWrappedIntParcelSerializer(irBuiltIns.charType)
+    private val shortArraySerializer = IrArrayParcelSerializer(
+        irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.shortType).defaultType,
+        irBuiltIns.shortType,
+        shortSerializer
+    )
+
+    // Unsigned primitive types
+    private val ubyteSerializer = IrUnsafeCoerceWrappedSerializer(byteSerializer, symbols.kotlinUByte.defaultType, irBuiltIns.byteType)
+    private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
+    private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
+    private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
+
+    // Unsigned array types
+    private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        byteArraySerializer,
+        symbols.kotlinUByteArray.owner.defaultType,
+        symbols.kotlinUByteArray.owner.inlineClassRepresentation!!.underlyingType
+    )
+
+    private val ushortArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        shortArraySerializer,
+        symbols.kotlinUShortArray.owner.defaultType,
+        symbols.kotlinUShortArray.owner.inlineClassRepresentation!!.underlyingType
+    )
+
+    private val uintArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        intArraySerializer,
+        symbols.kotlinUIntArray.owner.defaultType,
+        symbols.kotlinUIntArray.owner.inlineClassRepresentation!!.underlyingType
+    )
+
+    private val ulongArraySerializer = IrUnsafeCoerceWrappedSerializer(
+        longArraySerializer,
+        symbols.kotlinULongArray.owner.defaultType,
+        symbols.kotlinULongArray.owner.inlineClassRepresentation!!.underlyingType
+    )
 
     private val charSequenceSerializer = IrCharSequenceParcelSerializer()
 
@@ -283,9 +346,6 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
 
     private val sizeSerializer = IrSimpleParcelSerializer(symbols.parcelReadSize, symbols.parcelWriteSize)
     private val sizeFSerializer = IrSimpleParcelSerializer(symbols.parcelReadSizeF, symbols.parcelWriteSizeF)
-    private val bundleSerializer = IrSimpleParcelSerializer(symbols.parcelReadBundle, symbols.parcelWriteBundle)
-    private val persistableBundleSerializer =
-        IrSimpleParcelSerializer(symbols.parcelReadPersistableBundle, symbols.parcelWritePersistableBundle)
     private val sparseBooleanArraySerializer =
         IrSimpleParcelSerializer(symbols.parcelReadSparseBooleanArray, symbols.parcelWriteSparseBooleanArray)
 }

@@ -1,0 +1,107 @@
+FILE: protectedVisibility.kt
+    public open class Protected : R|kotlin/Any| {
+        public constructor(): R|Protected| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final fun bar(): R|kotlin/Unit| {
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+            this@R|/Protected|.R|/Protected.bar|()
+            R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public Protected.constructor(): R|Protected.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                this@R|/Protected|.R|/Protected.bar|()
+            }
+
+        }
+
+        protected open class Nested : R|kotlin/Any| {
+            public constructor(): R|Protected.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                this@R|/Protected.Nested|.R|/Protected.Nested.bar|()
+            }
+
+            protected final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+        protected final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Protected.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun fromCompanion(): R|kotlin/Unit| {
+            }
+
+            protected final fun protectedFromCompanion(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final class Derived : R|Protected| {
+        public constructor(): R|Derived| {
+            super<R|Protected|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Derived|.R|/Protected.bar|()
+            R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
+            R|/Protected.Nested.Nested|().<HIDDEN: /Protected.Nested.bar is invisible>#()
+            this@R|/Protected.Companion|.R|/Protected.Companion.fromCompanion|()
+            this@R|/Protected.Companion|.R|/Protected.Companion.protectedFromCompanion|()
+        }
+
+        private final class NestedDerived : R|Protected.Nested| {
+            public constructor(): R|Derived.NestedDerived| {
+                super<R|Protected.Nested|>()
+            }
+
+            public final fun use(): R|kotlin/Unit| {
+                this@R|/Derived.NestedDerived|.R|/Protected.Nested.bar|()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/Protected.Protected|().R|/Protected.baz|()
+        R|/Protected.Protected|().R|/Protected.Inner.Inner|()
+        R|/Protected.Protected|().<HIDDEN: /Protected.bar is invisible>#()
+        Q|Protected|.<HIDDEN: /Protected.Nested.Nested is invisible>#()
+    }
+    public open class Generic<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|T|): R|Generic<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+        protected open fun foo(): R|T| {
+            ^foo this@R|/Generic|.R|/Generic.x|
+        }
+
+    }
+    public final class DerivedGeneric : R|Generic<kotlin/Int>| {
+        public constructor(): R|DerivedGeneric| {
+            super<R|Generic<kotlin/Int>|>(Int(1))
+        }
+
+        protected final override fun foo(): R|kotlin/Int| {
+            ^foo this@R|/DerivedGeneric|.super<R|Generic<kotlin/Int>|>.R|SubstitutionOverride</Generic.foo: R|kotlin/Int|>|()
+        }
+
+    }

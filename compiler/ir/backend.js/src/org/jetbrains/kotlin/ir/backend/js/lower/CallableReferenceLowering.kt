@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -19,9 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -59,7 +60,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             return expression.run {
                 val vpCount = if (function.isSuspend) 1 else 0
                 val ctorCall =
-                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount, CALLABLE_REFERENCE_CREATE).apply {
+                    IrConstructorCallImpl(
+                        startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount,
+                        JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                    ).apply {
                         if (function.isSuspend) {
                             putValueArgument(0, IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType))
                         }
@@ -81,7 +85,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 val ctorCall = IrConstructorCallImpl(
                     startOffset, endOffset, type, ctor.symbol,
                     0 /*TODO: properly set type arguments*/, 0,
-                    vpCount, CALLABLE_REFERENCE_CREATE).apply {
+                    vpCount, JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                ).apply {
                     boundReceiver?.let {
                         putValueArgument(0, it)
                     }
@@ -91,27 +96,81 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         }
 
         private fun buildFunctionReference(expression: IrFunctionReference): Pair<IrClass, IrConstructor> {
-            return CallableReferenceBuilder(expression.symbol.owner, expression, false).build()
+            val target = expression.symbol.owner
+            val reflectionTarget = expression.reflectionTarget?.owner ?: target
+            return CallableReferenceBuilder(target, expression, reflectionTarget).build()
         }
 
         private fun buildLambdaReference(function: IrSimpleFunction, expression: IrFunctionExpression): Pair<IrClass, IrConstructor> {
-            return CallableReferenceBuilder(function, expression, true).build()
+            return CallableReferenceBuilder(function, expression, null).build()
         }
     }
 
     private inner class CallableReferenceBuilder(
         private val function: IrFunction,
         private val reference: IrExpression,
-        private val isLambda: Boolean
+        private val reflectionTarget: IrFunction?
     ) {
+
+        private val isLambda: Boolean get() = reflectionTarget == null
 
         private val isSuspendLambda = isLambda && function.isSuspend
 
         private val superClass = if (isSuspendLambda) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
         private var boundReceiverField: IrField? = null
 
-        private val superFunctionInterface = reference.type.classOrNull?.owner ?: error("Expected functional type")
+        private val referenceType = reference.type as IrSimpleType
+
+        private val superFunctionInterface: IrClass = referenceType.classOrNull?.owner
+            ?: compilationException(
+                "Expected functional type",
+                reference
+            )
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
+
+        // If we implement KFunctionN we also need FunctionN
+        private val secondFunctionInterface: IrClass? = if (isKReference) {
+            val arity = referenceType.arguments.size - 1
+            if (function.isSuspend)
+                context.ir.symbols.suspendFunctionN(arity).owner
+            else
+                context.ir.symbols.functionN(arity).owner
+        } else null
+
+        private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
+            val parent = d.parent
+
+            if (parent is IrPackageFragment) {
+                append(d.name.asString())
+                return
+            }
+
+            collectNamesForLambda(parent as IrDeclarationWithName)
+
+            if (d is IrAnonymousInitializer) return
+
+            fun IrDeclaration.isLambdaFun(): Boolean = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+
+            when {
+                d.isLambdaFun() -> {
+                    append('$')
+                    if (d is IrSimpleFunction && d.isSuspend) append('s')
+                    append("lambda")
+                }
+                d.name == SpecialNames.NO_NAME_PROVIDED -> append("\$o")
+                else -> {
+                    append('$')
+                    append(d.name.asString())
+                }
+            }
+        }
+
+        private fun makeContextDependentName(): Name {
+            val sb = StringBuilder()
+            sb.collectNamesForLambda(function)
+            if (!isLambda) sb.append("\$ref")
+            return Name.identifier(sb.toString())
+        }
 
         private fun buildReferenceClass(): IrClass {
             return context.irFactory.buildClass {
@@ -120,9 +179,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
                 // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
-                name = SpecialNames.NO_NAME_PROVIDED
+                name = makeContextDependentName()
             }.apply {
-                superTypes = listOf(superClass, reference.type)
+                superTypes = listOfNotNull(superClass, referenceType, secondFunctionInterface?.symbol?.typeWithArguments(referenceType.arguments))
 //                if (samSuperType == null)
 //                    superTypes += functionSuperClass.typeWith(parameterTypes)
 //                if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
@@ -177,7 +236,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                         }
                     }
                     boundReceiverParameter?.let {
-                        +irSetField(irGet(clazz.thisReceiver!!), boundReceiverField!!, irGet(it))
+                        +irSetField(irGet(clazz.thisReceiver!!), boundReceiverField!!, irGet(it),
+                                    LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                        )
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, clazz.symbol, context.irBuiltIns.unitType)
                 }
@@ -194,7 +255,14 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isSuspend = superMethod.isSuspend
                 isOperator = superMethod.isOperator
             }.apply {
-                overriddenSymbols = listOf(superMethod.symbol)
+                val secondSuperMethods: List<IrSimpleFunction>? =
+                    secondFunctionInterface?.declarations?.filterIsInstance<IrSimpleFunction>()
+                val secondSuperMethod = secondSuperMethods?.single { it.name.asString() == "invoke" }
+
+                overriddenSymbols = listOfNotNull(
+                    superMethod.symbol,
+                    secondSuperMethod?.symbol
+                )
                 dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
 
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
@@ -211,7 +279,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         }
 
         fun getValue(d: IrValueDeclaration): IrGetValue =
-            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, CALLABLE_REFERENCE_INVOKE)
+            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, JsStatementOrigins.CALLABLE_REFERENCE_INVOKE)
 
         /**
         inner class IN<IT> {
@@ -248,7 +316,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             callee.countContextTypeParameters(),
                             callee.typeParameters.size,
                             callee.valueParameters.size,
-                            CALLABLE_REFERENCE_INVOKE
+                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     is IrSimpleFunction ->
                         IrCallImpl(
@@ -258,10 +326,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             callee.symbol,
                             callee.typeParameters.size,
                             callee.valueParameters.size,
-                            CALLABLE_REFERENCE_INVOKE
+                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     else ->
-                        error("unknown function kind: ${callee.render()}")
+                        compilationException("unknown function kind", callee)
                 }
             }
 
@@ -295,7 +363,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                                 boundReceiverField.symbol,
                                 boundReceiverField.type,
                                 thisValue,
-                                CALLABLE_REFERENCE_INVOKE
+                                JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                             )
 
                         if (funRef.dispatchReceiver != null) irCall.dispatchReceiver = value
@@ -344,8 +412,15 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun createNameProperty(clazz: IrClass) {
             if (!isKReference) return
 
-            val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
-            val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
+            val superProperty = superFunctionInterface.declarations
+                .filterIsInstance<IrProperty>()
+                .single { it.name == Name.identifier("name") }  // In K/Wasm interfaces can have fake overridden properties from Any
+
+            val supperGetter = superProperty.getter
+                ?: compilationException(
+                    "Expected getter for KFunction.name property",
+                    superProperty
+                )
 
             val nameProperty = clazz.addProperty() {
                 visibility = superProperty.visibility
@@ -358,15 +433,16 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             }
             getter.overriddenSymbols += supperGetter.symbol
             getter.dispatchReceiverParameter = buildValueParameter(getter) {
-                name = THIS_NAME
+                name = SpecialNames.THIS
                 type = clazz.defaultType
             }
 
+            // TODO: What name should be in case of constructor? <init> or class name?
             getter.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, getter.symbol, IrConstImpl.string(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, function.name.asString()
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, reflectionTarget!!.name.asString()
                         )
                     )
                 )
@@ -391,11 +467,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
         object GENERATED_MEMBER_IN_CALLABLE_REFERENCE : IrDeclarationOriginImpl("GENERATED_MEMBER_IN_CALLABLE_REFERENCE")
 
-        object CALLABLE_REFERENCE_CREATE : IrStatementOriginImpl("CALLABLE_REFERENCE_CREATE")
-        object CALLABLE_REFERENCE_INVOKE : IrStatementOriginImpl("CALLABLE_REFERENCE_INVOKE")
-
-        val THIS_NAME = Name.special("<this>")
         val BOUND_RECEIVER_NAME = Name.identifier("\$boundThis")
     }
-
 }

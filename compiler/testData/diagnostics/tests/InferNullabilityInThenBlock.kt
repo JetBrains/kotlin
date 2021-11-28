@@ -1,4 +1,4 @@
-fun ff(<!UNUSED_PARAMETER!>a<!>: String) = 1
+fun ff(a: String) = 1
 
 fun gg() {
     val a: String? = ""

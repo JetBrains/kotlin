@@ -1,10 +1,10 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 fun <T: Any> fooT22() : T? {
   return null
 }
 
 fun foo1() {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT22<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT22<!>()
 }
 
 val n : Nothing = null.sure()

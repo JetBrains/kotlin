@@ -29,9 +29,9 @@ private object TopLevelObject {
 }
 
 fun testAccess() {
-    <!HIDDEN!>NestedClass<!>()
+    <!INVISIBLE_REFERENCE!>NestedClass<!>()
     E1
-    InNested()
-    NestedEntry
+    <!INVISIBLE_REFERENCE!>InNested<!>()
+    <!INVISIBLE_REFERENCE!>NestedEntry<!>
     inObject()
 }

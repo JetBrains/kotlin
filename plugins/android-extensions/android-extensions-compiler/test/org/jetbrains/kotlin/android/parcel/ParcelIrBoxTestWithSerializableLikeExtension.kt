@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.TargetBackend
-import org.junit.runner.RunWith
 
 class ParcelIrBoxTestWithSerializableLikeExtension : AbstractParcelIrBoxTest() {
     fun testSimple() = doTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/simple.kt")

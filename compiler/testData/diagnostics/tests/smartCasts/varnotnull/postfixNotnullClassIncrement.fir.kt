@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class MyClass
 
 operator fun MyClass.inc(): MyClass { return null!! }

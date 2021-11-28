@@ -3,12 +3,12 @@
 final class LambdaWithMultipleParametersKt$box$1$1 {
     // source: 'lambdaWithMultipleParameters.kt'
     enclosing method LambdaWithMultipleParametersKt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    synthetic field a: java.lang.String
-    synthetic field b: long
-    synthetic field c: long
-    synthetic field d: long
-    synthetic field e: long
-    synthetic field f: long
+    synthetic field J$0: long
+    synthetic field J$1: long
+    synthetic field J$2: long
+    synthetic field J$3: long
+    synthetic field J$4: long
+    synthetic field L$0: java.lang.Object
     field label: int
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1$1

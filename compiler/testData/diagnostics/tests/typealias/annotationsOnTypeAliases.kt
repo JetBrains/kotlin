@@ -1,4 +1,5 @@
-// WITH_RUNTIME
+// FIR_IDENTICAL
+// WITH_STDLIB
 import kotlin.annotation.AnnotationTarget.*
 
 annotation class NoTarget

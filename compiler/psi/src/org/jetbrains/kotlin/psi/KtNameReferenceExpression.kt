@@ -59,6 +59,9 @@ class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpres
         return visitor.visitSimpleNameExpression(this, data)
     }
 
+    val isPlaceholder: Boolean
+        get() = getIdentifier()?.text?.equals("_") == true
+
     companion object {
         private val NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD)
     }

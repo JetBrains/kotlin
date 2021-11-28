@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor;
 
 import java.io.File;
 import java.util.Collections;
@@ -61,7 +61,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
             if (fromLazyResolve instanceof LazyPackageDescriptor) {
                 PackageFragmentDescriptor deserialized =
                         CollectionsKt.single(PackageFragmentProviderKt.packageFragments(packageFragmentProvider, packageFqName));
-                RecursiveDescriptorComparator.validateAndCompareDescriptors(
+                RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptors(
                         fromLazyResolve, deserialized, AbstractBuiltInsWithJDKMembersTest.createComparatorConfiguration(),
                         new File("compiler/testData/builtin-classes/default/" + packageFqName.asString().replace('.', '-') + ".txt")
                 );

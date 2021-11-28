@@ -1,0 +1,25 @@
+// FILE: 1.kt
+
+// FILE: 2.kt
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+test/_1Kt
+*L
+1#1,38:1
+18#2,7:39
+9#2,7:46
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+31#1:39,7
+32#1:46,7
+*E
+

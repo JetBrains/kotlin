@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
@@ -90,7 +90,7 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
                 supportJvmStaticInInterface &&
                 descriptor is DeclarationDescriptorWithVisibility
             ) {
-                checkVisibility(descriptor, diagnosticHolder, declaration)
+                checkForInterface(descriptor, diagnosticHolder, declaration)
                 if (isLessJVM18) {
                     diagnosticHolder.report(ErrorsJvm.JVM_STATIC_IN_INTERFACE_1_6.on(declaration))
                 }
@@ -116,15 +116,18 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
         }
     }
 
-    private fun checkVisibility(
+    private fun checkForInterface(
         descriptor: DeclarationDescriptorWithVisibility,
         diagnosticHolder: DiagnosticSink,
         declaration: KtDeclaration
     ) {
         if (descriptor.visibility != DescriptorVisibilities.PUBLIC) {
             diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_NON_PUBLIC_MEMBER.on(declaration))
+        } else if (descriptor is MemberDescriptor && descriptor.isExternal) {
+            diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE.on(declaration))
         } else if (descriptor is PropertyDescriptor) {
-            descriptor.setter?.let { checkVisibility(it, diagnosticHolder, declaration) }
+            descriptor.getter?.let { checkForInterface(it, diagnosticHolder, declaration) }
+            descriptor.setter?.let { checkForInterface(it, diagnosticHolder, declaration) }
         }
     }
 }
@@ -192,6 +195,12 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_IN_INTERFACE.on(annotationEntry))
             } else if (descriptor.modality == Modality.ABSTRACT) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT.on(annotationEntry))
+            } else if (descriptor.isInline) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_INLINE.on(annotationEntry))
+            } else if (descriptor.isSuspend) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(annotationEntry))
+            } else if (descriptor.containingDeclaration.let { it is ClassDescriptor && it.isValue }) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_VALUE_CLASS.on(annotationEntry))
             }
         }
     }
@@ -232,13 +241,7 @@ class OverloadsAnnotationChecker : DeclarationChecker {
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
 
             descriptor.isAnnotationConstructor() -> {
-                val diagnostic =
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses))
-                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR
-                    else
-                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
-
-                diagnosticHolder.report(diagnostic.on(annotationEntry))
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR.on(context.languageVersionSettings, annotationEntry))
             }
 
             !descriptor.visibility.isPublicAPI && descriptor.visibility != DescriptorVisibilities.INTERNAL ->

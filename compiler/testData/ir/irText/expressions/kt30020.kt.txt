@@ -2,7 +2,7 @@ interface X {
   abstract val xs: MutableList<Any>
     abstract get
 
-  abstract fun f(): MutableList<Any> 
+  abstract fun f(): MutableList<Any>
 
 }
 
@@ -59,4 +59,3 @@ abstract class AML : MutableList<Int> {
   }
 
 }
-

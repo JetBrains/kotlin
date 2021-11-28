@@ -1,9 +1,17 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Z(val int: Int)
-inline class L(val long: Long)
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val int: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(val long: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Str(val string: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Obj(val obj: Any)
 
 inline fun <R> s1Z(x: Z, fn: (Int, Z) -> R) = fn(1, x)
 inline fun <R> s1L(x: L, fn: (Int, L) -> R) = fn(1, x)

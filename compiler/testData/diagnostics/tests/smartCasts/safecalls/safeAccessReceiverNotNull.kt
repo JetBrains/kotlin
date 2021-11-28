@@ -67,11 +67,29 @@ fun kt4565_2(a: SomeClass?) {
     }
 }
 
+inline fun <reified T : SomeClass> kt45345(a: SomeClass?) {
+    if (a?.data is T) {
+        <!DEBUG_INFO_SMARTCAST!>a<!>.data
+    }
+}
+
+inline fun <reified T : U, U : SomeClass> kt45345_2(a: SomeClass?) {
+    if (a?.data is T) {
+        <!DEBUG_INFO_SMARTCAST!>a<!>.data
+    }
+}
+
+inline fun <reified T : U, U : SomeClass?> kt45345_3(a: SomeClass?) {
+    if (a?.data is T) {
+        a<!UNSAFE_CALL!>.<!>data
+    }
+}
+
 class A(val y: Int)
 
 fun kt7491_1() {
     val x: A? = A(42)
-    val <!UNUSED_VARIABLE!>z<!> = x?.y ?: return
+    val z = x?.y ?: return
     <!DEBUG_INFO_SMARTCAST!>x<!>.y
 }
 

@@ -37,6 +37,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     public static final UserDataKey<ValueParameterDescriptor> ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER =
             new UserDataKey<ValueParameterDescriptor>() {};
 
+    public static final UserDataKey<Boolean> HAS_ERASED_VALUE_PARAMETERS = new UserDataKey<Boolean>() {};
+
     private enum ParameterNamesStatus {
         NON_STABLE_DECLARED(false, false),
         STABLE_DECLARED(true, false),
@@ -153,12 +155,12 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @NotNull
     public JavaMethodDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<ValueParameterData> enhancedValueParametersData,
+            @NotNull List<KotlinType> enhancedValueParameterTypes,
             @NotNull KotlinType enhancedReturnType,
             @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
         List<ValueParameterDescriptor> enhancedValueParameters =
-                UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), this);
+                UtilKt.copyValueParameters(enhancedValueParameterTypes, getValueParameters(), this);
 
         ReceiverParameterDescriptor enhancedReceiver =
                 enhancedReceiverType == null ? null : DescriptorFactory.createExtensionReceiverParameterForCallable(
@@ -174,7 +176,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                         .setPreserveSourceElement()
                         .build();
 
-        assert enhancedMethod != null : "null after substitution while enhancing " + toString();
+        assert enhancedMethod != null : "null after substitution while enhancing " + this;
 
         if (additionalUserData != null) {
             enhancedMethod.putInUserDataMap(additionalUserData.getFirst(), additionalUserData.getSecond());

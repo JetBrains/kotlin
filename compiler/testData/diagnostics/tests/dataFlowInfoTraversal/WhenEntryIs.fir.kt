@@ -6,7 +6,7 @@ fun foo(x: Number, y: Int) {
         y -> {}
         else -> {}
     }
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 fun bar(x: Number) {
@@ -14,7 +14,7 @@ fun bar(x: Number) {
         is Int -> checkSubtype<Int>(x)
         else -> {}
     }
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 fun whenWithoutSubject(x: Number) {
@@ -22,5 +22,5 @@ fun whenWithoutSubject(x: Number) {
         (x is Int) -> checkSubtype<Int>(x)
         else -> {}
     }
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }

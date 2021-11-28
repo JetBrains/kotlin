@@ -1,0 +1,6 @@
+KT element: KtBlockExpression
+FIR element: FirBlockImpl
+
+FIR element rendered:
+ {
+}

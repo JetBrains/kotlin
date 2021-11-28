@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val flattenStringConcatenationPhase = makeIrFilePhase(
     ::FlattenStringConcatenationLowering,
@@ -86,14 +87,14 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                         && receiver.type.isStringClassType()
                         && function.returnType.isStringClassType()
                         && function.valueParameters.size == 1
-                        && function.name.asString() == "plus"
+                        && function.name == OperatorNameConventions.PLUS
                         && function.fqNameWhenAvailable?.parent() in PARENT_NAMES
             }
 
         /** @return true if the function is Any.toString or an override of Any.toString */
         val IrSimpleFunction.isToString: Boolean
             get() {
-                if (name.asString() != "toString" || valueParameters.size != 0 || !returnType.isString())
+                if (name != OperatorNameConventions.TO_STRING || valueParameters.isNotEmpty() || !returnType.isString())
                     return false
 
                 return (dispatchReceiverParameter != null && extensionReceiverParameter == null
@@ -103,7 +104,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         /** @return true if the function is Any?.toString */
         private val IrSimpleFunction.isNullableToString: Boolean
             get() {
-                if (name.asString() != "toString" || valueParameters.size != 0 || !returnType.isString())
+                if (name != OperatorNameConventions.TO_STRING || valueParameters.isNotEmpty() || !returnType.isString())
                     return false
 
                 return dispatchReceiverParameter == null

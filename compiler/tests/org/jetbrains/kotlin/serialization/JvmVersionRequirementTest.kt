@@ -63,17 +63,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         )
     ).moduleDescriptor
 
-    fun testJvmDefault() {
-        doTest(
-            VersionRequirement.Version(1, 2, 40), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ENABLE),
-            fqNamesWithRequirements = listOf(
-                "test.Base",
-                "test.Derived"
-            )
-        )
-    }
-
     fun testAllJvmDefault() {
         doTest(
             VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
@@ -106,13 +95,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
                 "test.WithAbstractDeclaration",
                 "test.DerivedFromWithAbstractDeclaration"
             )
-        )
-    }
-
-    fun testJvmFieldInInterfaceCompanion() {
-        doTest(
-            VersionRequirement.Version(1, 2, 70), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            fqNamesWithRequirements = listOf("test.Base.Companion.foo")
         )
     }
 
@@ -174,23 +156,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
             ),
             shouldBeSingleRequirement = true,
             customLanguageVersion = LanguageVersion.KOTLIN_1_3
-        )
-    }
-
-    fun testSuspendFun_1_2() {
-        doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
-            fqNamesWithRequirements = listOf(
-                "test.topLevel",
-                "test.Foo.member",
-                "test.Foo.<init>",
-                "test.async1",
-                "test.async2",
-                "test.async3",
-                "test.async4",
-                "test.asyncVal"
-            )
         )
     }
 

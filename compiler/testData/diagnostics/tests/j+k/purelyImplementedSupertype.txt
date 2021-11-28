@@ -1,0 +1,15 @@
+package
+
+public fun test(/*0*/ list: java.util.ArrayList<kotlin.String?>): kotlin.Unit
+public fun testWithMap(/*0*/ map: java.util.concurrent.ConcurrentHashMap<kotlin.Int, kotlin.String>): kotlin.Int
+public fun testWithUtil(/*0*/ map: java.util.concurrent.ConcurrentHashMap<kotlin.Int, kotlin.String>): kotlin.Int
+
+public open class Util {
+    public constructor Util()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun getString(): kotlin.String!
+}

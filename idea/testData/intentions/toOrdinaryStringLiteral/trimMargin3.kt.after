@@ -1,2 +1,0 @@
-// WITH_RUNTIME
-val s = <caret>"\\foo\n \\\\bar"

@@ -8,8 +8,11 @@ package kotlin
 import kotlin.contracts.*
 
 
+@DeprecatedSinceKotlin(warningSince = "1.6")
+@Deprecated("Synchronization on any object is not supported in Kotlin/JS", ReplaceWith("run(block)"))
 @kotlin.internal.InlineOnly
-public actual inline fun <R> synchronized(lock: Any, block: () -> R): R {
+@Suppress("UNUSED_PARAMETER")
+public inline fun <R> synchronized(lock: Any, block: () -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }

@@ -1,3 +1,0 @@
-[NotNull Values]
-13 	println(<bold>p</bold> + 2) (in C.bar(Int))
-13 		println(<bold>p</bold> + 2) (in C.bar(Int))

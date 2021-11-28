@@ -1,9 +1,0 @@
-fun foo() {}
-
-fun test(a: Int) {
-    when (a) {
-        1 -> {
-            /* aaa */ foo() // bbb
-        }
-    }
-}

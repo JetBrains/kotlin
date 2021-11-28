@@ -1,5 +1,5 @@
 class Outer {
     inner class Inner {
-        annotation class TestNestedAnnotation
+        annotation <!NESTED_CLASS_NOT_ALLOWED!>class TestNestedAnnotation<!>
     }
 }

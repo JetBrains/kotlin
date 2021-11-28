@@ -5,251 +5,60 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.components.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
-    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
+    protected val createComponents: (DiagnosticReporter) -> List<AbstractDiagnosticCollectorComponent>,
 ) : SessionHolder {
-    fun collectDiagnostics(firFile: FirFile): List<FirDiagnostic<*>> {
-        if (!componentsInitialized) {
-            throw IllegalStateException("Components are not initialized")
-        }
-        initializeCollector()
-        firFile.accept(visitor, null)
-        return getCollectedDiagnostics()
+    fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: DiagnosticReporter) {
+        val components = createComponents(reporter)
+        val visitor = createVisitor(components)
+        firDeclaration.accept(visitor, null)
     }
 
-    protected abstract fun initializeCollector()
-    protected abstract fun getCollectedDiagnostics(): List<FirDiagnostic<*>>
-    abstract val reporter: DiagnosticReporter
+    protected abstract fun createVisitor(components: List<AbstractDiagnosticCollectorComponent>): CheckerRunningDiagnosticCollectorVisitor
 
-    private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
-    private var componentsInitialized = false
-    private val visitor = Visitor()
+    companion object {
+        const val SUPPRESS_ALL_INFOS = "infos"
+        const val SUPPRESS_ALL_WARNINGS = "warnings"
+        const val SUPPRESS_ALL_ERRORS = "errors"
 
-    @Suppress("LeakingThis")
-    private var context = PersistentCheckerContext(this, returnTypeCalculator)
-    private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+        private val SUPPRESS_NAMES_NAME = Name.identifier("names")
 
-    fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
-        if (componentsInitialized) {
-            throw IllegalStateException()
-        }
-        this.components += components
-        componentsInitialized = true
-    }
+        fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
+            var result: MutableList<String>? = null
 
-    protected open fun beforeCollecting() {}
+            for (annotation in annotationContainer.annotations) {
+                val type = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: continue
+                if (type.lookupTag.classId != StandardClassIds.Annotations.Suppress) continue
+                val argumentValues = annotation.findArgumentByName(SUPPRESS_NAMES_NAME)?.unwrapVarargValue() ?: continue
 
-    private inner class Visitor : FirDefaultVisitor<Unit, Nothing?>() {
-        private fun <T : FirElement> T.runComponents() {
-            components.forEach {
-                beforeCollecting()
-                this.accept(it, context)
-            }
-        }
+                for (argumentValue in argumentValues) {
+                    val value = (argumentValue as? FirConstExpression<*>)?.value as? String ?: continue
 
-        override fun visitElement(element: FirElement, data: Nothing?) {
-            element.runComponents()
-            element.acceptChildren(this, null)
-        }
-
-        private fun visitJump(loopJump: FirLoopJump) {
-            loopJump.runComponents()
-            loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this, null)
-        }
-
-        override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Nothing?) {
-            visitJump(breakExpression)
-        }
-
-        override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Nothing?) {
-            visitJump(continueExpression)
-        }
-
-        private fun visitClassAndChildren(klass: FirClass<*>, type: ConeKotlinType) {
-            val typeRef = buildResolvedTypeRef {
-                this.type = type
-            }
-            visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, typeRef)
-
-        }
-
-        override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
-            visitClassAndChildren(regularClass, regularClass.defaultType())
-        }
-
-        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
-            visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
-        }
-
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
-            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
-        }
-
-        override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
-            visitWithDeclaration(constructor)
-        }
-
-        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
-            val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            visitWithDeclarationAndReceiver(
-                anonymousFunction,
-                labelName,
-                anonymousFunction.receiverTypeRef
-            )
-        }
-
-        override fun visitProperty(property: FirProperty, data: Nothing?) {
-            visitWithDeclaration(property)
-        }
-
-        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
-            if (propertyAccessor !is FirDefaultPropertyAccessor) {
-                val property = context.containingDeclarations.last() as FirProperty
-                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
-            }
-        }
-
-        override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
-            visitWithDeclaration(valueParameter)
-        }
-
-        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
-            visitWithDeclaration(enumEntry)
-        }
-
-        override fun visitFile(file: FirFile, data: Nothing?) {
-            visitWithDeclaration(file)
-        }
-
-        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
-            visitWithDeclaration(anonymousInitializer)
-        }
-
-        override fun visitBlock(block: FirBlock, data: Nothing?) {
-            visitExpression(block, data)
-        }
-
-        override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
-            if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
-                super.visitTypeRef(typeRef, null)
-            }
-        }
-
-        private inline fun visitWithDeclaration(
-            declaration: FirDeclaration,
-            block: () -> Unit = { declaration.acceptChildren(this, null) }
-        ) {
-            if (!currentAction.checkNested) return
-
-            val action = onDeclarationEnter(declaration)
-            if (action.checkCurrentDeclaration) {
-                declaration.runComponents()
-            }
-            withDiagnosticsAction(action) {
-                withDeclaration(declaration) {
-                    block()
+                    if (result == null) {
+                        result = mutableListOf()
+                    }
+                    result.add(value)
                 }
             }
-            onDeclarationExit(declaration)
-        }
 
-        private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverTypeRef: FirTypeRef?) {
-            visitWithDeclaration(declaration) {
-                withLabelAndReceiverType(
-                    labelName,
-                    declaration,
-                    receiverTypeRef?.coneTypeSafe()
-                ) {
-                    declaration.acceptChildren(this, null)
-                }
-            }
+            return result
         }
     }
-
-    protected open fun onDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
-        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
-
-    protected open fun onDeclarationExit(declaration: FirDeclaration) {}
-
-    private inline fun <R> withDeclaration(declaration: FirDeclaration, block: () -> R): R {
-        val existingContext = context
-        context = context.addDeclaration(declaration)
-        try {
-            return block()
-        } finally {
-            context = existingContext
-        }
-    }
-
-    private inline fun <R> withLabelAndReceiverType(
-        labelName: Name?,
-        owner: FirDeclaration,
-        type: ConeKotlinType?,
-        block: () -> R
-    ): R {
-        val (implicitReceiverValue, implicitCompanionValues) = collectImplicitReceivers(type, owner)
-        val existingContext = context
-        implicitCompanionValues.forEach { value ->
-            context = context.addImplicitReceiver(null, value)
-        }
-        implicitReceiverValue?.let {
-            context = context.addImplicitReceiver(labelName, it)
-        }
-        try {
-            return block()
-        } finally {
-            context = existingContext
-        }
-    }
-
-    private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {
-        val oldAction = currentAction
-        currentAction = action
-        return try {
-            block()
-        } finally {
-            currentAction = oldAction
-        }
-    }
-}
-
-enum class DiagnosticCollectorDeclarationAction(val checkCurrentDeclaration: Boolean, val checkNested: Boolean) {
-    CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED(checkCurrentDeclaration = true, checkNested = true),
-    CHECK_CURRENT_DECLARATION_AND_SKIP_NESTED(checkCurrentDeclaration = true, checkNested = false),
-    SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED(checkCurrentDeclaration = false, checkNested = true),
-    SKIP(checkCurrentDeclaration = false, checkNested = false),
-}
-
-fun AbstractDiagnosticCollector.registerAllComponents() {
-    initializeComponents(
-        DeclarationCheckersDiagnosticComponent(this),
-        ExpressionCheckersDiagnosticComponent(this),
-        ErrorNodeDiagnosticCollectorComponent(this),
-        ControlFlowAnalysisDiagnosticComponent(this),
-    )
 }

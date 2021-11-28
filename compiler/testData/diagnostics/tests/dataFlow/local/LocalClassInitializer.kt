@@ -13,4 +13,4 @@ fun f(a: Any?) {
 interface B {
   fun foo() {}
 }
-open class X(<!UNUSED_PARAMETER!>b<!>: B)
+open class X(b: B)

@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // See KT-38106
 // This feature regressed with the fix for KT-22576
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -41,7 +41,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val first2 = readFromParcel<Test>(parcel)
+    val first2 = parcelableCreator<Test>().createFromParcel(parcel)
 
     assert(first.parcelableEnum == ParcelableEnum.THREE)
     assert(first2.parcelableEnum == ParcelableEnum.ONE)

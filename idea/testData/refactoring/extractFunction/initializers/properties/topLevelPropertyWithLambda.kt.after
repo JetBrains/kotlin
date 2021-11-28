@@ -1,5 +1,0 @@
-val a = 1
-val b = 1
-val foo = { i() - 1 }.invoke()
-
-private fun i() = a + b

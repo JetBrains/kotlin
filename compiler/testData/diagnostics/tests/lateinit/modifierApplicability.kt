@@ -20,7 +20,7 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>la
         private set
 
     fun a() {
-        <!UNSUPPORTED_FEATURE!>lateinit<!> var <!UNUSED_VARIABLE!>a<!>: String
+        <!UNSUPPORTED_FEATURE!>lateinit<!> var a: String
     }
 
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e1: V

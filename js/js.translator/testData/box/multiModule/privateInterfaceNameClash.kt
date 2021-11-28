@@ -20,7 +20,7 @@ interface B {
     fun bar() = foo()
 }
 
-// MODULE: main(lib1,lib2)
+// MODULE: main(lib1, lib2)
 // FILE: main.kt
 package main
 

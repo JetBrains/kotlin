@@ -6,7 +6,7 @@ open class A {
 }
 
 class B : A() {
-    override val a = 34
+    override <!VAR_OVERRIDDEN_BY_VAL!>val<!> a = 34
 
     var b : Int
         public get() = 23

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo(arg: Int?): Int {
     var i = arg
     if (i != null && i++ == 5) {
@@ -12,10 +11,10 @@ operator fun Long?.inc() = this?.let { it + 1 }
 fun bar(arg: Long?): Long {
     var i = arg
     if (i++ == 5L) {
-        return i<!INAPPLICABLE_CANDIDATE!>--<!> + i
+        return i<!UNSAFE_CALL!>--<!> <!UNSAFE_OPERATOR_CALL!>+<!> i
     }
     if (i++ == 7L) {
-        return i++ <!NONE_APPLICABLE!>+<!> i
+        return i++ <!UNSAFE_OPERATOR_CALL!>+<!> i
     }
     return 0L
 }

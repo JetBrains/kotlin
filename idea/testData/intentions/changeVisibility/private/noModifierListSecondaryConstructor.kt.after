@@ -1,5 +1,0 @@
-class C {
-    <caret>private constructor() {
-
-    }
-}

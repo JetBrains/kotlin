@@ -1,6 +1,9 @@
+// WITH_STDLIB
 // FILE: 1.kt
 
-inline class A(val x: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class A(val x: String)
 
 fun accessProperty(y: B): A {
     y.a = A("OK")

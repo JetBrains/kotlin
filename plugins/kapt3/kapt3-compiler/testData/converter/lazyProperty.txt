@@ -2,13 +2,17 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
+    private final kotlin.Lazy foo$delegate = null;
     private final kotlin.Lazy bar$delegate = null;
     private final kotlin.Lazy baz$delegate = null;
-    private final kotlin.Lazy foo$delegate = null;
     private final kotlin.Lazy generic1$delegate = null;
 
     public Foo() {
         super();
+    }
+
+    private final java.lang.Runnable getFoo() {
+        return null;
     }
 
     private final java.lang.Object getBar() {
@@ -16,10 +20,6 @@ public final class Foo {
     }
 
     private final java.lang.Object getBaz() {
-        return null;
-    }
-
-    private final java.lang.Runnable getFoo() {
         return null;
     }
 

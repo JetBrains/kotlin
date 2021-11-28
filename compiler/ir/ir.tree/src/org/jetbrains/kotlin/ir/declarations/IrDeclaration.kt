@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
@@ -35,7 +35,7 @@ interface IrMetadataSourceOwner : IrElement {
     var metadata: MetadataSource?
 }
 
-interface IrDeclaration : IrStatement, IrMutableAnnotationContainer {
+interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 
@@ -48,11 +48,9 @@ interface IrDeclaration : IrStatement, IrMutableAnnotationContainer {
 
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
 
-interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration, IrSymbolOwner {
+interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
     override val symbol: S
-}
-
-interface IrOverridableDeclaration<S : IrSymbol> : IrDeclaration {
+    val isFakeOverride: Boolean
     var overriddenSymbols: List<S>
 }
 
@@ -62,6 +60,10 @@ interface IrDeclarationWithVisibility : IrDeclaration {
 
 interface IrDeclarationWithName : IrDeclaration {
     val name: Name
+}
+
+interface IrPossiblyExternalDeclaration : IrDeclarationWithName {
+    val isExternal: Boolean
 }
 
 interface IrOverridableMember : IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {

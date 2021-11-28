@@ -1,5 +1,5 @@
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <reified T> typeOf(): kotlin.reflect.KType
 
 @kotlin.SinceKotlin(version = "1.4")

@@ -21,12 +21,12 @@ fun case1() {
         override var a: Any
             get() = TODO()
             set(value) {}
-        override val b: Any
+        override <!VAR_OVERRIDDEN_BY_VAL!>val<!> b: Any
             get() = TODO()
         override var c: Any
             get() = TODO()
             set(value) {}
-        override val d: Any
+        override <!VAR_OVERRIDDEN_BY_VAL!>val<!> d: Any
             get() = TODO()
 
         override fun foo() {}
@@ -44,7 +44,7 @@ fun case1() {
 * NOTE: property is not implemented
 */
 fun case2() {
-    val impl = object : Base() {
+    val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {
         override var b: Any
             get() = TODO()
             set(value) {}
@@ -71,7 +71,7 @@ fun case2() {
 */
 
 fun case3() {
-    val impl = object : Base() {
+    val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {
         override var b: Any
             get() = TODO()
             set(value) {}

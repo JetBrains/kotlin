@@ -1,0 +1,5 @@
+KT element: KtNameReferenceExpression
+FIR element: FirResolvedQualifierImpl
+
+FIR element rendered:
+Q|A.B|

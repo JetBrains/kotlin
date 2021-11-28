@@ -5,20 +5,18 @@
 
 package org.jetbrains.kotlin.parcelize
 
-import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker.Companion.DEPRECATED_RUNTIME_PACKAGE
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.parcelize.serializers.ParcelSerializer
 import org.jetbrains.kotlin.parcelize.serializers.isParcelable
@@ -33,15 +31,11 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
-val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
-val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
-
 open class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
         private val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
-            FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.canonicalName),
-            @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.canonicalName)
+            FqName("kotlinx.parcelize.IgnoredOnParcel"),
+            FqName("kotlinx.android.parcel.IgnoredOnParcel")
         )
     }
 
@@ -130,7 +124,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         }
 
         for (type in descriptor.defaultType.supertypes()) {
-            if (type.constructor.declarationDescriptor?.fqNameSafe == OLD_PARCELER_FQNAME) {
+            if (type.constructor.declarationDescriptor?.fqNameSafe == OLD_PARCELER_FQN) {
                 val reportElement = declaration.nameIdentifier ?: declaration.getObjectKeyword() ?: declaration
                 diagnosticHolder.report(ErrorsParcelize.DEPRECATED_PARCELER.on(reportElement))
                 break
@@ -154,7 +148,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface())) {
+        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface() && !declaration.isSealed())) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS.on(reportElement))
             return
@@ -167,10 +161,9 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
             }
         }
 
-        val sealedOrAbstract =
-            declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) ?: it.getModifier(KtTokens.SEALED_KEYWORD) }
-        if (sealedOrAbstract != null) {
-            diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract))
+        val abstractModifier = declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) }
+        if (abstractModifier != null) {
+            diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(abstractModifier))
         }
 
         if (declaration is KtClass && declaration.isInner()) {
@@ -184,7 +177,7 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         }
 
         val superTypes = TypeUtils.getAllSupertypes(descriptor.defaultType)
-        if (superTypes.none { it.constructor.declarationDescriptor?.fqNameSafe == ANDROID_PARCELABLE_CLASS_FQNAME }) {
+        if (superTypes.none { it.constructor.declarationDescriptor?.fqNameSafe == PARCELABLE_FQN }) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.report(ErrorsParcelize.NO_PARCELABLE_SUPERTYPE.on(reportElement))
         }
@@ -236,13 +229,13 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         val type = descriptor.type
 
         if (!type.isError && !containerClass.hasCustomParceler()) {
-            val asmType = typeMapper.mapType(type)
+            val asmType = typeMapper.mapType(type, mode = TypeMappingMode.CLASS_DECLARATION)
 
             try {
                 val parcelers = getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)
                 val context = ParcelSerializer.ParcelSerializerContext(
                     typeMapper,
-                    typeMapper.mapType(containerClass.defaultType),
+                    typeMapper.mapClass(containerClass),
                     parcelers,
                     FrameMap()
                 )

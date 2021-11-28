@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,8 +11,8 @@ package kotlin.time
  *
  * The smallest time unit is [NANOSECONDS] and the largest is [DAYS], which corresponds to exactly 24 [HOURS].
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalTime::class)
 public actual enum class DurationUnit {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
@@ -46,5 +46,10 @@ public actual enum class DurationUnit {
 
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
 @SinceKotlin("1.3")
-@ExperimentalTime
-internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double  = TODO("Wasm stdlib: convertDurationUnit")
+internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double = TODO("Wasm stdlib: convertDurationUnit Double")
+
+@SinceKotlin("1.5")
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnitOverflow Long")
+
+@SinceKotlin("1.5")
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnit Long")

@@ -1,10 +1,14 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Augmented(val x: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Augmented(val x: Int) {
     override fun toString(): String = (x + 1).toString()
 }
 
-inline class AsAny(val a: Any) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class AsAny(val a: Any) {
     override fun toString(): String = "AsAny: $a"
 }
 

@@ -105,12 +105,12 @@ public class FunctionReference extends CallableReference implements FunctionBase
         if (obj instanceof FunctionReference) {
             FunctionReference other = (FunctionReference) obj;
 
-            return Intrinsics.areEqual(getOwner(), other.getOwner()) &&
-                   getName().equals(other.getName()) &&
+            return getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
                    flags == other.flags &&
                    arity == other.arity &&
-                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver());
+                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver()) &&
+                   Intrinsics.areEqual(getOwner(), other.getOwner());
         }
         if (obj instanceof KFunction) {
             return obj.equals(compute());

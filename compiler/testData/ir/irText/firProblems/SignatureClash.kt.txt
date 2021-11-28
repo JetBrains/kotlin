@@ -21,7 +21,7 @@ interface Base {
 }
 
 interface Delegate : Base {
-  abstract fun bar() 
+  abstract fun bar()
 
 }
 
@@ -75,4 +75,3 @@ data class DataClass : Derived, Delegate {
   }
 
 }
-

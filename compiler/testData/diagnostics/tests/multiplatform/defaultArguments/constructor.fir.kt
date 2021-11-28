@@ -13,7 +13,7 @@ fun test() {
     Ok(42, "OK")
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class Ok actual constructor(x: Int, y: String)

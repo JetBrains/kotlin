@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
@@ -19,9 +18,9 @@ fun test1(a: (Int) -> Unit) {
 }
 
 fun test2(a: (Int) -> Unit) {
-    test2(<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) {}<!>)
+    test2(<!TYPE_MISMATCH!>fun (<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) {}<!>)
 }
 
 fun test3(a: (Int, String) -> Unit) {
-    test3(<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>)<!> {}<!>)
+    test3(<!TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>)<!> {}<!>)
 }

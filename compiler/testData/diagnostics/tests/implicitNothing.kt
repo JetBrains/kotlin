@@ -14,7 +14,7 @@ fun check() {
     // Error: KT-10449
     fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
     // Unreachable / unused, but not implicit Nothing
-    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> null!!
+    <!UNREACHABLE_CODE!>val x =<!> null!!
 }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
@@ -33,7 +33,7 @@ class Klass {
     fun foo() {
         fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
 
-        <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> y
+        <!UNREACHABLE_CODE!>val x =<!> y
     }
 }
 
@@ -45,7 +45,7 @@ interface Base {
 
 class Derived : Base {
     // Ok for override
-    
+
     override val x = null!!
 
     override fun foo() = null!!

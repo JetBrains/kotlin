@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-5665
 
 @Retention(AnnotationRetention.RUNTIME)

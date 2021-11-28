@@ -1,3 +1,0 @@
-class A(val n: Int) {
-    fun foo(): Int = n + 1
-}

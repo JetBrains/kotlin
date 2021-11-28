@@ -312,9 +312,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             try {
                 KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginName);
                 loadedPlugins.put(pluginName, extension);
-                getLog().debug("Got plugin instance" + pluginName + " of type " + extension.getClass().getName());
+                getLog().debug("Got plugin instance " + pluginName + " of type " + extension.getClass().getName());
             } catch (ComponentLookupException e) {
-                getLog().debug("Unable to get plugin instance" + pluginName);
+                getLog().debug("Unable to get plugin instance " + pluginName);
                 throw new PluginNotFoundException(pluginName, e);
             }
         }
@@ -440,10 +440,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.setLanguageVersion(languageVersion);
         arguments.setApiVersion(apiVersion);
         arguments.setMultiPlatform(multiPlatform);
-
-        if (experimentalCoroutines != null) {
-            arguments.setCoroutinesState(experimentalCoroutines);
-        }
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
 

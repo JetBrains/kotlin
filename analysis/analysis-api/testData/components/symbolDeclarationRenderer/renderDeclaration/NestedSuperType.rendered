@@ -1,0 +1,8 @@
+abstract class My {
+    abstract class NestedOne : My {
+        abstract class NestedTwo : My.NestedOne
+    }
+}
+class Your : My {
+    class NestedThree : My.NestedOne
+}

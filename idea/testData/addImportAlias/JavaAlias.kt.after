@@ -1,5 +1,0 @@
-import java.util.HashMap as HashMap1
-
-fun x() {
-    val list = HashMap1<String, String>()
-}

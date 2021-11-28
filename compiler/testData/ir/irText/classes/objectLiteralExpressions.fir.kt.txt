@@ -3,7 +3,7 @@ interface IFoo {
 
 }
 
-val test1: <no name provided>
+val test1: Any
   field = { // BLOCK
     local class <no name provided> {
       private constructor() /* primary */ {

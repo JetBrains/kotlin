@@ -1,14 +1,17 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// FIR_IDENTICAL
+// !OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI1
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI2
 
 @ExperimentalAPI1
@@ -26,12 +29,12 @@ import api.*
 
 fun use() {
     compilation()
-    <!EXPERIMENTAL_API_USAGE!>runtime<!>()
+    <!OPT_IN_USAGE!>runtime<!>()
 }
 
 class Use {
     fun use() {
         compilation()
-        <!EXPERIMENTAL_API_USAGE!>runtime<!>()
+        <!OPT_IN_USAGE!>runtime<!>()
     }
 }

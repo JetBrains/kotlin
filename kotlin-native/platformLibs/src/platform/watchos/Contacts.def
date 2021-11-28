@@ -1,0 +1,7 @@
+depends = CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.Contacts
+modules = Contacts
+
+compilerOpts = -framework Contacts
+linkerOpts = -framework Contacts

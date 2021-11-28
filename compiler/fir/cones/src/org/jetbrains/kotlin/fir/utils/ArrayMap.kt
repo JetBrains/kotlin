@@ -14,9 +14,6 @@ sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract fun copy(): ArrayMap<T>
 }
 
-fun ArrayMap<*>.isEmpty(): Boolean = size == 0
-fun ArrayMap<*>.isNotEmpty(): Boolean = size != 0
-
 internal object EmptyArrayMap : ArrayMap<Nothing>() {
     override val size: Int
         get() = 0
@@ -75,16 +72,17 @@ internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : Array
 }
 
 internal class ArrayMapImpl<T : Any> private constructor(
-    private var data: Array<Any?>
+    private var data: Array<Any?>,
+    initialSize: Int
 ) : ArrayMap<T>() {
     companion object {
         private const val DEFAULT_SIZE = 20
         private const val INCREASE_K = 2
     }
 
-    constructor() : this(arrayOfNulls<Any>(DEFAULT_SIZE))
+    constructor() : this(arrayOfNulls<Any>(DEFAULT_SIZE), 0)
 
-    override var size: Int = 0
+    override var size: Int = initialSize
         private set
 
 
@@ -107,7 +105,7 @@ internal class ArrayMapImpl<T : Any> private constructor(
         return data.getOrNull(index) as T?
     }
 
-    override fun copy(): ArrayMap<T> = ArrayMapImpl(data.copyOf())
+    override fun copy(): ArrayMap<T> = ArrayMapImpl(data.copyOf(), size)
 
     override fun iterator(): Iterator<T> {
         return object : AbstractIterator<T>() {

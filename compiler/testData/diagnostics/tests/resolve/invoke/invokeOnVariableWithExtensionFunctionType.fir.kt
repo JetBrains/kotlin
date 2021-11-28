@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: 1.kt
 package fooIsExtension
 
@@ -8,7 +7,7 @@ class B
 val A.foo: B.() -> Unit get() = {}
 
 fun test(a: A, b: B) {
-    b.<!UNRESOLVED_REFERENCE!>(a.foo)()<!>
+    b.(<!UNRESOLVED_REFERENCE!>a.foo<!>)()
     (a.foo)(b)
     a.foo(b)
 
@@ -17,15 +16,15 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        <!INAPPLICABLE_CANDIDATE!>(b.<!INAPPLICABLE_CANDIDATE!>foo<!>)()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>(b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)()<!>
 
         foo(b)
         (foo)(b)
     }
 
     with(b) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
+        a.foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
+        a.(foo)(<!NO_VALUE_FOR_PARAMETER!>)<!>
 
         (a.foo)()
 
@@ -41,7 +40,7 @@ fun test(a: A, b: B) {
     }
 }
 
-// FILE: 1.kt
+// FILE: 2.kt
 package fooIsMember
 
 class A {
@@ -50,7 +49,7 @@ class A {
 class B
 
 fun test(a: A, b: B) {
-    b.<!UNRESOLVED_REFERENCE!>(a.foo)()<!>
+    b.(<!UNRESOLVED_REFERENCE!>a.foo<!>)()
     (a.foo)(b)
     a.foo(b)
 
@@ -59,15 +58,15 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        <!UNRESOLVED_REFERENCE!>(b.<!UNRESOLVED_REFERENCE!>foo<!>)()<!>
+        (<!UNRESOLVED_REFERENCE!>b.<!FUNCTION_CALL_EXPECTED!>foo<!><!>)()
 
         foo(b)
         (foo)(b)
     }
 
     with(b) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
+        a.foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
+        a.(foo)(<!NO_VALUE_FOR_PARAMETER!>)<!>
 
         (a.foo)()
 

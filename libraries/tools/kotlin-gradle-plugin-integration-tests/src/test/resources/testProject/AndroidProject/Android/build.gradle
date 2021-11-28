@@ -1,7 +1,9 @@
 import org.gradle.util.VersionNumber
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
 
 android {
     compileSdkVersion 22
@@ -58,11 +60,11 @@ if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alph
 }
 else {
     dependencies {
-        compile project(":Lib")
+        implementation project(":Lib")
     }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testCompile 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation'junit:junit:4.13.2'
 }

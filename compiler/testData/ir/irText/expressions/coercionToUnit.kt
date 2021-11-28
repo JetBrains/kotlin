@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // +JDK
 
 val test1: () -> Unit = { 42 }

@@ -5,7 +5,7 @@ plugins {
 repositories {
     mavenLocal()
     maven("../repo")
-    jcenter()
+    mavenCentral()
 }
 
 group = "com.example.app"

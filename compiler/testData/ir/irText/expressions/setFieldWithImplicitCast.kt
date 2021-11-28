@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: Derived.kt
 // IR_FILE: setFieldWithImplicitCast.txt
 class Derived : Base() {

@@ -35,6 +35,8 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     }
 
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
+        AbstractList.checkPositionIndex(index, size)
+
         checkIsMutable()
         var _index = index
         var changed = false

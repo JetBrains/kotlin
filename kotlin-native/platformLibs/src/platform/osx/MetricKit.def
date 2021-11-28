@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.MetricKit
+modules = MetricKit
+
+compilerOpts = -framework MetricKit
+linkerOpts = -framework MetricKit

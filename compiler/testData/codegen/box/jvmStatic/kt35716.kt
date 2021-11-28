@@ -1,7 +1,7 @@
 // JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Test.java
 
 class Test {

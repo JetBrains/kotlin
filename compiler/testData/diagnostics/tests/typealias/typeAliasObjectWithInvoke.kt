@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
 object ObjectWithInvoke {

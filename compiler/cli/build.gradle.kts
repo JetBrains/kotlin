@@ -4,33 +4,36 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli-common"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:backend-common"))
-    compile(project(":compiler:backend"))
-    compile(project(":compiler:backend.jvm"))
-    compile(project(":compiler:ir.backend.common"))
-    compile(project(":compiler:light-classes"))
-    compile(project(":compiler:serialization"))
-    compile(project(":compiler:plugin-api"))
-    compile(project(":compiler:javac-wrapper"))
-    compile(project(":js:js.translator"))
-    compile(project(":native:frontend.native"))
-    compile(commonDep("org.fusesource.jansi", "jansi"))
-    compile(commonDep("org.jline", "jline"))
-    compile(project(":compiler:fir:raw-fir:psi2fir"))
-    compile(project(":compiler:fir:resolve"))
-    compile(project(":compiler:fir:jvm"))
-    compile(project(":compiler:fir:java"))
+    api(project(":compiler:util"))
+    api(project(":compiler:cli-common"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:frontend.java"))
+    api(project(":compiler:frontend:cfg"))
+    api(project(":compiler:backend-common"))
+    api(project(":compiler:backend"))
+    api(project(":compiler:backend.jvm"))
+    implementation(project(":compiler:backend.jvm.entrypoint"))
+    api(project(":compiler:ir.backend.common"))
+    api(project(":compiler:light-classes"))
+    api(project(":compiler:serialization"))
+    api(project(":compiler:plugin-api"))
+    api(project(":compiler:javac-wrapper"))
+    api(project(":js:js.translator"))
+    api(project(":native:frontend.native"))
+    api(commonDep("org.fusesource.jansi", "jansi"))
+    api(commonDep("org.jline", "jline"))
+    api(project(":compiler:fir:raw-fir:psi2fir"))
+    api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
+    api(project(":compiler:fir:java"))
     implementation(project(":compiler:fir:entrypoint"))
-    compile(project(":compiler:fir:fir2ir"))
-    compile(project(":compiler:fir:fir2ir:jvm-backend"))
-    compile(project(":compiler:fir:checkers"))
-    compile(project(":kotlin-util-klib"))
-    compile(project(":kotlin-util-io"))
-    compile(project(":compiler:ir.serialization.common"))
+    api(project(":compiler:fir:fir2ir"))
+    api(project(":compiler:fir:fir2ir:jvm-backend"))
+    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.jvm"))
+    api(project(":kotlin-util-klib"))
+    api(project(":kotlin-util-io"))
 
     // TODO: as soon as cli-jvm is extracted out of this module, move this dependency there
     compileOnly(project(":compiler:ir.tree.impl"))
@@ -39,10 +42,10 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:cli"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("junit:junit"))
 }
 
 sourceSets {
@@ -55,9 +58,11 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs += "-Xskip-prerelease-check"
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+        freeCompilerArgs = freeCompilerArgs - "-progressive" + listOf(
+            "-Xskip-prerelease-check", "-Xsuppress-version-warnings", "-Xuse-mixed-named-arguments", "-Xnew-inference"
+        )
     }
 }
 

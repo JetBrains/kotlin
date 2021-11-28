@@ -53,7 +53,7 @@ class ExternalEnumUsagesLowering(val context: JsIrBackendContext) : BodyLowering
             it.parent = irClass
 
             // TODO need a way to emerge local declarations from BodyLoweringPass
-            stageController.unrestrictDeclarationListsAccess {
+            context.irFactory.stageController.unrestrictDeclarationListsAccess {
                 irClass.declarations += it
             }
         }

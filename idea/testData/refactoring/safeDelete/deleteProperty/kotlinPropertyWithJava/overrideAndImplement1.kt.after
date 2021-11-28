@@ -1,6 +1,0 @@
-open class A {
-}
-
-interface Z {
-    public val foo: String
-}

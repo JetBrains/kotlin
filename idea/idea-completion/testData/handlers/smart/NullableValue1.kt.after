@@ -1,7 +1,0 @@
-fun foo(s: String, c: Char){ }
-
-fun bar(sss: String?) {
-    foo(sss!!, <caret>)
-}
-
-// ELEMENT_TEXT: "!! sss"

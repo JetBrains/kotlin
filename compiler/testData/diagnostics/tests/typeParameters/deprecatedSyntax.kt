@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo<!DEPRECATED_TYPE_PARAMETER_SYNTAX!><T><!>() {
     fun bar<!DEPRECATED_TYPE_PARAMETER_SYNTAX!><T><!>() {}
 }

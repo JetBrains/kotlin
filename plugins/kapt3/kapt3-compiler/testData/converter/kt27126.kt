@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:Suppress("NOTHING_TO_INLINE")
 package test

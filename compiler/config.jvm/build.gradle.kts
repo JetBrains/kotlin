@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:config"))
-    api(project(":core:descriptors.jvm"))
+    api(project(":core:compiler.common.jvm"))
     compileOnly(intellijCoreDep()) { includeJars("asm-all", rootProject = rootProject) }
 }
 

@@ -10,14 +10,14 @@ public final class A {
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final A f1(@org.jetbrains.annotations.NotNull()
-    A a, @org.jetbrains.annotations.NotNull()
-    A.B b) {
+    public final A getX() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final A getX() {
+    public final A f1(@org.jetbrains.annotations.NotNull()
+    A a, @org.jetbrains.annotations.NotNull()
+    A.B b) {
         return null;
     }
 

@@ -202,11 +202,19 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
         @JvmField
         val IS_EXPECT = Flag(F.IS_EXPECT_CLASS)
 
+        @JvmField
+        @Deprecated(
+            "Use IS_VALUE instead, which returns true if the class is either a pre-1.5 inline class, or a 1.5+ value class.",
+            level = DeprecationLevel.ERROR
+        )
+        @Suppress("unused")
+        val IS_INLINE = Flag(F.IS_INLINE_CLASS)
+
         /**
-         * Signifies that the corresponding class is `inline`.
+         * Signifies that the corresponding class is either a pre-Kotlin-1.5 `inline` class, or a 1.5+ `value` class.
          */
         @JvmField
-        val IS_INLINE = Flag(F.IS_INLINE_CLASS)
+        val IS_VALUE = Flag(F.IS_INLINE_CLASS)
 
         /**
          * Signifies that the corresponding class is a functional interface, i.e. marked with the keyword `fun`.

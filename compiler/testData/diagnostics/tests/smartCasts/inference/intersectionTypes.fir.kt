@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 package a
@@ -30,9 +29,9 @@ fun test(a: A, b: B, c: C) {
 
         val k = three(a, b, c)
         checkSubtype<A>(k)
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><B>(k)
-        val l: Int = three(a, b, c)
-        
+        checkSubtype<B>(<!ARGUMENT_TYPE_MISMATCH!>k<!>)
+        val l: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>three(a, b, c)<!>
+
         use(d, e, f, g, h, k, l)
     }
 }
@@ -41,11 +40,11 @@ fun <T> foo(t: T, l: MutableList<T>): T = t
 
 fun testErrorMessages(a: A, ml: MutableList<String>) {
     if (a is B && a is C) {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(a, ml)
+        foo(a, <!ARGUMENT_TYPE_MISMATCH!>ml<!>)
     }
 
     if(a is C) {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(a, ml)
+        foo(a, <!ARGUMENT_TYPE_MISMATCH!>ml<!>)
     }
 }
 
@@ -53,7 +52,7 @@ fun rr(s: String?) {
     if (s != null) {
         val l = arrayListOf("", s)
         checkSubtype<MutableList<String>>(l)
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><MutableList<String?>>(l)
+        checkSubtype<MutableList<String?>>(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
     }
 }
 

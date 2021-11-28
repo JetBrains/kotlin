@@ -22,7 +22,7 @@ fun box(): String {
     try {
         callback()
     } catch (e: Exception) {
-        assertTrue(e === exception)
+        if (e !== exception) return "Fail"
     }
 
     return "OK"

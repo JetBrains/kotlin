@@ -33,7 +33,7 @@ fun f() {
     A().Inner()
     A.Companion.<!UNRESOLVED_REFERENCE!>Nested<!>
     A.Companion.<!UNRESOLVED_REFERENCE!>Inner<!>
-    A.Inner
+    A.<!NO_COMPANION_OBJECT!>Inner<!>
     A.Companion.c
     A.Companion.Obj2
     A.Companion.Obj2.c
@@ -43,7 +43,7 @@ fun f() {
     A.Obj
     A.Companion.Obj2
     A.<!UNRESOLVED_REFERENCE!>Obj2<!>
-    A.<!UNRESOLVED_REFERENCE!>Obj2<!>.<!UNRESOLVED_REFERENCE!>c<!>
+    A.<!UNRESOLVED_REFERENCE!>Obj2<!>.c
     A.<!UNRESOLVED_REFERENCE!>Nested2<!>
 
     O.O

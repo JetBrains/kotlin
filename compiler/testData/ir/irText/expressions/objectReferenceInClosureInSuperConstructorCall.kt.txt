@@ -22,4 +22,3 @@ object Test : Base {
   }
 
 }
-

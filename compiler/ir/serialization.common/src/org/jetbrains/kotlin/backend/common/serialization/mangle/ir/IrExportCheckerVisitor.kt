@@ -17,62 +17,124 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-abstract class IrExportCheckerVisitor : IrElementVisitor<Boolean, Nothing?>, KotlinExportChecker<IrDeclaration> {
+abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : KotlinExportChecker<IrDeclaration> {
 
+    private val compatibleChecker = CompatibleChecker()
+    private val checker = Checker()
+
+    /**
+     * @return true if [declaration] is exportable from klib point of view.
+     * Depending on [compatibleMode] option the same declaration could have FileLocal or Common signature.
+     */
     override fun check(declaration: IrDeclaration, type: SpecialDeclarationType): Boolean {
-        return declaration.accept(this, null)
+        return declaration.accept(if (compatibleMode) compatibleChecker else checker, null)
     }
 
     abstract override fun IrDeclaration.isPlatformSpecificExported(): Boolean
 
-    private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: DescriptorVisibility?): Boolean {
-        val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
+    /**
+     * Corresponding to export policy of klib ABI >= 1.6.0.
+     * In that case any non-local declaration (including type parameter and field) is exportable and could be navigated between modules
+     */
+    private class Checker : IrElementVisitor<Boolean, Nothing?> {
+        override fun visitElement(element: IrElement, data: Nothing?): Boolean {
+            error("Should bot reach here ${element.render()}")
+        }
 
-        val selfExported = speciallyExported || visibility == null || visibility.isPubliclyVisible()
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): Boolean {
+            val visibility = (declaration as? IrDeclarationWithVisibility)?.visibility
 
-        return selfExported && parent.accept(this@IrExportCheckerVisitor, null)
+            if (visibility == DescriptorVisibilities.LOCAL)
+                return false
+
+            return declaration.parent.accept(this, data)
+        }
+
+        override fun visitClass(declaration: IrClass, data: Nothing?): Boolean {
+            if (declaration.name.isAnonymous) return false
+            return super.visitClass(declaration, data)
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): Boolean {
+            if (declaration.name.isAnonymous) return false
+            return super.visitSimpleFunction(declaration, data)
+        }
+
+        override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): Boolean = true
+
+        override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): Boolean = false
+
+        override fun visitVariable(declaration: IrVariable, data: Nothing?): Boolean = false
+
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): Boolean = false
+
+        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): Boolean = false
+
+        override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = false
     }
 
-    private fun DescriptorVisibility.isPubliclyVisible(): Boolean = isPublicAPI || this === DescriptorVisibilities.INTERNAL
+    /**
+     * Was using for klib ABI version <= 1.5.0. In that case declaration which has itself or in their hierarchy private or local parent
+     * is considered non-exportable.
+     *
+     * Also type parameters and fields are not exportable.
+     *
+     * Is used to link libraries with ABI level <= 1.5.0
+     */
+    private inner class CompatibleChecker : IrElementVisitor<Boolean, Nothing?> {
+        private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: DescriptorVisibility?): Boolean {
+            val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
 
-    override fun visitElement(element: IrElement, data: Nothing?): Boolean = error("Should bot reach here ${element.render()}")
+            val selfExported = speciallyExported || visibility == null || visibility.isPubliclyVisible()
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?) = declaration.run { isExported(annotations, null) }
+            return selfExported && parent.accept(this@CompatibleChecker, null)
+        }
 
-    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = false
-    override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = false
-    override fun visitVariable(declaration: IrVariable, data: Nothing?) = false
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = false
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = false
+        private fun DescriptorVisibility.isPubliclyVisible(): Boolean = isPublicAPI || this === DescriptorVisibilities.INTERNAL
 
-    override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?) = false
+        override fun visitElement(element: IrElement, data: Nothing?): Boolean = error("Should bot reach here ${element.render()}")
 
-    override fun visitField(declaration: IrField, data: Nothing?) = false
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?) = declaration.run { isExported(annotations, null) }
 
-    override fun visitProperty(declaration: IrProperty, data: Nothing?): Boolean {
-        return declaration.run { isExported(annotations, visibility) }
-    }
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = false
+        override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = false
+        override fun visitVariable(declaration: IrVariable, data: Nothing?) = false
+        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = false
+        override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = false
 
-    override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): Boolean = true
+        override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?) = false
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): Boolean =
-        if (declaration.parent is IrPackageFragment) true
-        else declaration.run { isExported(annotations, visibility) }
+        override fun visitField(declaration: IrField, data: Nothing?) = false
 
-    override fun visitClass(declaration: IrClass, data: Nothing?): Boolean {
-        if (declaration.name == SpecialNames.NO_NAME_PROVIDED) return false
-        return declaration.run { isExported(annotations, visibility) }
-    }
+        override fun visitProperty(declaration: IrProperty, data: Nothing?): Boolean {
+            return declaration.run { isExported(annotations, visibility) }
+        }
 
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): Boolean {
-        val klass = declaration.constructedClass
-        return if (klass.kind.isSingleton) klass.accept(this, null) else declaration.run { isExported(annotations, visibility) }
-    }
+        override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): Boolean = true
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): Boolean {
-        val annotations = declaration.run { correspondingPropertySymbol?.owner?.annotations ?: annotations }
-        return declaration.run { isExported(annotations, visibility) }
+        override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): Boolean =
+            if (declaration.parent is IrPackageFragment) true
+            else declaration.run { isExported(annotations, visibility) }
+
+        override fun visitClass(declaration: IrClass, data: Nothing?): Boolean {
+            if (declaration.name == SpecialNames.NO_NAME_PROVIDED) return false
+            return declaration.run { isExported(annotations, visibility) }
+        }
+
+        override fun visitConstructor(declaration: IrConstructor, data: Nothing?): Boolean {
+            val klass = declaration.constructedClass
+            return if (klass.kind.isSingleton) klass.accept(this, null) else declaration.run { isExported(annotations, visibility) }
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): Boolean {
+            val annotations = declaration.run { correspondingPropertySymbol?.owner?.annotations ?: annotations }
+            return declaration.run { isExported(annotations, visibility) }
+        }
     }
 }
+
+val Name.isAnonymous: Boolean
+    get() = isSpecial && (this == SpecialNames.ANONYMOUS || this == SpecialNames.NO_NAME_PROVIDED)

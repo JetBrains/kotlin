@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import java.util.concurrent.ConcurrentHashMap
 
 
 class BuilderFactoryForDuplicateClassNameDiagnostics(
@@ -29,7 +30,7 @@ class BuilderFactoryForDuplicateClassNameDiagnostics(
         private val diagnostics: DiagnosticSink
 ) : ClassNameCollectionClassBuilderFactory(builderFactory) {
 
-    private val className = hashMapOf<String, JvmDeclarationOrigin> ()
+    private val className = ConcurrentHashMap<String, JvmDeclarationOrigin>()
 
     override fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin) {
         val another = className.getOrPut(internalName, { origin })

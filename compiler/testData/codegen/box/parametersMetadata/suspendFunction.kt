@@ -1,8 +1,8 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.PARAMETERS_METADATA
+// PARAMETERS_METADATA
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
+
+
+dependencies {
+    testApi "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testApi "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testApi group: 'junit', name: 'junit', version: '4.12'
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}
+
+[compileKotlin, compileTestKotlin]*.configure {
+    kotlinOptions {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.jetbrains.qa.combompp'
+            artifactId 'api-jvm'
+            version publishing_version
+            from components.java
+        }
+    }
+}

@@ -18,13 +18,17 @@ package org.jetbrains.kotlin.incremental.storage
 
 import java.io.File
 
-internal class LookupMap(storage: File) : BasicMap<LookupSymbolKey, Collection<Int>>(storage, LookupSymbolKeyDescriptor, IntCollectionExternalizer) {
+class LookupMap(storage: File) : BasicMap<LookupSymbolKey, Collection<Int>>(storage, LookupSymbolKeyDescriptor, IntCollectionExternalizer) {
     override fun dumpKey(key: LookupSymbolKey): String = key.toString()
 
     override fun dumpValue(value: Collection<Int>): String = value.toString()
 
     fun add(name: String, scope: String, fileId: Int) {
         storage.append(LookupSymbolKey(name, scope), listOf(fileId))
+    }
+
+    fun append(lookup: LookupSymbolKey, fileIds: Collection<Int>) {
+        storage.append(lookup, fileIds)
     }
 
     operator fun get(key: LookupSymbolKey): Collection<Int>? = storage[key]

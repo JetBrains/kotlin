@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -27,14 +26,14 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 
 private class KtUltraLightFieldModifierList(
-    private val support: KtUltraLightSupport,
+    support: KtUltraLightSupport,
     private val declaration: KtNamedDeclaration,
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
     private val modifiers: Set<String>,
@@ -67,6 +66,9 @@ internal class KtUltraLightFieldForSourceDeclaration(
 ) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers),
     KtLightFieldForSourceDeclarationSupport {
 
+    private val lightIdentifier = KtLightIdentifier(this, declaration)
+
+    override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
     override fun getText(): String? = kotlinOrigin.text
     override fun getTextRange(): TextRange = kotlinOrigin.textRange
     override fun getTextOffset(): Int = kotlinOrigin.textOffset
@@ -111,9 +113,8 @@ internal open class KtUltraLightFieldImpl protected constructor(
     private val kotlinType: KotlinType?
         get() = when {
             declaration is KtProperty && declaration.hasDelegate() ->
-                (variableDescriptor as? PropertyDescriptor)?.let {
-                    val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
-                    PropertyCodegen.getDelegateTypeForProperty(it, context)
+                declaration.delegateExpression?.let {
+                    LightClassGenerationSupport.getInstance(project).analyze(it).getType(it)
                 }
             declaration is KtObjectDeclaration ->
                 (declaration.resolve() as? ClassDescriptor)?.defaultType

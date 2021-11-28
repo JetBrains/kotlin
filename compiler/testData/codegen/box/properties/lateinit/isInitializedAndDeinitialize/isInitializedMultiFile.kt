@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // On JVM, isInitialized on a property from another file is forbidden because lateinit-ness is not included in the an ABI of a property.
 // IGNORE_BACKEND: JVM, JVM_IR

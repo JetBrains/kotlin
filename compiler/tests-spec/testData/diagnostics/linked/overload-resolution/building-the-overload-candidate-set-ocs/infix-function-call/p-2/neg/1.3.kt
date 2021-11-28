@@ -15,14 +15,14 @@
  * DESCRIPTION: Explicitly imported infix extension callables
  */
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
 operator fun CharSequence.contains(regex: Regex): Boolean {
     println("my contains")
     return true
 }
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 
 package sentence3
 

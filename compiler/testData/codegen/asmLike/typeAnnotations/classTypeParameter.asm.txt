@@ -1,0 +1,136 @@
+<T:Lfoo/SimpleClass;>Ljava/lang/Object;
+public final class foo/ClassBound : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Class"]) : CLASS_TYPE_PARAMETER_BOUND 0, 0, null
+
+    public void <init>()
+
+    (TT;)TT;
+    public final foo.SimpleClass test(foo.SimpleClass p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<T:Lfoo/GenericClass<Lfoo/SimpleClass;>;>Ljava/lang/Object;
+public final class foo/ClassBoundGeneric : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Class"]) : CLASS_TYPE_PARAMETER_BOUND 0, 0, null
+  @Lfoo/TypeAnn;([name="SimpleClass"]) : CLASS_TYPE_PARAMETER_BOUND 0, 0, 0;
+
+    public void <init>()
+
+    (TT;)TT;
+    public final foo.GenericClass test(foo.GenericClass p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<T:Lfoo/SimpleClass;:Lfoo/SimpleInterface;:Lfoo/SimpleInterface2;>Ljava/lang/Object;
+public final class foo/ClassInterfaceBound : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Class"]) : CLASS_TYPE_PARAMETER_BOUND 0, 0, null
+  @Lfoo/TypeAnn;([name="Interface"]) : CLASS_TYPE_PARAMETER_BOUND 0, 1, null
+  @Lfoo/TypeAnn;([name="Interface2"]) : CLASS_TYPE_PARAMETER_BOUND 0, 2, null
+
+    public void <init>()
+
+    (TT;)TT;
+    public final foo.SimpleClass test(foo.SimpleClass p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<Z:Ljava/lang/Object;>Ljava/lang/Object;
+public class foo/GenericClass : java/lang/Object {
+    public void <init>()
+}
+
+<Z:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/GenericInterface : java/lang/Object {
+
+}
+
+<T::Lfoo/SimpleInterface;>Ljava/lang/Object;
+public final class foo/InterfaceBound : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Interface"]) : CLASS_TYPE_PARAMETER_BOUND 0, 1, null
+
+    public void <init>()
+
+    (TT;)TT;
+    public final foo.SimpleInterface test(foo.SimpleInterface p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<T::Lfoo/GenericInterface<Lfoo/SimpleInterface;>;>Ljava/lang/Object;
+public final class foo/InterfaceBoundGeneric : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Interface"]) : CLASS_TYPE_PARAMETER_BOUND 0, 1, null
+  @Lfoo/TypeAnn;([name="SimpleInterface"]) : CLASS_TYPE_PARAMETER_BOUND 0, 1, 0;
+
+    public void <init>()
+
+    (TT;)TT;
+    public final foo.GenericInterface test(foo.GenericInterface p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<T:Lfoo/SimpleClass;:Lfoo/SimpleInterface;:Lfoo/SimpleInterface2;>Ljava/lang/Object;
+public final class foo/InterfaceClassBound : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Interface"]) : CLASS_TYPE_PARAMETER_BOUND 0, 1, null
+  @Lfoo/TypeAnn;([name="Class"]) : CLASS_TYPE_PARAMETER_BOUND 0, 0, null
+  @Lfoo/TypeAnn;([name="Interface2"]) : CLASS_TYPE_PARAMETER_BOUND 0, 2, null
+
+    public void <init>()
+
+    (TT;)TT;
+    public final foo.SimpleClass test(foo.SimpleClass p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/Simple : java/lang/Object {
+  @Lfoo/TypeParameterAnn;([name="T"]) : CLASS_TYPE_PARAMETER 0, null
+  @Lfoo/TypeParameterAnnBinary;([]) : CLASS_TYPE_PARAMETER 0, null // invisible
+
+    public void <init>()
+
+    (TT;)TT;
+    public final java.lang.Object test(java.lang.Object p)
+}
+
+public class foo/SimpleClass : java/lang/Object {
+    public void <init>()
+}
+
+public abstract interface foo/SimpleInterface : java/lang/Object {
+
+}
+
+public abstract interface foo/SimpleInterface2 : java/lang/Object {
+
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+<Y:Ljava/lang/Object;T::TY;>Ljava/lang/Object;
+public final class foo/TypeBound : java/lang/Object {
+  @Lfoo/TypeAnn;([name="Y"]) : CLASS_TYPE_PARAMETER_BOUND 1, 0, null
+
+    public void <init>()
+
+    (TT;)TT;
+    public final java.lang.Object test(java.lang.Object p)
+}
+
+public abstract interface foo/TypeParameterAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeParameterAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeParameterAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}

@@ -41,11 +41,18 @@ class LazyJavaPackageFragmentProvider(
         }
     }
 
+    @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
     override fun getPackageFragments(fqName: FqName) = listOfNotNull(getPackageFragment(fqName))
 
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =
         packageFragments.addIfNotNull(getPackageFragment(fqName))
 
+    override fun isEmpty(fqName: FqName): Boolean {
+        return c.components.finder.findPackage(fqName) == null
+    }
+
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
         getPackageFragment(fqName)?.getSubPackageFqNames().orEmpty()
+
+    override fun toString(): String = "LazyJavaPackageFragmentProvider of module ${c.components.module}"
 }

@@ -8,6 +8,6 @@ interface B {
     fun bar()
 }
 
-interface C1 : A, B {
+<!CONFLICTING_INHERITED_MEMBERS!>interface C1<!> : A, B {
     override fun bar()
 }

@@ -5,7 +5,7 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 }
 
 @kotlin.Metadata
-synthetic final class<Ljava/lang/Object;LSam<Ljava/lang/String;>;Lkotlin/jvm/internal/FunctionAdapter;>  TKt$specializedSam$1 {
+synthetic final class<null>  TKt$specializedSam$1 {
     // source: 't.kt'
     public final @org.jetbrains.annotations.NotNull <()Lkotlin/Function<*>;> method getFunctionDelegate(): kotlin.Function
     static <null> method <clinit>(): void

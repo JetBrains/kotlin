@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // FILE: A.java
 public class A {
@@ -13,9 +13,9 @@ fun <T: Any> exclExcl(t: T?): T = t!!
 fun test11() {
     // not 'String!'
     exclExcl(A.foo()) checkType { _<String>() }
-    exclExcl(A.foo()) checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String?>() }
+    exclExcl(A.foo()) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String?>() }
 
     // not 'String!'
     A.foo()!! checkType { _<String>() }
-    A.foo()!! checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String?>() }
+    A.foo()!! checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String?>() }
 }

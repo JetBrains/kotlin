@@ -1,0 +1,2 @@
+expression: { /* SAM */ }
+expected type: java/lang/Runnable

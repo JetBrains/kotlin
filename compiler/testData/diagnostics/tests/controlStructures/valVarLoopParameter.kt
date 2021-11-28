@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Pair {
     operator fun component1(): Int = null!!
     operator fun component2(): Int = null!!
@@ -22,11 +23,11 @@ fun f() {
 
     }
 
-    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>val<!> (<!UNUSED_VARIABLE!>i<!>,<!UNUSED_VARIABLE!>j<!>) in Coll()) {
+    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>val<!> (i,j) in Coll()) {
 
     }
 
-    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>var<!> (<!UNUSED_VARIABLE!>i<!>,<!UNUSED_VARIABLE!>j<!>) in Coll()) {
+    for (<!VAL_OR_VAR_ON_LOOP_PARAMETER!>var<!> (i,j) in Coll()) {
 
     }
 }

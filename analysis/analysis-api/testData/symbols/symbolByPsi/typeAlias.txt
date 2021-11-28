@@ -1,0 +1,55 @@
+KtTypeParameterSymbol:
+  isReified: false
+  name: T
+  origin: SOURCE
+  upperBounds: [
+    kotlin/Any?
+  ]
+  variance: INVARIANT
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: X
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: X
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  visibility: Public
+  deprecationStatus: null
+
+KtTypeParameterSymbol:
+  isReified: false
+  name: Z
+  origin: SOURCE
+  upperBounds: [
+    kotlin/Any?
+  ]
+  variance: INVARIANT
+  deprecationStatus: null
+
+KtTypeAliasSymbol:
+  annotationsList: []
+  classIdIfNonLocal: Y
+  expandedType: X<Z>
+  name: Y
+  origin: SOURCE
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(Z)
+  ]
+  visibility: Private
+  deprecationStatus: null

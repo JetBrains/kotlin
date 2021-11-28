@@ -33,19 +33,25 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-import java.util.*
 
 class RedundantBoxingMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
 
     override fun transform(internalClassName: String, node: MethodNode) {
+        val insns = node.instructions.toArray()
+        if (insns.none { it.isBoxing(generationState) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
+            return
+
         val interpreter = RedundantBoxingInterpreter(node.instructions, generationState)
-        val frames = MethodTransformer.analyze(internalClassName, node, interpreter)
+        val frames = analyze(internalClassName, node, interpreter)
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
 
         val valuesToOptimize = interpreter.candidatesBoxedValues
 
         if (!valuesToOptimize.isEmpty) {
+            // has side effect on valuesToOptimize
+            removeValuesFromTaintedProgressionIterators(valuesToOptimize)
+
             // has side effect on valuesToOptimize and frames, containing BoxedBasicValues that are unsafe to remove
             removeValuesClashingWithVariables(valuesToOptimize, node, frames)
 
@@ -82,7 +88,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun removeValuesClashingWithVariables(
         values: RedundantBoxedValuesCollection,
         node: MethodNode,
-        frames: Array<Frame<BasicValue>>
+        frames: Array<Frame<BasicValue>?>
     ) {
         while (removeValuesClashingWithVariablesPass(values, node, frames)) {
             // do nothing
@@ -122,16 +128,25 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
         return needToRepeat
     }
 
+    private fun removeValuesFromTaintedProgressionIterators(valuesToOptimize: RedundantBoxedValuesCollection) {
+        for (descriptor in valuesToOptimize.toList()) {
+            val progressionIterator = descriptor?.progressionIterator ?: continue
+            if (progressionIterator.tainted) {
+                valuesToOptimize.remove(descriptor)
+            }
+        }
+    }
+
     private fun isUnsafeToRemoveBoxingForConnectedValues(usedValues: List<BasicValue>, unboxedType: Type): Boolean =
         usedValues.any { input ->
             if (input === StrictBasicValue.UNINITIALIZED_VALUE) return@any false
-            if (input !is BoxedBasicValue) return@any true
+            if (input !is CleanBoxedValue) return@any true
 
             val descriptor = input.descriptor
             !descriptor.isSafeToRemove || descriptor.unboxedType != unboxedType
         }
 
-    private fun adaptLocalVariableTableForBoxedValues(node: MethodNode, frames: Array<Frame<BasicValue>>) {
+    private fun adaptLocalVariableTableForBoxedValues(node: MethodNode, frames: Array<Frame<BasicValue>?>) {
         for (localVariableNode in node.localVariables) {
             if (Type.getType(localVariableNode.desc).sort != Type.OBJECT) {
                 continue
@@ -168,7 +183,8 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             val frame = frames[i] ?: continue
             val insn = insnList[i]
             if ((insn.opcode == Opcodes.ASTORE || insn.opcode == Opcodes.ALOAD) &&
-                (insn as VarInsnNode).`var` == localVariableNode.index) {
+                (insn as VarInsnNode).`var` == localVariableNode.index
+            ) {
                 if (insn.getOpcode() == Opcodes.ASTORE) {
                     values.add(frame.top()!!)
                 } else {

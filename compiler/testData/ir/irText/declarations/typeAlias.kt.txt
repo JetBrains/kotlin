@@ -15,4 +15,3 @@ class C {
   typealias TestNested = String
 
 }
-

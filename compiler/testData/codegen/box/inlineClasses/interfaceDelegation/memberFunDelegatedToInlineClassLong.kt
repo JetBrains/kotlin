@@ -1,12 +1,13 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.assertEquals
 
 interface IFoo {
     fun foo(s: String): String
 }
 
-inline class Z(val x: Long) : IFoo {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val x: Long) : IFoo {
     override fun foo(s: String): String = x.toString() + s
 }
 

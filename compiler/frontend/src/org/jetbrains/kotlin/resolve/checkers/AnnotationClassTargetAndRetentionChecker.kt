@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -27,19 +26,19 @@ class AnnotationClassTargetAndRetentionChecker : DeclarationChecker {
         if (declaration !is KtClassOrObject) return
         if (!DescriptorUtils.isAnnotationClass(descriptor)) return
 
-        val targets = AnnotationChecker.applicableTargetSet(descriptor) ?: return
+        val targets = AnnotationChecker.applicableTargetSetFromTargetAnnotationOrNull(descriptor) ?: return
         val retention = descriptor.getAnnotationRetention() ?: KotlinRetention.RUNTIME
 
         if (targets.contains(KotlinTarget.EXPRESSION) && retention != KotlinRetention.SOURCE) {
             val retentionAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.retention)
             val targetAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.target)
 
-            val diagnostics =
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.RestrictRetentionForExpressionAnnotations))
-                    Errors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION
-                else
-                    Errors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_WARNING
-            context.trace.report(diagnostics.on(retentionAnnotation?.psi ?: targetAnnotation?.psi ?: declaration))
+            context.trace.report(
+                Errors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION.on(
+                    context.languageVersionSettings,
+                    retentionAnnotation?.psi ?: targetAnnotation?.psi ?: declaration
+                )
+            )
         }
     }
 

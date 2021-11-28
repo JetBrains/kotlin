@@ -66,4 +66,3 @@ fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
   }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
 }
-

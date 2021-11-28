@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-//WITH_RUNTIME
+// WITH_STDLIB
 
 fun valueFromDB(value: Any): Any {
     return when (value) {

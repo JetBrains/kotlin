@@ -11,7 +11,8 @@ open class TypeApproximatorConfiguration {
     enum class IntersectionStrategy {
         ALLOWED,
         TO_FIRST,
-        TO_COMMON_SUPERTYPE
+        TO_COMMON_SUPERTYPE,
+        TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
     open val flexible: Boolean get() = false // simple flexible types (FlexibleTypeImpl)
@@ -22,10 +23,11 @@ open class TypeApproximatorConfiguration {
     open val definitelyNotNullType: Boolean get() = true
     open val intersection: IntersectionStrategy = IntersectionStrategy.TO_COMMON_SUPERTYPE
     open val intersectionTypesInContravariantPositions = false
+    open val localTypes = false
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
-        false  // true means that this type we can leave as is
+        true  // false means that this type we can leave as is
 
     abstract class AllFlexibleSameValue : TypeApproximatorConfiguration() {
         abstract val allFlexible: Boolean
@@ -51,14 +53,14 @@ open class TypeApproximatorConfiguration {
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
-    abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus) :
+    sealed class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus?) :
         AllFlexibleSameValue() {
         override val allFlexible: Boolean get() = true
         override val errorType: Boolean get() = true
 
         // i.e. will be approximated only approximatedCapturedStatus captured types
         override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
-            type.captureStatus(ctx) != approximatedCapturedStatus
+            approximatedCapturedStatus != null && type.captureStatus(ctx) == approximatedCapturedStatus
 
         override val intersection: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
@@ -77,6 +79,11 @@ open class TypeApproximatorConfiguration {
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
+    object TypeArgumentApproximation : AbstractCapturedTypesApproximation(null) {
+        override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
+    }
+
     object IntegerLiteralsTypesApproximation : AllFlexibleSameValue() {
         override val integerLiteralType: Boolean get() = true
         override val allFlexible: Boolean get() = true
@@ -84,6 +91,11 @@ open class TypeApproximatorConfiguration {
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
         override val errorType: Boolean get() = true
 
-        override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = true
+        override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = false
+    }
+
+    object UpperBoundAwareIntersectionTypeApproximator : AllFlexibleSameValue() {
+        override val allFlexible: Boolean get() = true
+        override val intersection: IntersectionStrategy = IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
     }
 }

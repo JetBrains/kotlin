@@ -18,23 +18,37 @@ package org.jetbrains.kotlin.cli.jvm.modules
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import java.util.concurrent.ConcurrentHashMap
 
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
-    private val systemModules: List<JavaModule.Explicit>
+    private val systemModules: List<JavaModule.Explicit>,
+    private val project: Project
 ) : JavaModuleResolver {
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
         }
+    }
+
+    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project) }
+
+    override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
+        val virtualFile = virtualFileFinder.findSourceOrBinaryVirtualFile(classId) ?: return null
+
+        return (findJavaModule(virtualFile) as? JavaModule.Explicit)?.moduleInfo?.annotations
     }
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
@@ -76,5 +90,9 @@ class CliJavaModuleResolver(
         }
 
         return null
+    }
+
+    companion object {
+        private const val MODULE_ANNOTATIONS_CACHE_SIZE = 10000
     }
 }

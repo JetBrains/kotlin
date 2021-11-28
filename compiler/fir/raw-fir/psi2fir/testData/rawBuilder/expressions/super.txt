@@ -13,7 +13,7 @@ FILE: super.kt
 
     }
     public? final? class C : A, B {
-        public? constructor(): R|C| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
             super<<implicit>>()
         }
 

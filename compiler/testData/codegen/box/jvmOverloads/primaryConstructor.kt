@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class C @kotlin.jvm.JvmOverloads constructor(s1: String, s2: String = "K") {
     public val status: String = s1 + s2

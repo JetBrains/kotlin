@@ -1,7 +1,7 @@
-// TARGET_BACKEND: JVM
-// WITH_RUNTIME
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: enumOrThrow$default
+// TARGET_BACKEND: JVM
+// WITH_STDLIB
+// FILE: 1.kt
 package test
 
 enum class TarEnum {

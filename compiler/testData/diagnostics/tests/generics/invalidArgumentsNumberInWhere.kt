@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A
 interface I0<T : A<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>>
 interface I1<T> where T : A<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>

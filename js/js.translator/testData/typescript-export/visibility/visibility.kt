@@ -2,9 +2,13 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_MINIFICATION
 // SKIP_NODE_JS
+// INFER_MAIN_MODULE
 
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN
+
+// MODULE: JS_TESTS
+// FILE: visibility.kt
 
 @file:JsExport
 
@@ -34,9 +38,25 @@ open class Class {
 
     protected val protectedVal = 10
     protected fun protectedFun() = 10
-    protected class protectedClass
+    protected class protectedClass {}
+    protected object protectedNestedObject {}
+    protected companion object {
+        val companionObjectProp = 10
+    }
+
+    public class classWithProtectedConstructors protected constructor() {
+
+        @JsName("createWithString")
+        protected constructor(arg: String): this()
+    }
 
     public val publicVal = 10
+    @JsName("publicFun")  // TODO: Should work without JsName
     public fun publicFun() = 10
     public class publicClass
+}
+
+enum class EnumClass {
+    EC1,
+    EC2
 }

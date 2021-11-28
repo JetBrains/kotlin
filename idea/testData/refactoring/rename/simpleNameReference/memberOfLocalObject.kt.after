@@ -1,7 +1,0 @@
-fun test() {
-    val a = object {
-        val bar = 1
-    }
-
-    a.bar
-}

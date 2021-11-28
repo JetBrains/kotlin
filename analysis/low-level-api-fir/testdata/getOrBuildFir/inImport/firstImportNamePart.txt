@@ -1,0 +1,5 @@
+KT element: KtNameReferenceExpression
+FIR element: FirImportImpl
+
+FIR element rendered:
+import a.b.c

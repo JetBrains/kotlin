@@ -1,9 +1,0 @@
-package buz
-
-import foo.Bar
-
-fun foo() {
-    Bar.FOO
-}
-
-// ELEMENT: FOO

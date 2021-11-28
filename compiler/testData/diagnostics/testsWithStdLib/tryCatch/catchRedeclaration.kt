@@ -8,7 +8,7 @@ class MyException : Exception() {
 }
 
 fun test1() {
-    val <!UNUSED_VARIABLE!>e<!> = "something"
+    val e = "something"
     try {}
     catch (e: Exception) {
         e.message
@@ -35,15 +35,15 @@ fun test3() {
 fun test4() {
     try {}
     catch (e: Exception) {
-        val <!REDECLARATION, UNUSED_VARIABLE!>a<!> = 42
-        val <!NAME_SHADOWING, REDECLARATION, UNUSED_VARIABLE!>a<!> = "foo"
+        val <!REDECLARATION!>a<!> = 42
+        val <!NAME_SHADOWING, REDECLARATION!>a<!> = "foo"
     }
 }
 
 fun test5() {
     try {}
     catch (e: Exception) {
-        val <!UNUSED_VARIABLE!>a<!>: Int = 42
+        val a: Int = 42
         try {}
         catch (e: MyException) {
             e.myFun()

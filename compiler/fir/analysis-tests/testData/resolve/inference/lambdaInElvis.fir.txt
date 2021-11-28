@@ -1,0 +1,21 @@
+FILE: lambdaInElvis.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun <T> foo(f: R|(kotlin/collections/MutableList<T>) -> kotlin/Unit|): R|kotlin/collections/List<T>?| {
+        ^foo R|kotlin/TODO|()
+    }
+    public final fun <T> listOf(): R|kotlin/collections/List<T>| {
+        ^listOf R|kotlin/TODO|()
+    }
+    public final fun bar1(w: R|kotlin/collections/List<kotlin/CharSequence>|): R|kotlin/collections/List<kotlin/CharSequence>?| {
+        ^bar1 R|/foo|<R|kotlin/CharSequence|>(<L> = foo@fun <anonymous>(container: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/container|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+        }
+        ) ?: R|<local>/w|
+    }
+    public final fun bar2(): R|kotlin/collections/List<kotlin/CharSequence>?| {
+        ^bar2 R|/foo|<R|kotlin/CharSequence|>(<L> = foo@fun <anonymous>(container: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/container|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+        }
+        ) ?: R|/listOf|<R|kotlin/CharSequence|>()
+    }

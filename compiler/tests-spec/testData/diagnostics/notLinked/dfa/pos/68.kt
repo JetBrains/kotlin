@@ -1,5 +1,6 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
+// COMPARE_WITH_LIGHT_TREE
 // SKIP_TXT
 
 /*
@@ -46,7 +47,7 @@ fun case_4(x: Any?) {
 
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
-    if (x as Nothing? is Nothing) {
+    if (<!USELESS_IS_CHECK!>x as Nothing? is Nothing<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }

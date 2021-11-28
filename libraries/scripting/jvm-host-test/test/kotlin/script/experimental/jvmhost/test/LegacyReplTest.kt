@@ -125,7 +125,7 @@ internal class LegacyTestRepl : Closeable {
     fun nextCodeLine(code: String): ReplCodeLine = ReplCodeLine(currentLineCounter.getAndIncrement(), 0, code)
 
     val replCompiler: JvmReplCompiler by lazy {
-        JvmReplCompiler(simpleScriptCompilationConfiguration, false)
+        JvmReplCompiler(simpleScriptCompilationConfiguration)
     }
 
     val compiledEvaluator: ReplEvaluator by lazy {

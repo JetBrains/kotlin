@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
@@ -23,17 +24,19 @@ import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.util.*
 
+@ObsoleteTestInfrastructure("org.jetbrains.kotlin.test.runners.AbstractDiagnosticsTestWithJsStdLib")
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
     private var lazyConfig: Lazy<JsConfig>? = lazy(LazyThreadSafetyMode.NONE) {
         JsConfig(project, environment.configuration.copy().apply {
             put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
             put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
-        })
+        }, CompilerEnvironment)
     }
 
     protected val config: JsConfig get() = lazyConfig!!.value
@@ -56,7 +59,9 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         // TODO: support LANGUAGE directive in JS diagnostic tests
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
         config.configuration.languageVersionSettings = languageVersionSettings
-        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(files, moduleTrace, moduleContext, config.configuration)
+        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
+            files, moduleTrace, moduleContext, config.configuration, CompilerEnvironment, config.project
+        )
     }
 
     private fun getModuleKind(ktFiles: List<KtFile>): ModuleKind {

@@ -11,7 +11,8 @@ package org.jetbrains.kotlin.backend.common.serialization.encodings
  * j = j1.j2.j3.j4
  * ij -> i1.j1.i2.j2.i3.j3.i4.j4
  */
-inline class BinaryLattice(private val code: Long) {
+@JvmInline
+value class BinaryLattice(private val code: Long) {
 
     val first: Int get() = decodeInt(code)
     val second: Int get() = decodeInt(code ushr 1)

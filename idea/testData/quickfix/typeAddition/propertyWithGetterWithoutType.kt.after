@@ -1,4 +1,0 @@
-// "Specify type explicitly" "true"
-
-val x: Int
-    get(): Int = 42

@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -21,14 +22,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirWhenExpressionImpl(
-    override val source: FirSourceElement?,
+    override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotationCall>,
+    override val annotations: MutableList<FirAnnotation>,
     override var calleeReference: FirReference,
     override var subject: FirExpression?,
-    override var subjectVariable: FirVariable<*>?,
+    override var subjectVariable: FirVariable?,
     override val branches: MutableList<FirWhenBranch>,
-    override var isExhaustive: Boolean,
+    override var exhaustivenessStatus: ExhaustivenessStatus?,
+    override val usedAsExpression: Boolean,
 ) : FirWhenExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -57,16 +59,16 @@ internal class FirWhenExpressionImpl(
     }
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        calleeReference = calleeReference.transformSingle(transformer, data)
+        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
     override fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
         if (subjectVariable != null) {
-            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+            subjectVariable = subjectVariable?.transform(transformer, data)
             subject = subjectVariable?.initializer
         } else {
-            subject = subject?.transformSingle(transformer, data)
+            subject = subject?.transform(transformer, data)
         }
         return this
     }
@@ -77,7 +79,7 @@ internal class FirWhenExpressionImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
@@ -90,7 +92,7 @@ internal class FirWhenExpressionImpl(
         calleeReference = newCalleeReference
     }
 
-    override fun replaceIsExhaustive(newIsExhaustive: Boolean) {
-        isExhaustive = newIsExhaustive
+    override fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?) {
+        exhaustivenessStatus = newExhaustivenessStatus
     }
 }

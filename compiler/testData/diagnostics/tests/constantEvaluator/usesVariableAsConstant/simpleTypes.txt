@@ -1,0 +1,11 @@
+package
+
+package test {
+    public val prop1: kotlin.Int = 1
+    public val prop2: kotlin.String = "hello"
+    public val prop3: kotlin.Boolean = true
+    public val prop4: kotlin.Boolean = false
+    public val prop5: kotlin.Int = -7453
+    public val prop6: kotlin.Double = 3.56.toDouble()
+    public val prop7: kotlin.Long = 5464564.toLong()
+}

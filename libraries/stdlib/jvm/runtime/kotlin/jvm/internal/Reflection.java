@@ -183,4 +183,21 @@ public class Reflection {
     public static void setUpperBounds(KTypeParameter typeParameter, KType... bounds) {
         factory.setUpperBounds(typeParameter, ArraysKt.toList(bounds));
     }
+
+    // Features of stable typeOf
+
+    @SinceKotlin(version = "1.6")
+    public static KType platformType(KType lowerBound, KType upperBound) {
+        return factory.platformType(lowerBound, upperBound);
+    }
+
+    @SinceKotlin(version = "1.6")
+    public static KType mutableCollectionType(KType type) {
+        return factory.mutableCollectionType(type);
+    }
+
+    @SinceKotlin(version = "1.6")
+    public static KType nothingType(KType type) {
+        return factory.nothingType(type);
+    }
 }

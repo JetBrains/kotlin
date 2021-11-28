@@ -7,3 +7,5 @@ class PlatformTypes {
     fun bothNullable() = Collections.emptyList<String>() ?: null
     fun bothNotNull() = Collections.emptyList<String>()!!
 }
+
+// FIR_COMPARISON

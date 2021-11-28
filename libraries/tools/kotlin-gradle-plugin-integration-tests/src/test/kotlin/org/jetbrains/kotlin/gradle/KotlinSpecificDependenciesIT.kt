@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.internals.KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -19,7 +18,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0, androidHome = KotlinTestUtils.findAndroidSdk())
+        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0, androidHome = KtTestUtil.findAndroidSdk())
 
     private fun Project.prepare() { // call this when reusing a project after a test, too, in order to remove any added dependencies
         setupWorkingDir()
@@ -32,6 +31,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
     }
 
     private fun jsProject() = Project("kotlin-js-plugin-project").apply {
+        // TODO: remove settings.gradle from test project after migrating to the new test DSL
         setupWorkingDir()
         gradleBuildScript().modify { it.lines().filter { "html" !in it }.joinToString("\n") }
         projectFile("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
@@ -111,7 +111,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
         )
     }
 
-    private val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:$KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME"
+    private val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:kotlin-test"
 
     @Test
     fun testKotlinTestSingleDependency() {
@@ -163,6 +163,21 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
                     "jvmAndJsTestApiDependenciesMetadata" to listOf("kotlin-test-common"),
                     "jvmAndJsTestCompileOnlyDependenciesMetadata" to listOf("kotlin-test-common"),
                     "jvmAndJsTestImplementationDependenciesMetadata" to listOf("!kotlin-test-common"),
+                )
+            ),
+            TestCase(
+                /**
+                 * Check that in a single-platform project the common metadata configurations resolve the
+                 * framework-specific dependency (inferred as JUnit) correctly to the common artifact
+                 * KTIJ-6098
+                 */
+                Project("mpp-single-jvm-target"),
+                listOf("commonTestImplementation"),
+                mapOf(
+                    "compileTestKotlinJvm" to listOf("kotlin-test-junit"),
+                ),
+                mapOf(
+                    "commonTestImplementationDependenciesMetadata" to listOf("kotlin-test-common", "kotlin-test-annotations-common")
                 )
             )
         ).forEach { testCase ->
@@ -222,7 +237,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
         gradleBuildScript().appendText(
             "\n" + """
             dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
-            configurations.getByName("testImplementation").dependencies.removeAll { it.name == "$KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME" }
+            configurations.getByName("testImplementation").dependencies.removeAll { it.name == "kotlin-test" }
             """.trimIndent()
         )
         checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = listOf("kotlin-test"))
@@ -244,35 +259,37 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
             kotlin.coreLibrariesVersion = "$customVersion"
             dependencies {
                 testImplementation("org.jetbrains.kotlin:kotlin-reflect")
-                testImplementation("org.jetbrains.kotlin:kotlin-test-multiplatform")
+                testImplementation("org.jetbrains.kotlin:kotlin-test")
             }
             test.useJUnit()
         """.trimIndent()
         )
         checkTaskCompileClasspath(
             "compileTestKotlin",
-            listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-junit-").map { it + customVersion }
+            listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-").map { it + customVersion }
         )
     }
 
     @Test
     fun testNoFailureIfConfigurationIsObserved() = with(jvmProject()) {
-        lateinit var originalScript: String
-        try {
-            gradleBuildScript().modify {
-                originalScript = it
-                """
-                    configurations.create("api")
-                    dependencies {
-                        api("org.jetbrains.kotlin:kotlin-reflect")
-                    }
-                    println(configurations.api.incoming.dependencies.toList())
-                """.trimIndent() + "\n" + it
+        gradleBuildScript().modify {
+            //language=Groovy
+            """
+            $it
+            
+            configurations {
+                 apiTest
+                 api.extendsFrom(apiTest)
             }
-            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
-        } finally {
-            gradleBuildScript().writeText(originalScript)
+            
+            dependencies {
+                apiTest("org.jetbrains.kotlin:kotlin-reflect")
+            }
+            println(configurations.apiTest.incoming.resolutionResult.allDependencies)
+            println(configurations.apiTest.incoming.dependencies.toList())
+            """.trimIndent()
         }
+        checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
     }
 
     private fun Project.checkConfigurationContent(

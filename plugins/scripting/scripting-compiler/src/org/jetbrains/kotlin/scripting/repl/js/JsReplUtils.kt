@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.LineId
@@ -23,11 +23,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.backend.js.getModuleDescriptorByLibrary
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.util.Logger
@@ -37,7 +35,6 @@ import java.io.FileOutputStream
 import java.io.FileReader
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.jvm.JsDependency
@@ -116,6 +113,7 @@ fun readLibrariesFromConfiguration(configuration: CompilerConfiguration): List<M
     val libraries = scriptDependencies.map { (it as JsDependency).path }
     val resolvedLibraries = jsResolveLibraries(
         libraries,
+        emptyList(),
         object : Logger {
             private val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: MessageCollector.NONE
             override fun warning(message: String) = collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
@@ -172,7 +170,7 @@ class DependencyLoader {
 
     fun writeNames(nameTables: NameTables): ByteArray {
         val result = StringBuilder()
-        for (entry in nameTables.mappedNames) {
+        for (entry in nameTables.mappedNames.orEmpty()) {
             result.append("${entry.key} ${entry.value}" + System.lineSeparator())
         }
         return result.toString().toByteArray(Charset.defaultCharset())
@@ -214,12 +212,4 @@ class DependencyLoader {
         }
     }
 }
-
-class JsReplCompilationState(
-    lock: ReentrantReadWriteLock,
-    nameTables: NameTables,
-    dependencies: List<ModuleDescriptor>,
-    val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState,
-    val symbolTable: SymbolTable
-) : JsCompilationState(lock, nameTables, dependencies)
 

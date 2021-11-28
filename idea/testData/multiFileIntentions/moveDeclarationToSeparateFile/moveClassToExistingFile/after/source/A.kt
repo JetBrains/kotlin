@@ -1,5 +1,0 @@
-package source
-
-fun bar() {
-
-}

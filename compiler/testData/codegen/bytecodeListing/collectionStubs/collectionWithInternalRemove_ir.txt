@@ -10,7 +10,7 @@ public final class Test {
     public method getSize(): int
     public method isEmpty(): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
-    public final method remove$test_module(p0: java.lang.Object): boolean
+    public final method remove$main(p0: java.lang.Object): boolean
     public bridge final method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean

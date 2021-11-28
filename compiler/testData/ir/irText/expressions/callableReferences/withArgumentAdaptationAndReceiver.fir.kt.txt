@@ -19,7 +19,7 @@ class Host {
         receiver.withVararg(xs = [p0])
       }
 
-      Host::withVararg
+      <this>::withVararg
     })
   }
 

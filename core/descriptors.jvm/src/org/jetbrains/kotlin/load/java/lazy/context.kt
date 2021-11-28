@@ -21,28 +21,25 @@ import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import java.util.*
 
 class JavaResolverComponents(
     val storageManager: StorageManager,
@@ -66,7 +63,9 @@ class JavaResolverComponents(
     val javaClassesTracker: JavaClassesTracker,
     val settings: JavaResolverSettings,
     val kotlinTypeChecker: NewKotlinTypeChecker,
-    val javaTypeEnhancementState: JavaTypeEnhancementState
+    val javaTypeEnhancementState: JavaTypeEnhancementState,
+    val javaModuleResolver: JavaModuleAnnotationsProvider,
+    val syntheticPartsProvider: SyntheticJavaPartsProvider = SyntheticJavaPartsProvider.EMPTY
 ) {
     fun replace(
         javaResolverCache: JavaResolverCache = this.javaResolverCache
@@ -76,31 +75,36 @@ class JavaResolverComponents(
         javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
         moduleClassResolver, packagePartProvider, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
         annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker, settings,
-        kotlinTypeChecker,
-        javaTypeEnhancementState
+        kotlinTypeChecker, javaTypeEnhancementState, javaModuleResolver
     )
 }
 
 interface JavaResolverSettings {
-    val isReleaseCoroutines: Boolean
     val correctNullabilityForNotNullTypeParameter: Boolean
+    val typeEnhancementImprovementsInStrictMode: Boolean
+    val ignoreNullabilityForErasedValueParameters: Boolean
 
     object Default : JavaResolverSettings {
-        override val isReleaseCoroutines: Boolean
+        override val correctNullabilityForNotNullTypeParameter: Boolean
             get() = false
 
-        override val correctNullabilityForNotNullTypeParameter: Boolean
+        override val typeEnhancementImprovementsInStrictMode: Boolean
+            get() = false
+
+        override val ignoreNullabilityForErasedValueParameters: Boolean
             get() = false
     }
 
     companion object {
         fun create(
-            isReleaseCoroutines: Boolean,
-            correctNullabilityForNotNullTypeParameter: Boolean
+            correctNullabilityForNotNullTypeParameter: Boolean,
+            typeEnhancementImprovementsInStrictMode: Boolean,
+            ignoreNullabilityForErasedValueParameters: Boolean
         ): JavaResolverSettings =
             object : JavaResolverSettings {
-                override val isReleaseCoroutines get() = isReleaseCoroutines
                 override val correctNullabilityForNotNullTypeParameter get() = correctNullabilityForNotNullTypeParameter
+                override val typeEnhancementImprovementsInStrictMode get() = typeEnhancementImprovementsInStrictMode
+                override val ignoreNullabilityForErasedValueParameters get() = ignoreNullabilityForErasedValueParameters
             }
     }
 }
@@ -132,55 +136,8 @@ fun LazyJavaResolverContext.child(
 
 fun LazyJavaResolverContext.computeNewDefaultTypeQualifiers(
     additionalAnnotations: Annotations
-): JavaTypeQualifiersByElementType? {
-    if (components.javaTypeEnhancementState.disabledDefaultAnnotations) return defaultTypeQualifiers
-
-    val defaultQualifiers =
-        additionalAnnotations.mapNotNull(this::extractDefaultNullabilityQualifier)
-
-    if (defaultQualifiers.isEmpty()) return defaultTypeQualifiers
-
-    val defaultQualifiersByType =
-        defaultTypeQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
-            ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
-
-    var wasUpdate = false
-    for (qualifier in defaultQualifiers) {
-        for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
-            defaultQualifiersByType[applicabilityType] = qualifier
-            wasUpdate = true
-        }
-    }
-
-    return if (!wasUpdate) defaultTypeQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
-}
-
-private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
-    annotationDescriptor: AnnotationDescriptor
-): JavaDefaultQualifiers? {
-    val typeQualifierResolver = components.annotationTypeQualifierResolver
-    typeQualifierResolver.resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor)?.let { return it }
-
-    val (typeQualifier, applicability) =
-        typeQualifierResolver.resolveTypeQualifierDefaultAnnotation(annotationDescriptor)
-            ?: return null
-
-    val jsr305State = typeQualifierResolver.resolveJsr305CustomState(annotationDescriptor)
-        ?: typeQualifierResolver.resolveJsr305AnnotationState(typeQualifier)
-
-    if (jsr305State.isIgnore) {
-        return null
-    }
-
-    val nullabilityQualifier =
-        components
-            .signatureEnhancement
-            .extractNullability(typeQualifier, onlyForJspecify = false)
-            ?.copy(isForWarningOnly = jsr305State.isWarning)
-            ?: return null
-
-    return JavaDefaultQualifiers(nullabilityQualifier, applicability)
-}
+): JavaTypeQualifiersByElementType? =
+    components.annotationTypeQualifierResolver.extractAndMergeDefaultQualifiers(defaultTypeQualifiers, additionalAnnotations)
 
 fun LazyJavaResolverContext.replaceComponents(
     components: JavaResolverComponents

@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 
 abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
-    protected val project: Project,
-    protected val kotlinPluginVersion: String
+    protected val project: Project
 ) : KotlinTargetPreset<R> {
 
     protected abstract fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<T, R>

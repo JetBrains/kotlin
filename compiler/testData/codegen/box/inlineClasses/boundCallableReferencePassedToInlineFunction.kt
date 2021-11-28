@@ -1,18 +1,26 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class IcInt(val i: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcInt(val i: Int) {
     fun simple(): String = i.toString()
 }
 
-inline class IcLong(val l: Long) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcLong(val l: Long) {
     fun simple(): String = l.toString()
 }
 
-inline class IcAny(val a: Any?) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcAny(val a: Any?) {
     fun simple(): String = a?.toString() ?: "null"
 }
 
-inline class IcOverIc(val o: IcLong) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class IcOverIc(val o: IcLong) {
     fun simple(): String = o.toString()
 }
 
@@ -54,11 +62,11 @@ fun box(): String {
     val a = IcAny(5)
     val o = IcOverIc(IcLong(6))
 
-    if (testUnboxed(i, l, a, o) != "345IcLong(l=6)") return "Fail 1"
+    if (testUnboxed(i, l, a, o) != "345IcLong(l=6)") return "Fail 1 ${testUnboxed(i, l, a, o)}"
     if (testBoxed(i, l, a, o) != "345IcLong(l=6)") return "Fail 2"
     if (testLocalVars() != "012IcLong(l=3)") return "Fail 3"
     if (testGlobalProperties() != "123IcLong(l=4)") return "Fail 4"
-    if (testCapturedVars() != "234IcLong(l=5)") return "Fail 5"
+    if (testCapturedVars() != "234IcLong(l=5)") return "Fail 5 ${testCapturedVars()}"
 
     return "OK"
 }

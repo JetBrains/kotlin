@@ -13,7 +13,7 @@ expect class Foo {
     fun <T : Set<Number>> f3(t: T): T?
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: FooImpl.java
 
 import java.util.*;

@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirCallResolver
-import org.jetbrains.kotlin.fir.FirQualifiedNameResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
@@ -20,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
@@ -38,27 +36,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     abstract var implicitTypeOnly: Boolean
         internal set
 
+    override val transformerPhase: FirResolvePhase
+        get() = if (implicitTypeOnly) baseTransformerPhase else FirResolvePhase.BODY_RESOLVE
+
     final override val session: FirSession get() = components.session
-
-    protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
-        return context.withTowerDataCleanup(l)
-    }
-
-    protected inline fun <T> withNewLocalScope(crossinline l: () -> T): T {
-        return context.withTowerDataCleanup {
-            addNewLocalScope()
-            l()
-        }
-    }
-
-    protected fun addNewLocalScope() {
-        context.addLocalScope(FirLocalScope())
-    }
-
-    protected fun addLocalScope(localScope: FirLocalScope?) {
-        if (localScope == null) return
-        context.addLocalScope(localScope)
-    }
 
     @OptIn(PrivateForInline::class)
     internal inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {
@@ -93,11 +74,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val file: FirFile get() = components.file
 
     val ResolutionMode.expectedType: FirTypeRef?
-        get() = when (this) {
-            is ResolutionMode.WithExpectedType -> expectedTypeRef
-            is ResolutionMode.ContextIndependent -> noExpectedType
-            else -> null
-        }
+        get() = expectedType(components)
 
     class BodyResolveTransformerComponents(
         override val session: FirSession,
@@ -114,19 +91,16 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val file: FirFile get() = context.file
         override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
         override val containingDeclarations: List<FirDeclaration> get() = context.containers
-        override val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions get() = context.towerDataContextForAnonymousFunctions
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
         override val container: FirDeclaration get() = context.containerIfAny!!
 
         override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
-        override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
+        override val symbolProvider: FirSymbolProvider = session.symbolProvider
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
 
-        private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
         override val callResolver: FirCallResolver = FirCallResolver(
             this,
-            qualifiedResolver
         )
         val typeResolverTransformer = FirSpecificTypeResolverTransformer(
             session

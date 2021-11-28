@@ -8,16 +8,10 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-class FirExpressionWithSmartcastBuilder {
-    lateinit var originalExpression: FirQualifiedAccessExpression
-    lateinit var typeRef: FirTypeRef
-    lateinit var typesFromSmartCast: Collection<ConeKotlinType>
-
-    fun build(): FirExpressionWithSmartcast {
-        return FirExpressionWithSmartcastImpl(originalExpression, typeRef, typesFromSmartCast)
+class FirExpressionWithSmartcastBuilder : FirWrappedExpressionWithSmartcastBuilder<FirQualifiedAccessExpression>() {
+    override fun build(): FirExpressionWithSmartcast {
+        return FirExpressionWithSmartcastImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability)
     }
 }
 

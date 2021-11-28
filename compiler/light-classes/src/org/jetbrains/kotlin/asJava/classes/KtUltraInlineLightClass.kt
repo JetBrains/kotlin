@@ -54,9 +54,12 @@ class KtUltraLightInlineClass(
             ?.valueParameters
             ?.firstOrNull()
 
-        if (inlineClassParameter !== null) {
+        if (inlineClassParameter != null) {
             membersBuilder.propertyAccessors(
                 inlineClassParameter,
+                // (inline or) value class primary constructor must have only final read-only (val) property parameter
+                // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
+                // we can enforce immutability here.
                 mutable = false,
                 forceStatic = false,
                 onlyJvmStatic = false
@@ -65,7 +68,7 @@ class KtUltraLightInlineClass(
             }
         }
 
-        result;
+        result
     }
 
     override fun getOwnFields(): List<KtLightField> = emptyList()

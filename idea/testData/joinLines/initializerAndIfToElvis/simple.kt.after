@@ -1,4 +1,0 @@
-fun foo(list: List<String>): Int {
-    val first = <caret>list.firstOrNull() ?: return -1
-    return first.length
-}

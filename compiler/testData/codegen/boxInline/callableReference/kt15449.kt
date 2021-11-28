@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 package test
@@ -15,7 +15,6 @@ class X {
 }
 
 // FILE: 2.kt
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 class A  {

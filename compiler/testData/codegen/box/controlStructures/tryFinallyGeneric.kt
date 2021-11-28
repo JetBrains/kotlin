@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
-// !LANGUAGE: +NewInference
+// WITH_STDLIB
 
 val stack = mutableListOf<Int>()
 

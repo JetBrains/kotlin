@@ -1,5 +1,5 @@
 fun interface MyRunnable {
-  abstract fun run() 
+  abstract fun run()
 
 }
 
@@ -16,4 +16,3 @@ fun test(a: Any, r: MyRunnable) {
 
 fun foo(vararg rs: MyRunnable) {
 }
-

@@ -31,9 +31,6 @@ abstract class AbstractBenchmark {
     private val files = mutableMapOf<File, String>()
     abstract val generator: TreeGenerator
 
-    @Param("true", "false")
-    var stubMode: Boolean = false
-
     protected fun readFiles(ignoreTestData: Boolean, path: String) {
         println("BASE PATH: $path")
         val saveText: (File) -> Unit = { file ->

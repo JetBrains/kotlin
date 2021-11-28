@@ -1,0 +1,12 @@
+package
+
+@kotlin.Suppress(names = {"OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR"}) public inline fun atLeastOnce(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, AT_LEAST_ONCE)
+
+@kotlin.Suppress(names = {"OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR"}) public inline fun atMostOnce(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, AT_MOST_ONCE)
+
+@kotlin.Suppress(names = {"OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR"}) public inline fun exactlyOnce(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun test(): kotlin.Unit

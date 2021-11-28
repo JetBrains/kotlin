@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
@@ -12,25 +13,27 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 /**
  * A transformer that converts resolved arrayOf() call to [FirArrayOfCall].
  *
- * Note that arrayOf() calls only in [FirAnnotationCall] or the default value of annotation constructor are transformed.
+ * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
-internal class FirArrayOfCallTransformer {
+internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
     private val FirFunctionCall.isArrayOfCall: Boolean
         get() {
-            val function: FirCallableDeclaration<*> = getOriginalFunction() ?: return false
+            val function: FirCallableDeclaration = getOriginalFunction() ?: return false
             return function is FirSimpleFunction &&
                     function.returnTypeRef.isArrayType &&
                     isArrayOf(function, arguments) &&
                     function.receiverTypeRef == null
         }
 
-    internal fun toArrayOfCall(functionCall: FirFunctionCall): FirArrayOfCall? {
+    private fun toArrayOfCall(functionCall: FirFunctionCall): FirArrayOfCall? {
         if (!functionCall.isArrayOfCall) {
             return null
         }
@@ -51,6 +54,16 @@ internal class FirArrayOfCallTransformer {
         }
     }
 
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): FirStatement {
+        functionCall.transformChildren(this, data)
+        return toArrayOfCall(functionCall) ?: functionCall
+    }
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        @Suppress("UNCHECKED_CAST")
+        return (element.transformChildren(this, data) as E)
+    }
+
     companion object {
         private val arrayOfNames = hashSetOf("kotlin/arrayOf") +
                 hashSetOf(
@@ -67,11 +80,11 @@ internal class FirArrayOfCallTransformer {
     }
 }
 
-private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration<*>? {
-    val symbol: AbstractFirBasedSymbol<*>? = when (val reference = calleeReference) {
+private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
+    val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
         is FirResolvedNamedReference -> reference.resolvedSymbol
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
     }
-    return symbol?.fir as? FirCallableDeclaration<*>
+    return symbol?.fir as? FirCallableDeclaration
 }

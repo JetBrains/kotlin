@@ -1,4 +1,4 @@
-fun f(<!UNUSED_PARAMETER!>a<!>: Boolean, <!UNUSED_PARAMETER!>b<!>: Int) {}
+fun f(a: Boolean, b: Int) {}
 
 fun foo(a: Any) {
     f(a is Int, <!TYPE_MISMATCH!>a<!>)

@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 // light class for top level or (inner/nested of top level) source declarations
 open class KtLightClassImpl @JvmOverloads constructor(
     classOrObject: KtClassOrObject,
+    jvmDefaultMode: JvmDefaultMode,
     forceUsingOldLightClasses: Boolean = false
-) : KtLightClassForSourceDeclaration(classOrObject, forceUsingOldLightClasses) {
+) : KtLightClassForSourceDeclaration(classOrObject, jvmDefaultMode, forceUsingOldLightClasses) {
     override fun getQualifiedName() = classOrObject.fqName?.asString()
 
     override fun getParent() = if (classOrObject.isTopLevel())
@@ -30,5 +32,5 @@ open class KtLightClassImpl @JvmOverloads constructor(
     else
         containingClass
 
-    override fun copy() = KtLightClassImpl(classOrObject.copy() as KtClassOrObject)
+    override fun copy() = KtLightClassImpl(classOrObject.copy() as KtClassOrObject, jvmDefaultMode)
 }

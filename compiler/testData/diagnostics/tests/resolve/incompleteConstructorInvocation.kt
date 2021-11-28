@@ -1,6 +1,6 @@
 package p
 
-class X<V>(<!UNUSED_PARAMETER!>provider<!>: () -> V, <!UNUSED_PARAMETER!>trackValue<!>: Boolean) {
+class X<V>(provider: () -> V, trackValue: Boolean) {
 }
 
 class B {

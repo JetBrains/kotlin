@@ -1,5 +1,4 @@
-// !WITH_NEW_INFERENCE
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun <T : CharSequence?> bar1(x: T) {}
 
@@ -13,6 +12,6 @@ fun <T : String?> foo(x: T) {
     bar1(x)
     bar2(x)
 
-    <!INAPPLICABLE_CANDIDATE!>bar3<!>(x)
-    <!INAPPLICABLE_CANDIDATE!>bar4<!>(x)
+    bar3(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    bar4(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }

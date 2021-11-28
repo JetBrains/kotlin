@@ -1,8 +1,11 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
-inline class Foo(val arg: Int)
-inline class AsAny(val arg: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val arg: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class AsAny(val arg: Any)
 
 fun box(): String {
     val arr = arrayOf(Foo(1), Foo(2))

@@ -1,4 +1,0 @@
-package baz
-
-class Baz {
-}

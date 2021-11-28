@@ -19,4 +19,3 @@ fun test1x(a: Boolean, b: Boolean): Boolean {
 fun test2x(a: Boolean, b: Boolean): Boolean {
   return a.or(other = b)
 }
-

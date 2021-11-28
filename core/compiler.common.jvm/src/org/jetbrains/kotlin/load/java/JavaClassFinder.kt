@@ -21,7 +21,7 @@ interface JavaClassFinder {
     fun findClass(request: Request): JavaClass?
     fun findClass(classId: ClassId): JavaClass? = findClass(Request(classId))
 
-    fun findPackage(fqName: FqName): JavaPackage?
+    fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean = true): JavaPackage?
 
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
 }

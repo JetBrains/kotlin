@@ -12,13 +12,14 @@ import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 open class KtLightClassForLocalDeclaration(
     classOrObject: KtClassOrObject
-) : KtLightClassForSourceDeclaration(classOrObject) {
+) : KtLightClassForSourceDeclaration(classOrObject, JvmDefaultMode.DEFAULT) {
 
     override fun copy(): PsiElement = KtLightClassForLocalDeclaration(classOrObject.copy() as KtClassOrObject)
 

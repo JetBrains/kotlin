@@ -28,7 +28,7 @@ import java.util.*
 
 object PackagePartClassUtils {
     @JvmStatic fun getPathHashCode(file: VirtualFile): Int =
-            file.path.toLowerCase().hashCode()
+            file.path.lowercase().hashCode()
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
 
@@ -36,7 +36,7 @@ object PackagePartClassUtils {
             // NB use Locale.ENGLISH so that build is locale-independent.
             // See Javadoc on java.lang.String.toUpperCase() for more details.
             when {
-                Character.isJavaIdentifierStart(str[0]) -> str.substring(0, 1).toLowerCase(Locale.ENGLISH) + str.substring(1)
+                Character.isJavaIdentifierStart(str[0]) -> str.substring(0, 1).lowercase() + str.substring(1)
                 str[0] == '_' -> str.substring(1)
                 else -> str
             }

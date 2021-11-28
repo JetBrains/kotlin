@@ -1,4 +1,8 @@
-inline class Z(val s: String) {
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(val s: String) {
     val Int.s: Int get() = 42
 }
 

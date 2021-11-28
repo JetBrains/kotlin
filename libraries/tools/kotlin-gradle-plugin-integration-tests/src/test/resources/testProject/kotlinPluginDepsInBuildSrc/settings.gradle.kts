@@ -1,0 +1,7 @@
+
+pluginManagement {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}

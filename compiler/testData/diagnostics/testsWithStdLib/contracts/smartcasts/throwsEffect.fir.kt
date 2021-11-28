@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
@@ -26,7 +26,7 @@ fun testSpilling(x: Any?) {
         myAssert(x is String)
         x.length
     }
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x<!UNSAFE_CALL!>.<!>length
 }
 
 fun testAssertInIf(x: Any?) {
@@ -60,7 +60,7 @@ fun testAtLeastOnceFlow(x: Any?) {
     do {
         myAssert(x is String)
         x.length
-    } while (x != null)
+    } while (<!SENSELESS_COMPARISON!>x != null<!>)
 
     x.length
 }

@@ -1,7 +1,6 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
-// !WITH_NEW_INFERENCE
 
 import kotlin.contracts.*
 
@@ -79,7 +78,7 @@ fun branchedAndNested(x: Any?, y: Any?) {
 
 
 fun br(y: Any?) {
-    if (myAssert(y is Int) == Unit && myAssert(y is String) == Unit) {
+    if (myAssert(y is Int) == Unit && myAssert(<!USELESS_IS_CHECK!>y is String<!>) == Unit) {
         <!DEBUG_INFO_SMARTCAST!>y<!>.length
         <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
     }
@@ -90,7 +89,7 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
             equalsTrue(notEqualsNull(nullWhenNotString(x)))   // x is String
             &&
             (
-                    (myAssert(y is Int) == Unit && myAssert(y is String) == Unit)  // y is Int, String
+                    (myAssert(y is Int) == Unit && myAssert(<!USELESS_IS_CHECK!>y is String<!>) == Unit)  // y is Int, String
                     ||
                     equalsTrue(isInt(y) && isString(y))                          // y is Int, String
             )

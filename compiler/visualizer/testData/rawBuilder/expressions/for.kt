@@ -1,4 +1,3 @@
-// FIR_IGNORE
 fun foo() {
 //            Int
 //            │fun (Int).rangeTo(Int): ranges/IntRange
@@ -12,11 +11,36 @@ fun foo() {
     }
 }
 
+fun fooLabeled() {
+//  fun io/println(Any?): Unit
+//  │
+    println("!!!")
+//                   Int
+//                   │fun (Int).rangeTo(Int): ranges/IntRange
+//              Int  ││ Int
+//              │    ││ │
+    label@ for (i in 1..10) {
+//      Unit
+//      │   val fooLabeled.i: Int
+//      │   │ EQ operator call
+//      │   │ │  Int
+//      │   │ │  │
+        if (i == 5) continue@label
+//      fun io/println(Int): Unit
+//      │       val fooLabeled.i: Int
+//      │       │
+        println(i)
+    }
+//  fun io/println(Any?): Unit
+//  │
+    println("!!!")
+}
+
 //            collections/List<String>
 //            │
 fun bar(list: List<String>) {
 //                  bar.list: collections/List<String>
-//                  │    fun (collections/List<String>).subList(Int, Int): collections/List<String>
+//                  │    fun (collections/List<E>).subList(Int, Int): collections/List<E>
 //                  │    │       Int
 //       String     │    │       │  Int
 //       │          │    │       │  │
@@ -27,7 +51,7 @@ fun bar(list: List<String>) {
         println(element)
     }
 //                  bar.list: collections/List<String>
-//                  │    fun (collections/List<String>).subList(Int, Int): collections/List<String>
+//                  │    fun (collections/List<E>).subList(Int, Int): collections/List<E>
 //                  │    │                fun io/println(Any?): Unit
 //       String     │    │       Int Int  │       val bar.element: String
 //       │          │    │       │   │    │       │
@@ -48,5 +72,18 @@ fun baz(set: Set<Some>) {
 //      │             │      val baz.y: Int
 //      │             │      │
         println("x = $x y = $y")
+    }
+}
+
+//                      collections/List<Some>
+//                      │
+fun withParameter(list: List<Some>) {
+//       Some       withParameter.list: collections/List<Some>
+//       │          │
+    for (s: Some in list) {
+//      fun io/println(Any?): Unit
+//      │       val withParameter.s: Some
+//      │       │
+        println(s)
     }
 }

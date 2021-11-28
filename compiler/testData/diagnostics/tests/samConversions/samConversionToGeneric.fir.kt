@@ -9,12 +9,12 @@ fun test2() = J { x: String -> x }
 fun test3() = H.bar { x: String  -> x }
 
 fun test4(a: Any) {
-    a as J<String>
+    a <!UNCHECKED_CAST!>as J<String><!>
     H.bar(a)
 }
 
 fun test5(a: Any) {
-    a as (String) -> String
+    a <!UNCHECKED_CAST!>as (String) -> String<!>
     H.bar(a)
 }
 
@@ -23,7 +23,7 @@ fun <T> test6(a: (T) -> T) {
 }
 
 fun <T> test7(a: Any) {
-    a as (T) -> T
+    a <!UNCHECKED_CAST!>as (T) -> T<!>
     H.bar(a)
 }
 

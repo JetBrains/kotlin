@@ -12,27 +12,19 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
-class IrSimpleTypeImpl(
-    kotlinType: KotlinType?,
-    override val classifier: IrClassifierSymbol,
-    override val hasQuestionMark: Boolean,
-    override val arguments: List<IrTypeArgument>,
-    override val annotations: List<IrConstructorCall>,
-    override val abbreviation: IrTypeAbbreviation? = null
-) : IrTypeBase(kotlinType), IrSimpleType {
+abstract class IrAbstractSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), IrSimpleType {
+
     override val variance: Variance
         get() = Variance.INVARIANT
 
-    constructor(
-        classifier: IrClassifierSymbol,
-        hasQuestionMark: Boolean,
-        arguments: List<IrTypeArgument>,
-        annotations: List<IrConstructorCall>,
-        abbreviation: IrTypeAbbreviation? = null
-    ) : this(null, classifier, hasQuestionMark, arguments, annotations, abbreviation)
+    abstract override val classifier: IrClassifierSymbol
+    abstract override val hasQuestionMark: Boolean
+    abstract override val arguments: List<IrTypeArgument>
+    abstract override val annotations: List<IrConstructorCall>
+    abstract override val abbreviation: IrTypeAbbreviation?
 
     override fun equals(other: Any?): Boolean =
-        other is IrSimpleTypeImpl &&
+        other is IrAbstractSimpleType &&
                 FqNameEqualityChecker.areEqual(classifier, other.classifier) &&
                 hasQuestionMark == other.hasQuestionMark &&
                 arguments == other.arguments
@@ -41,6 +33,49 @@ class IrSimpleTypeImpl(
         (FqNameEqualityChecker.getHashCode(classifier) * 31 +
                 hasQuestionMark.hashCode()) * 31 +
                 arguments.hashCode()
+}
+
+abstract class IrDelegatedSimpleType(kotlinType: KotlinType? = null) : IrAbstractSimpleType(kotlinType) {
+
+    protected abstract val delegate: IrSimpleType
+
+    override val classifier: IrClassifierSymbol
+        get() = delegate.classifier
+    override val hasQuestionMark: Boolean
+        get() = delegate.hasQuestionMark
+    override val arguments: List<IrTypeArgument>
+        get() = delegate.arguments
+    override val abbreviation: IrTypeAbbreviation?
+        get() = delegate.abbreviation
+    override val annotations: List<IrConstructorCall>
+        get() = delegate.annotations
+}
+
+// TODO: This implementation is aligned with FE representation of DefinitelyNotNull (DNN) type but
+//       in fact DNN is special case of more general `IntersectionType`
+//       so someday it should be reconsidered
+class IrDefinitelyNotNullTypeImpl(kotlinType: KotlinType?, original: IrType) : IrDelegatedSimpleType(kotlinType), IrDefinitelyNotNullType {
+    override val delegate: IrSimpleType = original as IrSimpleType
+    override val original: IrType
+        get() = delegate
+}
+
+class IrSimpleTypeImpl(
+    kotlinType: KotlinType?,
+    override val classifier: IrClassifierSymbol,
+    override val hasQuestionMark: Boolean,
+    override val arguments: List<IrTypeArgument>,
+    override val annotations: List<IrConstructorCall>,
+    override val abbreviation: IrTypeAbbreviation? = null
+) : IrAbstractSimpleType(kotlinType) {
+
+    constructor(
+        classifier: IrClassifierSymbol,
+        hasQuestionMark: Boolean,
+        arguments: List<IrTypeArgument>,
+        annotations: List<IrConstructorCall>,
+        abbreviation: IrTypeAbbreviation? = null
+    ) : this(null, classifier, hasQuestionMark, arguments, annotations, abbreviation)
 }
 
 class IrSimpleTypeBuilder {
@@ -95,6 +130,8 @@ class IrTypeProjectionImpl internal constructor(
 
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     when {
+        type is IrCapturedType -> IrTypeProjectionImpl(type, variance)
+        type is IrDefinitelyNotNullType -> IrTypeProjectionImpl(type, variance)
         type is IrTypeProjection && type.variance == variance -> type
         type is IrSimpleType -> type.toBuilder().apply { this.variance = variance }.buildTypeProjection()
         type is IrDynamicType -> IrDynamicTypeImpl(null, type.annotations, variance)

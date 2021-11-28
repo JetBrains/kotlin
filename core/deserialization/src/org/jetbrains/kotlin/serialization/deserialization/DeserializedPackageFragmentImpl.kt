@@ -49,12 +49,13 @@ abstract class DeserializedPackageFragmentImpl(
         _proto = null
         _memberScope = DeserializedPackageMemberScope(
             this, proto.`package`, nameResolver, metadataVersion, containerSource, components,
-            classNames = {
-                classDataFinder.allClassIds.filter { classId ->
-                    !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
-                }.map { it.shortClassName }
-            }
-        )
+            "scope of $this"
+        ) {
+            classDataFinder.allClassIds.filter { classId ->
+                !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
+            }.map { it.shortClassName }
+        }
+
     }
 
     override fun getMemberScope(): MemberScope = _memberScope

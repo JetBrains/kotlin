@@ -1,5 +1,5 @@
 class A(val next: A? = null) {
-    val x: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: String<!>
     init {
         next?.x = "a"
     }

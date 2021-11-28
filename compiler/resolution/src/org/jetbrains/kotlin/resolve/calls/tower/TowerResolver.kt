@@ -46,6 +46,8 @@ interface CandidateFactory<out C : Candidate> {
         explicitReceiverKind: ExplicitReceiverKind,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): C
+
+    fun createErrorCandidate(): C
 }
 
 interface CandidateFactoryProviderForInvoke<C : Candidate> {
@@ -105,7 +107,8 @@ class TowerResolver {
         private val useOrder: Boolean,
         private val name: Name
     ) {
-        private val isNameForHidesMember = name in HIDES_MEMBERS_NAME_LIST
+        private val isNameForHidesMember =
+            name in HIDES_MEMBERS_NAME_LIST || implicitScopeTower.getNameForGivenImportAlias(name) in HIDES_MEMBERS_NAME_LIST
         private val skippedDataForLookup = mutableListOf<TowerData>()
 
         private val localLevels: Collection<ScopeTowerLevel> by lazy(LazyThreadSafetyMode.NONE) {

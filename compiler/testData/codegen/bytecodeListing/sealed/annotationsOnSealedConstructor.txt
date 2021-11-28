@@ -1,0 +1,14 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class Ann {
+    // source: 'annotationsOnSealedConstructor.kt'
+}
+
+@kotlin.Metadata
+public abstract class Sealed {
+    // source: 'annotationsOnSealedConstructor.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private @Ann method <init>(@Ann p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}

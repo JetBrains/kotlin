@@ -18,7 +18,7 @@ class Case1 : Base() {
 
     override val a: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Any?<!>
     get() = TODO()
-    override var b: String
+    override var b: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String<!>
     get() = TODO()
     set(value)
     {}
@@ -29,7 +29,7 @@ class Case1 : Base() {
 * TESTCASE NUMBER: 2
 */
 
-class Case2(override val a: String, override var b: String) : Base() {
+class Case2(override val a: String, override var b: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String<!>) : Base() {
     override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>CharSequence?<!> {
         return ""
     }
@@ -41,7 +41,7 @@ class Case2(override val a: String, override var b: String) : Base() {
 */
 
 class Case3 {
-    class ImplBase1 : MainClass.Base1() {}
+    <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class ImplBase1<!> : MainClass.Base1() {}
 }
 
 class MainClass {

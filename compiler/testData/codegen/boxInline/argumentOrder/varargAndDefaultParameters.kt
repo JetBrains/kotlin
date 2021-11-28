@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+// WITH_STDLIB
 // !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
@@ -5,10 +7,8 @@
 // IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
 // IGNORE_BACKEND_FIR: JVM_IR
 // NO_CHECK_LAMBDA_INLINING
-// FILE: 1.kt
-// WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: NATIVE
+// FILE: 1.kt
 package test
 
 open class A(val value: String)
@@ -57,4 +57,3 @@ fun box(): String {
 
     return "OK"
 }
-

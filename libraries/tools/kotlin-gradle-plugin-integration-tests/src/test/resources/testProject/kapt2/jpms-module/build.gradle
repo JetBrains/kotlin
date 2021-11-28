@@ -1,0 +1,42 @@
+plugins {
+    id "java"
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+
+    implementation 'com.google.dagger:dagger:2.33'
+    kapt 'com.google.dagger:dagger-compiler:2.33'
+
+    //jpms module provider
+    implementation "org.apache.logging.log4j:log4j-api:2.14.0"
+}
+
+compileKotlin.kotlinOptions.allWarningsAsErrors = true
+
+compileJava {
+    doFirst {
+        options.compilerArgs += [
+                //workaround to make classpath into modules for java compilation so auto modules would work
+                '--module-path', classpath.asPath,
+                //provide compiled kotlin classes to javac (needed for java/kotlin mixed sources to work)
+                '--patch-module', "my.module=${sourceSets.main.output.asPath}"
+        ]
+    }
+}
+
+//starting from gradle 6.4 it has built in jpms support
+//still as for now it doesn't work with fully legacy jars (with no module's descriptor)
+//so we need workaround above till we get AP packed as module
+//java {
+//    modularity.inferModulePath.set(true)
+//}

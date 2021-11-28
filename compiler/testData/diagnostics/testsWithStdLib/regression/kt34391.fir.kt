@@ -2,9 +2,9 @@
 
 fun main() {
     val list = listOf(A())
-    list.forEach(A::foo)
+    list.forEach(A::<!OPT_IN_USAGE_ERROR!>foo<!>)
     list.forEach {
-        it.foo()
+        it.<!OPT_IN_USAGE_ERROR!>foo<!>()
     }
 }
 
@@ -15,5 +15,5 @@ class A {
     }
 }
 
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@<!OPT_IN_IS_NOT_ENABLED!>RequiresOptIn<!>(level = RequiresOptIn.Level.ERROR)
 annotation class ExperimentalTime

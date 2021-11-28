@@ -1,0 +1,3 @@
+expression: "42"
+constant_value: KtLiteralConstantValue(constantValueKind=String, value=42)
+constant: 42

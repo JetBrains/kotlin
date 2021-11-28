@@ -1,6 +1,0 @@
-fun main(args:Array<String>) {
-    val old = pref.getString("", "")
-    pref.edit().putString("", "").apply()
-    val instance = LocalBroadcastManager.getInstance(this)
-    instance.sendBroadcast(Intent(""))
-}

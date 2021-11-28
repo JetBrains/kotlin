@@ -6,20 +6,16 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven("https://dl.bintray.com/kotlin/kotlinx")
-}
-
 val kotlinxSerializationVersion = "0.4.2"
 
 dependencies {
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:plugin-api"))
+    api(project(":compiler:frontend.java"))
+    api(project(":compiler:plugin-api"))
     compileOnly("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common"))
 
     embedded("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
 }

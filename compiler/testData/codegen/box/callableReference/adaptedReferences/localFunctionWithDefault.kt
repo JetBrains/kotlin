@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-
 fun call0(f: (String) -> String, x: String): String = f(x)
 fun call1(f: (String, String) -> String, x: String, y: String): String = f(x, y)
 fun call2(f: (String, String, String) -> String, x: String, y: String, z: String): String = f(x, y, z)

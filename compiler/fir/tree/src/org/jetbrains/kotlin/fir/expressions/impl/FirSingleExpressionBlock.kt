@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -17,14 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.fakeElement
 
 class FirSingleExpressionBlock(
     var statement: FirStatement
-) : FirBlock(), FirAnnotationContainer {
-    override val source: FirSourceElement?
-        get() = statement.source?.fakeElement(FirFakeSourceElementKind.SingleExpressionBlock)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+) : FirBlock() {
+    override val source: KtSourceElement?
+        get() = statement.source?.fakeElement(KtFakeSourceElementKind.SingleExpressionBlock)
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val statements: List<FirStatement> get() = listOf(statement)
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 

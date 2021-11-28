@@ -5,3 +5,4 @@ package a {
     public fun foo(/*0*/ i: kotlin.Int, /*1*/ s: kotlin.String): kotlin.Unit
     public fun test(): kotlin.Unit
 }
+

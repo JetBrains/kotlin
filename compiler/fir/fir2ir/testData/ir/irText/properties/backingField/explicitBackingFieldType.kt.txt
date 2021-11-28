@@ -1,0 +1,33 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val a: Int
+    field = 20
+    get
+
+  val it: Int
+    field = 4
+    get
+
+  var invertedTypes: Number
+    field = 42
+    get(): Int {
+      return when {
+        greater(arg0 = <this>.#invertedTypes.toInt(), arg1 = 10) -> <this>.#invertedTypes.toInt()
+        else -> 10
+      }
+    }
+    set
+
+  val p: Int
+    field = 5
+    get(): Int {
+      return <this>.#p
+    }
+
+}
+

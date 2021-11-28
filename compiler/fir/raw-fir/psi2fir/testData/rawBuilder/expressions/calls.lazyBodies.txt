@@ -1,5 +1,5 @@
 FILE: calls.kt
-    public? final? infix fun distance(x: Int, y: Int): <implicit> { LAZY_BLOCK }
+    public? final? infix fun Int.distance(y: Int): <implicit> { LAZY_BLOCK }
     public? final? fun test(): Int { LAZY_BLOCK }
     public? final? fun testRegular(): Int { LAZY_BLOCK }
     public? final? class My : R|kotlin/Any| {

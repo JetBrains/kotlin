@@ -1,5 +1,5 @@
 fun interface IFoo {
-  abstract fun foo(i: Int) 
+  abstract fun foo(i: Int)
 
 }
 
@@ -46,10 +46,13 @@ fun withVararg(vararg xs: Int): Int {
 fun test1() {
   { // BLOCK
     val tmp0_array: A = A
-    val tmp2_sam: IFoo = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0]) /*~> Unit */
-    }
- /*-> IFoo */
+    val tmp2_sam: IFoo = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0]) /*~> Unit */
+      }
+
+      ::withVararg
+    } /*-> IFoo */
     tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
@@ -57,10 +60,13 @@ fun test1() {
 fun test2() {
   { // BLOCK
     val tmp0_array: B = B
-    val tmp2_sam: IFoo2 = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0]) /*~> Unit */
-    }
- /*-> IFoo2 */
+    val tmp2_sam: IFoo2 = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0]) /*~> Unit */
+      }
+
+      ::withVararg
+    } /*-> IFoo2 */
     tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
@@ -89,7 +95,7 @@ fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   { // BLOCK
     val tmp0_array: A = A
-    val tmp2_sam: IFoo = a /*as Function1<@ParameterName(name = "i") Int, Unit> */ /*-> IFoo */
+    val tmp2_sam: IFoo = a /*as Function1<Int, Unit> */ /*-> IFoo */
     tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
@@ -103,4 +109,3 @@ fun test6(a: Any) {
     tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
   }
 }
-

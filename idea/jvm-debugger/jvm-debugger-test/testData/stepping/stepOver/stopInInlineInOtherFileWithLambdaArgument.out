@@ -1,8 +1,0 @@
-LineBreakpoint created at stopInInlineInOtherFileWithLambdaArgument.Other.kt:7
-Run Java
-Connected to the target VM
-stopInInlineInOtherFileWithLambdaArgument.Other.kt:7
-stopInInlineInOtherFileWithLambdaArgument.Other.kt:8
-Disconnected from the target VM
-
-Process finished with exit code 0

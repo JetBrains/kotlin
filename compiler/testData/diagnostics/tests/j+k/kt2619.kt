@@ -1,7 +1,9 @@
-//FILE: foo.kt
+// FIR_IDENTICAL
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
+// FILE: foo.kt
 fun main() {
     val c: Type
-    <!NON_EXHAUSTIVE_WHEN!>when<!> (<!UNINITIALIZED_VARIABLE, UNUSED_EXPRESSION!>c<!>)  {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (<!UNINITIALIZED_VARIABLE!>c<!>)  {
 
     }
 }

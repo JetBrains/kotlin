@@ -1,6 +1,6 @@
 package ${package}
 
-import kotlin.browser.window
+import kotlinx.browser.window
 
 /**
  * Example main function. Started at script body.

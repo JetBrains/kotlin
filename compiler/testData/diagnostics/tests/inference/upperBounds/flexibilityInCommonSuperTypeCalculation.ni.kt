@@ -166,18 +166,18 @@ fun <T> case_11(y: T) {
 
         <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>x1<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T!!..T?)")!>x3<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(T & Any..T?)")!>x3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>y<!>
 
         <!DEBUG_INFO_EXPRESSION_TYPE("A<out (T..T?)>")!>result_1<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<out T?>")!>result_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T!!..T?)>")!>result_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_3<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_4<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_5<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T!!..T?)>")!>result_6<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_6<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_7<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T!!..T?)>")!>result_9<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_9<!>
 
         <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_10<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>result_11<!>

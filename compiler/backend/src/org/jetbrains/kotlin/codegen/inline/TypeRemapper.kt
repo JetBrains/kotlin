@@ -30,7 +30,7 @@ class TypeRemapper private constructor(
     private val typeParametersMapping = hashMapOf<String, TypeParameter>()
 
     fun addMapping(type: String, newType: String) {
-        typeMapping.put(type, newType)
+        typeMapping[type] = newType
     }
 
     fun hasNoAdditionalMapping(type: String): Boolean {

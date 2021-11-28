@@ -13,7 +13,7 @@ fun case_1() {
     y = x
     y.put(0)
     val z: In<*> = x
-    z.put(0)
+    z.put(<!ARGUMENT_TYPE_MISMATCH!>0<!>)
 }
 
 /*
@@ -27,7 +27,7 @@ fun case_2() {
     y = x
     y.put(0)
     val z: Inv<out Number> = x
-    z.put(0)
+    z.put(<!ARGUMENT_TYPE_MISMATCH!>0<!>)
 }
 
 // TESTCASE NUMBER: 3
@@ -61,7 +61,7 @@ fun case_5() {
     y = x
     y.put(0)
     val z: Inv<out Number> = x
-    z.put(0)
+    z.put(<!ARGUMENT_TYPE_MISMATCH!>0<!>)
 }
 
 /*
@@ -74,7 +74,7 @@ fun case_6() {
     var y: Inv<out Number> = Inv<Int>()
     if (true)
         y = x
-    y.<!INAPPLICABLE_CANDIDATE!>put<!>(0)
+    y.put(<!ARGUMENT_TYPE_MISMATCH!>0<!>)
     val z: Inv<out Number> = x
-    z.put(0)
+    z.put(<!ARGUMENT_TYPE_MISMATCH!>0<!>)
 }

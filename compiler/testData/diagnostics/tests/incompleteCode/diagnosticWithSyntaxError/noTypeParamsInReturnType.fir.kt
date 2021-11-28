@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package b
 
 fun <T, R> foo(map: Map<T, R>) : R = throw Exception()
@@ -6,6 +5,5 @@ fun <T, R> foo(map: Map<T, R>) : R = throw Exception()
 fun <F, G> getMap() : Map<F, G> = throw Exception()
 
 fun bar123() {
-    foo(<!INAPPLICABLE_CANDIDATE!>getMap<!>(
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!TOO_MANY_ARGUMENTS!>getMap<!>(
 <!SYNTAX!><!>}
-

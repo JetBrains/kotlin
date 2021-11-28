@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
 // TARGET_BACKEND: JVM

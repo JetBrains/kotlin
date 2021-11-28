@@ -1,6 +1,6 @@
 import kotlin.contracts.*
 
-fun checkNotNull(x: Any?) {
+fun checkNotNull(x: Any?): Boolean {
     contract {
         returns(true) implies (x != null)
         returns(false) implies (x == null)
@@ -21,7 +21,7 @@ fun test_1(x: String?) {
     if (checkNotNull(x)) {
         x.length // OK
     } else {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!> // Error
+        x<!UNSAFE_CALL!>.<!>length // Error
     }
 }
 

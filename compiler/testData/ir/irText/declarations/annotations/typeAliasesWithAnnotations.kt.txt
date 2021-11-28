@@ -1,6 +1,11 @@
 @Target(allowedTargets = [AnnotationTarget.TYPEALIAS])
-annotation class TestAnn : Annotation {
-  constructor(x: String) /* primary */ 
+open annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val x: String
     field = x
     get

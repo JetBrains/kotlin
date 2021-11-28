@@ -16,151 +16,135 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Test
-import java.io.File
+import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
-class BuildCacheIT : BaseGradleIT() {
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(withBuildCache = true)
+@ExperimentalPathApi
+@DisplayName("Local build cache")
+@SimpleGradlePluginTests
+class BuildCacheIT : KGPBaseTest() {
 
-    companion object {
-        private val GRADLE_VERSION = GradleVersionRequired.None
-    }
+    override val defaultBuildOptions: BuildOptions =
+        super.defaultBuildOptions.copy(buildCacheEnabled = true)
 
-    @Test
-    fun testKotlinCachingEnabledFlag() = with(Project("simpleProject", GRADLE_VERSION)) {
-        prepareLocalBuildCache()
+    private val localBuildCacheDir get() = workingDir.resolve("custom-jdk-build-cache")
 
-        build("assemble") {
-            assertSuccessful()
-            assertTaskPackedToCache(":compileKotlin")
-        }
+    @DisplayName("kotlin.caching.enabled flag should enable caching for Kotlin tasks")
+    @GradleTest
+    fun testKotlinCachingEnabledFlag(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
 
-        build("clean", "assemble", "-Dkotlin.caching.enabled=false") {
-            assertSuccessful()
-            assertNotContains(":compileKotlin FROM-CACHE")
-        }
-    }
-
-    @Test
-    fun testCacheHitAfterClean() = with(Project("simpleProject", GRADLE_VERSION)) {
-        prepareLocalBuildCache()
-
-        build("assemble") {
-            assertSuccessful()
-            assertTaskPackedToCache(":compileKotlin")
-        }
-        build("clean", "assemble") {
-            assertSuccessful()
-            assertContains(":compileKotlin FROM-CACHE")
-            assertContains(":compileJava FROM-CACHE")
-        }
-    }
-
-    @Test
-    fun testCacheHitAfterCacheHit() = with(Project("simpleProject", GRADLE_VERSION)) {
-        prepareLocalBuildCache()
-
-        build("assemble") {
-            assertSuccessful()
-            // Should store the output into the cache:
-            assertTaskPackedToCache(":compileKotlin")
-        }
-
-        val sourceFile = File(projectDir, "src/main/kotlin/helloWorld.kt")
-        val originalSource: String = sourceFile.readText()
-        val modifiedSource: String = originalSource.replace(" and ", " + ")
-        sourceFile.writeText(modifiedSource)
-
-        build("assemble") {
-            assertSuccessful()
-            assertTaskPackedToCache(":compileKotlin")
-        }
-
-        sourceFile.writeText(originalSource)
-
-        build("assemble") {
-            assertSuccessful()
-            // Should load the output from cache:
-            assertContains(":compileKotlin FROM-CACHE")
-        }
-
-        sourceFile.writeText(modifiedSource)
-
-        build("assemble") {
-            assertSuccessful()
-            // And should load the output from cache again, without compilation:
-            assertContains(":compileKotlin FROM-CACHE")
-        }
-    }
-
-    @Test
-    fun testCorrectBuildAfterCacheHit() = with(Project("buildCacheSimple", GRADLE_VERSION)) {
-        prepareLocalBuildCache()
-
-        // First build, should be stored into the build cache:
-        build("assemble") {
-            assertSuccessful()
-            assertTaskPackedToCache(":compileKotlin")
-        }
-
-        // A cache hit:
-        build("clean", "assemble") {
-            assertSuccessful()
-            assertContains(":compileKotlin FROM-CACHE")
-        }
-
-        // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
-        File(projectDir, "src/main/kotlin/foo.kt").modify { it.replace("Int = 1", "String = \"abc\"") }
-        build("assemble") {
-            assertSuccessful()
-            assertCompiledKotlinSources(relativize(allKotlinFiles))
-        }
-    }
-
-    @Test
-    fun testKaptCachingWithIncrementalApt() {
-        with(Project("kaptAvoidance", GRADLE_VERSION, directoryPrefix = "kapt2")) {
-            prepareLocalBuildCache()
-
-            val options = defaultBuildOptions().copy(
-                kaptOptions = KaptOptions(
-                    verbose = true,
-                    useWorkers = false,
-                    incrementalKapt = true,
-                    includeCompileClasspath = false
-                )
-            )
-            build(options = options, params = *arrayOf("clean", ":app:build")) {
-                assertSuccessful()
-                assertTaskPackedToCache(":app:kaptGenerateStubsKotlin")
-                assertTaskPackedToCache(":app:kaptKotlin")
+            build("assemble") {
+                assertTasksPackedToCache(":compileKotlin")
             }
 
-            // copy project to a new location
-            val copyProject = projectDir.resolveSibling("copy_${projectDir.name}").also { it.mkdirs() }
-            copyRecursively(projectDir, copyProject)
-
-            build(options = options, projectDir = copyProject.resolve(projectName), params = *arrayOf("clean", "build")) {
-                assertSuccessful()
-                assertContains(":app:kaptGenerateStubsKotlin FROM-CACHE")
-                assertContains(":app:kaptKotlin FROM-CACHE")
+            build("clean", "assemble", "-Dkotlin.caching.enabled=false") {
+                assertTasksExecuted(":compileKotlin")
             }
         }
     }
-}
 
-fun BaseGradleIT.Project.prepareLocalBuildCache(directory: File = File(projectDir.parentFile, "buildCache").apply { mkdir() }): File {
-    if (!projectDir.exists()) {
-        setupWorkingDir()
+    @DisplayName("Kotlin JVM task should be taken from cache")
+    @GradleTest
+    fun testCacheHitAfterClean(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build("assemble") {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            build("clean", "assemble") {
+                assertTasksFromCache(":compileKotlin", ":compileJava")
+            }
+        }
     }
-    File(projectDir, "settings.gradle").appendText("\nbuildCache.local.directory = '${directory.absolutePath.replace("\\", "/")}'")
-    return directory
-}
 
-internal fun BaseGradleIT.CompiledProject.assertTaskPackedToCache(taskPath: String) {
-    with(project.testCase) {
-        assertContainsRegex(Regex("(?:Packing|Stored cache entry for) task '${Regex.escape(taskPath)}'"))
+    @DisplayName("Should correctly handle modification/restoration of source file")
+    @GradleTest
+    fun testCacheHitAfterCacheHit(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build("assemble") {
+                // Should store the output into the cache:
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            val sourceFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            val originalSource: String = sourceFile.readText()
+            val modifiedSource: String = originalSource.replace(" and ", " + ")
+            sourceFile.writeText(modifiedSource)
+
+            build("assemble") {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            sourceFile.writeText(originalSource)
+
+            build("assemble") {
+                // Should load the output from cache:
+                assertTasksFromCache(":compileKotlin")
+            }
+
+            sourceFile.writeText(modifiedSource)
+
+            build("assemble") {
+                // And should load the output from cache again, without compilation:
+                assertTasksFromCache(":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Incremental compilation works with cache")
+    @GradleTest
+    fun testKotlinCompileIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
+        project("buildCacheSimple", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build("assemble") {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            build("clean", "assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+
+            val fooKtSourceFile = kotlinSourcesDir().resolve("foo.kt")
+            fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
+            build("assemble") {
+                assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
+            }
+
+            fooKtSourceFile.modify { it.replace("String = \"abc\"", "Int = 1") }
+            build("clean", "assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Debug log level should not break build cache")
+    @GradleTest
+    fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build(
+                ":assemble",
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            ) {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            build("clean", ":assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+        }
     }
 }

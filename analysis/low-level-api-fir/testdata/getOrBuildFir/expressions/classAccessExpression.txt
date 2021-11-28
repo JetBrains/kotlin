@@ -1,0 +1,5 @@
+KT element: KtClassLiteralExpression
+FIR element: FirGetClassCallImpl
+
+FIR element rendered:
+<getClass>(Q|kotlin/Int|)

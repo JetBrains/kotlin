@@ -71,7 +71,7 @@ interface BaseWithGeneric {
 fun interface GoodExtensionGeneric : GoodGeneric<String>
 
 fun interface GoodSuspend {
-    <!FUN_INTERFACE_WITH_SUSPEND_FUNCTION!>suspend<!> fun invoke()
+    suspend fun invoke()
 }
 
 class WithNestedFun<K> {
@@ -101,3 +101,4 @@ interface BaseWithDefaultValue {
 }
 
 <!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface DeriveDefault : BaseWithDefaultValue
+

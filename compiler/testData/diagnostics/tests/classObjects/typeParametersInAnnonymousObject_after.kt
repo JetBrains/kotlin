@@ -1,5 +1,5 @@
 // !LANGUAGE: +ProhibitTypeParametersInAnonymousObjects
-// !DIAGNOSTICS: -UNUSED_VARIABLE!
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-28999
 
 fun case_1() {
@@ -36,5 +36,15 @@ inline fun <reified T> case_5() {
     if (z is T) {
         // z is {T!! & T!!} (smart cast from T)
         <!UNRESOLVED_REFERENCE!>println<!>(z)
+    }
+
+    val a = object<!TYPE_PARAMETERS_IN_OBJECT!><A><!> {
+        fun test() = 42 <!UNCHECKED_CAST!>as A<!>
+    }
+
+    val b = a.test()
+
+    if (a is T) {
+        <!UNRESOLVED_REFERENCE!>println<!>(a)
     }
 }

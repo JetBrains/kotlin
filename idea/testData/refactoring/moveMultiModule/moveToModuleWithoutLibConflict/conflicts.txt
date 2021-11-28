@@ -1,1 +1,0 @@
-Function kotlin.collections.listOf(vararg T), referenced in function a.foo(), will not be accessible in module B

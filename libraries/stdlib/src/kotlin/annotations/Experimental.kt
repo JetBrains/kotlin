@@ -25,6 +25,7 @@ import kotlin.reflect.KClass
 @Retention(BINARY)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 @Deprecated("Please use RequiresOptIn instead.")
 public annotation class Experimental(val level: Level = Level.ERROR) {
     /**
@@ -51,6 +52,7 @@ public annotation class Experimental(val level: Level = Level.ERROR) {
 @Retention(SOURCE)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 @Deprecated("Please use OptIn instead.", ReplaceWith("OptIn(*markerClass)", "kotlin.OptIn"))
 public annotation class UseExperimental(
     vararg val markerClass: KClass<out Annotation>

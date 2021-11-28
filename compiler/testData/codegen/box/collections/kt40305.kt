@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: kt40305.kt
 
 class ListImpl<A>(private val list: List<A>): List<A> {

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 fun test() {
     val result = Result.success("yes!")

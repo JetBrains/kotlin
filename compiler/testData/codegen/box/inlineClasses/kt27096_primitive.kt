@@ -1,9 +1,17 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Z1(val x: Int)
-inline class Z2(val z: Z1)
-inline class ZN(val z: Z1?)
-inline class ZN2(val z: ZN)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z1(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z2(val z: Z1)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ZN(val z: Z1?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ZN2(val z: ZN)
 
 fun wrap1(n: Int): Z1? = if (n < 0) null else Z1(n)
 fun wrap2(n: Int): Z2? = if (n < 0) null else Z2(Z1(n))

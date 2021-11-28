@@ -7,10 +7,12 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -22,9 +24,10 @@ class SubpluginEnvironment(
     private val kotlinPluginVersion: String
 ) {
     companion object {
-        fun loadSubplugins(project: Project, kotlinPluginVersion: String): SubpluginEnvironment =
-            try {
-                @Suppress("DEPRECATION") // support for the deprecated plugin API
+        fun loadSubplugins(project: Project): SubpluginEnvironment {
+            val kotlinPluginVersion = project.getKotlinPluginVersion()
+            return try {
+                @Suppress("DEPRECATION_ERROR") // support for the deprecated plugin API
                 val klass = KotlinGradleSubplugin::class.java
                 val buildscriptClassloader = project.buildscript.classLoader
                 val klassFromBuildscript = try {
@@ -41,7 +44,7 @@ class SubpluginEnvironment(
 
                 val result = project.plugins.filterIsInstance<KotlinCompilerPluginSupportPlugin>()
 
-                @Suppress("DEPRECATION", "UNCHECKED_CAST")
+                @Suppress("DEPRECATION_ERROR", "UNCHECKED_CAST")
                 val compatibilitySubplugins = ServiceLoader.load(klass, classloader)
                     .filter { it !is KotlinCompilerPluginSupportPlugin }
                     .map { LegacyKotlinCompilerPluginSupportPlugin(it as KotlinGradleSubplugin<AbstractCompile>) }
@@ -53,6 +56,7 @@ class SubpluginEnvironment(
                 project.logger.error("Could not load subplugins", e)
                 SubpluginEnvironment(listOf(), kotlinPluginVersion)
             }
+        }
     }
 
     fun addSubpluginOptions(
@@ -66,24 +70,35 @@ class SubpluginEnvironment(
             val pluginId = subplugin.getCompilerPluginId()
             project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
-            subplugin.getPluginArtifact().let { artifact ->
-                project.addMavenDependency(PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
-            }
 
-            subplugin.getPluginArtifactForNative()?.let { artifact ->
-                project.addMavenDependency(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
+            if (kotlinCompilation is AbstractKotlinNativeCompilation && !kotlinCompilation.useGenericPluginArtifact) {
+                subplugin.getPluginArtifactForNative()?.let { artifact ->
+                    project.addMavenDependency(kotlinCompilation.pluginConfigurationName, artifact)
+                }
+            } else {
+                project.addMavenDependency(kotlinCompilation.pluginConfigurationName, subplugin.getPluginArtifact())
             }
 
             val subpluginOptionsProvider = subplugin.applyToCompilation(kotlinCompilation)
             val subpluginId = subplugin.getCompilerPluginId()
 
-            kotlinCompilation.compileKotlinTaskProvider.configure {
+            val configureKotlinTask: (KotlinCompile<*>) -> Unit = {
                 val pluginOptions = it.getPluginOptions()
                 val subpluginOptions = subpluginOptionsProvider.get()
                 for (option in subpluginOptions) {
                     pluginOptions.addPluginArgument(subpluginId, option)
                 }
                 it.registerSubpluginOptionsAsInputs(subpluginId, subpluginOptions)
+            }
+
+            kotlinCompilation.compileKotlinTaskProvider.configure(configureKotlinTask)
+
+            if (kotlinCompilation is KotlinJsIrCompilation) {
+                kotlinCompilation.binaries.all {
+                    if (it is JsIrBinary) {
+                        it.linkTask.configure(configureKotlinTask)
+                    }
+                }
             }
 
             project.logger.kotlinDebug("Subplugin $pluginId loaded")
@@ -124,9 +139,9 @@ internal fun addCompilationSourcesToExternalCompileTask(compilation: KotlinCompi
 }
 
 internal class LegacyKotlinCompilerPluginSupportPlugin(
-    @Suppress("deprecation") // support for deprecated API
+    @Suppress("DEPRECATION_ERROR") // support for deprecated API
     val oldPlugin: KotlinGradleSubplugin<AbstractCompile>
-): KotlinCompilerPluginSupportPlugin {
+) : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
         oldPlugin.isApplicable(kotlinCompilation.target.project, kotlinCompilation.compileKotlinTaskProvider.get() as AbstractCompile)
 
@@ -135,11 +150,8 @@ internal class LegacyKotlinCompilerPluginSupportPlugin(
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
-        val androidProjectHandlerOrNull: AbstractAndroidProjectHandler? = if (kotlinCompilation is KotlinJvmAndroidCompilation)
-            KotlinAndroidPlugin.androidTargetHandler(
-                checkNotNull(project.getKotlinPluginVersion()),
-                kotlinCompilation.target as KotlinAndroidTarget
-            ) else null
+        val androidProjectHandlerOrNull: AbstractAndroidProjectHandler? =
+            if (kotlinCompilation is KotlinJvmAndroidCompilation) KotlinAndroidPlugin.androidTargetHandler() else null
 
         val variantData = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 

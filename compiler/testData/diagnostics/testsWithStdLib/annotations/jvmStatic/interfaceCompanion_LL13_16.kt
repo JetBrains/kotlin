@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !LANGUAGE: +JvmStaticInInterface
+// !JVM_TARGET: 1.6
+
 interface B {
     companion object {
         <!JVM_STATIC_IN_INTERFACE_1_6!>@JvmStatic fun a1()<!> {
@@ -17,6 +19,8 @@ interface B {
         <!JVM_STATIC_IN_INTERFACE_1_6, JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic internal fun a4()<!> {
 
         }
+
+        <!JVM_STATIC_IN_INTERFACE_1_6, JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external fun a5()<!>
 
         <!JVM_STATIC_IN_INTERFACE_1_6!>@JvmStatic
         var foo<!> = 1
@@ -50,6 +54,10 @@ interface B {
         public var foo9 = 1
         <!JVM_STATIC_IN_INTERFACE_1_6, JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic private set<!>
 
+        <!JVM_STATIC_IN_INTERFACE_1_6, JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic
+        val foo10: Int<!> external get
+
+        val foo11: Int <!JVM_STATIC_IN_INTERFACE_1_6, JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external get<!>
     }
 
 }

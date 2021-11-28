@@ -1,4 +1,0 @@
-// "Convert parameter to receiver" "true"
-expect class A {
-    fun String.c(a: Int<caret>)
-}

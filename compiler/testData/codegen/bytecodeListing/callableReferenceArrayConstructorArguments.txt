@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class CallableReferenceArrayConstructorArgumentsKt {
+    // source: 'callableReferenceArrayConstructorArguments.kt'
+    public final static method foo1(p0: int): int
+    public varargs final static method foo2(@org.jetbrains.annotations.NotNull p0: int[]): int
+    public final static method foo3(p0: int): int
+    public final static method foo4(@org.jetbrains.annotations.NotNull p0: int[], p1: int): int
+    public final static method getFoo5(p0: int): int
+    public final static method test(): void
+}

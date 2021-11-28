@@ -1,0 +1,47 @@
+// FILE: 1.kt
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt$call$1
+*L
+1#1,13:1
+*E
+
+// FILE: 2.kt
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+builders/_1Kt
+*L
+1#1,31:1
+8#2:32
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+20#1:32
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt$call$1
++ 2 2.kt
+_2Kt
+*L
+1#1,13:1
+21#2,2:14
+*E
+

@@ -1,7 +1,0 @@
--InheritedDelegationMethods.kt
- -Test
-  equals(Any?): Boolean location=→Any
-  first(): Unit location=→Some
-  hashCode(): Int location=→Any
-  second(): Unit location=→Some
-  toString(): String location=→Any

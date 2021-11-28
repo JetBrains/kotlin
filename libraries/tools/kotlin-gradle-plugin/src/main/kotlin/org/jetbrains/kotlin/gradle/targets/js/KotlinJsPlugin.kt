@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.setupGeneralKotlinExtensionParameters
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -42,12 +41,12 @@ open class KotlinJsPlugin(
         customizeKotlinDependencies(project)
 
         kotlinExtension.apply {
-            irPreset = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion)
-            legacyPreset = KotlinJsSingleTargetPreset(project, kotlinPluginVersion)
+            irPreset = KotlinJsIrSingleTargetPreset(project)
+            legacyPreset = KotlinJsSingleTargetPreset(project)
             defaultJsCompilerType = PropertiesProvider(project).jsCompiler
         }
 
-        project.whenEvaluated {
+        project.runProjectConfigurationHealthCheckWhenEvaluated {
             if (kotlinExtension._target == null) {
                 project.logger.warn(
                     """

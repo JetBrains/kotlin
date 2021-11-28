@@ -1,6 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
-// !WITH_NEW_INFERENCE
 
 class Inv<T>
 
@@ -22,12 +20,12 @@ fun test(
     invOut.onlyOut(42)
     invOut.onlyOut(1L)
 
-    invOut.<!NI;TYPE_INFERENCE_ONLY_INPUT_TYPES, OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>onlyOutUB<!>(<!NI;TYPE_MISMATCH!>"str"<!>)
-    invStar.<!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>onlyOutUB<!>(0)
+    invOut.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>onlyOutUB<!>(<!TYPE_MISMATCH!>"str"<!>)
+    invStar.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOutUB<!>(0)
     invOut.onlyOutUB(42)
     invOut.onlyOutUB(1L)
 
-    invIn.<!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>onlyIn<!>(<!NI;TYPE_MISMATCH!>"str"<!>)
+    invIn.onlyIn(<!TYPE_MISMATCH!>"str"<!>)
     invIn.onlyIn(42)
     invIn.onlyIn(1L)
 }
@@ -67,7 +65,7 @@ class Test5 {
         set(value) {
             if (value != null) {
                 val a = a
-                require(a != null && <!DEBUG_INFO_SMARTCAST!>value<!> in <!OI;DEBUG_INFO_SMARTCAST!>a<!>.children)
+                require(a != null && <!DEBUG_INFO_SMARTCAST!>value<!> in a.children)
             }
             field = value
         }

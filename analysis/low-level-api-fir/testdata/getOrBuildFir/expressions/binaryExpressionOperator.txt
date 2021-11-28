@@ -1,0 +1,5 @@
+KT element: KtOperationReferenceExpression
+FIR element: FirResolvedNamedReferenceImpl
+
+FIR element rendered:
+R|kotlin/Int.plus|

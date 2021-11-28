@@ -1,10 +1,10 @@
-// FILE: Diagnostic.java
+// FILE: jvm/Diagnostic.java
 
 package jvm;
 
 public interface Diagnostic {}
 
-// FILE: DiagnosticWithParameters1.java
+// FILE: jvm/DiagnosticWithParameters1.java
 
 package jvm;
 
@@ -12,7 +12,7 @@ public interface DiagnosticWithParameters1<E, A> extends Diagnostic {
     A getA();
 }
 
-// FILE: DiagnosticWithParameters2.java
+// FILE: jvm/DiagnosticWithParameters2.java
 
 package jvm;
 

@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: localWithCapture
+// CHECK_CONTAINS_NO_CALLS: localWithCapture except=Unit_getInstance
 // CHECK_CONTAINS_NO_CALLS: localWithoutCapture
 
 internal inline fun repeatAction(times: Int, action: () -> Unit) {

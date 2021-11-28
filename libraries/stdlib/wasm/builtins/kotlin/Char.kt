@@ -13,7 +13,7 @@ import kotlin.wasm.internal.*
  *
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-@WasmPrimitive
+@WasmAutoboxed
 @Suppress("NOTHING_TO_INLINE")
 public class Char private constructor(public val value: Char) : Comparable<Char> {
     /**
@@ -43,11 +43,19 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
     public inline operator fun minus(other: Int): Char =
         (this.toInt() - other).toChar()
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Char =
         (this.toInt() + 1).toChar()
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Char =
         (this.toInt() - 1).toChar()
 
@@ -68,7 +76,7 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         this.toInt().toShort()
 
     /** Returns the value of this character as a `Int`. */
-    @WasmReinterpret
+    @WasmNoOpCast
     public fun toInt(): Int =
         implementedAsIntrinsic
 
@@ -85,7 +93,7 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         this.toInt().toDouble()
 
     override fun toString(): String =
-        charToString(this)
+        String.unsafeFromCharArray(charArrayOf(this))
 
     override fun hashCode(): Int =
         this.toInt().hashCode()
@@ -146,7 +154,3 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         public const val SIZE_BITS: Int = 16
     }
 }
-
-@WasmImport("runtime", "Char_toString")
-private fun charToString(c: Char): String = implementedAsIntrinsic
-

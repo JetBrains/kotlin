@@ -14,18 +14,23 @@ typealias C = Planet
 expect val property1: Int
 expect val property2: String
 expect val property3: Planet
+expect val property4: Planet
+expect val property5: Planet
 expect val property6: Planet
 expect val property7: C
 
 expect fun function1(): Int
 expect fun function2(): String
 expect fun function3(): Planet
+expect fun function4(): Planet
+expect fun function5(): Planet
 expect fun function6(): Planet
 expect fun function7(): C
 
 expect class Box<T>(value: T) {
     val value: T
 }
+
 expect class Fox()
 
 expect fun functionWithTypeParametersInReturnType1(): Array<Int>
@@ -46,6 +51,7 @@ expect class Outer<A>() {
         class Nested<C>()
         inner class Inner<D>()
     }
+
     inner class Inner<E>() {
         inner class Inner<F>()
     }

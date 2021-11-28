@@ -19,15 +19,13 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for iteration over iterables using the `get / []` operator and an index. */
-internal abstract class IndexedGetIterationHandler(
+abstract class IndexedGetIterationHandler(
     protected val context: CommonBackendContext,
     private val canCacheLast: Boolean
 ) : ExpressionHandler {
@@ -74,14 +72,20 @@ internal abstract class IndexedGetIterationHandler(
 
 /** Builds a [HeaderInfo] for arrays. */
 internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
-    override fun matchIterable(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() }
+    private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
+
+    override fun matchIterable(expression: IrExpression) =
+        expression.type.run { isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray()) }
 
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
 
+    private val getFunctionName: Name
+        get() = context.ir.symbols.getWithoutBoundCheckName ?: OperatorNameConventions.GET
+
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
-            it.name == OperatorNameConventions.GET &&
+            it.name == getFunctionName &&
                     it.valueParameters.size == 1 &&
                     it.valueParameters[0].type.isInt()
         }

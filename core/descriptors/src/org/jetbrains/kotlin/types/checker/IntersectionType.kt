@@ -170,6 +170,8 @@ object TypeIntersector {
         protected val UnwrappedType.resultNullability: ResultNullability
             get() = when {
                 isMarkedNullable -> ACCEPT_NULL
+                this is DefinitelyNotNullType && this.original is StubTypeForBuilderInference -> NOT_NULL
+                this is StubTypeForBuilderInference -> UNKNOWN
                 NullabilityChecker.isSubtypeOfAny(this) -> NOT_NULL
                 else -> UNKNOWN
             }

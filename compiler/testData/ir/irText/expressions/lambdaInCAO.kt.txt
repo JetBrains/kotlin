@@ -38,4 +38,3 @@ fun test3(a: Any) {
     tmp2
   } /*~> Unit */
 }
-

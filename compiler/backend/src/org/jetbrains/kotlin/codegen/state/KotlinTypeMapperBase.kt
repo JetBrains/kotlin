@@ -8,10 +8,17 @@ package org.jetbrains.kotlin.codegen.state
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class KotlinTypeMapperBase {
+    abstract val typeSystem: TypeSystemCommonBackendContext
+
     abstract fun mapClass(classifier: ClassifierDescriptor): Type
+
+    abstract fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type
 
     fun mapDefaultImpls(descriptor: ClassDescriptor): Type =
         Type.getObjectType(mapClass(descriptor).internalName + JvmAbi.DEFAULT_IMPLS_SUFFIX)

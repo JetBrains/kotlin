@@ -13,11 +13,11 @@ data class Test<T : Any?> {
     field = y
     get
 
-  fun component1(): T {
+  operator fun component1(): T {
     return <this>.#x
   }
 
-  fun component2(): String {
+  operator fun component2(): String {
     return <this>.#y
   }
 

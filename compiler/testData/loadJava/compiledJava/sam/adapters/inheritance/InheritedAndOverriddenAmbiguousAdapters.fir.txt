@@ -1,2 +1,14 @@
 public abstract interface InheritedAndOverriddenAmbiguousAdapters : R|kotlin/Any| {
+    public abstract interface Sub : R|test/InheritedAndOverriddenAmbiguousAdapters.Super| {
+        public abstract fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public abstract fun foo(r: R|ft<java/io/Closeable, java/io/Closeable?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public abstract fun foo(r: R|ft<java/io/Closeable, java/io/Closeable?>|): R|kotlin/Unit|
+
+    }
 }

@@ -29,7 +29,7 @@ object Annotator {
             annotationLines[lastLevel].replace(startReplace, startReplace + ann.text.length, ann.text)
 
             for (i in 0 until lastLevel) {
-                if (annotationLines[i][startReplace] == ' ') { //to avoid char replacement for a multilevel annotation
+                if (annotationLines[i].getOrNull(startReplace) == ' ') { //to avoid char replacement for a multilevel annotation
                     annotationLines[i].replace(startReplace, startReplace + 1, verticalLine)
                 }
             }

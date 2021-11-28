@@ -7,67 +7,82 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         DiscriminateSynthetics,
         CheckExplicitReceiverConsistency,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
-        PostponedVariablesInitializerResolutionStage
+        PostponedVariablesInitializerResolutionStage,
     )
 
     object SyntheticSelect : CallKind(
         MapArguments,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckArguments,
         EagerResolveOfCallableReferences
     )
 
     object Function : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         DiscriminateSynthetics,
         MapArguments,
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckArguments,
+        CheckCallModifiers,
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
-        PostponedVariablesInitializerResolutionStage
+        PostponedVariablesInitializerResolutionStage,
     )
 
     object DelegatingConstructorCall : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         MapArguments,
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckArguments,
-        EagerResolveOfCallableReferences
+        EagerResolveOfCallableReferences,
     )
 
     object CallableReference : CallKind(
+        CheckDeprecatedSinceKotlin,
         CheckVisibility,
         DiscriminateSynthetics,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckDslScopeViolation,
         CheckCallableReferenceExpectedType,
-        CheckLowPriorityInOverloadResolution
+        CheckLowPriorityInOverloadResolution,
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(
         MapArguments,
-        NoTypeArguments,
+        MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckArguments,
         EagerResolveOfCallableReferences
     )

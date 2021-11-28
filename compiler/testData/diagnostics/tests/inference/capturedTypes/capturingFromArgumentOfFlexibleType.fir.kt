@@ -14,5 +14,5 @@ fun <T> id(x: T) = null as T
 
 fun test() {
     Test.getFoo()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out kotlin.Number..kotlin.Number?!>")!>id(Test.getFoo())<!>
+    id(Test.getFoo())
 }

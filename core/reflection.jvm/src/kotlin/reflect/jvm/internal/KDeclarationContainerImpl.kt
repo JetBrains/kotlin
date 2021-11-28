@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.createArrayType
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -75,7 +74,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         if (match != null) {
             val (number) = match.destructured
             return getLocalProperty(number.toInt())
-                    ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
+                ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
         }
 
         val properties = getProperties(Name.identifier(name))
@@ -100,9 +99,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
             val mostVisibleProperties = properties
                 .groupBy { it.visibility }
-                .toSortedMap(Comparator { first, second ->
+                .toSortedMap { first, second ->
                     DescriptorVisibilities.compare(first, second) ?: 0
-                }).values.last()
+                }.values.last()
             if (mostVisibleProperties.size == 1) {
                 return mostVisibleProperties.first()
             }
@@ -178,9 +177,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 // Falling back to enumerating all methods in the class in this (rather rare) case.
                 // Example: class A(val x: Int) { fun getX(): String = ... }
                 declaredMethods.firstOrNull { method ->
-                    method.name == name &&
-                            method.returnType == returnType &&
-                            method.parameterTypes!!.contentEquals(parameterTypes)
+                    method.name == name && method.returnType == returnType && method.parameterTypes.contentEquals(parameterTypes)
                 }
             }
         } catch (e: NoSuchMethodException) {
@@ -249,6 +246,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         while (desc[begin] != ')') {
             var end = begin
             while (desc[end] == '[') end++
+            @Suppress("SpellCheckingInspection")
             when (desc[end]) {
                 in "VZCBSIFJD" -> end++
                 'L' -> end = desc.indexOf(';', begin) + 1

@@ -7,29 +7,32 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
 @PublishedApi
 internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(builder) {
-    val wrappedDescriptor = WrappedClassDescriptor()
     createClass(
         startOffset, endOffset, origin,
-        IrClassSymbolImpl(wrappedDescriptor),
+        IrClassSymbolImpl(),
         name, kind, visibility, modality,
         isCompanion, isInner, isData, isExternal, isInline, isExpect, isFun
-    ).also {
-        wrappedDescriptor.bind(it)
-    }
+    )
 }
 
 inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
@@ -40,14 +43,12 @@ inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
 
 @PublishedApi
 internal fun IrFactory.buildField(builder: IrFieldBuilder): IrField = with(builder) {
-    val wrappedDescriptor = WrappedFieldDescriptor()
     createField(
         startOffset, endOffset, origin,
-        IrFieldSymbolImpl(wrappedDescriptor),
+        IrFieldSymbolImpl(),
         name, type, visibility, isFinal, isExternal, isStatic,
     ).also {
         it.metadata = metadata
-        wrappedDescriptor.bind(it)
     }
 }
 
@@ -70,22 +71,22 @@ fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Descri
         visibility = fieldVisibility
     }
 
-fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE): IrField =
+fun IrClass.addField(
+    fieldName: String,
+    fieldType: IrType,
+    fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
+): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
 @PublishedApi
 internal fun IrFactory.buildProperty(builder: IrPropertyBuilder): IrProperty = with(builder) {
-    val wrappedDescriptor = WrappedPropertyDescriptor()
-
     createProperty(
         startOffset, endOffset, origin,
-        IrPropertySymbolImpl(wrappedDescriptor),
+        IrPropertySymbolImpl(),
         name, visibility, modality,
         isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
         containerSource,
-    ).also {
-        wrappedDescriptor.bind(it)
-    }
+    )
 }
 
 inline fun IrFactory.buildProperty(builder: IrPropertyBuilder.() -> Unit) =
@@ -111,33 +112,56 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         }
     }
 
-@PublishedApi
-internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
-    val wrappedDescriptor = WrappedSimpleFunctionDescriptor()
-    createFunction(
-        startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(wrappedDescriptor),
-        name, visibility, modality, returnType,
-        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
-        containerSource,
-    ).also {
-        wrappedDescriptor.bind(it)
+fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
+    val field = backingField!!
+    addGetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        returnType = field.type
+    }.apply {
+        dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(this)
+        body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrReturnImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    builtIns.nothingType,
+                    symbol,
+                    IrGetFieldImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        field.symbol,
+                        field.type,
+                        IrGetValueImpl(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            dispatchReceiverParameter!!.type,
+                            dispatchReceiverParameter!!.symbol
+                        )
+                    )
+                )
+            )
+        )
     }
 }
 
 @PublishedApi
+internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
+    createFunction(
+        startOffset, endOffset, origin,
+        IrSimpleFunctionSymbolImpl(),
+        name, visibility, modality, returnType,
+        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
+        containerSource,
+    )
+}
+
+@PublishedApi
 internal fun IrFactory.buildConstructor(builder: IrFunctionBuilder): IrConstructor = with(builder) {
-    val wrappedDescriptor = WrappedClassConstructorDescriptor()
     return createConstructor(
         startOffset, endOffset, origin,
-        IrConstructorSymbolImpl(wrappedDescriptor),
-        Name.special("<init>"),
+        IrConstructorSymbolImpl(),
+        SpecialNames.INIT,
         visibility, returnType,
         isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
         containerSource = containerSource
-    ).also {
-        wrappedDescriptor.bind(it)
-    }
+    )
 }
 
 inline fun IrFactory.buildFun(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
@@ -156,16 +180,16 @@ inline fun IrClass.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleF
     factory.addFunction(this, builder)
 
 fun IrClass.addFunction(
-        name: String,
-        returnType: IrType,
-        modality: Modality = Modality.FINAL,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
-        isStatic: Boolean = false,
-        isSuspend: Boolean = false,
-        isFakeOverride: Boolean = false,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+    name: String,
+    returnType: IrType,
+    modality: Modality = Modality.FINAL,
+    visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+    isStatic: Boolean = false,
+    isSuspend: Boolean = false,
+    isFakeOverride: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
 ): IrSimpleFunction =
     addFunction {
         this.startOffset = startOffset
@@ -179,7 +203,8 @@ fun IrClass.addFunction(
         this.origin = origin
     }.apply {
         if (!isStatic) {
-            dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
+            val thisReceiver = parentAsClass.thisReceiver!!
+            dispatchReceiverParameter = thisReceiver.copyTo(this, type = thisReceiver.type)
         }
     }
 
@@ -198,8 +223,6 @@ inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): I
         constructor.parent = this@addConstructor
     }
 
-private val RECEIVER_PARAMETER_NAME = Name.special("<this>")
-
 fun <D> buildReceiverParameter(
     parent: D,
     origin: IrDeclarationOrigin,
@@ -207,35 +230,31 @@ fun <D> buildReceiverParameter(
     startOffset: Int = parent.startOffset,
     endOffset: Int = parent.endOffset
 ): IrValueParameter
-    where D : IrDeclaration, D : IrDeclarationParent = WrappedReceiverParameterDescriptor().let { wrappedDescriptor ->
+        where D : IrDeclaration, D : IrDeclarationParent =
     parent.factory.createValueParameter(
         startOffset, endOffset, origin,
-        IrValueParameterSymbolImpl(wrappedDescriptor),
-        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false,
+        IrValueParameterSymbolImpl(),
+        SpecialNames.THIS, -1, type, null, isCrossinline = false, isNoinline = false,
         isHidden = false, isAssignable = false
     ).also {
-        wrappedDescriptor.bind(it)
         it.parent = parent
     }
-}
 
 @PublishedApi
 internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
-        val wrappedDescriptor = WrappedValueParameterDescriptor()
         return createValueParameter(
             startOffset, endOffset, origin,
-            IrValueParameterSymbolImpl(wrappedDescriptor),
+            IrValueParameterSymbolImpl(),
             name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, isAssignable
         ).also {
-            wrappedDescriptor.bind(it)
             it.parent = parent
         }
     }
 
 
 inline fun <D> buildValueParameter(declaration: D, builder: IrValueParameterBuilder.() -> Unit): IrValueParameter
-    where D : IrDeclaration, D : IrDeclarationParent =
+        where D : IrDeclaration, D : IrDeclarationParent =
     IrValueParameterBuilder().run {
         builder()
         declaration.factory.buildValueParameter(this, declaration)
@@ -253,8 +272,11 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
     }
 
 fun IrFunction.addValueParameter(name: String, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
+    addValueParameter(Name.identifier(name), type, origin)
+
+fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     addValueParameter {
-        this.name = Name.identifier(name)
+        this.name = name
         this.type = type
         this.origin = origin
     }
@@ -283,13 +305,11 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
 @PublishedApi
 internal fun IrFactory.buildTypeParameter(builder: IrTypeParameterBuilder, parent: IrDeclarationParent): IrTypeParameter =
     with(builder) {
-        val wrappedDescriptor = WrappedTypeParameterDescriptor()
         createTypeParameter(
             startOffset, endOffset, origin,
-            IrTypeParameterSymbolImpl(wrappedDescriptor),
+            IrTypeParameterSymbolImpl(),
             name, index, isReified, variance
         ).also {
-            wrappedDescriptor.bind(it)
             it.superTypes = superTypes
             it.parent = parent
         }
@@ -330,13 +350,11 @@ fun buildVariable(
     isConst: Boolean = false,
     isLateinit: Boolean = false,
 ): IrVariable {
-    val wrappedDescriptor = WrappedVariableDescriptor()
     return IrVariableImpl(
         startOffset, endOffset, origin,
-        IrVariableSymbolImpl(wrappedDescriptor),
+        IrVariableSymbolImpl(),
         name, type, isVar, isConst, isLateinit
     ).also {
-        wrappedDescriptor.bind(it)
         if (parent != null) {
             it.parent = parent
         }

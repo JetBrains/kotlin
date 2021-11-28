@@ -1,6 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 class Foo {
     var a: Int = 42
@@ -10,14 +8,18 @@ class Foo {
 var provideDelegateInvoked = 0
 var setterInvoked = 0
 
-inline class DelegateFactory(val default: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class DelegateFactory(val default: Int) {
     operator fun provideDelegate(thisRef: Any?, prop: Any?): Delegate {
         provideDelegateInvoked++
         return Delegate(default)
     }
 }
 
-inline class Delegate(val default: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Delegate(val default: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         (thisRef as? Foo)?.a ?: default

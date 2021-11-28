@@ -1,5 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// WITH_RUNTIME
+// !OPT_IN: kotlin.ExperimentalStdlibApi
+// WITH_STDLIB
 
 abstract class Visibility(val name: String, val isPublicAPI: Boolean) {
     open val internalDisplayName: String

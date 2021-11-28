@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.scripting.ide_services.test_util
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.mainKts.impl.IvyResolver
 import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 // in case of flat or direct resolvers the value should be a direct path or file name of a jar respectively
@@ -22,7 +22,7 @@ annotation class DependsOn(val value: String = "")
 
 open class ScriptDependenciesResolver {
 
-    private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), IvyResolver())
+    private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
     private val addedClasspath = mutableListOf<File>()
 
     fun resolveFromAnnotations(script: ScriptContents): ResultWithDiagnostics<List<File>> {

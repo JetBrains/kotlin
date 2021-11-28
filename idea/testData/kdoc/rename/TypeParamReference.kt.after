@@ -1,4 +1,0 @@
-/**
- * @param R this is a type parameter
- */
-fun <<caret>R> f(s: String) { }

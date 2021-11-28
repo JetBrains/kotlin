@@ -2,14 +2,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
  operator fun CharSequence.contains(regex: Regex): Boolean {
     println("my contains")
     return true
 }
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 
 package sentence3
 
@@ -27,7 +27,7 @@ import libPackage.*
 
 fun case1() {
     val regex = Regex("")
-   "" contains  regex
+   "" <!INFIX_MODIFIER_REQUIRED!>contains<!>  regex
 }
 
 // FILE: TestCase2.kt
@@ -42,5 +42,5 @@ import libPackage.*
 
 fun case2() {
     val regex = Regex("")
-    "" contains  regex
+    "" <!INFIX_MODIFIER_REQUIRED!>contains<!>  regex
 }

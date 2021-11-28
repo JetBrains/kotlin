@@ -33,4 +33,13 @@ public interface IrConstructorCallOrBuilder extends
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
+
+  /**
+   * <code>optional int32 origin_name = 4;</code>
+   */
+  boolean hasOriginName();
+  /**
+   * <code>optional int32 origin_name = 4;</code>
+   */
+  int getOriginName();
 }

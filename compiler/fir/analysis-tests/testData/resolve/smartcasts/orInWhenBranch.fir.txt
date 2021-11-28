@@ -1,0 +1,35 @@
+FILE: orInWhenBranch.kt
+    public final fun R|kotlin/String|.foo(): R|kotlin/Unit| {
+    }
+    public final fun test_1(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        when (R|<local>/a|) {
+            ($subj$ is R|kotlin/String|) || ($subj$ is R|kotlin/Any|) ->  {
+                R|<local>/a|.<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#()
+            }
+        }
+
+    }
+    public final fun test_2(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/String|) || (R|<local>/a| is R|kotlin/Any|) ->  {
+                R|<local>/a|.<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#()
+            }
+        }
+
+    }
+    public final fun test_3(a: R|kotlin/Any?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when (R|<local>/a|) {
+            ($subj$ is R|kotlin/String|) || ==($subj$, R|<local>/b|) ->  {
+                R|<local>/a|.<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#()
+            }
+        }
+
+    }
+    public final fun test_4(a: R|kotlin/Any?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/String|) || R|<local>/b| ->  {
+                R|<local>/a|.<None of the following candidates is applicable because of receiver type mismatch: [/foo]>#()
+            }
+        }
+
+    }

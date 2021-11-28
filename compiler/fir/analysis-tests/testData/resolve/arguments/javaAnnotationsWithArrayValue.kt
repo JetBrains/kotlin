@@ -9,7 +9,7 @@ public @interface Ann {
 @Ann("a", "b")
 fun test_1() {}
 
-<!INAPPLICABLE_CANDIDATE!>@Ann(arrayOf("a", "b"))<!>
+@Ann(<!ARGUMENT_TYPE_MISMATCH!>arrayOf("a", "b")<!>)
 fun test_2() {}
 
 @Ann(*arrayOf("a", "b"))

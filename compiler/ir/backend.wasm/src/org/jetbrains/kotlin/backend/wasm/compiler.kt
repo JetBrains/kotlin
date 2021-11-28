@@ -5,25 +5,19 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.generateStringLiteralsSupport
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
+import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
+import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
@@ -31,20 +25,20 @@ import java.io.ByteArrayOutputStream
 class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
 fun compileWasm(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
+    depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
-    exportedDeclarations: Set<FqName> = emptySet()
+    irFactory: IrFactory,
+    exportedDeclarations: Set<FqName> = emptySet(),
+    emitNameSection: Boolean = false,
 ): WasmCompilerResult {
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(
-            project, mainModule, analyzer, configuration, allDependencies, friendDependencies,
-            PersistentIrFactory
-        )
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
+    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
+        depsDescriptors,
+        irFactory,
+        verifySignatures = false,
+        loadFunctionInterfacesIntoStdlib = true,
+    )
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
@@ -52,28 +46,29 @@ fun compileWasm(
     }
 
     val moduleDescriptor = moduleFragment.descriptor
-    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
+    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, configuration)
 
     // Load declarations referenced during `context` initialization
     allModules.forEach {
-        val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
-        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
-            .generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     }
 
     val irFiles = allModules.flatMap { it.files }
-
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
 
     // Create stubs
-    val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
+
+    deserializer.postProcess()
+    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+
+    moduleFragment.files.forEach { irFile -> markExportedDeclarations(context, irFile, exportedDeclarations) }
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
-    val compiledWasmModule = WasmCompiledModuleFragment()
+    val compiledWasmModule = WasmCompiledModuleFragment(context.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule)
     codeGenerator.generateModule(moduleFragment)
 
@@ -85,7 +80,7 @@ fun compileWasm(
     val js = compiledWasmModule.generateJs()
 
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, linkedModule).appendWasmModule()
+    WasmIrToBinary(os, linkedModule, moduleDescriptor.name.asString(), emitNameSection).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(
@@ -97,50 +92,34 @@ fun compileWasm(
 
 
 fun WasmCompiledModuleFragment.generateJs(): String {
+    //language=js
     val runtime = """
+    var wasmInstance = null;
+    
+    const externrefBoxes = new WeakMap();
+    
     const runtime = {
-        String_getChar(str, index) {
-            return str.charCodeAt(index);
-        },
-
-        String_compareTo(str1, str2) {
-            if (str1 > str2) return 1;
-            if (str1 < str2) return -1;
-            return 0;
-        },
-
-        String_equals(str, other) {
-            return str === other;
-        },
-
-        String_subsequence(str, startIndex, endIndex) {
-            return str.substring(startIndex, endIndex);
-        },
-
-        String_getLiteral(index) {
-            return runtime.stringLiterals[index];
-        },
-
-        coerceToString(value) {
-            return String(value);
-        },
-
-        Char_toString(char) {
-            return String.fromCharCode(char)
-        },
- 
         identity(x) {
             return x;
         },
 
-        println(value) {
-            console.log(">>>  " + value)
+        println(valueAddr) {
+            console.log(">>>  " + importStringFromWasm(valueAddr));
         }
     };
+    
+    function importStringFromWasm(addr) {
+        const mem16 = new Uint16Array(wasmInstance.exports.memory.buffer);
+        const mem32 = new Int32Array(wasmInstance.exports.memory.buffer);
+        const len = mem32[addr / 4];
+        const str_start_addr = (addr + 4) / 2;
+        const slice = mem16.slice(str_start_addr, str_start_addr + len);
+        return String.fromCharCode.apply(null, slice);
+    }
     """.trimIndent()
 
     val jsCode =
         "\nconst js_code = {${jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }}};"
 
-    return runtime + generateStringLiteralsSupport(stringLiterals) + jsCode
+    return runtime + jsCode
 }

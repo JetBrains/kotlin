@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
@@ -49,7 +50,7 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
             group = taskGroupName
-            inputFileProperty.set(project.layout.file(compilation.compileKotlinTaskProvider.map { it.outputFile }))
+            inputFileProperty.fileProvider(compilation.compileKotlinTaskProvider.flatMap { it.outputFileProperty })
         }
         target.runTask.dependsOn(runTaskHolder)
     }

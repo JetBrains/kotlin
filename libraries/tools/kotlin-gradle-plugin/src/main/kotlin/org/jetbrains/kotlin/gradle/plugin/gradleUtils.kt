@@ -16,34 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Task
-import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.HasConvention
-import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
-import java.io.File
-
-internal fun AbstractCompile.appendClasspathDynamically(file: File) {
-    var added = false
-    val objects = project.objects
-    doFirst {
-        if (file !in classpath) {
-            classpath += objects.fileCollection().from(file)
-            added = true
-        }
-    }
-    doLast {
-        if (added) {
-            classpath -= objects.fileCollection().from(file)
-        }
-    }
-}
-
-fun AbstractCompile.mapClasspath(fn: () -> FileCollection) {
-    conventionMapping.map("classpath", fn)
-}
 
 internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T) {
     (this as HasConvention).convention.plugins[name] = plugin

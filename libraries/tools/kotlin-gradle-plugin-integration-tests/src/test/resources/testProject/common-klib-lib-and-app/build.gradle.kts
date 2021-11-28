@@ -8,7 +8,7 @@ version = "1.0"
 
 repositories {
 	mavenLocal()
-	jcenter()
+	mavenCentral()
 }
 
 kotlin {
@@ -94,7 +94,7 @@ tasks {
 		if (target in skipCompilationOfTargets) {
 			actions.clear()
 			doLast { 
-				val destinationFile = project.buildDir.resolve("classes/kotlin/$target/main/${project.name}.klib")
+				val destinationFile = project.buildDir.resolve("classes/kotlin/$target/main/klib/${project.name}.klib")
 				destinationFile.parentFile.mkdirs()
 				println("Writing a dummy klib to $destinationFile")
 				destinationFile.createNewFile()

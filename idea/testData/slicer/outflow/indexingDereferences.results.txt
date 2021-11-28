@@ -1,6 +1,0 @@
-15 <bold>val x</bold> = A() (in test())
-18 	DEREFERENCE: <bold>x</bold>[1] (in test())
-19 	DEREFERENCE: <bold>x</bold>[1] = y (in test())
-20 	DEREFERENCE: <bold>x</bold>[1] += y (in test())
-21 	DEREFERENCE: <bold>x</bold>[1] *= y (in test())
-22 	DEREFERENCE: <bold>x</bold>[1]++ (in test())

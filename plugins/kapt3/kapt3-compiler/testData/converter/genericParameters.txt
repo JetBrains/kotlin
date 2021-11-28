@@ -2,9 +2,9 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class MappedList<T extends java.lang.Object, R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
-    private final kotlin.jvm.functions.Function1<T, R> function = null;
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<T> list = null;
+    private final kotlin.jvm.functions.Function1<T, R> function = null;
 
     public MappedList(@org.jetbrains.annotations.NotNull()
     java.util.List<? extends T> list, @org.jetbrains.annotations.NotNull()
@@ -12,13 +12,13 @@ public final class MappedList<T extends java.lang.Object, R extends java.lang.Ob
         super();
     }
 
-    @java.lang.Override()
-    public R get(int index) {
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<T> getList() {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<T> getList() {
+    @java.lang.Override()
+    public R get(int index) {
         return null;
     }
 

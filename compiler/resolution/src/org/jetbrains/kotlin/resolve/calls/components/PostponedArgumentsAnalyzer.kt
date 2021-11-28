@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -23,7 +25,8 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class PostponedArgumentsAnalyzer(
-    private val callableReferenceResolver: CallableReferenceResolver
+    private val callableReferenceArgumentResolver: CallableReferenceArgumentResolver,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun analyze(
@@ -46,8 +49,10 @@ class PostponedArgumentsAnalyzer(
                     diagnosticsHolder
                 )
 
-            is ResolvedCallableReferenceAtom ->
-                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder, resolutionCallbacks)
+            is ResolvedCallableReferenceArgumentAtom ->
+                callableReferenceArgumentResolver.processCallableReferenceArgument(
+                    c.getBuilder(), argument, diagnosticsHolder, resolutionCallbacks
+                )
 
             is ResolvedCollectionLiteralAtom -> TODO("Not supported")
 
@@ -147,6 +152,8 @@ class PostponedArgumentsAnalyzer(
             returnArgumentsAnalysisResult
 
         if (hasInapplicableCallForBuilderInference) {
+            inferenceSession?.initializeLambda(lambda)
+            c.getBuilder().markCouldBeResolvedWithUnrestrictedBuilderInference()
             c.getBuilder().removePostponedVariables()
             return
         }
@@ -178,7 +185,10 @@ class PostponedArgumentsAnalyzer(
 
         lambda.setAnalyzedResults(returnArgumentsInfo, subResolvedKtPrimitives)
 
-        if (inferenceSession != null && lambda.atom.hasBuilderInferenceAnnotation) {
+        val shouldUseBuilderInference = lambda.atom.hasBuilderInferenceAnnotation
+                || languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
+
+        if (inferenceSession != null && shouldUseBuilderInference) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(
@@ -197,8 +207,12 @@ class PostponedArgumentsAnalyzer(
                 val variable = variableWithConstraints.typeVariable
 
                 c.getBuilder().unmarkPostponedVariable(variable)
-                c.getBuilder().addEqualityConstraint(variable.defaultType(c), resultType, CoroutinePosition)
+
+                // We add <inferred type> <: TypeVariable(T) to be able to contribute type info from several builder inference lambdas
+                c.getBuilder().addSubtypeConstraint(resultType, variable.defaultType(c), BuilderInferencePosition)
             }
+
+            c.removePostponedTypeVariablesFromConstraints(postponedVariables.keys)
         }
     }
 

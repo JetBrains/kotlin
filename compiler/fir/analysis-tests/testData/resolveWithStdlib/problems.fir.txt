@@ -1,0 +1,59 @@
+FILE: problems.kt
+    public final val sb: R|java/lang/StringBuilder| = R|java/lang/StringBuilder.StringBuilder|()
+        public get(): R|java/lang/StringBuilder|
+    public final val o: R|kotlin/Any| = object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = String(123)
+            public get(): R|kotlin/String|
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/<anonymous>|.R|/<anonymous>.name|
+        }
+
+    }
+
+        public get(): R|kotlin/Any|
+    public final fun test(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        R|/Local.Local|()
+    }
+    public final val R|kotlin/Any|.bar: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(456)
+        }
+    public final val R|kotlin/String|.bar: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(987)
+        }
+    public final val t: R|kotlin/String| = String().R|/bar|
+        public get(): R|kotlin/String|
+    public final val p: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(0), String())
+        public get(): R|kotlin/Pair<kotlin/Int, kotlin/String>|
+    public open class Base<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|T|): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+    }
+    public final class Derived : R|Base<kotlin/Int>| {
+        public constructor(): R|Derived| {
+            super<R|Base<kotlin/Int>|>(Int(10))
+        }
+
+    }
+    public final val xx: R|kotlin/Int| = R|/Derived.Derived|().R|SubstitutionOverride</Derived.x: R|kotlin/Int|>|.R|kotlin/Int.plus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final val t: R|kotlin/Nothing| = throw R|java/lang/AssertionError.AssertionError|(String())
+        public get(): R|kotlin/Nothing|

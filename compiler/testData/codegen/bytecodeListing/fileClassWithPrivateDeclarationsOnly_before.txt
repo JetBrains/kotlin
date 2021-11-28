@@ -1,0 +1,23 @@
+@kotlin.Metadata
+final class FileClassWithPrivateDeclarationsOnly_beforeKt$b$2 {
+    // source: 'fileClassWithPrivateDeclarationsOnly_before.kt'
+    enclosing class FileClassWithPrivateDeclarationsOnly_beforeKt
+    public final static field INSTANCE: FileClassWithPrivateDeclarationsOnly_beforeKt$b$2
+    inner (anonymous) class FileClassWithPrivateDeclarationsOnly_beforeKt$b$2
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+@kotlin.Metadata
+public final class FileClassWithPrivateDeclarationsOnly_beforeKt {
+    // source: 'fileClassWithPrivateDeclarationsOnly_before.kt'
+    private final static @org.jetbrains.annotations.NotNull field a: kotlin.Unit
+    private final static @org.jetbrains.annotations.NotNull field b$delegate: kotlin.Lazy
+    inner (anonymous) class FileClassWithPrivateDeclarationsOnly_beforeKt$b$2
+    static method <clinit>(): void
+    private final static method f(): void
+    public final static @kotlin.internal.InlineOnly method g(): void
+    private final static method getB(): kotlin.Unit
+}

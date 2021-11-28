@@ -19,22 +19,32 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
+import java.io.Serializable
 import kotlin.reflect.KClass
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
 internal class KotlinProjectNpmResolver(
+    @Transient
     val project: Project,
-    val resolver: KotlinRootNpmResolver
-) {
+    @Transient
+    var resolver: KotlinRootNpmResolver
+) : Serializable {
     override fun toString(): String = "ProjectNpmResolver($project)"
 
-    private val byCompilation = mutableMapOf<KotlinJsCompilation, KotlinCompilationNpmResolver>()
+    private val projectPath by lazy { project.path }
+
+    private val byCompilation = mutableMapOf<String, KotlinCompilationNpmResolver>()
 
     operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
         check(compilation.target.project == project)
-        return byCompilation[compilation] ?: error("$compilation was not registered in $this")
+        return byCompilation[compilation.disambiguatedName] ?: error("$compilation was not registered in $this")
+    }
+
+    operator fun get(compilationName: String): KotlinCompilationNpmResolver {
+        return byCompilation[compilationName] ?: error("$compilationName was not registered in $this")
     }
 
     private var closed = false
@@ -45,9 +55,8 @@ internal class KotlinProjectNpmResolver(
     init {
         addContainerListeners()
 
-
         project.whenEvaluated {
-            val nodeJs = resolver.nodeJs
+            val nodeJs = resolver.nodeJs ?: unavailableValueError("resolver.nodeJs")
             project.tasks.implementing(RequiresNpmDependencies::class)
                 .configureEach { task ->
                     if (task.enabled) {
@@ -81,7 +90,8 @@ internal class KotlinProjectNpmResolver(
     private fun addTargetListeners(target: KotlinTarget) {
         check(!closed) { resolver.alreadyResolvedMessage("add target $target") }
 
-        if (target.platformType == KotlinPlatformType.js) {
+        if (target.platformType == KotlinPlatformType.js ||
+            target.platformType == KotlinPlatformType.wasm) {
             target.compilations.all { compilation ->
                 if (compilation is KotlinJsCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
@@ -104,7 +114,7 @@ internal class KotlinProjectNpmResolver(
     private fun addCompilation(compilation: KotlinJsCompilation) {
         check(!closed) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
-        byCompilation[compilation] = KotlinCompilationNpmResolver(this, compilation)
+        byCompilation[compilation.disambiguatedName] = KotlinCompilationNpmResolver(this, compilation)
     }
 
     fun close(): KotlinProjectNpmResolution {
@@ -112,9 +122,9 @@ internal class KotlinProjectNpmResolver(
         closed = true
 
         return KotlinProjectNpmResolution(
-            project,
+            projectPath,
             byCompilation.values.mapNotNull { it.close() },
-            resolver.nodeJs.taskRequirements.byTask
+            resolver.taskRequirements.byTask
         )
     }
 }

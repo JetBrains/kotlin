@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 interface IFoo1<out T> {
     fun foo(): T
 }
@@ -6,7 +8,9 @@ interface IFoo2<out T> {
     fun foo(): T
 }
 
-inline class X(val x: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val x: String)
 
 class Test : IFoo1<X>, IFoo2<X> {
     override fun foo(): X = X("OK")

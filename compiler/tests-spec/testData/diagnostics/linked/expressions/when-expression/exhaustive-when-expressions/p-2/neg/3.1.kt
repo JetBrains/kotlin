@@ -1,3 +1,4 @@
+// LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
@@ -21,7 +22,7 @@ fun case_2(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
 }
 
 // TESTCASE NUMBER: 3
-fun case_3(value_1: Boolean): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) { }
+fun case_3(value_1: Boolean): Int = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(value_1) { }<!>
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> {
@@ -42,4 +43,11 @@ fun case_5(value_1: Boolean): String {
         trueValue -> ""
         falseValue -> ""
     }
+}
+
+
+// TESTCASE NUMBER: 6
+fun case_6(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
+    <!CONFUSING_BRANCH_CONDITION_WARNING!>true && false && ((true || false)) || true && !!!false && !!!true<!> -> ""
+    <!CONFUSING_BRANCH_CONDITION_WARNING!>true && false && ((true || false)) || true && !!!false<!> -> ""
 }

@@ -1,2 +1,0 @@
-[jvm.kt] Function call 4 boo("a")
-[jvm.kt] Function call 5 boo("b")

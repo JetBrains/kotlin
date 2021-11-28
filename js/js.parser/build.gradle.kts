@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
-    compile(project(":js:js.ast"))
+    api(project(":js:js.ast"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 

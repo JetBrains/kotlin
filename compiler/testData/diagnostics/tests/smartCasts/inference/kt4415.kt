@@ -3,7 +3,7 @@
 interface SelfJson
 
 object A {
-    fun find(<!UNUSED_PARAMETER!>clz<!>:Class<*>){  }
+    fun find(clz:Class<*>){  }
 
     fun toJson2(obj:Any){
         if(obj is SelfJson){

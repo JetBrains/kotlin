@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package kt606_dependents
 
 //KT-1489 Code analyzer fails with assertion
@@ -13,13 +12,13 @@ class C {
         }
     }
 
-    fun <X : AutoCloseable> foo(<!UNUSED_PARAMETER!>x<!> : X, <!UNUSED_PARAMETER!>body<!> : (X) -> Unit) {
+    fun <X : AutoCloseable> foo(x : X, body : (X) -> Unit) {
     }
 
     fun p() : Resource? = null
 
     fun bar() {
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo<!>(<!NI;TYPE_MISMATCH!>p()<!>) {
+        foo(<!TYPE_MISMATCH!>p()<!>) {
 
         }
     }

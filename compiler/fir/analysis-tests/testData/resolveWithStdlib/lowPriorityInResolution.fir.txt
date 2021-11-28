@@ -1,0 +1,11 @@
+FILE: lowPriorityInResolution.kt
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE))) @<ERROR TYPE REF: HIDDEN: kotlin/internal/LowPriorityInOverloadResolution is invisible>() public final fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun foo(): R|kotlin/String| {
+        ^foo String()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = R|/foo|()
+        R|<local>/s|.R|kotlin/String.length|
+    }

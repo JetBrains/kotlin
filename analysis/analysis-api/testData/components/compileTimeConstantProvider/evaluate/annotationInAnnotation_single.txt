@@ -1,0 +1,5 @@
+expression: Annotation("v1")
+constant_value: KtAnnotationConstantValue(Annotation, (strings = KtArrayConstantValue [
+  KtLiteralConstantValue(constantValueKind=String, value=v1)
+]))
+constant: null

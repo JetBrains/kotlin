@@ -18,7 +18,7 @@ fun getC() = false
 
 fun getD() = true
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:3 box
 // test.kt:13 getA
 // test.kt:3 box

@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final class K<T : R|kotlin/Comparable<T>|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/Comparable<T>|>(t: R|T|): R|K<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/K.K|<R|kotlin/Int|>(Int(0))
+        R|/JavaClass.JavaClass|<R|ft<kotlin/Int, kotlin/Int?>|>(Int(0))
+    }

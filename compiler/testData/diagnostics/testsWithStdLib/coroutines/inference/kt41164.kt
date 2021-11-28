@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -EXPERIMENTAL_IS_NOT_ENABLED
+// !DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED
 // ISSUE: KT-41164
 
 import kotlin.experimental.ExperimentalTypeInference

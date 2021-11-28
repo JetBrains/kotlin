@@ -1,5 +1,0 @@
-// CHOOSE_USE_SITE_TARGET: field
-
-annotation class A
-
-class Constructor(@field:A var foo: String)

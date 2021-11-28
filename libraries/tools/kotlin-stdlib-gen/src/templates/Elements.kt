@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,8 +21,8 @@ object Elements : TemplateGroupBase() {
             }
             specialFor(RangesOfPrimitives) {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
-                    sinceAtLeast("1.3")
-                    annotation("@ExperimentalUnsignedTypes")
+                    sinceAtLeast("1.5")
+                    wasExperimental("ExperimentalUnsignedTypes")
                     sourceFile(SourceFile.URanges)
                 }
             }
@@ -43,8 +43,8 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "any { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
-            annotation("""@Suppress("DEPRECATION")""")
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
+            annotation("""@Suppress("DEPRECATION_ERROR")""")
         }
         returns("Boolean")
         body(Iterables) {
@@ -72,7 +72,7 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfFirst { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
         }
         returns("Int")
         body {
@@ -137,7 +137,7 @@ object Elements : TemplateGroupBase() {
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfLast { it == element }"
             val message = floatingSearchDeprecationMessage(signature, replacement)
-            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
+            deprecate(Deprecation(message, replacement, warningSince = "1.4", errorSince = "1.6"))
         }
         returns("Int")
         body {
@@ -944,7 +944,7 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
         inlineOnly()
         returns("T?")
         doc {
@@ -988,7 +988,7 @@ object Elements : TemplateGroupBase() {
         specialFor(RangesOfPrimitives) {
             body {
                 val expr = when (primitive) {
-                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    PrimitiveType.Char -> "nextInt(first.code, last.code + 1).toChar()"
                     else -> "next$primitive(this)"
                 }
                 """
@@ -1006,7 +1006,7 @@ object Elements : TemplateGroupBase() {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
         returns("T?")
         doc {
             """
@@ -1033,7 +1033,7 @@ object Elements : TemplateGroupBase() {
         specialFor(RangesOfPrimitives) {
             body {
                 val expr = when (primitive) {
-                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    PrimitiveType.Char -> "nextInt(first.code, last.code + 1).toChar()"
                     else -> "next$primitive(this)"
                 }
                 """
@@ -1078,6 +1078,58 @@ object Elements : TemplateGroupBase() {
             }
             returns("T")
             body { "return get(${n-1})" }
+        }
+    }
+
+    val f_firstNotNullOfOrNull = fn("firstNotNullOfOrNull(transform: (T) -> R?)") {
+        include(Iterables, Sequences, Maps, CharSequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        since("1.5")
+        typeParam("R : Any")
+        returns("R?")
+
+        sample("samples.collections.Collections.Transformations.firstNotNullOf")
+
+        doc {
+            """
+            Returns the first non-null value produced by [transform] function being applied to ${f.element.pluralize()} of this ${f.collection} in iteration order,
+            or `null` if no non-null value was produced.
+            """
+        }
+        body {
+            """
+            for (element in this) {
+                val result = transform(element)
+                if (result != null) {
+                    return result
+                }
+            }
+            return null
+            """
+        }
+    }
+
+    val f_firstNotNullOf = fn("firstNotNullOf(transform: (T) -> R?)") {
+        include(Iterables, Sequences, Maps, CharSequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        since("1.5")
+        typeParam("R : Any")
+        returns("R")
+
+        sample("samples.collections.Collections.Transformations.firstNotNullOf")
+
+        doc {
+            """
+            Returns the first non-null value produced by [transform] function being applied to ${f.element.pluralize()} of this ${f.collection} in iteration order,
+            or throws [NoSuchElementException] if no non-null value was produced.
+            """
+        }
+        body {
+            """
+            return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the ${f.collection} was transformed to a non-null value.")
+            """
         }
     }
 

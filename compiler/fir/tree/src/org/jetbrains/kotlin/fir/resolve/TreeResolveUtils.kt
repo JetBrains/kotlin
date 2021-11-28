@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeAttributes
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -26,14 +25,7 @@ fun FirClassifierSymbol<*>.constructType(
             ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable, attributes)
         }
         is FirClassSymbol -> {
-            val errorTypeRef = typeArguments.find {
-                it is ConeClassErrorType
-            }
-            if (errorTypeRef is ConeClassErrorType) {
-                ConeClassErrorType(errorTypeRef.diagnostic)
-            } else {
-                ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
-            }
+            ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
         }
         is FirTypeAliasSymbol -> {
             ConeClassLikeTypeImpl(
@@ -43,6 +35,5 @@ fun FirClassifierSymbol<*>.constructType(
                 attributes = attributes
             )
         }
-        else -> error("!")
     }
 }

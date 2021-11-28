@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
+// SAM_CONVERSIONS: CLASS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Test.java
 
 class Test {
@@ -17,7 +18,7 @@ class Test {
     }
 }
 
-// FILE: test.kt
+// FILE: samFunReference.kt
 
 import java.lang.reflect.Method
 import kotlin.test.assertEquals

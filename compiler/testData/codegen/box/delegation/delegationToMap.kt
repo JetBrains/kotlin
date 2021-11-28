@@ -1,4 +1,12 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: NSME: Test.remove(Ljava/lang/String;Ljava/lang/String;)Z
+// FIR + JVM_IR:
+//  INVOKEVIRTUAL Test.remove (Ljava/lang/String;Ljava/lang/String;)Z
+//      => java.lang.NoSuchMethodError: Test.remove(Ljava/lang/String;Ljava/lang/String;)Z
+// FE1.0 + JVM_IR:
+//  INVOKEVIRTUAL Test.remove (Ljava/lang/Object;Ljava/lang/Object;)Z
+//      => default method in java.util.Map (as expected)
+
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK
@@ -24,3 +32,4 @@ fun box(): String {
 
     return test.getOrDefault("absent", "OK")
 }
+

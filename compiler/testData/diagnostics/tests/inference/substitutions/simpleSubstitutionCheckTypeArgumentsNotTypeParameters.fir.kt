@@ -6,5 +6,5 @@ class A<T> {
 
 fun test1() {
     A<Int>().newA<String>().useT("")
-    A<Int>().newA<String>().<!INAPPLICABLE_CANDIDATE!>useT<!>(1)
+    A<Int>().newA<String>().useT(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

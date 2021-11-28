@@ -8,7 +8,7 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
@@ -21,6 +21,9 @@ kotlin {
 	}
 	val nodeJs = js("nodeJs")
 	val linux64 = linuxX64("linux64")
+
+    wasm {
+    }
 
     configure(listOf(linux64)) {
         binaries.executable("main", listOf(DEBUG)) {

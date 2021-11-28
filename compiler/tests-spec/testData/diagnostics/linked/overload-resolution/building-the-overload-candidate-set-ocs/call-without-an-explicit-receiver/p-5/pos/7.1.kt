@@ -16,7 +16,7 @@
  * DESCRIPTION: Top-level non-extension functions: Implicitly imported callables
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 import libPackageCase1.* //nothing to import, function emptyArray is private
@@ -24,12 +24,12 @@ import libPackageCase1.* //nothing to import, function emptyArray is private
 fun case1() {
     <!DEBUG_INFO_CALL("fqName: kotlin.emptyArray; typeCall: inline function")!>emptyArray<Int>()<!>
 }
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 
 private fun <T> emptyArray(): Array<T> = TODO()
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testscase2
 
@@ -46,7 +46,7 @@ class A {
     operator fun <T>invoke(): T = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackagecase2
 import testscase2.*
 private fun <T> emptyArray(): Array<T> = TODO()

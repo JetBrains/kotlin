@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishProjectJars(listOf(":plugins:android-extensions-compiler"))
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(":plugins:android-extensions-compiler"))

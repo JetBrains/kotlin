@@ -71,6 +71,18 @@ fun KotlinCall.checkCallInvariants() {
 
         }
 
+        KotlinCallKind.CALLABLE_REFERENCE -> {
+            assert(argumentsInParenthesis.isEmpty()) {
+                "Callable references can't have value arguments"
+            }
+            assert(typeArguments.isEmpty()) {
+                "Callable references can't have explicit type arguments"
+            }
+            assert(externalArgument == null) {
+                "External argument is not allowed not for function call: $externalArgument."
+            }
+        }
+
         KotlinCallKind.UNSUPPORTED -> error("Call with UNSUPPORTED kind")
     }
 }

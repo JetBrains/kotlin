@@ -16,5 +16,5 @@ fun foo() {
     var c: MutableSet<String>? = null
     c = HashSet()
 
-    c!!.d = produce()
+    c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.d = produce()
 }

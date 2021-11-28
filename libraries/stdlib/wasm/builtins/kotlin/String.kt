@@ -6,23 +6,26 @@
 package kotlin
 
 import kotlin.wasm.internal.*
+import kotlin.math.min
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-@WasmPrimitive
-public class String constructor(public val string: String) : Comparable<String>, CharSequence {
-    public companion object;
+public class String private constructor(internal val chars: CharArray) : Comparable<String>, CharSequence {
+    public companion object {
+        // Note: doesn't copy the array, use with care.
+        internal fun unsafeFromCharArray(chars: CharArray) = String(chars)
+    }
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
     public operator fun plus(other: Any?): String =
-        stringPlusImpl(this, other.toString())
+        String(chars + other.toString().chars)
 
     public override val length: Int
-        get() = stringLengthImpl(this)
+        get() = chars.size
 
     /**
      * Returns the character of this string at the specified [index].
@@ -30,14 +33,23 @@ public class String constructor(public val string: String) : Comparable<String>,
      * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
      * where the behavior is unspecified.
      */
-    public override fun get(index: Int): Char =
-        stringGetCharImpl(this, index)
+    public override fun get(index: Int): Char = chars[index]
 
-    public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-        stringSubSequenceImpl(this, startIndex, endIndex)
+    public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
+        return String(chars.sliceArray(startIndex until endIndex))
+    }
 
-    public override fun compareTo(other: String): Int =
-        stringCompareToImpl(this, other)
+    public override fun compareTo(other: String): Int {
+        val len = min(this.length, other.length)
+
+        for (i in 0 until len) {
+            val l = this[i]
+            val r = other[i]
+            if (l != r)
+                return l - r
+        }
+        return this.length - other.length
+    }
 
     public override fun equals(other: Any?): Boolean {
         if (other is String)
@@ -47,26 +59,15 @@ public class String constructor(public val string: String) : Comparable<String>,
 
     public override fun toString(): String = this
 
-    // TODO: Implement
-    public override fun hashCode(): Int = 10
+    public override fun hashCode(): Int {
+        if (_hashCode != 0 || this.isEmpty())
+            return _hashCode
+        var hash = 0
+        for (c in chars)
+            hash = 31 * hash + c.toInt()
+        _hashCode = hash
+        return _hashCode
+    }
 }
 
-@JsFun("(it, other) => it + String(other)")
-private fun stringPlusImpl(it: String, other: String): String =
-    implementedAsIntrinsic
-
-@JsFun("(it) => it.length")
-private fun stringLengthImpl(it: String): Int =
-    implementedAsIntrinsic
-
-@WasmImport("runtime", "String_getChar")
-private fun stringGetCharImpl(it: String, index: Int): Char =
-    implementedAsIntrinsic
-
-@WasmImport("runtime", "String_compareTo")
-private fun stringCompareToImpl(it: String, other: String): Int =
-    implementedAsIntrinsic
-
-@WasmImport("runtime", "String_subsequence")
-private fun stringSubSequenceImpl(string: String, startIndex: Int, endIndex: Int): String =
-    implementedAsIntrinsic
+internal fun stringLiteral(startAddr: Int, length: Int) = String.unsafeFromCharArray(unsafeRawMemoryToCharArray(startAddr, length))

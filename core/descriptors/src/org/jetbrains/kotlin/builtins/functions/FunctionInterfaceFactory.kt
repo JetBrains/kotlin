@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
@@ -79,7 +79,7 @@ fun functionInterfacePackageFragmentProvider(
     val fragments = listOf(
         KOTLIN_REFLECT_FQ_NAME,
         BUILT_INS_PACKAGE_FQ_NAME,
-        COROUTINES_PACKAGE_FQ_NAME_RELEASE
+        COROUTINES_PACKAGE_FQ_NAME
     ).map { fqName ->
         FunctionInterfacePackageFragmentImpl(classFactory, module, fqName)
     }

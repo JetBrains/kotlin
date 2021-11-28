@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Incubating
-import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logger
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
@@ -17,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmR
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 import java.io.File
 
 /**
@@ -76,15 +81,31 @@ import java.io.File
  *
  * Note that in this case resolution process will be performed outside of task execution.
  */
-class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension) {
-    private val forceFullResolve: Boolean
-        get() = isInIdeaSync
+class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRootExtension?) {
+    private val forceFullResolve: Boolean by lazy {
+        (nodeJsSettings ?: unavailableValueError("nodeJsSettings")).rootProject.isInIdeaSync
+    }
 
-    @Volatile
-    private var state: ResolutionState =
-        ResolutionState.Configuring(
-            KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
-        )
+    internal val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
+
+    internal abstract class KotlinNpmResolutionManagerStateHolder : BuildService<BuildServiceParameters.None> {
+        @Volatile
+        internal var state: ResolutionState? = null
+    }
+
+    private val stateHolderProvider = (nodeJsSettings ?: unavailableValueError("nodeJsSettings"))
+        .rootProject.gradle.sharedServices.registerIfAbsent(
+            "npm-resolution-manager-state-holder", KotlinNpmResolutionManagerStateHolder::class.java
+        ) {
+        }
+
+    private val stateHolder get() = stateHolderProvider.get()
+
+    private var state: ResolutionState
+        get() = stateHolder.state ?: ResolutionState.Configuring(resolver)
+        set(value) {
+            stateHolder.state = value
+        }
 
     internal sealed class ResolutionState {
         abstract val npmProjects: List<NpmProject>
@@ -106,7 +127,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         companion object {
             fun npmProjectsByProjectResolutions(
-                resolutions: Map<Project, KotlinProjectNpmResolution>
+                resolutions: Map<String, KotlinProjectNpmResolution>
             ): List<NpmProject> {
                 return resolutions
                     .values
@@ -116,28 +137,37 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     }
 
     @Incubating
-    internal fun requireInstalled() = installIfNeeded(reason = "")
+    internal fun requireInstalled(
+        services: ServiceRegistry,
+        logger: Logger,
+        reason: String = ""
+    ) = installIfNeeded(reason = reason, services = services, logger = logger)
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
 
-    internal fun prepare() = prepareIfNeeded(requireNotPrepared = true)
+    internal fun isConfiguringState(): Boolean =
+        this.state is ResolutionState.Configuring
+
+    internal fun prepare(logger: Logger) = prepareIfNeeded(requireNotPrepared = true, logger = logger)
 
     internal fun installIfNeeded(
         reason: String? = "",
-        args: List<String> = emptyList()
+        args: List<String> = emptyList(),
+        services: ServiceRegistry,
+        logger: Logger
     ): KotlinRootNpmResolution {
-        synchronized(this) {
+        synchronized(stateHolder) {
             if (state is ResolutionState.Installed) {
                 return (state as ResolutionState.Installed).resolved
             }
 
-            val installUpToDate = nodeJsSettings.npmInstallTaskProvider.get().state.upToDate
+            val installUpToDate = nodeJsSettings?.npmInstallTaskProvider?.get()?.state?.upToDate ?: false
             val forceUpToDate = installUpToDate && !forceFullResolve
 
-            val installation = prepareIfNeeded(requireUpToDateReason = reason)
+            val installation = prepareIfNeeded(requireUpToDateReason = reason, logger = logger)
             val resolution = installation
-                .install(forceUpToDate, args)
+                .install(forceUpToDate, args, services, logger)
             state = ResolutionState.Installed(resolution)
 
             installation.closePlugins(resolution)
@@ -145,9 +175,6 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
             return resolution
         }
     }
-
-    internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-        installIfNeeded(reason = reason)[project]
 
     internal val packageJsonFiles: Collection<File>
         get() = state.npmProjects.map { it.packageJsonFile }
@@ -159,7 +186,8 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
      */
     private fun prepareIfNeeded(
         requireUpToDateReason: String? = null,
-        requireNotPrepared: Boolean = false
+        requireNotPrepared: Boolean = false,
+        logger: Logger
     ): KotlinRootNpmResolver.Installation {
         fun alreadyResolved(installation: KotlinRootNpmResolver.Installation): KotlinRootNpmResolver.Installation {
             if (requireNotPrepared) error("Project already prepared")
@@ -168,19 +196,21 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         val state0 = this.state
         return when (state0) {
-            is ResolutionState.Prepared -> alreadyResolved(state0.preparedInstallation)
+            is ResolutionState.Prepared -> {
+                alreadyResolved(state0.preparedInstallation)
+            }
             is ResolutionState.Configuring -> {
-                synchronized(this) {
+                synchronized(stateHolder) {
                     val state1 = this.state
                     when (state1) {
                         is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.rootPackageJsonTaskProvider.get().state.upToDate
+                            val upToDate = nodeJsSettings?.rootPackageJsonTaskProvider?.get()?.state?.upToDate ?: true
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }
 
-                            state1.resolver.prepareInstallation().also {
+                            state1.resolver.prepareInstallation(logger).also {
                                 this.state = ResolutionState.Prepared(it)
                             }
                         }
@@ -193,39 +223,41 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     }
 
     internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution? {
-        val project = npmDependency.project
+        val project = npmDependency.project!!
+        val projectPath = project.path
+        val services = (project as ProjectInternal).services
+        val logger = project.logger
 
         val resolvedProject =
             if (forceFullResolve) {
-                installIfNeeded(reason = null)[project]
+                installIfNeeded(reason = null, services = services, logger = logger)[projectPath]
             } else {
                 // may return null only during npm resolution
                 // (it can be called since NpmDependency added to configuration that
                 // requires resolve to build package.json, in this case we should just skip this call)
                 val state0 = state
                 when (state0) {
-                    is ResolutionState.Prepared -> state0.preparedInstallation[project]
+                    is ResolutionState.Prepared -> state0.preparedInstallation[projectPath]
                     is ResolutionState.Configuring -> {
                         return null
                         //error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
                     }
-                    is ResolutionState.Installed -> state0.resolved[project]
+                    is ResolutionState.Installed -> state0.resolved[projectPath]
                 }
             }
 
         return resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
     }
 
-    internal fun <T> checkRequiredDependencies(task: T)
+    internal fun <T> checkRequiredDependencies(task: T, services: ServiceRegistry, logger: Logger, projectPath: String)
             where T : RequiresNpmDependencies,
                   T : Task {
-        val project = task.project
-        val requestedTaskDependencies = requireAlreadyInstalled(project, "before $task execution").taskRequirements
-        val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
+        val requestedTaskDependencies = requireInstalled(services, logger, "before $task execution")[projectPath].taskRequirements
+        val targetRequired = requestedTaskDependencies[task.path]?.toSet() ?: setOf()
 
         task.requiredNpmDependencies.forEach {
             check(it in targetRequired) {
-                "${it.createDependency(project)} required by $task was not found resolved at the time of nodejs package manager call. " +
+                "${it.createDependency(task.project)} required by $task was not found resolved at the time of nodejs package manager call. " +
                         "This may be caused by changing $task configuration after npm dependencies resolution."
             }
         }

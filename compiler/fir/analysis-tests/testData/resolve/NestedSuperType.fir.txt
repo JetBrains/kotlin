@@ -1,0 +1,36 @@
+FILE: NestedSuperType.kt
+    package p
+
+    public abstract class My : R|kotlin/Any| {
+        public constructor(): R|p/My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract class NestedOne : R|p/My| {
+            public constructor(): R|p/My.NestedOne| {
+                super<R|p/My|>()
+            }
+
+            public abstract class NestedTwo : R|p/My.NestedOne| {
+                public constructor(): R|p/My.NestedOne.NestedTwo| {
+                    super<R|p/My.NestedOne|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class Your : R|p/My| {
+        public constructor(): R|p/Your| {
+            super<R|p/My|>()
+        }
+
+        public final class NestedThree : R|p/My.NestedOne| {
+            public constructor(): R|p/Your.NestedThree| {
+                super<R|p/My.NestedOne|>()
+            }
+
+        }
+
+    }

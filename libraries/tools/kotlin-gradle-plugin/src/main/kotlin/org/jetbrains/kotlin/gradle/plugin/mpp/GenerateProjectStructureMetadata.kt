@@ -11,10 +11,6 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import javax.xml.transform.OutputKeys
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 open class GenerateProjectStructureMetadata : DefaultTask() {
     @get:Internal
@@ -25,14 +21,14 @@ open class GenerateProjectStructureMetadata : DefaultTask() {
         get() = lazyKotlinProjectStructureMetadata.value
 
     @get:OutputFile
-    val resultXmlFile: File
+    val resultFile: File
         get() = project.buildDir.resolve("kotlinProjectStructureMetadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
 
     @TaskAction
     fun generateMetadataXml() {
-        resultXmlFile.parentFile.mkdirs()
+        resultFile.parentFile.mkdirs()
         val resultString = kotlinProjectStructureMetadata.toJson()
-        resultXmlFile.writeText(resultString)
+        resultFile.writeText(resultString)
     }
 }
 

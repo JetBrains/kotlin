@@ -1,9 +1,0 @@
-actual class Foo {
-    actual fun String.foo(n: Int) {
-
-    }
-}
-
-fun Foo.testJvm() {
-    "2".foo(1)
-}

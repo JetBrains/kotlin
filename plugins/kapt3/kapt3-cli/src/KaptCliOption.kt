@@ -181,6 +181,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-show-processor-timings", FLAG)
     ),
 
+    DUMP_PROCESSOR_TIMINGS(
+        "dumpProcessorTimings",
+        "<path>",
+        "Dump processor performance statistics to the specified file",
+        cliToolOption = CliToolOption("-Kapt-dump-processor-timings", VALUE)
+    ),
+
     STRICT_MODE_OPTION(
         "strict",
         "true | false",
@@ -193,6 +200,12 @@ enum class KaptCliOption(
         "true | false",
         "Strip @Metadata annotations from stubs",
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
+    ),
+
+    KEEP_KDOC_COMMENTS_IN_STUBS(
+        "keepKdocCommentsInStubs",
+        "true | false",
+        "Keep KDoc comments in stubs"
     ),
 
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),

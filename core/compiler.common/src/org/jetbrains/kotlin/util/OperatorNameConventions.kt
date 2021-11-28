@@ -24,6 +24,7 @@ object OperatorNameConventions {
     @JvmField val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 
     @JvmField val EQUALS = Name.identifier("equals")
+    @JvmField val HASH_CODE = Name.identifier("hashCode")
     @JvmField val COMPARE_TO = Name.identifier("compareTo")
     @JvmField val CONTAINS = Name.identifier("contains")
     @JvmField val INVOKE = Name.identifier("invoke")
@@ -39,6 +40,12 @@ object OperatorNameConventions {
 
     @JvmField val AND = Name.identifier("and")
     @JvmField val OR = Name.identifier("or")
+    @JvmField val XOR = Name.identifier("xor")
+    @JvmField val INV = Name.identifier("inv")
+
+    @JvmField val SHL = Name.identifier("shl")
+    @JvmField val SHR = Name.identifier("shr")
+    @JvmField val USHR = Name.identifier("ushr")
 
     @JvmField val INC = Name.identifier("inc")
     @JvmField val DEC = Name.identifier("dec")

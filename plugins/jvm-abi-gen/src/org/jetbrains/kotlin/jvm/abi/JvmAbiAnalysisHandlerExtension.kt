@@ -48,8 +48,12 @@ import java.io.File
 import java.util.*
 
 class JvmAbiAnalysisHandlerExtension(
-    private val compilerConfiguration: CompilerConfiguration
+    compilerConfiguration: CompilerConfiguration
 ) : AnalysisHandlerExtension {
+    private val compilerConfiguration: CompilerConfiguration = compilerConfiguration.copy().apply {
+        put(JVMConfigurationKeys.IR, false)
+    }
+
     override fun analysisCompleted(
         project: Project,
         module: ModuleDescriptor,

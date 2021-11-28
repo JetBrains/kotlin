@@ -17,7 +17,7 @@ interface A {
 interface B : A {
     override val p1: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
     @An
-    override val p2: @An String
+    override <!VAR_OVERRIDDEN_BY_VAL!>val<!> p2: @An String
     override fun test(arg: String): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
 }
 

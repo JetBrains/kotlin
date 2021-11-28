@@ -32,7 +32,7 @@ import kotlin.system.measureNanoTime
 @RunWith(JUnit3RunnerWithInners::class)
 class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
-    private fun testTotalKotlinWithGivenMode(stubMode: Boolean) {
+    fun testTotalKotlinWithExpressionTrees() {
         val root = File(testDataPath)
         var counter = 0
         var time = 0L
@@ -52,14 +52,18 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $testDataPath")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path
-            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
+            val path = file.path.lowercase()
+            if ("testdata" in path ||
+                "kotlin-native" in path ||
+                "resources" in path ||
+                "api/js" in path.replace('\\', '/')
+            ) continue
             if (file.extension != "kt") continue
             try {
                 val ktFile = createKtFile(file.toRelativeString(root))
                 val firFile: FirFile
                 time += measureNanoTime {
-                    firFile = ktFile.toFirFile(RawFirBuilderMode.stubs(stubMode))
+                    firFile = ktFile.toFirFile()
                 }
                 totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile) }.length
                 counter++
@@ -89,9 +93,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         when (expression) {
                             is FirExpressionStub -> {
                                 expressionStubs++
-                                if (!stubMode) {
-                                    println(expression.psi?.text)
-                                }
+                                println(expression.psi?.text)
                             }
                             else -> normalExpressions++
                         }
@@ -156,28 +158,22 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("KT EXPRESSIONS: $ktExpressions")
         println("KT DECLARATIONS: $ktDeclarations")
         println("KT REFERENCES: $ktReferences")
-        if (!stubMode) {
-            assertEquals(0, expressionStubs)
-        }
-        assertEquals(0, errorExpressions)
-        assertEquals(0, errorDeclarations)
-        assertEquals(0, errorReferences)
-    }
-
-    fun testTotalKotlinWithExpressionTrees() {
-        testTotalKotlinWithGivenMode(stubMode = false)
-    }
-
-    fun testTotalKotlinWithDeclarationsOnly() {
-        testTotalKotlinWithGivenMode(stubMode = true)
+        assertEquals("# of expression stubs", 0, expressionStubs)
+        assertEquals("# of error expressions", 0, errorExpressions)
+        assertEquals("# of error declarations", 0, errorDeclarations)
+        assertEquals("# of error references", 0, errorReferences)
     }
 
     private fun testConsistency(checkConsistency: FirFile.() -> Unit) {
         val root = File(testDataPath)
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path
-            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
+            val path = file.path.lowercase()
+            if ("kotlin-native" in path ||
+                "testdata" in path ||
+                "resources" in path ||
+                "api/js" in path.replace('\\', '/')
+            ) continue
             if (file.extension != "kt") continue
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile = ktFile.toFirFile()
@@ -203,8 +199,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var counter = 0
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path
-            if ("testData" in path || "testdata" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
+            val path = file.path.lowercase()
+            if ("kotlin-native" in path ||
+                "testdata" in path ||
+                "resources" in path ||
+                "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile: FirFile = ktFile.toFirFile()
@@ -226,48 +225,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 }
             })
             psiSetDirect -= psiSetViaFir
-            psiSetDirect.removeIf {
-                it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
-                        it is KtModifierList ||
-                        it is KtUserType || it is KtNullableType || it is KtFunctionType || it is KtFunctionTypeReceiver ||
-                        it is KtQualifiedExpression ||
-                        it is KtPropertyDelegate ||
-                        it is KtConstructorCalleeExpression && it.parent is KtAnnotationEntry ||
-                        it is KtValueArgumentList || it is KtParameterList || it is KtTypeParameterList || it is KtTypeArgumentList ||
-                        it is KtTypeReference && it.parent.parent.parent is KtCallExpression ||
-                        it is KtSuperTypeList || it is KtSuperTypeListEntry ||
-                        it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
-                        it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
-                        it is KtStringTemplateEntry ||
-                        it is KtOperationReferenceExpression ||
-                        it is KtLabelReferenceExpression ||
-                        it is KtConstructorDelegationReferenceExpression ||
-                        it is KtParenthesizedExpression ||
-                        it is KtLabeledExpression ||
-                        it is KtAnnotatedExpression ||
-                        it is KtWhenConditionWithExpression ||
-                        it is KtFinallySection ||
-                        // TODO: KT-24089 (support of dynamic)
-                        it is KtDynamicType ||
-                        // NB: KtAnnotation is processed via its KtAnnotationEntries
-                        it is KtFileAnnotationList || it is KtAnnotationUseSiteTarget || it is KtAnnotation ||
-                        it is KtInitializerList || it is KtEnumEntrySuperclassReferenceExpression ||
-                        it is KtLambdaExpression ||
-                        it is KtTypeConstraintList ||
-                        it is KtTypeConstraint ||
-                        it is KtStringTemplateExpression && it.entries.size <= 1 ||
-                        it is KtDestructuringDeclaration && it.parent is KtParameter ||
-                        it is KtArrayAccessExpression && it.parent is KtBinaryExpression ||
-                        it is KtNameReferenceExpression &&
-                        (it.parent is KtUserType || it.parent is KtInstanceExpressionWithLabel ||
-                                it.parent is KtValueArgumentName || it.parent is KtTypeConstraint) ||
-                        it.getStrictParentOfType<KtPackageDirective>() != null ||
-                        it.getStrictParentOfType<KtImportDirective>() != null ||
-                        (it is KtPropertyAccessor && !it.hasBody()) ||
-                        it is KtConstantExpression && it.parent.let { parent ->
-                            parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
-                        }
-            }
+            psiSetDirect.removeIf(::isKnownToBeNotTraversedByFirTree)
             if (psiSetDirect.isNotEmpty()) {
                 println("Total of $counter files processed successfully")
                 println("FILE ${file.toRelativeString(root)} has not traversed PSI elements (total of ${psiSetDirect.size})!")
@@ -282,6 +240,51 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 throw AssertionError()
             }
             counter++
+        }
+    }
+
+    private fun isKnownToBeNotTraversedByFirTree(it: KtElement): Boolean {
+        return it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
+                it is KtModifierList ||
+                it is KtUserType || it is KtNullableType || it is KtFunctionType || it is KtFunctionTypeReceiver ||
+                it is KtQualifiedExpression ||
+                it is KtPropertyDelegate ||
+                it is KtConstructorCalleeExpression && (it.parent is KtAnnotationEntry || it.parent is KtSuperTypeCallEntry) ||
+                it is KtValueArgumentList || it is KtParameterList || it is KtTypeParameterList || it is KtTypeArgumentList ||
+                it is KtTypeReference && it.parent.parent.parent is KtCallExpression ||
+                it is KtSuperTypeList || (it is KtSuperTypeListEntry && it !is KtSuperTypeCallEntry) ||
+                it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
+                it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
+                it is KtStringTemplateEntry ||
+                it is KtOperationReferenceExpression ||
+                it is KtLabelReferenceExpression ||
+                it is KtConstructorDelegationReferenceExpression ||
+                it is KtParenthesizedExpression ||
+                it is KtLabeledExpression ||
+                it is KtAnnotatedExpression ||
+                it is KtWhenConditionWithExpression ||
+                it is KtFinallySection ||
+                it is KtObjectLiteralExpression ||// TODO: KT-24089 (support of dynamic)
+                it is KtDynamicType ||
+                // NB: KtAnnotation is processed via its KtAnnotationEntries
+                it is KtFileAnnotationList || it is KtAnnotationUseSiteTarget || it is KtAnnotation ||
+                it is KtInitializerList || it is KtEnumEntrySuperclassReferenceExpression ||
+                it is KtLambdaExpression ||
+                it is KtTypeConstraintList ||
+                it is KtTypeConstraint ||
+                it is KtStringTemplateExpression && it.entries.size <= 1 ||
+                it is KtDestructuringDeclaration && it.parent is KtParameter ||
+                it is KtArrayAccessExpression && it.parent is KtBinaryExpression ||
+                it is KtCallExpression && it.parent is KtQualifiedExpression ||
+                it is KtNameReferenceExpression &&
+                (it.parent is KtUserType || it.parent is KtInstanceExpressionWithLabel ||
+                        it.parent is KtValueArgumentName || it.parent is KtTypeConstraint) ||
+                it.getStrictParentOfType<KtPackageDirective>() != null ||
+                it.getStrictParentOfType<KtImportDirective>() != null ||
+                (it is KtPropertyAccessor && !it.hasBody()) ||
+                it is KtDestructuringDeclarationEntry && it.text == "_" ||
+                it is KtConstantExpression && it.parent.let { parent ->
+            parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
         }
     }
 }

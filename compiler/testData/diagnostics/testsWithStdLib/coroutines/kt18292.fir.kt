@@ -1,6 +1,5 @@
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.coroutines.*
 
@@ -14,6 +13,6 @@ suspend fun fib(n: Long) =
     async {
         when {
             n < 2 -> n
-            else -> fib(n - 1).<!UNRESOLVED_REFERENCE!>await<!>() <!AMBIGUITY!>+<!> fib(n - 2).<!UNRESOLVED_REFERENCE!>await<!>()
+            else -> fib(n - 1).<!UNRESOLVED_REFERENCE!>await<!>() + fib(n - 2).<!UNRESOLVED_REFERENCE!>await<!>()
         }
     }

@@ -1,0 +1,13 @@
+FILE: referenceToField.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int| {
+                ::<References to variables aren't supported yet>#
+                ^ this@R|/A|.F|/A.x|
+            }
+
+    }

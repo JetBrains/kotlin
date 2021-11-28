@@ -1,12 +1,18 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class WithPrimitive(val a: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class WithPrimitive(val a: Int)
 fun takeWithPrimitive(a: WithPrimitive) {}
 
-inline class WithReference(val a: Any)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class WithReference(val a: Any)
 fun takeWithReference(a: WithReference) {}
 
-inline class WithNullableReference(val a: Any?)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class WithNullableReference(val a: Any?)
 fun takeWithNullableReference(a: WithNullableReference) {}
 
 fun foo(a: WithPrimitive?, b: WithPrimitive) {

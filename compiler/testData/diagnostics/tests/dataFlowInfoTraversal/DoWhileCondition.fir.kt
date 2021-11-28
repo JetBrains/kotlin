@@ -16,5 +16,5 @@ fun doWhileWithBreak(x: Int?, y0: Int) {
         y++
         if (y > 0) break
     } while (x!! == y)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }

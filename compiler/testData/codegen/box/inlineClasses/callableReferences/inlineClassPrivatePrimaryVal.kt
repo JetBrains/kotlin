@@ -1,22 +1,25 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.assertEquals
 
-inline class Z(private val x: Int) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Z(private val x: Int) {
     companion object {
         val xref = Z::x
     }
 }
 
-inline class L(private val x: Long) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class L(private val x: Long) {
     companion object {
         val xref = L::x
     }
 }
 
-inline class S(private val x: String) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class S(private val x: String) {
     companion object {
         val xref = S::x
     }

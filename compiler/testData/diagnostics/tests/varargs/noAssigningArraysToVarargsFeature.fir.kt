@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: +ArrayLiteralsInAnnotations, -AssigningArraysToVarargsInNamedFormInAnnotations -AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 
 // FILE: JavaAnn.java
@@ -15,10 +14,10 @@ annotation class Ann(vararg val s: String)
 @Ann(s = arrayOf())
 fun test1() {}
 
-<!INAPPLICABLE_CANDIDATE!>@Ann(s = intArrayOf())<!>
+@Ann(s = <!ARGUMENT_TYPE_MISMATCH!>intArrayOf()<!>)
 fun test2() {}
 
-<!INAPPLICABLE_CANDIDATE!>@Ann(s = arrayOf(1))<!>
+@Ann(s = <!ARGUMENT_TYPE_MISMATCH!>arrayOf(1)<!>)
 fun test3() {}
 
 @Ann(s = ["value"])
@@ -43,7 +42,7 @@ fun foo2() {}
 
 fun foo(vararg i: Int) {}
 
-@Ann(s = "value")
+@Ann(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>"value"<!>)
 fun dep1() {
-    foo(i = 1)
+    foo(i = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
 }

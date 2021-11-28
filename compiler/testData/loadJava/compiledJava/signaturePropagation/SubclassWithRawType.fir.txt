@@ -1,2 +1,38 @@
 public abstract interface SubclassWithRawType : R|kotlin/Any| {
+    public abstract interface Sub : R|test/SubclassWithRawType.Super| {
+        public abstract fun simple1(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun simple2(): R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+        public abstract fun simple3(): R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|
+
+        public abstract fun boundWildcard1(): R|ft<kotlin/collections/MutableList<out ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<out ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+        public abstract fun boundWildcard2(): R|ft<kotlin/collections/MutableList<in ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>, kotlin/collections/MutableList<in ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>?>|
+
+        public abstract fun wildcard(): R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|
+
+        public abstract fun array1(): R|ft<kotlin/Array<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/Array<out ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+        public abstract fun array2(): R|ft<kotlin/Array<ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>, kotlin/Array<out ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>?>|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun simple1(): R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|
+
+        public abstract fun simple2(): R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|
+
+        public abstract fun simple3(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun boundWildcard1(): R|ft<kotlin/collections/MutableList<out ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>, kotlin/collections/List<out ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>?>|
+
+        public abstract fun boundWildcard2(): R|ft<kotlin/collections/MutableList<in ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/MutableList<in ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+        public abstract fun wildcard(): R|ft<kotlin/collections/MutableList<*>, kotlin/collections/List<*>?>|
+
+        public abstract fun array1(): R|ft<kotlin/Array<ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>, kotlin/Array<out ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>>?>|
+
+        public abstract fun array2(): R|ft<kotlin/Array<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/Array<out ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+    }
 }

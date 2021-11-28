@@ -108,7 +108,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
     @SinceKotlin("1.4")
     @WasExperimental(ExperimentalStdlibApi::class)
     actual fun append(value: CharArray): StringBuilder {
-        @OptIn(ExperimentalStdlibApi::class)
         string += value.concatToString()
         return this
     }
@@ -238,7 +237,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
     actual fun insert(index: Int, value: CharArray): StringBuilder {
         AbstractList.checkPositionIndex(index, length)
 
-        @OptIn(ExperimentalStdlibApi::class)
         string = string.substring(0, index) + value.concatToString() + string.substring(index)
         return this
     }
@@ -492,7 +490,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
     @SinceKotlin("1.4")
     @WasExperimental(ExperimentalStdlibApi::class)
     public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
-        @OptIn(ExperimentalStdlibApi::class)
         string += value.concatToString(startIndex, endIndex)
         return this
     }
@@ -534,7 +531,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
     public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, this.length)
 
-        @OptIn(ExperimentalStdlibApi::class)
         string = string.substring(0, index) + value.concatToString(startIndex, endIndex) + string.substring(index)
         return this
     }

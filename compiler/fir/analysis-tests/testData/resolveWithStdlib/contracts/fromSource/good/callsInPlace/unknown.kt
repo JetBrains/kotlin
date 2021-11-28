@@ -19,7 +19,7 @@ fun myRun(block: () -> Unit) {
 fun test_1() {
     val x: Int
     inlineRun {
-        x = 1
+        <!VAL_REASSIGNMENT!>x<!> = 1
     }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
@@ -27,7 +27,7 @@ fun test_1() {
 fun test_2() {
     val x: Int
     myRun {
-        x = 1
+        <!VAL_REASSIGNMENT!>x<!> = 1
     }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

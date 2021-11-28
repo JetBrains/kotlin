@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 // FILE: C.java
 
 public interface C { void on(String s); }

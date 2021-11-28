@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
+import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -438,6 +439,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         _colon();
 
         popSourceInfo();
+        newlineOpt();
 
         sourceLocationConsumer.pushSourceInfo(null);
         printSwitchMemberStatements(x);
@@ -708,7 +710,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
         nestedPush(thenStmt);
 
-        if (thenStmt instanceof JsBlock) {
+        if (thenStmt instanceof JsBlock && elseStatement != null) {
             lineBreakAfterBlock = false;
         }
 
@@ -894,7 +896,19 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 p.print(((JsNameRef) labelExpr).getIdent());
             }
             else if (labelExpr instanceof JsStringLiteral) {
-                p.print(((JsStringLiteral) labelExpr).getValue());
+                JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
+                String value = stringLiteral.getValue();
+                boolean isValidIdentifier = IdentifierPolicyKt.isValidES5Identifier(value);
+
+                if (!isValidIdentifier)  {
+                    p.print('\'');
+                }
+
+                p.print(value);
+
+                if (!isValidIdentifier)  {
+                    p.print('\'');
+                }
             }
             else {
                 accept(labelExpr);
@@ -1171,6 +1185,69 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             newline();
         }
     }
+
+    @Override
+    public void visitExport(@NotNull JsExport export) {
+        p.print("export");
+        space();
+        JsExport.Subject subject = export.getSubject();
+
+        if (subject instanceof JsExport.Subject.All) {
+            p.print("*");
+        } else if (subject instanceof JsExport.Subject.Elements) {
+            blockOpen();
+            List<JsExport.Element> elements = ((JsExport.Subject.Elements) subject).getElements();
+            for (JsExport.Element element : elements) {
+                nameDef(element.getName());
+                JsName alias = element.getAlias();
+                if (alias != null) {
+                    p.print(" as ");
+                    nameDef(alias);
+                }
+                p.print(',');
+                p.newline();
+            }
+            p.indentOut();
+            p.print('}');
+        }
+
+        if (export.getFromModule() != null) {
+            p.print(" from ");
+            p.print(javaScriptString(export.getFromModule()));
+        }
+        needSemi = true;
+    }
+
+    @Override
+    public void visitImport(@NotNull JsImport jsImport) {
+        p.print("import {");
+        boolean isMultiline = jsImport.getElements().size() > 1;
+        p.indentIn();
+        if (isMultiline)
+            newlineOpt();
+        else
+            space();
+
+        for (JsImport.Element element : jsImport.getElements()) {
+            nameDef(element.getName());
+            JsName alias = element.getAlias();
+            if (alias != null) {
+                p.print(" as ");
+                nameDef(alias);
+            }
+
+            if (isMultiline) {
+                p.print(',');
+                newlineOpt();
+            } else {
+                space();
+            }
+        }
+        p.indentOut();
+        p.print("} from ");
+        p.print(javaScriptString(jsImport.getModule()));
+    }
+
 
     private void newline() {
         p.newline();

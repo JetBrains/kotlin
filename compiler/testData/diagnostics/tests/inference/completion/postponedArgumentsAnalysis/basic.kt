@@ -119,8 +119,8 @@ fun main() {
      * K <: (A) -> Unit -> TypeVariable(_RP1) >: A
      * K >: (C) -> TypeVariable(_R) -> TypeVariable(_RP1) <: C
      */
-    val x12 = selectC(id <!TYPE_MISMATCH!>{ <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }<!>, id <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>{ x: B -> }<!><!NO_VALUE_FOR_PARAMETER!>)<!>
-    val x13 = selectA(id <!TYPE_MISMATCH!>{ <!DEBUG_INFO_EXPRESSION_TYPE("A")!>it<!> }<!>, id <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>{ x: C -> }<!><!NO_VALUE_FOR_PARAMETER!>)<!>
+    val x12 = selectC(id <!TYPE_MISMATCH!>{ <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }<!>, id <!TYPE_MISMATCH!>{ x: B -> }<!><!NO_VALUE_FOR_PARAMETER!>)<!>
+    val x13 = selectA(id <!TYPE_MISMATCH!>{ <!DEBUG_INFO_EXPRESSION_TYPE("A")!>it<!> }<!>, id <!TYPE_MISMATCH!>{ x: C -> }<!><!NO_VALUE_FOR_PARAMETER!>)<!>
     val x14 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, id { x: A -> }, { x -> x })
     val x15 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, { x: A -> }, id { x -> x })
     /*

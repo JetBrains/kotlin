@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
+// TODO: extract PSI-independent parts, specifically coordinate classes
 public class PsiDiagnosticUtils {
     public static String atLocation(@NotNull PsiElement element) {
         if (element.isValid()) {

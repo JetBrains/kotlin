@@ -1,5 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 

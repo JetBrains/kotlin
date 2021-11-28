@@ -13,7 +13,7 @@ fun A?.bar() {
 }
 
 fun A.baz() {
-    if (this == null) {
+    if (<!SENSELESS_COMPARISON!>this == null<!>) {
         return
     }
     foo()

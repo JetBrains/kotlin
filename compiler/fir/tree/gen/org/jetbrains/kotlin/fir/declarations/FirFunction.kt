@@ -1,19 +1,22 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirTargetElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,44 +24,56 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
-    override val source: FirSourceElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val origin: FirDeclarationOrigin
-    override val attributes: FirDeclarationAttributes
-    override val annotations: List<FirAnnotationCall>
-    override val returnTypeRef: FirTypeRef
-    override val receiverTypeRef: FirTypeRef?
-    override val typeParameters: List<FirTypeParameterRef>
-    override val controlFlowGraphReference: FirControlFlowGraphReference?
-    override val symbol: FirFunctionSymbol<F>
-    val valueParameters: List<FirValueParameter>
-    val body: FirBlock?
+sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirControlFlowGraphOwner, FirStatement {
+    abstract override val source: KtSourceElement?
+    abstract override val annotations: List<FirAnnotation>
+    abstract override val moduleData: FirModuleData
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
+    abstract override val typeParameters: List<FirTypeParameterRef>
+    abstract override val status: FirDeclarationStatus
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val deprecation: DeprecationsPerUseSite?
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+    abstract override val symbol: FirFunctionSymbol<out FirFunction>
+    abstract val valueParameters: List<FirValueParameter>
+    abstract val body: FirBlock?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformFunction(this, data) as E
 
-    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
-    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
-    fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
+    abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
-    fun replaceBody(newBody: FirBlock?)
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract fun replaceBody(newBody: FirBlock?)
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction
 
-    fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFunction
 
-    fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
+
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
+
+    abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction
+
+    abstract fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction
 }

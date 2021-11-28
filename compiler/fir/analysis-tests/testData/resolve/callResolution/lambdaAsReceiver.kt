@@ -9,6 +9,6 @@ fun main1() {
 }
 
 fun main2() {
-    { "" }.<!INAPPLICABLE_CANDIDATE!>bar<!>()
+    { "" }.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
     "".bar()
 }

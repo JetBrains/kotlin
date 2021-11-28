@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
@@ -19,34 +20,34 @@ import checkType
 import check
 
 // TESTCASE NUMBER: 0
-fun foo() = run { false && JavaClass.VALUE && throw Exception() }
+fun foo() = run { false && <!CONDITION_TYPE_MISMATCH!>JavaClass.VALUE<!> && throw Exception() }
 
 // TESTCASE NUMBER: 1
 fun case1() {
     val a: Boolean? = false
     checkSubtype<Boolean?>(a)
-    val x4 = a && true
-    x4 <!AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> && true
+    x4 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
 }
 
 // TESTCASE NUMBER: 2
 fun case2() {
     val a: Any = false
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
-    val x4 = a && true
-    x4 <!AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> && true
+    x4 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
 }
 
 // TESTCASE NUMBER: 3
 fun case3() {
     val a1 = false
     val a2 = JavaClass.VALUE
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any..kotlin.Any?!")!>a2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any..kotlin.Any?!")!>a2<!>
 
-    val x3 = a1 && a2
+    val x3 = a1 && <!CONDITION_TYPE_MISMATCH!>a2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x3<!>
 
-    x3 <!AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x3 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
 }
 
 // TESTCASE NUMBER: 4

@@ -15,14 +15,13 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
-    runtime(kotlinStdlib())
+    implementation(kotlinStdlib())
 
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
-
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:cli"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDep("junit:junit"))
+    testApi(intellijCoreDep()) { includeJars("intellij-core")}
 }
 
 sourceSets {
@@ -41,5 +40,3 @@ testsJar()
 projectTest(parallel = true) {
     workingDir = rootDir
 }
-
-apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

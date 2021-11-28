@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object A<!TYPE_PARAMETERS_IN_OBJECT!><T><!>
 object B<!TYPE_PARAMETERS_IN_OBJECT!><in T, out R><!>
 object C<!TYPE_PARAMETERS_IN_OBJECT!><T : Comparable<T>><!>

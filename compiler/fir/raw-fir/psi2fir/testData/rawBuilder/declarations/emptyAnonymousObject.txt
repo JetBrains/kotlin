@@ -1,7 +1,7 @@
 FILE: emptyAnonymousObject.kt
     public? final? fun test(): R|kotlin/Unit| {
         lval x: <implicit> = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous>| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 

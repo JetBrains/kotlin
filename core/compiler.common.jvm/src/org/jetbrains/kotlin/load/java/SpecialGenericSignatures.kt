@@ -132,5 +132,14 @@ open class SpecialGenericSignatures {
                 .map { Pair(it.key.name, it.value) }
                 .groupBy({ it.second }, { it.first })
 
+        fun getBuiltinFunctionNamesByJvmName(name: Name): List<Name> =
+            JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name] ?: emptyList()
+
+        val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
+            get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
+
+        val Name.sameAsRenamedInJvmBuiltin: Boolean
+            get() = this in ORIGINAL_SHORT_NAMES
+
     }
 }

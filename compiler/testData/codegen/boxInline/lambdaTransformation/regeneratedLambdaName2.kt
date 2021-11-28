@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // CHECK_BYTECODE_LISTING
 // FILE: 1.kt
 package test
@@ -7,7 +8,6 @@ inline fun <R> call(crossinline f: () -> R) : R {
 }
 
 // FILE: 2.kt
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 inline fun sameName(s: Long): String = call { "FAIL" }

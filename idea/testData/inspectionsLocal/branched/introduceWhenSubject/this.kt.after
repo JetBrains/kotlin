@@ -1,7 +1,0 @@
-fun Number.test() {
-    <caret>when (this) {
-        is Int -> {}
-        is Long -> {}
-        is Short -> {}
-    }
-}

@@ -1,5 +1,10 @@
-annotation class A : Annotation {
-  constructor(klass: KClass<*>) /* primary */ 
+open annotation class A : Annotation {
+  constructor(klass: KClass<*>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val klass: KClass<*>
     field = klass
     get
@@ -18,4 +23,3 @@ class C {
 @A(klass = C::class)
 fun test1() {
 }
-

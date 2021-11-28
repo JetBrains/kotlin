@@ -1,0 +1,16 @@
+// FILE: 1.kt
+
+// FILE: 2.kt
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 fake.kt
+kotlin/jvm/internal/FakeKt
+*L
+1#1,18:1
+1#2:19
+*E

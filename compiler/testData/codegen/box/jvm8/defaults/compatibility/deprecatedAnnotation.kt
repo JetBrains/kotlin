@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface IFoo {
     @JvmDefault

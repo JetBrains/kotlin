@@ -9,6 +9,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
 import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -17,6 +19,11 @@ import java.io.PrintStream
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
+
+const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
+
+private fun getBaseCompilerArgumentsFromProperty(): List<String>? =
+    System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')
 
 // TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
 fun runWithKotlinc(
@@ -52,6 +59,7 @@ fun runWithKotlinLauncherScript(
             add("-cp")
             add(classpath.joinToString(File.pathSeparator))
         }
+        getBaseCompilerArgumentsFromProperty()?.let { addAll(it) }
         addAll(compilerArgs)
     }
 
@@ -157,26 +165,38 @@ fun runWithK2JVMCompiler(
 
 fun runWithK2JVMCompiler(
     args: Array<String>,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedExitCode: Int = 0
+    expectedAllOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0,
+    expectedSomeErrPatterns: List<String>? = null
 ) {
+    val argsWithBasefromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
     val (out, err, ret) = captureOutErrRet {
         CLITool.doMainNoExit(
             K2JVMCompiler(),
-            args
+            argsWithBasefromProp
         )
     }
     try {
         val outLines = out.lines()
         Assert.assertEquals(
-            "Expecting pattern:\n  ${expectedOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
-            expectedOutPatterns.size, outLines.size
+            "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
+            expectedAllOutPatterns.size, outLines.size
         )
-        for ((expectedPattern, actualLine) in expectedOutPatterns.zip(outLines)) {
+        for ((expectedPattern, actualLine) in expectedAllOutPatterns.zip(outLines)) {
             Assert.assertTrue(
                 "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
                 Regex(expectedPattern).matches(actualLine)
             )
+        }
+        if (expectedSomeErrPatterns != null) {
+            val errLines = err.lines()
+            for (expectedPattern in expectedSomeErrPatterns) {
+                val re = Regex(expectedPattern)
+                Assert.assertTrue(
+                    "Expected pattern \"$expectedPattern\" is not found in the stderr:\n${errLines.joinToString("\n")}",
+                    errLines.any { re.find(it) != null }
+                )
+            }
         }
         Assert.assertEquals(expectedExitCode, ret.code)
     } catch (e: Throwable) {
@@ -185,7 +205,6 @@ fun runWithK2JVMCompiler(
         throw e
     }
 }
-
 
 internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
     val outStream = ByteArrayOutputStream()
@@ -233,4 +252,9 @@ class TestDisposable : Disposable {
     }
 }
 
+fun CompilerConfiguration.updateWithBaseCompilerArguments() {
+    getBaseCompilerArgumentsFromProperty()?.let {
+        updateWithCompilerOptions(it)
+    }
+}
 

@@ -1,9 +1,0 @@
-// CHOOSE_USE_SITE_TARGET: property
-// WITH_RUNTIME
-
-annotation class A
-
-class Property {
-    @property:A
-    val foo: String by lazy { "" }
-}

@@ -19,5 +19,5 @@ package c
 import b.F
 
 fun f() {
-    F().<!HIDDEN!>m<!>
+    F().<!INVISIBLE_REFERENCE!>m<!>
 }

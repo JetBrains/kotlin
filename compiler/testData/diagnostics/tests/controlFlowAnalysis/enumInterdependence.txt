@@ -5,6 +5,8 @@ public final enum class A : kotlin.Enum<A> {
 
     enum entry A2
 
+    enum entry A3
+
     private constructor A(/*0*/ v: A)
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

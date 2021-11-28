@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 fun test() {
@@ -38,13 +37,13 @@ fun test() {
 
   if (out != null && ins != null || out != null) {
     ins?.read();
-    ins.<!NONE_APPLICABLE!>read<!>();
+    ins<!UNSAFE_CALL!>.<!>read();
     out.println();
   }
 
   if (out == null || out.println(0) == Unit) {
     out?.println(1)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(1)
+    out<!UNSAFE_CALL!>.<!>println(1)
   }
   else {
     out.println(2)
@@ -66,11 +65,11 @@ fun test() {
 
   if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(2);
+    out<!UNSAFE_CALL!>.<!>println(2);
   }
   else {
     out?.println(3)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(3)
+    out<!UNSAFE_CALL!>.<!>println(3)
   }
 
   out?.println()
@@ -103,7 +102,7 @@ fun test() {
 
   if (out == null || out.println(0) == Unit) {
     out?.println(1)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(1)
+    out<!UNSAFE_CALL!>.<!>println(1)
   }
   else {
     out.println(2)
@@ -114,12 +113,12 @@ fun test() {
   }
   else {
     out?.println();
-    out.<!NONE_APPLICABLE!>println<!>();
+    out<!UNSAFE_CALL!>.<!>println();
   }
 
   if (out == null || out.println() == Unit) {
     out?.println();
-    out.<!NONE_APPLICABLE!>println<!>();
+    out<!UNSAFE_CALL!>.<!>println();
   }
   else {
     out.println();
@@ -127,11 +126,11 @@ fun test() {
 
   if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(2);
+    out<!UNSAFE_CALL!>.<!>println(2);
   }
   else {
     out?.println(3)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(3)
+    out<!UNSAFE_CALL!>.<!>println(3)
   }
 
   if (1 > 2) {
@@ -146,10 +145,10 @@ fun test() {
   out?.println();
 
   val out2 : java.io.PrintStream? = null
-  
+
   while (out2 == null) {
     out2?.println();
-    out2.<!NONE_APPLICABLE!>println<!>();
+    out2<!UNSAFE_CALL!>.<!>println();
   }
   out2.println()
 
@@ -158,7 +157,7 @@ fun test() {
 
 fun f(out : String?) {
   out?.get(0)
-  out.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+  out<!UNSAFE_CALL!>.<!>get(0)
   if (out != null) else return;
   out.get(0)
 }

@@ -4,7 +4,7 @@
 annotation class Ann
 
 fun foo() {
-    for (@Ann private x in 1..100) {
+    for (@Ann <!WRONG_MODIFIER_TARGET!>private<!> x in 1..100) {
         if (x == 1) return
     }
 }

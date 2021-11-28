@@ -21,7 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import java.lang.ref.WeakReference
 
-open class MappedExtensionProvider<T, out R>
+open class MappedExtensionProvider<T : Any, out R>
 protected constructor(
     private val epName: ExtensionPointName<T>,
     private val map: (List<T>) -> R
@@ -47,9 +47,9 @@ protected constructor(
     }
 }
 
-class ExtensionProvider<T>(epName: ExtensionPointName<T>) : MappedExtensionProvider<T, List<T>>(epName, { it }) {
+class ExtensionProvider<T : Any>(epName: ExtensionPointName<T>) : MappedExtensionProvider<T, List<T>>(epName, { it }) {
     companion object {
         @JvmStatic
-        fun <T> create(epName: ExtensionPointName<T>): ExtensionProvider<T> = ExtensionProvider(epName)
+        fun <T : Any> create(epName: ExtensionPointName<T>): ExtensionProvider<T> = ExtensionProvider(epName)
     }
 }

@@ -1,7 +1,0 @@
-4 class <bold>C</bold>
-12 	fun <bold>C</bold>.extensionFun() {} (in extensionFun() on C)
-7 		[LAMBDA CALLS RECEIVER] val c = C().apply <bold>{</bold> (in foo())
-LIB 			(INLINE CALL apply) [LAMBDA CALLS RECEIVER] public inline fun <T> T.apply(<bold>block: T.() -> Unit</bold>): T { (in apply(T.() -> Unit) on T)
-LIB 				(INLINE CALL apply) public inline fun <T> <bold>T</bold>.apply(block: T.() -> Unit): T { (in apply(T.() -> Unit) on T)
-7 					val c = <bold>C()</bold>.apply { (in foo())
-4 						class <bold>C</bold>

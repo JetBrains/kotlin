@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -57,6 +58,7 @@ interface FirDeclarationPresenter {
             is ConeKotlinType -> {
                 appendRepresentation(it)
             }
+            is ConeKotlinTypeConflictingProjection -> {}
         }
     }
 
@@ -140,13 +142,19 @@ interface FirDeclarationPresenter {
         appendRepresentation(it.returnTypeRef)
     }
 
-    fun represent(it: FirProperty) = buildString {
+    fun represent(it: FirVariable) = buildString {
         append('[')
         it.receiverTypeRef?.let {
             appendRepresentation(it)
         }
         append(']')
         appendRepresentation(it.symbol.callableId)
+    }
+
+    fun StringBuilder.appendOperatorTag(it: FirSimpleFunction) {
+        if (it.isOperator) {
+            append("operator ")
+        }
     }
 
     fun represent(it: FirSimpleFunction) = buildString {
@@ -161,9 +169,7 @@ interface FirDeclarationPresenter {
             appendRepresentation(it)
         }
         append(']')
-        if (it.isOperator) {
-            append("operator ")
-        }
+        appendOperatorTag(it)
         appendRepresentation(it.symbol.callableId)
         append('(')
         it.valueParameters.forEach {
@@ -184,9 +190,27 @@ interface FirDeclarationPresenter {
         append(']')
         appendRepresentation(it.symbol.classId)
     }
+
+    fun represent(it: FirConstructor, owner: FirRegularClass) = buildString {
+        append('<')
+        it.typeParameters.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
+        append('>')
+        append('[')
+        append(']')
+        appendRepresentation(owner.symbol.classId)
+        append('(')
+        it.valueParameters.forEach {
+            appendRepresentation(it)
+            append(',')
+        }
+        append(')')
+    }
 }
 
-private class FirDefaultDeclarationPresenter : FirDeclarationPresenter
+internal class FirDefaultDeclarationPresenter : FirDeclarationPresenter
 
 private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 
@@ -197,7 +221,7 @@ private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 // - see tests with `fun () {}`.
 // you can't redeclare something that has no name.
 private fun FirDeclaration.isCollectable() = when (this) {
-    is FirSimpleFunction -> source?.kind !is FirFakeSourceElementKind && name != NO_NAME_PROVIDED
+    is FirSimpleFunction -> source?.kind !is KtFakeSourceElementKind && name != NO_NAME_PROVIDED
     is FirRegularClass -> name != NO_NAME_PROVIDED
     else -> true
 }
@@ -205,49 +229,35 @@ private fun FirDeclaration.isCollectable() = when (this) {
 /**
  * Collects FirDeclarations for further analysis.
  */
-class FirDeclarationInspector(
-    private val presenter: FirDeclarationPresenter = FirDefaultDeclarationPresenter()
+open class FirDeclarationInspector(
+    protected val presenter: FirDeclarationPresenter = FirDefaultDeclarationPresenter()
 ) {
     val otherDeclarations = mutableMapOf<String, MutableList<FirDeclaration>>()
     val functionDeclarations = mutableMapOf<String, MutableList<FirSimpleFunction>>()
 
     fun collect(declaration: FirDeclaration) {
-        if (!declaration.isCollectable()) {
-            return
+        when {
+            !declaration.isCollectable() -> {}
+            declaration is FirSimpleFunction -> collectFunction(presenter.represent(declaration), declaration)
+            declaration is FirRegularClass -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
+            declaration is FirTypeAlias -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
+            declaration is FirVariable -> collectNonFunctionDeclaration(presenter.represent(declaration), declaration)
         }
-
-        if (declaration is FirSimpleFunction) {
-            return collectFunction(declaration)
-        }
-
-        val key = when (declaration) {
-            is FirRegularClass -> presenter.represent(declaration)
-            is FirTypeAlias -> presenter.represent(declaration)
-            is FirProperty -> presenter.represent(declaration)
-            else -> return
-        }
-
-        var value = otherDeclarations[key]
-
-        if (value == null) {
-            value = mutableListOf()
-            otherDeclarations[key] = value
-        }
-
-        value.add(declaration)
     }
 
-    private fun collectFunction(declaration: FirSimpleFunction) {
-        val key = presenter.represent(declaration)
-        var value = functionDeclarations[key]
-
-        if (value == null) {
-            value = mutableListOf()
-            functionDeclarations[key] = value
+    protected open fun collectNonFunctionDeclaration(key: String, declaration: FirDeclaration): MutableList<FirDeclaration> =
+        otherDeclarations.getOrPut(key) {
+            mutableListOf()
+        }.also {
+            it.add(declaration)
         }
 
-        value.add(declaration)
-    }
+    protected open fun collectFunction(key: String, declaration: FirSimpleFunction): MutableList<FirSimpleFunction> =
+        functionDeclarations.getOrPut(key) {
+            mutableListOf()
+        }.also {
+            it.add(declaration)
+        }
 
     fun contains(declaration: FirDeclaration) = when (declaration) {
         is FirSimpleFunction -> presenter.represent(declaration) in functionDeclarations

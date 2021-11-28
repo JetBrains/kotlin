@@ -1,0 +1,40 @@
+FILE: eqNotEq.kt
+    public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x != null
+            Returns(FALSE) -> x == null
+        >
+     {
+        [StubStatement]
+        ^checkNotNull !=(R|<local>/x|, Null(null))
+    }
+    public final fun trickyRequireNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> !x == null
+        >
+     {
+        [StubStatement]
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                throw R|java/lang/IllegalStateException.IllegalStateException|()
+            }
+        }
+
+    }
+    public final fun test_1(x: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            R|/checkNotNull|(R|<local>/x|) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/String?|): R|kotlin/Unit| {
+        R|/trickyRequireNotNull|(R|<local>/x|)
+        R|<local>/x|.R|kotlin/String.length|
+    }

@@ -7,7 +7,7 @@ fun foo(arg: Int?) {
     }
     val y: Any? = arg
     if (y != null) {
-        arg.hashCode()
+        arg<!UNSAFE_CALL!>.<!>hashCode()
     }
     val yy: Any?
     yy = arg
@@ -36,7 +36,7 @@ fun kt6840_2(s: String?) {
 
 fun kt1635(s: String?) {
     s?.hashCode()!!
-    s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    s.hashCode()
 }
 
 fun kt2127() {

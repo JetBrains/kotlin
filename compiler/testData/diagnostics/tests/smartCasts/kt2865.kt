@@ -1,5 +1,4 @@
-// !WITH_NEW_INFERENCE
-operator fun <K, V> MutableMap<K, V>.set(<!UNUSED_PARAMETER!>k<!>: K, <!UNUSED_PARAMETER!>v<!>: V) {}
+operator fun <K, V> MutableMap<K, V>.set(k: K, v: V) {}
 
 fun foo(a: MutableMap<String, String>, x: String?) {
     a[x!!] = <!DEBUG_INFO_SMARTCAST!>x<!>
@@ -7,6 +6,6 @@ fun foo(a: MutableMap<String, String>, x: String?) {
 }
 
 fun foo1(a: MutableMap<String, String>, x: String?) {
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>a[<!NI;TYPE_MISMATCH!>x<!>]<!> = x!!
+    a[<!TYPE_MISMATCH!>x<!>] = x!!
     a[x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>] = <!DEBUG_INFO_SMARTCAST!>x<!>
 }

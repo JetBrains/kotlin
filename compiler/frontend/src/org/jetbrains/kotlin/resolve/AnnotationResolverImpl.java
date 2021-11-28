@@ -163,7 +163,8 @@ public class AnnotationResolverImpl extends AnnotationResolver {
                 CallMaker.makeCall(null, null, annotationEntry),
                 NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY,
-                true
+                true,
+                null // specific calls in terms of inference, can't be inside annotation calls
         );
     }
 

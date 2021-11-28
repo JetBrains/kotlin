@@ -12,18 +12,21 @@ fun test1() {
 }
 
 fun test2() {
-  var x: Int?
+  var x: Int
     val x$delegate: HashMap<String, Int> = hashMapOf<String, Int>()
-    local get(): Int? {
-      return x$delegate.getValue<Int?, Int?>(thisRef = null, property = ::x)
+    local get(): Int {
+      return x$delegate.getValue<Int, Int>(thisRef = null, property = ::x)
     }
-    local set(<set-?>: Int?) {
-      x$delegate.setValue<Int?>(thisRef = null, property = ::x, value = <set-?>)
+    local set(<set-?>: Int) {
+      x$delegate.setValue<Int>(thisRef = null, property = ::x, value = <set-?>)
     }
 
   <set-x>(<set-?> = 0)
-  val <unary>: Int = <get-x>() /*as Int */
-  <set-x>(<set-?> = <unary>.inc())
-  <unary> /*~> Unit */
-  <set-x>(<set-?> = <get-x>() /*as Int */.plus(other = 1))
+  { // BLOCK
+    val <unary>: Int = <get-x>()
+    <set-x>(<set-?> = <unary>.inc())
+    <unary>
+  } /*~> Unit */
+  <set-x>(<set-?> = <get-x>().plus(other = 1))
 }
+

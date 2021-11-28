@@ -18,7 +18,6 @@ class Delegated : IFoo {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = foo
   }
 
   @Deprecated(message = "")
@@ -33,7 +32,7 @@ class Delegated : IFoo {
       return (<this>.#<$$delegate_0>, <this>).<get-extProp>()
     }
 
-  local /* final field */ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo = foo
 
 }
 
@@ -64,4 +63,3 @@ class ExplicitOverride : IFoo {
     }
 
 }
-

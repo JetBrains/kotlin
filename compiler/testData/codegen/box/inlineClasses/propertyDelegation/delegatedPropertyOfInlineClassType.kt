@@ -1,10 +1,16 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
+// WITH_STDLIB
+
 import kotlin.reflect.KProperty
 
-inline class ICInt(val i: Int)
-inline class ICLong(val l: Long)
-inline class ICOverIC(val o: ICLong)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ICInt(val i: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ICLong(val l: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class ICOverIC(val o: ICLong)
 
 class Delegate<T>(var f: () -> T) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T = f()

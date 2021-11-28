@@ -65,4 +65,3 @@ fun testArrayAccess(nc: C?) {
     tmp3
   } /*~> Unit */
 }
-

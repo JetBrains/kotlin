@@ -3,7 +3,7 @@ open class VeryBase {
 }
 
 open class Base {
-    protected fun foo() { 
+    protected fun foo() {
         bar() // Ok
         baz() // Ok
     }
@@ -25,14 +25,14 @@ open class Base {
             baz() // Ok
         }
     }
-    
+
     companion object : VeryBase() {
         var prop = 42
             protected set
 
         protected fun bar() {}
 
-        @JvmStatic protected fun gav() {}       
+        @JvmStatic protected fun gav() {}
 
         class Nested {
             fun fromNested() {

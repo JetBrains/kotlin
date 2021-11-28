@@ -1,3 +1,0 @@
-class Test {
-    private var x = 1
-}

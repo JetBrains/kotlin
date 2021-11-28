@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package baz
 
 import kotlin.reflect.KProperty
@@ -10,10 +9,10 @@ class A(outer: Outer) {
     var g: String by  outer.getContainer().getMyProperty()
 
 
-    var b: String by  foo(getMyProperty())
-    var r: String by  foo(outer.getContainer().getMyProperty())
-    var e: String by  + foo(getMyProperty())
-    var f: String by  foo(getMyProperty()) - 1
+    var b: String by  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(getMyProperty())<!>
+    var r: String by  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(outer.getContainer().getMyProperty())<!>
+    var e: String by  + <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(getMyProperty())
+    var f: String by  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(getMyProperty()) - 1
 }
 
 fun <A, B> foo(a: Any?) = MyProperty<A, B>()
@@ -26,7 +25,7 @@ class MyProperty<R, T> {
 
     operator fun getValue(thisRef: R, desc: KProperty<*>): T {
         println("get $thisRef ${desc.name}")
-        return null as T
+        return null <!UNCHECKED_CAST!>as T<!>
     }
 
     operator fun setValue(thisRef: R, desc: KProperty<*>, value: T) {

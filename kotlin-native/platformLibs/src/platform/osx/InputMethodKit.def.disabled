@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.InputMethodKit
+modules = InputMethodKit
+compilerOpts = -framework InputMethodKit
+linkerOpts = -framework InputMethodKit
+#Disabled: Deprecated

@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 interface IFoo {
     fun getO(): String
@@ -7,7 +7,9 @@ interface IFoo {
     val ok: String get() = getO() + k
 }
 
-inline class InlineFooImpl(val s: String): IFoo {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class InlineFooImpl(val s: String): IFoo {
     override fun getO(): String = s
     override val k: String get() = "K"
 }

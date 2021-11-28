@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 
 interface Bar<T> {
@@ -17,7 +17,7 @@ class Foo<F : Bar<F>>(val f: F)
 fun <T> id(t1: T, t2: T) = t2
 
 fun test(foo: Foo<*>, g: Bar<*>) {
-    <!OI;TYPE_MISMATCH!><!OI;TYPE_MISMATCH!>id(foo.f, g)<!>.t<!>.<!NI;UNRESOLVED_REFERENCE!>t<!>
+    id(foo.f, g).t.<!UNRESOLVED_REFERENCE!>t<!>
 }
 
 fun main() {

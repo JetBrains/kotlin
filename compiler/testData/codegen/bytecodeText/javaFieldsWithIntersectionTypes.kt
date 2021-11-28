@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference
-// (old inference fails in the frontend)
 // FILE: JFieldOwner.java
 
 public class JFieldOwner {

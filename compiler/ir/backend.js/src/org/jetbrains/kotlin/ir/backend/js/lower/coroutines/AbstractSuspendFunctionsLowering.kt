@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
@@ -37,7 +37,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     private var IrFunction.coroutineConstructor by context.mapping.suspendFunctionToCoroutineConstructor
 
-    protected object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
     protected object DECLARATION_ORIGIN_COROUTINE_IMPL : IrDeclarationOriginImpl("COROUTINE_IMPL")
 
     protected abstract val stateMachineMethodName: Name
@@ -365,7 +364,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val thisReceiver = this.dispatchReceiverParameter!!
 
                 val boundFields =
-                    context.mapping.capturedFields[coroutineClass] ?: error("No captured values for class ${coroutineClass.render()}")
+                    context.mapping.capturedFields[coroutineClass]
+                        ?: compilationException(
+                            "No captured values",
+                            coroutineClass
+                        )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody(startOffset, endOffset) {
@@ -394,7 +397,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
             val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
-            val thisReceiver = function.dispatchReceiverParameter ?: error("Expected dispatch receiver for invoke")
+            val thisReceiver = function.dispatchReceiverParameter
+                ?: compilationException(
+                    "Expected dispatch receiver for invoke",
+                    function
+                )
             val functionBody = function.body as IrBlockBody
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody(startOffset, endOffset) {
@@ -438,7 +445,14 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.superTypes += coroutineBaseClass.defaultType
             }
 
-            coroutineClass.addFakeOverrides(context.irBuiltIns, implementedMembers)
+            coroutineClass.addFakeOverrides(context.typeSystem, implementedMembers)
+
+            // TODO constructing fake overrides on lowered declaration is tricky.
+            coroutineClass.declarations.transformFlat {
+                if (it is IrProperty && it.isFakeOverride) {
+                    listOfNotNull(it.getter, it.setter)
+                } else null
+            }
 
             // TODO: find out whether Kotlin/Native needs this call
             initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform._MapKit_SwiftUI
+modules = _MapKit_SwiftUI
+compilerOpts = -framework _MapKit_SwiftUI
+linkerOpts = -framework _MapKit_SwiftUI
+#Disabled: Unavailable

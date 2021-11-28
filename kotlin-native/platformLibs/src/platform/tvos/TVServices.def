@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.TVServices
+modules = TVServices
+
+compilerOpts = -framework TVServices
+linkerOpts = -framework TVServices

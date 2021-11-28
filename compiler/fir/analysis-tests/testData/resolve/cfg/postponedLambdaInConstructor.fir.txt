@@ -1,0 +1,26 @@
+FILE: postponedLambdaInConstructor.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(func: R|() -> kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(s: R|kotlin/String|): R|B| {
+            super<R|A|>(R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|() -> kotlin/String|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|() -> kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                    ^ R|<local>/it|
+                }
+
+            }
+            ))
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/B|.R|/B.foo|()
+        }
+
+    }

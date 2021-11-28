@@ -1,0 +1,299 @@
+RAW_FIR:
+FILE: secondaryConstructor.kt
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+IMPORTS:
+FILE: secondaryConstructor.kt
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: secondaryConstructor.kt
+    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+TYPES:
+FILE: secondaryConstructor.kt
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+STATUS:
+FILE: secondaryConstructor.kt
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: secondaryConstructor.kt
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+CONTRACTS:
+FILE: secondaryConstructor.kt
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: secondaryConstructor.kt
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: secondaryConstructor.kt
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/A.A|(Int(42)))
+    }
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
+    }
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+NoResolve:
+FILE: secondaryConstructor.kt
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+BodyResolveWithChildren:
+FILE: secondaryConstructor.kt
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/A.A|(Int(42)))
+    }
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
+    }
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+CallableBodyResolve:
+FILE: secondaryConstructor.kt
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/A.A|(Int(42)))
+    }
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
+    }
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+CallableReturnType:
+FILE: secondaryConstructor.kt
+    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+AnnotationType:
+FILE: secondaryConstructor.kt
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+AnnotationsArguments:
+FILE: secondaryConstructor.kt
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+CallableContracts:
+FILE: secondaryConstructor.kt
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+DeclarationStatus:
+FILE: secondaryConstructor.kt
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+ValueParametersTypes:
+FILE: secondaryConstructor.kt
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+TypeParametersTypes:
+FILE: secondaryConstructor.kt
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: secondaryConstructor.kt
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/A.A|(Int(42)))
+    }
+    public final [BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|A|): R|kotlin/Unit| {
+    }
+    public final [BODY_RESOLVE] class A : R|kotlin/Any| {
+        public [BODY_RESOLVE] [ContainingClassKey=A] constructor([BODY_RESOLVE] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+            [BODY_RESOLVE] lval a: R|kotlin/Int| = R|<local>/x|
+        }
+
+    }

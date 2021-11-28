@@ -1,5 +1,5 @@
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // MODULE: lib(support)
 // FILE: lib.kt
 

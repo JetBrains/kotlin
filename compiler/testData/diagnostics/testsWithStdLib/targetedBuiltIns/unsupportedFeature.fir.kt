@@ -1,6 +1,5 @@
 // !CHECK_TYPE
 // !LANGUAGE: -AdditionalBuiltInsMembers
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 // FULL_JDK
 
@@ -15,11 +14,11 @@ class A : java.util.ArrayList<String>() {
 }
 
 class A1 : java.util.ArrayList<String>() {
-    // `stream` is defined in ArrayList, so it was possible to declare it in 1.0 without an 'override' keyword
+    // `stream` is defined in Collection, so it was possible to declare it in 1.0 without an 'override' keyword
     fun stream(): java.util.stream.Stream<String> = super.stream()
 
     // `sort` is defined in ArrayList, so it was impossible to declare it in 1.0 without an 'override' keyword
-    fun sort(c: Comparator<in String>?) {
+    fun <!VIRTUAL_MEMBER_HIDDEN!>sort<!>(c: Comparator<in String>?) {
         super.sort(c)
     }
 }
@@ -28,7 +27,7 @@ interface A2 : List<String> {
     override fun stream(): java.util.stream.Stream<String> = null!!
 }
 
-class B : <!NONE_APPLICABLE!>Throwable<!>("", null, false, false)
+class B : Throwable("", null, false, false)
 
 class B1 : RuntimeException() {
     override fun fillInStackTrace(): Throwable { // 'override' keyword must be prohibited, as it was in 1.0.x
@@ -44,9 +43,9 @@ fun foo(x: List<String>, y: Throwable, z: A3) {
     x.stream()
     java.util.ArrayList<String>().stream()
 
-    y.fillInStackTrace() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    y.fillInStackTrace() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
 
-    HashMap<String, Int>().<!INAPPLICABLE_CANDIDATE!>getOrDefault<!>(Any(), null)
+    HashMap<String, Int>().getOrDefault(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     // Falls back to extension in stdlib
     y.printStackTrace()

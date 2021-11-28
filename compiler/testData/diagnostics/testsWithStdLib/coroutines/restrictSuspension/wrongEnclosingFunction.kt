@@ -1,12 +1,13 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 @kotlin.coroutines.RestrictsSuspension
 class RestrictedController {
     suspend fun yield() {}
 }
 
-fun generate(<!UNUSED_PARAMETER!>c<!>: suspend RestrictedController.() -> Unit) {}
+fun generate(c: suspend RestrictedController.() -> Unit) {}
 
-fun runBlocking(<!UNUSED_PARAMETER!>x<!>: suspend () -> Unit) {}
+fun runBlocking(x: suspend () -> Unit) {}
 
 fun test() {
     generate {

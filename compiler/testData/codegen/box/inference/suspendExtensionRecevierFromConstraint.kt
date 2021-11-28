@@ -1,8 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: COROUTINES
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +NewInference
+// WITH_STDLIB
 
 class ExtensionReceiver
 typealias SuspendExtensionFunction = suspend ExtensionReceiver.() -> Unit

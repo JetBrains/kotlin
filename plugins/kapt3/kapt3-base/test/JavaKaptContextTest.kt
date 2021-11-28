@@ -36,7 +36,8 @@ class JavaKaptContextTest : TestCase() {
                         val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
 
                         for (annotatedElement in annotatedElements) {
-                            val generatedClassName = annotatedElement.simpleName.toString().capitalize() + annotationName.capitalize()
+                            val generatedClassName = annotatedElement.simpleName.toString().replaceFirstChar(Char::uppercaseChar) +
+                                    annotationName.replaceFirstChar(Char::uppercaseChar)
                             val file = processingEnv.filer.createSourceFile("generated." + generatedClassName)
                             file.openWriter().use {
                                 it.write(

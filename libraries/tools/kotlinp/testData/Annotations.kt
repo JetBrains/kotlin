@@ -29,7 +29,12 @@ annotation class A(
     val str: String,
     val enum: AnnotationTarget,
     val klass: KClass<*>,
-    val anno: B
+    val klass2: KClass<*>,
+    val anno: B,
+    val stra: Array<String>,
+    val ka: Array<KClass<*>>,
+    val ea: Array<AnnotationTarget>,
+    val aa: Array<B>
 )
 
 annotation class B(val value: String)
@@ -66,7 +71,12 @@ class C {
         "aba\ncaba'\"\t\u0001\u0002\uA66E",
         AnnotationTarget.CLASS,
         C::class,
-        B(value = "aba\ncaba'\"\t\u0001\u0002\uA66E")
+        IntArray::class,
+        B(value = "aba\ncaba'\"\t\u0001\u0002\uA66E"),
+        ["lmao"],
+        [Double::class, Unit::class, LongArray::class, Array<String>::class],
+        [AnnotationTarget.TYPEALIAS, AnnotationTarget.FIELD],
+        [B("2"), B(value = "3")]
     ) Unit {}
 
     fun parameterTypeAnnotation(p: @JvmNamed("Q_Q") Any): Any = p

@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
 import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.TestsCompiletimeError;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
@@ -38,20 +37,11 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.clientserver.TestProxy;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.tree.ClassNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
-import org.jetbrains.org.objectweb.asm.tree.analysis.SimpleVerifier;
-import org.jetbrains.org.objectweb.asm.util.Textifier;
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -63,14 +53,13 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.*;
+import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
     private static final String DEFAULT_JVM_TARGET = System.getProperty("kotlin.test.default.jvm.target");
     public static final String BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port");
-    private static final String JAVA_COMPILATION_TARGET = System.getProperty("kotlin.test.java.compilation.target");
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
@@ -134,7 +123,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     protected String loadFile(@NotNull @TestDataFile String name) {
-        return loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + name);
+        return loadFileByFullPath(KtTestUtil.getTestDataPathBase() + "/codegen/" + name);
     }
 
     @NotNull
@@ -172,7 +161,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             if (file.name.endsWith(".kt") || file.name.endsWith(".kts")) {
                 // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
                 String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(file.content, new ArrayList<>(0), null);
-                ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
+                ktFiles.add(KtTestUtil.createFile(file.name, content, project));
             }
         }
 
@@ -202,7 +191,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         initializedClassLoader = createClassLoader();
 
-        if (!verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -235,7 +224,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         if (additionalDependencies != null) {
             files.addAll(additionalDependencies);
         }
-        files.addAll(getExtraDependenciesFromKotlinCompileClasspath());
 
         ScriptDependenciesProvider externalImportsProvider =
                 ScriptDependenciesProvider.Companion.getInstance(myEnvironment.getProject());
@@ -261,20 +249,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             throw ExceptionUtilsKt.rethrow(e);
         }
     }
-
-    private Set<File> getExtraDependenciesFromKotlinCompileClasspath() {
-        List<File> includeFromCompileClasspath = CollectionsKt.listOf(
-                ForTestCompileRuntime.coroutinesCompatForTests()
-        );
-        List<File> compileClasspath =
-                CollectionsKt.map(
-                        CollectionsKt.filterIsInstance(
-                                myEnvironment.getConfiguration().get(CLIConfigurationKeys.CONTENT_ROOTS),
-                                JvmClasspathRoot.class),
-                        JvmClasspathRoot::getFile);
-        return CollectionsKt.intersect(compileClasspath, includeFromCompileClasspath);
-    }
-
 
     @NotNull
     protected String generateToText() {
@@ -341,8 +315,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             boolean ignoreDexing = myFiles.getPsiFiles().stream().anyMatch(
                 it -> InTextDirectivesUtils.isDirectiveDefined(it.getText(), "IGNORE_DEXING")
             );
-            if (verifyWithDex() && DxChecker.RUN_DX_CHECKER && !ignoreDexing) {
-                DxChecker.check(classFileFactory);
+            if (verifyWithDex() && D8Checker.RUN_D8_CHECKER && !ignoreDexing) {
                 D8Checker.check(classFileFactory);
             }
         }
@@ -385,50 +358,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     protected boolean verifyWithDex() {
         return true;
-    }
-
-    private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {
-        boolean noErrors = true;
-        for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
-            noErrors &= verifyWithAsm(file, loader, reportProblems);
-        }
-        return noErrors;
-    }
-
-    private static boolean verifyWithAsm(@NotNull OutputFile file, ClassLoader loader, boolean reportProblems) {
-        ClassNode classNode = new ClassNode();
-        new ClassReader(file.asByteArray()).accept(classNode, 0);
-
-        SimpleVerifier verifier = new SimpleVerifier();
-        verifier.setClassLoader(loader);
-        Analyzer<BasicValue> analyzer = new Analyzer<>(verifier);
-
-        boolean noErrors = true;
-        for (MethodNode method : classNode.methods) {
-            try {
-                analyzer.analyze(classNode.name, method);
-            }
-            catch (Throwable e) {
-                if (reportProblems) {
-                    System.err.println(file.asText());
-                    System.err.println(classNode.name + "::" + method.name + method.desc);
-
-                    //noinspection InstanceofCatchParameter
-                    if (e instanceof AnalyzerException) {
-                        // Print the erroneous instruction
-                        TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
-                        ((AnalyzerException) e).node.accept(tmv);
-                        PrintWriter pw = new PrintWriter(System.err);
-                        tmv.p.print(pw);
-                        pw.flush();
-                    }
-
-                    e.printStackTrace();
-                }
-                noErrors = false;
-            }
-        }
-        return noErrors;
     }
 
     @NotNull
@@ -484,20 +413,10 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         File javaSourceDir = writeJavaFiles(files);
 
         configurationKind = extractConfigurationKind(files);
-        boolean loadAndroidAnnotations = files.stream().anyMatch(
-                it -> InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
-        );
-
-        List<File> classpath = new ArrayList<>();
-        classpath.add(getAnnotationsJar());
-
-        if (loadAndroidAnnotations) {
-            classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
-        }
 
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind, getTestJdkKind(files), getBackend(),
-                classpath,
+                Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
@@ -520,14 +439,11 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
         }
 
+        javaClassesOutputDirectory = null;
         if (compileJavaFiles) {
             List<String> javaClasspath = new ArrayList<>();
             javaClasspath.add(kotlinOut.getPath());
 
-            if (loadAndroidAnnotations) {
-                javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
-            }
-            javaClasspath.addAll(CollectionsKt.map(getExtraDependenciesFromKotlinCompileClasspath(), File::getPath));
             updateJavaClasspath(javaClasspath);
 
             javaClassesOutputDirectory = getJavaClassesOutputDirectory();
@@ -548,6 +464,13 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 throw ExceptionUtilsKt.rethrow(e);
             }
         }
+        if (kotlinOut != null) {
+            postCompile(kotlinOut, javaClassesOutputDirectory);
+        }
+    }
+
+    protected void postCompile(@NotNull File kotlinOut, @Nullable File javaOut) {
+
     }
 
     protected void runJavacTask(@NotNull Collection<File> files, @NotNull List<String> options) throws IOException {
@@ -574,7 +497,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             return javacOptions;
         }
 
-        String javaTarget = computeJavaTarget(javacOptions, kotlinTarget);
+        String javaTarget = CodegenTestUtil.computeJavaTarget(javacOptions, kotlinTarget);
         if (javaTarget != null) {
             javacOptions.add("-source");
             javacOptions.add(javaTarget);
@@ -582,20 +505,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             javacOptions.add(javaTarget);
         }
         return javacOptions;
-    }
-
-    private static final boolean IS_SOURCE_6_STILL_SUPPORTED =
-            // JDKs up to 11 do support -source/target 1.6, but later -- don't.
-            Arrays.asList("1.6", "1.7", "1.8", "9", "10", "11").contains(System.getProperty("java.specification.version"));
-
-    private static String computeJavaTarget(@NotNull List<String> javacOptions, @Nullable JvmTarget kotlinTarget) {
-        if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
-            return JAVA_COMPILATION_TARGET;
-        if (kotlinTarget != null && kotlinTarget.compareTo(JvmTarget.JVM_1_6) > 0)
-            return kotlinTarget.getDescription();
-        if (IS_SOURCE_6_STILL_SUPPORTED)
-            return "1.6";
-        return null;
     }
 
     @NotNull
@@ -608,7 +517,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected void doTest(@NotNull String filePath) throws Exception {
         File file = new File(filePath);
 
-        String expectedText = KotlinTestUtils.doLoadFile(file);
+        String expectedText = KtTestUtil.doLoadFile(file);
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
         doMultiFileTest(file, testFiles);
@@ -659,7 +568,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     @NotNull
     private static File createTempDirectory(String prefix) {
         try {
-            return KotlinTestUtils.tmpDir(prefix);
+            return KtTestUtil.tmpDir(prefix);
         } catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
@@ -674,7 +583,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         for (TestFile testFile : javaFiles) {
             File file = new File(dir, testFile.name);
-            KotlinTestUtils.mkdirs(file.getParentFile());
+            KtTestUtil.mkdirs(file.getParentFile());
             FilesKt.writeText(file, testFile.content, Charsets.UTF_8);
         }
 

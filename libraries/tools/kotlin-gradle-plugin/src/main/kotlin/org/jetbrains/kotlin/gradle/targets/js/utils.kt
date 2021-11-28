@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.internal.hash.FileHasher
+import org.gradle.internal.hash.Hashing.defaultFunction
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
@@ -15,13 +18,42 @@ fun Appendable.appendConfigsFromDir(confDir: File) {
         .filter { it.extension == "js" }
         .sortedBy { it.name }
         .forEach {
-            appendln("// ${it.name}")
+            appendLine("// ${it.name}")
             append(it.readText())
-            appendln()
-            appendln()
+            appendLine()
+            appendLine()
         }
 }
 
+fun ByteArray.toHex(): String {
+    val result = CharArray(size * 2) { ' ' }
+    var i = 0
+    forEach {
+        val n = it.toInt()
+        result[i++] = Character.forDigit(n shr 4 and 0xF, 16)
+        result[i++] = Character.forDigit(n and 0xF, 16)
+    }
+    return String(result)
+}
+
+fun FileHasher.calculateDirHash(
+    dir: File
+): String? {
+    if (!dir.isDirectory) return null
+
+    val hasher = defaultFunction().newHasher()
+    dir.walk()
+        .forEach { file ->
+            hasher.putString(file.toRelativeString(dir))
+            if (file.isFile) {
+                hasher.putHash(hash(file))
+            }
+        }
+
+    val digest = hasher.hash().toByteArray()
+
+    return digest.toHex()
+}
 
 const val JS = "js"
 const val JS_MAP = "js.map"

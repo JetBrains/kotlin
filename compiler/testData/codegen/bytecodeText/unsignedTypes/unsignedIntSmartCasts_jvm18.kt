@@ -1,5 +1,5 @@
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun both(a: Any?, b: Any?) = if (a is UInt && b is UInt) a < b else null!!
 

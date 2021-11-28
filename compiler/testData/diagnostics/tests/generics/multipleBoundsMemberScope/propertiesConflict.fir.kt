@@ -15,5 +15,5 @@ fun <T> test(a: T) where T : B, T : C {
     a.foo = ""
     a.foo = null
 
-    a.foo.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    a.foo.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 }

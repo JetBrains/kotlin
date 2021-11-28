@@ -85,7 +85,7 @@ abstract class IrDelegateDescriptorBase(
     override fun isVar(): Boolean = false
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-        visitor.visitVariableDescriptor(this, data)
+        visitor.visitPropertyDescriptor(this, data)
 }
 
 class IrPropertyDelegateDescriptorImpl(

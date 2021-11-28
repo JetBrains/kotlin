@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven { setUrl("https://www.jetbrains.com/intellij-repository/releases") }
-    maven { setUrl("https://jetbrains.bintray.com/intellij-third-party-dependencies") }
+    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
 }
 
 dependencies {
@@ -23,7 +23,6 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testImplementation(intellijDep())
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
@@ -122,5 +121,5 @@ val jmhExec by tasks.registering(JavaExec::class) {
     workingDir = rootDir
     systemProperty("idea.home.path", project.intellijRootDir().absolutePath)
     systemProperty("idea.max.intellisense.filesize", 5000 * 1024)
-    configurations.plusAssign(project.configurations["compile"])
+    configurations.plusAssign(project.configurations["api"])
 }

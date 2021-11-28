@@ -1,1 +1,0 @@
-internal anno<caret>tation class Ann

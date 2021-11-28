@@ -50,11 +50,9 @@ class ClassifierResolutionContext private constructor(
     internal fun addTypeParameters(newTypeParameters: Collection<JavaTypeParameter>) {
         if (newTypeParameters.isEmpty()) return
 
-        typeParameters =
-                newTypeParameters
-                    .fold(typeParameters) { acc, typeParameter ->
-                        acc.put(typeParameter.name.identifier, typeParameter)
-                    }
+        typeParameters = newTypeParameters.fold(typeParameters) { acc, typeParameter ->
+            acc.put(typeParameter.name.identifier, typeParameter)
+        }
     }
 
     private fun resolveClass(classId: ClassId) = Result(classesByQName(classId), classId.asSingleFqName().asString())
@@ -77,7 +75,7 @@ class ClassifierResolutionContext private constructor(
     // See com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
     private fun convertNestedClassInternalNameWithSimpleHeuristic(internalName: String): ClassId? {
         val splitPoints = SmartList<Int>()
-        for (p in 0 until internalName.length) {
+        for (p in internalName.indices) {
             val c = internalName[p]
             if (c == '$' && p > 0 && internalName[p - 1] != '/' && p < internalName.length - 1 && internalName[p + 1] != '$') {
                 splitPoints.add(p)

@@ -20,6 +20,7 @@ interface FieldContainer {
 }
 
 interface AbstractElement : FieldContainer, KindOwner {
+    val name: String
     val fields: Set<Field>
     val parents: List<AbstractElement>
     val typeArguments: List<TypeArgument>
@@ -35,10 +36,22 @@ interface AbstractElement : FieldContainer, KindOwner {
     val overridenFields: Map<Field, Map<Importable, Boolean>>
     val useNullableForReplace: Set<Field>
 
+    val isSealed: Boolean
+        get() = false
+
     override val allParents: List<KindOwner> get() = parents
 }
 
-class Element(val name: String, kind: Kind) : AbstractElement {
+class Element(override val name: String, kind: Kind) : AbstractElement {
+    companion object {
+        private val allowedKinds = setOf(
+            Implementation.Kind.Interface,
+            Implementation.Kind.SealedInterface,
+            Implementation.Kind.AbstractClass,
+            Implementation.Kind.SealedClass
+        )
+    }
+
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
@@ -50,12 +63,14 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<Importable, Importable>>()
     override var kind: Implementation.Kind? = null
         set(value) {
-            if (value != Implementation.Kind.Interface && value != Implementation.Kind.AbstractClass) {
+            if (value !in allowedKinds) {
                 throw IllegalArgumentException(value.toString())
             }
             field = value
         }
     var _needTransformOtherChildren: Boolean = false
+
+    override var isSealed: Boolean = false
 
     override var baseTransformerType: Element? = null
     override val transformerType: Element get() = baseTransformerType ?: this
@@ -104,7 +119,7 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     }
 
     val parentFields: List<Field> by lazy {
-        val result = LinkedHashSet<Field>()
+        val result = LinkedHashMap<String, Field>()
         parents.forEach { parent ->
             val fields = parent.allFields.map { field ->
                 val copy = (field as? SimpleField)?.let { simpleField ->
@@ -119,9 +134,23 @@ class Element(val name: String, kind: Kind) : AbstractElement {
                     fromParent = true
                 }
             }
-            result.addAll(fields)
+            fields.forEach {
+                result.merge(it.name, it) { previousField, thisField ->
+                    val resultField = previousField.copy()
+                    if (thisField.withReplace) {
+                        resultField.withReplace = true
+                    }
+                    if (thisField.useNullableForReplace) {
+                        resultField.useNullableForReplace = true
+                    }
+                    if (thisField.isMutable) {
+                        resultField.isMutable = true
+                    }
+                    resultField
+                }
+            }
         }
-        result.toList()
+        result.values.toList()
     }
 
     override val allFirFields: List<Field> by lazy {

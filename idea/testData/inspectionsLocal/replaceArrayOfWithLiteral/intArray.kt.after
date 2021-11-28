@@ -1,6 +1,0 @@
-// LANGUAGE_VERSION: 1.2
-
-annotation class Some(val nums: IntArray)
-
-@Some(nums = [1, 2])
-class My

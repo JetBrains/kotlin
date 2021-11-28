@@ -1,7 +1,0 @@
-var foo: String
-    get() = "abc"
-    set(value) {
-        doSet(value)
-    }
-
-fun doSet(value: String){}

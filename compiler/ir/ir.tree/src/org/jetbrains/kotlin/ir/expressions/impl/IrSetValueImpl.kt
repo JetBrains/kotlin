@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -35,7 +34,9 @@ class IrSetValueImpl(
 ) : IrSetValue() {
 
     init {
-        assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
+        if (symbol.isBound) {
+            assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
+        }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
+    kotlin("js")
 }
 
 group = "com.example"
@@ -7,7 +7,7 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {

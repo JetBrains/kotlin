@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -368,6 +369,7 @@ class ScriptTemplateTest : TestCase() {
                 TestJdkKind.FULL_JDK,
                 *additionalClasspath
             )
+            configuration.updateWithBaseCompilerArguments()
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,

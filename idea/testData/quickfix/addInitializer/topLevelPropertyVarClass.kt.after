@@ -1,4 +1,0 @@
-// "Add initializer" "true"
-// WITH_RUNTIME
-class A
-var label: A = TODO()

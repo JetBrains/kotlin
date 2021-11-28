@@ -1,0 +1,47 @@
+FILE: implicitReceiverOrder.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Int| {
+            ^foo Int(1)
+        }
+
+        public final fun R|B|.bar(): R|kotlin/Int| {
+            ^bar Int(3)
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Int| {
+            ^foo Int(2)
+        }
+
+        public final fun R|A|.bar(): R|kotlin/Int| {
+            ^bar Int(4)
+        }
+
+    }
+    public final fun test(a: R|A|, b: R|B|): R|kotlin/Unit| {
+        R|kotlin/with|<R|B|, R|kotlin/Int|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/with|<R|A|, R|kotlin/Int|>(R|<local>/a|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|special/anonymous|.R|/A.foo|()
+                ^ (this@R|special/anonymous|, this@R|special/anonymous|).R|/B.bar|()
+            }
+            )
+        }
+        )
+        R|kotlin/with|<R|A|, R|kotlin/Int|>(R|<local>/a|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/with|<R|B|, R|kotlin/Int|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|special/anonymous|.R|/B.foo|()
+                ^ (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.bar|()
+            }
+            )
+        }
+        )
+    }

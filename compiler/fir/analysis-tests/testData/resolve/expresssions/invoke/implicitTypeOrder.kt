@@ -1,6 +1,6 @@
 
 class A {
-    fun bar() = foo() // should resolve to invoke
+    fun bar() = <!OPERATOR_MODIFIER_REQUIRED!>foo<!>() // should resolve to invoke
 
     fun invoke() = this
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Test1 : <!CLASS_CANNOT_BE_EXTENDED_DIRECTLY!>Enum<Test1><!>("", 0)
 
 class Outer {

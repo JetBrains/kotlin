@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/unrestrictedBuilderInference.kt
+-d
+$TEMP_DIR$
+-Xunrestricted-builder-inference
+-opt-in=kotlin.RequiresOptIn

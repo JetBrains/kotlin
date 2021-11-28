@@ -1,0 +1,26 @@
+package
+
+public fun f(/*0*/ h: H): kotlin.Unit
+
+public abstract class AbstractMessageLite</*0*/ MessageType : AbstractMessageLite<MessageType!, BuilderType!>!, /*1*/ BuilderType : AbstractMessageLite.Builder<MessageType!, BuilderType!>!> {
+    public constructor AbstractMessageLite</*0*/ MessageType : AbstractMessageLite<MessageType!, BuilderType!>!, /*1*/ BuilderType : AbstractMessageLite.Builder<MessageType!, BuilderType!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun writeDelimitedTo(): kotlin.Unit
+
+    public abstract class Builder</*0*/ MessageType : AbstractMessageLite<MessageType!, BuilderType!>!, /*1*/ BuilderType : AbstractMessageLite.Builder<MessageType!, BuilderType!>!> {
+        public constructor Builder</*0*/ MessageType : AbstractMessageLite<MessageType!, BuilderType!>!, /*1*/ BuilderType : AbstractMessageLite.Builder<MessageType!, BuilderType!>!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class H : AbstractMessageLite<(raw) *, (raw) *> {
+    public constructor H()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun writeDelimitedTo(): kotlin.Unit
+}

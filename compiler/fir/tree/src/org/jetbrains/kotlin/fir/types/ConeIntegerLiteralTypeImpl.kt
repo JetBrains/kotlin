@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -62,7 +62,7 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
 
     override val supertypes: List<ConeClassLikeType> by lazy {
         listOf(
-            NUMBER_TYPE,
+            createType(StandardClassIds.Number),
             ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionIn(this)), false)
         )
     }
@@ -82,8 +82,6 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
         private fun createType(classId: ClassId): ConeClassLikeType {
             return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
         }
-
-        private val NUMBER_TYPE = createType(StandardClassIds.Number)
 
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
         private val BYTE_RANGE = Byte.MIN_VALUE.toLong()..Byte.MAX_VALUE.toLong()
@@ -147,11 +145,27 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     }
 }
 
-fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? = null): ConeKotlinType =
-    (this as? ConeIntegerLiteralType)?.getApproximatedType(expectedType) ?: this
+fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? = null): ConeKotlinType {
+    return when (this) {
+        is ConeIntegerLiteralType -> getApproximatedType(expectedType)
+        is ConeFlexibleType -> approximateIntegerLiteralBounds(expectedType)
+        else -> this
+    }
+}
 
-fun ConeKotlinType.approximateIntegerLiteralTypeOrNull(expectedType: ConeKotlinType? = null): ConeKotlinType? =
-    (this as? ConeIntegerLiteralType)?.getApproximatedType(expectedType)
+private fun ConeFlexibleType.approximateIntegerLiteralBounds(expectedType: ConeKotlinType? = null): ConeFlexibleType {
+    val newLowerBound = lowerBound.approximateIntegerLiteralType(expectedType)
+    val newUpperBound = upperBound.approximateIntegerLiteralType(expectedType)
+
+    if (newLowerBound !== lowerBound || newUpperBound !== upperBound) {
+        return ConeFlexibleType(
+            newLowerBound.lowerBoundIfFlexible(),
+            newUpperBound.upperBoundIfFlexible()
+        )
+    }
+
+    return this
+}
 
 private fun ConeClassLikeType.withNullability(nullability: ConeNullability): ConeClassLikeType {
     if (nullability == this.nullability) return this

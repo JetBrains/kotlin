@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 class SamWithReceiverGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<AbstractCompile> {
 
     override fun apply(target: Project) {
@@ -76,7 +76,7 @@ class SamWithReceiverGradleSubplugin @Inject internal constructor(private val re
     //region Stub implementation for legacy API, KT-39809
     internal constructor(): this(object : ToolingModelBuilderRegistry {
         override fun register(p0: ToolingModelBuilder) = Unit
-        override fun getBuilder(p0: String): ToolingModelBuilder? = null
+        override fun getBuilder(p0: String): ToolingModelBuilder = error("Method should not be called")
     })
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true

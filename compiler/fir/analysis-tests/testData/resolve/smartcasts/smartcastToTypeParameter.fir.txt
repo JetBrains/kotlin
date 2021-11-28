@@ -1,0 +1,43 @@
+FILE: smartcastToTypeParameter.kt
+    public abstract interface FirTypeScope : R|kotlin/Any| {
+    }
+    public abstract interface AbstractFirBasedSymbol<E : R|FirSymbolOwner<E>|, R|FirDeclaration|> : R|kotlin/Any| {
+        public abstract val fir: R|E|
+            public get(): R|E|
+
+    }
+    public abstract interface FirCallableSymbol<D : R|FirCallableDeclaration<D>|> : R|AbstractFirBasedSymbol<D>| {
+    }
+    public abstract interface FirElement : R|kotlin/Any| {
+    }
+    public abstract interface FirSymbolOwner<E : R|FirSymbolOwner<E>|, R|FirDeclaration|> : R|FirElement| {
+        public abstract val symbol: R|AbstractFirBasedSymbol<E>|
+            public get(): R|AbstractFirBasedSymbol<E>|
+
+    }
+    public abstract interface FirDeclaration : R|FirElement| {
+    }
+    public abstract interface FirCallableDeclaration<F : R|FirCallableDeclaration<F>|> : R|FirDeclaration|, R|FirSymbolOwner<F>| {
+    }
+    public abstract interface FirCallableMemberDeclaration<F : R|FirCallableMemberDeclaration<F>|> : R|FirCallableDeclaration<F>| {
+    }
+    private final inline fun <reified S : R|FirCallableSymbol<*>|> computeBaseSymbols(symbol: R|S|, basedSymbol: R|S|, directOverridden: R|FirTypeScope.(S) -> kotlin/collections/List<S>|): R|kotlin/Unit| {
+    }
+    public final fun R|FirCallableSymbol<*>|.dispatchReceiverClassOrNull(): R|kotlin/Boolean?| {
+        ^dispatchReceiverClassOrNull Boolean(true)
+    }
+    private final inline fun <reified D : R|FirCallableMemberDeclaration<D>|, reified S : R|FirCallableSymbol<D>|> createFakeOverriddenIfNeeded(originalSymbol: R|FirCallableSymbol<*>|, basedSymbol: R|S|, computeDirectOverridden: R|FirTypeScope.(S) -> kotlin/collections/List<S>|, someCondition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/originalSymbol| !is R|S|) ->  {
+                ^createFakeOverriddenIfNeeded Unit
+            }
+        }
+
+        when () {
+            ==(R|<local>/originalSymbol|.R|/dispatchReceiverClassOrNull|(), Boolean(true)) && R|<local>/someCondition| ->  {
+                ^createFakeOverriddenIfNeeded Unit
+            }
+        }
+
+        R|/computeBaseSymbols|<R|S|>(R|<local>/originalSymbol|, R|<local>/basedSymbol|, R|<local>/computeDirectOverridden|)
+    }

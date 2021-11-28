@@ -11,18 +11,23 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisitor<FirExpression?, Map<Int, FirExpression>>() {
-    override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Map<Int, FirExpression>): FirExpression? {
+private class ConeConditionalEffectToFirVisitor(
+    val valueParametersMapping: Map<Int, FirExpression>,
+    val substitutor: ConeSubstitutor
+) : ConeContractDescriptionVisitor<FirExpression?, Nothing?>() {
+    override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?): FirExpression? {
         return conditionalEffect.condition.accept(this, data)
     }
 
-    override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Map<Int, FirExpression>): FirExpression? {
+    override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Nothing?): FirExpression? {
         return when (constantReference) {
-            ConeBooleanConstantReference.TRUE -> buildConstExpression(null, FirConstKind.Boolean, true)
-            ConeBooleanConstantReference.FALSE -> buildConstExpression(null, FirConstKind.Boolean, false)
+            ConeBooleanConstantReference.TRUE -> buildConstExpression(null, ConstantValueKind.Boolean, true)
+            ConeBooleanConstantReference.FALSE -> buildConstExpression(null, ConstantValueKind.Boolean, false)
             ConeConstantReference.NULL -> createConstNull()
             else -> null
         }
@@ -30,7 +35,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
-        data: Map<Int, FirExpression>
+        data: Nothing?
     ): FirExpression? {
         val leftExpression = binaryLogicExpression.left.accept(this, data) ?: return null
         val rightExpression = binaryLogicExpression.right.accept(this, data) ?: return null
@@ -41,15 +46,16 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
         }
     }
 
-    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Map<Int, FirExpression>): FirExpression? {
+    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Nothing?): FirExpression? {
         val explicitReceiver = logicalNot.arg.accept(this, data) ?: return null
         return buildFunctionCall {
             calleeReference = buildSimpleNamedReference { name = OperatorNameConventions.NOT }
             this.explicitReceiver = explicitReceiver
+            origin = FirFunctionCallOrigin.Operator
         }
     }
 
-    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Map<Int, FirExpression>): FirExpression? {
+    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Nothing?): FirExpression? {
         val argument = isInstancePredicate.arg.accept(this@ConeConditionalEffectToFirVisitor, data) ?: return null
         return buildTypeOperatorCall {
             argumentList = buildUnaryArgumentList(argument)
@@ -58,11 +64,11 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
             } else {
                 FirOperation.IS
             }
-            conversionTypeRef = buildResolvedTypeRef { type = isInstancePredicate.type }
+            conversionTypeRef = buildResolvedTypeRef { type = substitutor.substituteOrSelf(isInstancePredicate.type) }
         }
     }
 
-    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Map<Int, FirExpression>): FirExpression? {
+    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Nothing?): FirExpression? {
         val argument = isNullPredicate.arg.accept(this, data) ?: return null
         return buildEqualityOperatorCall {
             operation = if (isNullPredicate.isNegated) {
@@ -74,15 +80,18 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
         }
     }
 
-    override fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: Map<Int, FirExpression>): FirExpression? {
-        return data[valueParameterReference.parameterIndex]
+    override fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: Nothing?): FirExpression? {
+        return valueParametersMapping[valueParameterReference.parameterIndex]
     }
 
-    private fun createConstNull(): FirConstExpression<*> = buildConstExpression(null, FirConstKind.Null, null)
+    private fun createConstNull(): FirConstExpression<*> = buildConstExpression(null, ConstantValueKind.Null, null)
 }
 
-fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, FirExpression>): FirExpression? {
-    return condition.accept(ConeConditionalEffectToFirVisitor, argumentMapping)
+fun ConeConditionalEffectDeclaration.buildContractFir(
+    argumentMapping: Map<Int, FirExpression>,
+    substitutor: ConeSubstitutor
+): FirExpression? {
+    return condition.accept(ConeConditionalEffectToFirVisitor(argumentMapping, substitutor), null)
 }
 
 fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExpression>? {
@@ -95,7 +104,7 @@ fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExp
             val parameterToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter to index }.toMap()
             val callArgumentMapping = qualifiedAccess.argumentMapping ?: return null
             for (argument in qualifiedAccess.arguments) {
-                argumentsMapping[parameterToIndex.getValue(callArgumentMapping.getValue(argument))] = argument.unwrap()
+                argumentsMapping[parameterToIndex.getValue(callArgumentMapping.getValue(argument))] = argument.unwrapArgument()
             }
         }
         is FirVariableAssignment -> {
@@ -105,4 +114,3 @@ fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExp
     return argumentsMapping
 }
 
-private fun FirExpression.unwrap(): FirExpression = if (this is FirWrappedArgumentExpression) expression else this

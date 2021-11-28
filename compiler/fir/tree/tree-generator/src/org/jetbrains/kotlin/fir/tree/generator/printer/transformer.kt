@@ -5,28 +5,29 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.compositeTransformResultType
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 
 import java.io.File
 
-fun printTransformer(elements: List<Element>, generationPath: File) {
+fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFile {
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    dir.mkdirs()
-    File(dir, "FirTransformer.kt").useSmartPrinter {
+    val file = File(dir, "FirTransformer.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import ${it.fullQualifiedName}") }
-        println("import ${compositeTransformResultType.fullQualifiedName}")
         println()
         printGeneratedMessage()
 
-        println("abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirElement>, D>() {")
+        println("abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {")
         println()
         withIndent {
-            println("abstract fun <E : FirElement> transformElement(element: E, data: D): CompositeTransformResult<E>")
+            println("abstract fun <E : FirElement> transformElement(element: E, data: D): E")
             println()
             for (element in elements) {
                 if (element == AbstractFirTreeBuilder.baseFirElement) continue
@@ -34,8 +35,8 @@ fun printTransformer(elements: List<Element>, generationPath: File) {
                 print("open fun ")
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
                 println(
-                    "transform${element.name}($varName: ${element.typeWithArguments}, data: D): CompositeTransformResult<${element.transformerType
-                        .typeWithArguments}>${element.multipleUpperBoundsList()}{",
+                    "transform${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
+                        .typeWithArguments}${element.multipleUpperBoundsList()}{",
                 )
                 withIndent {
                     println("return transformElement($varName, data)")
@@ -50,8 +51,8 @@ fun printTransformer(elements: List<Element>, generationPath: File) {
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
 
                 println(
-                    "visit${element.name}($varName: ${element.typeWithArguments}, data: D): CompositeTransformResult<${element.transformerType
-                        .typeWithArguments}>${element.multipleUpperBoundsList()}{",
+                    "visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
+                        .typeWithArguments}${element.multipleUpperBoundsList()}{",
                 )
                 withIndent {
                     println("return transform${element.name}($varName, data)")
@@ -62,4 +63,5 @@ fun printTransformer(elements: List<Element>, generationPath: File) {
         }
         println("}")
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }

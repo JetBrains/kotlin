@@ -1,5 +1,5 @@
 @kotlin.Metadata
-synthetic final class<Ljava/lang/Object;LSam<Ljava/lang/String;>;>  TKt$specializedSam$1 {
+synthetic final class<null>  TKt$specializedSam$1 {
     // source: 't.kt'
     static <null> method <clinit>(): void
     <null> method <init>(): void

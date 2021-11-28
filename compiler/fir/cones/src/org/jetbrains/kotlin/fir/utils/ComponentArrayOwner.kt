@@ -11,7 +11,6 @@ import kotlin.reflect.KClass
  * [ComponentArrayOwner] based on [ArrayMap] with flexible size and should be used for
  *   storing services in entities with limited number of instances, like FirSession
  */
-@OptIn(Protected::class)
 abstract class ComponentArrayOwner<K : Any, V : Any> : AbstractArrayMapOwner<K, V>() {
     final override val arrayMap: ArrayMap<V> =
         ArrayMapImpl()

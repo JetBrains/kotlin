@@ -26,12 +26,7 @@ object PolymorphicSignatureCallChecker : CallChecker {
             if (valueArgument !is VarargValueArgument) continue
             for (argument in valueArgument.arguments) {
                 val spread = argument.getSpreadElement() ?: continue
-                val diagnostic =
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall))
-                        ErrorsJvm.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR
-                    else
-                        ErrorsJvm.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL
-                context.trace.report(diagnostic.on(spread))
+                context.trace.report(ErrorsJvm.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL.on(context.languageVersionSettings, spread))
             }
         }
     }

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // Ambiguity between fun and callable property
 
 open class BaseWithCallableProp {
@@ -14,7 +13,7 @@ interface InterfaceWithFun {
 
 class DerivedUsingFun : BaseWithCallableProp(), InterfaceWithFun {
     fun foo(): String =
-    super.<!UNRESOLVED_REFERENCE!>fn<!>()
+    <!AMBIGUOUS_SUPER!>super<!>.fn()
 
     override fun bar(): String =
             super.bar()

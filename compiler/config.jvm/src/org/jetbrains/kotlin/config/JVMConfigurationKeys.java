@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.config;
 
-import org.jetbrains.kotlin.load.java.JavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 
@@ -54,10 +53,6 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable not-null parameter assertions");
     public static final CompilerConfigurationKey<JVMAssertionsMode> ASSERTIONS_MODE =
             CompilerConfigurationKey.create("assertions mode");
-    public static final CompilerConfigurationKey<JVMConstructorCallNormalizationMode> CONSTRUCTOR_CALL_NORMALIZATION_MODE =
-            CompilerConfigurationKey.create("constructor call normalization mode");
-    public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
-            CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
     public static final CompilerConfigurationKey<Boolean> USE_TYPE_TABLE =
@@ -65,9 +60,6 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_SINGLE_MODULE =
             CompilerConfigurationKey.create("combine modules for source files and binary dependencies into a single module");
-
-    public static final CompilerConfigurationKey<Boolean> SKIP_RUNTIME_VERSION_CHECK =
-            CompilerConfigurationKey.create("do not perform checks on runtime versions consistency");
 
     public static final CompilerConfigurationKey<JvmTarget> JVM_TARGET =
             CompilerConfigurationKey.create("JVM bytecode target version");
@@ -77,9 +69,6 @@ public class JVMConfigurationKeys {
     
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
-
-    public static final CompilerConfigurationKey<JavaClassesTracker> JAVA_CLASSES_TRACKER =
-            CompilerConfigurationKey.create("Java classes tracker");
 
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");
@@ -99,6 +88,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> USE_PSI_CLASS_FILES_READING =
             CompilerConfigurationKey.create("use a slower (PSI-based) class files reading implementation");
 
+    public static final CompilerConfigurationKey<Boolean> USE_FAST_JAR_FILE_SYSTEM =
+            CompilerConfigurationKey.create("use a faster JAR filesystem implementation");
+
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
             CompilerConfigurationKey.create("use javac [experimental]");
 
@@ -114,11 +106,17 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<JvmStringConcat> STRING_CONCAT =
             CompilerConfigurationKey.create("Specifies string concatenation scheme");
 
+    public static final CompilerConfigurationKey<JvmClosureGenerationScheme> SAM_CONVERSIONS =
+            CompilerConfigurationKey.create("SAM conversions code generation scheme");
+
+    public static final CompilerConfigurationKey<JvmClosureGenerationScheme> LAMBDAS =
+            CompilerConfigurationKey.create("Lambdas code generation scheme");
+
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");
 
-    public static final CompilerConfigurationKey<Boolean> IS_IR_WITH_STABLE_ABI =
-            CompilerConfigurationKey.create("Is IR with stable ABI");
+    public static final CompilerConfigurationKey<JvmAbiStability> ABI_STABILITY =
+            CompilerConfigurationKey.create("ABI stability of class files produced by JVM IR and/or FIR");
 
     public static final CompilerConfigurationKey<Boolean> DO_NOT_CLEAR_BINDING_CONTEXT =
             CompilerConfigurationKey.create("When using the IR backend, do not clear BindingContext between psi2ir and lowerings");
@@ -135,12 +133,21 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> NO_UNIFIED_NULL_CHECKS =
             CompilerConfigurationKey.create("Use pre-1.4 exception types in null checks instead of java.lang.NPE");
 
-    public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
-            CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");
-
     public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
             CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_PREVIEW =
             CompilerConfigurationKey.create("Enable Java language preview features");
+
+    public static final CompilerConfigurationKey<Boolean> NO_REFLECT =
+            CompilerConfigurationKey.create("Don't automatically include kotlin-reflect.jar into the output if the output is a jar");
+
+    public static final CompilerConfigurationKey<JvmSerializeIrMode> SERIALIZE_IR =
+            CompilerConfigurationKey.create("What functions to serialize as IR to class metadata");
+
+    public static final CompilerConfigurationKey<Boolean> VALIDATE_IR =
+            CompilerConfigurationKey.create("Validate IR");
+
+    public static final CompilerConfigurationKey<Boolean> VALIDATE_BYTECODE =
+            CompilerConfigurationKey.create("Validate generated JVM bytecode");
 }

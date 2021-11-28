@@ -2,11 +2,6 @@ description = 'Kotlin Test JUnit 5'
 
 apply plugin: 'kotlin-platform-jvm'
 
-configureJvm6Project(project)
-configurePublishing(project)
-ext.javaHome = JDK_18
-ext.jvmTarget = "1.8"
-
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
 sourceSets {
@@ -19,10 +14,10 @@ project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile project(':kotlin-test:kotlin-test-jvm')
+    api project(':kotlin-test:kotlin-test-jvm')
 
-    compile("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    api("org.junit.jupiter:junit-jupiter-api:5.0.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 }
 
 jar {
@@ -35,27 +30,25 @@ jar {
 configureSourcesJar()
 configureJavadocJar()
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_18
-    kotlinOptions.jvmTarget = 1.8
-}
-
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+    ]
     kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+    ]
 }
 
-configureJvmIrBackend(project)
+configureFrontendIr(project)
 
 if (includeJava9) {
-    compileJava9Sources(project, 'kotlin.test.junit5')
+    LibrariesCommon.configureJava9Compilation(project, 'kotlin.test.junit5')
 }
 
 test {
     useJUnitPlatform()
-    executable = "$JDK_18/bin/java"
 }

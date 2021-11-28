@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION: CONSTRAINT_SYSTEM_FOR_OLD_INFERENCE
 
 open class A<T>(val value: T)
@@ -12,5 +11,5 @@ fun <T> B<T>.foo(block: (T) -> Unit) {
 }
 
 fun main() {
-    B("string").<!AMBIGUITY!>foo<!> {  }
+    B("string").<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {  }
 }

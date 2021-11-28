@@ -1,6 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: SPREAD_OPERATOR
-// !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
+// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
 
 fun foo1(
     vararg p1: Int,

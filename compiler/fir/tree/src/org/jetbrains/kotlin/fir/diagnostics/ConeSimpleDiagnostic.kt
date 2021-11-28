@@ -5,32 +5,73 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
-class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic()
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+
+class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
+
+class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic {
+    override val reason: String get() = "Strange annotated expression: $text"
+}
+
+abstract class ConeDiagnosticWithSource(val source: KtSourceElement) : ConeDiagnostic
+
+class ConeUnderscoreIsReserved(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"
+}
+
+class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
+}
+
+class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
+    override val reason: String
+        get() = "Ambiguous supertype"
+}
 
 enum class DiagnosticKind {
     Syntax,
-    ExpressionRequired,
+    ExpressionExpected,
     NotLoopLabel,
     JumpOutsideLoop,
     VariableExpected,
 
     ReturnNotAllowed,
     UnresolvedLabel,
+    NotAFunctionLabel,
     NoThis,
     IllegalConstExpression,
+    IllegalSelector,
+    NoReceiverAllowed,
     IllegalUnderscore,
     DeserializationError,
     InferenceError,
-    TypeParameterAsSupertype,
-    EnumAsSupertype,
-    RecursionInSupertypes,
     RecursionInImplicitTypes,
     Java,
     SuperNotAllowed,
-    NoTypeForTypeParameter,
-    UnknownCallableKind,
-    SymbolNotFound,
+    ValueParameterWithNoTypeAnnotation,
+    CannotInferParameterType,
     IllegalProjectionUsage,
     MissingStdlibClass,
-    Other
+    NotASupertype,
+    SuperNotAvailable,
+
+    LoopInSupertype,
+    RecursiveTypealiasExpansion,
+    UnresolvedSupertype,
+    UnresolvedExpandedType,
+
+    IncorrectCharacterLiteral,
+    EmptyCharacterLiteral,
+    TooManyCharactersInCharacterLiteral,
+    IllegalEscape,
+
+    IntLiteralOutOfRange,
+    FloatLiteralOutOfRange,
+    WrongLongSuffix,
+
+    IsEnumEntry,
+    EnumEntryAsType,
+
+    Other,
 }

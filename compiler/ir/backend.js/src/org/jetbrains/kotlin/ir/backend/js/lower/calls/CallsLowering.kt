@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val transformers = listOf(
@@ -32,6 +30,7 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
         BuiltInConstructorCalls(context),
         JsonIntrinsics(context),
         NativeGetterSetterTransformer(context),
+        ReplaceCallsWithInvalidTypeArgumentForReifiedParameters(context),
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

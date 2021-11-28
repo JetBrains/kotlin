@@ -7,10 +7,10 @@ plugins {
 publish()
 
 dependencies {
-    compile(project(":kotlin-script-runtime"))
-    compile(kotlinStdlib())
-    compile(project(":kotlin-scripting-common"))
-    compile(project(":kotlin-scripting-jvm"))
+    api(project(":kotlin-script-runtime"))
+    api(kotlinStdlib())
+    api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-jvm"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))

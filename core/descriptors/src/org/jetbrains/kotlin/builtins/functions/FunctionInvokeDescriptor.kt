@@ -138,7 +138,7 @@ class FunctionInvokeDescriptor private constructor(
                 "E" -> "receiver"
                 else -> {
                     // Type parameter "P1" -> value parameter "p1", "P2" -> "p2", etc.
-                    typeParameterName.toLowerCase()
+                    typeParameterName.lowercase()
                 }
             }
 

@@ -32,17 +32,17 @@ public final class User : java/lang/Object, android/os/Parcelable {
           DUP
           ACONST_NULL
           INVOKESPECIAL (User$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (Companion, LUser$Companion;)
+          PUTSTATIC (User, Companion, LUser$Companion;)
         LABEL (L0)
         LINENUMBER (12)
           NEW
           DUP
           INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
-          PUTSTATIC (test, Ljava/lang/StringBuilder;)
+          PUTSTATIC (User, test, Ljava/lang/StringBuilder;)
           NEW
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 

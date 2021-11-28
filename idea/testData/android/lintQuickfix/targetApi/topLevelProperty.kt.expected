@@ -1,9 +1,0 @@
-// INTENTION_TEXT: Add @TargetApi(M) Annotation
-// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintNewApiInspection
-import android.annotation.TargetApi
-import android.app.Activity
-import android.os.Build
-
-val top: Int
-    @TargetApi(Build.VERSION_CODES.M)
-    get() = Activity().checkSelfPermission(READ_CONTACTS)

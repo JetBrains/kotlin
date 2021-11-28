@@ -1,0 +1,30 @@
+FILE: capturedTypeInEquality.kt
+    public abstract interface FirTargetElement : R|kotlin/Any| {
+    }
+    public abstract interface FirFunction<F : R|FirFunction<F>|> : R|FirTargetElement| {
+    }
+    public abstract interface FirPropertyAccessor : R|FirFunction<FirPropertyAccessor>| {
+    }
+    public abstract interface FirProperty : R|kotlin/Any| {
+        public abstract val getter: R|FirPropertyAccessor|
+            public get(): R|FirPropertyAccessor|
+
+    }
+    public abstract interface FirTarget<E : R|FirTargetElement|> : R|kotlin/Any| {
+        public abstract val labeledElement: R|E|
+            public get(): R|E|
+
+    }
+    public final fun foo(target: R|FirTarget<FirFunction<*>>|, property: R|FirProperty|): R|kotlin/Unit| {
+        lval functionTarget: R|FirFunction<*>| = R|<local>/target|.R|SubstitutionOverride</FirTarget.labeledElement: R|FirFunction<*>|>|
+        lval x: R|kotlin/Int?| = (R|<local>/functionTarget| as? R|FirFunction<*>|)?.{ $subj$.R|kotlin/let|<R|FirFunction<*>|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|FirFunction<*>|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            when () {
+                ===(R|<local>/property|.R|/FirProperty.getter|, R|<local>/functionTarget|) ->  {
+                    ^@let Int(1)
+                }
+            }
+
+            ^ Int(0)
+        }
+        ) }
+    }

@@ -1,8 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
-// !LANGUAGE: +InlineClasses
 
-inline class Result<out T>(val value: Any?) {
+// WITH_STDLIB
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Result<out T>(val value: Any?) {
     val isFailure: Boolean get() = value is Failure
 
     public companion object {

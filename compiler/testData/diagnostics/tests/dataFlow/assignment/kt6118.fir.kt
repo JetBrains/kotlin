@@ -2,7 +2,7 @@
 
 fun foo(o: Any) {
     if (o is String) {
-        val s = o as String
+        val s = o <!USELESS_CAST!>as String<!>
         s.length
     }
 }

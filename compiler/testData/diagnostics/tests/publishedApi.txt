@@ -52,3 +52,20 @@ public final class E {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class FalsePositiveInConstructor {
+    public constructor FalsePositiveInConstructor(/*0*/ extensionPoint: kotlin.Any)
+    @kotlin.PublishedApi internal final val extensionPoint: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InConstructor {
+    public constructor InConstructor(/*0*/ extensionPoint: kotlin.Any)
+    @kotlin.PublishedApi public final val extensionPoint: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

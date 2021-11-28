@@ -96,6 +96,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
     }
 
     reportJsCompilerMode(compilerOrDefault)
+    @Suppress("UNCHECKED_CAST")
     return configureOrCreate(
         targetName,
         presets.getByName(

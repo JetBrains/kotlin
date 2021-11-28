@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 open class ControlFlowInfo<K, V>(val map: Map<K, V>): Map<K, V> by map
 

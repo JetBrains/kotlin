@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -101,8 +102,8 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
 
     val script: KtScript?
         get() {
-            stub?.let { if (!it.isScript()) return null }
             isScript?.let { if (!it) return null }
+            stub?.let { if (!it.isScript()) return null }
 
             val result = getChildOfType<KtScript>()
             if (isScript == null) {
@@ -179,6 +180,9 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         it.alias != null && fqName == it.importedFqName
     }?.alias
 
+    fun getNameForGivenImportAlias(name: Name): Name? =
+        importDirectives.find { it.importedName == name }?.importedFqName?.pathSegments()?.last()
+
     @Deprecated("") // getPackageFqName should be used instead
     override fun getPackageName(): String {
         return packageFqName.asString()
@@ -190,7 +194,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             return stub
         }
 
-        throw error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
+        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
     }
 
     override fun getClasses(): Array<PsiClass> {
@@ -208,7 +212,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         pathCached = null
     }
 
-    fun isScript(): Boolean = stub?.isScript() ?: isScriptByTree
+    fun isScript(): Boolean = isScript ?: stub?.isScript() ?: isScriptByTree
 
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }

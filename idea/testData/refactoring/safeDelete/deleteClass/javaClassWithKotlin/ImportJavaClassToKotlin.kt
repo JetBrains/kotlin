@@ -1,5 +1,0 @@
-import J
-
-class K {
-
-}

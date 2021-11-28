@@ -1,9 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections.builders
+
+import java.io.Externalizable
+import java.io.InvalidObjectException
+import java.io.NotSerializableException
 
 internal class ListBuilder<E> private constructor(
     private var array: Array<E>,
@@ -12,7 +16,7 @@ internal class ListBuilder<E> private constructor(
     private var isReadOnly: Boolean,
     private val backing: ListBuilder<E>?,
     private val root: ListBuilder<E>?
-) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
+) : MutableList<E>, RandomAccess, AbstractMutableList<E>(), Serializable {
 
     constructor() : this(10)
 
@@ -25,6 +29,12 @@ internal class ListBuilder<E> private constructor(
         isReadOnly = true
         return this
     }
+
+    private fun writeReplace(): Any =
+        if (isEffectivelyReadOnly)
+            SerializedCollection(this, SerializedCollection.tagList)
+        else
+            throw NotSerializableException("The list cannot be serialized while it is being built.")
 
     override val size: Int
         get() = length
@@ -130,13 +140,25 @@ internal class ListBuilder<E> private constructor(
         return ListBuilder(array, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun ensureCapacity(minCapacity: Int) {
-        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
-        if (minCapacity > array.size) {
-            val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
-            array = array.copyOfUninitializedElements(newSize)
+    override fun <T> toArray(destination: Array<T>): Array<T> {
+        if (destination.size < length) {
+            return java.util.Arrays.copyOfRange(array, offset, offset + length, destination.javaClass)
         }
+
+        @Suppress("UNCHECKED_CAST")
+        (array as Array<T>).copyInto(destination, 0, startIndex = offset, endIndex = offset + length)
+
+        if (destination.size > length) {
+            @Suppress("UNCHECKED_CAST")
+            destination[length] = null as T // null-terminate
+        }
+
+        return destination
+    }
+
+    override fun toArray(): Array<Any?> {
+        @Suppress("UNCHECKED_CAST")
+        return array.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<Any?>
     }
 
     override fun equals(other: Any?): Boolean {
@@ -154,9 +176,21 @@ internal class ListBuilder<E> private constructor(
 
     // ---------------------------- private ----------------------------
 
-    private fun checkIsMutable() {
-        if (isReadOnly || root != null && root.isReadOnly) throw UnsupportedOperationException()
+    private fun ensureCapacity(minCapacity: Int) {
+        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity > array.size) {
+            val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
+            array = array.copyOfUninitializedElements(newSize)
+        }
     }
+
+    private fun checkIsMutable() {
+        if (isEffectivelyReadOnly) throw UnsupportedOperationException()
+    }
+
+    private val isEffectivelyReadOnly: Boolean
+        get() = isReadOnly || root != null && root.isReadOnly
 
     private fun ensureExtraCapacity(n: Int) {
         ensureCapacity(length + n)
@@ -347,4 +381,49 @@ internal fun <E> Array<E>.resetAt(index: Int) {
 
 internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
     for (index in fromIndex until toIndex) resetAt(index)
+}
+
+internal class SerializedCollection(
+    private var collection: Collection<*>,
+    private val tag: Int
+) : Externalizable {
+
+    constructor() : this(emptyList<Any?>(), 0) // for deserialization
+
+    override fun writeExternal(output: java.io.ObjectOutput) {
+        output.writeByte(tag)
+        output.writeInt(collection.size)
+        for (element in collection) {
+            output.writeObject(element)
+        }
+    }
+
+    override fun readExternal(input: java.io.ObjectInput) {
+        val flags = input.readByte().toInt()
+        val tag = flags and 1
+        val other = flags and 1.inv()
+        if (other != 0) {
+            throw InvalidObjectException("Unsupported flags value: $flags.")
+        }
+        val size = input.readInt()
+        if (size < 0) throw InvalidObjectException("Illegal size value: $size.")
+        collection = when (tag) {
+            tagList -> buildList<Any?>(size) {
+                repeat(size) { add(input.readObject()) }
+            }
+            tagSet -> buildSet<Any?>(size) {
+                repeat(size) { add(input.readObject()) }
+            }
+            else ->
+                throw InvalidObjectException("Unsupported collection type tag: $tag.")
+        }
+    }
+
+    private fun readResolve(): Any = collection
+
+    companion object {
+        private const val serialVersionUID: Long = 0L
+        const val tagList: Int = 0
+        const val tagSet: Int = 1
+    }
 }

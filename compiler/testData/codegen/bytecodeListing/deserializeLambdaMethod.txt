@@ -1,0 +1,9 @@
+@kotlin.Metadata
+public final class DeserializeLambdaMethodKt {
+    // source: 'deserializeLambdaMethod.kt'
+    private final static @org.jetbrains.annotations.NotNull field test: Sam
+    private synthetic final static method $deserializeLambda$(p0: java.lang.invoke.SerializedLambda): java.lang.Object
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method getTest(): Sam
+    public final static @org.jetbrains.annotations.NotNull method plusK(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+}

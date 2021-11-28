@@ -1,6 +1,0 @@
-fun test(some: Boolean) {
-    (if (some) {
-        <caret>
-    } else {
-    }).equals(true)
-}

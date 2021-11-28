@@ -1,6 +1,6 @@
 FILE: typeAliasWithGeneric.kt
     public? open class A : R|kotlin/Any| {
-        public? constructor(): R|A| {
+        public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -9,7 +9,7 @@ FILE: typeAliasWithGeneric.kt
     }
     public? final typealias C<T> = B<T, A>
     public? final? class D : C<A> {
-        public? constructor(): R|D| {
+        public? [ContainingClassKey=D] constructor(): R|D| {
             super<<implicit>>()
         }
 

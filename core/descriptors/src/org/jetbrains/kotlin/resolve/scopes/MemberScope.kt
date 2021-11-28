@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.lang.reflect.Modifier
@@ -73,7 +74,7 @@ fun Iterable<MemberScope>.flatMapClassifierNamesOrNull(): MutableSet<Name>? =
  */
 fun MemberScope.getDescriptorsFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-        nameFilter: (Name) -> Boolean = { true }
+        nameFilter: (Name) -> Boolean = ALL_NAME_FILTER
 ): Collection<DeclarationDescriptor> {
     if (kindFilter.kindMask == 0) return listOf()
     return getContributedDescriptors(kindFilter, nameFilter).filter { kindFilter.accepts(it) && nameFilter(it.name) }
@@ -136,6 +137,24 @@ class DescriptorKindFilter(
             is VariableDescriptor -> VARIABLES_MASK
             else -> 0
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DescriptorKindFilter
+
+        if (excludes != other.excludes) return false
+        if (kindMask != other.kindMask) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = excludes.hashCode()
+        result = 31 * result + kindMask
+        return result
     }
 
     companion object {

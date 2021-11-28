@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.js.dce.*
-import org.jetbrains.kotlin.js.inline.util.RelativePathCalculator
+import org.jetbrains.kotlin.js.sourceMap.RelativePathCalculator
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import java.io.*
 import java.util.zip.ZipFile
@@ -76,17 +76,23 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             messageCollector.report(severity, message)
         }
 
-        val dceResult = DeadCodeElimination.run(files, includedDeclarations, logConsumer)
+        val dceResult = DeadCodeElimination.run(
+            files,
+            includedDeclarations,
+            arguments.printReachabilityInfo,
+            logConsumer
+        )
         if (dceResult.status == DeadCodeEliminationStatus.FAILED) return ExitCode.COMPILATION_ERROR
-        val nodes = dceResult.reachableNodes.filterTo(mutableSetOf()) { it.reachable }
 
-        val reachabilitySeverity = if (arguments.printReachabilityInfo) CompilerMessageSeverity.INFO else CompilerMessageSeverity.LOGGING
-        messageCollector.report(reachabilitySeverity, "")
-        for (node in nodes.extractRoots()) {
-            printTree(
-                node, { messageCollector.report(reachabilitySeverity, it) },
-                printNestedMembers = false, showLocations = true
-            )
+        if (arguments.printReachabilityInfo) {
+            val reachabilitySeverity = CompilerMessageSeverity.INFO
+            messageCollector.report(reachabilitySeverity, "")
+            for (node in dceResult.reachableNodes.extractReachableRoots(dceResult.context!!)) {
+                printTree(
+                    node, { messageCollector.report(reachabilitySeverity, it) },
+                    printNestedMembers = false, showLocations = true
+                )
+            }
         }
 
         return ExitCode.OK

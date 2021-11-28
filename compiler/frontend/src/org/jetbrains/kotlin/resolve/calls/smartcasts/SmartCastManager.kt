@@ -25,19 +25,19 @@ import org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST
-import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
+import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.typeUtil.expandIntersectionTypeIfNecessary
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
 
@@ -136,7 +136,10 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         else
             listOf(expectedType)
 
-        val collectedTypes = c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings).toMutableList()
+        val builderInferenceSubstitutor = (c.inferenceSession as? BuilderInferenceSession)?.getNotFixedToInferredTypesSubstitutor()
+        val collectedTypes = c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings).let { types ->
+            if (builderInferenceSubstitutor != null) types.map { builderInferenceSubstitutor.safeSubstitute(it.unwrap()) } else types
+        }.toMutableList()
 
         if (collectedTypes.isNotEmpty() && c.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
             // Sometime expected type may be inferred to be an intersection of all of the smart-cast types
@@ -222,27 +225,41 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         ) {
             if (KotlinBuiltIns.isNullableNothing(type)) return
             if (dataFlowValue.isStable) {
-                if (dataFlowValue.kind == DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY) {
+                if (dataFlowValue.kind == DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY ||
+                    dataFlowValue.kind == DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
+                ) {
                     trace.report(Errors.DEPRECATED_SMARTCAST.on(expression, type, expression.text, dataFlowValue.kind.description))
                 }
 
-                val oldSmartCasts = trace[SMARTCAST, expression]
-                val newSmartCast = SingleSmartCast(call, type)
-                if (oldSmartCasts != null) {
-                    val oldType = oldSmartCasts.type(call)
-                    if (oldType != null && oldType != type) {
-                        throw AssertionError("Rewriting key $call for smart cast on ${expression.text}")
-                    }
-                }
-                trace.record(SMARTCAST, expression, oldSmartCasts?.let { it + newSmartCast } ?: newSmartCast)
+                updateSmartCast(trace, expression, call, type, SMARTCAST)
                 if (recordExpressionType) {
                     //TODO
                     //Why the expression type is rewritten for receivers and is not rewritten for arguments? Is it necessary?
                     trace.recordType(expression, type)
                 }
             } else {
+                updateSmartCast(trace, expression, call, type, UNSTABLE_SMARTCAST)
                 trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.text, dataFlowValue.kind.description))
             }
+        }
+
+        private fun updateSmartCast(
+            trace: BindingTrace,
+            expression: KtExpression,
+            call: Call?,
+            type: KotlinType,
+            key: WritableSlice<KtExpression, ExplicitSmartCasts>?
+        ) {
+            val oldSmartCasts = trace[key, expression]
+            val newSmartCast = SingleSmartCast(call, type)
+            if (oldSmartCasts != null) {
+                val oldType = oldSmartCasts.type(call)
+                if (oldType != null && oldType != type) {
+                    throw AssertionError("Rewriting key $call for smart cast on ${expression.text}")
+                }
+            }
+            val updatedSmartCasts = oldSmartCasts?.let { it + newSmartCast } ?: newSmartCast
+            trace.record(key, expression, updatedSmartCasts)
         }
     }
 }

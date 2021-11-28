@@ -12,7 +12,7 @@ public abstract class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/Number;Ljava/l
     public bridge final <null> method containsValue(p0: java.lang.Object): boolean
     public abstract <null> method containsValue(p0: java.lang.String): boolean
     public abstract <null> method get(p0: java.lang.Number): java.lang.String
-    public synthetic bridge <null> method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final <null> method get(p0: java.lang.Object): java.lang.Object
     public bridge final <null> method get(p0: java.lang.Object): java.lang.String
     public abstract <null> method getEntries(): java.util.Set
     public abstract <null> method getKeys(): java.util.Set

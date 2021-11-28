@@ -1,6 +1,5 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
-// KJS_WITH_FULL_RUNTIME
 
 import kotlin.coroutines.*
 import helpers.*

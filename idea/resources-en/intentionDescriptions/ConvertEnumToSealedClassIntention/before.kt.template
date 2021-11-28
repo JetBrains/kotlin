@@ -1,7 +1,0 @@
-enum class MyEnum(val s: String = "") {
-    FOO("FOO"), BAR("BAR"), DEFAULT();
-
-    fun foo() {
-
-    }
-}

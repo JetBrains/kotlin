@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.fir.FirSession
@@ -17,14 +18,15 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
@@ -43,7 +45,7 @@ class FirMetadataSerializer(
     components: Fir2IrComponents,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val approximator = object : AbstractTypeApproximator(session.typeContext) {
+    private val approximator = object : AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
         override fun createErrorType(debugName: String): SimpleTypeMarker {
             return ConeKotlinErrorType(ConeIntermediateDiagnostic(debugName))
         }
@@ -74,16 +76,17 @@ class FirMetadataSerializer(
         }
     }
 
-    private fun FirFunction<*>.copyToFreeAnonymousFunction(): FirAnonymousFunction {
+    private fun FirFunction.copyToFreeAnonymousFunction(): FirAnonymousFunction {
         val function = this
         return buildAnonymousFunction {
             val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
-            session = function.session
+            moduleData = function.moduleData
             origin = FirDeclarationOrigin.Source
             symbol = FirAnonymousFunctionSymbol()
             returnTypeRef = function.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             receiverTypeRef = function.receiverTypeRef?.approximated(toSuper = false, typeParameterSet)
             isLambda = (function as? FirAnonymousFunction)?.isLambda == true
+            hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
             valueParameters.addAll(function.valueParameters.map {
                 buildValueParameterCopy(it) {
                     returnTypeRef = it.returnTypeRef.approximated(toSuper = false, typeParameterSet)
@@ -97,7 +100,7 @@ class FirMetadataSerializer(
         val accessor = this
         return buildPropertyAccessor {
             val typeParameterSet = accessor.typeParameters.toMutableSet()
-            session = accessor.session
+            moduleData = accessor.moduleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = accessor.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             symbol = FirPropertyAccessorSymbol()
@@ -117,7 +120,7 @@ class FirMetadataSerializer(
         val property = this
         return buildProperty {
             val typeParameterSet = property.typeParameters.toMutableSet()
-            session = property.session
+            moduleData = property.moduleData
             origin = FirDeclarationOrigin.Source
             symbol = FirPropertySymbol(property.symbol.callableId)
             returnTypeRef = property.returnTypeRef.approximated(toSuper = true, typeParameterSet)
@@ -138,7 +141,7 @@ class FirMetadataSerializer(
             annotations += property.annotations
             typeParameters += typeParameterSet
         }.apply {
-            delegateFieldSymbol?.fir = this
+            delegateFieldSymbol?.bind(this)
         }
     }
 
@@ -154,10 +157,22 @@ class FirMetadataSerializer(
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
+                components.session,
+                components.scopeSession,
                 metadata.fir, serializerExtension, (parent as? FirMetadataSerializer)?.serializer, approximator
             )
-            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(metadata.session, serializerExtension, approximator)
-            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(metadata.session, serializerExtension, approximator)
+            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(
+                components.session,
+                components.scopeSession,
+                serializerExtension,
+                approximator
+            )
+            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(
+                components.session,
+                components.scopeSession,
+                serializerExtension,
+                approximator
+            )
             else -> null
         }
 
@@ -168,16 +183,28 @@ class FirMetadataSerializer(
                 serializer!!.packagePartProto(irClass.getPackageFragment()!!.fqName, metadata.fir).apply {
                     serializerExtension.serializeJvmPackage(this)
                 }.build()
-            is FirMetadataSource.Function ->
-                serializer!!.functionProto(metadata.fir.copyToFreeAnonymousFunction())?.build()
+            is FirMetadataSource.Function -> {
+                val withTypeParameters = metadata.fir.copyToFreeAnonymousFunction()
+                serializationBindings.get(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.fir)?.let {
+                    serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, withTypeParameters, it)
+                }
+                serializer!!.functionProto(withTypeParameters)?.build()
+            }
             else -> null
         } ?: return null
         return message to serializer!!.stringTable as JvmStringTable
     }
 
-    override fun bindMethodMetadata(metadata: MetadataSource.Property, signature: Method) {
+    override fun bindPropertyMetadata(metadata: MetadataSource.Property, signature: Method, origin: IrDeclarationOrigin) {
         val fir = (metadata as FirMetadataSource.Property).fir
-        context.state.globalSerializationBindings.put(FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE, fir, signature)
+        val slice = when (origin) {
+            JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
+                FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE
+            IrDeclarationOrigin.PROPERTY_DELEGATE ->
+                FirJvmSerializerExtension.DELEGATE_METHOD_FOR_FIR_VARIABLE
+            else -> throw IllegalStateException("invalid origin $origin for property-related method $signature")
+        }
+        context.state.globalSerializationBindings.put(slice, fir, signature)
     }
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {

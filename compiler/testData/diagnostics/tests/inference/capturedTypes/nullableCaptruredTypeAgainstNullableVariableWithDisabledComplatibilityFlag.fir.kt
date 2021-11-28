@@ -20,20 +20,20 @@ fun main(x: Foo<out Number?>, y: Bar<out Number?>, z1: Foo<out Number>, z2: Bar<
     x.foo()
     x.bar()
     x.boo1()
-    x.<!INAPPLICABLE_CANDIDATE!>boo2<!>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 
-    y.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
     y.bar()
-    y.<!INAPPLICABLE_CANDIDATE!>boo1<!>()
-    y.<!INAPPLICABLE_CANDIDATE!>boo2<!>()
+    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()
+    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 
     z1.foo()
     z1.bar()
     z1.boo1()
-    z1.<!INAPPLICABLE_CANDIDATE!>boo2<!>()
+    z1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 
     z2.foo()
     z2.bar()
-    z2.<!INAPPLICABLE_CANDIDATE!>boo1<!>()
-    z2.<!INAPPLICABLE_CANDIDATE!>boo2<!>()
+    z2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()
+    z2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 }

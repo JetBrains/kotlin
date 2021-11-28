@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.encodings
 
-inline class BinarySymbolData(val code: Long) {
+@JvmInline
+value class BinarySymbolData(val code: Long) {
     enum class SymbolKind {
         FUNCTION_SYMBOL,
         CONSTRUCTOR_SYMBOL,
@@ -21,7 +22,8 @@ inline class BinarySymbolData(val code: Long) {
         RECEIVER_PARAMETER_SYMBOL, // ReceiverParameterDescriptor rather than ValueParameterDescriptor.
         PROPERTY_SYMBOL,
         LOCAL_DELEGATED_PROPERTY_SYMBOL,
-        TYPEALIAS_SYMBOL;
+        TYPEALIAS_SYMBOL,
+        FILE_SYMBOL;
     }
 
     private fun symbolKindId(): Int = (code and 0xFF).toInt()

@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: genericSamSmartcast.kt
 fun f(x: Any): String {
     if (x is A<*>) {

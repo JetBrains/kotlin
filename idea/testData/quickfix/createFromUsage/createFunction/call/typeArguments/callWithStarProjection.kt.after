@@ -1,9 +1,0 @@
-// "Create function 'foo'" "true"
-
-fun test(): Int {
-    return foo<String>(2, "2")
-}
-
-fun <T> foo(i: Int, t: T): Int {
-    TODO("Not yet implemented")
-}

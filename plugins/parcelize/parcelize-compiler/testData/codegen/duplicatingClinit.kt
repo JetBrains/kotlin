@@ -1,5 +1,5 @@
-// CURIOUS_ABOUT <clinit>
-// WITH_RUNTIME
+// CURIOUS_ABOUT: <clinit>
+// WITH_STDLIB
 
 import kotlinx.parcelize.*
 import android.os.Parcelable

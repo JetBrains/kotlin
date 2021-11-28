@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
 // FILE: test.kt
-// WITH_RUNTIME
 
 import kotlin.test.*
 

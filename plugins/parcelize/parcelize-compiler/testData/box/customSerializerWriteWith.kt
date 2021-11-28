@@ -1,7 +1,9 @@
 // IGNORE_BACKEND: JVM
 // See KT-38107
 // The JVM backend is missing support for custom parcelers in List<String>
-// WITH_RUNTIME
+// WITH_STDLIB
+// fir doesn't support annotations with type arguments
+// IGNORE_BACKEND_FIR: JVM_IR
 
 @file:JvmName("TestKt")
 package test
@@ -43,7 +45,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val test2 = readFromParcel<Test>(parcel)
+    val test2 = parcelableCreator<Test>().createFromParcel(parcel)
 
     with (test) {
         assert(a == "Abc" && b == "Abc" && c == listOf("A", "bc") && d == listOf("A", "bc") && e == listOf("A", "bc"))

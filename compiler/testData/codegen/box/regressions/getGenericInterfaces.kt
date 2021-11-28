@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-4485 getGenericInterfaces vs getInterfaces for kotlin classes
 
 class SimpleClass

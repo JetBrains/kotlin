@@ -1,5 +1,3 @@
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// !LANGUAGE: +NewInference
 // TARGET_BACKEND: JS
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME

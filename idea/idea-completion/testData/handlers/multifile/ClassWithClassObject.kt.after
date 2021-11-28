@@ -1,5 +1,0 @@
-import pack.KtClass
-
-fun foo() {
-    KtClass<caret>
-}

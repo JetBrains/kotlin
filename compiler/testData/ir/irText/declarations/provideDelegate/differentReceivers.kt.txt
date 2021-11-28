@@ -19,13 +19,13 @@ operator fun String.getValue(receiver: Any?, p: Any): String {
   return <this>
 }
 
-val testO: String /* by */ 
+val testO: String /* by */
   field = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
   get(): String {
     return #testO$delegate.getValue(receiver = null, p = ::testO)
   }
 
-val testK: String /* by */ 
+val testK: String /* by */
   field = "K"
   get(): String {
     return #testK$delegate.getValue(receiver = null, p = ::testK)
@@ -34,4 +34,3 @@ val testK: String /* by */
 val testOK: String
   field = <get-testO>().plus(other = <get-testK>())
   get
-

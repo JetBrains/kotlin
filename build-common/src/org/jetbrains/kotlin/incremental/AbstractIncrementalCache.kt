@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.supertypes
@@ -34,12 +35,15 @@ interface IncrementalCacheCommon {
     val thisWithDependentCaches: Iterable<AbstractIncrementalCache<*>>
     fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName>
     fun getSubtypesOf(className: FqName): Sequence<FqName>
+    fun getSupertypesOf(className: FqName): Sequence<FqName>
     fun getSourceFileIfClass(fqName: FqName): File?
     fun markDirty(removedAndCompiledSources: Collection<File>)
     fun clearCacheForRemovedClasses(changesCollector: ChangesCollector)
     fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File>
     fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl)
     fun dump(): String
+
+    fun isSealed(className: FqName): Boolean?
 }
 
 /**
@@ -50,6 +54,7 @@ abstract class AbstractIncrementalCache<ClassName>(
     protected val pathConverter: FileToPathConverter
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
+        private val CLASS_ATTRIBUTES = "class-attributes"
         private val SUBTYPES = "subtypes"
         private val SUPERTYPES = "supertypes"
         private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
@@ -71,6 +76,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         result
     }
 
+    internal val classAttributesMap = registerMap(ClassAttributesMap(CLASS_ATTRIBUTES.storageFile))
     private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile))
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
@@ -90,21 +96,36 @@ abstract class AbstractIncrementalCache<ClassName>(
     override fun getSubtypesOf(className: FqName): Sequence<FqName> =
         subtypesMap[className].asSequence()
 
+    override fun getSupertypesOf(className: FqName): Sequence<FqName> {
+        return supertypesMap[className].asSequence()
+    }
+
+    override fun isSealed(className: FqName): Boolean? {
+        return classAttributesMap[className]?.isSealed
+    }
+
     override fun getSourceFileIfClass(fqName: FqName): File? =
         classFqNameToSourceMap[fqName]
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
-            val classes = sourceToClassesMap[sourceFile]
-            classes.forEach {
-                dirtyOutputClassesMap.markDirty(it)
+            sourceToClassesMap[sourceFile].forEach { className ->
+                markDirty(className)
             }
-
             sourceToClassesMap.clearOutputsForSource(sourceFile)
         }
     }
 
-    protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File) {
+    fun markDirty(className: ClassName) {
+        dirtyOutputClassesMap.markDirty(className)
+    }
+
+    /**
+     * Updates class storage based on the given class proto.
+     *
+     * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
+     */
+    protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File?) {
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }
             .filter { it.asString() != "kotlin.Any" }
@@ -117,7 +138,8 @@ abstract class AbstractIncrementalCache<ClassName>(
         removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
 
         supertypesMap[child] = parents
-        classFqNameToSourceMap[child] = srcFile
+        srcFile?.let { classFqNameToSourceMap[child] = it }
+        classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
     }
 
     protected fun removeAllFromClassStorage(removedClasses: Collection<FqName>, changesCollector: ChangesCollector) {
@@ -152,14 +174,17 @@ abstract class AbstractIncrementalCache<ClassName>(
             }
         }
 
-        removedFqNames.forEach { classFqNameToSourceMap.remove(it) }
+        removedFqNames.forEach {
+            classFqNameToSourceMap.remove(it)
+            classAttributesMap.remove(it)
+        }
     }
 
     protected class ClassFqNameToSourceMap(
         storageFile: File,
         private val pathConverter: FileToPathConverter
-    ) :
-        BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+    ) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+
         operator fun set(fqName: FqName, sourceFile: File) {
             storage[fqName.asString()] = pathConverter.toPath(sourceFile)
         }

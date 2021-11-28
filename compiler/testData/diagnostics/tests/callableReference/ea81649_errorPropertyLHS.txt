@@ -3,7 +3,6 @@ package
 
 public fun </*0*/ T> bar(/*0*/ ff: [ERROR : Err].() -> kotlin.Unit): kotlin.Unit
 
-
 // -- Module: <m2> --
 package
 
@@ -18,3 +17,4 @@ public final data class User {
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
+

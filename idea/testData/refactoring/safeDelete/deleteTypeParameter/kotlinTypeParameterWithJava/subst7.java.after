@@ -1,5 +1,0 @@
-class B {
-    void bar(A<String> a) {
-        a.foo()
-    }
-}

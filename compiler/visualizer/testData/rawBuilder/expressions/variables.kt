@@ -1,4 +1,3 @@
-// FIR_IGNORE
 fun foo() {
 //      Int Int
 //      │   │

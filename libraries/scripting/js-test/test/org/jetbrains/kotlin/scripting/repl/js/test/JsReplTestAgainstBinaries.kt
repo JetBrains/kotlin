@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ class JsReplTestAgainstBinaries : AbstractJsReplTest() {
     private val dependencies = readLibrariesFromConfiguration(environment.configuration)
 
     init {
-        val nameTable = NameTables(emptyList())
+        val nameTable = NameTables(emptyList(), mappedNames = mutableMapOf())
         val compiler = JsScriptDependencyCompiler(environment.configuration, nameTable, createSymbolTable())
         val runtimeBinary = compiler.compile(dependencies)
 
@@ -31,9 +31,9 @@ class JsReplTestAgainstBinaries : AbstractJsReplTest() {
         dependencyLoader.saveNames(nameTable)
     }
 
-    override fun createCompilationState(): JsReplCompilationState {
+    override fun createCompilationState(): JsReplCompilerState {
         val replState = ReplCodeAnalyzerBase.ResettableAnalyzerState()
-        return JsReplCompilationState(ReentrantReadWriteLock(), dependencyLoader.loadNames(), dependencies, replState, createSymbolTable())
+        return JsReplCompilerState(ReentrantReadWriteLock(), dependencyLoader.loadNames(), dependencies, replState, createSymbolTable())
     }
 
     private fun createSymbolTable(): SymbolTable =

@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-// (old inference fails in the frontend)
+// TARGET_BACKEND: JVM
 // FILE: JFieldOwner.java
 
 public class JFieldOwner {

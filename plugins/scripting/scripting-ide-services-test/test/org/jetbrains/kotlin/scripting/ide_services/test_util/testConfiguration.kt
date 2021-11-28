@@ -72,8 +72,8 @@ class TestConf {
 
         class Expected(private val run: Run) {
             val completions = ExpectedList<SourceCodeCompletionVariant>(run::doComplete)
-            fun addCompletion(text: String, displayText: String, tail: String, icon: String) {
-                completions.add(SourceCodeCompletionVariant(text, displayText, tail, icon))
+            fun addCompletion(text: String, displayText: String, tail: String, icon: String, deprecationLevel: DeprecationLevel? = null) {
+                completions.add(SourceCodeCompletionVariant(text, displayText, tail, icon, deprecationLevel))
             }
 
             val errors = ExpectedList<ScriptDiagnostic>(run::doErrorCheck)
@@ -108,7 +108,7 @@ fun test(setup: (TestConf).() -> Unit) {
 }
 
 enum class ComparisonType {
-    COMPARE_SIZE, INCLUDES, EQUALS, DONT_CHECK
+    COMPARE_SIZE, INCLUDES, EQUALS, CUSTOM, DONT_CHECK
 }
 
 data class CSVLoggingInfoItem(
@@ -138,12 +138,15 @@ data class RunRequest(
     val loggingInfo: CSVLoggingInfo?,
 )
 
-interface ExpectedOptions {
+typealias ListCheck<T> = (List<T>) -> Unit
+
+interface ExpectedOptions<T> {
     val mode: ComparisonType
     val size: Int
+    val checkFunction: ListCheck<T>?
 }
 
-class ExpectedList<T>(private val runProperty: KProperty0<Unit>) : ExpectedOptions {
+class ExpectedList<T>(private val runProperty: KProperty0<Unit>) : ExpectedOptions<T> {
     val list = mutableListOf<T>()
 
     override var mode = ComparisonType.DONT_CHECK
@@ -160,6 +163,16 @@ class ExpectedList<T>(private val runProperty: KProperty0<Unit>) : ExpectedOptio
             mode = ComparisonType.EQUALS
         runProperty.get()
         list.add(elem)
+    }
+
+    override var checkFunction: ListCheck<T>? = null
+        private set
+
+    fun check(checkFunction: ListCheck<T>) {
+        if (mode == ComparisonType.DONT_CHECK)
+            mode = ComparisonType.CUSTOM
+        runProperty.get()
+        this.checkFunction = checkFunction
     }
 }
 
@@ -211,7 +224,7 @@ private suspend fun evaluateInRepl(
 
                 loggingInfo?.complete?.writeValue(timeMillis)
 
-                res!!.toList().filter { it.tail != "keyword" }
+                res!!.toList()
             } else {
                 emptyList()
             }
@@ -247,7 +260,7 @@ private suspend fun evaluateInRepl(
     }
 }
 
-private fun <T> checkLists(index: Int, checkName: String, expected: List<T>, actual: List<T>, options: ExpectedOptions) {
+private fun <T> checkLists(index: Int, checkName: String, expected: List<T>, actual: List<T>, options: ExpectedOptions<T>) {
     when (options.mode) {
         ComparisonType.EQUALS -> Assert.assertEquals(
             "#$index ($checkName): Expected $expected, got $actual",
@@ -263,6 +276,7 @@ private fun <T> checkLists(index: Int, checkName: String, expected: List<T>, act
             options.size,
             actual.size
         )
+        ComparisonType.CUSTOM -> options.checkFunction!!(actual)
         ComparisonType.DONT_CHECK -> {
         }
     }
@@ -283,7 +297,7 @@ private suspend fun checkEvaluateInRepl(
 
                 checkLists(index, "completions", expectedCompletions.list, completionsRes, expectedCompletions)
                 val expectedErrorsWithPath = expectedErrors.list.map {
-                    it.copy(sourcePath = errorsRes.firstOrNull()?.sourcePath)
+                    if (it.location != null) it.copy(sourcePath = errorsRes.firstOrNull()?.sourcePath) else it
                 }
                 checkLists(index, "errors", expectedErrorsWithPath, errorsRes, expectedErrors)
                 TestCase.assertEquals("Analysis result types are different", expectedResultType, resultType)

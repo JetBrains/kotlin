@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 
 fun <T : CharSequence?> T.bar1() {}
@@ -13,33 +12,33 @@ fun <T : CharSequence?> foo(x: T) {
         if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
 
-        <!NI;DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
         x.bar2()
-        <!NI;DEBUG_INFO_SMARTCAST!>x<!>.<!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
+        <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar4()
 
 
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()<!>
     }
 
     x<!UNSAFE_CALL!>.<!>length
 
     if (x is String) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
 
-        <!NI;DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
         x.bar2()
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
     }
 
     if (x is CharSequence) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
 
-        <!NI;DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
         x.bar2()
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
     }

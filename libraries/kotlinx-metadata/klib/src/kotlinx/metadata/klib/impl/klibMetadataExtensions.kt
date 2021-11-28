@@ -299,7 +299,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
                 )
             }
 
-            override fun visitCompileTimeValue(value: KmAnnotationArgument<*>) {
+            override fun visitCompileTimeValue(value: KmAnnotationArgument) {
                 proto.setExtension(
                     KlibMetadataProtoBuf.compileTimeValue,
                     value.writeAnnotationArgument(c.strings).build()

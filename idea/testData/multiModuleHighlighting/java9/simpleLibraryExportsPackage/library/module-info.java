@@ -1,3 +1,0 @@
-module library {
-    exports dependency;
-}

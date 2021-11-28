@@ -1,0 +1,97 @@
+FILE: RedundantReturnUnitTypeChecker.kt
+    public final data class My : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Unit|): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Unit| = R|<local>/x|
+            public get(): R|kotlin/Unit|
+
+        public final operator fun component1(): R|kotlin/Unit|
+
+        public final fun copy(x: R|kotlin/Unit| = this@R|/My|.R|/My.x|): R|My|
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Unit|
+            public get(): R|kotlin/Unit|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun too(): R|@R|kotlin/Annotation|()  kotlin/Unit| {
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            ^bar Q|kotlin/Unit|
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+            ^baz this@R|/A|.R|/A.bar|()
+        }
+
+        public final fun f1(): R|kotlin/Int| {
+            ^f1 Int(1)
+        }
+
+        public final fun f2(): R|kotlin/Unit| {
+            throw R|java/lang/UnsupportedOperationException.UnsupportedOperationException|(String())
+        }
+
+        public final fun f3(): R|kotlin/Unit| {
+            ^f3 throw R|java/lang/UnsupportedOperationException.UnsupportedOperationException|(String())
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <T> run(f: R|() -> T|): R|T| {
+            ^run R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            ^foo this@R|/B|.R|/B.run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|/B|.R|/B.bar|()
+            }
+            )
+        }
+
+        public final fun bar(): R|kotlin/Int| {
+            ^bar Int(1)
+        }
+
+        public final fun call(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+            ^call R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        }
+
+        public final fun boo(): R|kotlin/Unit| {
+            ^boo this@R|/B|.R|/B.call|(<L> = call@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|/B|.R|/B.baz|()
+            }
+            )
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+        }
+
+        public final fun <T, R> R|T|.let(f: R|(T) -> R|): R|R| {
+            ^let R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(this@R|/B.let|)
+        }
+
+        public final fun goo(): R|kotlin/Unit| {
+            ^goo (this@R|/B|, Int(1)).R|/B.let|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|/B|.R|/B.bar|()
+            }
+            )
+        }
+
+    }

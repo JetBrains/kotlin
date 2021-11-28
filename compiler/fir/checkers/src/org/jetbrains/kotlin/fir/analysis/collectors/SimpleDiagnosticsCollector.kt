@@ -6,19 +6,25 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.context.MutableCheckerContext
+import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 
-class SimpleDiagnosticsCollector(session: FirSession) : AbstractDiagnosticCollector(session) {
-    override var reporter = SimpleDiagnosticReporter()
-        private set
-
-    override fun initializeCollector() {
-        reporter = SimpleDiagnosticReporter()
-    }
-
-    override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {
-        return reporter.diagnostics
+class SimpleDiagnosticsCollector(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    createComponents: (DiagnosticReporter) -> List<AbstractDiagnosticCollectorComponent>,
+) : AbstractDiagnosticCollector(session, scopeSession, createComponents) {
+    override fun createVisitor(components: List<AbstractDiagnosticCollectorComponent>): CheckerRunningDiagnosticCollectorVisitor {
+        return CheckerRunningDiagnosticCollectorVisitor(
+            MutableCheckerContext(
+                this,
+                ReturnTypeCalculatorForFullBodyResolve()
+            ),
+            components
+        )
     }
 }
 

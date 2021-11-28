@@ -1,8 +1,11 @@
+// WITH_STDLIB
 
 interface IQ1
 interface IQ2
 
-inline class X(val x: Any): IQ1, IQ2
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val x: Any): IQ1, IQ2
 
 interface IFoo1 {
     fun foo(): IQ1

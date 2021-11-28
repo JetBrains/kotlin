@@ -81,13 +81,14 @@ public open external class Notification : org.w3c.dom.events.EventTarget {
 }
 
 public external interface NotificationAction {
-    public open var action: kotlin.String? { get; set; }
+    public abstract var action: kotlin.String? { get; set; }
 
     public open var icon: kotlin.String? { get; set; }
 
-    public open var title: kotlin.String? { get; set; }
+    public abstract var title: kotlin.String? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface NotificationDirection {
     public companion object of NotificationDirection {
     }
@@ -114,7 +115,7 @@ public open external class NotificationEvent : org.w3c.workers.ExtendableEvent {
 public external interface NotificationEventInit : org.w3c.workers.ExtendableEventInit {
     public open var action: kotlin.String? { get; set; }
 
-    public open var notification: org.w3c.notifications.Notification? { get; set; }
+    public abstract var notification: org.w3c.notifications.Notification? { get; set; }
 }
 
 public external interface NotificationOptions {
@@ -153,6 +154,7 @@ public external interface NotificationOptions {
     public open var vibrate: dynamic { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface NotificationPermission {
     public companion object of NotificationPermission {
     }

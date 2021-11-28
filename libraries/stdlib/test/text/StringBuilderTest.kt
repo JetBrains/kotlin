@@ -341,6 +341,14 @@ class StringBuilderTest {
             assertFails { sb.insertRange(0, charArrayOf('_', '*', '#'), 0, 4) }
             assertFails { sb.insertRange(0, charArrayOf('_', '*', '#'), 2, 1) }
             assertFails { sb.insertRange(0, charArrayOf('_', '*', '#'), 2, -1) }
+
+            // Test insertion of large arrays that are likely to trigger increase of underlying array capacity
+            sb.insert(0, CharArray(1000) { ',' })
+            assertTrue(sb.toString().take(1000).all { it == ',' })
+            assertEquals("_my insertT CharArray test_", sb.toString().drop(1000))
+
+            sb.insertRange(0, CharArray(10000) { '@' }, 1000, 9000)
+            assertTrue(sb.toString().take(8000).all { it == '@' })
         }
     }
 

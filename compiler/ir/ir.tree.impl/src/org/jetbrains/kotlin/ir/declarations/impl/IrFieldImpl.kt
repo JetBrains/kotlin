@@ -38,13 +38,11 @@ class IrFieldImpl(
     override val isFinal: Boolean,
     override val isExternal: Boolean,
     override val isStatic: Boolean,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrField() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

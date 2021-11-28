@@ -1,12 +1,14 @@
+// FIR_IDE_IGNORE
+
 sealed class A
 
-<!REDECLARATION!>class B : A()<!>
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : A()
 
 interface C : <!INTERFACE_WITH_SUPERCLASS!>A<!>
 
 interface D : C, <!INTERFACE_WITH_SUPERCLASS!>A<!>
 
-class E : B, A()
+class E : <!SINGLETON_IN_SUPERTYPE!>B<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>A<!>()
 
 sealed class P {
     object H: P()
@@ -28,8 +30,8 @@ sealed class P {
 
 class K : P()
 
-<!REDECLARATION!>object B<!> {
-    class I : <!SEALED_SUPERTYPE!>P<!>()
+object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {
+    class I : P()
 }
 
 fun test() {

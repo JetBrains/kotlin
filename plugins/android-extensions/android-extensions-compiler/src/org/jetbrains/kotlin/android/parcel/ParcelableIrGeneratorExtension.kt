@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class ParcelableIrGeneratorExtension : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        val arrayOfNulls = pluginContext.symbols.arrayOfNulls
-        val charSequence = pluginContext.symbols.charSequence
+        val arrayOfNulls = pluginContext.irBuiltIns.arrayOfNulls
+        val charSequence = pluginContext.irBuiltIns.charSequenceClass
         val androidSymbols = AndroidSymbols(pluginContext.irBuiltIns, arrayOfNulls, charSequence, moduleFragment)
         ParcelableIrTransformer(pluginContext, androidSymbols).transform(moduleFragment)
     }

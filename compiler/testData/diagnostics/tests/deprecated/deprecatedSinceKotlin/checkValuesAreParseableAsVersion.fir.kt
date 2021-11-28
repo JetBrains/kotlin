@@ -1,19 +1,19 @@
 package kotlin
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", errorSince = "1.0")
+@DeprecatedSinceKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>, errorSince = "1.0")
 fun test1() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("")
+@DeprecatedSinceKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>)
 fun test2() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", "", "")
+@DeprecatedSinceKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>, <!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>, <!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>)
 fun test3() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("1.4-M2")
+@DeprecatedSinceKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.4-M2"<!>)
 fun test4() {}
 
 @Deprecated("")

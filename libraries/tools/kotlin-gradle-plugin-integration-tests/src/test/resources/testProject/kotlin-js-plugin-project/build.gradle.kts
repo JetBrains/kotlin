@@ -9,13 +9,14 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
+    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 kotlin.sourceSets {
     getByName("main") {
         dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-html-js:0.6.10")
+            api("org.jetbrains.kotlinx:kotlinx-html-js:0.6.12")
             implementation(kotlin("stdlib-js"))
         }
     }

@@ -1,5 +1,0 @@
-import java.util.TimeZone
-
-fun foo(list: List<String>) {
-    list.map { TimeZone }
-}

@@ -3,13 +3,13 @@
 class Foo
 
 fun main1() = when {
-    else -> <!UNRESOLVED_REFERENCE!>Foo::plus<!>
+    else -> Foo::<!UNRESOLVED_REFERENCE!>plus<!>
 }
 
-fun main2() = if (true) Foo::minus else Foo::times
+fun main2() = if (true) Foo::<!UNRESOLVED_REFERENCE!>minus<!> else Foo::<!UNRESOLVED_REFERENCE!>times<!>
 
-fun main3() = if (true) { Foo::minus } else { Foo::times }
+fun main3() = if (true) { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } else { Foo::<!UNRESOLVED_REFERENCE!>times<!> }
 
-fun main4() = try { Foo::minus } finally { <!UNRESOLVED_REFERENCE!>Foo::times<!> }
+fun main4() = try { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } finally { Foo::<!UNRESOLVED_REFERENCE!>times<!> }
 
-fun main5() = Foo::minus ?: Foo::times
+fun main5() = Foo::<!UNRESOLVED_REFERENCE!>minus<!> ?: Foo::<!UNRESOLVED_REFERENCE!>times<!>

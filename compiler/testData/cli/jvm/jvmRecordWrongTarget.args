@@ -6,7 +6,7 @@ $TEMP_DIR$
 -language-version
 1.5
 -jdk-home
-$JDK_15$
+$JDK_17$
 -XXLanguage\:+JvmRecordSupport
 -jvm-target
 9

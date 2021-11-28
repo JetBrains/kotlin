@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
 package p
@@ -29,6 +30,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b<!UNNECESSARY_SAFE_CALL!>?.<!>foo("")
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>b<!UNNECESSARY_SAFE_CALL!>?.<!>foo("")<!>
     }
 }

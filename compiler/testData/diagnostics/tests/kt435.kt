@@ -1,3 +1,4 @@
+// COMPARE_WITH_LIGHT_TREE
 fun Any.foo1() : (i : Int) -> Unit {
     return {}
 }

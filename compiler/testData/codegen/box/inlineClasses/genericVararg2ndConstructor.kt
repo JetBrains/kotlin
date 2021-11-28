@@ -1,10 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 // KT-41771
 
-inline class Polynomial<T : Any>(val coefficients: List<T>) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Polynomial<T : Any>(val coefficients: List<T>) {
     constructor(vararg coefficients: T) : this(coefficients.toList())
 }
 fun box(): String {

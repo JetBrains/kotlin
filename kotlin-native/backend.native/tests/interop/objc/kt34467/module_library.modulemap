@@ -1,0 +1,6 @@
+module module_library {
+  umbrella header "module_library_umbrella.h"
+
+  export *
+  module * { export * }
+}

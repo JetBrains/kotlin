@@ -1,4 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// FIR_IDE_IGNORE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 // TESTCASE NUMBER: 1
@@ -155,7 +156,7 @@ fun case_10() {
     val x: Int
     funWithExactlyOnceCallsInPlace outer@ {
         funWithAtLeastOnceCallsInPlace {
-            x = 42
+            <!VAL_REASSIGNMENT!>x<!> = 42
             return@outer
         }
     }

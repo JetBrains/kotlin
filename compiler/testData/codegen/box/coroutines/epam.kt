@@ -1,5 +1,5 @@
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 
 import helpers.*

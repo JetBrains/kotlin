@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.isCallableReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
+import org.jetbrains.kotlin.resolve.calls.util.isCallableReference
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -31,22 +28,27 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
 
         when (descriptor.fqNameOrNull()) {
             KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> {
-                if (calleeName != "suspend" || !call.hasFormOfSuspendModifierForLambda() || call.explicitReceiver != null) {
+                if (calleeName != "suspend" || !call.hasFormOfSuspendModifierForLambdaOrFun() || call.explicitReceiver != null) {
                     context.trace.report(Errors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND.on(reportOn))
                 }
             }
             else -> {
-                if ((calleeName == "suspend" || variableCalleeName == "suspend") && call.hasFormOfSuspendModifierForLambda()) {
-                    context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND.on(reportOn))
+                if ((calleeName == "suspend" || variableCalleeName == "suspend") && call.hasFormOfSuspendModifierForLambdaOrFun()) {
+                    if (call.hasNoArgumentListButDanglingLambdas() || call.isInfixWithRightLambda()) {
+                        context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND.on(reportOn))
+                    } else {
+                        require(call.isInfixWithRightFun())
+                        context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN.on(reportOn))
+                    }
                 }
             }
         }
     }
 
-    private fun Call.hasFormOfSuspendModifierForLambda() =
+    private fun Call.hasFormOfSuspendModifierForLambdaOrFun() =
         !isCallableReference()
                 && typeArguments.isEmpty()
-                && (hasNoArgumentListButDanglingLambdas() || isInfixWithRightLambda())
+                && (hasNoArgumentListButDanglingLambdas() || isInfixWithRightLambda() || isInfixWithRightFun())
 
     private fun Call.referencedName() =
         calleeExpression?.safeAs<KtSimpleNameExpression>()?.getReferencedName()
@@ -57,4 +59,8 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
     private fun Call.isInfixWithRightLambda() =
         isInfixCall(this)
                 && callElement.safeAs<KtBinaryExpression>()?.right is KtLambdaExpression
+
+    private fun Call.isInfixWithRightFun() =
+        isInfixCall(this)
+                && callElement.safeAs<KtBinaryExpression>()?.right is KtNamedFunction
 }

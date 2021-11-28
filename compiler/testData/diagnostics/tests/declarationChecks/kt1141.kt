@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1141 No check that object in 'object expression' implements all abstract members of supertype
 
 package kt1141
@@ -17,5 +18,5 @@ fun foo() {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C<!> : SomeTrait {}
 
 fun foo2() {
-    val <!UNUSED_VARIABLE!>r<!> = <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : Runnable {} //no error
+    val r = <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : Runnable {} //no error
 }

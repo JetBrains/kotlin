@@ -1,5 +1,5 @@
 // TODO: KT-37010 KT-37085
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 class Controller {

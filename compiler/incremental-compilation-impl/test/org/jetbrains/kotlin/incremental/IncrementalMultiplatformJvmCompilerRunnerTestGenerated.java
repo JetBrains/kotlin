@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
         }
 
         public void testAllFilesPresentInAllPlatforms() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("touchActual")
@@ -49,7 +50,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInTouchActual() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -62,7 +63,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInTouchExpect() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -76,7 +77,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
         }
 
         public void testAllFilesPresentInJvmOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("multifilePartChanged")
@@ -93,7 +94,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInMultifilePartChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }

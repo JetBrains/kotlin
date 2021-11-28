@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
@@ -189,6 +190,9 @@ class LocalVariableResolver(
             initializeWithDefaultGetterSetter(propertyDescriptor)
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor)
             result = propertyDescriptor
+            if (inferenceSession is BuilderInferenceSession) {
+                inferenceSession.addLocalVariable(variable)
+            }
         } else {
             val variableDescriptor = resolveLocalVariableDescriptorWithType(scope, variable, null, trace)
             // For a local variable the type must not be deferred
@@ -196,6 +200,9 @@ class LocalVariableResolver(
                 variableDescriptor, scope, variable, dataFlowInfo, inferenceSession, trace, local = true
             )
             variableDescriptor.setOutType(type)
+            if (inferenceSession is BuilderInferenceSession) {
+                inferenceSession.addLocalVariable(variable)
+            }
             result = variableDescriptor
         }
         variableTypeAndInitializerResolver

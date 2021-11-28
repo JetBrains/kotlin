@@ -1,8 +1,8 @@
-// !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions +FunctionalInterfaceConversion
 // WITH_REFLECT
 // FULL_JDK
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// SAM_CONVERSIONS: CLASS
+//  ^ SAM-convertion classes created with LambdaMetafactory have no generic signatures
 
 // FILE: Provider.java
 
@@ -25,7 +25,7 @@ private fun getFirstArgumentType(types: Array<Type>, klass: KClass<*>): String {
         .filterIsInstance<ParameterizedType>()
         .firstOrNull { it.rawType == klass.java }
         ?.let { it.actualTypeArguments[0] }
-        ?.toString() ?: "fail, inferred type is null"
+        ?.toString() ?: "none"
 }
 
 class KtProvider : Provider() {
@@ -88,5 +88,5 @@ fun box(): String {
     assertEquals(inferredTypeInSamLambda1, inferredTypeInSamLambda2)
     assertEquals(inferredTypeInSamLambda2, inferredTypeInSamLambda3)
 
-    return if (inferredTypeInSamLambda1 == "class java.lang.String") "OK" else "fail: $inferredTypeInSamLambda1"
+    return if (inferredTypeInSamLambda1 == "none") "OK" else "fail: $inferredTypeInSamLambda1"
 }

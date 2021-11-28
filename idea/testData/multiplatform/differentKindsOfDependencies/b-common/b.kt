@@ -1,1 +1,0 @@
-expect class <!NO_ACTUAL_FOR_EXPECT!>B<!>

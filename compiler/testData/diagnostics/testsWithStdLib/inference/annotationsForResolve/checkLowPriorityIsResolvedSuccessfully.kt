@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Foo {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     @kotlin.internal.LowPriorityInOverloadResolution
@@ -7,7 +8,7 @@ class Foo {
 fun Foo.test() {}
 class Bar
 class Scope {
-    operator fun Bar.invoke(<!UNUSED_PARAMETER!>f<!>: () -> Unit) {}
+    operator fun Bar.invoke(f: () -> Unit) {}
 }
 
 fun Scope.bar(e: Foo) {

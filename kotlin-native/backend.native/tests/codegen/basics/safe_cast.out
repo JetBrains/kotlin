@@ -1,0 +1,2 @@
+safe_cast_positive: true
+safe_cast_negative: true

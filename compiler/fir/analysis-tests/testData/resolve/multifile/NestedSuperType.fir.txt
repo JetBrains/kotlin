@@ -1,0 +1,55 @@
+FILE: C.kt
+    package c
+
+    public open class C : R|kotlin/Any| {
+        public constructor(): R|c/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class NestedInC : R|kotlin/Any| {
+            public constructor(): R|c/C.NestedInC| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: B.kt
+    package b
+
+    public open class B : R|c/C| {
+        public constructor(): R|b/B| {
+            super<R|c/C|>()
+        }
+
+        public open class NestedInB : R|c/C.NestedInC| {
+            public constructor(): R|b/B.NestedInB| {
+                super<R|c/C.NestedInC|>()
+            }
+
+        }
+
+    }
+FILE: A.kt
+    package a
+
+    public final class A : R|b/B| {
+        public constructor(): R|a/A| {
+            super<R|b/B|>()
+        }
+
+        public final class NestedInA1 : R|b/B.NestedInB| {
+            public constructor(): R|a/A.NestedInA1| {
+                super<R|b/B.NestedInB|>()
+            }
+
+        }
+
+        public final class NestedInA2 : R|c/C.NestedInC| {
+            public constructor(): R|a/A.NestedInA2| {
+                super<R|c/C.NestedInC|>()
+            }
+
+        }
+
+    }

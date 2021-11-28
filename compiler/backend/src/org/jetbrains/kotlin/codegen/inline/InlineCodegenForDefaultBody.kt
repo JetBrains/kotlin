@@ -15,15 +15,13 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class InlineCodegenForDefaultBody(
     private val function: FunctionDescriptor,
     codegen: ExpressionCodegen,
     val state: GenerationState,
-    private val methodOwner: Type,
     private val jvmSignature: JvmMethodSignature,
-    private val sourceCompilerForInline: SourceCompilerForInline
+    private val sourceCompilerForInline: PsiSourceCompilerForInline
 ) : CallGenerator {
     private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
 
@@ -39,32 +37,22 @@ class InlineCodegenForDefaultBody(
     }
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
-        val nodeAndSmap = PsiInlineCodegen(
-            codegen, state, function, methodOwner, jvmSignature, TypeParameterMappings(), sourceCompilerForInline
-        ).createInlineMethodNode(
-            callDefault, null, codegen.typeSystem
-        )
-        val childSourceMapper = SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP)
-
-        val node = nodeAndSmap.node
-        val transformedMethod = MethodNode(
-            node.access,
-            node.name,
-            node.desc,
-            node.signature,
-            node.exceptions.toTypedArray()
-        )
+        assert(!callDefault) { "inlining default stub into another default stub" }
+        val (node, smap) = sourceCompilerForInline.compileInlineFunction(jvmSignature)
+        val childSourceMapper = SourceMapCopier(sourceMapper, smap)
 
         val argsSize =
             (Type.getArgumentsAndReturnSizes(jvmSignature.asmMethod.descriptor) ushr 2) - if (callableMethod.isStaticCall()) 1 else 0
-        node.accept(object : InlineAdapter(transformedMethod, 0, childSourceMapper) {
-            override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
-                val startLabel = if (index < argsSize) methodStartLabel else start
-                super.visitLocalVariable(name, desc, signature, startLabel, end, index)
-            }
-        })
+        // `$default` is only for Kotlin use so it has no `$$forInline` version - this *is* what the inliner will use.
+        node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+        node.accept(object : MethodBodyVisitor(codegen.visitor) {
+            // The LVT was not generated at all, so move the start of parameters to the start of the method.
+            override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) =
+                super.visitLocalVariable(name, desc, signature, if (index < argsSize) methodStartLabel else start, end, index)
 
-        transformedMethod.accept(MethodBodyVisitor(codegen.visitor))
+            override fun visitLineNumber(line: Int, start: Label) =
+                super.visitLineNumber(childSourceMapper.mapLineNumber(line), start)
+        })
     }
 
     override fun genValueAndPut(
@@ -85,7 +73,7 @@ class InlineCodegenForDefaultBody(
         throw UnsupportedOperationException("Shouldn't be called")
     }
 
-    override fun processAndPutHiddenParameters(justProcess: Boolean) {
+    override fun processHiddenParameters() {
         throw UnsupportedOperationException("Shouldn't be called")
     }
 

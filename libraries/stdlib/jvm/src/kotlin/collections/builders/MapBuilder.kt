@@ -1,9 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections.builders
+
+import java.io.Externalizable
+import java.io.InvalidObjectException
+import java.io.NotSerializableException
 
 internal class MapBuilder<K, V> private constructor(
     private var keysArray: Array<K>,
@@ -12,7 +16,7 @@ internal class MapBuilder<K, V> private constructor(
     private var hashArray: IntArray,
     private var maxProbeDistance: Int,
     private var length: Int
-) : MutableMap<K, V> {
+) : MutableMap<K, V>, Serializable {
     private var hashShift: Int = computeShift(hashSize)
 
     override var size: Int = 0
@@ -22,7 +26,8 @@ internal class MapBuilder<K, V> private constructor(
     private var valuesView: MapBuilderValues<V>? = null
     private var entriesView: MapBuilderEntries<K, V>? = null
 
-    private var isReadOnly: Boolean = false
+    internal var isReadOnly: Boolean = false
+        private set
 
     // ---------------------------- functions ----------------------------
 
@@ -41,6 +46,12 @@ internal class MapBuilder<K, V> private constructor(
         isReadOnly = true
         return this
     }
+
+    private fun writeReplace(): Any =
+        if (isReadOnly)
+            SerializedMap(this)
+        else
+            throw NotSerializableException("The map cannot be serialized while it is being built.")
 
     override fun isEmpty(): Boolean = size == 0
     override fun containsKey(key: K): Boolean = findKey(key) >= 0
@@ -166,6 +177,7 @@ internal class MapBuilder<K, V> private constructor(
     }
 
     private fun ensureCapacity(capacity: Int) {
+        if (capacity < 0) throw OutOfMemoryError()    // overflow
         if (capacity > this.capacity) {
             var newSize = this.capacity * 3 / 2
             if (capacity > newSize) newSize = capacity
@@ -436,10 +448,8 @@ internal class MapBuilder<K, V> private constructor(
         private const val INITIAL_MAX_PROBE_DISTANCE = 2
         private const val TOMBSTONE = -1
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun computeShift(hashSize: Int): Int = hashSize.countLeadingZeroBits() + 1
     }
 
@@ -461,6 +471,7 @@ internal class MapBuilder<K, V> private constructor(
         fun hasNext(): Boolean = index < map.length
 
         fun remove() {
+            check(lastIndex != -1) { "Call next() before removing element from the iterator." }
             map.checkIsMutable()
             map.removeKeyAt(lastIndex)
             lastIndex = -1
@@ -595,13 +606,19 @@ internal class MapBuilderValues<V> internal constructor(
     }
 }
 
+// intermediate abstract class to workaround KT-43321
+internal abstract class AbstractMapBuilderEntrySet<E : Map.Entry<K, V>, K, V> : AbstractMutableSet<E>() {
+    final override fun contains(element: E): Boolean = containsEntry(element)
+    abstract fun containsEntry(element: Map.Entry<K, V>): Boolean
+}
+
 internal class MapBuilderEntries<K, V> internal constructor(
     val backing: MapBuilder<K, V>
-) : MutableSet<MutableMap.MutableEntry<K, V>>, AbstractMutableSet<MutableMap.MutableEntry<K, V>>() {
+) : AbstractMapBuilderEntrySet<MutableMap.MutableEntry<K, V>, K, V>() {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
-    override fun contains(element: MutableMap.MutableEntry<K, V>): Boolean = backing.containsEntry(element)
+    override fun containsEntry(element: Map.Entry<K, V>): Boolean = backing.containsEntry(element)
     override fun clear() = backing.clear()
     override fun add(element: MutableMap.MutableEntry<K, V>): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean = throw UnsupportedOperationException()
@@ -617,5 +634,43 @@ internal class MapBuilderEntries<K, V> internal constructor(
     override fun retainAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean {
         backing.checkIsMutable()
         return super.retainAll(elements)
+    }
+}
+
+private class SerializedMap(
+    private var map: Map<*, *>
+) : Externalizable {
+
+    constructor() : this(emptyMap<Any?, Any?>()) // for deserialization
+
+    override fun writeExternal(output: java.io.ObjectOutput) {
+        output.writeByte(0) // flags
+        output.writeInt(map.size)
+        for (entry in map) {
+            output.writeObject(entry.key)
+            output.writeObject(entry.value)
+        }
+    }
+
+    override fun readExternal(input: java.io.ObjectInput) {
+        val flags = input.readByte().toInt()
+        if (flags != 0) {
+            throw InvalidObjectException("Unsupported flags value: $flags")
+        }
+        val size = input.readInt()
+        if (size < 0) throw InvalidObjectException("Illegal size value: $size.")
+        map = buildMap<Any?, Any?>(size) {
+            repeat(size) {
+                val key = input.readObject()
+                val value = input.readObject()
+                put(key, value)
+            }
+        }
+    }
+
+    private fun readResolve(): Any = map
+
+    companion object {
+        private const val serialVersionUID: Long = 0L
     }
 }

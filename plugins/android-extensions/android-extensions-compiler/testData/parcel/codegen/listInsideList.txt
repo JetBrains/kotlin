@@ -30,7 +30,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (names, Ljava/util/List;)
+          GETFIELD (Test, names, Ljava/util/List;)
           DUP_X1
           INVOKEINTERFACE (java/util/Collection, size, ()I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)

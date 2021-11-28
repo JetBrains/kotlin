@@ -1,0 +1,8 @@
+fun <T> f(x: T): Int where T : CharSequence, T : Comparable<T> {
+  return x.compareTo(other = x)
+}
+
+fun test() {
+  f<@FlexibleNullability String?>(x = s()) /*~> Unit */
+  f<@FlexibleNullability String?>(x = super.#STRING) /*~> Unit */
+}

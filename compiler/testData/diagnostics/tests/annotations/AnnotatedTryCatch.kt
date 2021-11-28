@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class My
 
 fun foo(arg: Int): Int {

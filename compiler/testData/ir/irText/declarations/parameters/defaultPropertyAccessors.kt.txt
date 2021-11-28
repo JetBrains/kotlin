@@ -42,4 +42,3 @@ class InPrimaryCtor<T : Any?> {
     set
 
 }
-

@@ -49,7 +49,10 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
         for (element in elements) {
             val packageName = elementUtils.getPackageOf(element).qualifiedName.toString()
             val simpleName = element.simpleName.toString()
-            val generatedJavaClassName = generatedFilePrefix.capitalize() + simpleName.capitalize() + generatedFileSuffix
+            val generatedJavaClassName =
+                generatedFilePrefix.replaceFirstChar(Char::uppercaseChar) +
+                        simpleName.replaceFirstChar(Char::uppercaseChar) +
+                        generatedFileSuffix
 
             filer.createSourceFile(packageName + '.' + generatedJavaClassName).openWriter().use {
                 with(it) {

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 public class A {
@@ -21,7 +20,7 @@ fun test() {
 
     class B: A() {
         init {
-            val a: Int = foo() // todo
+            val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!> // todo
         }
     }
 }

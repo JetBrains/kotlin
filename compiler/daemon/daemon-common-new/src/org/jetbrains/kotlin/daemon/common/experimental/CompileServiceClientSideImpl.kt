@@ -56,10 +56,12 @@ class CompileServiceClientSideImpl(
                     while (keepAliveSuccess()) {
                         delay(KEEPALIVE_PERIOD - millisecondsSinceLastUsed())
                     }
-                    runWithTimeout(timeout = KEEPALIVE_PERIOD / 2) {
+                    val keepAliveAcknowledgement = runWithTimeout(timeout = KEEPALIVE_PERIOD / 2) {
                         val id = sendMessage(keepAliveMessage)
                         readMessage<Server.KeepAliveAcknowledgement<*>>(id)
-                    } ?: if (!keepAliveSuccess()) readActor.send(StopAllRequests()).also {
+                    }
+                    if (keepAliveAcknowledgement == null && !keepAliveSuccess()) {
+                        readActor.send(StopAllRequests())
                     }
                 }
             }
@@ -137,6 +139,11 @@ class CompileServiceClientSideImpl(
 
     override suspend fun getDaemonInfo(): CompileService.CallResult<String> {
         val id = sendMessage(GetDaemonInfoMessage())
+        return readMessage(id)
+    }
+
+    override suspend fun getKotlinVersion(): CompileService.CallResult<String> {
+        val id = sendMessage(GetKotlinVersionMessage())
         return readMessage(id)
     }
 
@@ -254,6 +261,11 @@ class CompileServiceClientSideImpl(
     class GetDaemonInfoMessage : Server.Message<CompileServiceServerSide>() {
         override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
             sendReply(server.getDaemonInfo())
+    }
+
+    class GetKotlinVersionMessage : Server.Message<CompileServiceServerSide>() {
+        override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
+            sendReply(server.getKotlinVersion())
     }
 
     class RegisterClientMessage(val aliveFlagPath: String?) : Server.Message<CompileServiceServerSide>() {

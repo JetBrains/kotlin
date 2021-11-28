@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import java.util.*
 
 class ResolverForModule(
     val packageFragmentProvider: PackageFragmentProvider,
@@ -96,6 +96,16 @@ interface CombinedModuleInfo : ModuleInfo {
     val platformModule: ModuleInfo
 }
 
+/**
+ * Special-purpose module info that allows implementors to provide different behavior compared to the [originalModule]'s.
+ * E.g. may be used to resolve common code as if it were target-specific, or to change the dependencies visible to the code.
+ *
+ * Resolvers should accept a derived module info, iff the [originalModule] is accepted.
+ */
+interface DerivedModuleInfo : ModuleInfo {
+    val originalModule: ModuleInfo
+}
+
 fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
     is CombinedModuleInfo -> listOf(this) + containedModules
     else -> listOf(this)
@@ -106,6 +116,9 @@ fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) pl
 interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
 }
+
+interface LibraryModuleSourceInfoBase : ModuleInfo
+interface NonSourceModuleInfoBase : ModuleInfo
 
 interface LibraryModuleInfo : ModuleInfo {
     override val platform: TargetPlatform
@@ -119,36 +132,42 @@ abstract class ResolverForModuleFactory {
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        sealedInheritorsProvider: SealedClassInheritorsProvider,
     ): ResolverForModule
 }
 
 class LazyModuleDependencies<M : ModuleInfo>(
     storageManager: StorageManager,
     private val module: M,
-    firstDependency: M? = null,
+    firstDependency: M?,
     private val resolverForProject: AbstractResolverForProject<M>
 ) : ModuleDependencies {
 
     private val dependencies = storageManager.createLazyValue {
-
         val moduleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         firstDependency?.let {
+            module.assertModuleDependencyIsCorrect(it)
             moduleDescriptors.add(resolverForProject.descriptorForModule(it))
         }
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
         val dependencyOnBuiltIns = module.dependencyOnBuiltIns()
         if (dependencyOnBuiltIns == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
-            moduleDescriptors.add(moduleDescriptor.builtIns.builtInsModule)
+            val builtInsModule = moduleDescriptor.builtIns.builtInsModule
+            module.assertModuleDependencyIsCorrect(builtInsModule)
+            moduleDescriptors.add(builtInsModule)
         }
         for (dependency in module.dependencies()) {
             if (dependency == firstDependency) continue
+            module.assertModuleDependencyIsCorrect(dependency)
 
             @Suppress("UNCHECKED_CAST")
             moduleDescriptors.add(resolverForProject.descriptorForModule(dependency as M))
         }
         if (dependencyOnBuiltIns == ModuleInfo.DependencyOnBuiltIns.LAST) {
-            moduleDescriptors.add(moduleDescriptor.builtIns.builtInsModule)
+            val builtInsModule = moduleDescriptor.builtIns.builtInsModule
+            module.assertModuleDependencyIsCorrect(builtInsModule)
+            moduleDescriptors.add(builtInsModule)
         }
         moduleDescriptors.toList()
     }
@@ -157,6 +176,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val directExpectedByDependencies by storageManager.createLazyValue {
         module.expectedBy.map {
+            module.assertModuleDependencyIsCorrect(it)
             @Suppress("UNCHECKED_CAST")
             resolverForProject.descriptorForModule(it as M)
         }
@@ -164,6 +184,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val allExpectedByDependencies: Set<ModuleDescriptorImpl> by storageManager.createLazyValue {
         collectAllExpectedByModules(module).mapTo(HashSet<ModuleDescriptorImpl>()) {
+            module.assertModuleDependencyIsCorrect(it)
             @Suppress("UNCHECKED_CAST")
             resolverForProject.descriptorForModule(it as M)
         }
@@ -172,10 +193,22 @@ class LazyModuleDependencies<M : ModuleInfo>(
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                module.assertModuleDependencyIsCorrect(it)
                 @Suppress("UNCHECKED_CAST")
                 resolverForProject.descriptorForModule(it as M)
             }
 
+    companion object {
+        private fun ModuleInfo.assertModuleDependencyIsCorrect(dependency: ModuleDescriptor) {
+            assertModuleDependencyIsCorrect(dependency.getCapability(ModuleInfo.Capability) ?: return)
+        }
+
+        private fun ModuleInfo.assertModuleDependencyIsCorrect(dependency: ModuleInfo) {
+            assert(dependency !is DerivedModuleInfo || this is DerivedModuleInfo) {
+                "Derived module infos may not be referenced from regular ones"
+            }
+        }
+    }
 }
 
 interface PackageOracle {
@@ -197,8 +230,7 @@ interface PackageOracleFactory {
 interface LanguageSettingsProvider {
     fun getLanguageVersionSettings(
         moduleInfo: ModuleInfo,
-        project: Project,
-        isReleaseCoroutines: Boolean? = null
+        project: Project
     ): LanguageVersionSettings
 
     fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
@@ -206,8 +238,7 @@ interface LanguageSettingsProvider {
     object Default : LanguageSettingsProvider {
         override fun getLanguageVersionSettings(
             moduleInfo: ModuleInfo,
-            project: Project,
-            isReleaseCoroutines: Boolean?
+            project: Project
         ) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion = TargetPlatformVersion.NoVersion

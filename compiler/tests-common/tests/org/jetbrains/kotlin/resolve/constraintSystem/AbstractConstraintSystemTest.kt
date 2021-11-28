@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -61,12 +62,16 @@ abstract class AbstractConstraintSystemTest : KotlinTestWithEnvironment() {
     }
 
     private val testDataPath: String
-        get() = KotlinTestUtils.getTestDataPathBase() + "/constraintSystem/"
+        get() = KtTestUtil.getTestDataPathBase() + "/constraintSystem/"
 
     private fun analyzeDeclarations(): ConstraintSystemTestData {
         val fileName = "declarations.kt"
 
-        val psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(testDataPath, fileName), project)
+        val psiFile = KtTestUtil.createFile(
+            fileName,
+            KtTestUtil.doLoadFile(testDataPath, fileName),
+            project
+        )
         val bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(psiFile, environment).bindingContext
         return ConstraintSystemTestData(bindingContext, project, typeResolver)
     }

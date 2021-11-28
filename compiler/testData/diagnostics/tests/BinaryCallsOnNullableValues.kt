@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class A() {
     override fun equals(other : Any?) : Boolean = false
 }
@@ -6,10 +5,10 @@ class A() {
 fun f(): Unit {
     var x: Int? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>1<!>
     x = null
-    <!OI;DEBUG_INFO_CONSTANT!>x<!> + 1
+    x + 1
     <!DEBUG_INFO_CONSTANT!>x<!> <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
     <!DEBUG_INFO_CONSTANT!>x<!> <!UNSAFE_OPERATOR_CALL!><<!> 1
-    <!TYPE_MISMATCH!><!OI;DEBUG_INFO_CONSTANT!>x<!> += 1<!>
+    <!TYPE_MISMATCH!>x += 1<!>
 
     <!DEBUG_INFO_CONSTANT!>x<!> == 1
     <!DEBUG_INFO_CONSTANT!>x<!> != 1
@@ -22,11 +21,11 @@ fun f(): Unit {
     <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!><!DEBUG_INFO_CONSTANT!>x<!> === 1<!>
     <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!><!DEBUG_INFO_CONSTANT!>x<!> !== 1<!>
 
-    <!OI;DEBUG_INFO_CONSTANT!>x<!><!UNSAFE_OPERATOR_CALL!>..<!>2
+    x<!UNSAFE_OPERATOR_CALL!>..<!>2
     <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!> in 1..2
 
     val y : Boolean? = true
-    <!UNUSED_EXPRESSION!>false || <!TYPE_MISMATCH!>y<!><!>
-    <!UNUSED_EXPRESSION!><!TYPE_MISMATCH!>y<!> && true<!>
-    <!UNUSED_EXPRESSION!><!TYPE_MISMATCH!>y<!> && <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!>
+    false || <!TYPE_MISMATCH!>y<!>
+    <!TYPE_MISMATCH!>y<!> && true
+    <!TYPE_MISMATCH!>y<!> && <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }

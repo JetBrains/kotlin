@@ -5,38 +5,42 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 private val ENUM_VALUES = Name.identifier("values")
 private val ENUM_VALUE_OF = Name.identifier("valueOf")
 private val VALUE = Name.identifier("value")
 
 fun FirRegularClassBuilder.generateValuesFunction(
-    session: FirSession, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
-    val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
+    val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
-        this.session = session
+        this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
@@ -48,26 +52,28 @@ fun FirRegularClassBuilder.generateValuesFunction(
             )
         }
         name = ENUM_VALUES
-        this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
+        this.status = createStatus(this@generateValuesFunction.status).apply {
             isStatic = true
             isExpect = makeExpect
         }
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = FirResolvePhase.BODY_RESOLVE
-        body = buildEmptyExpressionBlock()
+        body = buildEmptyExpressionBlock().also {
+            it.replaceTypeRef(returnTypeRef)
+        }
     }.apply {
-        containingClassAttr = this@generateValuesFunction.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
     }
 }
 
 fun FirRegularClassBuilder.generateValueOfFunction(
-    session: FirSession, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
-    val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
+    val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
-        this.session = session
+        this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
@@ -77,7 +83,8 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             )
         }
         name = ENUM_VALUE_OF
-        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
+
+        status = createStatus(this@generateValueOfFunction.status).apply {
             isStatic = true
             isExpect = makeExpect
         }
@@ -85,17 +92,29 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         valueParameters += buildValueParameter vp@{
             source = sourceElement
             origin = FirDeclarationOrigin.Source
-            this@vp.session = session
+            this.moduleData = moduleData
             returnTypeRef = FirImplicitStringTypeRef(source)
             name = VALUE
-            this@vp.symbol = FirVariableSymbol(VALUE)
+            this@vp.symbol = FirValueParameterSymbol(VALUE)
             isCrossinline = false
             isNoinline = false
             isVararg = false
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
         resolvePhase = FirResolvePhase.BODY_RESOLVE
-        body = buildEmptyExpressionBlock()
+        body = buildEmptyExpressionBlock().also {
+            it.replaceTypeRef(returnTypeRef)
+        }
     }.apply {
-        containingClassAttr = this@generateValueOfFunction.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()
+    }
+}
+
+private fun createStatus(parentStatus: FirDeclarationStatus): FirDeclarationStatusImpl {
+    val parentEffectiveVisibility = (parentStatus as? FirResolvedDeclarationStatusImpl)?.effectiveVisibility
+    return if (parentEffectiveVisibility != null) {
+        FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, parentEffectiveVisibility)
+    } else {
+        FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
     }
 }

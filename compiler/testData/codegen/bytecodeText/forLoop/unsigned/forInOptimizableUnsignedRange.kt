@@ -1,4 +1,13 @@
-// WITH_RUNTIME
+// WITH_STDLIB
+
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
 
 fun testUIntRangeLiteral(a: UInt, b: UInt): Int {
     var s = 0
@@ -58,3 +67,11 @@ fun testULongDownTo(a: ULong, b: ULong): Int {
 // 0 getStep
 // 0 INVOKESTATIC kotlin/U(Int|Long).constructor-impl
 // 0 INVOKE\w+ kotlin/U(Int|Long).(un)?box-impl
+
+
+// JVM_IR_TEMPLATES
+// 34 ILOAD
+// 21 ISTORE
+// 6 IADD
+// 0 ISUB
+// 3 IINC

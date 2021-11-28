@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
@@ -15,6 +15,7 @@ fun box(): String {
         false -> { "NOK" }
         !false -> { "OK" }
         !false -> { "NOK" }
+        else -> { "NOK" }
     }
     return  when2
 }

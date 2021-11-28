@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
@@ -38,17 +37,18 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     }
 
     override fun TypeVariableMarker.isReified(): Boolean {
-        // TODO
-        return false
+        return this is ConeTypeParameterBasedTypeVariable && typeParameterSymbol.fir.isReified
     }
 
     override fun KotlinTypeMarker.refineType(): KotlinTypeMarker {
         return this
     }
 
-    override fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T> {
-        @Suppress("UNCHECKED_CAST")
-        return ConeArgumentConstraintPosition() as ArgumentConstraintPosition<T>
+    override fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*> {
+        require(argument is PostponedResolvedAtom) {
+            "${argument::class}"
+        }
+        return ConeArgumentConstraintPosition(argument.atom)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
@@ -62,7 +62,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(declaration is PostponedResolvedAtom)
         return when (declaration) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> {
-                val atom = declaration.atom
+                val atom = declaration.atom.anonymousFunction
                 return if (atom.isLambda) { // lambda - must return null in case of absent parameters
                     if (atom.valueParameters.isNotEmpty())
                         atom.collectDeclaredValueParameterTypes()
@@ -81,14 +81,19 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     private fun FirAnonymousFunction.collectDeclaredValueParameterTypes(): List<ConeKotlinType?> =
         valueParameters.map { it.returnTypeRef.coneTypeSafe() }
 
-    override fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean {
+    override fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean {
         require(this is PostponedResolvedAtom)
-        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.isLambda
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.anonymousFunction.isLambda
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {
         require(this is PostponedResolvedAtom)
-        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.isLambda && this.atom.receiverTypeRef?.coneType != null
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.anonymousFunction.isLambda && this.atom.anonymousFunction.receiverTypeRef?.coneType != null
+    }
+
+    override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
+        require(this is PostponedResolvedAtom)
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && this.atom.anonymousFunction.isLambda
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {
@@ -99,8 +104,9 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         argument: PostponedAtomWithRevisableExpectedType,
         index: Int
     ): TypeVariableMarker {
-        return ConeTypeVariableForPostponedAtom(
-            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index
+        return ConeTypeVariableForLambdaParameterType(
+            PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index,
+            index
         )
     }
 
@@ -116,4 +122,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker {
         return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
+
+    override val isForcedConsiderExtensionReceiverFromConstrainsInLambda: Boolean
+        get() = true
 }

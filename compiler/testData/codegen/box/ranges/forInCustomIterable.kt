@@ -1,7 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_GENERATED
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 class C : Iterable<String> {
     // Unused declaration, which is here only to confuse the backend who might lookup symbols by name

@@ -56,13 +56,13 @@ fun bytesToStrings(bytes: ByteArray): Array<String> {
 }
 
 fun stringsToBytes(strings: Array<String>): ByteArray {
-    val resultLength = strings.sumBy { it.length }
+    val resultLength = strings.sumOf { it.length }
     val result = ByteArray(resultLength)
 
     var i = 0
     for (s in strings) {
         for (si in 0..s.length - 1) {
-            result[i++] = s[si].toByte()
+            result[i++] = s[si].code.toByte()
         }
     }
 

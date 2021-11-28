@@ -1,0 +1,35 @@
+package
+
+public fun test(): kotlin.Unit
+public inline fun </*0*/ reified L : kotlin.Any, /*1*/ reified R : kotlin.Any> Either<L, R>.isLeft(): kotlin.Boolean
+    Returns(TRUE) -> <this> is Left<L, R>
+
+public inline fun </*0*/ reified L : kotlin.Any, /*1*/ reified R : kotlin.Any> Either<L, R>.isRight(): kotlin.Boolean
+    Returns(TRUE) -> <this> is Right<L, R>
+
+public sealed class Either</*0*/ L : kotlin.Any, /*1*/ R : kotlin.Any> {
+    protected constructor Either</*0*/ L : kotlin.Any, /*1*/ R : kotlin.Any>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final data class Left</*0*/ L : kotlin.Any, /*1*/ R : kotlin.Any> : Either<L, R> {
+        public constructor Left</*0*/ L : kotlin.Any, /*1*/ R : kotlin.Any>(/*0*/ leftValue: L)
+        public final val leftValue: L
+        public final operator /*synthesized*/ fun component1(): L
+        public final /*synthesized*/ fun copy(/*0*/ leftValue: L = ...): Either.Left<L, R>
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final data class Right</*0*/ L : kotlin.Any, /*1*/ R : kotlin.Any> : Either<L, R> {
+        public constructor Right</*0*/ L : kotlin.Any, /*1*/ R : kotlin.Any>(/*0*/ rightValue: R)
+        public final val rightValue: R
+        public final operator /*synthesized*/ fun component1(): R
+        public final /*synthesized*/ fun copy(/*0*/ rightValue: R = ...): Either.Right<L, R>
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}

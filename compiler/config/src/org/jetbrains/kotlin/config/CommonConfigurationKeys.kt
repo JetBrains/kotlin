@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 object CommonConfigurationKeys {
@@ -40,6 +41,9 @@ object CommonConfigurationKeys {
     val EXPECT_ACTUAL_TRACKER = CompilerConfigurationKey.create<ExpectActualTracker>("expect actual tracker")
 
     @JvmField
+    val INLINE_CONST_TRACKER = CompilerConfigurationKey.create<InlineConstTracker>("inline constant tracker")
+
+    @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")
 
     @JvmField
@@ -50,6 +54,10 @@ object CommonConfigurationKeys {
 
     @JvmField
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
+
+    @JvmField
+    val PARALLEL_BACKEND_THREADS =
+        CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

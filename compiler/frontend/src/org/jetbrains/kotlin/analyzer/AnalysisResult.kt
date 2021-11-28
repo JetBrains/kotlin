@@ -52,13 +52,11 @@ open class AnalysisResult protected constructor(
     fun isError(): Boolean = this is InternalError || this is CompilationError
 
     fun throwIfError() {
-        when {
-            this is InternalError -> throw IllegalStateException("failed to analyze: " + error, error)
-            this is CompilationError -> throw CompilationErrorException()
+        when (this) {
+            is InternalError -> throw IllegalStateException("failed to analyze: $error", error)
+            is CompilationError -> throw CompilationErrorException()
         }
     }
-
-    class CompilationErrorException : RuntimeException()
 
     private class CompilationError(bindingContext: BindingContext) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
 

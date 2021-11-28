@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.name.FqName
 data class JavaDefaultQualifiers(
     val nullabilityQualifier: NullabilityQualifierWithMigrationStatus,
     val qualifierApplicabilityTypes: Collection<AnnotationQualifierApplicabilityType>,
-    val affectsTypeParameterBasedTypes: Boolean = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL
-) {
-    val makesTypeParameterNotNull get() = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL && affectsTypeParameterBasedTypes
-}
+    val definitelyNotNull: Boolean = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL
+)
 
 val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
 val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
@@ -32,10 +30,10 @@ val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
 )
 
 val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
-    JSPECIFY_DEFAULT_NOT_NULL to JavaDefaultQualifiers(
+    JSPECIFY_NULL_MARKED to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
         DEFAULT_JSPECIFY_APPLICABILITY,
-        affectsTypeParameterBasedTypes = false
+        definitelyNotNull = false
     )
 )
 

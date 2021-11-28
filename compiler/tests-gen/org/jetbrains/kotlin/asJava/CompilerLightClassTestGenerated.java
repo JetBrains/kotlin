@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     }
 
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true, "local", "ideRegression");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true, "local", "ideRegression");
     }
 
     @TestMetadata("AnnotatedParameterInEnumConstructor.kt")
@@ -46,6 +47,31 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("AnnotationClass.kt")
     public void testAnnotationClass() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/AnnotationClass.kt");
+    }
+
+    @TestMetadata("AnnotationJvmRepeatable.kt")
+    public void testAnnotationJvmRepeatable() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotationJvmRepeatable.kt");
+    }
+
+    @TestMetadata("AnnotationKotlinAndJavaRepeatable.kt")
+    public void testAnnotationKotlinAndJavaRepeatable() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotationKotlinAndJavaRepeatable.kt");
+    }
+
+    @TestMetadata("AnnotationKotlinAndJvmRepeatable.kt")
+    public void testAnnotationKotlinAndJvmRepeatable() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotationKotlinAndJvmRepeatable.kt");
+    }
+
+    @TestMetadata("AnnotationRepeatable.kt")
+    public void testAnnotationRepeatable() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotationRepeatable.kt");
+    }
+
+    @TestMetadata("Constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/Constructors.kt");
     }
 
     @TestMetadata("DataClassWithCustomImplementedMembers.kt")
@@ -118,6 +144,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/JvmStatic.kt");
     }
 
+    @TestMetadata("LocalFunctions.kt")
+    public void testLocalFunctions() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/LocalFunctions.kt");
+    }
+
     @TestMetadata("NestedObjects.kt")
     public void testNestedObjects() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/NestedObjects.kt");
@@ -128,6 +159,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/NonDataClassWithComponentFunctions.kt");
     }
 
+    @TestMetadata("OnlySecondaryConstructors.kt")
+    public void testOnlySecondaryConstructors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/OnlySecondaryConstructors.kt");
+    }
+
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/PublishedApi.kt");
@@ -136,6 +172,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestMetadata("SpecialAnnotationsOnAnnotationClass.kt")
     public void testSpecialAnnotationsOnAnnotationClass() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/SpecialAnnotationsOnAnnotationClass.kt");
+    }
+
+    @TestMetadata("SpecialAnnotationsOnAnnotationClass_1_6.kt")
+    public void testSpecialAnnotationsOnAnnotationClass_1_6() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/SpecialAnnotationsOnAnnotationClass_1_6.kt");
     }
 
     @TestMetadata("StubOrderForOverloads.kt")
@@ -177,7 +218,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInCompilationErrors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("AllInlineOnly.kt")
@@ -270,7 +311,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInDelegation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Function.kt")
@@ -293,7 +334,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInFacades() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("AllPrivate.kt")
@@ -326,7 +367,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Class.kt")
@@ -429,7 +470,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("SimpleObject.kt")
@@ -447,7 +488,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInPublicField() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("CompanionObject.kt")
@@ -470,7 +511,7 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         }
 
         public void testAllFilesPresentInScript() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("HelloWorld.kts")

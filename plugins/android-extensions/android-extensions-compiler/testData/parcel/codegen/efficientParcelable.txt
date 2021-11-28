@@ -13,7 +13,7 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           IFEQ (L2)
           ALOAD (1)
-          GETSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          GETSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           SWAP
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
           CHECKCAST
@@ -49,7 +49,7 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (test/Bar$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -66,7 +66,7 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (foo, Ltest/Foo;)
+          GETFIELD (test/Bar, foo, Ltest/Foo;)
           DUP
           IFNULL (L1)
           ALOAD (1)
@@ -97,7 +97,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           NEW
           DUP
           ALOAD (1)
-          GETSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          GETSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
           SWAP
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
           CHECKCAST
@@ -129,7 +129,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -146,7 +146,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (bar, Ltest/Bar;)
+          GETFIELD (test/Foo, bar, Ltest/Bar;)
           SWAP
           LDC (0)
           INVOKEINTERFACE (android/os/Parcelable, writeToParcel, (Landroid/os/Parcel;I)V)

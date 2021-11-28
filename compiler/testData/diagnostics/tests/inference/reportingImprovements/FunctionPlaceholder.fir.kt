@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 //For testing error messages text see DiagnosticMessageTest.testFunctionPlaceholder
 package a
 
@@ -7,11 +6,11 @@ fun <T, R> foo(a: A<T, R>) = a
 fun <T, R> bar(f: (T) -> R) = f
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!> { <!UNRESOLVED_REFERENCE!>it<!> }
-    <!INAPPLICABLE_CANDIDATE!>foo<!> { x -> x}
-    <!INAPPLICABLE_CANDIDATE!>foo<!> { x: Int -> x}
+    foo <!ARGUMENT_TYPE_MISMATCH!>{ <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>it<!> }<!>
+    foo <!ARGUMENT_TYPE_MISMATCH!>{ x -> x}<!>
+    foo <!ARGUMENT_TYPE_MISMATCH!>{ x: Int -> x}<!>
 
-    bar { it <!UNRESOLVED_REFERENCE!>+<!> 1 }
-    bar { x -> x <!UNRESOLVED_REFERENCE!>+<!> 1}
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!> { it + 1 }
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> x + 1}
     bar { x: Int -> x + 1}
 }

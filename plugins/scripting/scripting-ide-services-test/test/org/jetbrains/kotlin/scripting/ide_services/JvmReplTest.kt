@@ -296,6 +296,12 @@ class JvmIdeServicesTest : TestCase() {
                 val (exitCode, outputJarPath) = compileFile("stringTo.kt", outputJarName)
                 assertEquals(ExitCode.OK, exitCode)
 
+                assertCompileFails(
+                    repl, """
+                        import example.dependency.*
+                    """.trimIndent()
+                )
+
                 assertEvalUnit(
                     repl, """
                         @file:DependsOn("$outputJarPath")
@@ -327,7 +333,7 @@ class JvmIdeServicesTest : TestCase() {
         private data class CliCompilationResult(val exitCode: ExitCode, val outputJarPath: String)
 
         private fun compileFile(inputKtFileName: String, outputJarName: String): CliCompilationResult {
-            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().invariantSeparatorsPath
+            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().invariantSeparatorsPathString
 
             val compilerArgs = arrayOf(
                 "$MODULE_PATH/testData/$inputKtFileName",
@@ -410,6 +416,17 @@ private fun JvmTestRepl.compileAndEval(codeLine: SourceCode): Pair<ResultWithDia
         eval(it)
     }
     return compRes to evalRes?.valueOrNull().get()
+}
+
+private fun assertCompileFails(
+    repl: JvmTestRepl,
+    @Suppress("SameParameterValue")
+    line: String
+) {
+    val compiledSnippet =
+        checkCompile(repl, line)
+
+    TestCase.assertNull(compiledSnippet)
 }
 
 private fun assertEvalUnit(

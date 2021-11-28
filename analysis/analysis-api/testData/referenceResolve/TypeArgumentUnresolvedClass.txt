@@ -1,0 +1,2 @@
+Resolved to:
+0: (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, ERROR_TYPE <Unresolved type>

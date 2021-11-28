@@ -18,4 +18,3 @@ object A {
     private get
 
 }
-

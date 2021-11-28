@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.noarg;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class IrBlackBoxCodegenTestForNoArgGenerated extends AbstractIrBlackBoxCo
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("initializers.kt")
@@ -64,8 +65,18 @@ public class IrBlackBoxCodegenTestForNoArgGenerated extends AbstractIrBlackBoxCo
         runTest("plugins/noarg/noarg-cli/testData/box/nestedClass.kt");
     }
 
+    @TestMetadata("sealedClassWithExistingNoargCtor.kt")
+    public void testSealedClassWithExistingNoargCtor() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/box/sealedClassWithExistingNoargCtor.kt");
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/noarg/noarg-cli/testData/box/simple.kt");
+    }
+
+    @TestMetadata("subclass.kt")
+    public void testSubclass() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/box/subclass.kt");
     }
 }

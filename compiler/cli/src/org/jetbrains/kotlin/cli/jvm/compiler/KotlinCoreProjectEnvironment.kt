@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 
 open class KotlinCoreProjectEnvironment(
     disposable: Disposable,
     applicationEnvironment: KotlinCoreApplicationEnvironment
 ) : JavaCoreProjectEnvironment(disposable, applicationEnvironment) {
-    override fun createCoreFileManager() = KotlinCliJavaFileManagerImpl(PsiManager.getInstance(project))
+    override fun createCoreFileManager(): KotlinCliJavaFileManager = KotlinCliJavaFileManagerImpl(PsiManager.getInstance(project))
 }

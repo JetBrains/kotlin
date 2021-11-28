@@ -36,7 +36,7 @@ import java.util.List;
 
 public class DiagnosticUtils {
     @NotNull
-    private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = (o1, o2) -> {
+    public static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = (o1, o2) -> {
         if (o1.getStartOffset() != o2.getStartOffset()) {
             return o1.getStartOffset() - o2.getStartOffset();
         }
@@ -87,6 +87,11 @@ public class DiagnosticUtils {
     public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRange(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
         List<TextRange> textRanges = diagnostic.getTextRanges();
+        return getLineAndColumnRange(file, textRanges);
+    }
+
+    @NotNull
+    public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRange(PsiFile file, List<TextRange> textRanges) {
         if (textRanges.isEmpty()) return PsiDiagnosticUtils.LineAndColumnRange.NONE;
         TextRange firstRange = firstRange(textRanges);
         return getLineAndColumnRangeInPsiFile(file, firstRange);

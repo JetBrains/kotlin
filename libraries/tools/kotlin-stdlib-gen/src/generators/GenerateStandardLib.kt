@@ -5,8 +5,8 @@
 
 package generators
 
-import java.io.*
 import templates.*
+import java.io.File
 import kotlin.system.exitProcess
 
 /**
@@ -35,7 +35,8 @@ fun main(args: Array<String>) {
         ComparableOps
     )
 
-    COPYRIGHT_NOTICE = readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml").reader() }
+    COPYRIGHT_NOTICE =
+        readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml")!!.reader() }
 
     val targetBaseDirs = mutableMapOf<KotlinTarget, File>()
 
@@ -47,16 +48,11 @@ fun main(args: Array<String>) {
             targetBaseDirs[KotlinTarget.JS] = baseDir.resolveExistingDir("libraries/stdlib/js/src/generated")
             targetBaseDirs[KotlinTarget.JS_IR] = baseDir.resolveExistingDir("libraries/stdlib/js-ir/src/generated")
             targetBaseDirs[KotlinTarget.WASM] = baseDir.resolveExistingDir("libraries/stdlib/wasm/src/generated")
-        }
-        2 -> {
-            val (targetName, targetDir) = args
-            val target = KotlinTarget.values.singleOrNull { it.name.equals(targetName, ignoreCase = true) } ?: error("Invalid target: $targetName")
-            targetBaseDirs[target] = File(targetDir).also { it.requireExistingDir() }
+            targetBaseDirs[KotlinTarget.Native] = baseDir.resolveExistingDir("kotlin-native/runtime/src/main/kotlin/generated")
         }
         else -> {
             println("""Parameters:
-    <kotlin-base-dir> - generates sources for common, jvm, js, ir-js targets using paths derived from specified base path
-    <target> <target-dir> - generates source for the specified target in the specified target directory
+    <kotlin-base-dir> - generates sources for common, jvm, js, ir-js, native targets using paths derived from specified base path
 """)
             exitProcess(1)
         }
@@ -67,16 +63,14 @@ fun main(args: Array<String>) {
         val platformSuffix = when (val platform = target.platform) {
             Platform.Common -> ""
             Platform.Native -> if (target.backend == Backend.Wasm) "Wasm" else "Native"
-            else -> platform.name.toLowerCase().capitalize()
+            else -> platform.name.lowercase().capitalize()
         }
         targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")
     }
-
-    targetBaseDirs[KotlinTarget.WASM]?.let { generateWasmBuiltIns(it) }
 }
 
 fun File.resolveExistingDir(subpath: String) = resolve(subpath).also { it.requireExistingDir() }
 
 fun File.requireExistingDir() {
-    require(isDirectory) { "Directory $this doesn't exist"}
+    require(isDirectory) { "Directory $this doesn't exist" }
 }

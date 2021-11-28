@@ -1,0 +1,1 @@
+actual interface A

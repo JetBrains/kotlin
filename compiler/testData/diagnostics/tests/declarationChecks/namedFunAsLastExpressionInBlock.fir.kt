@@ -1,14 +1,13 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // !CHECK_TYPE
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
-    val x = <!EXPRESSION_REQUIRED!>fun named1(x: Int): Int { return 1 }<!>
-    x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Int, Int>>() }
+    val x = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named1(x: Int): Int { return 1 }<!>
+    x <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Function1<Int, Int>>() }
 
-    foo { fun named2(): Int {return 1} }
-    foo({ fun named3() = 1 })
+    foo { <!ARGUMENT_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
+    foo({ <!ARGUMENT_TYPE_MISMATCH!>fun named3() = 1<!> })
 
     val x1 =
     if (1 == 1)
@@ -45,12 +44,12 @@ fun test() {
     x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = <!UNRESOLVED_REFERENCE!>(<!EXPRESSION_REQUIRED!>fun named15(): Boolean { return true }<!>)()<!>
+    val b = (<!ANONYMOUS_FUNCTION_WITH_NAME, UNRESOLVED_REFERENCE!>fun named15(): Boolean { return true }<!>)()
 
-    baz(<!EXPRESSION_REQUIRED!>fun named16(){}<!>)
+    baz(<!ANONYMOUS_FUNCTION_WITH_NAME!>fun named16(){}<!>)
 }
 
-fun bar() = <!EXPRESSION_REQUIRED!>fun named() {}<!>
+fun bar() = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named() {}<!>
 
 fun <T> run(block: () -> T): T = null!!
 fun run2(block: () -> Unit): Unit = null!!

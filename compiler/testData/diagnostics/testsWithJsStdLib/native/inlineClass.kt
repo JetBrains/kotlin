@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 external inline class <!WRONG_EXTERNAL_DECLARATION!>C(<!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val a: Int<!>)<!> {
     fun foo()

@@ -1,0 +1,22 @@
+FILE: superIsNotAnExpression.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final fun act(): R|kotlin/Unit| {
+            <Super cannot be a callee>#()
+            <Unresolved name: invoke>#()
+            <Super cannot be a callee>#(<L> = <Super cannot be a callee>@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: println> <inline=Unknown>  {
+                ^ <Unresolved name: println>#(ERROR_EXPR(Incorrect character: 'weird'))
+            }
+            )
+        }
+
+    }

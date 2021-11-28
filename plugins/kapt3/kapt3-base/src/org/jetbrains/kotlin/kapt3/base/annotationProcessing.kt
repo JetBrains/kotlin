@@ -38,9 +38,18 @@ fun KaptContext.doAnnotationProcessing(
 
     val wrappedProcessors = processors.map { ProcessorWrapper(it) }
 
+    val javaSourcesToProcess = run {
+        //module descriptor should be in root package, but here we filter it from everywhere (bc we don't have knowledge about root here)
+        val filtered = javaSourceFiles.filterNot { it.name == KaptContext.MODULE_INFO_FILE }
+        if (filtered.size != javaSourceFiles.size) {
+            logger.info("${KaptContext.MODULE_INFO_FILE} is removed from sources files to disable JPMS")
+        }
+        filtered
+    }
+
     val compilerAfterAP: JavaCompiler
     try {
-        if (javaSourceFiles.isEmpty() && binaryTypesToReprocess.isEmpty() && additionalSources.isEmpty()) {
+        if (javaSourcesToProcess.isEmpty() && binaryTypesToReprocess.isEmpty() && additionalSources.isEmpty()) {
             if (logger.isVerbose) {
                 logger.info("Skipping annotation processing as all sources are up-to-date.")
             }
@@ -55,10 +64,10 @@ fun KaptContext.doAnnotationProcessing(
         }
 
         if (logger.isVerbose) {
-            logger.info("Processing java sources with annotation processors: ${javaSourceFiles.joinToString()}")
+            logger.info("Processing java sources with annotation processors: ${javaSourcesToProcess.joinToString()}")
             logger.info("Processing types with annotation processors: ${binaryTypesToReprocess.joinToString()}")
         }
-        val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
+        val parsedJavaFiles = parseJavaFiles(javaSourcesToProcess)
 
         val sourcesStructureListener = cacheManager?.let {
             if (processors.any { it.isUnableToRunIncrementally() }) return@let null
@@ -113,6 +122,8 @@ fun KaptContext.doAnnotationProcessing(
             showProcessorTimings(wrappedProcessors, loggerFun)
         }
 
+        options.processorsPerfReportFile?.let { dumpProcessorTiming(wrappedProcessors, options.processorsPerfReportFile, logger::info) }
+
         if (logger.isVerbose) {
             filer.displayState()
         }
@@ -131,6 +142,17 @@ private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logg
     wrappedProcessors.forEach { processor ->
         logger(processor.renderSpentTime())
     }
+}
+
+private fun dumpProcessorTiming(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File, logger: (String) -> Unit) {
+    logger("Dumping Kapt Annotation Processing performance report to ${apReportFile.absolutePath}")
+
+    apReportFile.writeText(buildString {
+        appendLine("Kapt Annotation Processing performance report:")
+        wrappedProcessors.forEach { processor ->
+            appendLine(processor.renderSpentTime())
+        }
+    })
 }
 
 private fun reportIfRunningNonIncrementally(

@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -15,12 +14,14 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-open class FirUserTypeRefImpl(
-    override val source: FirSourceElement?,
+class FirUserTypeRefImpl(
+    override var source: KtSourceElement?,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
-    override val annotations: MutableList<FirAnnotationCall>
-) : FirUserTypeRef(), FirAnnotationContainer {
+    override val annotations: MutableList<FirAnnotation>
+) : FirUserTypeRef() {
+    override val customRenderer: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (part in qualifier) {

@@ -1,12 +1,30 @@
 // EXPECTED_REACHABLE_NODES: 1301
-// CHECK_NOT_CALLED_IN_SCOPE: function=plus_za3lpa$ scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=plus scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=invoke scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=get_za3lpa$ scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=set_vux9f0$ scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=dec scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=minus_za3lpa$ scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=invoke_dqglrj$ scope=test
+
+// CHECK_FUNCTION_EXISTS: plus_za3lpa$ TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=plus_za3lpa$ scope=box TARGET_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: plus TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=plus scope=box TARGET_BACKENDS=JS
+// CHECK_FUNCTION_EXISTS: plus_0 IGNORED_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=plus_0 scope=box IGNORED_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: invoke TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=invoke scope=box TARGET_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: get_za3lpa$ TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=get_za3lpa$ scope=box TARGET_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: set_vux9f0$ TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=set_vux9f0$ scope=box TARGET_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: dec TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=dec scope=box TARGET_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: minus_za3lpa$ TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=minus_za3lpa$ scope=box TARGET_BACKENDS=JS
+
+// CHECK_FUNCTION_EXISTS: invoke_dqglrj$ TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=invoke_dqglrj$ scope=test TARGET_BACKENDS=JS
 
 class A {
     inline operator fun plus(a: Int) = a + 10

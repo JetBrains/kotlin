@@ -25,6 +25,7 @@ val testGlobalValGetter: String
 fun testJUse() {
   use(s = nullString())
   use(s = notNullString())
+  use(x = 42)
 }
 
 fun testLocalVarUse() {

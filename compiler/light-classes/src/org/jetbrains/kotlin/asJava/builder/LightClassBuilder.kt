@@ -25,6 +25,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -53,6 +54,7 @@ fun buildLightClass(
                 context.languageVersionSettings?.let {
                     CompilerConfiguration().apply {
                         languageVersionSettings = it
+                        put(JVMConfigurationKeys.JVM_TARGET, context.jvmTarget)
                         isReadOnly = true
                     }
                 } ?: CompilerConfiguration.EMPTY

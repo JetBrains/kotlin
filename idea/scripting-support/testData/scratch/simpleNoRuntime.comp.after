@@ -1,4 +1,0 @@
-// REPL_MODE: false
-// NO_MODULE
-
-run { 1 + 1 }    // RESULT: 2

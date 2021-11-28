@@ -1,5 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
+
 var result = ""
 
 class C(val token: String) {

@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
@@ -29,18 +27,18 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrClass :
-    IrDeclarationBase(), IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
+    IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility,
     IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer, IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
+    abstract override val symbol: IrClassSymbol
 
     abstract val kind: ClassKind
     abstract var modality: Modality
     abstract val isCompanion: Boolean
     abstract val isInner: Boolean
     abstract val isData: Boolean
-    abstract val isExternal: Boolean
     abstract val isInline: Boolean
     abstract val isExpect: Boolean
     abstract val isFun: Boolean
@@ -50,6 +48,10 @@ abstract class IrClass :
     abstract var superTypes: List<IrType>
 
     abstract var thisReceiver: IrValueParameter?
+
+    abstract var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+
+    abstract var sealedSubclasses: List<IrClassSymbol>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

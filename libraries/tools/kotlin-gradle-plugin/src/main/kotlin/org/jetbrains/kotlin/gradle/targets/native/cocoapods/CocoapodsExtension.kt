@@ -7,35 +7,36 @@
 package org.jetbrains.kotlin.gradle.plugin.cocoapods
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import java.io.File
 import java.net.URI
 
 open class CocoapodsExtension(private val project: Project) {
-    @get:Input
-    val version: String
-        get() = project.version.toString()
+    /**
+     * Configure version of the pod
+     */
+    var version: String? = null
 
     /**
      * Configure authors of the pod built from this project.
      */
-    @Optional
-    @Input
     var authors: String? = null
 
     /**
      * Configure existing file `Podfile`.
      */
-    @Optional
-    @InputFile
     var podfile: File? = null
 
-    @get:Input
     internal var needPodspec: Boolean = true
 
     /**
@@ -52,63 +53,97 @@ open class CocoapodsExtension(private val project: Project) {
         useLibraries = true
     }
 
-    @get:Input
     internal var useLibraries: Boolean = false
+
+    /**
+     * Configure name of the pod built from this project.
+     */
+    var name: String = project.name.asValidFrameworkName()
 
     /**
      * Configure license of the pod built from this project.
      */
-    @Optional
-    @Input
     var license: String? = null
 
     /**
      * Configure description of the pod built from this project.
      */
-    @Optional
-    @Input
     var summary: String? = null
 
     /**
      * Configure homepage of the pod built from this project.
      */
-    @Optional
-    @Input
     var homepage: String? = null
 
-    @Nested
+    /**
+     * Configure location of the pod built from this project.
+     */
+    var source: String? = null
+
+    /**
+     * Configure other podspec attributes
+     */
+    var extraSpecAttributes: MutableMap<String, String> = mutableMapOf()
+
+    /**
+     * Configure framework of the pod built from this project.
+     */
+    fun framework(configure: Framework.() -> Unit) = configureRegisteredFrameworks(configure)
+
+    /**
+     * Configure framework of the pod built from this project.
+     */
+    fun framework(configure: Action<Framework>) = framework {
+        configure.execute(this)
+    }
+
     val ios: PodspecPlatformSettings = PodspecPlatformSettings("ios")
 
-    @Nested
     val osx: PodspecPlatformSettings = PodspecPlatformSettings("osx")
 
-    @Nested
     val tvos: PodspecPlatformSettings = PodspecPlatformSettings("tvos")
 
-    @Nested
     val watchos: PodspecPlatformSettings = PodspecPlatformSettings("watchos")
 
     /**
      * Configure framework name of the pod built from this project.
      */
-    @Input
-    var frameworkName: String = project.name.asValidFrameworkName()
+    @Deprecated("Use 'baseName' property within framework{} block to configure framework name")
+    var frameworkName: String
+        get() = frameworkNameInternal
+        set(value) {
+            configureRegisteredFrameworks {
+                baseName = value
+            }
+        }
 
-    @get:Nested
+    internal var frameworkNameInternal: String = project.name.asValidFrameworkName()
+
+    internal var useDynamicFramework: Boolean = false
+
+    /**
+     * Configure custom Xcode Configurations to Native Build Types mapping
+     */
+    val xcodeConfigurationToNativeBuildType: MutableMap<String, NativeBuildType> = mutableMapOf(
+        "Debug" to NativeBuildType.DEBUG,
+        "Release" to NativeBuildType.RELEASE
+    )
+
+    /**
+     * Configure output directory for pod publishing
+     */
+    var publishDir: File = CocoapodsBuildDirs(project).publish
+
     internal val specRepos = SpecRepos()
 
     private val _pods = project.container(CocoapodsDependency::class.java)
 
-    // For some reason Gradle doesn't consume the @Nested annotation on NamedDomainObjectContainer.
-    @get:Nested
     val podsAsTaskInput: List<CocoapodsDependency>
         get() = _pods.toList()
 
     /**
      * Returns a list of pod dependencies.
      */
-    // Already taken into account as a task input in the [podsAsTaskInput] property.
-    @get:Internal
     val pods: NamedDomainObjectSet<CocoapodsDependency>
         get() = _pods
 
@@ -156,7 +191,7 @@ open class CocoapodsExtension(private val project: Project) {
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
         require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
-        val dependency = CocoapodsDependency(name, name.split("/")[0])
+        val dependency = CocoapodsDependency(name, name.asModuleName())
         dependency.configure()
         addToPods(dependency)
     }
@@ -192,6 +227,40 @@ open class CocoapodsExtension(private val project: Project) {
         ConfigureUtil.configure(configure, this)
     }
 
+    private fun configureRegisteredFrameworks(configure: Framework.() -> Unit) {
+        project.multiplatformExtension.supportedTargets().all { target ->
+            target.binaries.withType(Framework::class.java) { framework ->
+                framework.configure()
+                frameworkNameInternal = framework.baseName
+                useDynamicFramework = framework.isStatic.not()
+                if (useDynamicFramework) {
+                    configureLinkingOptions(framework)
+                }
+            }
+        }
+    }
+
+    internal fun configureLinkingOptions(binary: NativeBinary, setRPath: Boolean = false) {
+        pods.all { pod ->
+            binary.linkerOpts("-framework", pod.moduleName)
+
+            binary.linkTaskProvider.configure { task ->
+
+                val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
+                task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
+                task.dependsOn(podBuildTaskProvider)
+
+                task.doFirst { _ ->
+                    val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
+                    binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                    if (setRPath) {
+                        binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.flatMap { listOf("-rpath", it) })
+                    }
+                }
+            }
+        }
+    }
+
     data class CocoapodsDependency(
         private val name: String,
         @get:Input var moduleName: String,
@@ -210,9 +279,10 @@ open class CocoapodsExtension(private val project: Project) {
          *
          * @param url url to tar, jar or zip archive.
          * @param flatten does archive contains subdirectory that needs to be expanded
+         * @param isAllowInsecureProtocol enables communication with a repository over an insecure HTTP connection.
          */
         @JvmOverloads
-        fun url(url: String, flatten: Boolean = false): PodLocation = Url(URI(url), flatten)
+        fun url(url: String, flatten: Boolean = false, isAllowInsecureProtocol: Boolean = false): PodLocation = Url(URI(url), flatten, isAllowInsecureProtocol)
 
         /**
          * Path to local pod
@@ -248,14 +318,19 @@ open class CocoapodsExtension(private val project: Project) {
 
             data class Url(
                 @get:Input val url: URI,
-                @get:Input var flatten: Boolean
+                @get:Input var flatten: Boolean,
+                @get:Input var isAllowInsecureProtocol: Boolean
             ) : PodLocation() {
                 override fun getLocalPath(project: Project, podName: String): String {
                     return project.cocoapodsBuildDirs.externalSources("url").resolve(podName).absolutePath
                 }
             }
 
-            data class Path(@get:InputDirectory val dir: File) : PodLocation() {
+            data class Path(
+                @get:InputDirectory
+                @get:IgnoreEmptyDirectories
+                val dir: File
+            ) : PodLocation() {
                 override fun getLocalPath(project: Project, podName: String): String {
                     return dir.absolutePath
                 }
@@ -285,14 +360,14 @@ open class CocoapodsExtension(private val project: Project) {
 
     class SpecRepos {
         @get:Internal
-        internal val specRepos = mutableSetOf(URI("https://cdn.cocoapods.org"))
+        internal val specRepos = mutableSetOf("https://cdn.cocoapods.org")
 
         fun url(url: String) {
-            specRepos.add(URI(url))
+            specRepos.add(url)
         }
 
         @Input
-        internal fun getAll(): Collection<URI> {
+        internal fun getAll(): Collection<String> {
             return specRepos
         }
     }

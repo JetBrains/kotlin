@@ -1,2 +1,0 @@
-abstract class C implements B {
-}

@@ -15,7 +15,7 @@ fun testWithSubject(x: Any?): String {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> "A"
       tmp0_subject is String -> "String"
       tmp0_subject !is Number -> "!Number"
-      setOf<Nothing>().contains<Any?>(element = tmp0_subject) -> "nothingness?"
+      setOf<Nothing>().contains<Number>(element = tmp0_subject /*as Number */) -> "nothingness?"
       else -> "something"
     }
   }
@@ -24,9 +24,9 @@ fun testWithSubject(x: Any?): String {
 fun test(x: Any?): String {
   return when {
     EQEQ(arg0 = x, arg1 = null) -> "null"
-    EQEQ(arg0 = x /*as Any */, arg1 = A) -> "A"
-    x /*as Any */ is String -> "String"
-    x /*as Any */ !is Number -> "!Number"
+    EQEQ(arg0 = x, arg1 = A) -> "A"
+    x is String -> "String"
+    x !is Number -> "!Number"
     setOf<Nothing>().contains<Number>(element = x /*as Number */) -> "nothingness?"
     else -> "something"
   }
@@ -61,3 +61,4 @@ fun testComma(x: Int): String {
     }
   }
 }
+

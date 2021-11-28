@@ -3,7 +3,7 @@
 import B.foo
 
 fun test() {
-    <!HIDDEN!>foo<!>
+    <!INVISIBLE_REFERENCE!>foo<!>
 }
 
 // FILE: B.kt

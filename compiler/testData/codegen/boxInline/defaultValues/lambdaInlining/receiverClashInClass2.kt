@@ -1,5 +1,5 @@
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// FILE: 1.kt
 package test
 
 class A(val value: String) {
@@ -13,8 +13,8 @@ class A(val value: String) {
 
 // FILE: 2.kt
 //WIH_RUNTIME
-// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda scope=test
-// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda_0 scope=test
+// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda scope=test TARGET_BACKENDS=JS
+// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda_0 scope=test TARGET_BACKENDS=JS
 import test.*
 
 fun String.test(): String = with(A("VALUE")) { "INLINE".inlineFun({ this@test }) }

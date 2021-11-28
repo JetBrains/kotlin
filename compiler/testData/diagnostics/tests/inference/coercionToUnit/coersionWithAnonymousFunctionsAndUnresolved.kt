@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 fun takeFnToAny(fn: () -> Any) {}
 fun takeFnToUnit(fn: () -> Unit) {}
@@ -54,7 +53,7 @@ fun testParameter() {
     takeFnToParameter { Unit }
     takeFnToParameter { <!UNRESOLVED_REFERENCE!>unresolved<!>() }
     takeFnToParameter { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() }
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeFnToParameter<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeFnToParameter<!> {
         if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() else <!UNRESOLVED_REFERENCE!>unresolved<!>()
     }
     takeFnToParameter(fun() = Unit)

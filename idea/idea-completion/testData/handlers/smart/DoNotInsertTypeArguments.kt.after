@@ -1,7 +1,0 @@
-public inline fun <reified T> Iterable<*>.foo(): List<T> { }
-
-fun f(list: List<Any>): Collection<String> {
-    return list.foo()<caret>
-}
-
-// ELEMENT: foo

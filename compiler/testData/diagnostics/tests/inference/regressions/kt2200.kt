@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 //KT-2200 array(array()) breaks compiler
@@ -6,8 +5,8 @@ package n
 import checkSubtype
 
 fun main() {
-    val <!UNUSED_VARIABLE!>a<!> = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>array<!>(<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>array<!>())
-    val <!UNUSED_VARIABLE!>a0<!> : Array<Array<Int>> = array(array())
+    val a = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>array<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>array<!>())
+    val a0 : Array<Array<Int>> = array(array())
     val a1 = array(array<Int>())
     checkSubtype<Array<Array<Int>>>(a1)
     val a2 = array<Array<Int>>(array())

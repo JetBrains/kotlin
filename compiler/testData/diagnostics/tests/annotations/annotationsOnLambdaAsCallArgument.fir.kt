@@ -13,7 +13,7 @@ fun foo() {
         return@l1 103
     }
 
-    bar <!INAPPLICABLE_CANDIDATE!>@Ann("")<!> {
+    bar @Ann(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
         104
     }
 }

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
 
 group = "com.example"
@@ -10,7 +10,7 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 yarn

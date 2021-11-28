@@ -12,7 +12,7 @@ fun varargFloat(vararg v: Float) = v
 
 fun varargDouble(vararg v: Double) = v
 
-fun <T> testFun(<!UNUSED_PARAMETER!>p<!>: T) {}
+fun <T> testFun(p: T) {}
 
 fun test() {
     checkSubtype<Byte>(1)
@@ -31,11 +31,11 @@ fun test() {
 
     checkSubtype<Double>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     checkSubtype<Float>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
-    
+
     1 <!CAST_NEVER_SUCCEEDS!>as<!> Byte
     1 <!USELESS_CAST!>as Int<!>
     0xff <!CAST_NEVER_SUCCEEDS!>as<!> Long
-    
+
     1.1 <!CAST_NEVER_SUCCEEDS!>as<!> Int
     checkSubtype<Int>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.1<!>)
 

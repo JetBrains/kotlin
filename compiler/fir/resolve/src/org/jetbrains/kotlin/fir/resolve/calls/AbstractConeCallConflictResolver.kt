@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
@@ -69,8 +67,8 @@ abstract class AbstractConeCallConflictResolver(
             val uByte = StandardClassIds.UByte
             val uShort = StandardClassIds.UShort
 
-            val specificClassId = specific.classId ?: return false
-            val generalClassId = general.classId ?: return false
+            val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
+            val generalClassId = general.upperBoundIfFlexible().classId ?: return false
 
 
             // int >= long, int >= short, short >= byte
@@ -102,13 +100,14 @@ abstract class AbstractConeCallConflictResolver(
         return when (val declaration = call.symbol.fir) {
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
-            is FirVariable<*> -> createFlatSignature(call, declaration)
-            is FirClass<*> -> createFlatSignature(call, declaration)
+            is FirVariable -> createFlatSignature(call, declaration)
+            is FirClass -> createFlatSignature(call, declaration)
+            is FirTypeAlias -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }
 
-    protected fun createFlatSignature(call: Candidate, variable: FirVariable<*>): FlatSignature<Candidate> {
+    protected fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
         return FlatSignature(
             call,
             (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
@@ -156,18 +155,18 @@ abstract class AbstractConeCallConflictResolver(
 
     private fun computeParameterTypes(
         call: Candidate,
-        function: FirFunction<*>
+        function: FirFunction
     ): List<ConeKotlinType> {
         return listOfNotNull(function.receiverTypeRef?.coneType) +
                 (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
                     ?: call.argumentMapping?.map { it.value.argumentType() }.orEmpty())
     }
 
-    private fun createFlatSignature(call: Candidate, klass: FirClass<*>): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, klass: FirClassLikeDeclaration): FlatSignature<Candidate> {
         return FlatSignature(
             call,
-            (klass as? FirRegularClass)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
-            valueParameterTypes = emptyList(),
+            (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
+            emptyList(),
             hasExtensionReceiver = false,
             hasVarargs = false,
             numDefaults = 0,
@@ -177,6 +176,6 @@ abstract class AbstractConeCallConflictResolver(
     }
 
     private fun createEmptyConstraintSystem(): SimpleConstraintSystem {
-        return ConeSimpleConstraintSystemImpl(inferenceComponents.createConstraintSystem())
+        return ConeSimpleConstraintSystemImpl(inferenceComponents.createConstraintSystem(), inferenceComponents.session)
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // http://youtrack.jetbrains.com/issue/KT-1996
 
 interface Foo {

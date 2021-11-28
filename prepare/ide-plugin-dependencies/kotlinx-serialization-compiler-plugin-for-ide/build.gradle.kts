@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishProjectJars(listOf(":kotlinx-serialization-compiler-plugin"))
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(":kotlinx-serialization-compiler-plugin"))

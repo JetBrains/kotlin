@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // KT-5362 Compiler crashes on access to extension method from nested class
 class Outer {
     class Nested{
@@ -12,7 +11,7 @@ class Outer {
 fun Activity.toast() = Unit
 class Activity(){
     class Fragment{
-        fun call() = <!INAPPLICABLE_CANDIDATE!>toast<!>()
+        fun call() = <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toast<!>()
     }
 }
 
@@ -25,7 +24,7 @@ public class Manager {
 
     class Task(val callback: Manager.() -> Unit) : Runnable {
         override public fun run() {
-            <!INAPPLICABLE_CANDIDATE!>callback<!>() // Manager is not accessible here, but no error is shown
+            <!ARGUMENT_TYPE_MISMATCH!>callback<!>() // Manager is not accessible here, but no error is shown
         }
     }
 }

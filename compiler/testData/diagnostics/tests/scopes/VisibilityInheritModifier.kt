@@ -21,7 +21,7 @@ class E : D() {
     internal <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun self() = this
 
     fun test() {
-        val <!UNUSED_VARIABLE!>s<!> : E = self()
+        val s : E = self()
     }
 }
 

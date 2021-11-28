@@ -1,9 +1,10 @@
 // EXPECTED_REACHABLE_NODES: 1288
 package foo
 
-// CHECK_VARS_COUNT: function=test1 count=0
-// CHECK_VARS_COUNT: function=test2 count=1
-// CHECK_VARS_COUNT: function=test3 count=0
+// FIXME: The IR backend generates a lot of redundant vars
+// CHECK_VARS_COUNT: function=test1 count=0 TARGET_BACKENDS=JS
+// CHECK_VARS_COUNT: function=test2 count=1 TARGET_BACKENDS=JS
+// CHECK_VARS_COUNT: function=test3 count=0 TARGET_BACKENDS=JS
 
 inline fun a(x: Int) = b(x)
 

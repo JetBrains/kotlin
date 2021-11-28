@@ -1,0 +1,26 @@
+package
+
+package test {
+
+    public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann(/*0*/ b1: kotlin.Char, /*1*/ b2: kotlin.Char, /*2*/ b3: kotlin.Int, /*3*/ b4: kotlin.Long, /*4*/ b5: kotlin.Byte, /*5*/ b6: kotlin.Short, /*6*/ b7: kotlin.Double, /*7*/ b8: kotlin.Float)
+        public final val b1: kotlin.Char
+        public final val b2: kotlin.Char
+        public final val b3: kotlin.Int
+        public final val b4: kotlin.Long
+        public final val b5: kotlin.Byte
+        public final val b6: kotlin.Short
+        public final val b7: kotlin.Double
+        public final val b8: kotlin.Float
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @test.Ann(b1 = \u0063 ('c'), b2 = \u0063 ('c'), b3 = 99, b4 = 99.toLong(), b5 = 99.toByte(), b6 = 99.toShort(), b7 = 99.0.toDouble(), b8 = 99.0.toFloat()) public final class MyClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

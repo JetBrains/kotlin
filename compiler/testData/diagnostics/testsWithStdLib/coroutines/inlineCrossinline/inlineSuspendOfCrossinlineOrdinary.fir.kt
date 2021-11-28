@@ -20,7 +20,7 @@ suspend inline fun test(crossinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE!>startCoroutine<!>(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {
@@ -32,7 +32,7 @@ suspend fun calculate() = "OK"
 fun box() {
     builder {
         test {
-            calculate()
+            <!NON_LOCAL_SUSPENSION_POINT!>calculate<!>()
         }
     }
 }

@@ -136,7 +136,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 }
                 val sizeDiff = a.intersectedTypes.size - b.intersectedTypes.size
                 if (sizeDiff != 0) {
-                    return 0
+                    return sizeDiff
                 }
                 // Can't compare individual types from each side, since their orders are not guaranteed.
                 return a.hashCode() - b.hashCode()

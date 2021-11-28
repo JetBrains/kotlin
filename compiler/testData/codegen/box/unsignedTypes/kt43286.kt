@@ -1,6 +1,5 @@
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 class D(val x: UInt?)
 

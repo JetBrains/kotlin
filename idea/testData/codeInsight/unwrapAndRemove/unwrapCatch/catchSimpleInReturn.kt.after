@@ -1,4 +1,0 @@
-// OPTION: 0
-fun foo(n: Int): Int {
-    return -1<caret>
-}

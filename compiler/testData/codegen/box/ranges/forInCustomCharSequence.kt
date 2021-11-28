@@ -1,7 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 class C : CharSequence {
     // Unused declarations, which are here only to confuse the backend who might lookup symbols by name

@@ -1,3 +1,0 @@
-C
-A.B.C
-test.A.B.C

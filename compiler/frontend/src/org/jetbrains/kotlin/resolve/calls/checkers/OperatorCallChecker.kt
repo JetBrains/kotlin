@@ -24,12 +24,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
-import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
+import org.jetbrains.kotlin.resolve.calls.util.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -52,11 +49,7 @@ class OperatorCallChecker : CallChecker {
                 val containingDeclarationName = functionDescriptor.containingDeclaration.fqNameUnsafe.asString()
                 context.trace.report(Errors.PROPERTY_AS_OPERATOR.on(reportOn, functionDescriptor, containingDeclarationName))
             } else if (isWrongCallWithExplicitTypeArguments(resolvedCall, outerCall)) {
-                throw AssertionError(
-                    "Illegal resolved call to variable with invoke for $outerCall. " +
-                            "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
-                            "Invoke: ${resolvedCall.functionCall.resultingDescriptor}"
-                )
+                context.trace.report(Errors.TYPE_ARGUMENTS_NOT_ALLOWED.on(reportOn as KtElement, "on implicit invoke call"))
             }
         }
 

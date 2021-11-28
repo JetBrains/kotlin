@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1282
-// MODULE: #my-libr@ry
-// FILE: bar.kt
+// MODULE: #my_libr@ry
 // MODULE_KIND: PLAIN
+// FILE: bar.kt
 // PROPERTY_NOT_WRITTEN_TO: baz
 // PROPERTY_NOT_WRITTEN_TO: boo_287e2$
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -11,10 +11,11 @@ inline fun foo() = "foo"
 inline fun baz() = "baz"
 inline fun <reified T> boo() = "boo"
 
-// MODULE: main(#my-libr@ry)
-// FILE: box.kt
+// MODULE: main(#my_libr@ry)
 // MODULE_KIND: PLAIN
-// CHECK_CONTAINS_NO_CALLS: box except=assertEquals
+// FILE: box.kt
+// CHECK_CONTAINS_NO_CALLS: box except=assertEquals TARGET_BACKENDS=JS
+// CHECK_CONTAINS_NO_CALLS: box except=assertEquals$default IGNORED_BACKENDS=JS
 
 fun box(): String {
     assertEquals("foo", foo())

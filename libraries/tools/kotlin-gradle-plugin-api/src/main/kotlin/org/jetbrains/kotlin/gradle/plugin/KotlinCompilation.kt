@@ -12,7 +12,6 @@ import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import java.io.File
@@ -39,7 +38,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     val defaultSourceSet: KotlinSourceSet
 
     fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit)
-    fun defaultSourceSet(configure: Closure<*>) = defaultSourceSet { ConfigureUtil.configure(configure, this) }
+    fun defaultSourceSet(configure: Closure<*>) = defaultSourceSet { target.project.configure(this, configure) }
 
     val compileDependencyConfigurationName: String
 
@@ -58,10 +57,10 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     val kotlinOptions: T
 
     fun kotlinOptions(configure: T.() -> Unit)
-    fun kotlinOptions(configure: Closure<*>) = kotlinOptions { ConfigureUtil.configure(configure, this) }
+    fun kotlinOptions(configure: Closure<*>) = kotlinOptions { target.project.configure(this, configure) }
 
     fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
-    fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
+    fun attributes(configure: Closure<*>) = attributes { target.project.configure(this, configure) }
 
     val compileAllTaskName: String
 
@@ -82,6 +81,9 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
 
     val moduleName: String
+
+    val disambiguatedName
+        get() = target.disambiguationClassifier + name
 }
 
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinCompilation<T> {
@@ -92,6 +94,9 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinComp
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
+
+val <T : KotlinCommonOptions> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
+    get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 
 interface KotlinCompilationWithResources<T : KotlinCommonOptions> : KotlinCompilation<T> {
     val processResourcesTaskName: String

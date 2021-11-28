@@ -8,15 +8,13 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
-}
-
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:deserialization"))
     implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:fir:providers"))
+    implementation(project(":compiler:fir:semantics"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:java"))
     implementation(project(":compiler:cli"))

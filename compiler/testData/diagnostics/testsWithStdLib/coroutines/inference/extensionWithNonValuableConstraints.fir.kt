@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
-// !WITH_NEW_INFERENCE
+// !OPT_IN: kotlin.RequiresOptIn
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -29,7 +28,7 @@ val test1 = generate {
     baseExtension()
 }
 
-val test2 = generate {
+val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     baseExtension()
 }
 

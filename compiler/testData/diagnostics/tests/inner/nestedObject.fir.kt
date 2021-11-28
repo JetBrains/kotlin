@@ -1,12 +1,12 @@
 // SKIP_TXT
 class Outer {
     inner class Inner1 {
-        object Obj1
+        <!NESTED_CLASS_NOT_ALLOWED!>object Obj1<!>
 
-        companion object Obj2
+        companion <!NESTED_CLASS_NOT_ALLOWED!>object Obj2<!>
 
         inner class Inner2 {
-            object Obj3
+            <!NESTED_CLASS_NOT_ALLOWED!>object Obj3<!>
         }
     }
 }

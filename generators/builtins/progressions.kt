@@ -42,11 +42,19 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
-                "        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)"
+                "        if (isEmpty()) -1 else (31 * (31 * first.code + last.code) + step)"
             INT ->
                 "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
                 "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
+        }
+        val elementToIncrement = when (kind) {
+            CHAR -> ".code"
+            else -> ""
+        }
+        val incrementToElement = when (kind) {
+            CHAR -> ".toChar()"
+            else -> ""
         }
 
         out.println(
@@ -73,7 +81,7 @@ public open class $progression
     /**
      * The last element in the progression.
      */
-    public val last: $t = getProgressionLastElement(start.to$incrementType(), endInclusive.to$incrementType(), step).to$t()
+    public val last: $t = getProgressionLastElement(start$elementToIncrement, endInclusive$elementToIncrement, step)$incrementToElement
 
     /**
      * The step of the progression.
@@ -82,7 +90,12 @@ public open class $progression
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     *
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -96,7 +109,7 @@ public open class $progression
     companion object {
         /**
          * Creates $progression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *

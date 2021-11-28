@@ -1,12 +1,13 @@
+// FIR_IDENTICAL
 //KT-3772 Invoke and overload resolution ambiguity
 package bar
 
 open class A {
-    public operator fun invoke(<!UNUSED_PARAMETER!>f<!>: A.() -> Unit) {}
+    public operator fun invoke(f: A.() -> Unit) {}
 }
 
 class B {
-    public operator fun invoke(<!UNUSED_PARAMETER!>f<!>: B.() -> Unit) {}
+    public operator fun invoke(f: B.() -> Unit) {}
 }
 
 open class C

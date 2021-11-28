@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 open class KotlinJsTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsTarget, KotlinJsCompilation>(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     var irPreset: KotlinJsIrTargetPreset? = null
         internal set
@@ -56,7 +55,7 @@ open class KotlinJsTargetPreset(
             }
             this.isMpp = this@KotlinJsTargetPreset.isMpp
 
-            project.whenEvaluated {
+            project.runProjectConfigurationHealthCheckWhenEvaluated {
                 if (!isBrowserConfigured && !isNodejsConfigured) {
                     project.logger.warn(
                         """
@@ -84,9 +83,7 @@ open class KotlinJsTargetPreset(
         }
     }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
-        kotlinPluginVersion
-    )
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator()
 
     override fun getName(): String {
         return lowerCamelCaseName(
@@ -96,7 +93,7 @@ open class KotlinJsTargetPreset(
     }
 
     override fun createCompilationFactory(forTarget: KotlinJsTarget): KotlinJsCompilationFactory {
-        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { (forTarget as KotlinJsTarget).irTarget })
+        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { forTarget.irTarget })
     }
 
     companion object {
@@ -105,11 +102,9 @@ open class KotlinJsTargetPreset(
 }
 
 class KotlinJsSingleTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinJsTargetPreset(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     override val isMpp: Boolean
         get() = false
@@ -125,7 +120,5 @@ class KotlinJsSingleTargetPreset(
                 ?.decapitalize()
         }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
-        kotlinPluginVersion
-    )
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator()
 }

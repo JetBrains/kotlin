@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.jvm.abi
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 object JvmAbiConfigurationKeys {
-    val OUTPUT_DIR: CompilerConfigurationKey<String> =
-        CompilerConfigurationKey.create<String>(JvmAbiCommandLineProcessor.OUTPUT_DIR_OPTION.description)
+    val OUTPUT_PATH: CompilerConfigurationKey<String> =
+        CompilerConfigurationKey.create<String>(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.description)
 
+    val LEGACY_ABI_GEN: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create<Boolean>(JvmAbiCommandLineProcessor.LEGACY_ABI_GEN_OPTION.description)
 }

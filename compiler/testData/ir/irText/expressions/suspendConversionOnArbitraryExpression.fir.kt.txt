@@ -1,7 +1,7 @@
 fun useSuspend(sfn: SuspendFunction0<Unit>) {
 }
 
-fun useSuspendExt(sfn: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<Int, Unit>) {
+fun useSuspendExt(sfn: @ExtensionFunctionType SuspendFunction1<Int, Unit>) {
 }
 
 fun useSuspendArg(sfn: SuspendFunction1<Int, Unit>) {
@@ -10,7 +10,7 @@ fun useSuspendArg(sfn: SuspendFunction1<Int, Unit>) {
 fun <T : Any?> useSuspendArgT(sfn: SuspendFunction1<T, Unit>) {
 }
 
-fun <T : Any?> useSuspendExtT(sfn: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<T, Unit>) {
+fun <T : Any?> useSuspendExtT(sfn: @ExtensionFunctionType SuspendFunction1<T, Unit>) {
 }
 
 fun produceFun(): Function0<Unit> {
@@ -40,9 +40,9 @@ fun testSimpleNonVal() {
   })
 }
 
-fun testExtAsExt(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendExt(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: Int) {
+    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: Int) {
       callee.invoke(p1 = p0)
     }
 
@@ -50,9 +50,9 @@ fun testExtAsExt(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int
   })
 }
 
-fun testExtAsSimple(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendArg(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: Int) {
+    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: Int) {
       callee.invoke(p1 = p0)
     }
 
@@ -90,9 +90,9 @@ fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
   })
 }
 
-fun testExtAsSimpleT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendArgT<Int>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: T) {
+    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: T) {
       callee.invoke(p1 = p0)
     }
 
@@ -100,9 +100,9 @@ fun testExtAsSimpleT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1
   })
 }
 
-fun testExtAsExtT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendExtT<Int>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: T) {
+    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: T) {
       callee.invoke(p1 = p0)
     }
 
@@ -130,9 +130,9 @@ fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
   })
 }
 
-fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>) {
+fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>) {
   useSuspendArgT<S>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>.suspendConversion(p0: T) {
+    local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion(p0: T) {
       callee.invoke(p1 = p0)
     }
 
@@ -140,9 +140,9 @@ fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType @ExtensionFunctionTy
   })
 }
 
-fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>) {
+fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>) {
   useSuspendExtT<S>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>.suspendConversion(p0: T) {
+    local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion(p0: T) {
       callee.invoke(p1 = p0)
     }
 

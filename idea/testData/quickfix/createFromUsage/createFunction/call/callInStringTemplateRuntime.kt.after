@@ -1,9 +1,0 @@
-// "Create function 'foo'" "true"
-
-fun test() {
-    println("a = ${foo()}")
-}
-
-fun foo(): String {
-    TODO("Not yet implemented")
-}

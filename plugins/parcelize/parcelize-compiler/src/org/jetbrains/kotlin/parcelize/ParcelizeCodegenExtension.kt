@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.descriptors.*
@@ -17,6 +16,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeResolveExtension.Companion.createMethod
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.parcelize.serializers.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -220,7 +223,7 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
 
         createMethod(
             creatorClass, CREATE_FROM_PARCEL, Modality.FINAL,
-            parcelableClass.defaultType, "in" to parcelClassType
+            parcelableClass.defaultType.replaceArgumentsWithStarProjections(), "in" to parcelClassType
         ).write(codegen, overriddenFunction) {
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
@@ -328,7 +331,7 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
         codegen.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
         codegenForCreator.v.visitInnerClass(creatorAsmType.internalName, containerAsmType.internalName, "Creator", ACC_PUBLIC or ACC_STATIC)
 
-        writeSyntheticClassMetadata(classBuilderForCreator, codegen.state)
+        writeSyntheticClassMetadata(classBuilderForCreator, codegen.state, InlineUtil.isInPublicInlineScope(parcelableClass))
 
         writeCreatorConstructor(codegenForCreator, creatorClass, creatorAsmType)
         writeNewArrayMethod(codegenForCreator, parcelableClass, parcelableCreatorClassType, creatorClass, parcelerObject)
@@ -368,12 +371,12 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
 
         createMethod(
             creatorClass, NEW_ARRAY, Modality.FINAL,
-            builtIns.getArrayType(Variance.INVARIANT, parcelableClass.defaultType),
+            builtIns.getArrayType(Variance.INVARIANT, parcelableClass.defaultType.replaceArgumentsWithStarProjections()),
             "size" to builtIns.intType
         ).write(codegen, overriddenFunction) {
             if (parcelerObject != null) {
                 val newArrayMethod = parcelerObject.unsubstitutedMemberScope
-                    .getContributedFunctions(Name.identifier("newArray"), NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+                    .getContributedFunctions(NEW_ARRAY_NAME, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
                     .firstOrNull {
                         it.typeParameters.isEmpty()
                                 && it.kind == CallableMemberDescriptor.Kind.DECLARATION

@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // FILE: promise.kt
 import helpers.*

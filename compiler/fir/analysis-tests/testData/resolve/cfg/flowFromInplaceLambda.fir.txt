@@ -1,0 +1,88 @@
+FILE: flowFromInplaceLambda.kt
+    public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun <K> select(vararg x: R|kotlin/Array<out K>|): R|K| {
+        ^select R|<local>/x|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
+    }
+    public final fun <T> id(x: R|T|): R|T| {
+        ^id R|<local>/x|
+    }
+    public final fun <K> materialize(): R|K| {
+        ^materialize Null(null)!!
+    }
+    public final fun <R> myRun(block: R|() -> R|): R|R| {
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )
+        R|/takeInt|(R|<local>/x|)
+    }
+    public final fun test_2(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/y|.<Unresolved name: inc>#()
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )), (R|<local>/y| as R|kotlin/Int|), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/x|.R|kotlin/Int.inc|()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        )))
+        R|/takeInt|(R|<local>/x|)
+        R|/takeInt|(R|<local>/y|)
+        R|/takeInt|(R|<local>/a|)
+    }
+    public final fun test_3(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/y|.<Unresolved name: inc>#()
+            (R|<local>/x| as R|kotlin/Int|)
+            ^ R|/materialize|<R|kotlin/Int|>()
+        }
+        )), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            (R|<local>/y| as R|kotlin/Int|)
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        )))
+        R|/takeInt|(R|<local>/x|)
+        R|/takeInt|(R|<local>/y|)
+        R|/takeInt|(R|<local>/a|)
+    }
+    public final fun test_4(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|/id|<R|kotlin/Int|>(R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            R|<local>/y|.<Unresolved name: inc>#()
+            ^ (R|<local>/x| as R|kotlin/Int|)
+        }
+        )), (R|<local>/y| as R|kotlin/Int|), R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            R|<local>/x|.<Unresolved name: inc>#()
+            R|<local>/y|.R|kotlin/Int.inc|()
+            ^ Int(1)
+        }
+        )))
+        <Inapplicable(INAPPLICABLE): /takeInt>#(R|<local>/x|)
+        R|/takeInt|(R|<local>/y|)
+        R|/takeInt|(R|<local>/a|)
+    }
+    public final fun test_5(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = R|/select|<R|kotlin/Int|>(vararg(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/materialize|<R|kotlin/Int|>()
+        }
+        ), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/materialize|<R|kotlin/Int|>()
+        }
+        )))
+        R|/takeInt|(R|<local>/x|)
+    }
+    public final fun test_6(): R|kotlin/Unit| {
+        lval x: R|kotlin/String| = R|/id|<R|kotlin/String|>(R|/myRun|<R|kotlin/String|>(<L> = myRun@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ R|/materialize|<R|kotlin/String|>()
+            }
+            )
+        }
+        ))
+    }

@@ -3,7 +3,7 @@ public final class TestClass$Companion {
     // source: 'jvmStaticDeprecatedProperty.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic deprecated static @kotlin.Deprecated @kotlin.jvm.JvmStatic method getA$annotations(): void
+    public synthetic deprecated static @kotlin.Deprecated(message="") @kotlin.jvm.JvmStatic method getA$annotations(): void
     public deprecated final method getA(): int
     public final inner class TestClass$Companion
 }
@@ -27,7 +27,7 @@ public final class TestInterface$Companion {
     private deprecated final static field a: int
     static method <clinit>(): void
     private method <init>(): void
-    public synthetic deprecated static @kotlin.Deprecated @kotlin.jvm.JvmStatic method getA$annotations(): void
+    public synthetic deprecated static @kotlin.Deprecated(message="") @kotlin.jvm.JvmStatic method getA$annotations(): void
     public deprecated final method getA(): int
     public final inner class TestInterface$Companion
 }
@@ -48,6 +48,6 @@ public final class TestObject {
     private deprecated final static field a: int
     static method <clinit>(): void
     private method <init>(): void
-    public synthetic deprecated static @kotlin.Deprecated @kotlin.jvm.JvmStatic method getA$annotations(): void
+    public synthetic deprecated static @kotlin.Deprecated(message="") @kotlin.jvm.JvmStatic method getA$annotations(): void
     public deprecated final static method getA(): int
 }

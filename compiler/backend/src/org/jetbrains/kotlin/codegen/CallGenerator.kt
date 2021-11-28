@@ -15,12 +15,11 @@ enum class ValueKind {
     GENERAL,
     GENERAL_VARARG,
     DEFAULT_PARAMETER,
+    DEFAULT_INLINE_PARAMETER,
     DEFAULT_MASK,
     METHOD_HANDLE_IN_DEFAULT,
-    CAPTURED,
-    DEFAULT_LAMBDA_CAPTURED_PARAMETER,
-    NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND,
-    NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
+    READ_OF_INLINE_LAMBDA_FOR_INLINE_SUSPEND_PARAMETER,
+    READ_OF_OBJECT_FOR_INLINE_SUSPEND_PARAMETER
 }
 
 interface CallGenerator {
@@ -40,13 +39,9 @@ interface CallGenerator {
             }
         }
 
-        override fun processAndPutHiddenParameters(justProcess: Boolean) {
+        override fun processHiddenParameters() {}
 
-        }
-
-        override fun putHiddenParamsIntoLocals() {
-
-        }
+        override fun putHiddenParamsIntoLocals() {}
 
         override fun genValueAndPut(
             valueParameterDescriptor: ValueParameterDescriptor?,
@@ -141,9 +136,8 @@ interface CallGenerator {
         paramIndex: Int
     )
 
-    fun processAndPutHiddenParameters(justProcess: Boolean)
+    fun processHiddenParameters()
 
-    /*should be called if justProcess = true in processAndPutHiddenParameters*/
     fun putHiddenParamsIntoLocals()
 
     fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>)

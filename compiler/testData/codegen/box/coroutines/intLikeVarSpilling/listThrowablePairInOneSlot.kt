@@ -1,7 +1,6 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
 // FULL_RUNTIME
-// KJS_WITH_FULL_RUNTIME
 
 class JarFile {
     fun entries() = listOf<String>()

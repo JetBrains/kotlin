@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.kotlin.utils.compact
+import org.jetbrains.kotlin.utils.createStringInterner
 import org.jetbrains.org.objectweb.asm.Type
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -36,8 +36,7 @@ import java.text.StringCharacterIterator
  * So please, do not convert it to object
  */
 class BinaryClassSignatureParser {
-
-    private val canonicalNameInterner = StringInterner()
+    private val canonicalNameInterner = createStringInterner()
 
     fun parseTypeParametersDeclaration(signature: CharacterIterator, context: ClassifierResolutionContext): List<JavaTypeParameter> {
         if (signature.current() != '<') {
@@ -66,13 +65,20 @@ class BinaryClassSignatureParser {
 
         // postpone list allocation till a second bound is seen; ignore sole Object bound
         val bounds: MutableList<JavaClassifierType> = SmartList()
+        var hasImplicitObjectBound = false
         while (signature.current() == ':') {
             signature.next()
-            val bound = parseClassifierRefSignature(signature, context) ?: continue
-            bounds.add(bound)
+
+            // '::' means that the implicit object bound is between ':'
+            if (signature.current() == ':') {
+                hasImplicitObjectBound = true
+                continue
+            }
+
+            bounds.add(parseClassifierRefSignature(signature, context) ?: continue)
         }
 
-        return BinaryJavaTypeParameter(Name.identifier(parameterName), bounds)
+        return BinaryJavaTypeParameter(Name.identifier(parameterName), bounds, hasImplicitObjectBound)
     }
 
     fun parseClassifierRefSignature(signature: CharacterIterator, context: ClassifierResolutionContext): JavaClassifierType? {
@@ -83,7 +89,7 @@ class BinaryClassSignatureParser {
         }
     }
 
-    private fun parseTypeVariableRefSignature(signature: CharacterIterator, context: ClassifierResolutionContext): JavaClassifierType? {
+    private fun parseTypeVariableRefSignature(signature: CharacterIterator, context: ClassifierResolutionContext): JavaClassifierType {
         val id = StringBuilder()
 
         signature.next()
@@ -105,8 +111,8 @@ class BinaryClassSignatureParser {
     }
 
     private fun parseParameterizedClassRefSignature(
-            signature: CharacterIterator,
-            context: ClassifierResolutionContext
+        signature: CharacterIterator,
+        context: ClassifierResolutionContext
     ): JavaClassifierType {
         val canonicalName = StringBuilder()
 
@@ -120,12 +126,10 @@ class BinaryClassSignatureParser {
                 signature.next()
                 do {
                     group.add(parseClassOrTypeVariableElement(signature, context))
-                }
-                while (signature.current() != '>')
+                } while (signature.current() != '>')
 
                 argumentGroups.add(group)
-            }
-            else if (c != ' ') {
+            } else if (c != ' ') {
                 canonicalName.append(c)
             }
             signature.next()
@@ -199,21 +203,21 @@ class BinaryClassSignatureParser {
     fun mapAsmType(type: Type, context: ClassifierResolutionContext) = parseTypeString(StringCharacterIterator(type.descriptor), context)
 
     private fun parseTypeWithoutVarianceAndArray(signature: CharacterIterator, context: ClassifierResolutionContext) =
-            when (signature.current()) {
-                'L' -> parseParameterizedClassRefSignature(signature, context)
-                'T' -> parseTypeVariableRefSignature(signature, context)
+        when (signature.current()) {
+            'L' -> parseParameterizedClassRefSignature(signature, context)
+            'T' -> parseTypeVariableRefSignature(signature, context)
 
-                'B' -> parsePrimitiveType(signature, PrimitiveType.BYTE)
-                'C' -> parsePrimitiveType(signature, PrimitiveType.CHAR)
-                'D' -> parsePrimitiveType(signature, PrimitiveType.DOUBLE)
-                'F' -> parsePrimitiveType(signature, PrimitiveType.FLOAT)
-                'I' -> parsePrimitiveType(signature, PrimitiveType.INT)
-                'J' -> parsePrimitiveType(signature, PrimitiveType.LONG)
-                'Z' -> parsePrimitiveType(signature, PrimitiveType.BOOLEAN)
-                'S' -> parsePrimitiveType(signature, PrimitiveType.SHORT)
-                'V' -> parsePrimitiveType(signature, null)
-                else -> null
-            }
+            'B' -> parsePrimitiveType(signature, PrimitiveType.BYTE)
+            'C' -> parsePrimitiveType(signature, PrimitiveType.CHAR)
+            'D' -> parsePrimitiveType(signature, PrimitiveType.DOUBLE)
+            'F' -> parsePrimitiveType(signature, PrimitiveType.FLOAT)
+            'I' -> parsePrimitiveType(signature, PrimitiveType.INT)
+            'J' -> parsePrimitiveType(signature, PrimitiveType.LONG)
+            'Z' -> parsePrimitiveType(signature, PrimitiveType.BOOLEAN)
+            'S' -> parsePrimitiveType(signature, PrimitiveType.SHORT)
+            'V' -> parsePrimitiveType(signature, null)
+            else -> null
+        }
 
     private fun parsePrimitiveType(signature: CharacterIterator, primitiveType: PrimitiveType?): JavaType {
         signature.next()

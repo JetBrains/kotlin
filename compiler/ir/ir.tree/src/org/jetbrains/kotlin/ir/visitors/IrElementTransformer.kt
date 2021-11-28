@@ -81,6 +81,14 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
 
     override fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
     override fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
+    override fun visitConstantValue(expression: IrConstantValue, data: D) : IrConstantValue {
+        expression.transformChildren(this, data)
+        return expression
+    }
+
+    override fun visitConstantObject(expression: IrConstantObject, data: D) = visitConstantValue(expression, data)
+    override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: D) = visitConstantValue(expression, data)
+    override fun visitConstantArray(expression: IrConstantArray, data: D) = visitConstantValue(expression, data)
 
     override fun visitSpreadElement(spread: IrSpreadElement, data: D): IrSpreadElement {
         spread.transformChildren(this, data)
@@ -102,7 +110,9 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: D) = visitDeclarationReference(expression, data)
     override fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     override fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
-    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D): IrElement = visitExpression(expression, data)
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D): IrElement =
+        visitDeclarationReference(expression, data)
+
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): IrElement = visitMemberAccess(expression, data)
     override fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitConstructorCall(expression: IrConstructorCall, data: D): IrElement = visitFunctionAccess(expression, data)

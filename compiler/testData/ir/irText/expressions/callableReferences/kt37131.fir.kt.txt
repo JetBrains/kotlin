@@ -20,9 +20,15 @@ fun use(fn: Function0<Any>): Any {
 }
 
 fun testFn(): Any {
-  return use(fn = ::foo)
+  return use(fn = local fun foo(): String {
+    return foo()
+  }
+)
 }
 
 fun testCtor(): Any {
-  return use(fn = C::<init>)
+  return use(fn = local fun <init>(): C {
+    return C()
+  }
+)
 }

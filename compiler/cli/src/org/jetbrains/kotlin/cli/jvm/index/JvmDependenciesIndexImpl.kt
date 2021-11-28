@@ -20,10 +20,10 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.IntArrayList
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.IntArrayList
 import java.util.*
 
 // speeds up finding files/classes in classpath/java source roots
@@ -45,7 +45,8 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         // indices of roots that are known to contain this package
         // if this list contains [1, 3, 5] then roots with indices 1, 3 and 5 are known to contain this package, 2 and 4 are known not to (no information about roots 6 or higher)
         // if this list contains maxIndex that means that all roots containing this package are known
-        val rootIndices = IntArrayList(2)
+        @Suppress("DEPRECATION") // TODO: fix deprecation
+        val rootIndices = com.intellij.util.containers.IntArrayList(2)
     }
 
     // root "Cache" object corresponds to DefaultPackage which exists in every root. Roots with non-default fqname are also listed here but
@@ -121,7 +122,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         // NOTE: indices manipulation instead of using caches.reversed() is here for performance reasons
         for (cacheIndex in caches.lastIndex downTo 0) {
             val cacheRootIndices = caches[cacheIndex].rootIndices
-            for (i in 0..cacheRootIndices.size() - 1) {
+            for (i in 0 until cacheRootIndices.size()) {
                 val rootIndex = cacheRootIndices[i]
                 if (rootIndex <= processedRootsUpTo) continue // roots with those indices have been processed by now
 
@@ -137,7 +138,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
                     }
                 }
             }
-            processedRootsUpTo = if (cacheRootIndices.isEmpty) processedRootsUpTo else cacheRootIndices.get(cacheRootIndices.size() - 1)
+            processedRootsUpTo = if (cacheRootIndices.isEmpty) processedRootsUpTo else cacheRootIndices[cacheRootIndices.size() - 1]
         }
 
         if (request is FindClassRequest) {
@@ -156,7 +157,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         cachesPath: List<Cache>
     ): VirtualFile? {
         if (rootIndex >= maxIndex) {
-            for (i in (fillCachesAfter + 1)..(cachesPath.size - 1)) {
+            for (i in (fillCachesAfter + 1) until cachesPath.size) {
                 // we all know roots that contain this package by now
                 cachesPath[i].rootIndices.add(maxIndex)
                 cachesPath[i].rootIndices.trimToSize()

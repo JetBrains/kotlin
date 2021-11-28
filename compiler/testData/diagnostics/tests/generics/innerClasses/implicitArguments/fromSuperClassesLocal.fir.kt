@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
 
@@ -10,7 +9,7 @@ private fun <E> foobar() = {
             fun a() = A<E, X, Y, Z>()
         }
 
-        typealias LocalAlias<W> = <!UNRESOLVED_REFERENCE!>A<E, X, Y, W><!>
+        typealias LocalAlias<W> = A<E, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, W>
     }
 
     class Derived : LocalOuter<Double, Short>() {
@@ -27,7 +26,7 @@ private fun noParameters() = {
             fun a() = A<Any, X, Y, Z>()
         }
 
-        typealias LocalAlias2<W> = <!UNRESOLVED_REFERENCE!>A<Any, X, Y, W><!>
+        typealias LocalAlias2<W> = A<Any, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, W>
     }
 
     class Derived2 : LocalOuter2<Double, Short>() {
@@ -42,14 +41,14 @@ fun test() {
     var x = foobar<String>()
     x = foobar<String>()
 
-    x().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<String, Double, Short, Long>>() }
-    x().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<String, Double, Short, Char>>() }
+    x().foo().a() checkType { _<A<String, Double, Short, Long>>() }
+    x().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<String, Double, Short, Char>>() }
 
-    x = foobar<Int>()
+    x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
 
     var y = noParameters()
     y = noParameters()
 
     y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
-    y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<Any, Double, Short, Char>>() }
+    y().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<Any, Double, Short, Char>>() }
 }

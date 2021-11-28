@@ -32,12 +32,12 @@ class MutableVariableWithConstraints private constructor(
         }
 
     // see @OnlyInputTypes annotation
-    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<KotlinTypeMarker> {
+    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<Pair<KotlinTypeMarker, ConstraintKind>> {
         return with(utilContext) {
             mutableConstraints
                 .mapNotNullTo(SmartList()) {
                     if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
-                        it.type.unCapture()
+                        it.type.unCapture() to it.kind
                     else null
                 }
         }
@@ -46,6 +46,8 @@ class MutableVariableWithConstraints private constructor(
     private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 
     private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
+
+    val rawConstraintsCount get() = mutableConstraints.size
 
     // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
     // the second element of pair is a flag whether a constraint was added in fact
@@ -104,8 +106,8 @@ class MutableVariableWithConstraints private constructor(
 
     // This method should be used only for transaction in constraint system
     // shouldRemove should give true only for tail elements
-    internal fun removeLastConstraints(shouldRemove: (Constraint) -> Boolean) {
-        mutableConstraints.trimToSize(mutableConstraints.indexOfLast { !shouldRemove(it) } + 1)
+    internal fun removeLastConstraints(sinceIndex: Int) {
+        mutableConstraints.trimToSize(sinceIndex)
         if (simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints = null
         }
@@ -123,6 +125,16 @@ class MutableVariableWithConstraints private constructor(
         // Constraints from declared upper bound are quite special -- they aren't considered as a proper ones
         // In other words, user-defined constraints have "higher" priority and here we're trying not to loose them
         if (old.position.from is DeclaredUpperBoundConstraintPosition<*> && new.position.from !is DeclaredUpperBoundConstraintPosition<*>)
+            return false
+
+        /*
+         * We discriminate upper expected type constraints during finding a result type to fix variable (see ResultTypeResolver.kt):
+         * namely, we don't intersect the expected type with other upper constraints' types to prevent cases like this:
+         *  fun <T : String> materialize(): T = null as T
+         *  val bar: Int = materialize() // T is inferred into String & Int without discriminating upper expected type constraints
+         * So here we shouldn't lose upper non-expected type constraints.
+         */
+        if (old.position.from is ExpectedTypeConstraintPosition<*> && new.position.from !is ExpectedTypeConstraintPosition<*> && old.kind.isUpper() && new.kind.isUpper())
             return false
 
         return when (old.kind) {
@@ -202,6 +214,8 @@ class MutableVariableWithConstraints private constructor(
 internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
+    override val missedConstraints: MutableList<Pair<IncorporationConstraintPosition, MutableList<Pair<TypeVariableMarker, Constraint>>>> =
+        SmartList()
     override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<ConstraintSystemError> = SmartList()

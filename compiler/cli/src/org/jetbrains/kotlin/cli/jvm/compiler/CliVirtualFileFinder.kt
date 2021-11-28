@@ -35,6 +35,10 @@ class CliVirtualFileFinder(
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
 
+    override fun findSourceOrBinaryVirtualFile(classId: ClassId) =
+        findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
+            ?: findSourceClass(classId, classId.relativeClassName.asString() + ".java")
+
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
 
@@ -61,8 +65,11 @@ class CliVirtualFileFinder(
         return findBinaryClass(classId, BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName))?.inputStream
     }
 
-    private fun findBinaryClass(classId: ClassId, fileName: String): VirtualFile? =
-        index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
+    private fun findClass(classId: ClassId, fileName: String, rootType: Set<JavaRoot.RootType>) =
+        index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
             dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
         }?.takeIf { it in scope }
+
+    private fun findBinaryClass(classId: ClassId, fileName: String) = findClass(classId, fileName, JavaRoot.OnlyBinary)
+    private fun findSourceClass(classId: ClassId, fileName: String) = findClass(classId, fileName, JavaRoot.OnlySource)
 }

@@ -25,6 +25,8 @@ public fun invOut_In(/*0*/ x: Inv3<in kotlin.Int> /* = Inv<in kotlin.Int> */): I
 public fun invOut_Inv(/*0*/ x: Inv3<kotlin.Int> /* = Inv<out kotlin.Int> */): Inv3<kotlin.Int> /* = Inv<out kotlin.Int> */
 public fun invOut_Out(/*0*/ x: Inv3<out kotlin.Int> /* = Inv<out kotlin.Int> */): Inv3<out kotlin.Int> /* = Inv<out kotlin.Int> */
 public fun invOut_Star(/*0*/ x: Inv3<*> /* = Inv<*> */): Inv3<*> /* = Inv<*> */
+public fun nested_conflicting_type_argument(/*0*/ x: In<Out<in kotlin.Int>>): In<[ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]>
+public fun nested_redundant_type_argument(/*0*/ x: In<Out<out kotlin.Int>>): In<Out<out kotlin.Int>>
 public fun outIn_In(/*0*/ x: Out2<in kotlin.Int> /* = Out<in kotlin.Int> */): [ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]
 public fun outIn_Inv(/*0*/ x: Out2<kotlin.Int> /* = Out<in kotlin.Int> */): [ERROR : Inconsistent type: Out<in Int> (0 parameter has declared variance: out, but argument variance is in)]
 public fun outIn_Out(/*0*/ x: Out2<out kotlin.Int> /* = Out<out kotlin.Int> */): Out2<out kotlin.Int> /* = Out<out kotlin.Int> */
@@ -70,3 +72,4 @@ public typealias Out1</*0*/ T> = Out<T>
 public typealias Out2</*0*/ T> = Out<in T>
 public typealias Out3</*0*/ T> = Out<out T>
 public typealias Out4</*0*/ T> = Out<*>
+

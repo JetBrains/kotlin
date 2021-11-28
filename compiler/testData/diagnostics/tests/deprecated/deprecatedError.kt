@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @Deprecated("alas", level = DeprecationLevel.ERROR)
 fun foo() {}

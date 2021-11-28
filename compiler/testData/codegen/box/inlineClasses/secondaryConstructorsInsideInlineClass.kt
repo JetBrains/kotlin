@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-@file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
+@file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
 
 var global = "wrong"
 
-inline class Foo(val x: String) {
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val x: String) {
     constructor(y: Int) : this(y.toString())
     constructor(z: Long) : this(z.toInt() + 1)
     constructor(other: Char) : this(other.toInt().toString()) {

@@ -1,6 +1,0 @@
-Resolve target: value-parameter p: kotlin.Any? smart-cast to kotlin.Any
-----------------------------------------------
-fun foo(p: Any?) {
-    if (!(p != null)) return
-    <caret>p.hashCode()
-}

@@ -1,0 +1,23 @@
+FILE: untouchedReturnInIf.kt
+    public abstract interface Box<T> : R|kotlin/Any| {
+    }
+    public final fun <T> foo(nextFunction: R|(T) -> T|): R|Box<T>| {
+        ^foo Null(null)!!
+    }
+    public final fun leaves(value: R|kotlin/String|, forward: R|kotlin/Boolean|): R|Box<kotlin/String>| {
+        when () {
+            R|<local>/forward| ->  {
+                ^leaves R|/foo|<R|kotlin/String|>(<L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+                    ^ String()
+                }
+                )
+            }
+            else ->  {
+                ^leaves R|/foo|<R|kotlin/String|>(<L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+                    ^ String()
+                }
+                )
+            }
+        }
+
+    }

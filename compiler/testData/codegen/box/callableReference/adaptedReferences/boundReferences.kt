@@ -1,7 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 

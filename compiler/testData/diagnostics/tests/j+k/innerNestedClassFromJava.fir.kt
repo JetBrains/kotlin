@@ -25,8 +25,8 @@ package b
 fun f() {
   val c1: a.M.Inner
   val c2: a.M.Nested
-  val c3: a.M.PrInner
-  val c4: a.M.PrNested
+  val c3: <!INVISIBLE_REFERENCE!>a.M.PrInner<!>
+  val c4: <!INVISIBLE_REFERENCE!>a.M.PrNested<!>
 
 }
 

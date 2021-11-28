@@ -191,3 +191,16 @@ public annotation class JsQualifier(val value: String)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
 @SinceKotlin("1.3")
 public actual annotation class JsExport
+
+/**
+ * Forces a top-level property to be initialized eagerly, opposed to lazily on the first access to file and/or property.
+ */
+@ExperimentalStdlibApi
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.PROPERTY)
+@SinceKotlin("1.6")
+@Deprecated("This annotation is a temporal migration assistance and may be removed in the future releases, please consider filing an issue about the case where it is needed")
+public annotation class EagerInitialization
+
+@Deprecated("It is necessary until bootstrap update", level = DeprecationLevel.HIDDEN)
+internal annotation class JsEagerInitialization

@@ -1,0 +1,7 @@
+FILE: extensionLambdaInDefaultArgument.kt
+    public final fun test(f: R|kotlin/String.() -> kotlin/Int| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        ^ this@R|special/anonymous|.R|kotlin/String.length|
+    }
+    ): R|kotlin/Int| {
+        ^test R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(String())
+    }

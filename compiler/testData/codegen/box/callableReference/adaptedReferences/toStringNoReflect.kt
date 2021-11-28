@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 package test
 
 import kotlin.test.assertEquals

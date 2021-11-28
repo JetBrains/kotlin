@@ -20,3 +20,5 @@ fun setRwProp(v: Int) {}
 fun foo(x: List<String>) {}
 @JvmName("fooInt")
 fun foo(x: List<Int>) {}
+
+// FIR_COMPARISON

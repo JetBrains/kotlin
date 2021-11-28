@@ -9,10 +9,10 @@
 fun case_1(x: Any) {
     if (x is Interface1) {
         if (x is Interface2) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>.itest()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>.itest1()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>.itest2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface1 & Interface2")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface1 & Interface2")!>x<!>.itest()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface1 & Interface2")!>x<!>.itest1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface1 & Interface2")!>x<!>.itest2()
         }
     }
 }
@@ -24,8 +24,8 @@ fun case_1(x: Any) {
 fun case_2(x: Any) {
     if (x is Interface2) {
         if (x is Interface1) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any")!>x<!>.itest0()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface2 & Interface1")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface2 & Interface1")!>x<!>.itest0()
         }
     }
 }
@@ -37,8 +37,8 @@ fun case_2(x: Any) {
 fun case_3(x: Any) {
     if (x is Interface1) {
         if (x is Interface2) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>.itest000()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface1 & Interface2")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface1 & Interface2")!>x<!>.itest000()
         }
     }
 }
@@ -50,8 +50,8 @@ fun case_3(x: Any) {
 fun case_4(x: Any) {
     if (x is Interface2) {
         if (x is Interface1) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any")!>x<!>.itest0000()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface2 & Interface1")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & Interface2 & Interface1")!>x<!>.itest0000()
         }
     }
 }

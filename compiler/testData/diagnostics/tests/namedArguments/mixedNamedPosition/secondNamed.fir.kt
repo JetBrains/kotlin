@@ -16,3 +16,4 @@ fun main() {
     <!INAPPLICABLE_CANDIDATE!>foo<!>(b = "first", a = "a", "second") // prints "a, second"
     <!INAPPLICABLE_CANDIDATE!>reformat<!>(normalizeCase = "first",str = "","second",false,true, 's' )
 }
+

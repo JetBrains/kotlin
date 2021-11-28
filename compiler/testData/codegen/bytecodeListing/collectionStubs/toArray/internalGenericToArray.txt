@@ -15,6 +15,6 @@ public final class InternalGenericToArray {
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
-    public final @org.jetbrains.annotations.NotNull method toArray$test_module(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
+    public final @org.jetbrains.annotations.NotNull method toArray$main(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
     public method toArray(): java.lang.Object[]
 }

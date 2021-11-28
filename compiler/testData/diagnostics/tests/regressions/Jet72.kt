@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// WITH_EXTENDED_CHECKERS
 // JET-72 Type inference doesn't work when iterating over ArrayList
 
 import java.util.ArrayList
@@ -12,7 +14,7 @@ fun test(room : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>) {
   for(item: Item? in items) {
     if (item?.room === room) {
       // item?.room is not null
-      System.out.println("You see " + item<!UNNECESSARY_SAFE_CALL!>?.<!>name)
+      System.out.println("You see " + <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>item<!UNNECESSARY_SAFE_CALL!>?.<!>name<!>)
     }
   }
 }

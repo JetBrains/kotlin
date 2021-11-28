@@ -19,20 +19,23 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 
 fun writeKotlinMetadata(
     cb: ClassBuilder,
     state: GenerationState,
     kind: KotlinClassHeader.Kind,
+    publicAbi: Boolean,
     extraFlags: Int,
     action: (AnnotationVisitor) -> Unit
 ) {
     val av = cb.newAnnotation(JvmAnnotationNames.METADATA_DESC, true)
     av.visit(JvmAnnotationNames.METADATA_VERSION_FIELD_NAME, state.metadataVersion.toArray())
-    av.visit(JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME, JvmBytecodeBinaryVersion.INSTANCE.toArray())
+    if (!state.metadataVersion.isAtLeast(1, 5, 0)) {
+        av.visit("bv", JvmBytecodeBinaryVersion.INSTANCE.toArray())
+    }
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)
     var flags = extraFlags
     if (state.languageVersionSettings.isPreRelease()) {
@@ -41,6 +44,9 @@ fun writeKotlinMetadata(
     if (state.languageVersionSettings.getFlag(JvmAnalysisFlags.strictMetadataVersionSemantics)) {
         flags = flags or JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG
     }
+    if (publicAbi) {
+        flags = flags or JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG
+    }
     if (flags != 0) {
         av.visit(JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME, flags)
     }
@@ -48,8 +54,8 @@ fun writeKotlinMetadata(
     av.visitEnd()
 }
 
-fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
-    writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { _ ->
+fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState, publicAbi: Boolean) {
+    writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { _ ->
         // Do nothing
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class My {
 
     lateinit var x: String

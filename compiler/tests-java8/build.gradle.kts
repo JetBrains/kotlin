@@ -6,15 +6,14 @@ plugins {
 }
 
 dependencies {
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(projectTests(":generators:test-generator"))
-    testRuntime(project(":kotlin-reflect"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(projectTests(":compiler:tests-common"))
+    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(projectTests(":generators:test-generator"))
+    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
-    testRuntime(intellijDep())
     testRuntimeOnly(intellijPluginDep("java"))
-    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }
 
 sourceSets {
@@ -23,7 +22,6 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
-    executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

@@ -1,3 +1,3 @@
 fun test() {
-    try { } catch (e: Exception = Exception()) { }
+    try { } catch (<!CATCH_PARAMETER_WITH_DEFAULT_VALUE!>e: Exception = Exception()<!>) { }
 }

@@ -70,6 +70,7 @@ class Outer<A> {
         class Nested<C>
         inner class Inner<D>
     }
+
     inner class Inner<E> {
         inner class Inner<F>
     }

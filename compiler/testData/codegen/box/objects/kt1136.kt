@@ -41,7 +41,7 @@ public class SomeClass() {
     }
 }
 
-public fun box(): String {
+fun box(): String {
     var obj = SomeClass()
     return if (obj.status == null) "OK" else {
         (obj.status as java.lang.Throwable).printStackTrace()

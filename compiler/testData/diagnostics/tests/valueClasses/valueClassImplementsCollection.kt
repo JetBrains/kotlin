@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// !SKIP_JAVAC
+// FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses
 
 package kotlin.jvm

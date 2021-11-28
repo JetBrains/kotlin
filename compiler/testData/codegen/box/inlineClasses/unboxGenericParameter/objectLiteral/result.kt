@@ -1,5 +1,4 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun <T> foo(a: Result<T>): T = bar(a, object : IFace<Result<T>, T> {
     override fun call(ic: Result<T>): T = ic.getOrThrow()

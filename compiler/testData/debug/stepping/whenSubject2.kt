@@ -26,45 +26,45 @@ fun box() {
 // it stops on the subject line first, then on the when line (line 4 and 12), and
 // then goes to the right branch.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:22 box
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:7 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:9 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:17 foo
 // test.kt:12 foo
 // test.kt:19 foo
 // test.kt:8 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:16 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:9 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:17 foo
 // test.kt:12 foo
 // test.kt:19 foo
@@ -73,42 +73,42 @@ fun box() {
 // test.kt:19 foo
 // test.kt:7 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:15 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:9 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:17 foo
 // test.kt:12 foo
 // test.kt:19 foo
 // test.kt:8 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:16 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:9 foo
 // test.kt:13 foo
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 foo
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:17 foo
 // test.kt:12 foo
 // test.kt:19 foo

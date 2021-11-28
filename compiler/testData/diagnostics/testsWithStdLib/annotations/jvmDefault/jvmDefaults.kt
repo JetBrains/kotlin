@@ -1,13 +1,14 @@
+// FIR_IDENTICAL
 // !JVM_DEFAULT_MODE: enable
 // !JVM_TARGET: 1.8
 
 public interface KInterface {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun test(): String {
         return "OK";
     }
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     val property: String
         get() = "OK"
 
@@ -23,7 +24,7 @@ public interface KInterface {
 // FILE: 1.kt
 
 interface KotlinInterface : KInterface {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun fooo() {
         super.test()
         super.property
@@ -42,7 +43,7 @@ interface KotlinInterface : KInterface {
         }
     }
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     val propertyy: String
         get() {
             super.test()
@@ -105,7 +106,7 @@ interface KotlinInterface : KInterface {
 }
 
 interface KotlinInterfaceIndirectInheritance : KotlinInterface {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     fun foooo() {
         super.test()
         super.property
@@ -124,7 +125,7 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
         }
     }
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     val propertyyy: String
         get() {
             super.test()

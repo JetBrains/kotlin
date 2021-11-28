@@ -24,7 +24,8 @@ fun KmAnnotation.writeAnnotation(strings: StringTable): ProtoBuf.Annotation.Buil
         }
     }
 
-fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): ProtoBuf.Annotation.Argument.Value.Builder =
+@OptIn(ExperimentalUnsignedTypes::class)
+fun KmAnnotationArgument.writeAnnotationArgument(strings: StringTable): ProtoBuf.Annotation.Argument.Value.Builder =
     ProtoBuf.Annotation.Argument.Value.newBuilder().apply {
         when (this@writeAnnotationArgument) {
             is KmAnnotationArgument.ByteValue -> {
@@ -33,7 +34,7 @@ fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): Proto
             }
             is KmAnnotationArgument.CharValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.CHAR
-                this.intValue = value.toLong()
+                this.intValue = value.code.toLong()
             }
             is KmAnnotationArgument.ShortValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.SHORT
@@ -76,7 +77,7 @@ fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): Proto
             }
             is KmAnnotationArgument.ULongValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.LONG
-                this.intValue = value
+                this.intValue = value.toLong()
                 this.flags = Flags.IS_UNSIGNED.toFlags(true)
             }
             is KmAnnotationArgument.StringValue -> {
@@ -85,7 +86,8 @@ fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): Proto
             }
             is KmAnnotationArgument.KClassValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.CLASS
-                this.classId = strings.getClassNameIndex(value)
+                this.classId = strings.getClassNameIndex(className)
+                this.arrayDimensionCount = this@writeAnnotationArgument.arrayDimensionCount
             }
             is KmAnnotationArgument.EnumValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.ENUM
@@ -94,11 +96,11 @@ fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): Proto
             }
             is KmAnnotationArgument.AnnotationValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION
-                this.annotation = value.writeAnnotation(strings).build()
+                this.annotation = this@writeAnnotationArgument.annotation.writeAnnotation(strings).build()
             }
             is KmAnnotationArgument.ArrayValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.ARRAY
-                for (element in value) {
+                for (element in elements) {
                     this.addArrayElement(element.writeAnnotationArgument(strings))
                 }
             }

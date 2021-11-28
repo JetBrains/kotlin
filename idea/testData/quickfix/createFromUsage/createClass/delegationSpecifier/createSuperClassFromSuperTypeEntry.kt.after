@@ -1,8 +1,0 @@
-// "Create class 'Unknown'" "true"
-class A : Unknown {
-    constructor()
-}
-
-open class Unknown {
-
-}

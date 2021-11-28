@@ -1,0 +1,5 @@
+KT element: KtPrefixExpression
+FIR element: FirFunctionCallImpl
+
+FIR element rendered:
+R|<local>/x|.R|kotlin/Boolean.not|()

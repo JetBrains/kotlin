@@ -134,7 +134,7 @@ obj
 //        assertThrows(NoSuchMethodException::class.java) {
 //            invocator!!.invokeMethod(res1, "fn", 3)
 //        }
-        val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
+        val res3 = invocator.invokeMethod(res1, "fn1", 3)
         Assert.assertEquals(6, res3)
     }
 
@@ -218,10 +218,10 @@ obj
         val times = generateSequence {
             val t0 = mxBeans.threadCpuTime()
 
-            val res1 = engine.eval(script)
+            engine.eval(script)
             val t1 = mxBeans.threadCpuTime()
 
-            val res2 = engine.eval("eval(\"\"\"$script\"\"\", bnd)")
+            engine.eval("eval(\"\"\"$script\"\"\", bnd)")
             val t2 = mxBeans.threadCpuTime()
 
             Triple(t1 - t0, t2 - t1, t2 - t1)

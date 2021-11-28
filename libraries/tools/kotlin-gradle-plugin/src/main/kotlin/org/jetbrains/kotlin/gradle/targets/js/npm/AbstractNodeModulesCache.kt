@@ -6,23 +6,39 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import java.io.File
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal abstract class AbstractNodeModulesCache(val nodeJs: NodeJsRootExtension) : AutoCloseable {
+internal abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNodeModulesCache.Parameters> {
+    internal interface Parameters : BuildServiceParameters {
+        val rootProjectDir: DirectoryProperty
+        val cacheDir: DirectoryProperty
+    }
+
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
 
-    val project: Project get() = nodeJs.rootProject
-    internal val dir = nodeJs.nodeModulesGradleCacheDir
-    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "9")
+    abstract val type: String
+
+    lateinit var fileHasher: FileHasher
+
+    private val cache by lazy {
+        ProcessedFilesCache(
+            fileHasher,
+            parameters.rootProjectDir.get().asFile,
+            parameters.cacheDir.get().asFile,
+            "$STATE_FILE_NAME-$type",
+            "9"
+        )
+    }
 
     @Synchronized
     fun get(

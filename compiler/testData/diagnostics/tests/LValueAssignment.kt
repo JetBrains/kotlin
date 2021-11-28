@@ -7,7 +7,7 @@ open class B() {
 
 class C() : B() {
     var x = 4
-    fun foo(<!UNUSED_PARAMETER!>c<!>: C) {
+    fun foo(c: C) {
         this.x = 34
         this.b = 123
         super.b = 23
@@ -17,7 +17,7 @@ class C() : B() {
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
-    fun foo1(<!UNUSED_PARAMETER!>c<!>: C) {
+    fun foo1(c: C) {
         <!VAL_REASSIGNMENT!>super.c<!> = 34
     }
 
@@ -51,18 +51,25 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
 
-fun canBe(i0: Int, <!UNUSED_PARAMETER!>j<!>: Int) {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = i0
-    <!UNUSED_VALUE!>(label@ i) =<!> 34
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.EXPRESSION)
+annotation class Ann
 
-    <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34 //repeat for j
+fun canBe(i0: Int, j: Int) {
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = i0
+    (label@ i) = 34
+
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
 
     val a = A()
     (l@ a.a) = 3894
+
+    @Ann
+    l@ (i) = 123
 }
 
-fun canBe2(<!UNUSED_PARAMETER!>j<!>: Int) {
-    <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34
+fun canBe2(j: Int) {
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
 }
 
 class A() {
@@ -78,10 +85,13 @@ class Test() {
         (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (<!REDUNDANT_LABEL_WARNING!>r@<!> <!VARIABLE_EXPECTED!>1<!>)++
+        (<!REDUNDANT_LABEL_WARNING!>r@<!> <!VARIABLE_EXPECTED!>1<!>)--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (<!REDUNDANT_LABEL_WARNING!>m@<!> <!VARIABLE_EXPECTED!>getInt()<!>)++
+        (<!REDUNDANT_LABEL_WARNING!>m@<!> <!VARIABLE_EXPECTED!>getInt()<!>)--
+
+        ++<!VARIABLE_EXPECTED!>2<!>
+        --(<!REDUNDANT_LABEL_WARNING!>r@<!> <!VARIABLE_EXPECTED!>2<!>)
 
         this<!UNRESOLVED_REFERENCE!>++<!>
 
@@ -89,6 +99,9 @@ class Test() {
         s += "ss"
         s += this
         s += (<!REDUNDANT_LABEL_WARNING!>a@<!> 2)
+
+        @Ann
+        l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
     }
 
     fun testIncompleteSyntax() {
@@ -106,8 +119,11 @@ class Test() {
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (<!REDUNDANT_LABEL_WARNING!>l@<!> a)++
-        <!UNUSED_CHANGED_VALUE!>(a)++<!>
+        (@Ann <!REDUNDANT_LABEL_WARNING!>l@<!> a)--
+        (a)++
+        --a
+        ++(@Ann <!REDUNDANT_LABEL_WARNING!>l@<!> a)
+        --(a)
     }
 
     fun testVariables1() {
@@ -122,6 +138,9 @@ class Test() {
         a[3] = 4
         a[4]++
         a[6] += 43
+        @Ann
+        a[7] = 7
+        (@Ann <!REDUNDANT_LABEL_WARNING!>l@<!> (a))[8] = 8
 
         ab.getArray()[54] = 23
         ab.getArray()[54]++

@@ -1,10 +1,10 @@
-inline fun inlineFun() {
-    fun localFun() {}
-    class LocalClass {}
+<!NOTHING_TO_INLINE!>inline<!> fun inlineFun() {
+    <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
+    <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> LocalClass {}
 }
 
 fun outerFun() {
-    inline fun localInlineFun() {}
+    <!NOT_YET_SUPPORTED_IN_INLINE!>inline<!> fun localInlineFun() {}
 }
 
 abstract class Base {
@@ -12,7 +12,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    override final inline fun withDefault(
-            f: () -> Unit
-    ) {}
+    <!OVERRIDE_BY_INLINE!>override final inline fun withDefault(
+            <!NOT_YET_SUPPORTED_IN_INLINE!>f: () -> Unit<!>
+    )<!> {}
 }

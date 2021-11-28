@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 infix fun Int.rem(other: Int) = 10
 infix operator fun Int.minus(other: Int): Int = 20
 

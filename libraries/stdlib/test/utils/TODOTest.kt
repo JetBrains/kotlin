@@ -10,6 +10,7 @@ import kotlin.test.*
 class TODOTest {
     private class PartiallyImplementedClass {
         public val prop: String get() = TODO()
+
         @Suppress("UNREACHABLE_CODE", "CAST_NEVER_SUCCEEDS")
         fun method1() = TODO() as String
 
@@ -20,6 +21,7 @@ class TODOTest {
                 TODO("what if false")
             else {
                 if (value.length < 3)
+                    @Suppress("UNREACHABLE_CODE")
                     throw TODO("write message")
             }
 

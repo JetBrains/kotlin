@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // AssertionError in ConstraintSystem(The constraint shouldn't contain different type variables on both sides: Y <: X)
 
@@ -16,6 +15,6 @@ class C<X, Z, Y : X>
 
 class D<X, Z, Y : X>(foo: C<X, Z, Y>) {
     fun test(a: C<Y, Y, Y>) {
-        val d: D<X, Y, Y> = D(a)
+        val d: D<X, Y, Y> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>D(a)<!>
     }
 }

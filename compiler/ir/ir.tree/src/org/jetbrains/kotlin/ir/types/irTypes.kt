@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -30,18 +30,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun IrType.withHasQuestionMark(newHasQuestionMark: Boolean): IrType =
     when (this) {
-        is IrSimpleType ->
-            if (this.hasQuestionMark == newHasQuestionMark)
-                this
-            else
-                buildSimpleType {
-                    hasQuestionMark = newHasQuestionMark
-                    kotlinType = originalKotlinType?.run {
-                        if (newHasQuestionMark) makeNullable() else makeNotNullable()
-                    }
-                }
+        is IrSimpleType -> withHasQuestionMark(newHasQuestionMark)
         else -> this
     }
+
+fun IrSimpleType.withHasQuestionMark(newHasQuestionMark: Boolean): IrSimpleType =
+    if (this.hasQuestionMark == newHasQuestionMark)
+        this
+    else
+        buildSimpleType {
+            hasQuestionMark = newHasQuestionMark
+            kotlinType = originalKotlinType?.run {
+                if (newHasQuestionMark) makeNullable() else makeNotNullable()
+            }
+        }
 
 fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
     if (newAnnotations.isEmpty())
@@ -69,6 +71,18 @@ fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType 
             this
     }
 
+fun IrType.removeAnnotations(): IrType =
+    when (this) {
+        is IrSimpleType ->
+            toBuilder().apply {
+                annotations = emptyList()
+            }.buildSimpleType()
+        is IrDynamicType ->
+            IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+        else ->
+            this
+    }
+
 val IrType.classifierOrFail: IrClassifierSymbol
     get() = cast<IrSimpleType>().classifier
 
@@ -76,7 +90,12 @@ val IrType.classifierOrNull: IrClassifierSymbol?
     get() = safeAs<IrSimpleType>()?.classifier
 
 val IrType.classOrNull: IrClassSymbol?
-    get() = classifierOrNull as? IrClassSymbol
+    get() =
+        when (val classifier = classifierOrNull) {
+            is IrClassSymbol -> classifier
+            is IrScriptSymbol -> classifier.owner.targetClass
+            else -> null
+        }
 
 val IrType.classFqName: FqName?
     get() = classOrNull?.owner?.fqNameWhenAvailable
@@ -165,31 +184,28 @@ val IrClassSymbol.starProjectedType: IrSimpleType
 
 val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
     get() =
-        generateSequence(
-            this as IrTypeParametersContainer,
-            { current ->
-                val parent = current.parent as? IrTypeParametersContainer
-                when {
-                    parent is IrSimpleFunction && parent.isPropertyAccessor -> {
-                        // KT-42151
-                        // Property type parameters for local classes declared inside property accessors are not captured in FE descriptors.
-                        // In order to match type parameters against type arguments in IR types translated from KotlinTypes,
-                        // we should stop on property accessor here.
-                        // NB this can potentially cause problems with inline properties with reified type parameters.
-                        // Ideally this should be fixed in FE.
-                        null
-                    }
-                    current.isAnonymousObject -> {
-                        // Anonymous classes don't capture type parameters.
-                        null
-                    }
-                    parent is IrClass && current is IrClass && !current.isInner ->
-                        null
-                    else ->
-                        parent
+        generateSequence(this as IrTypeParametersContainer) { current ->
+            val parent = current.parent as? IrTypeParametersContainer
+            when {
+                parent is IrSimpleFunction && parent.isPropertyAccessor -> {
+                    // KT-42151
+                    // Property type parameters for local classes declared inside property accessors are not captured in FE descriptors.
+                    // In order to match type parameters against type arguments in IR types translated from KotlinTypes,
+                    // we should stop on property accessor here.
+                    // NB this can potentially cause problems with inline properties with reified type parameters.
+                    // Ideally this should be fixed in FE.
+                    null
                 }
+                current.isAnonymousObject -> {
+                    // Anonymous classes don't capture type parameters.
+                    null
+                }
+                parent is IrClass && current is IrClass && !current.isInner ->
+                    null
+                else ->
+                    parent
             }
-        ).flatMap { it.typeParameters }
+        }.flatMap { it.typeParameters }
 
 fun IrClassifierSymbol.typeWithParameters(parameters: List<IrTypeParameter>): IrSimpleType =
     typeWith(parameters.map { it.defaultType })

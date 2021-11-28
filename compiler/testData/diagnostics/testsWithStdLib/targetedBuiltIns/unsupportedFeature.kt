@@ -1,6 +1,5 @@
 // !CHECK_TYPE
 // !LANGUAGE: -AdditionalBuiltInsMembers
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 // FULL_JDK
 
@@ -15,7 +14,7 @@ class A : java.util.ArrayList<String>() {
 }
 
 class A1 : java.util.ArrayList<String>() {
-    // `stream` is defined in ArrayList, so it was possible to declare it in 1.0 without an 'override' keyword
+    // `stream` is defined in Collection, so it was possible to declare it in 1.0 without an 'override' keyword
     fun stream(): java.util.stream.Stream<String> = super.<!UNRESOLVED_REFERENCE!>stream<!>()
 
     // `sort` is defined in ArrayList, so it was impossible to declare it in 1.0 without an 'override' keyword
@@ -28,7 +27,7 @@ interface A2 : List<String> {
     <!NOTHING_TO_OVERRIDE!>override<!> fun stream(): java.util.stream.Stream<String> = null!!
 }
 
-class B : <!OI;NONE_APPLICABLE!>Throwable<!>(<!NI;TOO_MANY_ARGUMENTS!>""<!>, <!NI;TOO_MANY_ARGUMENTS!>null<!>, <!NI;TOO_MANY_ARGUMENTS!>false<!>, <!NI;TOO_MANY_ARGUMENTS!>false<!>)
+class B : Throwable(<!TOO_MANY_ARGUMENTS!>""<!>, <!TOO_MANY_ARGUMENTS!>null<!>, <!TOO_MANY_ARGUMENTS!>false<!>, <!TOO_MANY_ARGUMENTS!>false<!>)
 
 class B1 : RuntimeException() {
     <!NOTHING_TO_OVERRIDE!>override<!> fun fillInStackTrace(): Throwable { // 'override' keyword must be prohibited, as it was in 1.0.x

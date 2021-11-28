@@ -81,9 +81,11 @@ class ClasspathBasedKapt3Extension(
 
     override fun loadProcessors(): LoadedProcessors {
         val efficientProcessorLoader = object : ProcessorLoader(options, logger) {
-            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: URLClassLoader): List<Processor> {
-                return ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
-            }
+            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
+                when (classLoader) {
+                    is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
+                    else -> super.doLoadProcessors(classpath, classLoader)
+                }
         }
 
         this.processorLoader = efficientProcessorLoader

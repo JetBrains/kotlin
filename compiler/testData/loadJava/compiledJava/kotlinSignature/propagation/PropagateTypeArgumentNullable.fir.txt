@@ -1,2 +1,30 @@
 public abstract interface PropagateTypeArgumentNullable : R|kotlin/Any| {
+    public abstract interface Sub : R|test/PropagateTypeArgumentNullable.Super| {
+        public abstract fun outS(p: R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun invOutS(p: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|): R|kotlin/Unit|
+
+        public abstract fun outOutS(p: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|): R|kotlin/Unit|
+
+        public abstract fun outR(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun invR(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun invOutR(): R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun outS(p: R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun invOutS(p: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|): R|kotlin/Unit|
+
+        public abstract fun outOutS(p: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|): R|kotlin/Unit|
+
+        public abstract fun outR(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun invR(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun invOutR(): R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|
+
+    }
 }

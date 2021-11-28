@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 data class A(val x: Int, val y: String)
@@ -27,8 +26,8 @@ fun bar(aList: List<A>) {
         b checkType { _<String>() }
     }
 
-    aList.<!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!> { <!NI;EXPECTED_PARAMETER_TYPE_MISMATCH!>(a, b): B<!> ->
-        b checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><Int>() }
-        a checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String>() }
+    aList.foo { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(a, b): B<!> ->
+        b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 }

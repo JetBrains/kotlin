@@ -30,7 +30,7 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = create { 1.0 }
+    val x = create { <!ARGUMENT_TYPE_MISMATCH!>1.0<!> }
 }
 
 @OverloadResolutionByLambdaReturnType

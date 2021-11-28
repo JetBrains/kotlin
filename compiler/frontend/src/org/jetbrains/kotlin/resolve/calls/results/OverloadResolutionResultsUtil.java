@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformerKt;
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl;
-import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl;
+import org.jetbrains.kotlin.resolve.calls.tower.*;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.resolve.calls.util.ResolvedCallUtilKt;
 
 import java.util.Collection;
 
@@ -57,17 +56,17 @@ public class OverloadResolutionResultsUtil {
     ) {
         if (results.isSingleResult() && context.contextDependency == ContextDependency.INDEPENDENT) {
             ResolvedCall<D> resultingCall = results.getResultingCall();
-            NewResolvedCallImpl<?> newResolvedCall;
+            NewAbstractResolvedCall<?> newResolvedCall;
             if (resultingCall instanceof NewVariableAsFunctionResolvedCallImpl) {
                 newResolvedCall = ((NewVariableAsFunctionResolvedCallImpl) resultingCall).getFunctionCall();
             }
-            else if (resultingCall instanceof NewResolvedCallImpl) {
-                newResolvedCall = (NewResolvedCallImpl<?>) resultingCall;
+            else if (resultingCall instanceof NewAbstractResolvedCall<?>) {
+                newResolvedCall = (NewAbstractResolvedCall<?>) resultingCall;
             } else {
                 newResolvedCall = null;
             }
             if (newResolvedCall != null) {
-                if (!KotlinToResolvedCallTransformerKt.hasInferredReturnType(newResolvedCall)) {
+                if (!ResolvedCallUtilKt.hasInferredReturnType(newResolvedCall)) {
                     return null;
                 }
             } else if (!((MutableResolvedCall<D>) resultingCall).hasInferredReturnType()) {

@@ -1,7 +1,7 @@
 package sample
 
 import kotlin.Pair
-import kotlin.browser.document
+import kotlinx.browser.document
 import library.sample.*
 import kotlin.js.Date
 

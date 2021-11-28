@@ -64,7 +64,7 @@ class ClassWrapper(
     fun defaultConstructorVisibility(): Visibility {
         return when {
             isObject() || isEnum() || isEnumEntry() -> Visibilities.Private
-            isSealed() -> Visibilities.Private
+            isSealed() -> Visibilities.Protected
             else -> Visibilities.Unknown
         }
     }

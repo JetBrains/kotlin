@@ -1,0 +1,73 @@
+FILE: accessInSetter.kt
+    public final class DrawableGrid : R|kotlin/Any| {
+        public constructor(isEnabled: R|kotlin/Boolean|): R|DrawableGrid| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var isEnabled: R|kotlin/Boolean| = R|<local>/isEnabled|
+            public get(): R|kotlin/Boolean|
+            public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+    }
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val drawableGrid: R|DrawableGrid| = this@R|/My|.R|/My.createDrawableGrid|()
+            private get(): R|DrawableGrid|
+
+        private final var useAll: R|kotlin/Boolean| = Boolean(false)
+            private get(): R|kotlin/Boolean|
+            private set(value: R|kotlin/Boolean|): R|kotlin/Unit| {
+                this@R|/My|.R|/My.drawableGrid|.R|/DrawableGrid.isEnabled| = R|<local>/value|.R|kotlin/Boolean.not|()
+            }
+
+        private final fun createDrawableGrid(): R|DrawableGrid| {
+            ^createDrawableGrid R|/DrawableGrid.DrawableGrid|(Boolean(false)).R|kotlin/apply|<R|DrawableGrid|>(<L> = apply@fun R|DrawableGrid|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                when () {
+                    this@R|/My|.R|/My.useAll| ->  {
+                        Int(-1)
+                    }
+                    else ->  {
+                        Int(0)
+                    }
+                }
+
+            }
+            )
+        }
+
+    }
+    public final class Your : R|kotlin/Any| {
+        public constructor(): R|Your| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val drawableGrid: R|DrawableGrid| = this@R|/Your|.R|/Your.createDrawableGrid|()
+            private get(): R|DrawableGrid|
+
+        private final var useAll: R|kotlin/Boolean|
+            private get(): R|kotlin/Boolean| {
+                ^ Boolean(false)
+            }
+            private set(value: R|kotlin/Boolean|): R|kotlin/Unit| {
+                this@R|/Your|.R|/Your.drawableGrid|.R|/DrawableGrid.isEnabled| = R|<local>/value|.R|kotlin/Boolean.not|()
+            }
+
+        private final fun createDrawableGrid(): R|DrawableGrid| {
+            ^createDrawableGrid R|/DrawableGrid.DrawableGrid|(Boolean(false)).R|kotlin/apply|<R|DrawableGrid|>(<L> = apply@fun R|DrawableGrid|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                when () {
+                    this@R|/Your|.R|/Your.useAll| ->  {
+                        Int(-1)
+                    }
+                    else ->  {
+                        Int(0)
+                    }
+                }
+
+            }
+            )
+        }
+
+    }

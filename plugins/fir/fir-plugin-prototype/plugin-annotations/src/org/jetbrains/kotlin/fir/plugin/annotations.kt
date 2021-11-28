@@ -20,6 +20,12 @@ annotation class G
 
 annotation class AllPublic(val visibility: Visibility)
 
+@Target(AnnotationTarget.TYPE)
+annotation class Positive
+
+@Target(AnnotationTarget.TYPE)
+annotation class Negative
+
 enum class Visibility {
     Public, Internal, Private, Protected
 }

@@ -11,12 +11,12 @@
 }
 
 fun testA() = js("""
-var a = JS_TESTS.AA;
+var a = main.AA;
 return a.foo();
 """)
 
 fun testB() = js("""
-var b = new JS_TESTS.BB();
+var b = new main.BB();
 return b.foo();
 """)
 

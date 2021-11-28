@@ -1,0 +1,45 @@
+FILE: Parameters.kt
+    public final val bar: R|(kotlin/Int) -> kotlin/Unit| = fun <anonymous>(p: R|kotlin/Int| = Int(3)): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|(kotlin/Int) -> kotlin/Unit|
+    public final val bas: R|(kotlin/Int) -> kotlin/Unit| = fun <anonymous>(vararg p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public get(): R|(kotlin/Int) -> kotlin/Unit|
+    public final fun gar(): R|(kotlin/Int) -> kotlin/Unit| {
+        ^gar fun <anonymous>(p: R|kotlin/Int| = Int(3)): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+    }
+    public final fun gas(): R|(kotlin/Int) -> kotlin/Unit| {
+        ^gas fun <anonymous>(vararg p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+    }
+    public final fun outer(b: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval bar: R|(kotlin/Int) -> kotlin/Unit| = fun <anonymous>(p: R|kotlin/Int| = Int(3)): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+        lval bas: R|(kotlin/Int) -> kotlin/Unit| = fun <anonymous>(vararg p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+        local final fun gar(): R|(kotlin/Int) -> kotlin/Unit| {
+            ^gar fun <anonymous>(p: R|kotlin/Int| = Int(3)): R|kotlin/Unit| <inline=Unknown>  {
+            }
+
+        }
+
+        local final fun gas(): R|(kotlin/Int) -> kotlin/Unit| {
+            ^gas fun <anonymous>(vararg p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            }
+
+        }
+
+        R|/outer|(fun <anonymous>(p: R|kotlin/Int| = Int(3)): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+        R|/outer|(fun <anonymous>(vararg p: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+    }

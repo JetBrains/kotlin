@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
@@ -19,6 +20,7 @@ import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class HierarchicalMppIT : BaseGradleIT() {
@@ -210,6 +212,18 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testMultiModulesHmppKt48370() = with(Project("hierarchical-mpp-multi-modules", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+        build(
+            "assemble", options = defaultBuildOptions().copy(
+                parallelTasksInProject = true,
+                warningMode = WarningMode.Summary
+            )
+        ) {
+            assertSuccessful()
+        }
+    }
+
     private fun publishThirdPartyLib(
         projectName: String = "third-party-lib",
         directoryPrefix: String = "hierarchical-mpp-published-modules",
@@ -266,6 +280,19 @@ class HierarchicalMppIT : BaseGradleIT() {
 
             assertEquals(expectedProjectStructureMetadata, parsedProjectStructureMetadata)
         }
+
+        ZipFile(
+            project.projectDir.parentFile.resolve(
+                "repo/com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-sources.jar"
+            )
+        ).use { publishedSourcesJar ->
+            publishedSourcesJar.checkAllEntryNamesArePresent(
+                "commonMain/Foo.kt",
+                "jvmAndJsMain/FooJvmAndJs.kt",
+                "linuxAndJsMain/FooLinuxAndJs.kt",
+                "linuxX64Main/FooLinux.kt"
+            )
+        }
     }
 
     private fun checkMyLibBar(compiledProject: CompiledProject, subprojectPrefix: String?) = with(compiledProject) {
@@ -303,6 +330,19 @@ class HierarchicalMppIT : BaseGradleIT() {
             )
 
             assertEquals(expectedProjectStructureMetadata, parsedProjectStructureMetadata)
+        }
+
+        ZipFile(
+            project.projectDir.parentFile.resolve(
+                "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-sources.jar"
+            )
+        ).use { publishedSourcesJar ->
+            publishedSourcesJar.checkAllEntryNamesArePresent(
+                "commonMain/Bar.kt",
+                "jvmAndJsMain/BarJvmAndJs.kt",
+                "linuxAndJsMain/BarLinuxAndJs.kt",
+                "linuxX64Main/BarLinux.kt"
+            )
         }
 
         checkNamesOnCompileClasspath(
@@ -401,8 +441,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         shouldInclude: Iterable<Pair<String, String>> = emptyList(),
         shouldNotInclude: Iterable<Pair<String, String>> = emptyList()
     ) {
-        val taskOutput = getOutputForTask(taskPath.removePrefix(":"))
-        val compilerArgsLine = taskOutput.lines().single { "Kotlin compiler args:" in it }
+        val compilerArgsLine = output.lines().single { "$taskPath Kotlin compiler args:" in it }
         val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
 
         val actualClasspath = classpathItems.joinToString("\n")
@@ -460,6 +499,7 @@ class HierarchicalMppIT : BaseGradleIT() {
                     ModuleDependencyIdentifier(it.first, it.second)
                 }.toSet()
             },
+            sourceSetCInteropMetadataDirectory = mapOf(),
             hostSpecificSourceSets = emptySet(),
             sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
             isPublishedAsRoot = true
@@ -480,12 +520,13 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency")) {
-        publishThirdPartyLib(withGranularMetadata = true)
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations() =
+        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency")) {
+            publishThirdPartyLib(withGranularMetadata = true)
 
-        gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
-        projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
-            """
+            gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
+            projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
+                """
             import kotlin.test.Test
                 
             class UseCompileOnlyDependency {
@@ -493,12 +534,12 @@ class HierarchicalMppIT : BaseGradleIT() {
                 fun myTest() = Unit
             }
             """.trimIndent()
-        )
+            )
 
-        build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
-            assertSuccessful()
+            build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
+                assertSuccessful()
+            }
         }
-    }
 
     @Test
     fun testHmppDependenciesInJsTests() {
@@ -555,6 +596,53 @@ class HierarchicalMppIT : BaseGradleIT() {
                 it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
             }.let {
                 assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
+            }
+        }
+    }
+
+    @Test
+    fun testMixedScopesFilesExistKt44845() {
+        publishThirdPartyLib(withGranularMetadata = true)
+
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            gradleBuildScript().appendText(
+                """
+                ${"\n"}
+                dependencies {
+                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+                }
+            """.trimIndent()
+            )
+
+            testDependencyTransformations { reports ->
+                val reportsForJvmAndJsMain = reports.filter { it.sourceSetName == "jvmAndJsMain" }
+                val thirdPartyLib = reportsForJvmAndJsMain.single {
+                    it.scope == "api" && it.groupAndModule.startsWith("com.example")
+                }
+                val coroutinesCore = reportsForJvmAndJsMain.single {
+                    it.scope == "implementation" && it.groupAndModule.contains("kotlinx-coroutines-core")
+                }
+                val serialization = reportsForJvmAndJsMain.single {
+                    it.scope == "compileOnly" && it.groupAndModule.contains("kotlinx-serialization-json")
+                }
+                listOf(thirdPartyLib, coroutinesCore, serialization).forEach { report ->
+                    assertTrue(report.newVisibleSourceSets.isNotEmpty(), "Expected visible source sets for $report")
+                    assertTrue(report.useFiles.isNotEmpty(), "Expected non-empty useFiles for $report")
+                    report.useFiles.forEach { assertTrue(it.isFile, "Expected $it to exist for $report") }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testNativeLeafTestSourceSetsKt46417() {
+        with(Project("kt-46417-ios-test-source-sets")) {
+            testDependencyTransformations("p2") { reports ->
+                val report = reports.singleOrNull { it.sourceSetName == "iosArm64Test" && it.scope == "implementation" }
+                assertNotNull(report, "No single report for 'iosArm64' and implementation scope")
+                assertEquals(setOf("commonMain", "iosMain"), report.allVisibleSourceSets)
+                assertTrue(report.groupAndModule.endsWith(":p1"))
             }
         }
     }

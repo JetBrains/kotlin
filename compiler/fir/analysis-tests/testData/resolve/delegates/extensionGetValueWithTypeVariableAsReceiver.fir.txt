@@ -1,0 +1,17 @@
+FILE: extensionGetValueWithTypeVariableAsReceiver.kt
+    public final inline fun <L> runLogged(action: R|() -> L|): R|L| {
+        ^runLogged R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|L|>|()
+    }
+    public final operator fun R|kotlin/String|.getValue(receiver: R|kotlin/Any?|, p: R|kotlin/Any|): R|kotlin/String| {
+        ^getValue R|/runLogged|<R|kotlin/String|>(<L> = runLogged@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+            ^ this@R|/getValue|
+        }
+        )
+    }
+    public final val testK: R|kotlin/String|by R|/runLogged|<R|kotlin/String|>(<L> = runLogged@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+        ^ String(K)
+    }
+    )
+        public get(): R|kotlin/String| {
+            ^ D|/testK|.R|/getValue|(Null(null), ::R|/testK|)
+        }

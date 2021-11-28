@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks.internal
 
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
+import java.io.Serializable
 import java.time.Instant
 
 /**
@@ -16,7 +17,7 @@ import java.time.Instant
  * Now you will be able to access files via `CleanableStore["/path/to/dir"]["file/name"].use()`
  * and it would update usage of th store.
  */
-interface CleanableStore {
+interface CleanableStore : Serializable {
     fun cleanDir(expirationDate: Instant)
 
     operator fun get(fileName: String): DownloadedFile

@@ -6,8 +6,8 @@ public interface MyList<E> extends java.util.List<E>, I {}
 fun <R> elemAndList(r: R, t: MutableList<R>): R = TODO()
 
 interface I
-class A : Comparable<A>, I
-class B : Comparable<B>, I
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class A<!> : Comparable<A>, I
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class B<!> : Comparable<B>, I
 
 fun test() {
     elemAndList(A(), list(B()))

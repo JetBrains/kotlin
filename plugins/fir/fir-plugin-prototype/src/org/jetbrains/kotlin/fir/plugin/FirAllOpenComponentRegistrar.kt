@@ -7,18 +7,20 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.plugin.generators.*
+import org.jetbrains.kotlin.fir.plugin.types.FirNumberSignAttributeExtension
 
 class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
-        +::AllOpenVisibilityTransformer
-        +::AllOpenSupertypeGenerator
+        +::AllPublicVisibilityTransformer
+        +::SomeAdditionalSupertypeGenerator
+        +::PluginAdditionalCheckers
+        +::FirNumberSignAttributeExtension
 
         // Declaration generators
-        +::AllOpenMemberGenerator
-        +::AllOpenNestedClassGenerator
-        +::AllOpenAdditionalCheckers
-        +::AllOpenTopLevelDeclarationsGenerator
-        +::AllOpenRecursiveNestedClassGenerator
+        +::TopLevelDeclarationsGenerator
+        +::ExternalClassGenerator
+        +::AdditionalMembersGenerator
+        +::CompanionGenerator
     }
 }

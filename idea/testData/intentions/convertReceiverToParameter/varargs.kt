@@ -1,1 +1,0 @@
-fun <caret>Int.f1(vararg i: Int){}

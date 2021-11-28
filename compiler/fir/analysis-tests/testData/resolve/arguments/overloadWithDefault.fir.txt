@@ -1,0 +1,13 @@
+FILE: overloadWithDefault.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(b: R|kotlin/Boolean| = Boolean(false)): R|A|
+
+        public abstract fun foo(block: R|() -> kotlin/Boolean|): R|A|
+
+    }
+    public final fun test(a: R|A|): R|kotlin/Unit| {
+        R|<local>/a|.R|/A.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ Boolean(true)
+        }
+        )
+    }

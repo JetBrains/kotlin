@@ -1,7 +1,0 @@
-// "Remove parameter 'a'" "true"
-// DISABLE-ERRORS
-
-package com.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-
-class SomeVeryImportantClass
-fun message(<caret>b: SomeVeryImportantClass, c: SomeVeryImportantClass) = Unit

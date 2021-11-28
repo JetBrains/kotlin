@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.codegen.`when`.SwitchCodegen.Companion.preferLookupO
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTrueConst
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.*
 
 // TODO: eliminate the temporary variable
 class SwitchGenerator(private val expression: IrWhen, private val data: BlockInfo, private val codegen: ExpressionCodegen) {
@@ -237,11 +238,13 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     //     action
     // }
     //
+    // fir2ir lowers the same to an or sequence:
+    //
+    // if (((subject == a) || (subject == b)) || (subject = c)) action
+    //
     // @return true if the conditions are equality checks of constants.
     private fun matchConditions(condition: IrExpression): ArrayList<IrCall>? {
-        if (condition is IrCall) {
-            return arrayListOf(condition)
-        } else if (condition is IrWhen && condition.origin == IrStatementOrigin.WHEN_COMMA) {
+        if (condition is IrWhen && condition.origin == IrStatementOrigin.WHEN_COMMA) {
             assert(condition.type.isBoolean()) { "WHEN_COMMA should always be a Boolean: ${condition.dump()}" }
 
             val candidates = ArrayList<IrCall>()
@@ -268,6 +271,15 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             }
 
             return if (candidates.isNotEmpty()) candidates else return null
+        } else if (condition is IrCall && condition.symbol == codegen.context.irBuiltIns.ororSymbol) {
+            val candidates = ArrayList<IrCall>()
+            for (i in 0 until condition.valueArgumentsCount) {
+                val argument = condition.getValueArgument(i)!!
+                candidates += matchConditions(argument) ?: return null
+            }
+            return if (candidates.isNotEmpty()) candidates else return null
+        } else if (condition is IrCall) {
+            return arrayListOf(condition)
         }
 
         return null
@@ -435,9 +447,19 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 hashAndSwitchLabels.add(ValueToLabel(key, Label()))
         }
 
-        // Using a switch, the subject string has to be traversed at least twice (hash + comparison * N, where N is #strings hashed into the
-        // same bucket). The optimization isn't better than an IF cascade when #switch-targets <= 2.
-        override fun shouldOptimize() = hashAndSwitchLabels.size > 2
+        // Using a switch, the subject string has to be traversed at least twice
+        // (hash + comparison * N, where N is #strings hashed into the same bucket).
+        // The optimization isn't better than an IF cascade when #switch-targets <= 2.
+        //
+        // Generate "optimized" version for @EnhancedNullability subject type
+        // to model 1.0 behavior causing NPE in case of null value.
+        // TODO make 'when' with String subject behavior consistent.
+        // see:
+        //  box/when/stringOptimization/enhancedNullability.kt
+        //  box/when/stringOptimization/flexibleNullability.kt
+        override fun shouldOptimize() =
+            hashAndSwitchLabels.size > 2 ||
+                    subject.type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) && hashAndSwitchLabels.isNotEmpty()
 
         override fun genSwitch() {
             with(codegen) {

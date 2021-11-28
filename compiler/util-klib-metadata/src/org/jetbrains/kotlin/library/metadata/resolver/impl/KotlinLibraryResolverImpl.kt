@@ -25,11 +25,12 @@ import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
 
-fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver()
-        = KotlinLibraryResolverImpl<L>(this)
+fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false)
+        = KotlinLibraryResolverImpl<L>(this, resolveManifestDependenciesLenient)
 
-class KotlinLibraryResolverImpl<L: KotlinLibrary>(
-        override val searchPathResolver: SearchPathResolver<L>
+class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
+        override val searchPathResolver: SearchPathResolver<L>,
+        val resolveManifestDependenciesLenient: Boolean
 ): KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
 
     override fun resolveWithDependencies(
@@ -56,7 +57,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
     ): List<KotlinLibrary> {
 
         val userProvidedLibraries = unresolvedLibraries.asSequence()
-                .map { searchPathResolver.resolve(it) }
+                .mapNotNull { searchPathResolver.resolve(it) }
                 .toList()
 
         val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs, noEndorsedLibs)
@@ -110,22 +111,22 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
         val result = KotlinLibraryResolverResultImpl(rootLibraries)
 
         val cache = mutableMapOf<File, KotlinResolvedLibrary>()
-        cache.putAll(rootLibraries.map { it.library.libraryFile.absoluteFile to it })
+        cache.putAll(rootLibraries.map { it.library.libraryFile.canonicalFile to it })
 
         var newDependencies = rootLibraries
         do {
             newDependencies = newDependencies.map { library: KotlinResolvedLibraryImpl ->
-                library.library.unresolvedDependencies.asSequence()
+                library.library.unresolvedDependencies(resolveManifestDependenciesLenient).asSequence()
 
                         .filterNot { searchPathResolver.isProvidedByDefault(it) }
-                        .map { KotlinResolvedLibraryImpl(searchPathResolver.resolve(it)) }
+                        .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
                         .map { resolved ->
-                            val absoluteFile = resolved.library.libraryFile.absoluteFile
-                            if (absoluteFile in cache) {
-                                library.addDependency(cache[absoluteFile]!!)
+                            val canonicalFile = resolved.library.libraryFile.canonicalFile
+                            if (canonicalFile in cache) {
+                                library.addDependency(cache[canonicalFile]!!)
                                 null
                             } else {
-                                cache.put(absoluteFile, resolved)
+                                cache.put(canonicalFile, resolved)
                                 library.addDependency(resolved)
                                 resolved
                             }
@@ -143,30 +144,29 @@ class KotlinLibraryResolverResultImpl(
         private val roots: List<KotlinResolvedLibrary>
 ): KotlinLibraryResolveResult {
 
-    private val all: List<KotlinResolvedLibrary> by lazy {
-        val result = mutableSetOf<KotlinResolvedLibrary>().also { it.addAll(roots) }
+    private val all: List<KotlinResolvedLibrary>
+        by lazy {
+            val result = mutableSetOf<KotlinResolvedLibrary>().also { it.addAll(roots) }
 
-        var newDependencies = result.toList()
-        do {
-            newDependencies = newDependencies
-                    .map { it -> it.resolvedDependencies }.flatten()
+            var newDependencies = result.toList()
+            do {
+                newDependencies = newDependencies
+                    .map { it.resolvedDependencies }.flatten()
                     .filter { it !in result }
-            result.addAll(newDependencies)
-        } while (newDependencies.isNotEmpty())
+                result.addAll(newDependencies)
+            } while (newDependencies.isNotEmpty())
 
-        result.toList()
-    }
+            result.toList()
+        }
 
     override fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean) =
             KotlinLibraryResolverResultImpl(roots.filter(predicate))
 
-    override fun getFullList(order: LibraryOrder?) = (order?.invoke(all) ?: all).asPlain()
+    override fun getFullResolvedList(order: LibraryOrder?) = (order?.invoke(all) ?: all)
 
     override fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit) {
         all.forEach { action(it.library, it) }
     }
-
-    private fun List<KotlinResolvedLibrary>.asPlain() = map { it.library }
 
     override fun toString() = "roots=$roots, all=$all"
 }

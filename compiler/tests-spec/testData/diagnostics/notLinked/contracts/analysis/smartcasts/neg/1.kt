@@ -1,5 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_NEW_INFERENCE
+// FIR_IDE_IGNORE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 /*
@@ -20,13 +20,15 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     funWithReturnsAndInvertCondition(value_1 != null)
-    println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>inc())
+    println(value_1<!UNSAFE_CALL!>.<!>inc())
+    println(value_1<!UNSAFE_CALL!>.<!>unaryPlus())
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     funWithReturns(value_1 == null)
-    println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>inc())
+    println(value_1<!UNSAFE_CALL!>.<!>inc())
+    println(value_1<!UNSAFE_CALL!>.<!>unaryPlus())
 }
 
 // TESTCASE NUMBER: 4
@@ -38,13 +40,13 @@ fun case_4(value_1: Any?) {
 // TESTCASE NUMBER: 5
 fun case_5(value_1: String?) {
     funWithReturnsAndNullCheck(value_1)
-    println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
+    println(value_1<!UNSAFE_CALL!>.<!>length)
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: String?) {
     funWithReturnsAndNullCheck(value_1)
-    println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
+    println(value_1<!UNSAFE_CALL!>.<!>length)
 }
 
 // TESTCASE NUMBER: 7
@@ -53,7 +55,7 @@ object case_7_object {
 }
 fun case_7() {
     funWithReturns(case_7_object.prop_1 == null)
-    <!OI;DEBUG_INFO_CONSTANT!>case_7_object.prop_1<!><!UNSAFE_CALL!>.<!>inc()
+    case_7_object.prop_1<!UNSAFE_CALL!>.<!>inc()
 }
 
 // TESTCASE NUMBER: 8

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:Suppress("DEPRECATION") // TODO: needs an intensive rework for new Char API
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
 import java.io.*
@@ -143,7 +143,7 @@ private class JsonParser(val content: String) {
     fun parse(): JsonNode {
         val result = parseNode()
         skipSpaces()
-        if (charCode != -1) throw error("End of input expected")
+        if (charCode != -1) error("End of input expected")
         return result
     }
 

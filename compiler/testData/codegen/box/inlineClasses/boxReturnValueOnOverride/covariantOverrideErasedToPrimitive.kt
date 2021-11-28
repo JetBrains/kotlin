@@ -1,5 +1,8 @@
+// WITH_STDLIB
 
-inline class X(val x: Char)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class X(val x: Char)
 
 interface IFoo {
     fun foo(): Any

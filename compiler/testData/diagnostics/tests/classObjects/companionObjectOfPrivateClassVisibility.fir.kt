@@ -3,7 +3,7 @@ package test
 fun use() {
     Default.create()
 
-    Explicit.create()
+    Explicit.<!INVISIBLE_REFERENCE!>create<!>()
 }
 
 private class Default {

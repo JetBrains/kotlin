@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: annotations.kt
 @Target(AnnotationTarget.CLASS)
 public annotation class ClassAnn

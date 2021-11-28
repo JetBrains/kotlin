@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.ir.builders
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.resolve.BindingContext
 
 interface TranslationPluginContext : IrGeneratorContext {
-
     val moduleDescriptor: ModuleDescriptor
-    val bindingContext: BindingContext
     val symbolTable: ReferenceSymbolTable
     val typeTranslator: TypeTranslator
 }

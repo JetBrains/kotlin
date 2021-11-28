@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.pill.generateAllTests;
 
 import org.jetbrains.kotlin.generators.tests.*;
-import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker;
+import org.jetbrains.kotlin.generators.InconsistencyChecker;
+import org.jetbrains.kotlin.test.generators.GenerateCompilerTestsKt;
+import org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class Main {
         GenerateJsTestsKt.main(args);
         GenerateJava8TestsKt.main(args);
         GenerateRuntimeDescriptorTestsKt.main(args);
+        GenerateAnalysisApiTestsKt.main(args);
 
         boolean dryRun = InconsistencyChecker.Companion.hasDryRunArg(args);
         List<String> affectedFiles = InconsistencyChecker.Companion.inconsistencyChecker(dryRun).getAffectedFiles();

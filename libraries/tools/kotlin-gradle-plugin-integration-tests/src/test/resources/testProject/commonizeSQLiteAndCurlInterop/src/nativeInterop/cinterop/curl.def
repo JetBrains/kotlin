@@ -1,0 +1,4 @@
+headers = curl/curl.h
+headerFilter = curl/*
+compilerOpts = -Ilibs/include
+

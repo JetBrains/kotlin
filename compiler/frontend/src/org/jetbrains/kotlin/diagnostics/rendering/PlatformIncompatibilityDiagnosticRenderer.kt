@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 
 class PlatformIncompatibilityDiagnosticRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
-) : DiagnosticParameterRenderer<Map<Incompatible, Collection<MemberDescriptor>>> {
+) : DiagnosticParameterRenderer<Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> {
     override fun render(
-        obj: Map<Incompatible, Collection<MemberDescriptor>>,
+        obj: Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>,
         renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
@@ -43,9 +43,9 @@ class PlatformIncompatibilityDiagnosticRenderer(
 
 class IncompatibleExpectedActualClassScopesRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
-) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> {
+) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>> {
     override fun render(
-        obj: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
+        obj: List<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>,
         renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
@@ -82,7 +82,7 @@ open class MultiplatformDiagnosticRenderingMode {
 }
 
 private fun StringBuilder.renderIncompatibilityInformation(
-    map: Map<Incompatible, Collection<MemberDescriptor>>,
+    map: Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>,
     indent: String,
     context: RenderingContext,
     mode: MultiplatformDiagnosticRenderingMode
@@ -109,7 +109,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
 }
 
 private fun StringBuilder.renderIncompatibleClassScopes(
-    unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
+    unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>,
     indent: String,
     context: RenderingContext,
     mode: MultiplatformDiagnosticRenderingMode

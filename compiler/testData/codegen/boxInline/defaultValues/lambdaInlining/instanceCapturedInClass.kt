@@ -1,5 +1,5 @@
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// FILE: 1.kt
 package test
 
 class A(val value: String) {
@@ -13,7 +13,7 @@ class A(val value: String) {
 
 import test.*
 
-// CHECK_CONTAINS_NO_CALLS: box
+// CHECK_CONTAINS_NO_CALLS: box TARGET_BACKENDS=JS
 fun box(): String {
     return A("OK").inlineFun()
 }

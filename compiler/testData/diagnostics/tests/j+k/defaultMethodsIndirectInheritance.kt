@@ -1,3 +1,4 @@
+// !JVM_TARGET: 1.6
 // FILE: JavaInterfaceBase.java
 
 public interface JavaInterfaceBase {

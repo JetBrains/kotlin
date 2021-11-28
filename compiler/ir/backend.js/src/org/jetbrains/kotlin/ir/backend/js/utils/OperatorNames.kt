@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object OperatorNames {
@@ -21,12 +20,12 @@ object OperatorNames {
 
     val AND = OperatorNameConventions.AND
     val OR = OperatorNameConventions.OR
-    val XOR = Name.identifier("xor")
-    val INV = Name.identifier("inv")
+    val XOR = OperatorNameConventions.XOR
+    val INV = OperatorNameConventions.INV
 
-    val SHL = Name.identifier("shl")
-    val SHR = Name.identifier("shr")
-    val SHRU = Name.identifier("ushr")
+    val SHL = OperatorNameConventions.SHL
+    val SHR = OperatorNameConventions.SHR
+    val SHRU = OperatorNameConventions.USHR
 
     val NOT = OperatorNameConventions.NOT
 

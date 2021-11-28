@@ -1,1 +1,0 @@
-fun <caret>foo() = Unit

@@ -40,6 +40,11 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     JS_GENERATE_EXTERNALS(OR, SAFE),
 
+    JS_SOURCE_MAP(OR, SAFE),
+
+    JS_KLIB_INCREMENTAL(OR, SAFE),
+    JS_IR_INCREMENTAL(OR, SAFE),
+
     // User scenarios
     DEBUGGER_ENABLED(OVERRIDE, SAFE),
     COMPILATION_STARTED(OVERRIDE, SAFE),

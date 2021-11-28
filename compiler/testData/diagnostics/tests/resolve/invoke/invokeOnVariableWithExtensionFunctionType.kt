@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: 1.kt
 package fooIsExtension
 
@@ -41,7 +40,7 @@ fun test(a: A, b: B) {
     }
 }
 
-// FILE: 1.kt
+// FILE: 2.kt
 package fooIsMember
 
 class A {

@@ -1,0 +1,10 @@
+KT element: KtObjectLiteralExpression
+FIR element: FirAnonymousObjectExpressionImpl
+
+FIR element rendered:
+object : R|kotlin/Any| {
+    private constructor(): R|<anonymous>| {
+        super<R|kotlin/Any|>()
+    }
+
+}

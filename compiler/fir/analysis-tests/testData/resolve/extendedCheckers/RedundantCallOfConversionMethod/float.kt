@@ -1,0 +1,2 @@
+// WITH_STDLIB
+val foo = 1.1f.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toFloat()<!>

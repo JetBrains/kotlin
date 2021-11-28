@@ -11,4 +11,3 @@ val test2: Function0<Unit>
   }
 
   get
-

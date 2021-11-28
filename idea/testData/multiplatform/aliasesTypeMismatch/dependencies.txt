@@ -1,9 +1,0 @@
-MODULE common { platform=[JVM, JS, Native]; root=common }
-MODULE commonLibrary { platform=[JVM, JS, Native]; root=commonLibrary }
-MODULE jvm { platform=[JVM]; root=jvm }
-MODULE jvmLibrary { platform=[JVM]; root=jvmLibrary }
-
-common -> commonLibrary { kind=DEPENDENCY }
-jvmLibrary -> commonLibrary { kind=DEPENDS_ON }
-jvm -> commonLibrary, jvmLibrary { kind=DEPENDENCY }
-jvm -> common { kind=DEPENDS_ON }

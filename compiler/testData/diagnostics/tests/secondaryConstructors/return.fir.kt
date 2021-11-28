@@ -1,8 +1,7 @@
-// !WITH_NEW_INFERENCE
 class A {
     init {
-        return
-        return 1
+        <!RETURN_NOT_ALLOWED!>return<!>
+        <!RETURN_NOT_ALLOWED!>return<!> 1
     }
     constructor() {
         if (1 == 1) {
@@ -10,7 +9,7 @@ class A {
             return 1
         }
         return
-        return foo()
+        return <!TYPE_MISMATCH!>foo()<!>
     }
 
     fun foo(): Int = 1

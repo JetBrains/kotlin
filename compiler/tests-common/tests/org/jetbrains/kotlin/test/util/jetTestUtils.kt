@@ -18,19 +18,10 @@ package org.jetbrains.kotlin.test.util
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
-
-fun String.trimTrailingWhitespaces(): String =
-    this.split('\n').joinToString(separator = "\n") { it.trimEnd() }
-
-fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
-        this.trimTrailingWhitespaces().let {
-            result -> if (result.endsWith("\n")) result else result + "\n"
-        }
 
 fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keys.singleOrNull()
@@ -60,7 +51,3 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
     return result
 }
 
-val CodeInsightTestFixture.elementByOffset: PsiElement
-    get() {
-        return file.findElementAt(editor.caretModel.offset) ?: error("Can't find element at offset. Probably <caret> is missing.")
-    }

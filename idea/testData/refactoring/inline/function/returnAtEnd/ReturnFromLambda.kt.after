@@ -1,6 +1,0 @@
-fun g() {
-    println(listOf("a", "b").any {
-        if (it.isEmpty()) return@any false
-        it.length < 10
-    })
-}

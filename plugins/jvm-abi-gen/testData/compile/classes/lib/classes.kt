@@ -13,6 +13,8 @@ open class A : I {
     fun aMethod(): Int = 30
     inline fun aInlineMethod(): Int = 40
 
+    private class AB {}
+
     companion object {
         const val aConst: Int = 50
     }

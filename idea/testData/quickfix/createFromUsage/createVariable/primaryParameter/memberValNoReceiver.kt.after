@@ -1,9 +1,0 @@
-// "Create property 'foo' as constructor parameter" "true"
-
-class A {
-    class B(val foo: Int) {
-        fun test(): Int {
-            return foo
-        }
-    }
-}

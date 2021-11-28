@@ -12,7 +12,7 @@ inline fun bar(i: Int = 1) {
 }
 
 // FORCE_STEP_INTO
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
 // test.kt:8 foo$default (synthetic)
 // test.kt:9 foo

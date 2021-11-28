@@ -26,6 +26,9 @@ object BuiltinSpecialProperties {
         PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.entries
             .map { Pair(it.key.shortName(), it.value) }
             .groupBy({ it.second }, { it.first })
+            .mapValues {
+                it.value.distinct()
+            }
 
     val SPECIAL_FQ_NAMES: Set<FqName> = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
     val SPECIAL_SHORT_NAMES: Set<Name> = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()

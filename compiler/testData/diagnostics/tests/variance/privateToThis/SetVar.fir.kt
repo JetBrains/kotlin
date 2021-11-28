@@ -33,5 +33,5 @@ class Test<in I, out O> {
 }
 
 fun <I, O> test(t: Test<I, O>) {
-    t.<!HIDDEN!>i<!> = getT()
+    t.<!INVISIBLE_REFERENCE!>i<!> = getT()
 }

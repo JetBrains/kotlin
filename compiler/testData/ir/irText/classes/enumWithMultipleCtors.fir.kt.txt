@@ -50,7 +50,7 @@ open enum class A : Enum<A> {
   }
 
   open fun f(): String {
-    return <this>.<get-prop1>().toString() + "#" + <this>.<get-prop2>().toString() + "#" + <this>.<get-prop3>().toString()
+    return <this>.<get-prop1>() + "#" + <this>.<get-prop2>() + "#" + <this>.<get-prop3>()
   }
 
   fun values(): Array<A> /* Synthetic body for ENUM_VALUES */

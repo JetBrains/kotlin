@@ -5,23 +5,18 @@
 
 package org.jetbrains.kotlin.test
 
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.lang.reflect.Field
 import java.util.*
-import java.util.regex.Pattern
 
 abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() {
     @Throws(Exception::class)
@@ -32,7 +27,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     @Throws(java.lang.Exception::class)
     protected open fun doTest(filePath: String) {
         val file = File(filePath)
-        val expectedText = KotlinTestUtils.doLoadFile(file)
+        val expectedText = KtTestUtil.doLoadFile(file)
         doMultiFileTest(file, createTestFilesFromFile(file, expectedText))
     }
 
@@ -47,7 +42,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
     protected open fun getTestJdkKind(files: List<F>): TestJdkKind {
-        if (files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.content, "JDK_15") }) return TestJdkKind.FULL_JDK_15
+        if (files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.content, "JDK_17") }) return TestJdkKind.FULL_JDK_17
 
         for (file in files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
@@ -129,60 +124,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
     companion object {
-
-        private val FLAG_NAMESPACE_TO_CLASS: Map<String, Class<*>> = ImmutableMap.of(
-            "CLI", CLIConfigurationKeys::class.java,
-            "JVM", JVMConfigurationKeys::class.java
-        )
-
-        private val FLAG_CLASSES: List<Class<*>> = ImmutableList.of(
-            CLIConfigurationKeys::class.java,
-            JVMConfigurationKeys::class.java
-        )
-
-        private val BOOLEAN_FLAG_PATTERN = Pattern.compile("([+-])(([a-zA-Z_0-9]*)\\.)?([a-zA-Z_0-9]*)")
-        private val CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN = Pattern.compile(
-            "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_\\-0-9]*)"
-        )
-        private val ASSERTIONS_MODE_FLAG_PATTERN = Pattern.compile("ASSERTIONS_MODE=([a-zA-Z_0-9-]*)")
-        private val STRING_CONCAT = Pattern.compile("STRING_CONCAT=([a-zA-Z_0-9-]*)")
-
-        private fun tryApplyBooleanFlag(
-            configuration: CompilerConfiguration,
-            flag: String,
-            flagEnabled: Boolean,
-            flagNamespace: String?,
-            flagName: String
-        ) {
-            val configurationKeysClass: Class<*>?
-            var configurationKeyField: Field? = null
-            if (flagNamespace == null) {
-                for (flagClass in FLAG_CLASSES) {
-                    try {
-                        configurationKeyField = flagClass.getField(flagName)
-                        break
-                    } catch (ignored: java.lang.Exception) {
-                    }
-                }
-            } else {
-                configurationKeysClass = FLAG_NAMESPACE_TO_CLASS[flagNamespace]
-                assert(configurationKeysClass != null) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
-                configurationKeyField = try {
-                    configurationKeysClass!!.getField(flagName)
-                } catch (e: java.lang.Exception) {
-                    null
-                }
-            }
-            assert(configurationKeyField != null) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
-            try {
-                @Suppress("UNCHECKED_CAST")
-                val configurationKey = configurationKeyField!![null] as CompilerConfigurationKey<Boolean>
-                configuration.put(configurationKey, flagEnabled)
-            } catch (e: java.lang.Exception) {
-                assert(false) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
-            }
-        }
-
         @JvmStatic
         fun updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives: List<TestFile>,
@@ -198,7 +139,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             usePreparsedDirectives: Boolean
         ) {
             var explicitLanguageVersionSettings: LanguageVersionSettings? = null
-            var includeCompatExperimentalCoroutines = false
             val kotlinConfigurationFlags: MutableList<String> = ArrayList(0)
             for (testFile in testFilesWithConfigurationDirectives) {
                 val content = testFile.content
@@ -230,17 +170,11 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     """.trimIndent()
                     )
                 }
-                if (content.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
-                    includeCompatExperimentalCoroutines = true
-                }
                 val fileLanguageVersionSettings: LanguageVersionSettings? = parseLanguageVersionSettings(directives)
                 if (fileLanguageVersionSettings != null) {
                     assert(explicitLanguageVersionSettings == null) { "Should not specify !LANGUAGE directive twice" }
                     explicitLanguageVersionSettings = fileLanguageVersionSettings
                 }
-            }
-            if (includeCompatExperimentalCoroutines) {
-                configuration.addJvmClasspathRoot(ForTestCompileRuntime.coroutinesCompatForTests())
             }
             if (explicitLanguageVersionSettings != null) {
                 configuration.languageVersionSettings = explicitLanguageVersionSettings
@@ -249,37 +183,10 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         }
 
         private fun updateConfigurationWithFlags(configuration: CompilerConfiguration, flags: List<String>) {
-            for (flag in flags) {
-                var m = BOOLEAN_FLAG_PATTERN.matcher(flag)
-                if (m.matches()) {
-                    val flagEnabled = "-" != m.group(1)
-                    val flagNamespace = m.group(3)
-                    val flagName = m.group(4)
-                    tryApplyBooleanFlag(configuration, flag, flagEnabled, flagNamespace, flagName)
-                    continue
-                }
-                m = CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN.matcher(flag)
-                if (m.matches()) {
-                    val flagValueString = m.group(1)
-                    val mode = JVMConstructorCallNormalizationMode.fromStringOrNull(flagValueString)
-                        ?: error("Wrong CONSTRUCTOR_CALL_NORMALIZATION_MODE value: $flagValueString")
-                    configuration.put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE, mode)
-                }
-                m = ASSERTIONS_MODE_FLAG_PATTERN.matcher(flag)
-                if (m.matches()) {
-                    val flagValueString = m.group(1)
-                    val mode = JVMAssertionsMode.fromStringOrNull(flagValueString)
-                        ?: error("Wrong ASSERTIONS_MODE value: $flagValueString")
-                    configuration.put(JVMConfigurationKeys.ASSERTIONS_MODE, mode)
-                }
-
-                m = STRING_CONCAT.matcher(flag)
-                if (m.matches()) {
-                    val flagValueString = m.group(1)
-                    val mode = JvmStringConcat.fromString(flagValueString)
-                        ?: error("Wrong STRING_CONCAT value: $flagValueString")
-                    configuration.put(JVMConfigurationKeys.STRING_CONCAT, mode)
-                }
+            val configurationFlags = parseAnalysisFlags(flags)
+            configurationFlags.entries.forEach { (key, value) ->
+                @Suppress("UNCHECKED_CAST")
+                configuration.put(key as CompilerConfigurationKey<Any>, value)
             }
         }
 
@@ -288,6 +195,9 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             var addReflect = false
             for (file in files) {
                 if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                    addRuntime = true
+                }
+                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_STDLIB")) {
                     addRuntime = true
                 }
                 if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {

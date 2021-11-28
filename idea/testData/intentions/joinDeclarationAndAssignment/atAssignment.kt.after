@@ -1,8 +1,0 @@
-fun test(repo: Repository, commitMessage: String) {
-    repo.git("add --verbose .")
-    val hash<selection>: String</selection><caret> = repo.git("commit -m $commitMessage")
-}
-
-class Repository {
-    fun git(s: String) = ""
-}

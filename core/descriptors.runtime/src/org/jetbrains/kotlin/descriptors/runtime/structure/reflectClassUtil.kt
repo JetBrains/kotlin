@@ -67,15 +67,22 @@ val Class<*>.classId: ClassId
     }
 
 val Class<*>.desc: String
-    get() {
-        if (this == Void.TYPE) return "V"
-        // This is a clever exploitation of a format returned by Class.getName(): for arrays, it's almost an internal name,
-        // but with '.' instead of '/'
-        return createArrayType().name.substring(1).replace('.', '/')
+    get() = when {
+        isPrimitive -> when (name) {
+            "boolean" -> "Z"
+            "char" -> "C"
+            "byte" -> "B"
+            "short" -> "S"
+            "int" -> "I"
+            "float" -> "F"
+            "long" -> "J"
+            "double" -> "D"
+            "void" -> "V"
+            else -> throw IllegalArgumentException("Unsupported primitive type: $this")
+        }
+        isArray -> name.replace('.', '/')
+        else -> "L${name.replace('.', '/')};"
     }
-
-fun Class<*>.createArrayType(): Class<*> =
-    Array.newInstance(this, 0)::class.java
 
 /**
  * @return all arguments of a parameterized type, including those of outer classes in case this type represents an inner generic.

@@ -1,7 +1,0 @@
-package kotlin.internal
-
-annotation class ImplicitIntegerCoercion : Annotation {
-  constructor() /* primary */ 
-
-}
-

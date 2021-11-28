@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,11 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
 
     override fun contains(value: Char): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     *
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
@@ -23,7 +28,7 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
         first == other.first && last == other.last)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())
+        if (isEmpty()) -1 else (31 * first.code + last.code)
 
     override fun toString(): String = "$first..$last"
 
@@ -42,6 +47,11 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
 
     override fun contains(value: Int): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     *
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
@@ -68,6 +78,11 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
 
     override fun contains(value: Long): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     *
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =

@@ -1,0 +1,69 @@
+FILE: destructuring.kt
+    public final data class C : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/C|.R|/C.x|, y: R|kotlin/String| = this@R|/C|.R|/C.y|): R|C|
+
+    }
+    public final fun foo1(block: R|(C) -> kotlin/Unit|): R|kotlin/Unit| {
+        ^foo1 R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/C.C|(Int(0), String()))
+    }
+    public final fun foo2(block: R|(C, C) -> kotlin/Unit|): R|kotlin/Unit| {
+        ^foo2 R|<local>/block|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(R|/C.C|(Int(0), String()), R|/C.C|(Int(0), String()))
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo1|(<L> = foo1@fun <anonymous>(<destruct>: R|C|): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/C.component1|()
+            lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/C.component2|()
+            R|/C.C|(R|<local>/x|, R|<local>/y|)
+        }
+        )
+        R|/foo1|(<L> = foo1@fun <anonymous>(<destruct>: R|C|): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/C.component1|()
+            lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/C.component2|()
+            R|/C.C|(R|<local>/x|, R|<local>/y|)
+        }
+        )
+        R|/foo1|(<L> = foo1@fun <anonymous>(<destruct>: R|C|): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|kotlin/String| = R|<local>/<destruct>|.<CS errors: /C.component1>#()
+            lval y: R|kotlin/Int| = R|<local>/<destruct>|.<CS errors: /C.component2>#()
+            <Inapplicable(INAPPLICABLE): /C.C>#(R|<local>/x|, R|<local>/y|)
+        }
+        )
+        R|/foo2|(<L> = foo2@fun <anonymous>(<destruct>: R|C|, <destruct>: R|C|): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/C.component1|()
+            lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/C.component2|()
+            lval z: R|kotlin/Int| = R|<local>/<destruct>|.R|/C.component1|()
+            lval w: R|kotlin/String| = R|<local>/<destruct>|.R|/C.component2|()
+            R|/C.C|(R|<local>/x|.R|kotlin/Int.plus|(R|<local>/z|), R|<local>/y|.R|kotlin/String.plus|(R|<local>/w|))
+        }
+        )
+        R|/foo2|(<L> = foo2@fun <anonymous>(<destruct>: R|C|, <destruct>: R|C|): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/C.component1|()
+            lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/C.component2|()
+            lval z: R|kotlin/Int| = R|<local>/<destruct>|.R|/C.component1|()
+            lval w: R|kotlin/String| = R|<local>/<destruct>|.R|/C.component2|()
+            R|/C.C|(R|<local>/x|.R|kotlin/Int.plus|(R|<local>/z|), R|<local>/y|.R|kotlin/String.plus|(R|<local>/w|))
+        }
+        )
+        R|/foo2|(<L> = foo2@fun <anonymous>(<destruct>: R|C|, <destruct>: R|C|): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|kotlin/String| = R|<local>/<destruct>|.<CS errors: /C.component1>#()
+            lval y: R|kotlin/Int| = R|<local>/<destruct>|.<CS errors: /C.component2>#()
+            lval z: R|kotlin/String| = R|<local>/<destruct>|.<CS errors: /C.component1>#()
+            lval w: R|kotlin/Int| = R|<local>/<destruct>|.<CS errors: /C.component2>#()
+            <Inapplicable(INAPPLICABLE): /C.C>#(R|<local>/x|.R|kotlin/String.plus|(R|<local>/z|), R|<local>/y|.R|kotlin/Int.plus|(R|<local>/w|))
+        }
+        )
+    }

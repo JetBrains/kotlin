@@ -1,7 +1,0 @@
-// DISABLE-ERRORS
-annotation class Ann
-
-@Ann
-private data class Foo(val s: String) {
-    fun foo() {}
-}

@@ -48,11 +48,19 @@ class TestAnnotationProcessor : AbstractProcessor() {
         // print warning processingEnv.messager.printMessage(WARNING, "Additional warning message from AP")
 
         processingEnv.filer
-                .createResource(StandardLocation.CLASS_OUTPUT, "abc", "helloWorld.txt")
-                .openWriter()
-                .use {
-                    it.write("Hello, world!")
-                }
+            .createResource(
+                StandardLocation.SOURCE_OUTPUT,
+                "test.generated",
+                "AnotherGenerated.kt",
+            ).openWriter().use {
+                it.write("package test.generated;   class AnotherGenerated")
+            }
+        processingEnv.filer
+            .createResource(StandardLocation.CLASS_OUTPUT, "abc", "helloWorld.txt")
+            .openWriter()
+            .use {
+                it.write("Hello, world!")
+            }
 
         return true
     }

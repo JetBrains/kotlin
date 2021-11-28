@@ -1,5 +1,4 @@
-// !WITH_NEW_INFERENCE
-// FILE: b.kt
+// FILE: a.kt
 package outer
 
 fun Int?.optint() : Unit {}
@@ -10,7 +9,7 @@ fun <T: Any, E> T.foo(x : E, y : A) : T   {
   y plus 1
   y + 1.0
 
-  this?.minus<T>(this)
+  <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)<!>
 
   return this
 }
@@ -20,7 +19,7 @@ class A
 infix operator fun A.plus(a : Any) {
 
   1.foo()
-  true.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+  true.foo(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
 
   1
 }
@@ -37,7 +36,7 @@ fun test() {
 val Int.abs : Int
   get() = if (this > 0) this else -this;
 
-val <T> T.foo : T
+<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>val <T> T.foo : T<!>
 
 fun Int.foo() = this
 
@@ -64,13 +63,13 @@ import outer.*
 
             command.foo
 
-            command.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            command<!UNSAFE_CALL!>.<!>equals(null)
             command?.equals(null)
             command.equals1(null)
             command?.equals1(null)
 
             val c = Command()
-            c?.equals2(null)
+            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)<!>
 
             if (command == null) 1
         }

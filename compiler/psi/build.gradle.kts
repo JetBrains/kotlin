@@ -4,19 +4,16 @@ plugins {
 }
 
 repositories {
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 val jflexPath by configurations.creating
 
 dependencies {
-    val compile by configurations
-    val compileOnly by configurations
-
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend.common"))
-    compile(project(":kotlin-script-runtime"))
+    api(project(":core:compiler.common"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend.common"))
+    api(project(":kotlin-script-runtime"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("guava", "trove4j", rootProject = rootProject) }

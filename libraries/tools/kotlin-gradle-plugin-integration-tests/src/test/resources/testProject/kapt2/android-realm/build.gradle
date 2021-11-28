@@ -4,7 +4,8 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url 'https://maven.google.com' }
-        jcenter()
+        mavenCentral()
+        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$android_tools_version"
@@ -42,6 +43,11 @@ android {
         incremental false
     }
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     packagingOptions {
         // Workaround for org.jetbrains.kotlin.gradle.Kapt3Android33IT#testRealm
         // Android Plugin 3.3.2 fails with:
@@ -66,7 +72,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile 'org.jetbrains.anko:anko-common:0.9'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation 'org.jetbrains.anko:anko-common:0.9'
 }

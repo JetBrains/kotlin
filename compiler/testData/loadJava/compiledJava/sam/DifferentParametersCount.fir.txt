@@ -1,4 +1,18 @@
 public final class DifferentParametersCount : R|kotlin/Any| {
     public constructor(): R|test/DifferentParametersCount|
 
+    public open class A : R|kotlin/Any| {
+        public open static fun foo(x: R|ft<java/lang/Runnable, java/lang/Runnable?>|, y: R|kotlin/Int|): R|kotlin/Unit|
+
+        public constructor(): R|test/DifferentParametersCount.A|
+
+    }
+    public open class B : R|test/DifferentParametersCount.A| {
+        public open static fun foo(x: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public open static fun foo(x: R|ft<java/lang/Runnable, java/lang/Runnable?>|, y: R|kotlin/Int|): R|kotlin/Unit|
+
+        public constructor(): R|test/DifferentParametersCount.B|
+
+    }
 }

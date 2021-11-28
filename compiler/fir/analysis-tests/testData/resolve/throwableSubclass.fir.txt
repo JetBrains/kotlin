@@ -1,0 +1,67 @@
+FILE: throwableSubclass.kt
+    public final class Test1<T, B> : R|kotlin/Exception| {
+        public constructor<T, B>(): R|Test1<T, B>| {
+            super<R|kotlin/Exception|>()
+        }
+
+        public final inner class Test2<S, T, B> : R|kotlin/Throwable| {
+            public Test1<T, B>.constructor<S>(): R|Test1.Test2<S, T, B>| {
+                super<R|kotlin/Throwable|>()
+            }
+
+        }
+
+        public final class Test3 : R|kotlin/NullPointerException| {
+            public constructor(): R|Test1.Test3| {
+                super<R|kotlin/NullPointerException|>()
+            }
+
+        }
+
+        public final object Test4 : R|kotlin/Throwable| {
+            private constructor(): R|Test1.Test4| {
+                super<R|kotlin/Throwable|>()
+            }
+
+        }
+
+    }
+    public final class Test5<T, B> : R|kotlin/Any| {
+        public constructor<T, B>(): R|Test5<T, B>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Test6<T, B> : R|kotlin/Exception| {
+            public Test5<T, B>.constructor(): R|Test5.Test6<T, B>| {
+                super<R|kotlin/Exception|>()
+            }
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            local final class Test7<T, B> : R|kotlin/Throwable| {
+                public constructor(): R|Test5.Test7<T, B>| {
+                    super<R|kotlin/Throwable|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun <Z> topLevelFun(): R|kotlin/Unit| {
+        local final class Test8<Z> : R|kotlin/Error| {
+            public constructor(): R|Test8<Z>| {
+                super<R|kotlin/Error|>()
+            }
+
+        }
+
+        lval obj: R|<anonymous><Z>| = object : R|kotlin/Throwable| {
+            private constructor(): R|<anonymous><Z>| {
+                super<R|kotlin/Throwable|>()
+            }
+
+        }
+
+    }

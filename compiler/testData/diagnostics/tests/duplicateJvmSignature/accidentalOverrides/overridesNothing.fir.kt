@@ -3,5 +3,5 @@ interface B {
 }
 
 class C : B {
-    override val x = 1
+    <!NOTHING_TO_OVERRIDE!>override<!> val x = 1
 }

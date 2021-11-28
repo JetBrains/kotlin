@@ -22,7 +22,7 @@
         },
         {
           "specVersion": "0.1-435",
-          "casesNumber": 3,
+          "casesNumber": 4,
           "description": "Non-exhaustive when using nullable boolean values.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/11.1.kt",
           "unexpectedBehaviour": false,
@@ -90,7 +90,7 @@
       "3": [
         {
           "specVersion": "0.1-100",
-          "casesNumber": 5,
+          "casesNumber": 6,
           "description": "Non-exhaustive when using boolean values.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/3.1.kt",
           "unexpectedBehaviour": false,

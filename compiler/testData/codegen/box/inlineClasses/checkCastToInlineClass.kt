@@ -1,6 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class UInt(val s: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class UInt(val s: Int)
 
 fun test(a1: Any, a2: UInt?, a3: Any?, a4: Any?): Int {
     val b1 = a1 as UInt

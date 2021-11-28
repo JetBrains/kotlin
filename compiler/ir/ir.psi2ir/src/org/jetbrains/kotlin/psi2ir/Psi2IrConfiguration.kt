@@ -17,5 +17,6 @@
 package org.jetbrains.kotlin.psi2ir
 
 class Psi2IrConfiguration(
-    val ignoreErrors: Boolean = false
+    val ignoreErrors: Boolean = false,
+    val allowUnboundSymbols: Boolean = false
 )

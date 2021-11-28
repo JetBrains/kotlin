@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: +NewInference
 // Issue: KT-30734
 

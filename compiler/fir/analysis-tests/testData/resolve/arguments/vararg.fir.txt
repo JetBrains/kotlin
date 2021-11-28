@@ -1,0 +1,17 @@
+FILE: vararg.kt
+    public final fun foo(x: R|kotlin/Int|, vararg y: R|kotlin/Array<out kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun bar(x: R|kotlin/Int|, vararg y: R|kotlin/Array<out kotlin/String>|, z: R|kotlin/Boolean|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(Int(1))
+        R|/foo|(Int(1), vararg(String()))
+        R|/foo|(Int(1), vararg(String(my), String(yours)))
+        R|/foo|(Int(1), vararg(*R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(my), String(yours)))))
+        <Inapplicable(INAPPLICABLE): /foo>#(String())
+        <Inapplicable(INAPPLICABLE): /foo>#(Int(1), Int(2))
+        R|/bar|(Int(1), z = Boolean(true), vararg(y = *R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(my), String(yours)))))
+        <Inapplicable(INAPPLICABLE): /bar>#(Int(0), z = Boolean(false), y = String(), y = String(other))
+        <Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /bar>#(Int(0), String(), Boolean(true))
+        <Inapplicable(INAPPLICABLE): /bar>#(Int(0), z = Boolean(false), y = String(), y = String(other), y = String(yet other))
+    }

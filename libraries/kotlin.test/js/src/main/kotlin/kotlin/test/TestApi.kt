@@ -65,11 +65,26 @@ internal fun adapter(): FrameworkAdapter {
     return result
 }
 
+@JsName("kotlinTest")
+external val kotlinTestNamespace: KotlinTestNamespace
 
-internal fun detectAdapter() = when {
-    isQUnit() -> QUnitAdapter()
-    isJasmine() -> JasmineLikeAdapter()
-    else -> BareAdapter()
+external interface KotlinTestNamespace {
+    val adapterTransformer: ((FrameworkAdapter) -> FrameworkAdapter)?
+}
+
+internal fun detectAdapter(): FrameworkAdapter {
+    val frameworkAdapter = when {
+        isQUnit() -> QUnitAdapter()
+        isJasmine() -> JasmineLikeAdapter()
+        else -> BareAdapter()
+    }
+    return if (jsTypeOf(kotlinTestNamespace) != "undefined") {
+        val adapterTransform = kotlinTestNamespace
+            .adapterTransformer
+        if (adapterTransform !== null) {
+            adapterTransform(frameworkAdapter)
+        } else frameworkAdapter
+    } else frameworkAdapter
 }
 
 internal val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(

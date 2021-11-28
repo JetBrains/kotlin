@@ -5,7 +5,7 @@
 
 expect fun <T : Comparable<T>> Array<out T>.sort(): Unit
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {}

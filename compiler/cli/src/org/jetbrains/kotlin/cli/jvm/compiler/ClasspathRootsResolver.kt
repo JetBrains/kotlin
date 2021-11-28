@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -29,14 +30,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
@@ -49,12 +51,15 @@ class ClasspathRootsResolver(
     private val psiManager: PsiManager,
     private val messageCollector: MessageCollector?,
     private val additionalModules: List<String>,
-    private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
+    private val contentRootToVirtualFile: (JvmContentRootBase) -> VirtualFile?,
     private val javaModuleFinder: CliJavaModuleFinder,
     private val requireStdlibModule: Boolean,
-    private val outputDirectory: VirtualFile?
+    private val outputDirectory: VirtualFile?,
+    private val javaFileManager: KotlinCliJavaFileManager
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
+
+    private val searchScope = GlobalSearchScope.allScope(psiManager.project)
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
@@ -66,11 +71,11 @@ class ClasspathRootsResolver(
         val jvmModulePathRoots = mutableListOf<VirtualFile>()
 
         for (contentRoot in contentRoots) {
-            if (contentRoot !is JvmContentRoot) continue
+            if (contentRoot !is JvmContentRootBase) continue
             val root = contentRootToVirtualFile(contentRoot) ?: continue
             when (contentRoot) {
                 is JavaSourceRoot -> javaSourceRoots += RootWithPrefix(root, contentRoot.packagePrefix)
-                is JvmClasspathRoot -> jvmClasspathRoots += root
+                is JvmClasspathRootBase -> jvmClasspathRoots += root
                 is JvmModulePathRoot -> jvmModulePathRoots += root
                 else -> error("Unknown root type: $contentRoot")
             }
@@ -160,7 +165,7 @@ class ClasspathRootsResolver(
                 }
 
         if (moduleInfoFile != null) {
-            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
+            val moduleInfo = JavaModuleInfo.read(moduleInfoFile, javaFileManager, searchScope) ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 

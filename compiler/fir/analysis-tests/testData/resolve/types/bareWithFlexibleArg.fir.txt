@@ -1,0 +1,6 @@
+FILE: main.kt
+    public final fun foo(x: R|Promise<kotlin/String?>|): R|kotlin/Unit| {
+        R|/bar|((R|<local>/x| as R|CancellablePromise<kotlin/String?>|))
+    }
+    public final fun bar(x: R|CancellablePromise<kotlin/String?>|): R|kotlin/Unit| {
+    }

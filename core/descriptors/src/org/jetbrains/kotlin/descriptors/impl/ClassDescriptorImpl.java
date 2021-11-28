@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
@@ -173,5 +174,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @Override
     public Collection<ClassDescriptor> getSealedSubclasses() {
         return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+        return null;
     }
 }

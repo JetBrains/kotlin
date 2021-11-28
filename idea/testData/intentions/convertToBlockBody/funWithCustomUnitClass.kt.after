@@ -1,5 +1,0 @@
-object Unit
-
-fun foo(): Unit {
-    return Unit
-}

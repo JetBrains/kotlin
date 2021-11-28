@@ -18,6 +18,8 @@ interface B {
 
         }
 
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic external fun a5()<!>
+
         <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic
         var foo<!> = 1
 
@@ -49,6 +51,11 @@ interface B {
 
         public var foo9 = 1
         <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic private set<!>
+
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic
+        val foo10: Int<!> external get
+
+        val foo11: Int <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic external get<!>
     }
 
 }

@@ -34,9 +34,9 @@ internal open class KProperty1Impl<T, out V> : KProperty1<T, V>, KPropertyImpl<V
 
     override fun get(receiver: T): V = getter.call(receiver)
 
-    private val delegateField = lazy(PUBLICATION) { computeDelegateField() }
+    private val delegateSource = lazy(PUBLICATION) { computeDelegateSource() }
 
-    override fun getDelegate(receiver: T): Any? = getDelegate(delegateField.value, receiver)
+    override fun getDelegate(receiver: T): Any? = getDelegateImpl(delegateSource.value, receiver, null)
 
     override fun invoke(receiver: T): V = get(receiver)
 

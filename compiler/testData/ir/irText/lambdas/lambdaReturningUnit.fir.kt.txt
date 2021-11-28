@@ -1,0 +1,10 @@
+inline fun flaf(block: Function0<Any?>) {
+  block.invoke() /*~> Unit */
+}
+
+suspend fun box() {
+  flaf(block = local fun <anonymous>(): Any? {
+    Unit
+  }
+)
+}

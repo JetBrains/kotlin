@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !USE_EXPERIMENTAL: kotlin.internal.ContractsDsl
+// !OPT_IN: kotlin.internal.ContractsDsl
 
 import kotlin.contracts.*
 
@@ -68,16 +68,16 @@ class Test1 {
 
     init {
         inlineMe {
-            <!VARIABLE_EXPECTED!>a<!> += "allowed"
+            <!VAL_REASSIGNMENT!>a<!> += "allowed"
         }
         crossinlineMe {
-            <!VARIABLE_EXPECTED!>b<!> += "not allowed"
+            <!VAL_REASSIGNMENT!>b<!> += "not allowed"
         }
         noinlineMe {
-            <!VARIABLE_EXPECTED!>c<!> += "not allowed"
+            <!VAL_REASSIGNMENT!>c<!> += "not allowed"
         }
         notinline {
-            <!VARIABLE_EXPECTED!>d<!> += "not allowed"
+            <!VAL_REASSIGNMENT!>d<!> += "not allowed"
         }
     }
 }

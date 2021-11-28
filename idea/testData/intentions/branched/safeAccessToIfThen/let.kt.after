@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo(value: Int?): Int? {
-    return if (value != null) value + 1 else null
-}

@@ -65,4 +65,13 @@ object VersionReader {
         if (!file.exists()) return null
         return getVersionsFromManifest(file)
     }
+
+    internal val minVersionForInlineClasses = ApiVersion.parse("1.1-M1-SNAPSHOT")!!
+
+    fun canSupportInlineClasses(module: ModuleDescriptor, trace: BindingTrace): Boolean {
+        // Klibs do not have manifest file, unfortunately, so we hope for the better
+        val currentVersion = getVersionsForCurrentModuleFromTrace(module, trace) ?: return true
+        val implVersion = currentVersion.implementationVersion ?: return false
+        return implVersion >= minVersionForInlineClasses
+    }
 }

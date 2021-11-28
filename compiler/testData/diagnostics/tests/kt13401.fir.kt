@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 // See KT-13401: SOE in VarianceChecker
 
@@ -10,9 +9,9 @@ interface Super<out U> {
 }
 // Related variance errors
 class Owner<in T> {
-    inner class Inner<U : T>(val u: U) {
+    inner class Inner<U : <!TYPE_VARIANCE_CONFLICT!>T<!>>(val u: U) {
         fun getT() = u
     }
 
-    fun foo(arg: Inner<*>) = arg.getT()
+    <!TYPE_VARIANCE_CONFLICT!>fun foo(arg: Inner<*>)<!> = arg.getT()
 }

@@ -1,0 +1,5 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+
+FIR element rendered:
+R|(kotlin/Int) -> kotlin/String|

@@ -18,9 +18,9 @@ fun main() {
         x.toInt().toString()
     })
 
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(MyFunction { x: Int ->
+    foo2(<!ARGUMENT_TYPE_MISMATCH!>MyFunction { x: Int ->
         x.toString()
-    })
+    }<!>)
 
     foo3(
        MyFunction { x ->

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -37,15 +38,15 @@ private fun TypeSystemCommonBackendContext.putTypeOfReifiedTypeParameter(
     v.aconst(null)
 }
 
-internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
+fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
     v: InstructionAdapter, type: KT, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
 ) {
     val typeParameter = type.typeConstructor().getTypeParameterClassifier()
     if (typeParameter != null) {
         if (!doesTypeContainTypeParametersWithRecursiveBounds(type)) {
-            throw UnsupportedOperationException(
-                "Non-reified type parameters with recursive bounds are not supported yet: ${typeParameter.getName()}"
-            )
+            intrinsicsSupport.reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameter.getName())
+            v.aconst(null)
+            return
         }
 
         generateNonReifiedTypeParameter(v, typeParameter, intrinsicsSupport)
@@ -89,6 +90,27 @@ internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateType
     }
 
     v.invokestatic(REFLECTION, methodName, signature, false)
+
+    if (intrinsicsSupport.toKotlinType(type).isSuspendFunctionType) {
+        intrinsicsSupport.reportSuspendTypeUnsupported()
+    }
+
+    if (intrinsicsSupport.state.stableTypeOf) {
+        if (intrinsicsSupport.isMutableCollectionType(type)) {
+            v.invokestatic(REFLECTION, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
+        } else if (type.typeConstructor().isNothingConstructor()) {
+            v.invokestatic(REFLECTION, "nothingType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
+        }
+
+        if (type.isFlexible()) {
+            // If this is a flexible type, we've just generated its lower bound and have it on the stack.
+            // Let's generate the upper bound now and call the method that takes lower and upper bound and constructs a flexible KType.
+            @Suppress("UNCHECKED_CAST")
+            generateTypeOf(v, type.upperBoundIfFlexible() as KT, intrinsicsSupport)
+
+            v.invokestatic(REFLECTION, "platformType", Type.getMethodDescriptor(K_TYPE, K_TYPE, K_TYPE), false)
+        }
+    }
 }
 
 private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonReifiedTypeParameter(
@@ -103,7 +125,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
         TypeVariance.OUT -> KVariance.OUT
     }
     v.getstatic(K_VARIANCE.internalName, variance.name, K_VARIANCE.descriptor)
-    v.aconst(typeParameter.isReified())
+    v.iconst(if (typeParameter.isReified()) 1 else 0)
     v.invokestatic(
         REFLECTION, "typeParameter",
         Type.getMethodDescriptor(K_TYPE_PARAMETER, OBJECT_TYPE, JAVA_STRING_TYPE, K_VARIANCE, Type.BOOLEAN_TYPE),
@@ -119,11 +141,11 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
     if (bounds.size == 1) {
         generateTypeOf(v, bounds.single(), intrinsicsSupport)
     } else {
-        v.aconst(bounds.size)
+        v.iconst(bounds.size)
         v.newarray(K_TYPE)
         for ((i, bound) in bounds.withIndex()) {
             v.dup()
-            v.aconst(i)
+            v.iconst(i)
             generateTypeOf(v, bound, intrinsicsSupport)
             v.astore(K_TYPE)
         }

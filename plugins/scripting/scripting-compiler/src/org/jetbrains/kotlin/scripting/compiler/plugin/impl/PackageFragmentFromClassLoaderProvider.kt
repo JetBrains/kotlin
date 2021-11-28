@@ -17,14 +17,13 @@ import org.jetbrains.kotlin.descriptors.runtime.components.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.load.kotlin.*
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.ClassLoaderByConfiguration
-import kotlin.script.experimental.jvm.util.classpathFromClassloader
 
 class PackageFragmentFromClassLoaderProviderExtension(
     val classLoaderGetter: ClassLoaderByConfiguration,
@@ -39,7 +38,7 @@ class PackageFragmentFromClassLoaderProviderExtension(
         trace: BindingTrace,
         moduleInfo: ModuleInfo?,
         lookupTracker: LookupTracker
-    ): PackageFragmentProvider? {
+    ): PackageFragmentProvider {
         val classLoader = classLoaderGetter(scriptCompilationConfiguration)
 
         val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
@@ -54,16 +53,17 @@ class PackageFragmentFromClassLoaderProviderExtension(
             )
 
         val lazyJavaPackageFragmentProvider =
-            makeLazyJavaPackageFragmentFromClassLoaderProvider(
-                classLoader, module, storageManager, notFoundClasses,
-                reflectKotlinClassFinder, deserializedDescriptorResolver, singleModuleClassResolver,
+            makeLazyJavaPackageFragmentProvider(
+                ReflectJavaClassFinder(classLoader), module, storageManager, notFoundClasses,
+                reflectKotlinClassFinder, deserializedDescriptorResolver,
+                RuntimeErrorReporter, RuntimeSourceElementFactory, singleModuleClassResolver,
                 packagePartProvider
             )
 
         val deserializationComponentsForJava =
             makeDeserializationComponentsForJava(
                 module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                reflectKotlinClassFinder, deserializedDescriptorResolver
+                reflectKotlinClassFinder, deserializedDescriptorResolver, RuntimeErrorReporter
             )
 
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)

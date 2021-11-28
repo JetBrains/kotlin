@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.metadata
 
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
@@ -24,4 +25,5 @@ class MetadataSerializerExtension(
     override val metadataVersion: BuiltInsBinaryVersion
 ) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
+    override val stringTable = ApproximatingStringTable()
 }

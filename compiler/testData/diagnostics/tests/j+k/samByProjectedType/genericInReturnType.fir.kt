@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // FILE: EventListener.java
 public interface EventListener<E> {
@@ -34,7 +33,7 @@ fun main() {
     }
 
     A.baz {
-        x -> x.hashCode()
+        x -> <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH!>x.hashCode()<!>
     }
 
     val block: (String) -> Any? = {
@@ -48,6 +47,6 @@ fun main() {
         x -> x.toString()
     }
 
-    A.<!INAPPLICABLE_CANDIDATE!>baz<!>(block)
+    A.baz(<!ARGUMENT_TYPE_MISMATCH!>block<!>)
     A.baz(block2)
 }

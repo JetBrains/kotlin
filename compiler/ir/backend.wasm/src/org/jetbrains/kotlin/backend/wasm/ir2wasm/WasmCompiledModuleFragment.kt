@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.wasm.ir.*
 
-class WasmCompiledModuleFragment {
+class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val functions =
         ReferencableAndDefinable<IrFunctionSymbol, WasmFunction>()
     val globals =
@@ -36,21 +38,55 @@ class WasmCompiledModuleFragment {
     val runtimeTypes =
         ReferencableAndDefinable<IrClassSymbol, WasmGlobal>()
 
+    val tagFuncType = WasmFunctionType(
+        "ex_handling_tag",
+        listOf(
+            WasmRefNullType(WasmHeapType.Type(gcTypes.reference(irBuiltIns.throwableClass)))
+        ),
+        emptyList()
+    )
+    val tag = WasmTag(tagFuncType)
+
+
     val classes = mutableListOf<IrClassSymbol>()
     val interfaces = mutableListOf<IrClassSymbol>()
     val virtualFunctions = mutableListOf<IrSimpleFunctionSymbol>()
     val signatures = LinkedHashSet<WasmSignature>()
-    val stringLiterals = mutableListOf<String>()
 
     val typeInfo =
         ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
+
+    // Wasm table for each method of each interface.
+    val interfaceMethodTables =
+        ReferencableAndDefinable<IrFunctionSymbol, WasmTable>()
+
+    // Defined class interface tables
+    val definedClassITableData =
+        ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
+
+    // Address of class interface table in linear memory
+    val referencedClassITableAddresses =
+        ReferencableElements<IrClassSymbol, Int>()
+
+    // Sequential number of an implementation (class, object, etc.) for a particular interface
+    // Used as index in table for interface method dispatch
+    val referencedInterfaceImplementationId =
+        ReferencableElements<InterfaceImplementation, Int>()
+
+    val interfaceImplementationsMethods =
+        LinkedHashMap<InterfaceImplementation, Map<IrFunctionSymbol, WasmSymbol<WasmFunction>>>()
+
     val exports = mutableListOf<WasmExport<*>>()
 
     class JsCodeSnippet(val importName: String, val jsCode: String)
 
     val jsFuns = mutableListOf<JsCodeSnippet>()
 
-    var startFunction: WasmFunction? = null
+    class FunWithPriority(val function: WasmFunction, val priority: String)
+    val initFunctions = mutableListOf<FunWithPriority>()
+
+    val scratchMemAddr = WasmSymbol<Int>()
+    val scratchMemSizeInBytes = 65_536
 
     open class ReferencableElements<Ir, Wasm : Any> {
         val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
@@ -92,26 +128,57 @@ class WasmCompiledModuleFragment {
         bind(runtimeTypes.unbound, runtimeTypes.defined)
 
         val klassIds = mutableMapOf<IrClassSymbol, Int>()
-        var classId = 0
+        var currentDataSectionAddress = 0
         for (typeInfoElement in typeInfo.elements) {
             val ir = typeInfo.wasmToIr.getValue(typeInfoElement)
-            klassIds[ir] = classId
-            classId += typeInfoElement.sizeInBytes
+            klassIds[ir] = currentDataSectionAddress
+            currentDataSectionAddress += typeInfoElement.sizeInBytes
         }
 
+        val interfaceTableAddresses = mutableMapOf<IrClassSymbol, Int>()
+        for (typeInfoElement in definedClassITableData.elements) {
+            val ir = definedClassITableData.wasmToIr.getValue(typeInfoElement)
+            interfaceTableAddresses[ir] = currentDataSectionAddress
+            currentDataSectionAddress += typeInfoElement.sizeInBytes
+        }
+
+        val stringDataSectionStart = currentDataSectionAddress
+        val stringDataSectionBytes = mutableListOf<Byte>()
+        val stringAddrs = mutableMapOf<String, Int>()
+        for (str in stringLiteralId.unbound.keys) {
+            val constData = ConstantDataCharArray("string_literal", str.toCharArray())
+            stringDataSectionBytes += constData.toBytes().toList()
+            stringAddrs[str] = currentDataSectionAddress
+            currentDataSectionAddress += constData.sizeInBytes
+        }
+
+        // Reserve some memory to pass complex exported types (like strings). It's going to be accessible through 'unsafeGetScratchRawMemory'
+        // runtime call from stdlib.
+        currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
+        scratchMemAddr.bind(currentDataSectionAddress)
+        currentDataSectionAddress += scratchMemSizeInBytes
+
         bind(classIds.unbound, klassIds)
+        bind(referencedClassITableAddresses.unbound, interfaceTableAddresses)
+        bind(stringLiteralId.unbound, stringAddrs)
         bindIndices(virtualFunctionId.unbound, virtualFunctions)
         bindIndices(signatureId.unbound, signatures.toList())
         bindIndices(interfaceId.unbound, interfaces)
-        bindIndices(stringLiteralId.unbound, stringLiterals)
 
-        val data = typeInfo.elements.map {
-            val ir = typeInfo.wasmToIr.getValue(it)
-            val id = klassIds.getValue(ir)
-            val offset = mutableListOf<WasmInstr>()
-            WasmIrExpressionBuilder(offset).buildConstI32(id)
-            WasmData(WasmDataMode.Active(0, offset), it.toBytes())
+        val interfaceImplementationIds = mutableMapOf<InterfaceImplementation, Int>()
+        val numberOfInterfaceImpls = mutableMapOf<IrClassSymbol, Int>()
+        for (interfaceImplementation in interfaceImplementationsMethods.keys) {
+            val prev = numberOfInterfaceImpls.getOrPut(interfaceImplementation.irInterface) { 0 }
+            interfaceImplementationIds[interfaceImplementation] = prev
+            numberOfInterfaceImpls[interfaceImplementation.irInterface] = prev + 1
         }
+
+        bind(referencedInterfaceImplementationId.unbound, interfaceImplementationIds)
+        bind(interfaceMethodTables.unbound, interfaceMethodTables.defined)
+
+        val data = typeInfo.buildData(address = { klassIds.getValue(it) }) +
+                definedClassITableData.buildData(address = { interfaceTableAddresses.getValue(it) }) +
+                WasmData(WasmDataMode.Active(0, stringDataSectionStart), stringDataSectionBytes.toByteArray())
 
         val logTypeInfo = false
         if (logTypeInfo) {
@@ -124,6 +191,16 @@ class WasmCompiledModuleFragment {
             for ((index, iface: IrClassSymbol) in interfaces.withIndex()) {
                 println("  -- $index ${iface.owner.fqNameWhenAvailable}")
             }
+
+            println("Interfaces implementations: ")
+            for ((interfaceImpl, index: Int) in interfaceImplementationIds) {
+                println(
+                    "  -- $index" +
+                            " Interface: ${interfaceImpl.irInterface.owner.fqNameWhenAvailable}" +
+                            " Class: ${interfaceImpl.irClass.owner.fqNameWhenAvailable}"
+                )
+            }
+
 
             println("Virtual functions: ")
             for ((index, vf: IrSimpleFunctionSymbol) in virtualFunctions.withIndex()) {
@@ -151,9 +228,52 @@ class WasmCompiledModuleFragment {
             WasmElement.Mode.Active(table, offsetExpr)
         )
 
-        val typeInfoSize = classId
+        val interfaceTableElementsLists = interfaceMethodTables.defined.keys.associateWith {
+            mutableMapOf<Int, WasmSymbol<WasmFunction>>()
+        }
+
+        interfaceImplementationIds.forEach { ii: InterfaceImplementation, implId: Int ->
+            for ((interfaceFunction: IrFunctionSymbol, wasmFunction: WasmSymbol<WasmFunction>) in interfaceImplementationsMethods[ii]!!) {
+                interfaceTableElementsLists[interfaceFunction]!![implId] = wasmFunction
+            }
+        }
+
+        val interfaceTableElements = interfaceTableElementsLists.map { (interfaceFunction, methods) ->
+            val type = interfaceMethodTables.defined[interfaceFunction]!!.elementType
+            val functions = MutableList(methods.size) { idx ->
+                val wasmFunc = methods[idx]!!
+                val expression = buildWasmExpression {
+                    buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(wasmFunc))
+                }
+                WasmTable.Value.Expression(expression)
+            }
+            WasmElement(
+                type,
+                values = functions,
+                WasmElement.Mode.Active(interfaceMethodTables.defined[interfaceFunction]!!, offsetExpr)
+            )
+        }
+
+        val masterInitFunctionType = WasmFunctionType("__init_t", emptyList(), emptyList())
+        val masterInitFunction = WasmFunction.Defined("__init", masterInitFunctionType)
+        with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
+            initFunctions.sortedBy { it.priority }.forEach {
+                buildCall(WasmSymbol(it.function))
+            }
+        }
+        exports += WasmExport.Function("__init", masterInitFunction)
+
+        interfaceMethodTables.defined.forEach { (function, table) ->
+            val size = interfaceTableElementsLists[function]!!.size.toUInt()
+            table.limits = WasmLimits(size, size)
+        }
+
+        val typeInfoSize = currentDataSectionAddress
         val memorySizeInPages = (typeInfoSize / 65_536) + 1
         val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), memorySizeInPages.toUInt()))
+
+        // Need to export the memory in order to pass complex objects to the host language.
+        exports += WasmExport.Memory("memory", memory)
 
         val importedFunctions = functions.elements.filterIsInstance<WasmFunction.Imported>()
 
@@ -161,18 +281,19 @@ class WasmCompiledModuleFragment {
         val sortedRttGlobals = runtimeTypes.elements.sortedBy { (it.type as WasmRtt).depth }
 
         val module = WasmModule(
-            functionTypes = functionTypes.elements,
+            functionTypes = functionTypes.elements + tagFuncType + masterInitFunctionType,
             gcTypes = gcTypes.elements,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
-            definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>(),
-            tables = listOf(table),
+            definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>() + masterInitFunction,
+            tables = listOf(table) + interfaceMethodTables.elements,
             memories = listOf(memory),
             globals = globals.elements + sortedRttGlobals,
             exports = exports,
-            startFunction = startFunction!!,
-            elements = listOf(elements),
-            data = data
+            startFunction = null,  // Module is initialized via export call
+            elements = listOf(elements) + interfaceTableElements,
+            data = data,
+            tags = listOf(tag)
         )
         module.calculateIds()
         return module
@@ -207,4 +328,23 @@ fun <IrSymbolType> bindIndices(
             error("Can't link symbol with indices ${irSymbolDebugDump(irSymbol)}")
         wasmSymbol.bind(index)
     }
+}
+
+inline fun WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>.buildData(address: (IrClassSymbol) -> Int): List<WasmData> {
+    return elements.map {
+        val id = address(wasmToIr.getValue(it))
+        val offset = mutableListOf<WasmInstr>()
+        WasmIrExpressionBuilder(offset).buildConstI32(id)
+        WasmData(WasmDataMode.Active(0, offset), it.toBytes())
+    }
+}
+
+data class InterfaceImplementation(
+    val irInterface: IrClassSymbol,
+    val irClass: IrClassSymbol
+)
+
+fun alignUp(x: Int, alignment: Int): Int {
+    assert(alignment and (alignment - 1) == 0) { "power of 2 expected" }
+    return (x + alignment - 1) and (alignment - 1).inv()
 }

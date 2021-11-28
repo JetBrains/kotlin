@@ -1,4 +1,0 @@
-7 <bold>val x</bold> = foo (in test())
-7 	val x = <bold>foo</bold> (in test())
-4 		<bold>val foo: Int</bold> by D.INSTANCE
-9 			return <bold>1</bold>;

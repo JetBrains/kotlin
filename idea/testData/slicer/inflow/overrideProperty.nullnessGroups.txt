@@ -1,3 +1,0 @@
-[NotNull Values]
-13 	<bold>val v</bold> = d.prop (in foo(Base, Derived))
-13 		<bold>val v</bold> = d.prop (in foo(Base, Derived))

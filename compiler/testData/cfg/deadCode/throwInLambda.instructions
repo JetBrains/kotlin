@@ -52,14 +52,14 @@ L0:
 L3 [after local declaration]:
     r({ throw Exception() }) -> <v1>                                                PREV:[jmp?(L3)]
     mark(let { throw Exception() })
-    call(let { throw Exception() }, let|<v0>, <v1>)
+    call(let { throw Exception() }, let|<v0>, <v1>) -> <v2>
 L2 [result of call]:
-    mark(fn()?.let { throw Exception() } ?: "unreachable?")                         PREV:[jf(L2), call(let { throw Exception() }, let|<v0>, <v1>)]
-    jt(L6|!<v2>)                                                                    NEXT:[mark("unreachable?"), merge(fn()?.let { throw Exception() } ?: "unreachable?"|!<v2>, <v3>) -> <v4>]
+    mark(fn()?.let { throw Exception() } ?: "unreachable?")                         PREV:[jf(L2), call(let { throw Exception() }, let|<v0>, <v1>) -> <v2>]
+    jt(L6|<v2>)                                                                     NEXT:[mark("unreachable?"), merge(fn()?.let { throw Exception() } ?: "unreachable?"|<v2>, <v3>) -> <v4>]
     mark("unreachable?")
     r("unreachable?") -> <v3>
 L6 [after elvis operator]:
-    merge(fn()?.let { throw Exception() } ?: "unreachable?"|!<v2>, <v3>) -> <v4>    PREV:[jt(L6|!<v2>), r("unreachable?") -> <v3>]
+    merge(fn()?.let { throw Exception() } ?: "unreachable?"|<v2>, <v3>) -> <v4>     PREV:[jt(L6|<v2>), r("unreachable?") -> <v3>]
     w(x|<v4>)
     r(x) -> <v5>
     ret(*|<v5>) L1
@@ -119,16 +119,16 @@ L2 [after elvis operator]:
 L4 [after local declaration]:
     r({ throw Exception() }) -> <v5>                                                                      PREV:[jmp?(L4)]
     mark(let { throw Exception() })
-    call(let { throw Exception() }, let|<v4>, <v5>)
+    call(let { throw Exception() }, let|<v4>, <v5>) -> <v6>
     jmp(error)                                                                                            NEXT:[<ERROR>]
 L3 [result of call]:
     jmp(error)                                                                                            NEXT:[<ERROR>]                                                                                               PREV:[jf(L3)]
 -   mark(x?.let { throw Exception() } ?: "unreachable")                                                   PREV:[]
--   jt(L7|!<v6>)                                                                                          NEXT:[mark("unreachable"), merge(x?.let { throw Exception() } ?: "unreachable"|!<v6>, <v7>) -> <v8>]         PREV:[]
+-   jt(L7|<v6>)                                                                                           NEXT:[mark("unreachable"), merge(x?.let { throw Exception() } ?: "unreachable"|<v6>, <v7>) -> <v8>]          PREV:[]
 -   mark("unreachable")                                                                                   PREV:[]
 -   r("unreachable") -> <v7>                                                                              PREV:[]
 L7 [after elvis operator]:
--   merge(x?.let { throw Exception() } ?: "unreachable"|!<v6>, <v7>) -> <v8>                              PREV:[]
+-   merge(x?.let { throw Exception() } ?: "unreachable"|<v6>, <v7>) -> <v8>                               PREV:[]
 -   w(y|<v8>)                                                                                             PREV:[]
 -   r(y) -> <v9>                                                                                          PREV:[]
 -   ret(*|<v9>) L1                                                                                        PREV:[]

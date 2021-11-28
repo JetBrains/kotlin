@@ -1,9 +1,9 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 package f
 
-fun <T> g(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>a<!>: Any): List<T> {throw Exception()}
-fun <T> g(<!UNUSED_PARAMETER!>a<!>: Any, <!UNUSED_PARAMETER!>i<!>: Int): Collection<T> {throw Exception()}
+fun <T> g(i: Int, a: Any): List<T> {throw Exception()}
+fun <T> g(a: Any, i: Int): Collection<T> {throw Exception()}
 
 fun <T> test() {
-    val <!UNUSED_VARIABLE!>c<!>: List<T> = <!NI;OVERLOAD_RESOLUTION_AMBIGUITY, OI;CANNOT_COMPLETE_RESOLVE!>g<!>(1, 1)
+    val c: List<T> = <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!>(1, 1)
 }

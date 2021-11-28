@@ -16,14 +16,16 @@ synthetic final class<Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/fun
 }
 
 @kotlin.Metadata
-final class<null>  TKt$sam$Sam$0 {
+synthetic final class<null>  TKt$sam$Sam$0 {
     // source: 't.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public <null> method equals(p0: java.lang.Object): boolean
     public synthetic final <null> method get(): java.lang.Object
     public <null> method getFunctionDelegate(): kotlin.Function
     public <null> method hashCode(): int
+    enclosing method TKt.genericSam()Ljava/lang/Object;
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
+    inner (anonymous) class TKt$sam$Sam$0
 }
 
 @kotlin.Metadata
@@ -33,4 +35,5 @@ public final class<null>  TKt {
     public final static <<T:Ljava/lang/Object;>()TT;> method genericSam(): java.lang.Object
     public final static <<T:Ljava/lang/Object;>(LSam<TT;>;)TT;> method expectsSam(@org.jetbrains.annotations.NotNull p0: Sam): java.lang.Object
     inner (anonymous) class TKt$genericSam$1
+    inner (anonymous) class TKt$sam$Sam$0
 }

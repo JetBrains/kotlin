@@ -1,9 +1,10 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
+
+// On Wasm we don't currently have ArrayIndexOutOfBoundsException
+// IGNORE_BACKEND: WASM
 
 fun iarr(vararg a : Int) = a
 fun <T> array(vararg a : T) = a

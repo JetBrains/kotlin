@@ -1,14 +1,13 @@
-// !WITH_NEW_INFERENCE
 fun foo(): String {
     var s: String?
     s = null
     s?.length
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
-    if (s == null) return s!!
+    s<!UNSAFE_CALL!>.<!>length
+    if (<!SENSELESS_COMPARISON!>s == null<!>) return s!!
     var t: String? = "y"
     if (t == null) t = "x"
     var x: Int? = null
-    if (x == null) <!UNRESOLVED_REFERENCE!>x += null<!>
+    if (x == null) <!ASSIGNMENT_TYPE_MISMATCH!>x += null<!>
     return t + s
 }
 

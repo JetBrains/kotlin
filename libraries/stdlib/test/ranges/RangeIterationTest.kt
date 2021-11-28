@@ -74,10 +74,8 @@ public open class RangeIterationTestBase {
         assertEquals(expectedLast, last)
         assertEquals(expectedIncrement, increment)
 
-        if (expectedElements.isEmpty())
-            assertTrue(sequence.none())
-        else
-            assertEquals(expectedElements, sequence.toList())
+        assertEquals(expectedElements.isEmpty(), sequence.none())
+        assertEquals(expectedElements, sequence.toList())
 
         compare(expectedElements.iterator(), sequence.iterator()) {
             iteratorBehavior()

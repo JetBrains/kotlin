@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore QuickLookThumbnailing Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.QuickLook
+modules = QuickLook
+
+compilerOpts = -framework QuickLook
+linkerOpts = -framework QuickLook

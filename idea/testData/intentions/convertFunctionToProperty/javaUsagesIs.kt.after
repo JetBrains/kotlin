@@ -1,4 +1,0 @@
-package test
-
-val isFoo<caret>: Boolean
-    get() = true

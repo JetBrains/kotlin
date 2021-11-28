@@ -35,4 +35,3 @@ fun test3(x: Any): String {
   }
   return x /*as String */
 }
-

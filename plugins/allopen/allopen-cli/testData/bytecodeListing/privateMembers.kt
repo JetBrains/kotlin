@@ -13,4 +13,6 @@ private class Test {
 
     internal fun internalMethod() {}
     internal val internalProp: String = ""
+
+    private tailrec fun privateTailrecMethod() {}
 }

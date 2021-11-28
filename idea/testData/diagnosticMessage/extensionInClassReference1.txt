@@ -1,2 +1,0 @@
-<!-- extensionInClassReference1 -->
-'foo' is a member and an extension at the same time. References to such elements are not allowed

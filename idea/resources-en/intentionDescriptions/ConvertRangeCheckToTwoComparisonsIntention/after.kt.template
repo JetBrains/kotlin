@@ -1,1 +1,0 @@
-fun foo(arg: Int) = 1 <= arg && arg <= 4

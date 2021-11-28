@@ -217,13 +217,13 @@ public inline fun max(a: kotlin.Int, b: kotlin.Int): kotlin.Int
 @kotlin.SinceKotlin(version = "1.2")
 public inline fun max(a: kotlin.Long, b: kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun max(a: kotlin.UInt, b: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun max(a: kotlin.ULong, b: kotlin.ULong): kotlin.ULong
 
@@ -242,13 +242,13 @@ public inline fun min(a: kotlin.Int, b: kotlin.Int): kotlin.Int
 @kotlin.SinceKotlin(version = "1.2")
 public inline fun min(a: kotlin.Long, b: kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun min(a: kotlin.UInt, b: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun min(a: kotlin.ULong, b: kotlin.ULong): kotlin.ULong
 

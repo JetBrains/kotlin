@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 // !CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {
@@ -22,10 +22,9 @@ public interface J {
 
 // FILE: 1.kt
 fun test(j: J) {
-    j.<!AMBIGUITY!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" }, "") <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 
-    j.<!AMBIGUITY!>bas<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bas<!>({ <!UNRESOLVED_REFERENCE!>it<!> checkType { _<Any>() }; "" }, "") <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
 
-    // NI: TODO
-    j.bar { it checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } checkType { _<Int>() }
+    j.bar { it checkType { _<String>() }; "" } checkType { _<Int>() }
 }

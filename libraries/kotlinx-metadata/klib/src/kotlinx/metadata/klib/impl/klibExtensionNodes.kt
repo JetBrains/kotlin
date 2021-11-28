@@ -118,7 +118,7 @@ internal class KlibPropertyExtension : KlibPropertyExtensionVisitor(), KmPropert
     val setterAnnotations: MutableList<KmAnnotation> = mutableListOf()
     var uniqId: UniqId? = null
     var file: Int? = null
-    var compileTimeValue: KmAnnotationArgument<*>? = null
+    var compileTimeValue: KmAnnotationArgument? = null
 
     override fun visitAnnotation(annotation: KmAnnotation) {
         annotations += annotation
@@ -140,7 +140,7 @@ internal class KlibPropertyExtension : KlibPropertyExtensionVisitor(), KmPropert
         this.uniqId = uniqId
     }
 
-    override fun visitCompileTimeValue(value: KmAnnotationArgument<*>) {
+    override fun visitCompileTimeValue(value: KmAnnotationArgument) {
         this.compileTimeValue = value
     }
 

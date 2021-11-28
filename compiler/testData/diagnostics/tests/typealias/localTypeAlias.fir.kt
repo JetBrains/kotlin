@@ -5,7 +5,7 @@ fun <T> emptyList(): List<T> = null!!
 fun <T> foo() {
     typealias LT = List<T>
 
-    val a: <!UNRESOLVED_REFERENCE!>LT<!> = emptyList()
+    val a: <!UNRESOLVED_REFERENCE!>LT<!> = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 
     fun localFun(): <!UNRESOLVED_REFERENCE!>LT<!> {
         typealias LLT = List<T>

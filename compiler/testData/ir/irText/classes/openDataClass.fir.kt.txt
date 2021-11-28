@@ -14,11 +14,11 @@ open data class ValidatedProperties {
     field = test2
     open get
 
-  fun component1(): String {
+  operator fun component1(): String {
     return <this>.<get-test1>()
   }
 
-  fun component2(): String {
+  operator fun component2(): String {
     return <this>.<get-test2>()
   }
 

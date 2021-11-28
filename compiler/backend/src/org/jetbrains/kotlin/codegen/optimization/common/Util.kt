@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -36,7 +35,7 @@ val AbstractInsnNode.isMeaningful: Boolean
 
 val AbstractInsnNode.isBranchOrCall: Boolean
     get() =
-        when(this.type) {
+        when (this.type) {
             AbstractInsnNode.JUMP_INSN,
             AbstractInsnNode.TABLESWITCH_INSN,
             AbstractInsnNode.LOOKUPSWITCH_INSN,
@@ -61,7 +60,7 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
     }
 }
 
-fun InsnList.asSequence() = InsnSequence(this)
+fun InsnList.asSequence(): Sequence<AbstractInsnNode> = if (size() == 0) emptySequence() else InsnSequence(this)
 
 fun MethodNode.prepareForEmitting() {
     stripOptimizationMarkers()
@@ -85,13 +84,17 @@ fun MethodNode.prepareForEmitting() {
 
         current = prev
     }
+    updateMaxStack()
+}
+
+fun MethodNode.updateMaxStack() {
     maxStack = -1
     accept(
         MaxStackFrameSizeAndLocalsCalculator(
-            Opcodes.API_VERSION, access, desc,
-            object : MethodVisitor(Opcodes.API_VERSION) {
+            API_VERSION, access, desc,
+            object : MethodVisitor(API_VERSION) {
                 override fun visitMaxs(maxStack: Int, maxLocals: Int) {
-                    this@prepareForEmitting.maxStack = maxStack
+                    this@updateMaxStack.maxStack = maxStack
                 }
             })
     )
@@ -100,10 +103,10 @@ fun MethodNode.prepareForEmitting() {
 fun MethodNode.stripOptimizationMarkers() {
     var insn = instructions.first
     while (insn != null) {
-        if (isOptimizationMarker(insn)) {
-            insn = instructions.removeNodeGetNext(insn)
+        insn = if (isOptimizationMarker(insn)) {
+            instructions.removeNodeGetNext(insn)
         } else {
-            insn = insn.next
+            insn.next
         }
     }
 }
@@ -119,6 +122,20 @@ fun MethodNode.removeEmptyCatchBlocks() {
 
 fun MethodNode.removeUnusedLocalVariables() {
     val used = BooleanArray(maxLocals) { false }
+
+    // Arguments are always used whether or not they are in the local variable table
+    // or used by instructions.
+    var argumentIndex = 0
+    val isStatic = (access and ACC_STATIC) != 0
+    if (!isStatic) {
+        used[argumentIndex++] = true
+    }
+    for (argumentType in Type.getArgumentTypes(desc)) {
+        for (i in 0 until argumentType.size) {
+            used[argumentIndex++] = true
+        }
+    }
+
     for (insn in instructions) {
         when (insn) {
             is VarInsnNode -> {
@@ -216,8 +233,8 @@ val AbstractInsnNode.intConstant: Int?
 
 fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
 
-fun AbstractInsnNode.isStoreOperation(): Boolean = opcode in Opcodes.ISTORE..Opcodes.ASTORE
-fun AbstractInsnNode.isLoadOperation(): Boolean = opcode in Opcodes.ILOAD..Opcodes.ALOAD
+fun AbstractInsnNode.isStoreOperation(): Boolean = opcode in ISTORE..ASTORE
+fun AbstractInsnNode.isLoadOperation(): Boolean = opcode in ILOAD..ALOAD
 
 val AbstractInsnNode?.debugText
     get() =

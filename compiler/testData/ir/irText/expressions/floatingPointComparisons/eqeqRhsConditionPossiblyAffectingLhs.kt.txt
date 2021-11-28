@@ -4,4 +4,3 @@ fun test(x: Any): Boolean {
     else -> x /*as Double */
   })
 }
-

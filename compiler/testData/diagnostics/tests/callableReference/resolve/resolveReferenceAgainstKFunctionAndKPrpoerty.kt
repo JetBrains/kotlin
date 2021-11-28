@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_RUNTIME
+// WITH_STDLIB
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T, R> foo(x: kotlin.reflect.KFunction1<T, R>) {}

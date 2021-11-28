@@ -18,4 +18,3 @@ class Derived : Base {
   }
 
 }
-

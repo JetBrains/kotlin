@@ -12,7 +12,6 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.psi.KtFile
@@ -29,17 +28,17 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         if (onlyPsi) {
             DebugUtil.psiTreeToString(ktFile, false)
         } else {
-            val firFile = ktFile.toFirFile(RawFirBuilderMode.STUBS)
+            val firFile = ktFile.toFirFile()
             StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         }
     }
 
-    private fun generateFirFromLightTree(onlyLightTree: Boolean, converter: LightTree2Fir, text: String, fileName: String) {
+    private fun generateFirFromLightTree(onlyLightTree: Boolean, converter: LightTree2Fir, text: String, fileName: String, filePath: String) {
         if (onlyLightTree) {
             val lightTree = converter.buildLightTree(text)
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
-            val firFile = converter.buildFirFile(text, fileName)
+            val firFile = converter.buildFirFile(text, fileName, filePath)
             StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         }
     }
@@ -51,8 +50,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider,
-            stubMode = true
+            scopeProvider = StubFirScopeProvider
         )
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
@@ -60,7 +58,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         path.walkTopDown {
             val text = FileUtil.loadFile(it, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                generateFirFromLightTree(onlyLightTree, lightTreeConverter, text, it.name)
+                generateFirFromLightTree(onlyLightTree, lightTreeConverter, text, it.name, it.path)
             }
 
             counter++
@@ -80,12 +78,20 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            /* TODO: fix this, please !!! */
+            if (file.path.contains("kotlin-native") ||
+                file.path.lowercase().contains("testdata") ||
+                file.path.contains("resources")
+            ) continue
             if (file.extension != "kt") continue
 
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                generateFirFromPsi(onlyPsi, text, file.path)
+                try {
+                    generateFirFromPsi(onlyPsi, text, file.path)
+                } catch (e: Exception) {
+                    throw IllegalStateException(file.path, e)
+                }
             }
 
             counter++

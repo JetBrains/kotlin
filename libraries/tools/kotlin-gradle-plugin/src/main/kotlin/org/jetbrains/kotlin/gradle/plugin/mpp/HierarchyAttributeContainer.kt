@@ -40,16 +40,16 @@ class HierarchyAttributeContainer(
         attributesMap.contains(key) || getFilteredParentAttribute(key) != null
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : Any?> getAttribute(key: Attribute<T>?): T? =
+    override fun <T : Any> getAttribute(key: Attribute<T>): T? =
         attributesMap.get(key as Attribute<*>) as T? ?: getFilteredParentAttribute(key) as T?
 
     override fun isEmpty(): Boolean = attributesMap.isEmpty() && (parent?.keySet().orEmpty().filter(filterParentAttributes).isEmpty())
 
     override fun keySet(): Set<Attribute<*>> = attributesMap.keys + parent?.keySet().orEmpty().filter(filterParentAttributes)
 
-    override fun <T : Any?> attribute(key: Attribute<T>?, value: T): AttributeContainer {
+    override fun <T : Any> attribute(key: Attribute<T>, value: T): AttributeContainer {
         val checkedValue = requireNotNull(value as Any?) { "null values for attributes are not supported" }
-        attributesMap[key as Attribute<*>] = checkedValue
+        attributesMap[key] = checkedValue
         return this
     }
 

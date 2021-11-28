@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 // !RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
@@ -12,5 +11,5 @@ class C<T> {
 }
 
 fun test(a: C<out CharSequence>) {
-    <!INAPPLICABLE_CANDIDATE!>a[1] = 25<!>
+    a[1] = <!ARGUMENT_TYPE_MISMATCH!>25<!>
 }

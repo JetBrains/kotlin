@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 class A(x: Int) {
@@ -21,8 +20,8 @@ val y4: B<Int> = B<Int>("")
 
 val y5: B<String> = <!NONE_APPLICABLE!>B<!><String>(1)
 val y6: B<String> = B<String>("")
-val y7: B<String> = B(1)
+val y7: B<String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>B(1)<!>
 val y8: B<String> = B("")
 
 val y9 = B(1)
-val y10 = B("")
+val y10 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>B<!>("")

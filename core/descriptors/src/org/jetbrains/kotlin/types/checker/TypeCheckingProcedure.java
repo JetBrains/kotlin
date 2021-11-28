@@ -126,21 +126,11 @@ public class TypeCheckingProcedure {
                && isSubtypeOf(inflexibleType, FlexibleTypesKt.asFlexibleType(flexibleType).getUpperBound());
     }
 
-    public enum EnrichedProjectionKind {
-        IN, OUT, INV, STAR;
-
-        @NotNull
-        public static EnrichedProjectionKind fromVariance(@NotNull Variance variance) {
-            switch (variance) {
-                case INVARIANT:
-                    return INV;
-                case IN_VARIANCE:
-                    return IN;
-                case OUT_VARIANCE:
-                    return OUT;
-            }
-            throw new IllegalStateException("Unknown variance");
-        }
+    public static EnrichedProjectionKind getEffectiveProjectionKind(
+            @NotNull TypeParameterDescriptor typeParameter,
+            @NotNull TypeProjection typeArgument
+    ) {
+        return getEffectiveProjectionKind(typeParameter.getVariance(), typeArgument.getProjectionKind());
     }
 
     // If class C<out T> then C<T> and C<out T> mean the same
@@ -156,29 +146,10 @@ public class TypeCheckingProcedure {
     // inv * in  = out
     // inv * inv = inv
     public static EnrichedProjectionKind getEffectiveProjectionKind(
-            @NotNull TypeParameterDescriptor typeParameter,
-            @NotNull TypeProjection typeArgument
+            @NotNull Variance typeParameterVariance,
+            @NotNull Variance typeArgumentVariance
     ) {
-        Variance a = typeParameter.getVariance();
-        Variance b = typeArgument.getProjectionKind();
-
-        // If they are not both invariant, let's make b not invariant for sure
-        if (b == INVARIANT) {
-            Variance t = a;
-            a = b;
-            b = t;
-        }
-
-        // Opposites yield STAR
-        if (a == IN_VARIANCE && b == OUT_VARIANCE) {
-            return EnrichedProjectionKind.STAR;
-        }
-        if (a == OUT_VARIANCE && b == IN_VARIANCE) {
-            return EnrichedProjectionKind.STAR;
-        }
-
-        // If they are not opposite, return b, because b is either equal to a or b is in/out and a is inv
-        return EnrichedProjectionKind.fromVariance(b);
+        return EnrichedProjectionKind.Companion.getEffectiveProjectionKind(typeParameterVariance, typeArgumentVariance);
     }
 
     public boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {

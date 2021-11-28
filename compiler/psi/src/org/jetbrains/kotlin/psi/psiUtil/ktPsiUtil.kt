@@ -12,8 +12,6 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -347,6 +345,8 @@ fun PsiElement.parameterIndex(): Int {
     }
 }
 
+val KtValueArgument.argumentIndex: Int get() = (parent as KtValueArgumentList).arguments.indexOf(this)
+
 fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
 fun KtModifierListOwner.isProtected(): Boolean = hasModifier(KtTokens.PROTECTED_KEYWORD)
@@ -378,6 +378,14 @@ fun KtExpression.getAssignmentByLHS(): KtBinaryExpression? {
     val parent = parent as? KtBinaryExpression ?: return null
     return if (KtPsiUtil.isAssignment(parent) && parent.left == this) parent else null
 }
+
+tailrec fun findAssignment(element: PsiElement?): KtBinaryExpression? =
+    when (val parent = element?.parent) {
+        is KtBinaryExpression -> if (parent.left == element && parent.operationToken == KtTokens.EQ) parent else null
+        is KtQualifiedExpression -> findAssignment(element.parent)
+        is KtSimpleNameExpression -> findAssignment(element.parent)
+        else -> null
+    }
 
 fun KtStringTemplateExpression.getContentRange(): TextRange {
     val start = node.firstChildNode.textLength
@@ -544,6 +552,32 @@ fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList {
     return newParameterList
 }
 
+fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
+    val literalParent = (this.parent as KtLambdaExpression).parent
+
+    fun KtValueArgument.callExpression(): KtCallExpression? {
+        val parent = parent
+        return (if (parent is KtValueArgumentList) parent else this).parent as? KtCallExpression
+    }
+
+    when (literalParent) {
+        is KtLabeledExpression -> {
+            val callExpression = (literalParent.parent as? KtValueArgument)?.callExpression()
+            return Pair(literalParent.getLabelNameAsName(), callExpression)
+        }
+
+        is KtValueArgument -> {
+            val callExpression = literalParent.callExpression()
+            val label = (callExpression?.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
+            return Pair(label, callExpression)
+        }
+
+        else -> {
+            return Pair(null, null)
+        }
+    }
+}
+
 fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList {
     valueArgumentList?.let { return it }
     return addAfter(
@@ -628,16 +662,6 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
     }
 }
 
-fun KtModifierKeywordToken.toVisibility(): DescriptorVisibility {
-    return when (this) {
-        KtTokens.PUBLIC_KEYWORD -> DescriptorVisibilities.PUBLIC
-        KtTokens.PRIVATE_KEYWORD -> DescriptorVisibilities.PRIVATE
-        KtTokens.PROTECTED_KEYWORD -> DescriptorVisibilities.PROTECTED
-        KtTokens.INTERNAL_KEYWORD -> DescriptorVisibilities.INTERNAL
-        else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
-    }
-}
-
 fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations
 
 fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
@@ -656,8 +680,8 @@ fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
 
 fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
     var result: KtExpression = this
-    while (KtPsiUtil.deparenthesizeOnce(result.parent.safeAs()) == result) {
-        result = result.parent.safeAs() ?: break
+    while (KtPsiUtil.deparenthesizeOnce(result.parent as? KtExpression) == result) {
+        result = result.parent as? KtExpression ?: break
     }
     return result
 }
@@ -676,3 +700,10 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
 
 val KtNameReferenceExpression.isUnderscoreInBackticks
     get() = getReferencedName() == "`_`"
+
+tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
+    return when (this) {
+        is KtNullableType -> this.innerType?.unwrapNullability()
+        else -> this
+    }
+}

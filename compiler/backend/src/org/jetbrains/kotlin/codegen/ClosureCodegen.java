@@ -12,6 +12,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.SamType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
@@ -31,15 +32,16 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -157,7 +159,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         for (int i = 0; i < superInterfaceTypes.size(); i++) {
             KotlinType superInterfaceType = superInterfaceTypes.get(i);
             sw.writeInterface();
-            superInterfaceAsmTypes[i] = typeMapper.mapSupertype(superInterfaceType, sw).getInternalName();
+            Type superInterfaceAsmType;
+            if (samType != null && superInterfaceType.getConstructor() == samType.getType().getConstructor()) {
+                superInterfaceAsmType = typeMapper.mapSupertype(superInterfaceType, null);
+                sw.writeAsmType(superInterfaceAsmType);
+            } else {
+                superInterfaceAsmType = typeMapper.mapSupertype(superInterfaceType, sw);
+            }
+            superInterfaceAsmTypes[i] = superInterfaceAsmType.getInternalName();
             sw.writeInterfaceEnd();
         }
 
@@ -279,7 +288,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         if (builder == null) return;
         ProtoBuf.Function functionProto = builder.build();
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, av -> {
+        boolean publicAbi = InlineUtil.isInPublicInlineScope(frontendFunDescriptor);
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0, av -> {
             writeAnnotationData(av, serializer, functionProto);
             return Unit.INSTANCE;
         });
@@ -368,10 +379,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 value = StackValue.local(slot, type, bridgeParameterKotlinTypes.get(i));
                 slot += type.getSize();
             }
-            if (InlineClassesCodegenUtilKt.isInlineClassWithUnderlyingTypeAnyOrAnyN(parameterType) &&
-                functionReferenceCall == null
-            ) {
-                parameterType = InlineClassesUtilsKt.unsubstitutedUnderlyingParameter(parameterType).getType();
+            if (InlineClassesCodegenUtilKt.isInlineClassWithUnderlyingTypeAnyOrAnyN(parameterType) && functionReferenceCall == null) {
+                ClassDescriptor descriptor = TypeUtils.getClassDescriptor(parameterType);
+                InlineClassRepresentation<SimpleType> representation =
+                        descriptor != null ? descriptor.getInlineClassRepresentation() : null;
+                assert representation != null : "Not an inline class type: " + parameterType;
+                parameterType = representation.getUnderlyingType();
             }
             value.put(typeMapper.mapType(calleeParameter), parameterType, iv);
         }
@@ -465,7 +478,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             List<Type> superCtorArgTypes = new ArrayList<>();
             if (superClassAsmType.equals(LAMBDA) || functionReferenceTarget != null ||
-                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())
+                CoroutineCodegenUtilKt.isCoroutineSuperClass(superClassAsmType.getInternalName())
             ) {
                 iv.iconst(CodegenUtilKt.getArity(funDescriptor));
                 superCtorArgTypes.add(Type.INT_TYPE);

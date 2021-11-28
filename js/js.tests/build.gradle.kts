@@ -1,5 +1,4 @@
-import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.npm.NpmTask
+import com.github.gradle.node.npm.task.NpmTask
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -9,14 +8,14 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("com.github.node-gradle.node") version "2.2.0"
+    id("com.github.node-gradle.node") version "3.0.1"
     id("de.undercouch.download")
-    id("com.gradle.enterprise.test-distribution")
 }
 
 node {
-    download = true
-    version = "10.16.2"
+    download.set(true)
+    version.set("10.16.2")
+    nodeProjectDir.set(buildDir)
 }
 
 val antLauncherJar by configurations.creating
@@ -28,51 +27,56 @@ val testJsRuntime by configurations.creating {
 }
 
 dependencies {
-    testRuntime(intellijDep())
+    testApiJUnit5(vintageEngine = true)
+    testRuntimeOnly(intellijDep())
 
-    testCompile(protobufFull())
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(protobufFull())
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
-    testCompileOnly(project(":compiler:cli-js-klib"))
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util") }
-    testCompile(project(":compiler:backend.js"))
-    testCompile(project(":compiler:backend.wasm"))
-    testCompile(project(":js:js.translator"))
-    testCompile(project(":js:js.serializer"))
-    testCompile(project(":js:js.dce"))
-    testCompile(project(":js:js.engines"))
-    testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":kotlin-build-common"))
-    testCompile(projectTests(":generators:test-generator"))
+    testApi(project(":compiler:backend.js"))
+    testApi(project(":compiler:backend.wasm"))
+    testApi(project(":js:js.translator"))
+    testApi(project(":js:js.serializer"))
+    testApi(project(":js:js.dce"))
+    testApi(project(":js:js.engines"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(commonDep("junit:junit"))
+    testApi(projectTests(":kotlin-build-common"))
+    testApi(projectTests(":generators:test-generator"))
 
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:util"))
+    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(project(":compiler:frontend"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:util"))
 
-    testRuntime(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-reflect"))
 
-    testRuntime(intellijDep()) { includeJars("trove4j", "guava", "jdom", rootProject = rootProject) }
+    testRuntimeOnly(intellijDep()) { includeJars("trove4j", "guava", "jdom", rootProject = rootProject) }
 
-    testRuntime(kotlinStdlib())
+    testRuntimeOnly(kotlinStdlib())
     testJsRuntime(kotlinStdlib("js"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     }
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":kotlin-preloader")) // it's required for ant tests
-    testRuntime(project(":compiler:backend-common"))
-    testRuntime(commonDep("org.fusesource.jansi", "jansi"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
+    testRuntimeOnly(project(":compiler:backend-common"))
+    testRuntimeOnly(commonDep("org.fusesource.jansi", "jansi"))
     
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
 
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${commonVer("org.junit", "junit-bom")}")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -104,7 +108,7 @@ val currentOsType = run {
         else -> OsName.UNKNOWN
     }
 
-    val osArch = when (System.getProperty("sun.arch.data.model")) {
+    val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
         "32" -> OsArch.X86_32
         "64" -> OsArch.X86_64
         else -> OsArch.UNKNOWN
@@ -149,7 +153,7 @@ val v8osString = when (currentOsType) {
 }
 
 val v8edition = "rel" // rel or dbg
-val v8version = "8.8.104"
+val v8version = "9.2.212"
 val v8fileName = "v8-${v8osString}-${v8edition}-${v8version}"
 val v8url = "https://storage.googleapis.com/chromium-v8/official/canary/$v8fileName.zip"
 
@@ -164,6 +168,20 @@ val unzipV8 by task<Copy> {
     from(zipTree(downloadV8.get().dest))
     val unpackedDir = File(downloadedTools, v8fileName)
     into(unpackedDir)
+}
+
+val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+val installTsDependencies by task<NpmTask> {
+    workingDir.set(testDataDir)
+    args.set(listOf("install"))
+}
+
+val generateTypeScriptTests by task<NpmTask>  {
+    dependsOn(installTsDependencies)
+
+    workingDir.set(testDataDir)
+    args.set(listOf("run", "generateTypeScriptTests"))
 }
 
 fun Test.setupV8() {
@@ -186,6 +204,11 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     inputs.files(rootDir.resolve("js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js"))
 
     dependsOn(":dist")
+
+    if (!project.hasProperty("teamcity")) {
+        dependsOn(generateTypeScriptTests)
+    }
+
     if (jsEnabled) {
         dependsOn(testJsRuntime)
         inputs.files(testJsRuntime)
@@ -205,11 +228,10 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
         inputs.dir(rootDir.resolve("libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"))
     }
 
-    exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/es6/semantics/*")
+    exclude("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
 
-    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/*")
+    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/*")
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     setUpBoxTests()
@@ -219,12 +241,15 @@ fun Test.setUpBoxTests() {
     workingDir = rootDir
     dependsOn(antLauncherJar)
     inputs.files(antLauncherJar)
+    val antLauncherJarPath = antLauncherJar.asPath
     doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.classpath", antLauncherJarPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
-    systemProperty("overwrite.output", findProperty("overwrite.output") ?: "false")
+    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
+    systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output")
+        .forUseAtConfigurationTime().orNull ?: "false")
 
     val prefixForPpropertiesToForward = "fd."
     for ((key, value) in properties) {
@@ -234,10 +259,9 @@ fun Test.setUpBoxTests() {
     }
 }
 
-val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
-
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true)
+    maxHeapSize = "3g"
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
@@ -247,53 +271,31 @@ projectTest(parallel = true) {
     inputs.dir(rootDir.resolve("libraries/stdlib/api/js"))
     inputs.dir(rootDir.resolve("libraries/stdlib/api/js-v1"))
 
-    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
-    outputs.dir("$buildDir/out-pir")
+
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
 
     configureTestDistribution()
 }
 
-projectTest("jsTest", true) {
+projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
+    maxHeapSize = "3g"
+    useJUnitPlatform()
 }
 
-projectTest("jsIrTest", true) {
-    systemProperty("kotlin.js.ir.pir", "false")
+projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
+    maxHeapSize = "3g"
+    useJUnitPlatform()
 }
 
-projectTest("jsEs6IrTest", true) {
-    systemProperty("kotlin.js.ir.pir", "false")
-    systemProperty("kotlin.js.ir.es6", "true")
-
-    dependsOn(":dist")
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
-    systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
-
-    exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    exclude("org/jetbrains/kotlin/js/test/semantics/*")
-
-    include("org/jetbrains/kotlin/js/test/es6/semantics/*")
-
-    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
-    setUpBoxTests()
-}
-
-projectTest("jsPirTest", true) {
-    systemProperty("kotlin.js.ir.skipRegularMode", "true")
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
-}
-
-projectTest("quickTest", true) {
+projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
+    maxHeapSize = "3g"
     systemProperty("kotlin.js.skipMinificationTest", "true")
+    useJUnitPlatform()
 }
 
 testsJar {}
@@ -301,8 +303,6 @@ testsJar {}
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
     dependsOn(":compiler:generateTestData")
 }
-
-extensions.getByType(NodeExtension::class.java).nodeModulesDir = buildDir
 
 val prepareMochaTestData by tasks.registering(Copy::class) {
     from(testDataDir) {
@@ -314,40 +314,50 @@ val prepareMochaTestData by tasks.registering(Copy::class) {
 
 val npmInstall by tasks.getting(NpmTask::class) {
     dependsOn(prepareMochaTestData)
-    setWorkingDir(buildDir)
+    workingDir.set(buildDir)
 }
 
 val runMocha by task<NpmTask> {
-    setWorkingDir(buildDir)
+    workingDir.set(buildDir)
 
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
-    setArgs(listOf("run", target))
+    args.set(listOf("run", target))
 
-    setIgnoreExitValue(kotlinBuildProperties.ignoreTestFailures)
+    ignoreExitValue.set(kotlinBuildProperties.ignoreTestFailures)
 
     dependsOn(npmInstall, "test")
 
     val check by tasks
     check.dependsOn(this)
 
-    doFirst {
-        setEnvironment(
-            mapOf(
-                "KOTLIN_JS_LOCATION" to rootDir.resolve("dist/js/kotlin.js"),
-                "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js")
-            )
-        )
-    }
+    environment.set(mapOf(
+        "KOTLIN_JS_LOCATION" to rootDir.resolve("dist/js/kotlin.js").toString(),
+        "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js").toString()
+    ))
 }
 
 projectTest("wasmTest", true) {
     setupV8()
     setupSpiderMonkey()
 
-    include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
+    include("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
 
-    dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
-    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
+    dependsOn(":kotlin-stdlib-wasm:compileKotlinWasm")
+    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/wasm/main")
+
+    dependsOn(":kotlin-test:kotlin-test-wasm:compileKotlinWasm")
+    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/wasm/main")
 
     setUpBoxTests()
+}
+
+projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
+    workingDir = rootDir
+
+    include("org/jetbrains/kotlin/incremental/*")
+
+    dependsOn(":dist")
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
 }

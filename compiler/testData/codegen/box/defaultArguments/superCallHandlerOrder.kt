@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 open class O {
     open fun foo(s: String = throw Error("Fail: this expression should not be evaluated")) {}

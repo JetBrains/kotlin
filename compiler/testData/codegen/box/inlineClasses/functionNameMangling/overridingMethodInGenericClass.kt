@@ -1,10 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
 abstract class GenericBase<T> {
     abstract fun foo(x: T): T
 }
 
-inline class Str(val str: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Str(val str: String)
 
 class Derived : GenericBase<Str>() {
     override fun foo(x: Str): Str = x

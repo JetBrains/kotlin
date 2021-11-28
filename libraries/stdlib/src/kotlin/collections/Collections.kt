@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -162,10 +162,12 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
  * The list passed as a receiver to the [builderAction] is valid only inside that function.
  * Using it outside of the function produces an unspecified behavior.
  *
+ * The returned list is serializable (JVM).
+ *
  * @sample samples.collections.Builders.Lists.buildListSample
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -174,7 +176,6 @@ public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E>
 
@@ -185,14 +186,16 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
  * The list passed as a receiver to the [builderAction] is valid only inside that function.
  * Using it outside of the function produces an unspecified behavior.
  *
+ * The returned list is serializable (JVM).
+ *
  * [capacity] is used to hint the expected number of elements added in the [builderAction].
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *
  * @sample samples.collections.Builders.Lists.buildListSampleWithCapacity
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -201,7 +204,6 @@ public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: 
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal expect inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E>
 

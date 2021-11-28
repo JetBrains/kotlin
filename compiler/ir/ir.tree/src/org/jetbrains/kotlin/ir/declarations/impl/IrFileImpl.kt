@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
@@ -30,18 +31,35 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 
 class IrFileImpl(
-    override val fileEntry: SourceManager.FileEntry,
+    override val fileEntry: IrFileEntry,
     override val symbol: IrFileSymbol,
     override val fqName: FqName
 ) : IrFile() {
     constructor(
-        fileEntry: SourceManager.FileEntry,
+        fileEntry: IrFileEntry,
         packageFragmentDescriptor: PackageFragmentDescriptor
     ) : this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
+
+    constructor(
+        fileEntry: IrFileEntry,
+        packageFragmentDescriptor: PackageFragmentDescriptor,
+        module: IrModuleFragment,
+    ) : this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName, module)
+
+    constructor(
+        fileEntry: IrFileEntry,
+        symbol: IrFileSymbol,
+        fqName: FqName,
+        module: IrModuleFragment
+    ) : this(fileEntry, symbol, fqName) {
+        this.module = module
+    }
 
     init {
         symbol.bind(this)
     }
+
+    override lateinit var module: IrModuleFragment
 
     override val startOffset: Int
         get() = 0

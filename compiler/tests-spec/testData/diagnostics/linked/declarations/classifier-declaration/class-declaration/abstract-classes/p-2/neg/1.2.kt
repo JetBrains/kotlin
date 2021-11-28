@@ -11,7 +11,7 @@
  * DESCRIPTION: Abstract classes may contain abstract members, which should be implemented in an anonymous class that inherits from that abstract type
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 private abstract class Base {
@@ -48,7 +48,7 @@ fun case1() {
 }
 
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 /*
  * TESTCASE NUMBER: 2
  * NOTE: property is not implemented
@@ -90,7 +90,7 @@ fun case2() {
 }
 
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 package testPackCase3
 private abstract class Base {

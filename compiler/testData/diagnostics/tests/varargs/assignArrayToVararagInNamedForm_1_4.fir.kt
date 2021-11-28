@@ -1,6 +1,5 @@
 // !LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.EXPRESSION)
@@ -10,13 +9,13 @@ fun withVararg(vararg s: String) {}
 fun foo() {}
 
 fun test_fun(s: String, arr: Array<String>) {
-    <!INAPPLICABLE_CANDIDATE!>withVararg<!>(arr) // Error
+    withVararg(<!ARGUMENT_TYPE_MISMATCH!>arr<!>) // Error
     withVararg(*arr) // OK
     withVararg(s = arr) // OK
-    withVararg(s = *arr) // Warning
+    withVararg(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arr<!>) // Warning
 
     withVararg(s) // OK
-    <!INAPPLICABLE_CANDIDATE!>withVararg<!>(s = s) // Error
+    withVararg(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>s<!>) // Error
 }
 
 fun test_ann(s: String, arr: Array<String>) {
@@ -26,11 +25,11 @@ fun test_ann(s: String, arr: Array<String>) {
     foo()
     @Ann(s = [""], x = 1)
     foo()
-    @Ann(s = *[""], x = 1)
+    @Ann(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>[""]<!>, x = 1)
     foo()
 
     @Ann("", x = 1)
     foo()
-    @Ann(s = "", x = 1)
+    @Ann(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>""<!>, x = 1)
     foo()
 }

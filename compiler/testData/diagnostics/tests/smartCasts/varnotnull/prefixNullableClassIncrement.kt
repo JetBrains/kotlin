@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class MyClass
 
 // Correct at compile time but wrong at run-time

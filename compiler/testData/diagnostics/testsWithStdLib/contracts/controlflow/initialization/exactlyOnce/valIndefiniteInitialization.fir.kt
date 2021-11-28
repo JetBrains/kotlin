@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
@@ -24,7 +24,7 @@ fun branchingIndetermineFlow(a: Any?) {
     if (a is String) {
         myRepeat(a.length) {
             // Val reassignment because we know that repeat's lambda called in-place
-            myRun { x = 42 }
+            myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
         }
     }
     else {
@@ -36,7 +36,7 @@ fun branchingIndetermineFlow(a: Any?) {
 
 fun nonAnonymousLambdas() {
     val x: Int
-    val initializer = { x = 42 }
+    val initializer = { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }
     myRun(initializer)
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
@@ -45,7 +45,7 @@ fun multipleAssignments() {
     val x: Int
     myRepeat(42) {
         // Val reassignment because we know that repeat's lambda called in-place
-        myRun { x = 42 }
+        myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
     }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
@@ -55,12 +55,12 @@ fun funWithUnknownInvocations(block: () -> Unit) = block()
 fun nestedIndefiniteAssignment() {
     val x: Int
     // Captured val initialization reported, because we don't know anything about funWithUnknownInvocations
-    funWithUnknownInvocations { myRun { x = 42 } }
+    funWithUnknownInvocations { myRun { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 } }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 class InitializationForbiddenInNonInitSection {
-    val x: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
 
     fun setup() {
         myRun { x = 42 }

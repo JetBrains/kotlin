@@ -4,7 +4,7 @@ fun test1(c: Boolean?) {
       val <elvis>: Boolean? = c
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> break@L
-        else -> <elvis> /*as Boolean */
+        else -> <elvis>
       }
     }) { // BLOCK
     }
@@ -17,7 +17,7 @@ fun test2(c: Boolean?) {
       val <elvis>: Boolean? = c
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> continue@L
-        else -> <elvis> /*as Boolean */
+        else -> <elvis>
       }
     }) { // BLOCK
     }
@@ -31,11 +31,13 @@ fun test3(ss: List<String>?) {
         val <elvis>: List<String>? = ss
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> continue@L
-          else -> <elvis> /*as List<String> */
+          else -> <elvis>
         }
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
         val s: String = <iterator>.next()
+        { // BLOCK
+        }
       }
     }
   }
@@ -48,11 +50,13 @@ fun test4(ss: List<String>?) {
         val <elvis>: List<String>? = ss
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> break@L
-          else -> <elvis> /*as List<String> */
+          else -> <elvis>
         }
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
         val s: String = <iterator>.next()
+        { // BLOCK
+        }
       }
     }
   }
@@ -64,15 +68,18 @@ fun test5() {
     i = i.inc()
     i /*~> Unit */
     var j: Int = 0
-    Inner@ do// COMPOSITE {
-    j = j.inc()
-    j
-    // }    while (when {
-      greaterOrEqual(arg0 = j, arg1 = 3) -> false
-      else -> break@Outer
-    })
+    { // BLOCK
+      Inner@ do// COMPOSITE {
+      j = j.inc()
+      j
+      // }      while (when {
+        greaterOrEqual(arg0 = j, arg1 = 3) -> false
+        else -> break@Inner
+      })
+    }
     when {
       EQEQ(arg0 = i, arg1 = 3) -> break@Outer
     }
   }
 }
+

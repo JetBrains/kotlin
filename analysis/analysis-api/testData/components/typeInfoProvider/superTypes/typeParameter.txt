@@ -1,0 +1,17 @@
+[direct super types]
+kotlin.collections.List<kotlin.String>
+
+[approximated direct super types]
+kotlin.collections.List<kotlin.String>
+
+[all super types]
+kotlin.collections.List<kotlin.String>
+kotlin.collections.Collection<kotlin.String>
+kotlin.collections.Iterable<kotlin.String>
+kotlin.Any
+
+[approximated all super types]
+kotlin.collections.List<kotlin.String>
+kotlin.collections.Collection<kotlin.String>
+kotlin.collections.Iterable<kotlin.String>
+kotlin.Any

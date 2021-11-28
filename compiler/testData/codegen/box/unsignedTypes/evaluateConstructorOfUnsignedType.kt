@@ -1,8 +1,11 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 
-@file:Suppress("INVISIBLE_MEMBER")
+// TODO: it's not clear why compilation fails for Android
+// IGNORE_BACKEND: ANDROID
+
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
 annotation class AnnoUB(val ub0: UByte, val ub1: UByte)
 annotation class AnnoUS(val us0: UShort, val us1: UShort)

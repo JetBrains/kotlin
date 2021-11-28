@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuto
 import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -32,6 +32,8 @@ abstract class KotlinNativeTest : KotlinTest() {
     @get:Internal
     val executableProperty: Property<FileCollection> = project.objects.property(FileCollection::class.java)
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
     @get:SkipWhenEmpty
     @Suppress("UNUSED") // Gradle input
@@ -63,12 +65,19 @@ abstract class KotlinNativeTest : KotlinTest() {
             processOptions.workingDir = File(value)
         }
 
-    @get:Input
+    @get:Internal
     var environment: Map<String, Any>
         get() = processOptions.environment
         set(value) {
             processOptions.environment = value
         }
+
+    private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
+
+    @Suppress("unused")
+    @get:Input
+    val trackedEnvironment
+        get() = environment.filterKeys(trackedEnvironmentVariablesKeys::contains)
 
     private fun <T> Property<T>.set(providerLambda: () -> T) = set(project.provider { providerLambda() })
 
@@ -96,8 +105,21 @@ abstract class KotlinNativeTest : KotlinTest() {
         executableProperty.set(project.provider(provider).map { project.files(it) })
     }
 
-    fun environment(name: String, value: Any) {
+    @JvmOverloads
+    fun environment(name: String, value: Any, tracked: Boolean = true) {
         processOptions.environment(name, value)
+        if (tracked) {
+            trackedEnvironmentVariablesKeys.add(name)
+        }
+    }
+
+    @JvmOverloads
+    fun trackEnvironment(name: String, tracked: Boolean = true) {
+        if (tracked) {
+            trackedEnvironmentVariablesKeys.add(name)
+        } else {
+            trackedEnvironmentVariablesKeys.remove(name)
+        }
     }
 
     @get:Internal
@@ -114,7 +136,11 @@ abstract class KotlinNativeTest : KotlinTest() {
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
-            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
+            escapeTCMessagesInLog = if (isConfigurationCacheAvailable(project.gradle)) {
+                project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+            } else {
+                project.hasProperty(TC_PROJECT_PROPERTY)
+            }
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.

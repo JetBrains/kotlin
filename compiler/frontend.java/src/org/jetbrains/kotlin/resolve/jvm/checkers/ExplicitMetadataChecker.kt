@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -16,7 +18,13 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 object ExplicitMetadataChecker : AdditionalAnnotationChecker {
     private val METADATA_FQ_NAME = FqName("kotlin.Metadata")
 
-    override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+    override fun checkEntries(
+        entries: List<KtAnnotationEntry>,
+        actualTargets: List<KotlinTarget>,
+        trace: BindingTrace,
+        annotated: KtAnnotated?,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         for (entry in entries) {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             if (descriptor.fqName == METADATA_FQ_NAME) {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-5854 Incorrect 'Nested class should be qualified'
 
 class A {

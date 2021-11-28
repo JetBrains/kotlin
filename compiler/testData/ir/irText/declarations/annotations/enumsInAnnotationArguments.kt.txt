@@ -19,8 +19,13 @@ enum class En : Enum<En> {
 
 }
 
-annotation class TestAnn : Annotation {
-  constructor(x: En) /* primary */ 
+open annotation class TestAnn : Annotation {
+  constructor(x: En) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   val x: En
     field = x
     get
@@ -30,4 +35,3 @@ annotation class TestAnn : Annotation {
 @TestAnn(x = En.A)
 fun test1() {
 }
-

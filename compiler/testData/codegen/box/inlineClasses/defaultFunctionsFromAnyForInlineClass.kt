@@ -1,9 +1,17 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 
-inline class Foo(val x: Int)
-inline class FooRef(val y: String)
-inline class FooLong(val x: Long)
-inline class FooDouble(val y: Double)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class Foo(val x: Int)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class FooRef(val y: String)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class FooLong(val x: Long)
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@kotlin.jvm.JvmInline
+value class FooDouble(val y: Double)
 
 fun box(): String {
     val f = Foo(42)

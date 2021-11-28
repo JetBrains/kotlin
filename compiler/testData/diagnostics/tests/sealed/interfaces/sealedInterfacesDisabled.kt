@@ -2,4 +2,4 @@
 // !LANGUAGE: -SealedInterfaces
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-<!WRONG_MODIFIER_TARGET!>sealed<!> interface Base
+<!UNSUPPORTED_FEATURE!>sealed<!> interface Base

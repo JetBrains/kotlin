@@ -15,15 +15,14 @@ package kotlin.random
  * Available at https://www.jstatsoft.org/v08/i14/paper
  *
  */
-internal class XorWowRandom
-internal constructor(
+internal class XorWowRandom internal constructor(
     private var x: Int,
     private var y: Int,
     private var z: Int,
     private var w: Int,
     private var v: Int,
     private var addend: Int
-) : Random() {
+) : Random(), Serializable {
 
     internal constructor(seed1: Int, seed2: Int) :
             this(seed1, seed2, 0, 0, seed1.inv(), (seed1 shl 10) xor (seed2 ushr 4))
@@ -53,4 +52,8 @@ internal constructor(
 
     override fun nextBits(bitCount: Int): Int =
         nextInt().takeUpperBits(bitCount)
+
+    private companion object {
+        private const val serialVersionUID: Long = 0L
+    }
 }

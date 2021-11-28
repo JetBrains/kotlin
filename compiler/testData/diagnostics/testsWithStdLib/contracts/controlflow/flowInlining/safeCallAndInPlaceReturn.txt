@@ -1,7 +1,12 @@
 package
 
 public fun bad(): kotlin.String
+public inline fun </*0*/ T> directRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
 public fun ok(): kotlin.String
+public fun ok2(): kotlin.String
+public fun ok3(/*0*/ arg: kotlin.Any?): kotlin.String
 public inline fun </*0*/ T> kotlin.Any?.myRun(/*0*/ block: () -> T): T
     CallsInPlace(block, EXACTLY_ONCE)
 

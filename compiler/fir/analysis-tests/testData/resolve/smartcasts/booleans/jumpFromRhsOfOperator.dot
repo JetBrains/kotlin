@@ -5,17 +5,17 @@ digraph jumpFromRhsOfOperator_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class A" style="filled" fillcolor=red];
-        1 [label="Exit class A" style="filled" fillcolor=red];
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
+    0 -> {1};
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function foo" style="filled" fillcolor=red];
-        3 [label="Exit function foo" style="filled" fillcolor=red];
+        2 [label="Enter class A" style="filled" fillcolor=red];
+        3 [label="Exit class A" style="filled" fillcolor=red];
     }
-    2 -> {3};
+    2 -> {3} [color=green];
 
     subgraph cluster_2 {
         color=red
@@ -51,7 +51,7 @@ digraph jumpFromRhsOfOperator_kt {
     10 -> {15 11};
     11 -> {12};
     12 -> {13};
-    13 -> {19};
+    13 -> {19}    [label=onUncaughtException];
     13 -> {14} [style=dotted];
     14 -> {15} [style=dotted];
     15 -> {16};
@@ -93,7 +93,7 @@ digraph jumpFromRhsOfOperator_kt {
     26 -> {31 27};
     27 -> {28};
     28 -> {29};
-    29 -> {35};
+    29 -> {35}    [label=onUncaughtException];
     29 -> {30} [style=dotted];
     30 -> {31} [style=dotted];
     31 -> {32};
@@ -157,7 +157,7 @@ digraph jumpFromRhsOfOperator_kt {
     44 -> {49 45};
     45 -> {46};
     46 -> {47};
-    47 -> {62};
+    47 -> {62}    [label=onUncaughtException];
     47 -> {48} [style=dotted];
     48 -> {49} [style=dotted];
     49 -> {50};
@@ -230,7 +230,7 @@ digraph jumpFromRhsOfOperator_kt {
     71 -> {76 72};
     72 -> {73};
     73 -> {74};
-    74 -> {89};
+    74 -> {89}    [label=onUncaughtException];
     74 -> {75} [style=dotted];
     75 -> {76} [style=dotted];
     76 -> {77};
@@ -267,7 +267,7 @@ digraph jumpFromRhsOfOperator_kt {
                 101 [label="Exit ||"];
             }
             102 [label="Access variable R|<local>/a|"];
-            103 [label="Function call: R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()"];
+            103 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
             104 [label="Exit block"];
         }
         105 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -281,7 +281,7 @@ digraph jumpFromRhsOfOperator_kt {
     96 -> {101 97};
     97 -> {98};
     98 -> {99};
-    99 -> {105};
+    99 -> {105}    [label=onUncaughtException];
     99 -> {100} [style=dotted];
     100 -> {101} [style=dotted];
     101 -> {102};
@@ -309,7 +309,7 @@ digraph jumpFromRhsOfOperator_kt {
                 117 [label="Exit &&"];
             }
             118 [label="Access variable R|<local>/a|"];
-            119 [label="Function call: R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()"];
+            119 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
             120 [label="Exit block"];
         }
         121 [label="Exit function teat_6" style="filled" fillcolor=red];
@@ -323,7 +323,7 @@ digraph jumpFromRhsOfOperator_kt {
     112 -> {117 113};
     113 -> {114};
     114 -> {115};
-    115 -> {121};
+    115 -> {121}    [label=onUncaughtException];
     115 -> {116} [style=dotted];
     116 -> {117} [style=dotted];
     117 -> {118};
@@ -364,14 +364,14 @@ digraph jumpFromRhsOfOperator_kt {
                     color=blue
                     139 [label="Enter block"];
                     140 [label="Access variable R|<local>/a|"];
-                    141 [label="Function call: R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()"];
+                    141 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
                     142 [label="Exit block"];
                 }
                 143 [label="Exit when branch result"];
                 144 [label="Exit when"];
             }
             145 [label="Access variable R|<local>/a|"];
-            146 [label="Function call: R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()"];
+            146 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
             147 [label="Exit block"];
         }
         148 [label="Exit function test_7" style="filled" fillcolor=red];
@@ -387,7 +387,7 @@ digraph jumpFromRhsOfOperator_kt {
     130 -> {135 131};
     131 -> {132};
     132 -> {133};
-    133 -> {148};
+    133 -> {148}    [label=onUncaughtException];
     133 -> {134} [style=dotted];
     134 -> {135} [style=dotted];
     135 -> {136};
@@ -437,14 +437,14 @@ digraph jumpFromRhsOfOperator_kt {
                     color=blue
                     166 [label="Enter block"];
                     167 [label="Access variable R|<local>/a|"];
-                    168 [label="Function call: R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()"];
+                    168 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
                     169 [label="Exit block"];
                 }
                 170 [label="Exit when branch result"];
                 171 [label="Exit when"];
             }
             172 [label="Access variable R|<local>/a|"];
-            173 [label="Function call: R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()"];
+            173 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
             174 [label="Exit block"];
         }
         175 [label="Exit function test_8" style="filled" fillcolor=red];
@@ -460,7 +460,7 @@ digraph jumpFromRhsOfOperator_kt {
     157 -> {162 158};
     158 -> {159};
     159 -> {160};
-    160 -> {175};
+    160 -> {175}    [label=onUncaughtException];
     160 -> {161} [style=dotted];
     161 -> {162} [style=dotted];
     162 -> {163};

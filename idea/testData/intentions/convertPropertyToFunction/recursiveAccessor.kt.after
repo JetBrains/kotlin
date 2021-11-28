@@ -1,2 +1,0 @@
-// WITH_RUNTIME
-fun String.getFoo(): String = if (isEmpty()) "" else substring(1).getFoo()

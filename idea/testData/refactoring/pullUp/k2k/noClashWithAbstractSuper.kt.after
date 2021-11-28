@@ -1,9 +1,0 @@
-abstract class A<T, U> {
-    // INFO: {"checked": "true"}
-    fun foo(s: String, x: U) {
-
-    }
-}
-
-class B<X>: A<String, X>() {
-}

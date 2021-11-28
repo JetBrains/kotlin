@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.utils.clearAnsiColor
 import java.text.ParseException
 
 class TeamCityMessageCommonClient(
+    internal val clientType: LogType,
     internal val log: Logger
 ) : ServiceMessageParserCallback {
 
@@ -43,9 +44,12 @@ class TeamCityMessageCommonClient(
         afterMessage = true
     }
 
-    internal fun testFailedMessage(): String {
-        return errors
-            .joinToString("\n")
+    internal fun testFailedMessage(): String? {
+        return if (errors.isNotEmpty())
+            errors
+                .joinToString("\n")
+        else
+            null
     }
 
     private fun printMessage(text: String, type: LogType?) {
@@ -74,6 +78,10 @@ class TeamCityMessageCommonClient(
     }
 
     override fun regularText(text: String) {
-        printMessage(text, LogType.DEBUG)
+        if (clientType == LogType.ERROR || clientType == LogType.WARN) {
+            printMessage(text, clientType)
+        } else {
+            printMessage(text, LogType.DEBUG)
+        }
     }
 }

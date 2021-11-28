@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -135,7 +135,7 @@ public abstract class Random {
                         nextInt().toLong() and 0xFFFF_FFFF
                     else -> {
                         val bitCount = fastLog2(nHigh)
-                        nextBits(bitCount).toLong().shl(32) + nextInt()
+                        nextBits(bitCount).toLong().shl(32) + (nextInt().toLong() and 0xFFFF_FFFF)
                     }
                 }
             } else {
@@ -267,9 +267,16 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.defaultRandom
      */
-    companion object Default : Random() {
-
+    companion object Default : Random(), Serializable {
         private val defaultRandom: Random = defaultPlatformRandom()
+
+        private object Serialized : Serializable {
+            private const val serialVersionUID = 0L
+
+            private fun readResolve(): Any = Random
+        }
+
+        private fun writeReplace(): Any = Serialized
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
@@ -290,7 +297,8 @@ public abstract class Random {
 
         override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
-        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
+        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray =
+            defaultRandom.nextBytes(array, fromIndex, toIndex)
     }
 }
 
@@ -323,7 +331,6 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
  */
 @SinceKotlin("1.3")
 public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).toInt())
-
 
 
 /**
@@ -362,7 +369,6 @@ public fun Random.nextLong(range: LongRange): Long = when {
 internal expect fun defaultPlatformRandom(): Random
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
-@OptIn(ExperimentalStdlibApi::class)
 internal fun fastLog2(value: Int): Int = 31 - value.countLeadingZeroBits()
 
 /** Takes upper [bitCount] bits (0..32) from this number. */

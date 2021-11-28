@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
 // Issues: KT-26153, KT-26191
 
@@ -15,16 +15,16 @@ fun foo(y: Boolean) {
 inline fun case1(block: () -> Unit) {
     val contracts = listOf(
         contract {
-            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+            callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
         }, contract {
-            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+            callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
         }
     )
     block()
 }
 
 inline fun case_2(block: () -> Unit) = contract {
-    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 }
 
 fun case_3(block: () -> Unit) {

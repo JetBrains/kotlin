@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +SoundSmartCastsAfterTry
 
 fun bar(arg: Any?) = arg

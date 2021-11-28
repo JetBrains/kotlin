@@ -20,8 +20,12 @@ object TestObject {
 
 }
 
-annotation class TestAnnotationClass : Annotation {
-  constructor() /* primary */ 
+open annotation class TestAnnotationClass : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -37,4 +41,3 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
 
 }
-

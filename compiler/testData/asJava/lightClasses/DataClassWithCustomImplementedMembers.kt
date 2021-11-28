@@ -18,3 +18,4 @@ class Wrapper {
 class G
 
 // LAZINESS:NoLaziness
+// FIR_COMPARISON

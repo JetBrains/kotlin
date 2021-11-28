@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 @RequiresOptIn(message = "Should be used just only in resolve processor")
 annotation class AdapterForResolveProcessor
 
-sealed class FirResolveProcessor(val session: FirSession, val scopeSession: ScopeSession)
+sealed class FirResolveProcessor(val session: FirSession, val scopeSession: ScopeSession) {
+    open fun beforePhase() {}
+
+    open fun afterPhase() {}
+}
 
 abstract class FirGlobalResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirResolveProcessor(session, scopeSession) {
-    abstract fun process()
+    abstract fun process(files: Collection<FirFile>)
 }
 
 abstract class FirTransformerBasedResolveProcessor(

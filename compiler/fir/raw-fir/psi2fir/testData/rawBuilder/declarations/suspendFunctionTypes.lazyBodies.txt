@@ -1,0 +1,4 @@
+FILE: suspendFunctionTypes.kt
+    public? final? suspend fun <T> simpleRun(f: ( suspend () -> T )): T { LAZY_BLOCK }
+    public? final? suspend fun <T, R> List<T>.simpleMap(f: ( suspend (T) -> R )): R { LAZY_BLOCK }
+    public? final? suspend fun <T> simpleWith(t: T, f: ( suspend T.() -> Unit )): Unit { LAZY_BLOCK }

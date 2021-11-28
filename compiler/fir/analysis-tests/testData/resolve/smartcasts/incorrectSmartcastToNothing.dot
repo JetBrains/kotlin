@@ -1,0 +1,144 @@
+digraph incorrectSmartcastToNothing_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter property" style="filled" fillcolor=red];
+        1 [label="Const: String(foo)"];
+        2 [label="Function call: R|java/io/File.File|(...)"];
+        3 [label="Exit property" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+    2 -> {3};
+
+    subgraph cluster_1 {
+        color=red
+        4 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            5 [label="Enter block"];
+            subgraph cluster_3 {
+                color=blue
+                6 [label="Enter when"];
+                subgraph cluster_4 {
+                    color=blue
+                    7 [label="Enter when branch condition "];
+                    8 [label="Access variable R|<local>/cacheExtSetting|"];
+                    9 [label="Const: Null(null)"];
+                    10 [label="Equality operator =="];
+                    11 [label="Exit when branch condition"];
+                }
+                subgraph cluster_5 {
+                    color=blue
+                    12 [label="Enter when branch condition "];
+                    13 [label="Access variable R|<local>/cacheExtSetting|"];
+                    14 [label="Function call: R|<local>/cacheExtSetting|.R|kotlin/text/isBlank|()"];
+                    15 [label="Exit when branch condition"];
+                }
+                subgraph cluster_6 {
+                    color=blue
+                    16 [label="Enter when branch condition else"];
+                    17 [label="Exit when branch condition"];
+                }
+                18 [label="Enter when branch result"];
+                subgraph cluster_7 {
+                    color=blue
+                    19 [label="Enter block"];
+                    20 [label="Access variable R|<local>/cacheExtSetting|"];
+                    21 [label="Function call: R|java/io/File.File|(...)"];
+                    22 [label="Exit block"];
+                }
+                23 [label="Exit when branch result"];
+                24 [label="Enter when branch result"];
+                subgraph cluster_8 {
+                    color=blue
+                    25 [label="Enter block"];
+                    26 [label="Const: Null(null)"];
+                    27 [label="Exit block"];
+                }
+                28 [label="Exit when branch result"];
+                29 [label="Enter when branch result"];
+                subgraph cluster_9 {
+                    color=blue
+                    30 [label="Enter block"];
+                    31 [label="Access variable R|/cache|"];
+                    32 [label="Enter safe call"];
+                    33 [label="Postponed enter to lambda"];
+                    subgraph cluster_10 {
+                        color=blue
+                        43 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        subgraph cluster_11 {
+                            color=blue
+                            44 [label="Enter block"];
+                            45 [label="Access variable R|<local>/it|"];
+                            46 [label="Const: String(main.kts.compiled.cache)"];
+                            47 [label="Function call: R|java/io/File.File|(...)"];
+                            48 [label="Exit block"];
+                        }
+                        49 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                    }
+                    34 [label="Postponed exit from lambda"];
+                    35 [label="Function call: $subj$.R|kotlin/let|<R|java/io/File|, R|java/io/File|>(...)"];
+                    36 [label="Exit safe call"];
+                    37 [label="Exit block"];
+                }
+                38 [label="Exit when branch result"];
+                39 [label="Exit when"];
+            }
+            40 [label="Variable declaration: lval cacheBaseDir: R|java/io/File?|"];
+            41 [label="Exit block"];
+        }
+        42 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
+    11 -> {29 12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {24 16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23};
+    23 -> {39};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {39};
+    29 -> {30};
+    30 -> {31};
+    31 -> {32 36};
+    32 -> {33};
+    33 -> {43};
+    33 -> {34} [color=red];
+    33 -> {43} [style=dashed];
+    34 -> {35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {34} [color=green];
+
+}

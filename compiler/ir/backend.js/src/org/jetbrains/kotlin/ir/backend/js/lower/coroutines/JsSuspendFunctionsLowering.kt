@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,16 +29,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
-class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunctionsLowering<JsIrBackendContext>(ctx) {
+class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx) {
 
-    private val coroutineImplExceptionPropertyGetter = ctx.coroutineImplExceptionPropertyGetter
-    private val coroutineImplExceptionPropertySetter = ctx.coroutineImplExceptionPropertySetter
-    private val coroutineImplExceptionStatePropertyGetter = ctx.coroutineImplExceptionStatePropertyGetter
-    private val coroutineImplExceptionStatePropertySetter = ctx.coroutineImplExceptionStatePropertySetter
-    private val coroutineImplLabelPropertySetter = ctx.coroutineImplLabelPropertySetter
-    private val coroutineImplLabelPropertyGetter = ctx.coroutineImplLabelPropertyGetter
-    private val coroutineImplResultSymbolGetter = ctx.coroutineImplResultSymbolGetter
-    private val coroutineImplResultSymbolSetter = ctx.coroutineImplResultSymbolSetter
+    val coroutineSymbols = ctx.coroutineSymbols
+
+    private val coroutineImplExceptionPropertyGetter = coroutineSymbols.coroutineImplExceptionPropertyGetter
+    private val coroutineImplExceptionPropertySetter = coroutineSymbols.coroutineImplExceptionPropertySetter
+    private val coroutineImplExceptionStatePropertyGetter = coroutineSymbols.coroutineImplExceptionStatePropertyGetter
+    private val coroutineImplExceptionStatePropertySetter = coroutineSymbols.coroutineImplExceptionStatePropertySetter
+    private val coroutineImplLabelPropertySetter = coroutineSymbols.coroutineImplLabelPropertySetter
+    private val coroutineImplLabelPropertyGetter = coroutineSymbols.coroutineImplLabelPropertyGetter
+    private val coroutineImplResultSymbolGetter = coroutineSymbols.coroutineImplResultSymbolGetter
+    private val coroutineImplResultSymbolSetter = coroutineSymbols.coroutineImplResultSymbolSetter
 
     private var coroutineId = 0
 
@@ -52,7 +55,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         argumentToPropertiesMap: Map<IrValueParameter, IrField>
     ) {
         val returnableBlockTransformer = ReturnableBlockTransformer(context)
-        val finallyBlockTransformer = FinallyBlocksLowering(context, context.dynamicType)
+        val finallyBlockTransformer = FinallyBlocksLowering(context, context.catchAllThrowableType)
         val simplifiedFunction =
             transformingFunction.transform(finallyBlockTransformer, null).transform(returnableBlockTransformer, null) as IrFunction
 
@@ -62,7 +65,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             simplifiedFunction.startOffset,
             simplifiedFunction.endOffset,
             context.irBuiltIns.unitType,
-            STATEMENT_ORIGIN_COROUTINE_IMPL,
+            JsStatementOrigins.STATEMENT_ORIGIN_COROUTINE_IMPL,
             originalBody.statements
         )
 
@@ -81,7 +84,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
 
         val unit = context.irBuiltIns.unitType
 
-        val switch = IrWhenImpl(body.startOffset, body.endOffset, unit, COROUTINE_SWITCH)
+        val switch = IrWhenImpl(body.startOffset, body.endOffset, unit, JsStatementOrigins.COROUTINE_SWITCH)
         val stateVar = JsIrBuilder.buildVar(context.irBuiltIns.intType, stateMachineFunction)
         val switchBlock = IrBlockImpl(switch.startOffset, switch.endOffset, switch.type).apply {
             statements += stateVar
@@ -92,7 +95,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             body.startOffset,
             body.endOffset,
             unit,
-            COROUTINE_ROOT_LOOP,
+            JsStatementOrigins.COROUTINE_ROOT_LOOP,
         ).also {
             it.condition = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
             it.body = rootTry
@@ -116,7 +119,22 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             coroutineImplExceptionStatePropertySetter,
             coroutineImplLabelPropertySetter,
             thisReceiver,
-            suspendResult.symbol
+            getSuspendResultAsType = { type ->
+                JsIrBuilder.buildImplicitCast(
+                    JsIrBuilder.buildGetValue(suspendResult.symbol),
+                    type
+                )
+            },
+            setSuspendResultValue = { value ->
+                JsIrBuilder.buildSetVariable(
+                    suspendResult.symbol,
+                    JsIrBuilder.buildImplicitCast(
+                        value,
+                        context.irBuiltIns.anyNType
+                    ),
+                    unit
+                )
+            }
         )
 
         body.acceptVoid(stateMachineBuilder)
@@ -178,9 +196,9 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             }
         }
 
-        stateMachineFunction.transform(LiveLocalsTransformer(localToPropertyMap, { JsIrBuilder.buildGetValue(thisReceiver) }, unit), null)
         // TODO find out why some parents are incorrect
         stateMachineFunction.body!!.patchDeclarationParents(stateMachineFunction)
+        stateMachineFunction.transform(LiveLocalsTransformer(localToPropertyMap, { JsIrBuilder.buildGetValue(thisReceiver) }, unit), null)
     }
 
     private fun assignStateIds(entryState: SuspendState, subject: IrVariableSymbol, switch: IrWhen, rootLoop: IrLoop) {
@@ -234,16 +252,18 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
     }
 
     override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {
-        val fromType = (delegatingCall as? IrCall)?.symbol?.owner?.returnType ?: delegatingCall.type
-        if (!needUnboxingOrUnit(fromType, expectedType)) return delegatingCall
+        val functionReturnType = (delegatingCall as? IrCall)?.symbol?.owner?.let { function ->
+            loweredSuspendFunctionReturnType(function, context.irBuiltIns)
+        } ?: delegatingCall.type
 
-        val ctx = this@JsSuspendFunctionsLowering.context
-        return irComposite(resultType = fromType) {
-            val tmp = createTmpVariable(delegatingCall, irType = fromType)
-            val coroutineSuspended = irCall(ctx.coroutineSuspendGetter)
+        if (!needUnboxingOrUnit(functionReturnType, expectedType)) return delegatingCall
+
+        return irComposite(resultType = expectedType) {
+            val tmp = createTmpVariable(delegatingCall, irType = functionReturnType)
+            val coroutineSuspended = irCall(coroutineSymbols.coroutineSuspendedGetter)
             val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
-            +irIfThen(fromType, condition, irReturn(irReinterpretCast(irGet(tmp), expectedType)))
-            +irGet(tmp)
+            +irIfThen(context.irBuiltIns.unitType, condition, irReturn(irGet(tmp)))
+            +irImplicitCast(irGet(tmp), expectedType)
         }
     }
 

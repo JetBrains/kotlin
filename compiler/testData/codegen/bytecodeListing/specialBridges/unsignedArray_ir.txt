@@ -8,7 +8,7 @@ public final class UIntArray {
     public synthetic final static method box-impl(p0: int[]): UIntArray
     public method clear(): void
     public static method constructor-impl(p0: int[]): int[]
-    public synthetic bridge method contains(p0: java.lang.Object): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
     public method contains-WZ4Q5Ns(p0: int): boolean
     public static method contains-WZ4Q5Ns(p0: int[], p1: int): boolean
     public method containsAll(p0: java.util.Collection): boolean

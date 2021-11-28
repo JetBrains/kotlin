@@ -7,8 +7,8 @@ val test1a = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>AbstractClass()<!>
 
 annotation class AnnotationClass
 typealias Test2 = AnnotationClass
-val test2 = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Test2()<!>
-val test2a = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>AnnotationClass()<!>
+val test2 = Test2()
+val test2a = AnnotationClass()
 
 enum class EnumClass { VALUE1, VALUE2 }
 typealias Test3 = EnumClass

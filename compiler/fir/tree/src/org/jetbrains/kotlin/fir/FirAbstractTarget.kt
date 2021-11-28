@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir
 abstract class FirAbstractTarget<E : FirTargetElement>(
     override val labelName: String?
 ) : FirTarget<E> {
-    override lateinit var labeledElement: E
+    protected abstract var _labeledElement: E
+
+    final override val labeledElement: E
+        get() = _labeledElement
 
     override fun bind(element: E) {
-        labeledElement = element
+        _labeledElement = element
     }
 }

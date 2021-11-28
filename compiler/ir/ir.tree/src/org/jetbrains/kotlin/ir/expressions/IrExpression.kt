@@ -40,7 +40,3 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
         // No children by default
     }
 }
-
-interface IrExpressionWithCopy {
-    fun copy(): IrExpression
-}

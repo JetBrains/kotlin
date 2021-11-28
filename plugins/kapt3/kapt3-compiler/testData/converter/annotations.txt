@@ -14,23 +14,23 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno2 {
 
+    public abstract int i() default 5;
+
+    public abstract java.lang.String s() default "ABC";
+
+    public abstract int[] ii() default {1, 2, 3};
+
+    public abstract java.lang.String[] ss() default {"A", "B"};
+
     public abstract Anno1 a();
-
-    public abstract java.lang.Class<?>[] classes();
-
-    public abstract java.lang.Class<?> clazz();
 
     public abstract Colors color() default Colors.BLACK;
 
     public abstract Colors[] colors() default {Colors.BLACK, Colors.WHITE};
 
-    public abstract int i() default 5;
+    public abstract java.lang.Class<?> clazz();
 
-    public abstract int[] ii() default {1, 2, 3};
-
-    public abstract java.lang.String s() default "ABC";
-
-    public abstract java.lang.String[] ss() default {"A", "B"};
+    public abstract java.lang.Class<?>[] classes();
 }
 
 ////////////////////

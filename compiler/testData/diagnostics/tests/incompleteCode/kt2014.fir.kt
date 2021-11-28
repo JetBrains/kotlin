@@ -9,12 +9,12 @@ class Foo {
 }
 
 fun x(f : Foo) {
-    f.<!UNRESOLVED_REFERENCE!>prop<!>
-    f.<!UNRESOLVED_REFERENCE!>bar<!>
+    f.<!FUNCTION_CALL_EXPECTED!>prop<!>
+    f.<!FUNCTION_CALL_EXPECTED!>bar<!>
 
-    f.<!UNRESOLVED_REFERENCE!>a<!>()
+    f.<!FUNCTION_EXPECTED!>a<!>()
     <!UNRESOLVED_REFERENCE!>c<!>()
-    <!HIDDEN!>R<!>()
+    <!INVISIBLE_REFERENCE!>R<!>()
 }
 
 object R {}

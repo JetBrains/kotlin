@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
-
-inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
-    val fir = this.fir
-    require(fir is T) {
-        "Not an expected fir element type = ${T::class}, symbol = ${this}, fir = ${fir.renderWithType()}"
-    }
-    return fir
-}
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal inline var FirExpression.resultType: FirTypeRef
     get() = typeRef
@@ -58,7 +58,7 @@ internal fun remapArgumentsWithVararg(
             ) {
                 arguments += arg
                 if (this.source == null) {
-                    this.source = arg.source?.fakeElement(FirFakeSourceElementKind.VarargArgument)
+                    this.source = arg.source?.fakeElement(KtFakeSourceElementKind.VarargArgument)
                 }
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
@@ -82,7 +82,6 @@ internal fun remapArgumentsWithVararg(
 
 fun FirBlock.writeResultType(session: FirSession) {
     val resultExpression = when (val statement = statements.lastOrNull()) {
-        is FirReturnExpression -> statement.result
         is FirExpression -> statement
         else -> null
     }
@@ -92,7 +91,7 @@ fun FirBlock.writeResultType(session: FirSession) {
         val theType = resultExpression.resultType
         if (theType is FirResolvedTypeRef) {
             buildResolvedTypeRef {
-                source = theType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                source = theType.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                 type = theType.type
                 annotations += theType.annotations
             }
@@ -104,30 +103,30 @@ fun FirBlock.writeResultType(session: FirSession) {
     }
 }
 
-fun FirConstKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
+fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
     fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
-        val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)
+        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
         return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
     }
     return when (this) {
-        FirConstKind.Null -> session.builtinTypes.nullableNothingType.type
-        FirConstKind.Boolean -> session.builtinTypes.booleanType.type
-        FirConstKind.Char -> constructLiteralType(StandardClassIds.Char)
-        FirConstKind.Byte -> constructLiteralType(StandardClassIds.Byte)
-        FirConstKind.Short -> constructLiteralType(StandardClassIds.Short)
-        FirConstKind.Int -> constructLiteralType(StandardClassIds.Int)
-        FirConstKind.Long -> constructLiteralType(StandardClassIds.Long)
-        FirConstKind.String -> constructLiteralType(StandardClassIds.String)
-        FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
-        FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
+        ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.type
+        ConstantValueKind.Boolean -> session.builtinTypes.booleanType.type
+        ConstantValueKind.Char -> constructLiteralType(StandardClassIds.Char)
+        ConstantValueKind.Byte -> constructLiteralType(StandardClassIds.Byte)
+        ConstantValueKind.Short -> constructLiteralType(StandardClassIds.Short)
+        ConstantValueKind.Int -> constructLiteralType(StandardClassIds.Int)
+        ConstantValueKind.Long -> constructLiteralType(StandardClassIds.Long)
+        ConstantValueKind.String -> constructLiteralType(StandardClassIds.String)
+        ConstantValueKind.Float -> constructLiteralType(StandardClassIds.Float)
+        ConstantValueKind.Double -> constructLiteralType(StandardClassIds.Double)
 
-        FirConstKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
-        FirConstKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
-        FirConstKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
-        FirConstKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
+        ConstantValueKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
+        ConstantValueKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
+        ConstantValueKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
+        ConstantValueKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
 
-        FirConstKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
-        FirConstKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
+        ConstantValueKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
+        ConstantValueKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
     }
 }

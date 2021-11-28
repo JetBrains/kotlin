@@ -1,6 +1,0 @@
-{
-  "type": "KOTLIN_PACKAGE",
-  "fqn": "some.foo",
-  "newName": "bar",
-  "comment": "KT-365 Support renaming packages"
-}

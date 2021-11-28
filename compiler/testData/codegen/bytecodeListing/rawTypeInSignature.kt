@@ -1,5 +1,5 @@
-// FILE: rawTypeInSignature.kt
 // WITH_SIGNATURES
+// FILE: rawTypeInSignature.kt
 
 class GenericInv<T : Number>
 class GenericIn<in T : Number>

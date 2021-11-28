@@ -1,6 +1,6 @@
-// FILE: Bar.java
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
+// FILE: Bar.java
 
 public class Bar<K, N> { }
 

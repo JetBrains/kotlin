@@ -1,5 +1,5 @@
 // CURIOUS_ABOUT writeToParcel, createFromParcel, <clinit>
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package test
 

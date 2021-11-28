@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun runWithoutReturn(r: () -> Unit) = r()
@@ -25,8 +24,8 @@ fun testRun() {
     }
 
     run<Int?> {
-        1 as Int
-        1 as Int
+        1 <!USELESS_CAST!>as Int<!>
+        1 <!USELESS_CAST!>as Int<!>
     }
 
     runWithoutReturn {

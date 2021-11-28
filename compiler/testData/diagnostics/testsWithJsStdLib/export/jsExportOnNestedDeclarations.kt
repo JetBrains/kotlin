@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.js.ExperimentalJsExport
+// !OPT_IN: kotlin.js.ExperimentalJsExport
 
 package foo
 

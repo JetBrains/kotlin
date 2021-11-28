@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -26,20 +27,21 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-fun generateTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context) { context.createTestContainerFun(moduleFragment) }
+fun generateJsTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
+    val generator = TestGenerator(context, false)
 
     moduleFragment.files.toList().forEach {
         generator.lower(it)
     }
 }
 
-class TestGenerator(val context: JsIrBackendContext, val testContainerFactory: () -> IrSimpleFunction) : FileLoweringPass {
+class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boolean) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
-        irFile.declarations.forEach {
+        // Additional copy to prevent ConcurrentModificationException
+        ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
-                generateTestCalls(it) { suiteForPackage(irFile.fqName) }
+                generateTestCalls(it) { if (groupByPackage) suiteForPackage(irFile) else context.createTestContainerFun(irFile) }
             }
 
             // TODO top-level functions
@@ -48,8 +50,8 @@ class TestGenerator(val context: JsIrBackendContext, val testContainerFactory: (
 
     private val packageSuites = mutableMapOf<FqName, IrSimpleFunction>()
 
-    private fun suiteForPackage(fqName: FqName) = packageSuites.getOrPut(fqName) {
-        context.suiteFun!!.createInvocation(fqName.asString(), testContainerFactory())
+    private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.fqName) {
+        context.suiteFun!!.createInvocation(irFile.fqName.asString(), context.createTestContainerFun(irFile))
     }
 
     private fun IrSimpleFunctionSymbol.createInvocation(
@@ -61,7 +63,7 @@ class TestGenerator(val context: JsIrBackendContext, val testContainerFactory: (
 
         val function = context.irFactory.buildFun {
             this.name = Name.identifier("$name test fun")
-            this.returnType = context.irBuiltIns.anyNType
+            this.returnType = if (this@createInvocation == context.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
             this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }
         function.parent = parentFunction

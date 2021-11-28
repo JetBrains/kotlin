@@ -73,6 +73,41 @@ public final class ErrorInDeclarations {
         super();
     }
 
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getP1() {
+        return null;
+    }
+
+    public final void setP1(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getP2() {
+        return null;
+    }
+
+    public final void setP2(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final BCD<java.lang.String> getP3() {
+        return null;
+    }
+
+    public final void setP3(@org.jetbrains.annotations.NotNull()
+    BCD<java.lang.String> p0) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+
     public final void f1(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     ABC<java.util.List<java.lang.String>> b) {
@@ -87,41 +122,6 @@ public final class ErrorInDeclarations {
     @org.jetbrains.annotations.Nullable()
     public final ABC f4() {
         return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getP1() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC getP2() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final BCD<java.lang.String> getP3() {
-        return null;
-    }
-
-    public final void overloads(@org.jetbrains.annotations.NotNull()
-    ABC a) {
-    }
-
-    public final void overloads(@org.jetbrains.annotations.NotNull()
-    java.lang.String a) {
-    }
-
-    public final void setP1(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
-    }
-
-    public final void setP2(@org.jetbrains.annotations.NotNull()
-    ABC p0) {
-    }
-
-    public final void setP3(@org.jetbrains.annotations.NotNull()
-    BCD<java.lang.String> p0) {
     }
 }
 

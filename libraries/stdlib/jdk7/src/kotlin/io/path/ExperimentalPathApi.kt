@@ -15,7 +15,7 @@ import kotlin.annotation.AnnotationTarget.*
  *
  * Any usage of a declaration annotated with `@ExperimentalPathApi` must be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalPathApi::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.io.path.ExperimentalPathApi`.
+ * or by using the compiler argument `-opt-in=kotlin.io.path.ExperimentalPathApi`.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)

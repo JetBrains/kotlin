@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val UB_MAX = UByte.MAX_VALUE
 val UB_START = (UB_MAX - 10u).toUByte()

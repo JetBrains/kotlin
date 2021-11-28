@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 data class A(val x: Int, val y: String)
@@ -8,8 +7,8 @@ fun foo(block: (A, B) -> Unit) { }
 
 fun bar() {
     foo { (a, a), b ->
-        a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
+        b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 
     foo { (a, b), a ->
@@ -18,13 +17,13 @@ fun bar() {
     }
 
     foo { a, (a, b) ->
-        a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
+        b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 
     foo { (a, b), (c, b) ->
-        <!UNRESOLVED_REFERENCE!>a<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-        c checkType { <!INAPPLICABLE_CANDIDATE!>_<!><B>() }
+        a checkType { _<Int>() }
+        b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+        c checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><B>() }
     }
 }

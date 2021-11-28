@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
@@ -28,17 +27,17 @@ fun main() {
     val raw = Test.rawAField
 
     raw.charSequences = arrayOf<String>()
-    raw.charSequences = arrayOf<Double>()
+    raw.charSequences = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Double>()<!>
 
-    raw.maps = arrayOf<Map<Int, Int>>()
-    raw.maps = arrayOf<MutableMap<Int, Int>>()
-    raw.maps = arrayOf<List<String>>()
+    raw.maps = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Map<Int, Int>>()<!>
+    raw.maps = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<MutableMap<Int, Int>>()<!>
+    raw.maps = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<List<String>>()<!>
 
-    raw.arraysOfLists = arrayOf<Array<List<*>>>()
-    raw.arraysOfLists = arrayOf<List<String>>()
-    raw.arraysOfLists = arrayOf<Array<Array<String>>>()
+    raw.arraysOfLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Array<List<*>>>()<!>
+    raw.arraysOfLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<List<String>>()<!>
+    raw.arraysOfLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Array<Array<String>>>()<!>
 
     raw.arraysOfAny = arrayOf<Array<Array<String>>>()
 
-    raw.erasedLists = arrayOf<List<String>>()
+    raw.erasedLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<List<String>>()<!>
 }

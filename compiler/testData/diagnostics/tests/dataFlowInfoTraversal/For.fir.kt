@@ -5,17 +5,17 @@ fun foo() {
     val a = Array<Int>(3, {0})
 
     for (p in a) {
-        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) continue
         bar(x)
         for (q in a) {
             bar(x)
-            if (x == null) bar(x)
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x)
         }
     }
 
     for (p in a) {
-        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) break
         bar(x)
     }

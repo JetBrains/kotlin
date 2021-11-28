@@ -8,9 +8,9 @@ fun main() {
     val x3: () -> String = if (true) {{ -> "this" }} else {{ -> "this" }}
     val x4: String.() -> String = if (true) {{ str: String -> "this" }} else {{ str: String -> "this" }}
     val x41: String.(String) -> String = if (true) {{ str: String, str2: String -> "this" }} else {{ str: String, str2: String -> "this" }}
-    val x42: String.(String) -> String = if (true) {{ str, str2 -> "this" }} else {{ str, str2 -> "this" }}
-    val x5: String.() -> String = if (true) {{ str -> "this" }} else {{ str -> "this" }}
-    val x6: String.() -> String = if (true) {{ str -> "this" }} else {{ "this" }}
+    val x42: String.(String) -> String = if (true) {{ str, <!CANNOT_INFER_PARAMETER_TYPE!>str2<!> -> "this" }} else {{ str, <!CANNOT_INFER_PARAMETER_TYPE!>str2<!> -> "this" }}
+    val x5: String.() -> String = if (true) {{ <!CANNOT_INFER_PARAMETER_TYPE!>str<!> -> "this" }} else {{ <!CANNOT_INFER_PARAMETER_TYPE!>str<!> -> "this" }}
+    val x6: String.() -> String = if (true) {{ <!CANNOT_INFER_PARAMETER_TYPE!>str<!> -> "this" }} else {{ "this" }}
     val x7: String.() -> String = select({ -> this }, { -> this })
     val x8: String.() -> String = select({ this }, { this })
 }

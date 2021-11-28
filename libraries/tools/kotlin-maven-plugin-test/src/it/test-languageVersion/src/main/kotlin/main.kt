@@ -1,7 +1,1 @@
-fun breakInWhenFrom14() {
-    while (true) {
-        when {
-            true -> break
-        }
-    }
-}
+interface A : suspend () -> Unit

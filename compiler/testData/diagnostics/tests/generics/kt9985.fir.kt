@@ -27,15 +27,15 @@ fun foo(l: A<String>?) {
     foo(l?.bar()) checkType { _<String?>() }
     foo(l?.gav()) checkType { _<String?>() }
     if (l != null) {
-        foo(l?.bar()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-        foo(l?.gav()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        foo(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>l<!UNNECESSARY_SAFE_CALL!>?.<!>bar()<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+        foo(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>l<!UNNECESSARY_SAFE_CALL!>?.<!>gav()<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 }
 
 fun fooNotNull(l: A<String>) {
     // No errors should be here
-    foo(l?.bar()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
-    foo(l?.gav()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    foo(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>l<!UNNECESSARY_SAFE_CALL!>?.<!>bar()<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+    foo(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>l<!UNNECESSARY_SAFE_CALL!>?.<!>gav()<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 }
 
 fun bar() {

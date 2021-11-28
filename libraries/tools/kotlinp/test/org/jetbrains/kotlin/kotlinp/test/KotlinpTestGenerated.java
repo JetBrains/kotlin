@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kotlinp.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     }
 
     public void testAllFilesPresentInTestData() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Annotations.kt")
@@ -108,8 +109,36 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/TypeParameters.kt");
     }
 
+    @TestMetadata("ValueClass.kt")
+    public void testValueClass() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/ValueClass.kt");
+    }
+
     @TestMetadata("VersionRequirement.kt")
     public void testVersionRequirement() throws Exception {
         runTest("libraries/tools/kotlinp/testData/VersionRequirement.kt");
+    }
+
+    @TestMetadata("libraries/tools/kotlinp/testData/jvmDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmDefault extends AbstractKotlinpTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("All.kt")
+        public void testAll() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/jvmDefault/All.kt");
+        }
+
+        @TestMetadata("AllCompatibility.kt")
+        public void testAllCompatibility() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/jvmDefault/AllCompatibility.kt");
+        }
+
+        public void testAllFilesPresentInJvmDefault() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
     }
 }

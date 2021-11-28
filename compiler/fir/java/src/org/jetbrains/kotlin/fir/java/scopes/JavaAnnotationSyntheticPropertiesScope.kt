@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.nullableModuleData
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -41,9 +45,17 @@ class JavaAnnotationSyntheticPropertiesScope(
             val function = functionSymbol.fir
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)
-                FirAccessorSymbol(callableId, callableId).also {
+                FirJavaOverriddenSyntheticPropertySymbol(callableId, callableId).also {
                     val accessor = FirSyntheticPropertyAccessor(function, isGetter = true)
-                    FirSyntheticProperty(session, name, isVar = false, it, function.status, function.resolvePhase, accessor)
+                    FirSyntheticProperty(
+                        session.nullableModuleData ?: function.moduleData,
+                        name,
+                        isVar = false,
+                        it,
+                        function.status.copy(newModality = Modality.FINAL),
+                        function.resolvePhase,
+                        accessor
+                    )
                 }
             }
             processor(symbol)
