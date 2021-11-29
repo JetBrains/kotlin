@@ -169,7 +169,16 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
                 "-F", frameworkParentDirPath,
                 "-Xcc", "-Werror" // To fail compilation on warnings in framework header.
         )
-        compileSwift(project, project.testTarget, sources, options + swiftExtraOpts, Paths.get(executable), fullBitcode)
+        // As of Xcode 13.1 swift passes wrong libclang_rt to simulator targets (similar to KT-47333).
+        // To workaround this problem, we explicitly provide the correct one.
+        val simulatorHack = if (project.testTargetConfigurables.targetTriple.isSimulator) {
+            project.platformManager.platform(project.testTarget).linker.provideCompilerRtLibrary("")?.let {
+                listOf("-Xlinker", it)
+            } ?: emptyList()
+        } else {
+            emptyList()
+        }
+        compileSwift(project, project.testTarget, sources, options + simulatorHack + swiftExtraOpts, Paths.get(executable), fullBitcode)
     }
 
     @TaskAction

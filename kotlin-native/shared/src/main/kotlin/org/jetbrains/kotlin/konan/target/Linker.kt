@@ -94,7 +94,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
         return libraries
     }
 
-    protected open fun provideCompilerRtLibrary(libraryName: String, isDynamic: Boolean = false): String? {
+    open fun provideCompilerRtLibrary(libraryName: String, isDynamic: Boolean = false): String? {
         System.err.println("Can't provide $libraryName.")
         return null
     }
