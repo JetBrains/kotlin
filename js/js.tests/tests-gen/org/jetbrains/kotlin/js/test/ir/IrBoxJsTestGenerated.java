@@ -51,6 +51,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("arrayToString.kt")
+        public void testArrayToString() throws Exception {
+            runTest("js/js.translator/testData/box/builtins/arrayToString.kt");
+        }
+
+        @Test
         @TestMetadata("hashCode.kt")
         public void testHashCode() throws Exception {
             runTest("js/js.translator/testData/box/builtins/hashCode.kt");
