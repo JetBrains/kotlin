@@ -334,7 +334,7 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
                 project.configurations.getByName(compilation.compileDependencyConfigurationName)
             }
             is KotlinPm20ProjectExtension -> {
-                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration.get()
+                (requestingVariant as KotlinGradleVariant).compileDependenciesConfiguration
             }
             else -> error("could not find the compile dependencies configuration for variant $requestingVariant")
         }

@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 interface KotlinCompileDependenciesConfigurationInstantiator : KotlinFragmentConfigurationInstantiator
 
 object DefaultKotlinCompileDependenciesConfigurationInstantiator : KotlinCompileDependenciesConfigurationInstantiator {
-    override fun locateOrRegister(
+    override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
         dependencies: KotlinDependencyConfigurations
-    ): NamedDomainObjectProvider<Configuration> {
-        return module.project.configurations.locateOrRegister(names.disambiguateName("compileDependencies")) {
+    ): Configuration {
+        return module.project.configurations.maybeCreate(names.disambiguateName("compileDependencies")).apply {
             isCanBeConsumed = false
             isCanBeResolved = true
             module.project.addExtendsFromRelation(name, dependencies.transitiveApiConfiguration.name)

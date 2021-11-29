@@ -20,9 +20,9 @@ abstract class KotlinNativeVariantInternal(
     fragmentName: String,
     val konanTarget: KonanTarget,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    final override val hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    final override val hostSpecificMetadataElementsConfiguration: Configuration?
 ) : KotlinNativeVariant,
     KotlinGradleVariantInternal(
         containingModule = containingModule,
@@ -52,18 +52,18 @@ class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
         containingModule: KotlinGradleModule,
         fragmentName: String,
         dependencyConfigurations: KotlinDependencyConfigurations,
-        compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-        apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-        hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+        compileDependencyConfiguration: Configuration,
+        apiElementsConfiguration: Configuration,
+        hostSpecificMetadataElementsConfiguration: Configuration?
     ) -> T
 ) {
     operator fun invoke(
         containingModule: KotlinGradleModule,
         fragmentName: String,
         dependencyConfigurations: KotlinDependencyConfigurations,
-        compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-        apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-        hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+        compileDependencyConfiguration: Configuration,
+        apiElementsConfiguration: Configuration,
+        hostSpecificMetadataElementsConfiguration: Configuration?
     ): T = constructor(
         containingModule, fragmentName,
         dependencyConfigurations,
@@ -78,9 +78,9 @@ open class KotlinLinuxX64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    hostSpecificMetadataElementsConfiguration: Configuration?
 ) : KotlinNativeVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
@@ -101,9 +101,9 @@ open class KotlinMacosX64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    hostSpecificMetadataElementsConfiguration: Configuration?
 ) : KotlinNativeVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
@@ -123,9 +123,9 @@ open class KotlinMacosX64Variant @Inject constructor(
 open class KotlinMacosArm64Variant @Inject constructor(
     containingModule: KotlinGradleModule, fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    hostSpecificMetadataElementsConfiguration: Configuration?
 ) : KotlinNativeVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
@@ -146,9 +146,9 @@ open class KotlinIosX64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    hostSpecificMetadataElementsConfiguration: Configuration?
 ) : KotlinNativeVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
@@ -169,9 +169,9 @@ open class KotlinIosArm64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    hostSpecificMetadataElementsConfiguration: Configuration?
 ) : KotlinNativeVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,

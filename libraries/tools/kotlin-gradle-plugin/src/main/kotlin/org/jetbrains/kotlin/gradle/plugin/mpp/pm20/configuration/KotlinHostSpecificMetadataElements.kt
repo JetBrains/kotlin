@@ -7,12 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.isHostSpecificKonanTargetsSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.locateOrRegister
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 interface KotlinHostSpecificMetadataElementsConfigurationInstantiator : KotlinFragmentConfigurationInstantiator
@@ -24,10 +22,10 @@ fun DefaultKotlinHostSpecificMetadataElementsConfigurationInstantiator(
 
 private object DefaultKotlinHostSpecificMetadataElementsConfigurationInstantiator :
     KotlinHostSpecificMetadataElementsConfigurationInstantiator {
-    override fun locateOrRegister(
+    override fun create(
         module: KotlinGradleModule, names: FragmentNameDisambiguation, dependencies: KotlinDependencyConfigurations
-    ): NamedDomainObjectProvider<Configuration> {
-        return module.project.configurations.locateOrRegister(names.disambiguateName("hostSpecificMetadataElements")) {
+    ): Configuration {
+        return module.project.configurations.maybeCreate(names.disambiguateName("hostSpecificMetadataElements")).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
         }

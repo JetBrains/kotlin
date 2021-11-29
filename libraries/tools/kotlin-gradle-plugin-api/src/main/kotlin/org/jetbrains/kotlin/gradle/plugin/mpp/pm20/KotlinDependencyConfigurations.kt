@@ -9,34 +9,34 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 
 interface KotlinDependencyConfigurations {
-    val apiConfiguration: NamedDomainObjectProvider<Configuration>
-    val implementationConfiguration: NamedDomainObjectProvider<Configuration>
-    val compileOnlyConfiguration: NamedDomainObjectProvider<Configuration>
-    val runtimeOnlyConfiguration: NamedDomainObjectProvider<Configuration>
+    val apiConfiguration: Configuration
+    val implementationConfiguration: Configuration
+    val compileOnlyConfiguration: Configuration
+    val runtimeOnlyConfiguration: Configuration
 
     /** This configuration includes the dependencies from the refines-parents */
-    val transitiveApiConfiguration: NamedDomainObjectProvider<Configuration>
+    val transitiveApiConfiguration: Configuration
 
     /** This configuration includes the dependencies from the refines-parents */
-    val transitiveImplementationConfiguration: NamedDomainObjectProvider<Configuration>
+    val transitiveImplementationConfiguration: Configuration
 
     private class Impl(
-        override val apiConfiguration: NamedDomainObjectProvider<Configuration>,
-        override val implementationConfiguration: NamedDomainObjectProvider<Configuration>,
-        override val compileOnlyConfiguration: NamedDomainObjectProvider<Configuration>,
-        override val runtimeOnlyConfiguration: NamedDomainObjectProvider<Configuration>,
-        override val transitiveApiConfiguration: NamedDomainObjectProvider<Configuration>,
-        override val transitiveImplementationConfiguration: NamedDomainObjectProvider<Configuration>
+        override val apiConfiguration: Configuration,
+        override val implementationConfiguration: Configuration,
+        override val compileOnlyConfiguration: Configuration,
+        override val runtimeOnlyConfiguration: Configuration,
+        override val transitiveApiConfiguration:Configuration,
+        override val transitiveImplementationConfiguration: Configuration
     ) : KotlinDependencyConfigurations
 
     companion object {
         fun create(
-            apiConfiguration: NamedDomainObjectProvider<Configuration>,
-            implementationConfiguration: NamedDomainObjectProvider<Configuration>,
-            compileOnlyConfiguration: NamedDomainObjectProvider<Configuration>,
-            runtimeOnlyConfiguration: NamedDomainObjectProvider<Configuration>,
-            transitiveApiConfiguration: NamedDomainObjectProvider<Configuration>,
-            transitiveImplementationConfiguration: NamedDomainObjectProvider<Configuration>
+            apiConfiguration: Configuration,
+            implementationConfiguration: Configuration,
+            compileOnlyConfiguration: Configuration,
+            runtimeOnlyConfiguration: Configuration,
+            transitiveApiConfiguration: Configuration,
+            transitiveImplementationConfiguration: Configuration
         ): KotlinDependencyConfigurations = Impl(
             apiConfiguration = apiConfiguration,
             implementationConfiguration = implementationConfiguration,

@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 
 interface KotlinFragmentConfigurationInstantiator {
-    fun locateOrRegister(
+    fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
         dependencies: KotlinDependencyConfigurations
-    ): NamedDomainObjectProvider<Configuration>
+    ): Configuration
 }

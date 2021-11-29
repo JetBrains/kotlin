@@ -54,7 +54,7 @@ internal open class TransformKotlinGranularMetadataForFragment
         val participatingFragments = fragment.refinesClosure
         val participatingCompilations = participatingFragments.flatMap { it.containingModule.variantsContainingFragment(it) }
         participatingCompilations.associate { variant ->
-            variant.fragmentName to variant.compileDependenciesConfiguration.get()
+            variant.fragmentName to variant.compileDependenciesConfiguration
                 .allDependencies.map { listOf(it.group, it.name, it.version) }.toSet()
         }
     }

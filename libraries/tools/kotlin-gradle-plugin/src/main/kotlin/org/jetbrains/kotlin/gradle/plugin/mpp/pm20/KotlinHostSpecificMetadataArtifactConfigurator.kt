@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.refinesClosure
 
-object KotlinHostSpecificMetadataArtifactConfigurator :
-    KotlinGradleFragmentFactory.FragmentConfigurator<KotlinNativeVariantInternal> {
+object KotlinHostSpecificMetadataArtifactConfigurator : KotlinGradleFragmentFactory.FragmentConfigurator<KotlinNativeVariantInternal> {
     override fun configure(fragment: KotlinNativeVariantInternal) {
         val project = fragment.project
         val hostSpecificMetadataElements = fragment.hostSpecificMetadataElementsConfiguration ?: return
@@ -36,11 +35,9 @@ object KotlinHostSpecificMetadataArtifactConfigurator :
                 }
         }
 
-        hostSpecificMetadataElements.configure { configuration ->
-            project.artifacts.add(configuration.name, hostSpecificMetadataJar)
-            configuration.dependencies.addAllLater(project.objects.listProperty(Dependency::class.java).apply {
-                set(project.provider { fragment.apiElementsConfiguration.get().allDependencies })
-            })
-        }
+        project.artifacts.add(hostSpecificMetadataElements.name, hostSpecificMetadataJar)
+        hostSpecificMetadataElements.dependencies.addAllLater(project.objects.listProperty(Dependency::class.java).apply {
+            set(project.provider { fragment.apiElementsConfiguration.allDependencies })
+        })
     }
 }

@@ -44,10 +44,10 @@ class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
             containingModule = module,
             fragmentName = name,
             dependencyConfigurations = dependencies,
-            compileDependencyConfiguration = compileDependenciesConfigurationInstantiator.locateOrRegister(module, names, dependencies),
-            apiElementsConfiguration = apiElementsConfigurationInstantiator.locateOrRegister(module, names, dependencies),
+            compileDependencyConfiguration = compileDependenciesConfigurationInstantiator.create(module, names, dependencies),
+            apiElementsConfiguration = apiElementsConfigurationInstantiator.create(module, names, dependencies),
             hostSpecificMetadataElementsConfiguration =
-            hostSpecificMetadataElementsConfigurationInstantiator?.locateOrRegister(module, names, dependencies)
+            hostSpecificMetadataElementsConfigurationInstantiator?.create(module, names, dependencies)
         )
     }
 }
@@ -79,18 +79,11 @@ class KotlinNativeVariantConfigurator<T : KotlinNativeVariantInternal>(
 ) : KotlinGradleFragmentFactory.FragmentConfigurator<T> {
 
     override fun configure(fragment: T) {
-        fragment.compileDependenciesConfiguration.configure { configuration ->
-            compileDependenciesConfigurator.configure(fragment, configuration)
-        }
-
-        fragment.apiElementsConfiguration.configure { configuration ->
-            apiElementsConfigurator.configure(fragment, configuration)
-        }
-
-        fragment.hostSpecificMetadataElementsConfiguration?.configure { configuration ->
+        compileDependenciesConfigurator.configure(fragment, fragment.compileDependenciesConfiguration)
+        apiElementsConfigurator.configure(fragment, fragment.apiElementsConfiguration)
+        fragment.hostSpecificMetadataElementsConfiguration?.let { configuration ->
             hostSpecificMetadataElementsConfigurator.configure(fragment, configuration)
         }
-
         hostSpecificMetadataArtifactConfigurator.configure(fragment)
         sourceDirectoriesConfigurator.configure(fragment)
         compileTaskConfigurator.registerCompileTasks(fragment)

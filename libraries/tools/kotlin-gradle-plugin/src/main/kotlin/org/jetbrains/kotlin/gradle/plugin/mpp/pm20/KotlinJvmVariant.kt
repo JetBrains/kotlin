@@ -17,10 +17,10 @@ open class KotlinJvmVariant(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependenciesConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    runtimeDependenciesConfiguration: NamedDomainObjectProvider<Configuration>,
-    runtimeElementsConfiguration: NamedDomainObjectProvider<Configuration>
+    compileDependenciesConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    runtimeDependenciesConfiguration: Configuration,
+    runtimeElementsConfiguration: Configuration
 ) : KotlinGradlePublishedVariantWithRuntime(
     containingModule = containingModule,
     fragmentName = fragmentName,

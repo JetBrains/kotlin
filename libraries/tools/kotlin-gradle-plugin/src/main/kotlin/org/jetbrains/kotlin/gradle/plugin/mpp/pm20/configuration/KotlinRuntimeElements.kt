@@ -5,32 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentModuleCapabilityConfigurator.setModuleCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.locateOrRegister
 
 interface KotlinRuntimeElementsConfigurationFactory : KotlinFragmentConfigurationInstantiator
 
 object DefaultKotlinRuntimeElementsConfigurationInstantiator : KotlinRuntimeElementsConfigurationFactory {
-    override fun locateOrRegister(
+    override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
         dependencies: KotlinDependencyConfigurations
-    ): NamedDomainObjectProvider<Configuration> {
-        return module.project.configurations.locateOrRegister(names.disambiguateName("runtimeElements")) {
+    ): Configuration {
+        return module.project.configurations.maybeCreate(names.disambiguateName("runtimeElements")).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
 
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, module.project.objects.named(Category::class.java, Category.LIBRARY))
             attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, module.project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
 
-            extendsFrom(dependencies.transitiveApiConfiguration.get())
-            extendsFrom(dependencies.transitiveImplementationConfiguration.get())
+            extendsFrom(dependencies.transitiveApiConfiguration)
+            extendsFrom(dependencies.transitiveImplementationConfiguration)
             module.ifMadePublic {
                 isCanBeConsumed = true
                 setModuleCapability(this, module)

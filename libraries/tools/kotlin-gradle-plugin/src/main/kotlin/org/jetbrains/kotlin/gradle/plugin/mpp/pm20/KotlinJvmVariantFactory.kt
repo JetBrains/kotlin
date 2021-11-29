@@ -50,10 +50,10 @@ class KotlinJvmVariantInstantiator(
             containingModule = module,
             fragmentName = name,
             dependencyConfigurations = dependencies,
-            compileDependenciesConfiguration = compileDependenciesConfigurationInstantiator.locateOrRegister(module, names, dependencies),
-            apiElementsConfiguration = apiElementsConfigurationInstantiator.locateOrRegister(module, names, dependencies),
-            runtimeDependenciesConfiguration = runtimeDependenciesConfigurationInstantiator.locateOrRegister(module, names, dependencies),
-            runtimeElementsConfiguration = runtimeElementsConfigurationInstantiator.locateOrRegister(module, names, dependencies)
+            compileDependenciesConfiguration = compileDependenciesConfigurationInstantiator.create(module, names, dependencies),
+            apiElementsConfiguration = apiElementsConfigurationInstantiator.create(module, names, dependencies),
+            runtimeDependenciesConfiguration = runtimeDependenciesConfigurationInstantiator.create(module, names, dependencies),
+            runtimeElementsConfiguration = runtimeElementsConfigurationInstantiator.create(module, names, dependencies)
         )
     }
 }
@@ -86,24 +86,11 @@ class KotlinJvmVariantConfigurator(
 ) : KotlinGradleFragmentFactory.FragmentConfigurator<KotlinJvmVariant> {
 
     override fun configure(fragment: KotlinJvmVariant) {
-        fragment.compileDependenciesConfiguration.configure { configuration ->
-            compileDependenciesConfigurator.configure(fragment, configuration)
-        }
-
-        fragment.runtimeDependenciesConfiguration.configure { configuration ->
-            runtimeDependenciesConfigurator.configure(fragment, configuration)
-        }
-
-        fragment.apiElementsConfiguration.configure { configuration ->
-            apiElementsConfigurator.configure(fragment, configuration)
-        }
-
-        fragment.runtimeElementsConfiguration.configure { configuration ->
-            runtimeElementsConfigurator.configure(fragment, configuration)
-        }
-
+        compileDependenciesConfigurator.configure(fragment, fragment.compileDependenciesConfiguration)
+        runtimeDependenciesConfigurator.configure(fragment, fragment.runtimeDependenciesConfiguration)
+        apiElementsConfigurator.configure(fragment, fragment.apiElementsConfiguration)
+        runtimeElementsConfigurator.configure(fragment, fragment.runtimeElementsConfiguration)
         sourceDirectoriesConfigurator.configure(fragment)
-
         compileTaskConfigurator.registerCompileTasks(fragment)
         sourceArchiveTaskConfigurator.registerSourceArchiveTask(fragment)
         publicationConfigurator.configure(fragment)

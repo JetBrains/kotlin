@@ -53,7 +53,7 @@ class KotlinNativeVariantFactoryTest(
     fun `test compileDependenciesConfiguration - contains konanTarget`() {
         assertEquals(
             variantConstructor.konanTarget.name,
-            variant.compileDependenciesConfiguration.get()
+            variant.compileDependenciesConfiguration
                 .attributes.getAttribute(KotlinNativeTarget.konanTargetAttribute)
         )
     }
@@ -62,7 +62,7 @@ class KotlinNativeVariantFactoryTest(
     fun `test apiElementsConfiguration - contains konanTarget`() {
         assertEquals(
             variantConstructor.konanTarget.name,
-            variant.apiElementsConfiguration.get()
+            variant.apiElementsConfiguration
                 .attributes.getAttribute(KotlinNativeTarget.konanTargetAttribute)
         )
     }

@@ -18,7 +18,7 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val platformType: KotlinPlatformType
 
     // TODO generalize with KotlinCompilation?
-    val compileDependenciesConfiguration: NamedDomainObjectProvider<Configuration>
+    val compileDependenciesConfiguration: Configuration
 
     var compileDependencyFiles: FileCollection
 
@@ -29,28 +29,28 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val sourceArchiveTaskName: String
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
-    val apiElementsConfiguration: NamedDomainObjectProvider<Configuration>
+    val apiElementsConfiguration: Configuration
 
     val gradleVariantNames: Set<String>
 }
 
 interface KotlinGradleVariantWithRuntime : KotlinGradleVariant {
     // TODO deduplicate with KotlinCompilation?
-    val runtimeDependenciesConfiguration: NamedDomainObjectProvider<Configuration>
+    val runtimeDependenciesConfiguration: Configuration
 
     var runtimeDependencyFiles: FileCollection
 
     val runtimeFiles: ConfigurableFileCollection
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
-    val runtimeElementsConfiguration: NamedDomainObjectProvider<Configuration>
+    val runtimeElementsConfiguration: Configuration
 }
 
 interface KotlinNativeVariant : KotlinGradleVariant {
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.native
 
-    val hostSpecificMetadataElementsConfiguration: NamedDomainObjectProvider<Configuration>?
+    val hostSpecificMetadataElementsConfiguration: Configuration?
 
     var enableEndorsedLibraries: Boolean
 }

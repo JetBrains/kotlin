@@ -31,14 +31,14 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     fun `test accessing configurations`() {
         val variant = KotlinJvmVariantFactory(kotlin.main).create("jvm")
 
-        variant.compileDependenciesConfiguration.get()
-        variant.runtimeDependenciesConfiguration.get()
-        variant.apiElementsConfiguration.get()
-        variant.runtimeElementsConfiguration.get()
-        variant.implementationConfiguration.get()
-        variant.apiConfiguration.get()
-        variant.runtimeOnlyConfiguration.get()
-        variant.compileOnlyConfiguration.get()
+        variant.compileDependenciesConfiguration
+        variant.runtimeDependenciesConfiguration
+        variant.apiElementsConfiguration
+        variant.runtimeElementsConfiguration
+        variant.implementationConfiguration
+        variant.apiConfiguration
+        variant.runtimeOnlyConfiguration
+        variant.compileOnlyConfiguration
     }
 
     @Test
@@ -88,13 +88,13 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
         val variant = KotlinJvmVariantFactory(
             KotlinJvmVariantInstantiator(kotlin.main),
             KotlinJvmVariantConfigurator(compileDependenciesConfigurator = { fragment, configuration ->
-                assertSame(fragment.compileDependenciesConfiguration.get(), configuration)
+                assertSame(fragment.compileDependenciesConfiguration, configuration)
                 configuration.attributes.attribute(testAttribute, "compileDependencies")
             })
         ).create("jvm")
 
         assertEquals(
-            "compileDependencies", variant.compileDependenciesConfiguration.get().attributes.getAttribute(testAttribute)
+            "compileDependencies", variant.compileDependenciesConfiguration.attributes.getAttribute(testAttribute)
         )
     }
 
@@ -103,13 +103,13 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
         val variant = KotlinJvmVariantFactory(
             KotlinJvmVariantInstantiator(kotlin.main),
             KotlinJvmVariantConfigurator(runtimeDependenciesConfigurator = { fragment, configuration ->
-                assertSame(fragment.runtimeDependenciesConfiguration.get(), configuration)
+                assertSame(fragment.runtimeDependenciesConfiguration, configuration)
                 configuration.attributes.attribute(testAttribute, "runtimeDependencies")
             })
         ).create("jvm")
 
         assertEquals(
-            "runtimeDependencies", variant.runtimeDependenciesConfiguration.get().attributes.getAttribute(testAttribute)
+            "runtimeDependencies", variant.runtimeDependenciesConfiguration.attributes.getAttribute(testAttribute)
         )
     }
 
@@ -117,13 +117,13 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     fun `test custom configure apiElementsConfiguration`() {
         val variant = KotlinJvmVariantFactory(
             KotlinJvmVariantInstantiator(kotlin.main), KotlinJvmVariantConfigurator(apiElementsConfigurator = { fragment, configuration ->
-                assertSame(fragment.apiElementsConfiguration.get(), configuration)
+                assertSame(fragment.apiElementsConfiguration, configuration)
                 configuration.attributes.attribute(testAttribute, "apiElements")
             })
         ).create("jvm")
 
         assertEquals(
-            "apiElements", variant.apiElementsConfiguration.get().attributes.getAttribute(testAttribute)
+            "apiElements", variant.apiElementsConfiguration.attributes.getAttribute(testAttribute)
         )
     }
 
@@ -132,13 +132,13 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
         val variant = KotlinJvmVariantFactory(
             KotlinJvmVariantInstantiator(kotlin.main),
             KotlinJvmVariantConfigurator(runtimeElementsConfigurator = { fragment, configuration ->
-                assertSame(fragment.runtimeElementsConfiguration.get(), configuration)
+                assertSame(fragment.runtimeElementsConfiguration, configuration)
                 configuration.attributes.attribute(testAttribute, "runtimeElements")
             })
         ).create("jvm")
 
         assertEquals(
-            "runtimeElements", variant.runtimeElementsConfiguration.get().attributes.getAttribute(testAttribute)
+            "runtimeElements", variant.runtimeElementsConfiguration.attributes.getAttribute(testAttribute)
         )
     }
 

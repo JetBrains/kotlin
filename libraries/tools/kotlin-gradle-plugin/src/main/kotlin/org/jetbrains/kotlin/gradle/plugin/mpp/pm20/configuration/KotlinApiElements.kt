@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
@@ -13,22 +12,21 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.locateOrRegister
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 
 interface KotlinApiElementsConfigurationInstantiator : KotlinFragmentConfigurationInstantiator
 
 object DefaultKotlinApiElementsConfigurationInstantiator : KotlinApiElementsConfigurationInstantiator {
-    override fun locateOrRegister(
+    override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
         dependencies: KotlinDependencyConfigurations
-    ): NamedDomainObjectProvider<Configuration> {
-        return module.project.configurations.locateOrRegister(names.disambiguateName("apiElements")) {
+    ): Configuration {
+        return module.project.configurations.maybeCreate(names.disambiguateName("apiElements")).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
-            extendsFrom(dependencies.transitiveApiConfiguration.get())
+            extendsFrom(dependencies.transitiveApiConfiguration)
             module.ifMadePublic { isCanBeConsumed = true }
 
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, module.project.objects.named(Category::class.java, Category.LIBRARY))

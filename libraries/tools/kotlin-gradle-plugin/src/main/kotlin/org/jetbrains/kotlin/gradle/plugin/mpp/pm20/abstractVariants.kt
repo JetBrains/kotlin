@@ -25,8 +25,8 @@ abstract class KotlinGradleVariantInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    final override val compileDependenciesConfiguration: NamedDomainObjectProvider<Configuration>,
-    final override val apiElementsConfiguration: NamedDomainObjectProvider<Configuration>
+    final override val compileDependenciesConfiguration: Configuration,
+    final override val apiElementsConfiguration: Configuration
 ) : KotlinGradleFragmentInternal(
     containingModule, fragmentName, dependencyConfigurations
 ), KotlinGradleVariant {
@@ -34,7 +34,7 @@ abstract class KotlinGradleVariantInternal(
     override val variantAttributes: Map<KotlinAttributeKey, String>
         get() = mapOf(KotlinPlatformTypeAttribute to kotlinPlatformTypeAttributeFromPlatform(platformType)) // TODO user attributes
 
-    override var compileDependencyFiles: FileCollection = project.files({ compileDependenciesConfiguration.get() })
+    override var compileDependencyFiles: FileCollection = project.files({ compileDependenciesConfiguration })
 
     internal abstract val compilationData: KotlinVariantCompilationDataInternal<*>
 
@@ -80,10 +80,10 @@ abstract class KotlinGradleVariantWithRuntimeInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    final override val runtimeDependenciesConfiguration: NamedDomainObjectProvider<Configuration>,
-    final override val runtimeElementsConfiguration: NamedDomainObjectProvider<Configuration>
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    final override val runtimeDependenciesConfiguration: Configuration,
+    final override val runtimeElementsConfiguration: Configuration
 ) : KotlinGradleVariantInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,
@@ -105,10 +105,10 @@ private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String)
 abstract class KotlinGradlePublishedVariantWithRuntime(
     containingModule: KotlinGradleModule, fragmentName: String,
     dependencyConfigurations: KotlinDependencyConfigurations,
-    compileDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    apiElementsConfiguration: NamedDomainObjectProvider<Configuration>,
-    runtimeDependencyConfiguration: NamedDomainObjectProvider<Configuration>,
-    runtimeElementsConfiguration: NamedDomainObjectProvider<Configuration>
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    runtimeDependencyConfiguration: Configuration,
+    runtimeElementsConfiguration: Configuration
 ) : KotlinGradleVariantWithRuntimeInternal(
     containingModule = containingModule,
     fragmentName = fragmentName,

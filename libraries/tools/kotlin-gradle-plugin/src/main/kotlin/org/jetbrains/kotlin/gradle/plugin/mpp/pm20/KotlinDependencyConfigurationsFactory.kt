@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.locateOrRegister
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.extendsFrom
 
 interface KotlinDependencyConfigurationsFactory {
     fun create(module: KotlinGradleModule, names: FragmentNameDisambiguation): KotlinDependencyConfigurations
@@ -18,12 +15,12 @@ object DefaultKotlinDependencyConfigurationsFactory : KotlinDependencyConfigurat
 
     override fun create(module: KotlinGradleModule, names: FragmentNameDisambiguation): KotlinDependencyConfigurations {
         val configurations = module.project.configurations
-        val apiConfiguration = configurations.locateOrRegister(names.disambiguateName("api"))
-        val implementationConfiguration = configurations.locateOrRegister(names.disambiguateName("implementation"))
-        val compileOnlyConfiguration = configurations.locateOrRegister(names.disambiguateName("compileOnly"))
-        val runtimeOnlyConfiguration = configurations.locateOrRegister(names.disambiguateName("runtimeOnly"))
-        val transitiveApiConfiguration = configurations.locateOrRegister(names.disambiguateName("transitiveApi"))
-        val transitiveImplementationConfiguration = configurations.locateOrRegister(names.disambiguateName("transitiveImplementation"))
+        val apiConfiguration = configurations.maybeCreate(names.disambiguateName("api"))
+        val implementationConfiguration = configurations.maybeCreate(names.disambiguateName("implementation"))
+        val compileOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("compileOnly"))
+        val runtimeOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("runtimeOnly"))
+        val transitiveApiConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveApi"))
+        val transitiveImplementationConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveImplementation"))
 
         listOf(
             apiConfiguration,
@@ -32,11 +29,9 @@ object DefaultKotlinDependencyConfigurationsFactory : KotlinDependencyConfigurat
             runtimeOnlyConfiguration,
             transitiveApiConfiguration,
             transitiveImplementationConfiguration
-        ).forEach { configurationProvider ->
-            configurationProvider.configure { configuration ->
-                configuration.isCanBeConsumed = false
-                configuration.isCanBeResolved = false
-            }
+        ).forEach { configuration ->
+            configuration.isCanBeConsumed = false
+            configuration.isCanBeResolved = false
         }
 
         transitiveApiConfiguration.extendsFrom(apiConfiguration)
