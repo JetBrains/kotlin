@@ -532,7 +532,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             else irFunctionReference.getArgumentsWithIr().singleOrNull()
 
         // The type of the reference is KFunction<in A1, ..., in An, out R>
-        private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
+        private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map {
+            when (it) {
+                is IrTypeProjection -> it.type
+                else -> context.irBuiltIns.anyNType
+            }
+        }
         private val argumentTypes = parameterTypes.dropLast(1)
         private val referenceReturnType = parameterTypes.last()
 
