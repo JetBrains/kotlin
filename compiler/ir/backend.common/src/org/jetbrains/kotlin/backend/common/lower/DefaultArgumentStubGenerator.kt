@@ -416,7 +416,7 @@ open class DefaultParameterInjector(
                 listOfNotNull(stubFunction.dispatchReceiverParameter, stubFunction.extensionReceiverParameter)
             else emptyList()
         return stubFunction.symbol to (valueParametersPrefix + stubFunction.valueParameters).mapIndexed { i, parameter ->
-            if (!parameter.isMovedReceiver()) {
+            if (!parameter.isMovedReceiver() && parameter != stubFunction.dispatchReceiverParameter && parameter != stubFunction.extensionReceiverParameter) {
                 ++sourceParameterIndex
             }
             when {

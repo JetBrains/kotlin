@@ -20940,6 +20940,41 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                 }
 
                 @Nested
+                @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
+                @TestDataPath("$PROJECT_ROOT")
+                @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+                public class DefaultWithDefaultParameter {
+                    @Test
+                    @TestMetadata("all.kt")
+                    public void testAll() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/all.kt");
+                    }
+
+                    @Test
+                    public void testAllFilesPresentInDefaultWithDefaultParameter() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("all-compatibility.kt")
+                    public void testAll_compatibility() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/all-compatibility.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("compatibility.kt")
+                    public void testCompatibility() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/compatibility.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("default.kt")
+                    public void testDefault() throws Exception {
+                        runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter/default.kt");
+                    }
+                }
+
+                @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
                 @TestDataPath("$PROJECT_ROOT")
                 @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)

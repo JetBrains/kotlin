@@ -16350,6 +16350,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
+            @TestDataPath("$PROJECT_ROOT")
+            public class DefaultWithDefaultParameter {
+                @Test
+                public void testAllFilesPresentInDefaultWithDefaultParameter() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
             @TestDataPath("$PROJECT_ROOT")
             public class OverrideFunctionWithDefaultParameter {
