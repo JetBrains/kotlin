@@ -146,7 +146,11 @@ var KmProperty.syntheticMethodForAnnotations: JvmMethodSignature?
     }
 
 /**
- * TODO: WHAT IS AN EXAMPLE OF THIS?
+ * JVM signature of a synthetic method for properties which delegate to another property,
+ * which constructs and returns a property reference object.
+ * See https://kotlinlang.org/docs/delegated-properties.html#delegating-to-another-property.
+ *
+ * Example: `JvmMethodSignature("getX$delegate", "()Ljava/lang/Object;")`.
  */
 var KmProperty.syntheticMethodForDelegate: JvmMethodSignature?
     get() = jvm.syntheticMethodForDelegate
