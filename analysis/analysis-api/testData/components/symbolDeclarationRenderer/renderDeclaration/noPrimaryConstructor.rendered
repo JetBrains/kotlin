@@ -1,5 +1,8 @@
 class NoPrimary {
-    constructor()
-    constructor(x: String)
-    val x: String
+  constructor()
+
+  constructor(x: String)
+
+  val x: String
 }
+
