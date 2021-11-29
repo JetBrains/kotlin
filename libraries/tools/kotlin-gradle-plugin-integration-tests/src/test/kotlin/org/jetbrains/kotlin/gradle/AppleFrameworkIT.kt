@@ -34,7 +34,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
                     "SDK_NAME" to "iphoneos123",
-                    "ARCHS" to "arm64"
+                    "ARCHS" to "arm64",
+                    "TARGET_BUILD_DIR" to "no use",
+                    "FRAMEWORKS_FOLDER_PATH" to "no use"
                 )
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
@@ -60,7 +62,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Release",
                     "SDK_NAME" to "iphonesimulator",
-                    "ARCHS" to "arm64 x86_64"
+                    "ARCHS" to "arm64 x86_64",
+                    "TARGET_BUILD_DIR" to "no use",
+                    "FRAMEWORKS_FOLDER_PATH" to "no use"
                 )
             )
             build("assembleReleaseAppleFrameworkForXcode", options = options) {
@@ -75,14 +79,11 @@ class AppleFrameworkIT : BaseGradleIT() {
     }
 
     @Test
-    fun `check there aren't Xcode tasks without Xcode environment`() {
+    fun `check embedAndSignAppleFrameworkForXcode fail`() {
         with(Project("sharedAppleFramework")) {
-            build("tasks") {
-                assertSuccessful()
-                assertTasksNotRegistered(
-                    ":shared:assembleDebugAppleFrameworkForXcodeIosArm64",
-                    ":shared:embedAndSignAppleFrameworkForXcode"
-                )
+            build(":shared:embedAndSignAppleFrameworkForXcode") {
+                assertTasksFailed(":shared:embedAndSignAppleFrameworkForXcode")
+                assertContains("Please run the embedAndSignAppleFrameworkForXcode task from Xcode")
             }
         }
     }
@@ -106,9 +107,7 @@ class AppleFrameworkIT : BaseGradleIT() {
                     ":shared:assembleDebugAppleFrameworkForXcodeIosArm64",
                     ":shared:embedAndSignAppleFrameworkForXcode",
                     ":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64",
-                    ":shared:embedAndSignCustomAppleFrameworkForXcode"
-                )
-                assertTasksNotRegistered(
+                    ":shared:embedAndSignCustomAppleFrameworkForXcode",
                     ":shared:assembleDebugAppleFrameworkForXcodeIosX64",
                     ":shared:assembleReleaseAppleFrameworkForXcodeIosX64",
                     ":shared:assembleReleaseAppleFrameworkForXcodeIosArm64",
@@ -121,7 +120,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     }
 
     @Test
-    fun `check there isn't embedAndSignAppleFrameworkForXcode task without required Xcode environments`() {
+    fun `check embedAndSignAppleFrameworkForXcode was registered without required Xcode environments`() {
         with(Project("sharedAppleFramework")) {
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
@@ -133,15 +132,23 @@ class AppleFrameworkIT : BaseGradleIT() {
             build("tasks", options = options) {
                 assertSuccessful()
                 assertTasksRegistered(
-                    ":shared:assembleDebugAppleFrameworkForXcodeIosArm64",
-                    ":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64"
+                    ":shared:embedAndSignAppleFrameworkForXcode",
+                    ":shared:embedAndSignCustomAppleFrameworkForXcode"
                 )
                 assertTasksNotRegistered(
-                    ":shared:embedAndSignAppleFrameworkForXcode",
+                    ":shared:assembleReleaseAppleFrameworkForXcodeIosX64",
                     ":shared:assembleDebugAppleFrameworkForXcodeIosX64",
-                    ":shared:embedAndSignCustomAppleFrameworkForXcode",
-                    ":shared:assembleCustomDebugAppleFrameworkForXcodeIosX64"
+                    ":shared:assembleReleaseAppleFrameworkForXcodeIosArm64",
+                    ":shared:assembleDebugAppleFrameworkForXcodeIosArm64",
+                    ":shared:assembleCustomDebugAppleFrameworkForXcodeIosX64",
+                    ":shared:assembleCustomReleaseAppleFrameworkForXcodeIosX64",
+                    ":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64",
+                    ":shared:assembleCustomReleaseAppleFrameworkForXcodeIosArm64"
                 )
+            }
+            build(":shared:embedAndSignCustomAppleFrameworkForXcode", options = options) {
+                assertTasksFailed(":shared:embedAndSignCustomAppleFrameworkForXcode")
+                assertContains("Please run the embedAndSignCustomAppleFrameworkForXcode task from Xcode")
             }
         }
     }
