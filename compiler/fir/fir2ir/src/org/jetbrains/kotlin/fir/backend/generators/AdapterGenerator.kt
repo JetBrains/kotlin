@@ -560,7 +560,7 @@ internal class AdapterGenerator(
             isInline = false,
             isExternal = false,
             isTailrec = false,
-            isSuspend = true,
+            isSuspend = false,
             isOperator = false,
             isInfix = false,
             isExpect = false,

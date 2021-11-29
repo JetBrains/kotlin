@@ -2508,6 +2508,23 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/callableReference/funInterfaceConstructor")
+            @TestDataPath("$PROJECT_ROOT")
+            @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+            public class FunInterfaceConstructor {
+                @Test
+                public void testAllFilesPresentInFunInterfaceConstructor() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/funInterfaceConstructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("funInterfaceConstructor.kt")
+                public void testFunInterfaceConstructor() throws Exception {
+                    runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/function")
             @TestDataPath("$PROJECT_ROOT")
             @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)

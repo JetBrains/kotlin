@@ -60,69 +60,69 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
                 GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable [suspend] declared in <root>.test1' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test1a visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1a (): kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
                 GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable [suspend] declared in <root>.test1a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test1b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KRunnable>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1b (): kotlin.reflect.KFunction<<root>.KRunnable> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
                 GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1b.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable [suspend] declared in <root>.test1b' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1b' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.String>) returnType:<root>.KSupplier<kotlin.String> [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.String>) returnType:<root>.KSupplier<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.String>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KSupplier<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KSupplier<kotlin.String>
                 GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> [suspend] declared in <root>.test2' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2a visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2a (): kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.String>) returnType:<root>.KSupplier<kotlin.String> [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.String>) returnType:<root>.KSupplier<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.String>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KSupplier<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KSupplier<kotlin.String>
                 GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2a.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> [suspend] declared in <root>.test2a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String> [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<kotlin.String, kotlin.Unit>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
                 GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> [suspend] declared in <root>.test3' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3a visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3a (): kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> declared in <root>'
         BLOCK type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String> [suspend]
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<kotlin.String, kotlin.Unit>
             EXPRESSION_BODY
               TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
                 GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3a.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> [suspend] declared in <root>.test3a' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
