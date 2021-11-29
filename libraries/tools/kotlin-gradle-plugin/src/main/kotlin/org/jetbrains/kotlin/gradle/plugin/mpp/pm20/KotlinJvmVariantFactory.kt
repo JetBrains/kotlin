@@ -75,7 +75,7 @@ class KotlinJvmVariantConfigurator(
         DefaultKotlinRuntimeDependenciesConfigurator,
 
     private val apiElementsConfigurator: KotlinFragmentConfigurationsConfigurator<KotlinJvmVariant> =
-        DefaultKotlinApiElementsConfigurator,
+        DefaultKotlinApiElementsConfigurator + KotlinCompilationOutputsJarArtifactConfigurator,
 
     private val runtimeElementsConfigurator: KotlinFragmentConfigurationsConfigurator<KotlinJvmVariant> =
         DefaultKotlinRuntimeElementsConfigurator,

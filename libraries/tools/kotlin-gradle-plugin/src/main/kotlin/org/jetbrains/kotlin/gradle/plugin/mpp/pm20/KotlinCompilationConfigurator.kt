@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 
 interface KotlinCompileTaskConfigurator<in T : KotlinGradleVariant> {
     fun registerCompileTasks(variant: T): TaskProvider<*>
@@ -29,20 +24,6 @@ object KotlinNativeCompileTaskConfigurator : KotlinCompileTaskConfigurator<Kotli
         val compilationData = variant.compilationData
         LifecycleTasksManager(variant.project).registerClassesTask(compilationData)
         return KotlinCompilationTaskConfigurator(variant.project).createKotlinNativeCompilationTask(variant, compilationData)
-    }
-}
-
-// TODO NOW: Find place
-object KotlinFragmentJarArtifactElementsConfigurator : KotlinFragmentConfigurationsConfigurator<KotlinGradleVariant> {
-    override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
-        val project = fragment.project
-        val module = fragment.containingModule
-        val jarTaskName = fragment.disambiguateName("jar")
-        val jarTask = project.locateOrRegisterTask<Jar>(jarTaskName) {
-            it.from(fragment.compilationOutputs.allOutputs)
-            it.archiveClassifier.set(dashSeparatedName(fragment.name, module.moduleClassifier))
-        }
-        project.artifacts.add(configuration.name, jarTask)
     }
 }
 
