@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import kotlin.reflect.KClass
 
-abstract class FirStatusTransformerExtension(session: FirSession) : FirPredicateBasedExtension(session) {
+abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("StatusTransformer")
     }

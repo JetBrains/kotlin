@@ -36,14 +36,10 @@ class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExte
     var registeredExtensionsSize: Int = 0
         private set
 
-    var registeredPredicateBasedExtensionsSize: Int = 0
-        private set
-
     @PluginServicesInitialization
     fun registerExtensions(extensionClass: KClass<out FirExtension>, extensionFactories: List<FirExtension.Factory<*>>) {
         registeredExtensionsSize += extensionFactories.size
         val extensions = extensionFactories.map { it.create(session) }
-        registeredPredicateBasedExtensionsSize += extensions.count { it is FirPredicateBasedExtension }
         registerComponent(
             extensionClass,
             extensions
@@ -60,6 +56,3 @@ val FirSession.extensionService: FirExtensionService by FirSession.sessionCompon
 
 val FirExtensionService.hasExtensions: Boolean
     get() = registeredExtensionsSize > 0
-
-val FirExtensionService.hasPredicateBasedExtensions: Boolean
-    get() = registeredPredicateBasedExtensionsSize > 0

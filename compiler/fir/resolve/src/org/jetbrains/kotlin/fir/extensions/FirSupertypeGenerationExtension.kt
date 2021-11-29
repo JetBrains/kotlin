@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import kotlin.reflect.KClass
 
-abstract class FirSupertypeGenerationExtension(session: FirSession) : FirPredicateBasedExtension(session) {
+abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("SupertypeGenerator")
     }

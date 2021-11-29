@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -21,7 +20,7 @@ import kotlin.reflect.KClass
  * TODO:
  *  - check that annotations or meta-annotations is not empty
  */
-abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredicateBasedExtension(session) {
+abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("ExistingClassModification")
     }

@@ -31,10 +31,8 @@ abstract class FirExtension(val session: FirSession) {
     fun interface Factory<out P : FirExtension> {
         fun create(session: FirSession): P
     }
-}
 
-abstract class FirPredicateBasedExtension(session: FirSession) : FirExtension(session) {
-    abstract fun FirDeclarationPredicateRegistrar.registerPredicates()
+    open fun FirDeclarationPredicateRegistrar.registerPredicates() {}
 }
 
 data class FirExtensionPointName(val name: Name) {
