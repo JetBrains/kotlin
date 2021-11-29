@@ -57,7 +57,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_PRIVATE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_LOCAL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactoryForDeprecation0<KtAnnotationEntry> OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses);
+    DiagnosticFactoryForDeprecation0<KtAnnotationEntry> OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_MANGLED_FUNCTION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
@@ -73,11 +74,16 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION_TARGET6 = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATED_ANNOTATION_WITH_CONTAINER = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY = DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
-    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER = DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
-    DiagnosticFactoryForDeprecation4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION = DiagnosticFactoryForDeprecation4.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
-    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET = DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
-    DiagnosticFactoryForDeprecation0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER = DiagnosticFactoryForDeprecation0.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY =
+            DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER =
+            DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION =
+            DiagnosticFactoryForDeprecation4.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET =
+            DiagnosticFactoryForDeprecation2.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
+    DiagnosticFactoryForDeprecation0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.RepeatableAnnotationContainerConstraints);
 
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
@@ -104,10 +110,13 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> WHEN_ENUM_CAN_BE_NULL_IN_JAVA = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory3<PsiElement, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<PsiElement, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE =
+            DiagnosticFactory3.create(ERROR);
 
-    DiagnosticFactoryForDeprecation0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
-    DiagnosticFactoryForDeprecation0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
+    DiagnosticFactoryForDeprecation0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
+    DiagnosticFactoryForDeprecation0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
 
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM_WARNING = DiagnosticFactory2.create(WARNING);
@@ -153,7 +162,8 @@ public interface ErrorsJvm {
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
             = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory3<KtElement, KotlinType, KotlinType, ClassifierDescriptor> UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
+    DiagnosticFactory3<KtElement, KotlinType, KotlinType, ClassifierDescriptor>
+            UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
             = DiagnosticFactory3.create(WARNING);
 
     DiagnosticFactory1<KtElement, KotlinType> NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER
@@ -169,16 +179,20 @@ public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, String> SUSPENSION_POINT_INSIDE_MONITOR = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> SUSPENSION_POINT_INSIDE_CRITICAL_SECTION = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactoryForDeprecation0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitConcurrentHashMapContains);
+    DiagnosticFactoryForDeprecation0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitConcurrentHashMapContains);
 
     DiagnosticFactory0<KtNamedFunction> TAILREC_WITH_DEFAULTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 
-    DiagnosticFactoryForDeprecation0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall);
+    DiagnosticFactoryForDeprecation0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL =
+            DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall);
 
     DiagnosticFactory0<PsiElement> FUNCTION_DELEGATE_MEMBER_NAME_CLASH = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory2<KtDeclaration, CallableDescriptor, CallableDescriptor> EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory3<KtDeclaration, CallableDescriptor, CallableDescriptor, String> EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE = DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory2<KtDeclaration, CallableDescriptor, CallableDescriptor> EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE =
+            DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory3<KtDeclaration, CallableDescriptor, CallableDescriptor, String> EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE =
+            DiagnosticFactory3.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory1<PsiElement, String> DANGEROUS_CHARACTERS = DiagnosticFactory1.create(WARNING);
 
