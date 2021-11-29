@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
@@ -248,6 +249,14 @@ class IrModuleToJsTransformerTmp(
         file.declarations.forEach {
             computeTag(it)?.let { tag ->
                 result.definitions += tag
+            }
+
+            if (it is IrClass && it.isInterface) {
+                it.declarations.forEach {
+                    computeTag(it)?.let { tag ->
+                        result.definitions += tag
+                    }
+                }
             }
         }
 
