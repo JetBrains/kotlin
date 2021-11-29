@@ -18,7 +18,7 @@ internal class TestRun(
     val displayName: String,
     val executable: TestExecutable,
     val runParameters: List<TestRunParameter>,
-    val origin: TestOrigin.SingleTestDataFile
+    val testCaseId: TestCaseId
 )
 
 internal sealed interface TestRunParameter {

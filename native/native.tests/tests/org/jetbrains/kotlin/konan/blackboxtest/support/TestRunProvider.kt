@@ -37,9 +37,9 @@ internal class TestRunProvider(
     }
 
     /**
-     * Produces a single [TestRun] per testData file.
+     * Produces a single [TestRun] per [TestCase]. So-called "one test case/one test run" mode.
      *
-     * If testData file contains multiple functions annotated with [kotlin.test.Test], then all these functions will be executed
+     * If [TestCase] contains multiple functions annotated with [kotlin.test.Test], then all these functions will be executed
      * in one shot. If either function will fail, the whole JUnit test will be considered as failed.
      *
      * Example:
@@ -61,18 +61,18 @@ internal class TestRunProvider(
      *       }
      *   }
      */
-    fun getSingleTestRun(testDataFile: File): TestRun = withTestExecutable(testDataFile) { testCase, executable ->
+    fun getSingleTestRun(testCaseId: TestCaseId): TestRun = withTestExecutable(testCaseId) { testCase, executable ->
         val runParameters = getRunParameters(testCase, testFunction = null)
-        TestRun(displayName = testDataFile.nameWithoutExtension, executable, runParameters, testCase.origin)
+        TestRun(displayName = /* Unimportant. Used only in dynamic tests. */ "", executable, runParameters, testCase.id)
     }
 
     /**
-     * Produces at least one [TestRun] per testData file.
+     * Produces at least one [TestRun] per [TestCase]. So-called "one test function/one test run" mode.
      *
-     * If testData file contains multiple functions annotated with [kotlin.test.Test], then a separate [TestRun] will be produced
+     * If [TestCase] contains multiple functions annotated with [kotlin.test.Test], then a separate [TestRun] will be produced
      * for each such function.
      *
-     * This allows to have a better granularity in tests. So that every individual test method inside testData file will be considered
+     * This allows to have a better granularity in tests. So that every individual test method inside [TestCase] will be considered
      * as an individual JUnit test, and will be presented as a separate row in JUnit test report.
      *
      * Example:
@@ -96,10 +96,10 @@ internal class TestRunProvider(
      *       }
      *   }
      */
-    fun getTestRuns(testDataFile: File): TreeNode<TestRun> = withTestExecutable(testDataFile) { testCase, executable ->
+    fun getTestRuns(testCaseId: TestCaseId): TreeNode<TestRun> = withTestExecutable(testCaseId) { testCase, executable ->
         fun createTestRun(testRunName: String, testFunction: TestFunction?): TestRun {
             val runParameters = getRunParameters(testCase, testFunction)
-            return TestRun(testRunName, executable, runParameters, testCase.origin)
+            return TestRun(testRunName, executable, runParameters, testCase.id)
         }
 
         when (testCase.kind) {
@@ -110,33 +110,32 @@ internal class TestRunProvider(
             }
             TestKind.REGULAR, TestKind.STANDALONE -> {
                 val testFunctions = testCase.extras<WithTestRunnerExtras>().testFunctions
-                testFunctions.buildTree(TestFunction::packageName) { testFunction -> createTestRun(testFunction.functionName, testFunction) }
+                testFunctions.buildTree(TestFunction::packageName) { testFunction ->
+                    createTestRun(testFunction.functionName, testFunction)
+                }
             }
         }
     }
 
-    private fun <T> withTestExecutable(testDataFile: File, action: (TestCase, TestExecutable) -> T): T {
+    private fun <T> withTestExecutable(testCaseId: TestCaseId, action: (TestCase, TestExecutable) -> T): T {
         settings.assertNotDisposed()
 
-        val testDataDir = testDataFile.parentFile
-        val testDataFileName = testDataFile.name
+        val testCaseGroup = testCaseGroupProvider.getTestCaseGroup(testCaseId.testCaseGroupId) ?: fail { "No test case for $testCaseId" }
+        assumeTrue(testCaseGroup.isEnabled(testCaseId), "Test case is disabled")
 
-        val testCaseGroup = testCaseGroupProvider.getTestCaseGroup(testDataDir) ?: fail { "No test case for $testDataFile" }
-        assumeTrue(testCaseGroup.isEnabled(testDataFileName), "Test case is disabled")
-
-        val testCase = testCaseGroup.getByName(testDataFileName) ?: fail { "No test case for $testDataFile" }
+        val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId" }
 
         val testCompilation = when (testCase.kind) {
             TestKind.STANDALONE, TestKind.STANDALONE_NO_TR -> {
                 // Create a separate compilation for each standalone test case.
-                val cacheKey = TestCompilationCacheKey.Standalone(testDataFile)
+                val cacheKey = TestCompilationCacheKey.Standalone(testCaseId)
                 cachedCompilations.computeIfAbsent(cacheKey) {
                     compilationFactory.testCasesToExecutable(listOf(testCase))
                 }
             }
             TestKind.REGULAR -> {
                 // Group regular test cases by compiler arguments.
-                val cacheKey = TestCompilationCacheKey.Grouped(testDataDir, testCase.freeCompilerArgs)
+                val cacheKey = TestCompilationCacheKey.Grouped(testCaseId.testCaseGroupId, testCase.freeCompilerArgs)
                 cachedCompilations.computeIfAbsent(cacheKey) {
                     val testCases = testCaseGroup.getRegularOnlyByCompilerArgs(testCase.freeCompilerArgs)
                     assertTrue(testCases.isNotEmpty())
@@ -193,7 +192,7 @@ internal class TestRunProvider(
     }
 
     private sealed class TestCompilationCacheKey {
-        data class Standalone(val testDataFile: File) : TestCompilationCacheKey()
-        data class Grouped(val testDataDir: File, val freeCompilerArgs: TestCompilerArgs) : TestCompilationCacheKey()
+        data class Standalone(val testCaseId: TestCaseId) : TestCompilationCacheKey()
+        data class Grouped(val testCaseGroupId: TestCaseGroupId, val freeCompilerArgs: TestCompilerArgs) : TestCompilationCacheKey()
     }
 }

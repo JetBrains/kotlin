@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 internal class StandardTestCaseGroupProvider(private val settings: Settings) : TestCaseGroupProvider {
     val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
 
     // Load test cases in groups on demand.
-    private val lazyTestCaseGroups = ThreadSafeFactory<File, TestCaseGroup?> { testDataDir ->
-        val testDataFiles = testDataDir.listFiles()
+    private val lazyTestCaseGroups = ThreadSafeFactory<TestCaseGroupId.TestDataDir, TestCaseGroup?> { testCaseGroupId ->
+        val testDataFiles = testCaseGroupId.dir.listFiles()
             ?: return@ThreadSafeFactory null // `null` means that there is no such testDataDir.
 
         val testCases = testDataFiles.mapNotNull { testDataFile ->
@@ -40,7 +41,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
             createTestCase(testDataFile)
         }
 
-        TestCaseGroup.Default(disabledTestDataFileNames = emptySet(), testCases = testCases)
+        TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = testCases)
     }
 
     override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
@@ -50,7 +51,10 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
             sourceTransformers.remove(testDataDir.canonicalPath)
     }
 
-    override fun getTestCaseGroup(testDataDir: File) = lazyTestCaseGroups[testDataDir]
+    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
+        assertTrue(testCaseGroupId is TestCaseGroupId.TestDataDir)
+        return lazyTestCaseGroups[testCaseGroupId.cast()]
+    }
 
     private fun createTestCase(testDataFile: File): TestCase {
         val generatedSourcesDir = computeGeneratedSourcesDir(
@@ -211,10 +215,10 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
         }
 
         val testCase = TestCase(
+            id = TestCaseId.TestDataFile(testDataFile),
             kind = testKind,
             modules = testModules.values.toSet(),
             freeCompilerArgs = freeCompilerArgs,
-            origin = TestOrigin.SingleTestDataFile(testDataFile),
             nominalPackageName = nominalPackageName,
             expectedOutputDataFile = expectedOutputDataFile,
             extras = extras

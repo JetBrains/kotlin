@@ -38,9 +38,18 @@ abstract class AbstractNativeBlackBoxTest {
      * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
      */
     fun runTest(@TestDataFile testDataFilePath: String) {
-        val testDataFile = getAbsoluteFile(testDataFilePath)
-        val testRun = testRunProvider.getSingleTestRun(testDataFile)
-        runTest(testRun)
+        val testCaseId = TestCaseId.TestDataFile(getAbsoluteFile(testDataFilePath))
+        runTestCase(testCaseId)
+    }
+
+    /**
+     * Run JUnit test.
+     *
+     * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
+     */
+    internal fun runTestCase(testCaseId: TestCaseId) {
+        val testRun = testRunProvider.getSingleTestRun(testCaseId)
+        performTestRun(testRun)
     }
 
     /**
@@ -49,8 +58,17 @@ abstract class AbstractNativeBlackBoxTest {
      * This function should be called from a method annotated with [org.junit.jupiter.api.TestFactory].
      */
     fun dynamicTest(@TestDataFile testDataFilePath: String): Collection<DynamicNode> {
-        val testDataFile = getAbsoluteFile(testDataFilePath)
-        val rootTestRunNode = testRunProvider.getTestRuns(testDataFile)
+        val testCaseId = TestCaseId.TestDataFile(getAbsoluteFile(testDataFilePath))
+        return dynamicTestCase(testCaseId)
+    }
+
+    /**
+     * Run JUnit dynamic test.
+     *
+     * This function should be called from a method annotated with [org.junit.jupiter.api.TestFactory].
+     */
+    internal fun dynamicTestCase(testCaseId: TestCaseId): Collection<DynamicNode> {
+        val rootTestRunNode = testRunProvider.getTestRuns(testCaseId)
         return buildJUnitDynamicNodes(rootTestRunNode)
     }
 
@@ -73,7 +91,7 @@ abstract class AbstractNativeBlackBoxTest {
                 val ownPackageSegment = joinPackageNames(parentPackageSegment, packageSegment)
                 items.mapTo(this@buildList) { testRun ->
                     val displayName = testRun.displayName.prependPackageName(ownPackageSegment)
-                    dynamicTest(displayName) { runTest(testRun) }
+                    dynamicTest(displayName) { performTestRun(testRun) }
                 }
 
                 children.forEach { it.processItems(ownPackageSegment) }
@@ -82,7 +100,7 @@ abstract class AbstractNativeBlackBoxTest {
             testRunNode.processItems("")
         }
 
-    private fun runTest(testRun: TestRun) {
+    private fun performTestRun(testRun: TestRun) {
         val testRunner = testRunProvider.createRunner(testRun)
         testRunner.run()
     }

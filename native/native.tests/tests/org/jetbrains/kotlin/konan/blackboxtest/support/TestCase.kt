@@ -19,15 +19,6 @@ internal typealias PackageFQN = String
 internal typealias FunctionName = String
 
 /**
- * Helps to track the origin of every [TestCase], [TestCompilation] or [TestExecutable]. Used for issue reporting purposes.
- */
-internal interface TestOrigin {
-    class SingleTestDataFile(val testDataFile: File) : TestOrigin {
-        override fun toString(): String = testDataFile.path
-    }
-}
-
-/**
  * Represents a single test function (i.e. a function annotated with [kotlin.test.Test]) inside of a [TestFile].
  */
 internal data class TestFunction(val packageName: PackageFQN, val functionName: FunctionName)
@@ -155,20 +146,34 @@ internal sealed class TestModule {
 }
 
 /**
+ * A unique identifier of [TestCase].
+ *
+ * [testCaseGroupId] - a unique ID of [TestCaseGroup] this [TestCase] belongs to.
+ */
+internal interface TestCaseId {
+    val testCaseGroupId: TestCaseGroupId
+
+    data class TestDataFile(val file: File) : TestCaseId {
+        override val testCaseGroupId = TestCaseGroupId.TestDataDir(file.parentFile) // The directory, containing testData file.
+        override fun toString(): String = file.path
+    }
+}
+
+/**
  * A collection of one or more [TestModule]s that results in testable executable file.
  *
  * [modules] - the collection of [TestModule.Exclusive] modules with [TestFile]s that need to be compiled to run this test.
  *             Note: There can also be [TestModule.Shared] modules as dependencies of either of [TestModule.Exclusive] modules.
  *             See [TestModule.Exclusive.allDependencies] for details.
- * [origin] - the origin of the test case.
- * [nominalPackageName] - the unique package name that was computed for this [TestCase] based on [origin]'s actual path.
+ * [id] - the unique ID of the test case.
+ * [nominalPackageName] - the unique package name that was computed for this [TestCase] based on [id].
  *                        Note: It depends on the concrete [TestKind] whether the package name will be enforced for the [TestFile]s or not.
  */
 internal class TestCase(
+    val id: TestCaseId,
     val kind: TestKind,
     val modules: Set<TestModule.Exclusive>,
     val freeCompilerArgs: TestCompilerArgs,
-    val origin: TestOrigin.SingleTestDataFile,
     val nominalPackageName: PackageFQN,
     val expectedOutputDataFile: File?,
     val extras: Extras
@@ -204,11 +209,11 @@ internal class TestCase(
             rootModules -= module.allDependencies
         }
 
-        assertTrue(rootModules.isNotEmpty()) { "No root modules in test case. Origin: $origin." }
+        assertTrue(rootModules.isNotEmpty()) { "$id: No root modules in test case." }
 
         val nonExclusiveRootTestModules = rootModules.filter { module -> module !is TestModule.Exclusive }
         assertTrue(nonExclusiveRootTestModules.isEmpty()) {
-            "There are non-exclusive root test modules in test case. Origin: $origin. Modules: $nonExclusiveRootTestModules"
+            "$id: There are non-exclusive root test modules in test case. Modules: $nonExclusiveRootTestModules"
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -218,19 +223,19 @@ internal class TestCase(
     fun initialize(findSharedModule: ((moduleName: String) -> TestModule.Shared?)?) {
         // Check that there are no duplicated files among different modules.
         val duplicatedFiles = modules.flatMap { it.files }.groupingBy { it }.eachCount().filterValues { it > 1 }.keys
-        assertTrue(duplicatedFiles.isEmpty()) { "$origin: Duplicated test files encountered: $duplicatedFiles" }
+        assertTrue(duplicatedFiles.isEmpty()) { "$id: Duplicated test files encountered: $duplicatedFiles" }
 
         // Check that there are modules with duplicated names.
         val exclusiveModules: Map</* regular module name */ String, TestModule.Exclusive> = modules.toIdentitySet()
             .groupingBy { module -> module.name }
             .aggregate { moduleName, _: TestModule.Exclusive?, module, isFirst ->
-                assertTrue(isFirst) { "$origin: Multiple test modules with the same name found: $moduleName" }
+                assertTrue(isFirst) { "$id: Multiple test modules with the same name found: $moduleName" }
                 module
             }
 
         fun findModule(moduleName: String): TestModule = exclusiveModules[moduleName]
             ?: findSharedModule?.invoke(moduleName)
-            ?: fail { "$origin: Module $moduleName not found" }
+            ?: fail { "$id: Module $moduleName not found" }
 
         modules.forEach { module ->
             module.commit() // Save to the file system and release the memory.
@@ -242,33 +247,40 @@ internal class TestCase(
 }
 
 /**
+ * A unique identified of [TestCaseGroup].
+ */
+internal interface TestCaseGroupId {
+    data class TestDataDir(val dir: File) : TestCaseGroupId
+}
+
+/**
  * A group of [TestCase]s that were obtained from the same origin (ex: same testData directory).
  *
  * [TestCase]s inside of the group with similar [TestCompilerArgs] can be compiled to the single
  * executable file to reduce the time spent for compiling and speed-up overall test execution.
  */
 internal interface TestCaseGroup {
-    fun isEnabled(testDataFileName: String): Boolean
-    fun getByName(testDataFileName: String): TestCase?
+    fun isEnabled(testCaseId: TestCaseId): Boolean
+    fun getByName(testCaseId: TestCaseId): TestCase?
     fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs): Collection<TestCase>
 
     class Default(
-        private val disabledTestDataFileNames: Set<String>,
+        private val disabledTestCaseIds: Set<TestCaseId>,
         testCases: Iterable<TestCase>
     ) : TestCaseGroup {
-        private val testCasesByTestDataFileNames = testCases.associateBy { it.origin.testDataFile.name }
+        private val testCasesById = testCases.associateBy { it.id }
 
-        override fun isEnabled(testDataFileName: String) = testDataFileName !in disabledTestDataFileNames
-        override fun getByName(testDataFileName: String) = testCasesByTestDataFileNames[testDataFileName]
+        override fun isEnabled(testCaseId: TestCaseId) = testCaseId !in disabledTestCaseIds
+        override fun getByName(testCaseId: TestCaseId) = testCasesById[testCaseId]
 
         override fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs) =
-            testCasesByTestDataFileNames.values.filter { it.kind == TestKind.REGULAR && it.freeCompilerArgs == freeCompilerArgs }
+            testCasesById.values.filter { it.kind == TestKind.REGULAR && it.freeCompilerArgs == freeCompilerArgs }
     }
 
     companion object {
         val ALL_DISABLED = object : TestCaseGroup {
-            override fun isEnabled(testDataFileName: String) = false
-            override fun getByName(testDataFileName: String) = fail { "This function should not be called" }
+            override fun isEnabled(testCaseId: TestCaseId) = false
+            override fun getByName(testCaseId: TestCaseId) = fail { "This function should not be called" }
             override fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs) = fail { "This function should not be called" }
         }
     }

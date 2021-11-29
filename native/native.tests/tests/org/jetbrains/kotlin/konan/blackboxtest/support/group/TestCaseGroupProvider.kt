@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroup
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroupId
 import java.io.File
 
 internal interface TestCaseGroupProvider {
     fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>)
-    fun getTestCaseGroup(testDataDir: File): TestCaseGroup?
+    fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup?
 }
 
 internal fun String.applySourceTransformers(sourceTransformers: List<(String) -> String>) =

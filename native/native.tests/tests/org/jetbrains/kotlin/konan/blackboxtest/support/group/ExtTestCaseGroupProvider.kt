@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 internal class ExtTestCaseGroupProvider(
@@ -46,16 +47,16 @@ internal class ExtTestCaseGroupProvider(
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
-    private val lazyTestCaseGroups = ThreadSafeFactory<File, TestCaseGroup?> { testDataDir ->
-        if (testDataDir in excludes) return@ThreadSafeFactory TestCaseGroup.ALL_DISABLED
+    private val lazyTestCaseGroups = ThreadSafeFactory<TestCaseGroupId.TestDataDir, TestCaseGroup?> { testCaseGroupId ->
+        if (testCaseGroupId.dir in excludes) return@ThreadSafeFactory TestCaseGroup.ALL_DISABLED
 
-        val (excludedTestDataFiles, testDataFiles) = testDataDir.listFiles()
+        val (excludedTestDataFiles, testDataFiles) = testCaseGroupId.dir.listFiles()
             ?.filter { file -> file.isFile && file.extension == "kt" }
             ?.partition { file -> file in excludes }
             ?: return@ThreadSafeFactory null
 
-        val disabledTestDataFileNames = hashSetOf<String>()
-        excludedTestDataFiles.mapTo(disabledTestDataFileNames) { it.name }
+        val disabledTestCaseIds = hashSetOf<TestCaseId>()
+        excludedTestDataFiles.mapTo(disabledTestCaseIds, TestCaseId::TestDataFile)
 
         val testCases = mutableListOf<TestCase>()
 
@@ -70,10 +71,10 @@ internal class ExtTestCaseGroupProvider(
                     sharedModules = sharedModules
                 )
             else
-                disabledTestDataFileNames += testDataFile.name
+                disabledTestCaseIds += TestCaseId.TestDataFile(testDataFile)
         }
 
-        TestCaseGroup.Default(disabledTestDataFileNames, testCases)
+        TestCaseGroup.Default(disabledTestCaseIds, testCases)
     }
 
     override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
@@ -83,9 +84,10 @@ internal class ExtTestCaseGroupProvider(
             sourceTransformers.remove(testDataDir.canonicalPath)
     }
 
-    override fun getTestCaseGroup(testDataDir: File): TestCaseGroup? {
+    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
         assertNotDisposed()
-        return lazyTestCaseGroups[testDataDir]
+        assertTrue(testCaseGroupId is TestCaseGroupId.TestDataDir)
+        return lazyTestCaseGroups[testCaseGroupId.cast()]
     }
 
     companion object {
@@ -586,10 +588,10 @@ private class ExtTestDataFile(
         )
 
         val testCase = TestCase(
+            id = TestCaseId.TestDataFile(testDataFile),
             kind = if (isStandaloneTest) TestKind.STANDALONE else TestKind.REGULAR,
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
-            origin = TestOrigin.SingleTestDataFile(testDataFile),
             nominalPackageName = testDataFileSettings.nominalPackageName,
             expectedOutputDataFile = null,
             extras = WithTestRunnerExtras.EMPTY

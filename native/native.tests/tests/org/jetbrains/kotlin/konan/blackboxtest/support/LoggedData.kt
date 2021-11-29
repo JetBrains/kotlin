@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.RunResult
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -33,16 +34,22 @@ internal abstract class LoggedData {
         private val sourceModules: Collection<TestModule>
     ) : LoggedData() {
         private val testDataFiles: List<File>
-            get() = sourceModules.asSequence()
-                .filterIsInstance<TestModule.Exclusive>()
-                .map { it.testCase.origin.testDataFile }
-                .toMutableList()
-                .apply { sort() }
+            get() = buildList {
+                sourceModules.forEach { module ->
+                    if (module !is TestModule.Exclusive) return@forEach
+                    this += module.testCase.id.safeAs<TestCaseId.TestDataFile>()?.file ?: return@forEach
+                }
+                sort()
+            }
 
         override fun computeText() = buildString {
             appendArguments("COMPILER ARGUMENTS:", listOf("\$\$kotlinc-native\$\$") + compilerArgs)
-            appendLine()
-            appendList("TEST DATA FILES (COMPILED TOGETHER):", testDataFiles)
+
+            val testDataFiles = testDataFiles
+            if (testDataFiles.isNotEmpty()) {
+                appendLine()
+                appendList("TEST DATA FILES (COMPILED TOGETHER):", testDataFiles)
+            }
         }
     }
 
@@ -83,13 +90,18 @@ internal abstract class LoggedData {
 
     class TestRunParameters(
         private val compilerCall: CompilerCall,
-        private val origin: TestOrigin.SingleTestDataFile,
+        private val testCaseId: TestCaseId,
         private val runArgs: Iterable<String>,
         private val runParameters: List<TestRunParameter>
     ) : LoggedData() {
         override fun computeText() = buildString {
-            appendLine("TEST DATA FILE:")
-            appendLine(origin.testDataFile)
+            if (testCaseId is TestCaseId.TestDataFile) {
+                appendLine("TEST DATA FILE:")
+                appendLine(testCaseId.file)
+            } else {
+                appendLine("TEST CASE ID:")
+                appendLine(testCaseId)
+            }
             appendLine()
             appendArguments("TEST RUN ARGUMENTS:", runArgs)
             appendLine()
