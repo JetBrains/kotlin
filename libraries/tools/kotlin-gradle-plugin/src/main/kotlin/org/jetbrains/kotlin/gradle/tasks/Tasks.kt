@@ -213,6 +213,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val layout = project.layout
 
+    @get:Inject
+    internal abstract val fileSystemOperations: FileSystemOperations
+
     @get:Internal
     protected val objects: ObjectFactory = project.objects
 
@@ -333,7 +336,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
                     metrics.measure(BuildTime.BACKUP_OUTPUT) {
-                        TaskOutputsBackup(allOutputFiles())
+                        TaskOutputsBackup(
+                            fileSystemOperations,
+                            layout.buildDirectory,
+                            layout.buildDirectory.dir("snapshot/kotlin/$name"),
+                            allOutputFiles(),
+                            logger
+                        ).also {
+                            it.createSnapshot()
+                        }
                     }
                 else null
 
@@ -343,27 +354,18 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                 clearLocalState("Task cannot run incrementally")
             }
 
-            try {
-                executeImpl(inputChanges)
-                metrics.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-                    metrics.addMetric(
-                        BuildPerformanceMetric.SNAPSHOT_SIZE,
-                        taskBuildDirectory.file("build-history.bin").get().asFile.length() +
-                                taskBuildDirectory.file("last-build.bin").get().asFile.length() +
-                                taskBuildDirectory.file("abi-snapshot.bin").get().asFile.length()
-                    )
-                    metrics.addMetric(BuildPerformanceMetric.OUTPUT_SIZE,
-                                      taskBuildDirectory.dir("caches-jvm").get().asFileTree.files.filter { it.isFile }.map { it.length() }
-                                          .sum()
-                    )
-                }
-            } catch (t: Throwable) {
-                if (outputsBackup != null) {
-                    metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                        outputsBackup.restoreOutputs()
-                    }
-                }
-                throw t
+            executeImpl(inputChanges, outputsBackup)
+            metrics.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
+                metrics.addMetric(
+                    BuildPerformanceMetric.SNAPSHOT_SIZE,
+                    taskBuildDirectory.file("build-history.bin").get().asFile.length() +
+                            taskBuildDirectory.file("last-build.bin").get().asFile.length() +
+                            taskBuildDirectory.file("abi-snapshot.bin").get().asFile.length()
+                )
+                metrics.addMetric(BuildPerformanceMetric.OUTPUT_SIZE,
+                                  taskBuildDirectory.dir("caches-jvm").get().asFileTree.files.filter { it.isFile }.map { it.length() }
+                                      .sum()
+                )
             }
         }
     }
@@ -381,7 +383,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             commonSourceSet
         )
 
-    private fun executeImpl(inputChanges: InputChanges) {
+    private fun executeImpl(
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
@@ -399,7 +404,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         callCompilerAsync(
             args,
             sourceRoots,
-            getChangedFiles(inputChanges, incrementalProps)
+            getChangedFiles(inputChanges, incrementalProps),
+            taskOutputsBackup
         )
     }
 
@@ -432,7 +438,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
-    internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
+    internal abstract fun callCompilerAsync(
+        args: T,
+        sourceRoots: SourceRoots,
+        changedFiles: ChangedFiles,
+        taskOutputsBackup: TaskOutputsBackup?
+    )
 
     @get:Input
     internal val multiPlatformEnabled: Property<Boolean> = objects.property(Boolean::class.java)
@@ -680,7 +691,12 @@ abstract class KotlinCompile @Inject constructor(
 
     override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
-    override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun callCompilerAsync(
+        args: K2JVMCompilerArguments,
+        sourceRoots: SourceRoots,
+        changedFiles: ChangedFiles,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         sourceRoots as SourceRoots.ForJvm
 
         validateKotlinAndJavaHasSameTargetCompatibility(args)
@@ -723,7 +739,8 @@ abstract class KotlinCompile @Inject constructor(
             javaPackagePrefix,
             args,
             environment,
-            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
+            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            taskOutputsBackup
         )
 
         with(classpathSnapshotProperties) {
@@ -1082,7 +1099,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val incrementalProps: List<FileCollection>
         get() = super.incrementalProps + listOf(friendDependencies)
 
-    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+    override fun callCompilerAsync(
+        args: K2JSCompilerArguments,
+        sourceRoots: SourceRoots,
+        changedFiles: ChangedFiles,
+        taskOutputsBackup: TaskOutputsBackup?
+    ) {
         sourceRoots as SourceRoots.KotlinOnly
 
         logger.debug("Calling compiler")
@@ -1134,7 +1156,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
             sourceRoots.kotlinSourceFiles.files.toList(),
             commonSourceSet.toList(),
             args,
-            environment
+            environment,
+            taskOutputsBackup
         )
     }
 }

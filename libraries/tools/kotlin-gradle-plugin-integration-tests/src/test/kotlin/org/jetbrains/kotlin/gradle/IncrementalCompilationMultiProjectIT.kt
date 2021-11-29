@@ -409,6 +409,45 @@ open class A {
     }
 
     @Test
+    fun testCompileErrorInLibWithWorkers() {
+        val project = defaultProject()
+        val buildOptions = defaultBuildOptions().copy(
+            parallelTasksInProject = true
+        )
+        project.build("build", options = buildOptions) {
+            assertSuccessful()
+        }
+
+        val bKt = project.projectDir.getFileByName("B.kt")
+        val bKtContent = bKt.readText()
+        bKt.delete()
+
+        fun runFailingBuild() {
+            project.build("build", options = buildOptions) {
+                assertFailed()
+                assertContains("B.kt has been removed")
+                assertTasksFailed(":lib:$compileKotlinTaskName")
+                val affectedFiles = project.projectDir.getFilesByNames("barUseAB.kt", "barUseB.kt")
+                assertCompiledKotlinSources(project.relativize(affectedFiles))
+            }
+        }
+
+        runFailingBuild()
+        runFailingBuild()
+
+        bKt.writeText(bKtContent.replace("fun b", "open fun b"))
+
+        project.build("build", options = buildOptions) {
+            assertSuccessful()
+            val affectedFiles = project.projectDir.getFilesByNames(
+                "B.kt", "barUseAB.kt", "barUseB.kt",
+                "BB.kt", "fooUseB.kt"
+            )
+            assertCompiledKotlinSources(project.relativize(affectedFiles))
+        }
+    }
+
+    @Test
     fun testRemoveLibFromClasspath() {
         val project = defaultProject()
         project.build("build") {

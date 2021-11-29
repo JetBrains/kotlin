@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.GradleException
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -12,7 +17,9 @@ import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
+import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Uses Gradle worker api to run kotlin compilation.
@@ -23,26 +30,67 @@ internal class GradleCompilerRunnerWithWorkers(
     kotlinDaemonJvmArgs: List<String>?,
     private val workerExecutor: WorkerExecutor
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, kotlinDaemonJvmArgs) {
-    override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments): WorkQueue {
+    override fun runCompilerAsync(
+        workArgs: GradleKotlinCompilerWorkArguments,
+        taskOutputsBackup: TaskOutputsBackup?
+    ): WorkQueue {
         loggerProvider.kotlinDebug { "Starting Kotlin compiler work from task '${pathProvider}'" }
 
         val workQueue = workerExecutor.noIsolation()
-        workQueue.submit(GradleKotlinCompilerWorkAction::class.java) {
-            it.compilerWorkArguments.set(workArgs)
+        workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
+            params.compilerWorkArguments.set(workArgs)
+            if (taskOutputsBackup != null) {
+                params.taskOutputs.from(taskOutputsBackup.outputs)
+                params.buildDir.set(taskOutputsBackup.buildDirectory)
+                params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
+            }
         }
         return workQueue
     }
 
-    internal abstract class GradleKotlinCompilerWorkAction
-        : WorkAction<GradleKotlinCompilerWorkParameters> {
+    internal abstract class GradleKotlinCompilerWorkAction @Inject constructor(
+        private val fileSystemOperations: FileSystemOperations
+    ) : WorkAction<GradleKotlinCompilerWorkParameters> {
+
+        private val logger = Logging.getLogger("kotlin-compile-worker")
+
         override fun execute() {
-            GradleKotlinCompilerWork(
-                parameters.compilerWorkArguments.get()
-            ).run()
+            val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
+                TaskOutputsBackup(
+                    fileSystemOperations,
+                    parameters.buildDir,
+                    parameters.snapshotsDir,
+                    parameters.taskOutputs,
+                    logger
+                )
+            } else {
+                null
+            }
+
+            try {
+                GradleKotlinCompilerWork(
+                    parameters.compilerWorkArguments.get()
+                ).run()
+            } catch (e: GradleException) {
+                // Currently, metrics are not reported as in the worker we are getting new instance of [BuildMetricsReporter]
+                // [BuildDataRecorder] knows nothing about this new instance. Possibly could be fixed in the future by migrating
+                // [BuildMetricsReporter] to be shared Gradle service.
+                if (taskOutputsBackup != null) {
+                    logger.info("Restoring task outputs to pre-compilation state")
+                    taskOutputsBackup.restoreOutputs()
+                }
+
+                throw e
+            } finally {
+                taskOutputsBackup?.deleteSnapshot()
+            }
         }
     }
 
     internal interface GradleKotlinCompilerWorkParameters : WorkParameters {
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
+        val taskOutputs: ConfigurableFileCollection
+        val snapshotsDir: DirectoryProperty
+        val buildDir: DirectoryProperty
     }
 }

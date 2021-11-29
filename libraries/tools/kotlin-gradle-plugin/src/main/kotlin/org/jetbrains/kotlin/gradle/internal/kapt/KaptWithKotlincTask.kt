@@ -131,7 +131,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
             javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
             environment = environment,
-            jdkHome = defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
+            jdkHome = defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            null
         )
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
@@ -26,10 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeOrCanonical
@@ -85,7 +85,8 @@ internal open class GradleCompilerRunner(
         javaPackagePrefix: String?,
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment,
-        jdkHome: File
+        jdkHome: File,
+        taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
         args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
@@ -93,7 +94,7 @@ internal open class GradleCompilerRunner(
         args.javaPackagePrefix = javaPackagePrefix
         if (args.jdkHome == null && !args.noJdk) args.jdkHome = jdkHome.absolutePath
         loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")
-        return runCompilerAsync(KotlinCompilerClass.JVM, args, environment)
+        return runCompilerAsync(KotlinCompilerClass.JVM, args, environment, taskOutputsBackup)
     }
 
     /**
@@ -104,11 +105,12 @@ internal open class GradleCompilerRunner(
         kotlinSources: List<File>,
         kotlinCommonSources: List<File>,
         args: K2JSCompilerArguments,
-        environment: GradleCompilerEnvironment
+        environment: GradleCompilerEnvironment,
+        taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
         args.freeArgs += kotlinSources.map { it.absolutePath }
         args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
-        return runCompilerAsync(KotlinCompilerClass.JS, args, environment)
+        return runCompilerAsync(KotlinCompilerClass.JS, args, environment, taskOutputsBackup)
     }
 
     /**
@@ -127,7 +129,8 @@ internal open class GradleCompilerRunner(
     private fun runCompilerAsync(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
-        environment: GradleCompilerEnvironment
+        environment: GradleCompilerEnvironment,
+        taskOutputsBackup: TaskOutputsBackup? = null
     ): WorkQueue? {
         if (compilerArgs.version) {
             loggerProvider.lifecycle(
@@ -192,12 +195,23 @@ internal open class GradleCompilerRunner(
             daemonJvmArgs = kotlinDaemonJvmArgs
         )
         TaskLoggers.put(pathProvider, loggerProvider)
-        return runCompilerAsync(workArgs)
+        return runCompilerAsync(workArgs, taskOutputsBackup)
     }
 
-    protected open fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments): WorkQueue? {
+    protected open fun runCompilerAsync(
+        workArgs: GradleKotlinCompilerWorkArguments,
+        taskOutputsBackup: TaskOutputsBackup?
+    ): WorkQueue? {
         val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
-        kotlinCompilerRunnable.run()
+        try {
+            kotlinCompilerRunnable.run()
+        } catch (e: GradleException) {
+            loggerProvider.info("Restoring task outputs to pre-compilation state")
+            taskOutputsBackup?.restoreOutputs()
+            throw e
+        } finally {
+            taskOutputsBackup?.deleteSnapshot()
+        }
         return null
     }
 
