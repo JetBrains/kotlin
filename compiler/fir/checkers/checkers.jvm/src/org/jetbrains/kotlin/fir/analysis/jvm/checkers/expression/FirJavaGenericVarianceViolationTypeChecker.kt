@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -46,11 +46,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * doesn't do anything to prevent this from happening.
  */
 object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
-    private val javaOrigin = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return
-        if (calleeFunction.originalOrSelf().origin !in javaOrigin) {
+        if (!calleeFunction.originalOrSelf().isJavaOrEnhancement) {
             return
         }
         val argumentMapping = expression.argumentMapping ?: return

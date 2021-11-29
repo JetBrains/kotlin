@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -25,8 +26,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-private val JAVA_ORIGINS = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
 
 fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
     return when (this) {
@@ -46,7 +45,7 @@ fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
 
 fun FirAnnotationContainer.getDeprecationInfos(currentVersion: ApiVersion): DeprecationsPerUseSite {
     val deprecationByUseSite = mutableMapOf<AnnotationUseSiteTarget?, DeprecationInfo>()
-    val fromJava = JAVA_ORIGINS.contains(this.safeAs<FirDeclaration>()?.origin)
+    val fromJava = this.safeAs<FirDeclaration>()?.isJavaOrEnhancement == true
     annotations.extractDeprecationInfoPerUseSite(currentVersion, fromJava).toMap(deprecationByUseSite)
 
     if (this is FirProperty) {

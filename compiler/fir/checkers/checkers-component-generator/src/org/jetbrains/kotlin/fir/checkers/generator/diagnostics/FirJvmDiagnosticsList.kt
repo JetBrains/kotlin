@@ -183,5 +183,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             ProhibitSpreadOnSignaturePolymorphicCall,
             PositioningStrategy.SPREAD_OPERATOR
         )
+        val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
     }
 }

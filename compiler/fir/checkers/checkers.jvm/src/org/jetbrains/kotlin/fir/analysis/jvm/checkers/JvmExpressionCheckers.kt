@@ -16,7 +16,8 @@ object JvmExpressionCheckers : ExpressionCheckers() {
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
         get() = setOf(
-            FirInterfaceDefaultMethodCallChecker
+            FirInterfaceDefaultMethodCallChecker,
+            FirJavaSamInterfaceConstructorReferenceChecker
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

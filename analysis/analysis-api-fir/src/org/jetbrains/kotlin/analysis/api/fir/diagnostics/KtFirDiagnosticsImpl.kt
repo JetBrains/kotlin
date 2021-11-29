@@ -3646,3 +3646,8 @@ internal class SpreadOnSignaturePolymorphicCallWarningImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.SpreadOnSignaturePolymorphicCallWarning(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class JavaSamInterfaceConstructorReferenceImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.JavaSamInterfaceConstructorReference(), KtAbstractFirDiagnostic<PsiElement>
+

@@ -3016,4 +3016,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SpreadOnSignaturePolymorphicCallWarning::class
     }
 
+    abstract class JavaSamInterfaceConstructorReference : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JavaSamInterfaceConstructorReference::class
+    }
+
 }

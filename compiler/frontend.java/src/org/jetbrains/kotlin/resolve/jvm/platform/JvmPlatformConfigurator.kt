@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.*
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
@@ -58,6 +59,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         ApiVersionIsAtLeastArgumentsChecker,
         InconsistentOperatorFromJavaCallChecker,
         PolymorphicSignatureCallChecker,
+        SamInterfaceConstructorReferenceCallChecker,
     ),
 
     additionalTypeCheckers = listOf(

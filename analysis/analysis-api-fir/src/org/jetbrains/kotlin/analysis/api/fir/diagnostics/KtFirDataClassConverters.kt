@@ -4333,4 +4333,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE) { firDiagnostic ->
+        JavaSamInterfaceConstructorReferenceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }

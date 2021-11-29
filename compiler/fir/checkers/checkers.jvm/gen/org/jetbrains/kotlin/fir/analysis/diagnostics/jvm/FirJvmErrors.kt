@@ -125,6 +125,7 @@ object FirJvmErrors {
     val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError0<PsiElement>(ProhibitConcurrentHashMapContains)
     val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError0<PsiElement>(ProhibitSpreadOnSignaturePolymorphicCall, SourceElementPositioningStrategies.SPREAD_OPERATOR)
+    val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error0<PsiElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)

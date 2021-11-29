@@ -202,6 +202,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> TYPEOF_SUSPEND_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

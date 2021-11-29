@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.name.ClassId
  * Note that, in case of multi-override, if any super member requires `override`, then the `override` keyword cannot be omitted.
  */
 object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatibilityHelper {
-    private val javaOrigin = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
     private val platformDependentAnnotation = ClassId.fromString("kotlin/internal/PlatformDependent")
 
     override fun overrideCanBeOmitted(
@@ -71,7 +71,7 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
             return true
         }
 
-        if (originalMember.origin !in javaOrigin) return false
+        if (!originalMember.isJavaOrEnhancement) return false
         val containingClassName = originalMember.containingClass()?.classId?.asSingleFqName()?.toUnsafe() ?: return false
         // If the super class is mapped to a Kotlin built-in class, then we don't require `override` keyword.
         if (JavaToKotlinClassMap.mapKotlinToJava(containingClassName) != null) {

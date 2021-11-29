@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// !LANGUAGE: -AllowKotlinFunInterfaceConstructorReference -ProhibitJavaSamInterfaceConstructorReference
+
 fun interface Foo {
     fun run()
 }

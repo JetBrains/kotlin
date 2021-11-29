@@ -3,25 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve.calls.checkers
+package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.resolve.calls.util.isCallableReference
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.isCallableReference
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 
-object FunInterfaceConstructorReferenceChecker : CallChecker {
+object SamInterfaceConstructorReferenceCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowKotlinFunInterfaceConstructorReference)) return
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJavaSamInterfaceConstructorReference)) return
 
         val resultingDescriptor = resolvedCall.resultingDescriptor
         if (resultingDescriptor !is SamConstructorDescriptor || !resolvedCall.call.isCallableReference()) return
 
-        if (resultingDescriptor.baseDescriptorForSynthetic.isFun) {
+        if (!resultingDescriptor.baseDescriptorForSynthetic.isFun) {
             context.trace.report(
-                Errors.FUN_INTERFACE_CONSTRUCTOR_REFERENCE.on(reportOn)
+                ErrorsJvm.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE.on(reportOn)
             )
         }
     }
