@@ -9,7 +9,7 @@ package foo
 
 import test.*
 
-// CHECK_CONTAINS_NO_CALLS: testClassObject except=Companion_getInstance_19
+// CHECK_CONTAINS_NO_CALLS: testClassObject except=Companion_getInstance
 
 internal fun testFinalInline(): String {
     return Z().finalInline({"final"})
