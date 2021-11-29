@@ -73,7 +73,6 @@ configurations {
     kotlin_reflect_jar
     kotlin_script_runtime_jar
     trove4j_jar
-    kotlinCommonSources
 
     cli_bcApiElements {
         extendsFrom cli_bcApi
@@ -88,10 +87,6 @@ dependencies {
     kotlin_stdlib_jar kotlinStdLibModule
     kotlin_reflect_jar kotlinReflectModule
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
-
-    [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
-        kotlinCommonSources(it) { transitive = false }
-    }
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
 

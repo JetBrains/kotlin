@@ -86,9 +86,6 @@ ext {
 
     kotlinCompilerModule= [path: ":kotlin-compiler", configuration: "runtimeElements"]
     kotlinStdLibModule= project(":kotlin-stdlib")
-    kotlinCommonStdlibModule= project(":kotlin-stdlib-common")
-    kotlinTestCommonModule= project(":kotlin-test:kotlin-test-common")
-    kotlinTestAnnotationsCommonModule= project(":kotlin-test:kotlin-test-annotations-common")
     kotlinReflectModule= project(":kotlin-reflect")
     kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
     kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
@@ -156,15 +153,12 @@ void loadCommandLineProperties() {
 
 configurations {
     ftpAntTask
-    kotlinCommonSources
     distPack
+    commonSources
 }
 
 dependencies {
     ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
-    [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
-        kotlinCommonSources(it) { transitive = false }
-    }
     distPack project(':kotlin-native:Interop:Runtime')
     distPack project(':kotlin-native:Interop:Indexer')
     distPack project(':kotlin-native:Interop:StubGenerator')
@@ -175,6 +169,9 @@ dependencies {
     distPack project(':kotlin-native:klib')
     distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
     //distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    commonSources project(path: ':kotlin-stdlib-common', configuration: 'sources')
+    commonSources project(path: ':kotlin-test:kotlin-test-common', configuration: 'sources')
+    commonSources project(path: ':kotlin-test:kotlin-test-annotations-common', configuration: 'sources')
 }
 
 //task sharedJar {
@@ -199,7 +196,7 @@ task build {
 
 task distCommonSources(type: CopyCommonSources) {
     outputDir "$distDir/sources"
-    sourcePaths project(":kotlin-stdlib-common").file("src")
+    sourcePaths configurations.commonSources
     zipSources true
 }
 
