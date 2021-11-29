@@ -32,11 +32,11 @@ fun test1a(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRun
   }
 }
 
-fun test1b(): KFunction<Runnable> {
+fun test1b(): KFunction<KRunnable> {
   return { // BLOCK
-    local fun Runnable(function: Function0<Unit>): Runnable function /*-> Runnable */
+    local fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
 
-    ::Runnable
+    ::KRunnable
   }
 }
 

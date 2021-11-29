@@ -17,29 +17,58 @@ fun interface KConsumer<T : Any?> {
 }
 
 fun test1(): KFunction1<Function0<Unit>, KRunnable> {
-  return ::KRunnable
+  return { // BLOCK
+    local suspend fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
+
+    ::KRunnable
+  }
 }
 
 fun test1a(): KFunction1<Function0<Unit>, KRunnable> {
-  return ::KRunnable
+  return { // BLOCK
+    local suspend fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
+
+    ::KRunnable
+  }
 }
 
-fun test1b(): KFunction<Runnable> {
-  return ::Runnable
+fun test1b(): KFunction<KRunnable> {
+  return { // BLOCK
+    local suspend fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
+
+    ::KRunnable
+  }
 }
 
 fun test2(): Function1<Function0<String>, KSupplier<String>> {
-  return ::KSupplier/*<String>()*/
+  return { // BLOCK
+    local suspend fun KSupplier(function: Function0<String>): KSupplier<String> function /*-> KSupplier<String> */
+
+    ::KSupplier
+  }
 }
 
 fun test2a(): Function1<Function0<String>, KSupplier<String>> {
-  return ::KSupplier/*<String>()*/
+  return { // BLOCK
+    local suspend fun KSupplier(function: Function0<String>): KSupplier<String> function /*-> KSupplier<String> */
+
+    ::KSupplier
+  }
 }
 
 fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
-  return ::KConsumer/*<String>()*/
+  return { // BLOCK
+    local suspend fun KConsumer(function: Function1<String, Unit>): KConsumer<String> function /*-> KConsumer<String> */
+
+    ::KConsumer
+  }
 }
 
 fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
-  return ::KConsumer/*<String>()*/
+  return { // BLOCK
+    local suspend fun KConsumer(function: Function1<String, Unit>): KConsumer<String> function /*-> KConsumer<String> */
+
+    ::KConsumer
+  }
 }
+

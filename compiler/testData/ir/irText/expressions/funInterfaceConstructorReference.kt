@@ -24,7 +24,7 @@ fun test1() = ::KRunnable
 
 fun test1a() = ::KR
 
-fun test1b(): KFunction<Runnable> = ::Runnable
+fun test1b(): KFunction<KRunnable> = ::KRunnable
 
 fun test2(): (() -> String) -> KSupplier<String> = ::KSupplier
 

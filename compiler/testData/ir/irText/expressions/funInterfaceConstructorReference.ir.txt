@@ -76,16 +76,16 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
               TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
                 GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
-  FUN name:test1b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<java.lang.Runnable>
+  FUN name:test1b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KRunnable>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1b (): kotlin.reflect.KFunction<java.lang.Runnable> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, java.lang.Runnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:Runnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:java.lang.Runnable
+      RETURN type=kotlin.Nothing from='public final fun test1b (): kotlin.reflect.KFunction<<root>.KRunnable> declared in <root>'
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             EXPRESSION_BODY
-              TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-                GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1b.Runnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun Runnable (function: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in <root>.test1b' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, java.lang.Runnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+              TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+                GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1b.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1b' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> declared in <root>'

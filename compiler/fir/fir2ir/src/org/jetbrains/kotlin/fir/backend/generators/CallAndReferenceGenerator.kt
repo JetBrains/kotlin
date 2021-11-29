@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
@@ -70,10 +72,22 @@ class CallAndReferenceGenerator(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?
     ): IrExpression {
+        val type = callableReferenceAccess.typeRef.toIrType()
+        val callableSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol()
+        if (callableSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
+            assert(explicitReceiverExpression == null) {
+                "Fun interface constructor reference should be unbound: ${explicitReceiverExpression?.dump()}"
+            }
+            return adapterGenerator.generateFunInterfaceConstructorReference(
+                callableReferenceAccess,
+                callableSymbol as FirSyntheticFunctionSymbol,
+                type
+            )
+        }
+
         val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(
             callableReferenceAccess.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope
         )
-        val type = callableReferenceAccess.typeRef.toIrType()
         // val x by y ->
         //   val `x$delegate` = y
         //   val x get() = `x$delegate`.getValue(this, ::x)

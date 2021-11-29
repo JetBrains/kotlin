@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
-import org.jetbrains.kotlin.fir.backend.convertWithOffsets
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -21,23 +18,18 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
@@ -499,5 +491,102 @@ internal class AdapterGenerator(
             irCall.putValueArgument(irAdapterParameter.index, irAdapterParameter.toIrGetValue(startOffset, endOffset))
         }
         return irCall
+    }
+
+    fun generateFunInterfaceConstructorReference(
+        callableReference: FirCallableReferenceAccess,
+        callableSymbol: FirFunctionSymbol<*>,
+        irReferenceType: IrType
+    ): IrExpression =
+        callableReference.convertWithOffsets { startOffset: Int, endOffset: Int ->
+            //  {
+            //      fun <ADAPTER_FUN>(function: <FUN_TYPE>): <FUN_INTERFACE_TYPE> =
+            //          <FUN_INTERFACE_TYPE>(function)
+            //      ::<ADAPTER_FUN>
+            //  }
+
+            val irAdapterFun = generateFunInterfaceConstructorAdapter(startOffset, endOffset, callableSymbol, irReferenceType)
+
+            val irAdapterRef = IrFunctionReferenceImpl(
+                startOffset, endOffset,
+                type = irReferenceType,
+                symbol = irAdapterFun.symbol,
+                typeArgumentsCount = irAdapterFun.typeParameters.size,
+                valueArgumentsCount = irAdapterFun.valueParameters.size,
+                reflectionTarget = irAdapterFun.symbol,
+                origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+            )
+
+            IrBlockImpl(
+                startOffset, endOffset,
+                irReferenceType,
+                IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE,
+                listOf(
+                    irAdapterFun,
+                    irAdapterRef
+                )
+            )
+        }
+
+    private fun IrSimpleType.getArgumentTypeAt(index: Int): IrType {
+        val irTypeArgument = this.arguments[index] as? IrTypeProjection
+            ?: throw AssertionError("Type projection expected at argument $index: ${this.render()}")
+        return irTypeArgument.type
+    }
+
+    private fun generateFunInterfaceConstructorAdapter(
+        startOffset: Int,
+        endOffset: Int,
+        callableSymbol: FirFunctionSymbol<*>,
+        irReferenceType: IrType
+    ): IrSimpleFunction {
+        // Here irReferenceType is always kotlin.reflect.KFunction1<FUN_TYPE, FUN_INTERFACE_TYPE>
+        val irSimpleReferenceType = irReferenceType as? IrSimpleType
+            ?: throw AssertionError("Class type expected: ${irReferenceType.render()}")
+        val irSamType = irSimpleReferenceType.getArgumentTypeAt(1)
+        val irFunctionType = irSimpleReferenceType.getArgumentTypeAt(0)
+
+        val functionParameter = callableSymbol.valueParameterSymbols.singleOrNull()
+            ?: throw AssertionError("Single value parameter expected: ${callableSymbol.valueParameterSymbols}")
+
+        return irFactory.createFunction(
+            startOffset, endOffset,
+            IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
+            IrSimpleFunctionSymbolImpl(),
+            callableSymbol.name,
+            DescriptorVisibilities.LOCAL,
+            Modality.FINAL,
+            irSamType,
+            isInline = false,
+            isExternal = false,
+            isTailrec = false,
+            isSuspend = true,
+            isOperator = false,
+            isInfix = false,
+            isExpect = false,
+            isFakeOverride = false
+        ).also { irAdapterFunction ->
+            symbolTable.enterScope(irAdapterFunction)
+            irAdapterFunction.dispatchReceiverParameter = null
+            irAdapterFunction.extensionReceiverParameter = null
+            val irFunctionParameter = createAdapterParameter(
+                irAdapterFunction,
+                functionParameter.name,
+                0,
+                irFunctionType,
+                IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
+            )
+            irAdapterFunction.valueParameters = listOf(irFunctionParameter)
+            irAdapterFunction.body = irFactory.createExpressionBody(
+                startOffset, endOffset,
+                IrTypeOperatorCallImpl(
+                    startOffset, endOffset,
+                    irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
+                    IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol)
+                )
+            )
+            symbolTable.leaveScope(irAdapterFunction)
+            irAdapterFunction.parent = conversionScope.parent()!!
+        }
     }
 }
