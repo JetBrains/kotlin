@@ -12,32 +12,31 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.isExplicitOverride
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-internal typealias KtFe10RendererConsumer = StringBuilder
+internal typealias KtFe10RendererConsumer = PrettyPrinter
 
 internal class KtFe10Renderer(
     private val analysisContext: Fe10AnalysisContext,
@@ -45,8 +44,6 @@ internal class KtFe10Renderer(
     isDebugText: Boolean = false
 ) {
     private companion object {
-        private val INDENTATION = " ".repeat(4)
-
         val IGNORED_VISIBILITIES: Set<Visibility> = setOf(
             Visibilities.Local,
             Visibilities.PrivateToThis,
@@ -68,22 +65,6 @@ internal class KtFe10Renderer(
         analysisContext.builtIns,
         analysisContext.resolveSession.languageVersionSettings
     )
-
-    private var indentation = 0
-
-    private fun KtFe10RendererConsumer.curlyBlock(body: KtFe10RendererConsumer.() -> Unit) {
-        append(" {")
-        indentedBlock(body)
-        appendLine()
-        renderIndentation()
-        append('}')
-    }
-
-    private fun KtFe10RendererConsumer.indentedBlock(body: KtFe10RendererConsumer.() -> Unit) {
-        indentation += 1
-        body()
-        indentation -= 1
-    }
 
     fun render(descriptor: DeclarationDescriptor, consumer: KtFe10RendererConsumer) {
         consumer.renderDeclaration(descriptor)
@@ -138,7 +119,7 @@ internal class KtFe10Renderer(
 
     private fun KtFe10RendererConsumer.renderTypeAlias(descriptor: TypeAliasDescriptor) {
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
             renderModifiers(descriptor)
             append("typealias ")
         }
@@ -149,7 +130,9 @@ internal class KtFe10Renderer(
     }
 
     private fun KtFe10RendererConsumer.renderTypeParameters(typeParameters: List<TypeParameterDescriptor>) {
-        renderList(typeParameters, separator = ", ", prefix = "<", postfix = ">", renderWhenEmpty = false) { renderTypeParameter(it) }
+        if (typeParameters.isNotEmpty()) append('<')
+        printCollection(typeParameters, separator = ", ") { renderTypeParameter(it) }
+        if (typeParameters.isNotEmpty()) append('>')
     }
 
     private fun KtFe10RendererConsumer.renderTypeParameter(descriptor: TypeParameterDescriptor) {
@@ -158,19 +141,16 @@ internal class KtFe10Renderer(
         val variance = descriptor.variance.label
         renderModifier(variance, variance.isNotEmpty())
 
-        renderAnnotations(descriptor.annotations)
+        renderAnnotations(descriptor)
         renderName(descriptor)
 
         val upperBounds = descriptor.upperBounds.filterNot { it.isNullableAny() }
-        renderList(upperBounds, separator = " & ", prefix = " : ", postfix = "", renderWhenEmpty = false) { renderType(it) }
+        printCollectionIfNotEmpty(upperBounds, separator = " & ", prefix = " : ") { renderType(it) }
     }
 
     private fun KtFe10RendererConsumer.renderClass(descriptor: ClassDescriptor) {
-        appendLine()
-        renderIndentation()
-
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
             renderModifiers(descriptor)
 
 
@@ -200,7 +180,7 @@ internal class KtFe10Renderer(
         renderTypeParameters(descriptor.declaredTypeParameters)
         renderSupertypes(descriptor)
 
-        if (options.renderContainingDeclarations) {
+        if (options.renderClassMembers) {
             val (enumEntries, otherDeclarations) = descriptor.unsubstitutedMemberScope.getContributedDescriptors()
                 .filter { shouldRenderNestedDeclaration(descriptor, it) }
                 .partition { it is ClassDescriptor && it.kind == ClassKind.ENUM_ENTRY }
@@ -209,10 +189,19 @@ internal class KtFe10Renderer(
                 .filter { shouldRenderNestedDeclaration(descriptor, it) }
 
             if (enumEntries.isNotEmpty() || otherDeclarations.isNotEmpty() || constructors.isNotEmpty()) {
-                curlyBlock {
-                    enumEntries.forEach { renderEnumEntry(it as ClassDescriptor) }
-                    sortDeclarations(constructors).forEach { renderConstructor(it) }
-                    sortDeclarations(otherDeclarations).forEach { renderDeclaration(it) }
+                append(' ')
+                withIndentInBraces {
+                    printCollection(sortDeclarations(enumEntries), separator = ",\n") {
+                        renderEnumEntry(it as ClassDescriptor)
+                    }
+
+                    if (enumEntries.isNotEmpty() && (constructors.isNotEmpty() || otherDeclarations.isNotEmpty())) {
+                        appendLine(";\n")
+                    }
+
+                    printCollection(sortDeclarations(constructors + otherDeclarations), separator = "\n\n") {
+                        renderDeclaration(it)
+                    }
                 }
             }
         }
@@ -268,8 +257,8 @@ internal class KtFe10Renderer(
                 return@Comparator nameResult
             }
 
-            val leftString = buildString { renderDeclaration(left) }
-            val rightString = buildString { renderDeclaration(right) }
+            val leftString = prettyPrint { renderDeclaration(left) }
+            val rightString = prettyPrint { renderDeclaration(right) }
             return@Comparator leftString.compareTo(rightString)
         })
     }
@@ -279,7 +268,7 @@ internal class KtFe10Renderer(
             .filterTo(HashSet()) { it.classId !in IGNORED_SUPERTYPES }
 
         val supertypes = descriptor.typeConstructor.supertypes.filter { it.constructor.declarationDescriptor in allowedSuperClasses }
-        renderList(supertypes, separator = ", ", prefix = " : ", postfix = "", renderWhenEmpty = false) { renderType(it) }
+        printCollectionIfNotEmpty(supertypes, separator = ", ", prefix = " : ") { renderType(it) }
     }
 
     private fun KtFe10RendererConsumer.renderCallable(descriptor: CallableDescriptor) {
@@ -296,47 +285,35 @@ internal class KtFe10Renderer(
     }
 
     private fun KtFe10RendererConsumer.renderPropertyAccessor(descriptor: PropertyAccessorDescriptor) {
-        appendLine()
-        indentedBlock {
-            renderIndentation()
-            if (options.renderDeclarationHeader) {
-                renderAnnotations(descriptor.annotations)
-                renderModifiers(descriptor)
-            }
+        if (options.renderDeclarationHeader) {
+            renderAnnotations(descriptor)
+            renderModifiers(descriptor)
+        }
 
-            when (descriptor) {
-                is PropertyGetterDescriptor -> {
-                    append("get()")
+        when (descriptor) {
+            is PropertyGetterDescriptor -> {
+                append("get()")
+            }
+            is PropertySetterDescriptor -> {
+                append("set(")
+                val valueParameter = descriptor.valueParameters.singleOrNull()
+                if (valueParameter != null) {
+                    val name = valueParameter.name.takeIf { !it.isSpecial } ?: Name.identifier("value")
+                    renderValueParameter(valueParameter, name)
                 }
-                is PropertySetterDescriptor -> {
-                    append("set(")
-                    val valueParameter = descriptor.valueParameters.singleOrNull()
-                    if (valueParameter != null) {
-                        val name = valueParameter.name.takeIf { !it.isSpecial } ?: Name.identifier("value")
-                        renderValueParameter(valueParameter, name)
-                    }
-                    append(")")
-                }
+                append(")")
             }
         }
     }
 
     private fun KtFe10RendererConsumer.renderEnumEntry(descriptor: ClassDescriptor) {
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
-
-        appendLine()
-        renderIndentation()
-
         renderName(descriptor)
-        append(',')
     }
 
     private fun KtFe10RendererConsumer.renderLocalVariable(descriptor: LocalVariableDescriptor) {
-        appendLine()
-        renderIndentation()
-
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
             append(if (descriptor.isVar) "var" else "val").append(' ')
         }
 
@@ -346,11 +323,8 @@ internal class KtFe10Renderer(
     }
 
     private fun KtFe10RendererConsumer.renderProperty(descriptor: PropertyDescriptor) {
-        appendLine()
-        renderIndentation()
-
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
             renderModifiers(descriptor)
             append(if (descriptor.isVar) "var" else "val").append(' ')
             renderTypeParameters(descriptor.typeParameters)
@@ -364,11 +338,9 @@ internal class KtFe10Renderer(
         append(": ")
         renderType(descriptor.type, shouldApproximate = options.approximateTypes)
 
-        if (options.renderContainingDeclarations) {
+        if (options.renderClassMembers) {
             fun shouldRenderAccessor(accessor: PropertyAccessorDescriptor): Boolean {
-                return descriptor.isDelegated
-                        || accessor.hasBody()
-                        || !accessor.annotations.isEmpty()
+                return !accessor.annotations.isEmpty()
                         || accessor.visibility != descriptor.visibility
             }
 
@@ -377,11 +349,15 @@ internal class KtFe10Renderer(
 
             val shouldRenderAccessors = (getter != null && shouldRenderAccessor(getter)) || (setter != null && shouldRenderAccessor(setter))
             if (shouldRenderAccessors) {
-                if (getter != null) {
-                    renderPropertyAccessor(getter)
-                }
-                if (setter != null) {
-                    renderPropertyAccessor(setter)
+                withIndent {
+                    if (getter != null) {
+                        appendLine()
+                        renderPropertyAccessor(getter)
+                    }
+                    if (setter != null) {
+                        appendLine()
+                        renderPropertyAccessor(setter)
+                    }
                 }
             }
         }
@@ -401,23 +377,16 @@ internal class KtFe10Renderer(
     }
 
     private fun KtFe10RendererConsumer.renderConstructor(descriptor: ConstructorDescriptor) {
-        appendLine()
-        renderIndentation()
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
         }
         append("constructor")
         renderValueParameters(descriptor.valueParameters)
-
-        renderLocalDeclarations(descriptor)
     }
 
     private fun KtFe10RendererConsumer.renderFunction(descriptor: FunctionDescriptor) {
-        appendLine()
-        renderIndentation()
-
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
             renderModifiers(descriptor)
             append("fun ")
             renderTypeParameters(descriptor.typeParameters)
@@ -435,17 +404,15 @@ internal class KtFe10Renderer(
             append(": ")
             renderType(returnType, shouldApproximate = options.approximateTypes)
         }
-
-        renderLocalDeclarations(descriptor)
     }
 
     private fun KtFe10RendererConsumer.renderValueParameters(valueParameters: List<ValueParameterDescriptor>) {
-        renderList(valueParameters, separator = ", ", prefix = "(", postfix = ")", renderWhenEmpty = true) { renderValueParameter(it) }
+        printCollection(valueParameters, separator = ", ", prefix = "(", postfix = ")") { renderValueParameter(it) }
     }
 
     private fun KtFe10RendererConsumer.renderValueParameter(descriptor: ValueParameterDescriptor, name: Name = descriptor.name) {
         if (options.renderDeclarationHeader) {
-            renderAnnotations(descriptor.annotations)
+            renderAnnotations(descriptor)
         }
 
         renderModifiers(descriptor)
@@ -458,50 +425,16 @@ internal class KtFe10Renderer(
         }
     }
 
-    private fun KtFe10RendererConsumer.renderLocalDeclarations(descriptor: CallableMemberDescriptor) {
-        if (!options.renderContainingDeclarations) {
-            return
-        }
-
-        val body = when (val declaration = descriptor.source.getPsi()) {
-            is KtFunction -> declaration.bodyExpression
-            is KtPropertyAccessor -> declaration.bodyExpression
-            else -> null
-        }
-
-        val collectedChildren = mutableListOf<DeclarationDescriptor>()
-
-        body?.accept(object : KtTreeVisitorVoid() {
-            override fun visitDeclaration(declaration: KtDeclaration) {
-                if (declaration is KtFunction || declaration is KtVariableDeclaration || declaration is KtClassOrObject) {
-                    val bindingContext = analysisContext.analyze(declaration)
-                    val childDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-                    if (childDescriptor != null) {
-                        collectedChildren += childDescriptor
-                    }
-                } else {
-                    super.visitDeclaration(declaration)
-                }
-            }
-        })
-
-        if (collectedChildren.isNotEmpty()) {
-            curlyBlock {
-                collectedChildren.forEach { renderDeclaration(it) }
-            }
-        }
-    }
-
     private fun KtFe10RendererConsumer.renderName(descriptor: DeclarationDescriptor) {
         append(descriptor.name.render())
     }
 
-    private fun KtFe10RendererConsumer.renderAnnotations(annotations: Annotations, predicate: (ClassId) -> Boolean = { true }) {
+    private fun KtFe10RendererConsumer.renderAnnotations(declaration: Annotated, predicate: (ClassId) -> Boolean = { true }) {
         if (RendererModifier.ANNOTATIONS !in options.modifiers) {
             return
         }
-
-        renderFe10Annotations(annotations, predicate)
+        val isSingleLineAnnotations = declaration is ValueParameterDescriptor || declaration is TypeParameterDescriptor
+        renderFe10Annotations(declaration.annotations, isSingleLineAnnotations, predicate)
     }
 
     private fun KtFe10RendererConsumer.renderModifiers(descriptor: DeclarationDescriptor) {
@@ -595,30 +528,4 @@ internal class KtFe10Renderer(
             append(text).append(' ')
         }
     }
-
-    private fun KtFe10RendererConsumer.renderIndentation() {
-        append(INDENTATION.repeat(indentation))
-    }
-}
-
-internal fun <T> KtFe10RendererConsumer.renderList(
-    list: Collection<T>,
-    separator: String,
-    prefix: String = "",
-    postfix: String = "",
-    renderWhenEmpty: Boolean = true,
-    renderItem: KtFe10RendererConsumer.(T) -> Unit
-) {
-    if (!renderWhenEmpty && list.isEmpty()) {
-        return
-    }
-
-    append(prefix)
-    list.forEachIndexed { index, item ->
-        if (index > 0) {
-            append(separator)
-        }
-        renderItem(item)
-    }
-    append(postfix)
 }

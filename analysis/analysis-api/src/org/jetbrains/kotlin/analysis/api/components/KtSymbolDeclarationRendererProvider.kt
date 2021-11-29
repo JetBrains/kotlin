@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 /**
@@ -68,9 +69,9 @@ public data class KtDeclarationRendererOptions(
      */
     val normalizedVisibilities: Boolean = false,
     /**
-     * Render containing declarations
+     * Render members of a classes and objects if any
      */
-    val renderContainingDeclarations: Boolean = false,
+    val renderClassMembers: Boolean = false,
     /**
      * Approximate Kotlin not-denotable types into denotable for declarations return type
      */
@@ -124,7 +125,7 @@ public enum class RendererModifier(public val includeByDefault: Boolean) {
 }
 
 public abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
-    public abstract fun render(symbol: KtSymbol, options: KtDeclarationRendererOptions): String
+    public abstract fun renderMember(symbol: KtPossibleMemberSymbol, options: KtDeclarationRendererOptions): String
     public abstract fun render(type: KtType, options: KtTypeRendererOptions): String
 }
 
@@ -135,8 +136,8 @@ public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
     /**
      * Render symbol into the representable Kotlin string
      */
-    public fun KtSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
-        analysisSession.symbolDeclarationRendererProvider.render(this, options)
+    public fun KtPossibleMemberSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
+        analysisSession.symbolDeclarationRendererProvider.renderMember(this, options)
 
     /**
      * Render kotlin type into the representable Kotlin type string

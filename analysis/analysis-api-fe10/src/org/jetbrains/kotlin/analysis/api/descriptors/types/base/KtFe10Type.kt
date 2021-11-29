@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.render
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -32,8 +34,6 @@ interface KtFe10Type : ValidityTokenOwner, KtAnnotated {
 }
 
 internal fun KotlinType.asStringForDebugging(): String {
-    val builder = StringBuilder()
     val renderer = KtFe10TypeRenderer(KtTypeRendererOptions.DEFAULT, isDebugText = true)
-    renderer.render(this, builder)
-    return builder.toString()
+    return prettyPrint { renderer.render(this@asStringForDebugging, this) }
 }

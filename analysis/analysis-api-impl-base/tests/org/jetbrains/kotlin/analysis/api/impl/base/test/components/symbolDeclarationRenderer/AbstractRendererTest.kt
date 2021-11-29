@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -18,16 +19,18 @@ abstract class AbstractRendererTest(configurator: FrontendApiTestConfiguratorSer
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val options = KtDeclarationRendererOptions.DEFAULT.copy(
             approximateTypes = true,
-            renderContainingDeclarations = true,
+            renderClassMembers = true,
             typeRendererOptions = KtTypeRendererOptions.SHORT_NAMES,
             sortNestedDeclarations = true
         )
 
         val actual = executeOnPooledThreadInReadAction {
             buildString {
-                ktFile.declarations.forEach {
-                    analyseForTest(it) {
-                        append(it.getSymbol().render(options))
+                ktFile.declarations.forEach { declaration ->
+                    analyseForTest(declaration) {
+                        val symbol = declaration.getSymbol() as? KtPossibleMemberSymbol ?: return@analyseForTest
+                        append(symbol.render(options))
+                        appendLine()
                         appendLine()
                     }
                 }

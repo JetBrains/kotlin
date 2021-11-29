@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 
 internal class KtFe10SymbolDeclarationRendererProvider(
     override val analysisSession: KtFe10AnalysisSession
@@ -24,7 +26,7 @@ internal class KtFe10SymbolDeclarationRendererProvider(
     override val token: ValidityToken
         get() = analysisSession.token
 
-    override fun render(symbol: KtSymbol, options: KtDeclarationRendererOptions): String {
+    override fun renderMember(symbol: KtPossibleMemberSymbol, options: KtDeclarationRendererOptions): String {
         val descriptor = getSymbolDescriptor(symbol)
         if (descriptor != null) {
             return descriptor.render(analysisContext, options)
@@ -36,8 +38,6 @@ internal class KtFe10SymbolDeclarationRendererProvider(
 
     override fun render(type: KtType, options: KtTypeRendererOptions): String {
         require(type is KtFe10Type)
-        val consumer = StringBuilder()
-        KtFe10TypeRenderer(options).render(type.type, consumer)
-        return consumer.toString()
+        return prettyPrint { KtFe10TypeRenderer(options).render(type.type, this) }
     }
 }

@@ -8,6 +8,7 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-barebone"))
     api(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    implementation(project(":analysis:analysis-internal-utils"))
 
     testApiJUnit5()
     testApi(project(":kotlin-test:kotlin-test-junit"))

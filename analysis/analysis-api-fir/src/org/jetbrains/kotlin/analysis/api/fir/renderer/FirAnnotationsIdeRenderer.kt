@@ -10,25 +10,30 @@ import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEval
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.annotations.KtUnsupportedAnnotationValue
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import kotlin.text.Appendable
 
-internal fun StringBuilder.renderAnnotations(
+internal fun Appendable.renderAnnotations(
     coneTypeIdeRenderer: ConeTypeIdeRenderer,
     annotations: List<FirAnnotation>,
-    session: FirSession
+    session: FirSession,
+    isSingleLineAnnotations: Boolean,
 ) {
+    val separator = if (isSingleLineAnnotations) " " else "\n"
     for (annotation in annotations) {
         if (!annotation.isParameterName()) {
             append(renderAnnotation(annotation, coneTypeIdeRenderer, session))
-            append(" ")
+            append(separator)
         }
     }
 }
+
 
 private fun FirAnnotation.isParameterName(): Boolean {
     return toAnnotationClassId()?.asSingleFqName() == StandardNames.FqNames.parameterName

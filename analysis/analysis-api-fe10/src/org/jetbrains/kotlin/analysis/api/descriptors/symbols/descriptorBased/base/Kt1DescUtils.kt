@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10Renderer
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -308,7 +310,7 @@ internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
-                    arguments = arguments,
+                    arguments = value.getKtNamedAnnotationArguments(),
                 )
             )
         }
@@ -413,9 +415,7 @@ internal fun ClassDescriptor.getSupertypesWithAny(): Collection<KotlinType> {
 
 internal fun DeclarationDescriptor.render(analysisContext: Fe10AnalysisContext, options: KtDeclarationRendererOptions): String {
     val renderer = KtFe10Renderer(analysisContext, options)
-    val consumer = StringBuilder()
-    renderer.render(this, consumer)
-    return consumer.toString().trim()
+    return prettyPrint { renderer.render(this@render, this) }.trim()
 }
 
 internal fun CallableMemberDescriptor.getSymbolPointerSignature(analysisContext: Fe10AnalysisContext): String {

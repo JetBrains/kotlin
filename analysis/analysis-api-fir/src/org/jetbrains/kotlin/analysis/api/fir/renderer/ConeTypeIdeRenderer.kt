@@ -41,7 +41,7 @@ internal class ConeTypeIdeRenderer(
 
     private fun StringBuilder.renderAnnotationList(type: ConeKotlinType) {
         if (options.renderTypeAnnotations) {
-            renderAnnotations(this@ConeTypeIdeRenderer, type.customAnnotations, session)
+            renderAnnotations(this@ConeTypeIdeRenderer, type.customAnnotations, session, isSingleLineAnnotations = true)
         }
     }
 
