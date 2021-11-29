@@ -663,9 +663,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> SETTER_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory1<KtPropertyDelegate, String> DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtPropertyDelegate, String> DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_WARNING =
-            DiagnosticFactory1.create(WARNING);
+    DiagnosticFactoryForDeprecation1<KtPropertyDelegate, String> DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER = DiagnosticFactoryForDeprecation1.create(LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate);
 
     // Function-specific
 

@@ -2539,13 +2539,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER) { firDiagnostic ->
-        DelegateUsesExtensionPropertyTypeParameterImpl(
+    add(FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER.errorFactory) { firDiagnostic ->
+        DelegateUsesExtensionPropertyTypeParameterErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_WARNING) { firDiagnostic ->
+    add(FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER.warningFactory) { firDiagnostic ->
         DelegateUsesExtensionPropertyTypeParameterWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,

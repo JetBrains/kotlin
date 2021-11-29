@@ -12,6 +12,10 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
 
     operator fun get(factory: AbstractKtDiagnosticFactory): KtDiagnosticRenderer? = renderersMap[factory]
 
+    fun containsKey(factory: AbstractKtDiagnosticFactory): Boolean {
+        return renderersMap.containsKey(factory)
+    }
+
     fun put(factory: KtDiagnosticFactory0, message: String) {
         put(factory, SimpleKtDiagnosticRenderer(message))
     }
@@ -102,6 +106,9 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
     }
 
     private fun put(factory: AbstractKtDiagnosticFactory, renderer: KtDiagnosticRenderer) {
+        if (renderersMap.containsKey(factory)) {
+            throw IllegalStateException("Diagnostic renderer is already initialized for $factory")
+        }
         renderersMap[factory] = renderer
     }
 

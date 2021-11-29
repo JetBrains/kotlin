@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -29,20 +26,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         val shouldReportError = delegate.typeRef.coneType.containsTypeParameterFrom(parameters, delegate, context, reporter)
 
         if (shouldReportError) {
-            val diagnostic = getProperDiagnostic(context)
-            reporter.reportOn(declaration.source, diagnostic, context)
-        }
-    }
-
-    private fun getProperDiagnostic(context: CheckerContext): KtDiagnosticFactory0 {
-        val reportAsError = context.session.languageVersionSettings.supportsFeature(
-            LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
-        )
-
-        return if (reportAsError) {
-            FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER
-        } else {
-            FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_WARNING
+            reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, context)
         }
     }
 

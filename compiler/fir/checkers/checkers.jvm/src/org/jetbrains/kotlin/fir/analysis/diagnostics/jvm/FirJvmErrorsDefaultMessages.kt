@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONFLICTING_JVM_DECLARATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICAB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_IN_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET
@@ -231,18 +233,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,
             "Using protected members which are not @JvmStatic in the superclass companion is unsupported yet"
         )
-        map.put(
-            DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET,
-            "Super calls to Java default methods are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'"
-        )
-        map.put(
-            INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET,
-            "Calls to static methods in Java interfaces are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'"
-        )
-        map.put(
-            INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
-            "Interfaces can call default methods via super only within @JvmDefault members. Please annotate the containing interface member with @JvmDefault"
-        )
 
         map.put(
             REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY,
@@ -289,5 +279,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL,
             "Spread operator is prohibited for arguments to signature-polymorphic calls"
         )
+        map.put(
+            JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE,
+            "Java SAM interface constructor references are prohibited"
+        )
+
+        map.checkMissingMessages(FirJvmErrors)
     }
 }

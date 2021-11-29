@@ -501,7 +501,6 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING);
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, "It's forbidden using extension property type parameter ''{0}'' in delegate", TO_STRING);
-        MAP.put(DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_WARNING, "Deprecation: delegate shouldn't use extension property type parameter ''{0}''", TO_STRING);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit");
         MAP.put(NO_COMPANION_OBJECT, "Classifier ''{0}'' does not have a companion object, and thus must be initialized here", NAME);

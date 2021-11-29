@@ -917,8 +917,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
-        val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER by error<KtProperty>(PositioningStrategy.PROPERTY_DELEGATE)
-        val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_WARNING by warning<KtProperty>(PositioningStrategy.PROPERTY_DELEGATE)
+        val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER by deprecationError<KtProperty>(
+            LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate,
+            PositioningStrategy.PROPERTY_DELEGATE
+        )
         val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.PROPERTY_INITIALIZER) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
@@ -956,6 +958,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPECTED_ENUM_CONSTRUCTOR by error<KtConstructor<*>>()
         val EXPECTED_ENUM_ENTRY_WITH_BODY by error<KtEnumEntry>()
         val EXPECTED_PROPERTY_INITIALIZER by error<KtExpression>()
+
         // TODO: need to cover `by` as well as delegate expression
         val EXPECTED_DELEGATED_PROPERTY by error<KtExpression>()
         val EXPECTED_LATEINIT_PROPERTY by error<KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER)
