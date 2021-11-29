@@ -73,21 +73,6 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
-    /*
-    override val apiConfigurationName: String
-        get() = disambiguateName("api")
-
-    override val implementationConfigurationName: String
-        get() = disambiguateName("implementation")
-
-    override val compileOnlyConfigurationName: String
-        get() = disambiguateName("compileOnly")
-
-    override val runtimeOnlyConfigurationName: String
-        get() = disambiguateName("runtimeOnly")
-
-     */
-
     private val _directRefinesDependencies = mutableSetOf<Provider<KotlinGradleFragment>>()
 
     override val directRefinesDependencies: Iterable<KotlinGradleFragment>

@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.refinesClosure
 
+/**
+ * Will register a 'hostSpecificMetadataJar' [Jar] task containing compilation outputs of host specific metadata.
+ * Will add this jar artifact to the given configuration
+ */
 object KotlinHostSpecificMetadataArtifactConfigurator : KotlinGradleFragmentFactory.FragmentConfigurator<KotlinNativeVariantInternal> {
     override fun configure(fragment: KotlinNativeVariantInternal) {
         val project = fragment.project

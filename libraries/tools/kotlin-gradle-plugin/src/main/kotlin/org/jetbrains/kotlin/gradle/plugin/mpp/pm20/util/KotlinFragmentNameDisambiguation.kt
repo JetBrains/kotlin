@@ -18,6 +18,24 @@ internal fun FragmentNameDisambiguation(module: KotlinModule, fragmentName: Stri
     return DefaultKotlinFragmentNameDisambiguation(module, fragmentName)
 }
 
+/**
+ * Mechanism for disambiguating/scoping names for a certain fragment.
+ * e.g. Certain fragments might want to create a configuration called 'api'. However, the name scope
+ * of Gradle configurations is bound to the Gradle project which requires providing different names of mentioned configurations
+ * for FragmentFoo and FragmentBar.
+ *
+ * In such case a disambiguation _could_ produce:
+ *
+ * ```kotlin
+ * // in main module
+ * fragmentFoo.disambiguateName("api") == "fragmentFooApi"
+ * fragmentBar.disambiguateName("api") == "fragmentBarApi"
+ *
+ * // in test module
+ * fragmentFoo.disambiguateName("api") == "fragmentFooTestApi"
+ * fragmentBar.disambiguateName("api") == "fragmentBarTestApi"
+ * ```
+ */
 interface KotlinFragmentNameDisambiguation {
     fun disambiguateName(simpleName: String): String
 }

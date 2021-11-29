@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.locateOrRegister
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 interface KotlinRuntimeDependenciesConfigurationInstantiator : KotlinFragmentConfigurationInstantiator

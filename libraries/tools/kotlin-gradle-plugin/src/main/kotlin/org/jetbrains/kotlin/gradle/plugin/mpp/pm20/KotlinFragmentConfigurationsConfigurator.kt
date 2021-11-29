@@ -19,9 +19,22 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 
+/**
+ * Special 'Configurator' for Gradle configurations.
+ * Such 'Configurator' depend on the concrete [KotlinGradleFragment] instance in order to run
+ * This 'Configurator's can be composed using the [KotlinConfigurationsConfigurator] or [plus] function.
+ */
 fun interface KotlinFragmentConfigurationsConfigurator<in T : KotlinGradleFragment> {
     fun configure(fragment: T, configuration: Configuration)
 }
+
+fun <T : KotlinGradleFragment> KotlinConfigurationsConfigurator(
+    vararg configurators: KotlinFragmentConfigurationsConfigurator<T>
+): KotlinFragmentConfigurationsConfigurator<T> {
+    return CompositeKotlinFragmentConfigurationsConfigurator(configurators.toList())
+}
+
+//region Simple default implementations
 
 object KotlinFragmentPlatformAttributesConfigurator : KotlinFragmentConfigurationsConfigurator<KotlinGradleVariant> {
     override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
@@ -77,6 +90,8 @@ object KotlinFragmentModuleCapabilityConfigurator : KotlinFragmentConfigurations
     }
 }
 
+//endregion
+
 operator fun <T : KotlinGradleFragment> KotlinFragmentConfigurationsConfigurator<T>.plus(
     other: KotlinFragmentConfigurationsConfigurator<T>
 ): KotlinFragmentConfigurationsConfigurator<T> {
@@ -93,12 +108,6 @@ operator fun <T : KotlinGradleFragment> KotlinFragmentConfigurationsConfigurator
     }
 
     return CompositeKotlinFragmentConfigurationsConfigurator(listOf(this, other))
-}
-
-fun <T : KotlinGradleFragment> KotlinConfigurationsConfigurator(
-    vararg configurators: KotlinFragmentConfigurationsConfigurator<T>
-): KotlinFragmentConfigurationsConfigurator<T> {
-    return CompositeKotlinFragmentConfigurationsConfigurator(configurators.toList())
 }
 
 private class CompositeKotlinFragmentConfigurationsConfigurator<in T : KotlinGradleFragment>(

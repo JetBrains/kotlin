@@ -50,7 +50,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
     private fun addAndroidExtensionsRuntime(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
 
-        project.configurations.configureEach all@{ configuration ->
+        project.configurations.all { configuration ->
             val name = configuration.name
             if (name != "implementation" && name != "compile") return@all
 

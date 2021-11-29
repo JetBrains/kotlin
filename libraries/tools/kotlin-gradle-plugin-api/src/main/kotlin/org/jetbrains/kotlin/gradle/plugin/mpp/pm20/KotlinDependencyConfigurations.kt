@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 
 interface KotlinDependencyConfigurations {
