@@ -71,17 +71,32 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
         const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
 
+        private val classesToLoadByParentFromRegistry =
+            System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
+        private val classPrefixesToLoadByParentFromRegistry =
+            System.getProperty("kotlin.jps.classPrefixesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
+
         val classesToLoadByParent: ClassCondition
             get() = ClassCondition { className ->
-                className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
-                        || className.startsWith("org.jetbrains.kotlin.incremental.components.")
-                        || className.startsWith("org.jetbrains.kotlin.incremental.js")
-                        || className == "org.jetbrains.kotlin.config.Services"
-                        || className.startsWith("org.apache.log4j.") // For logging from compiler
-                        || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
-                        || className == "org.jetbrains.kotlin.progress.CompilationCanceledException"
-                        || className == "org.jetbrains.kotlin.modules.TargetId"
-                        || className == "org.jetbrains.kotlin.cli.common.ExitCode"
+                val prefixes = listOf(
+                    "org.apache.log4j.", // For logging from compiler
+                    "org.jetbrains.kotlin.incremental.components.",
+                    "org.jetbrains.kotlin.incremental.js",
+                    "org.jetbrains.kotlin.load.kotlin.incremental.components."
+                ) + classPrefixesToLoadByParentFromRegistry
+
+                val classes = listOf(
+                    "org.jetbrains.kotlin.config.Services",
+                    "org.jetbrains.kotlin.progress.CompilationCanceledStatus",
+                    "org.jetbrains.kotlin.progress.CompilationCanceledException",
+                    "org.jetbrains.kotlin.modules.TargetId",
+                    "org.jetbrains.kotlin.cli.common.ExitCode"
+                ) + classesToLoadByParentFromRegistry
+
+                prefixes.forEach { if (className.startsWith(it)) return@ClassCondition true }
+                classes.forEach { if (className == it) return@ClassCondition true }
+
+                return@ClassCondition false
             }
     }
 
