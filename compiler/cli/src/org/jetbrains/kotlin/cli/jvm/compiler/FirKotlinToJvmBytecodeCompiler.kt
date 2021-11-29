@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.convertToIr
@@ -87,6 +88,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val isMultiModuleChunk = chunk.size > 1
 
         // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
+        val project = (projectEnvironment as? PsiBasedProjectEnvironment)?.project
         for (module in chunk) {
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
             val context = CompilationContext(
@@ -101,7 +103,8 @@ object FirKotlinToJvmBytecodeCompiler {
                 targetIds,
                 incrementalComponents,
                 extendedAnalysisMode,
-                (projectEnvironment as? PsiBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
+                firExtensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
+                irGenerationExtensions = project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
             )
             val generationState = context.compileModule() ?: return false
             outputs += generationState
@@ -112,7 +115,7 @@ object FirKotlinToJvmBytecodeCompiler {
         }
 
         return writeOutputs(
-            (projectEnvironment as? PsiBasedProjectEnvironment)?.project,
+            project,
             projectConfiguration,
             chunk,
             outputs.map(Pair<FirResult, GenerationState>::second),
@@ -208,6 +211,7 @@ object FirKotlinToJvmBytecodeCompiler {
                 librariesScope,
                 lookupTracker = moduleConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
                 providerAndScopeForIncrementalCompilation,
+                firExtensionRegistrars,
                 dependenciesConfigurator = {
                     dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
                     dependencies(moduleConfiguration.jvmModularRoots.map { it.toPath() })
@@ -350,6 +354,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val targetIds: List<TargetId>?,
         val incrementalComponents: IncrementalCompilationComponents?,
         val extendedAnalysisMode: Boolean,
+        val firExtensionRegistrars: List<FirExtensionRegistrar>,
         val irGenerationExtensions: Collection<IrGenerationExtension>
     )
 

@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar {
-    companion object {
-        val AVAILABLE_EXTENSIONS = listOf(
+    companion object : ProjectExtensionDescriptor<FirExtensionRegistrar>(
+        name = "org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar",
+        extensionClass = FirExtensionRegistrar::class.java
+    ) {
+        internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
             FirAdditionalCheckersExtension::class,

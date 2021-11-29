@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.fir.plugin.services
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.plugin.FirAllOpenComponentRegistrar
 import org.jetbrains.kotlin.ir.plugin.GeneratedDeclarationsIrBodyFiller
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
-class IrExtensionRegistrar(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun registerCompilerExtensions(project: Project) {
+        FirExtensionRegistrar.registerExtension(project, FirAllOpenComponentRegistrar())
         IrGenerationExtension.registerExtension(project, GeneratedDeclarationsIrBodyFiller())
     }
 }

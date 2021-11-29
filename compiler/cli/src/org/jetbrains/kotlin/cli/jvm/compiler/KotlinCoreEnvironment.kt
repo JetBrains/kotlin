@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -648,6 +649,7 @@ class KotlinCoreEnvironment private constructor(
             TypeResolutionInterceptor.registerExtensionPoint(project)
             CandidateInterceptor.registerExtensionPoint(project)
             DescriptorSerializerPlugin.registerExtensionPoint(project)
+            FirExtensionRegistrar.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {

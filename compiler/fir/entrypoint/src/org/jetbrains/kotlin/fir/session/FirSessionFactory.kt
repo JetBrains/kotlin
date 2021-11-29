@@ -84,6 +84,7 @@ object FirSessionFactory {
         librariesScope: AbstractProjectFileSearchScope,
         lookupTracker: LookupTracker?,
         providerAndScopeForIncrementalCompilation: ProviderAndScopeForIncrementalCompilation?,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
@@ -113,6 +114,7 @@ object FirSessionFactory {
             sourceScope,
             projectEnvironment,
             providerAndScopeForIncrementalCompilation,
+            extensionRegistrars,
             languageVersionSettings = languageVersionSettings,
             lookupTracker = lookupTracker,
             init = sessionConfigurator
@@ -125,6 +127,7 @@ object FirSessionFactory {
         scope: AbstractProjectFileSearchScope,
         projectEnvironment: AbstractProjectEnvironment,
         providerAndScopeForIncrementalCompilation: ProviderAndScopeForIncrementalCompilation?,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         init: FirSessionConfigurator.() -> Unit = {}
@@ -160,6 +163,9 @@ object FirSessionFactory {
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
                 registerJvmCheckers()
+                for (extensionRegistrar in extensionRegistrars) {
+                    registerExtensions(extensionRegistrar.configure())
+                }
                 init()
             }.configure()
 

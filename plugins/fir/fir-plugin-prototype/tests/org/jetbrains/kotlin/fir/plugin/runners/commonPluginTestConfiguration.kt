@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.fir.plugin.runners
 
-import org.jetbrains.kotlin.fir.plugin.FirAllOpenComponentRegistrar
-import org.jetbrains.kotlin.fir.plugin.services.IrExtensionRegistrar
+import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 
 fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
-    baseFirDiagnosticTestConfiguration(frontendFacade = FirFrontendFacadeWithPlugin)
+    baseFirDiagnosticTestConfiguration()
 
     defaultDirectives {
         +ENABLE_PLUGIN_PHASES
@@ -25,13 +22,6 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
 
     useConfigurators(
         ::PluginAnnotationsProvider,
-        ::IrExtensionRegistrar
+        ::ExtensionRegistrarConfigurator
     )
 }
-
-val FirFrontendFacadeWithPlugin: Constructor<FirFrontendFacade>
-    get() = { testServices ->
-        FirFrontendFacade(testServices) {
-            it.registerExtensions(FirAllOpenComponentRegistrar().configure())
-        }
-    }

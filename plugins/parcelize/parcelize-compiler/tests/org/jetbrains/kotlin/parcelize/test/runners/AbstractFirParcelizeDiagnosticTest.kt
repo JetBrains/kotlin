@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
-import org.jetbrains.kotlin.parcelize.test.services.FirFacadeWithParcelizeExtension
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
-        baseFirDiagnosticTestConfiguration(frontendFacade = FirFacadeWithParcelizeExtension)
+        baseFirDiagnosticTestConfiguration()
 
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES

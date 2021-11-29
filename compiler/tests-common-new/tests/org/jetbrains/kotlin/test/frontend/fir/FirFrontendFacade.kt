@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
@@ -91,6 +92,7 @@ class FirFrontendFacade(
             PsiBasedProjectFileSearchScope(librariesScope),
             lookupTracker = null,
             providerAndScopeForIncrementalCompilation = null,
+            extensionRegistrars = FirExtensionRegistrar.getInstances(project),
             dependenciesConfigurator = {
                 dependencies(configuration.jvmModularRoots.map { it.toPath() })
                 dependencies(configuration.jvmClasspathRoots.map { it.toPath() })

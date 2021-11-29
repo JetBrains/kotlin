@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
@@ -158,6 +159,9 @@ internal object FirIdeSessionFactory {
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 if (isRootModule) {
                     registerExtendedCommonCheckers()
+                }
+                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
+                    registerExtensions(extensionRegistrar.configure())
                 }
             }.configure()
             configureSession?.invoke(this)
