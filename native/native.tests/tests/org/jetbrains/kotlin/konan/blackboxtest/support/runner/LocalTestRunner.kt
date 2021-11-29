@@ -24,7 +24,7 @@ internal class LocalTestRunner(
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(
         compilerCall = executable.loggedCompilerCall,
-        origin = testRun.origin,
+        testCaseId = testRun.testCaseId,
         runArgs = programArgs,
         runParameters = testRun.runParameters
     )
