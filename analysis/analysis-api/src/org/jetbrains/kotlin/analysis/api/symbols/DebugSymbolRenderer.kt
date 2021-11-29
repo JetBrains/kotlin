@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.*
-import java.lang.Appendable
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -26,14 +27,14 @@ import kotlin.reflect.full.declaredMemberExtensionProperties
 import kotlin.reflect.full.extensionReceiverParameter
 
 public object DebugSymbolRenderer {
-    public fun render(symbol: KtSymbol): String = Block().apply { renderSymbol(symbol) }.toString()
+    public fun render(symbol: KtSymbol): String = prettyPrint { renderSymbol(symbol) }
 
     public fun renderAnnotationApplication(application: KtAnnotationApplication): String =
-        Block().apply { renderAnnotationApplication(application) }.toString()
+        prettyPrint { renderAnnotationApplication(application) }
 
-    public fun renderType(type: KtType): String = Block().apply { renderType(type) }.toString()
+    public fun renderType(type: KtType): String = prettyPrint { renderType(type) }
 
-    public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = Block().apply {
+    public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = prettyPrint {
         renderSymbol(symbol)
 
         withIndent {
@@ -48,10 +49,10 @@ public object DebugSymbolRenderer {
                 .filter { (it.extensionReceiverParameter?.type?.classifier as? KClass<*>)?.isInstance(symbol) == true }
                 .forEach { renderProperty(it, this@renderExtra, symbol) }
         }
-    }.toString()
+    }
 
-    public fun KtAnalysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KtSymbol): String = Block().apply {
-        if (symbol !is KtCallableSymbol) return@apply
+    public fun KtAnalysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KtSymbol): String = prettyPrint {
+        if (symbol !is KtCallableSymbol) return@prettyPrint
 
         renderSymbolHeader(symbol)
 
@@ -63,14 +64,14 @@ public object DebugSymbolRenderer {
             renderProperty(KtCallableSymbol::origin, symbol)
 
             @Suppress("DEPRECATION")
-            (symbol as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
+            (symbol as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
                 appendLine().append("getDispatchReceiver()").append(": ")
                 renderType(dispatchType)
             }
         }
     }.toString()
 
-    private fun Block.renderProperty(property: KProperty<*>, vararg args: Any) {
+    private fun PrettyPrinter.renderProperty(property: KProperty<*>, vararg args: Any) {
         try {
             appendLine().append(property.name).append(": ")
             renderValue(property.getter.call(*args))
@@ -79,9 +80,8 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun Block.renderSymbol(symbol: KtSymbol) {
+    private fun PrettyPrinter.renderSymbol(symbol: KtSymbol) {
         renderSymbolHeader(symbol)
-
         val apiClass = getSymbolApiClass(symbol)
         withIndent {
             apiClass.members
@@ -93,28 +93,26 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun Block.renderSymbolHeader(symbol: KtSymbol) {
+    private fun PrettyPrinter.renderSymbolHeader(symbol: KtSymbol) {
         val apiClass = getSymbolApiClass(symbol)
         append(apiClass.simpleName).append(':')
     }
 
-    private fun Block.renderList(values: List<*>) {
+    private fun PrettyPrinter.renderList(values: List<*>) {
         if (values.isEmpty()) {
             append("[]")
             return
         }
 
-        append('[')
-        withIndent {
+        withIndentInSquareBrackets {
             for (value in values) {
                 appendLine()
                 renderValue(value)
             }
         }
-        appendLine().append(']')
     }
 
-    private fun Block.renderSymbolTag(symbol: KtSymbol) {
+    private fun PrettyPrinter.renderSymbolTag(symbol: KtSymbol) {
         fun renderId(id: Any?, symbol: KtSymbol) {
             if (id != null) {
                 renderValue(id)
@@ -138,16 +136,16 @@ public object DebugSymbolRenderer {
         append(")")
     }
 
-    private fun Block.renderAnnotationValue(value: KtAnnotationValue) {
+    private fun PrettyPrinter.renderAnnotationValue(value: KtAnnotationValue) {
         append(KtAnnotationValueRenderer.render(value))
     }
 
-    private fun Block.renderNamedConstantValue(value: KtNamedAnnotationValue) {
+    private fun PrettyPrinter.renderNamedConstantValue(value: KtNamedAnnotationValue) {
         append(value.name).append(" = ")
         renderValue(value.expression)
     }
 
-    private fun Block.renderType(type: KtType) {
+    private fun PrettyPrinter.renderType(type: KtType) {
         if (type.annotations.isNotEmpty()) {
             renderList(type.annotations)
             append(' ')
@@ -158,7 +156,7 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun Block.renderAnnotationApplication(call: KtAnnotationApplication) {
+    private fun PrettyPrinter.renderAnnotationApplication(call: KtAnnotationApplication) {
         renderValue(call.classId)
         append('(')
         call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
@@ -175,7 +173,7 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun Block.renderDeprecationInfo(info: DeprecationInfo) {
+    private fun PrettyPrinter.renderDeprecationInfo(info: DeprecationInfo) {
         append("DeprecationInfo(")
         append("deprecationLevel=${info.deprecationLevel}, ")
         append("propagatesToOverrides=${info.propagatesToOverrides}, ")
@@ -183,7 +181,7 @@ public object DebugSymbolRenderer {
         append(")")
     }
 
-    private fun Block.renderValue(value: Any?) {
+    private fun PrettyPrinter.renderValue(value: Any?) {
         when (value) {
             // Symbol-related values
             is KtSymbol -> renderSymbolTag(value)
@@ -211,7 +209,7 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun Block.renderKtInitializerValue(value: KtInitializerValue) {
+    private fun PrettyPrinter.renderKtInitializerValue(value: KtInitializerValue) {
         when (value) {
             is KtConstantInitializerValue -> {
                 append("KtConstantInitializerValue(")
@@ -226,7 +224,7 @@ public object DebugSymbolRenderer {
         }
     }
 
-    private fun Block.renderAnnotationsList(value: KtAnnotationsList) {
+    private fun PrettyPrinter.renderAnnotationsList(value: KtAnnotationsList) {
         renderList(value.annotations)
     }
 
@@ -255,46 +253,4 @@ public object DebugSymbolRenderer {
         "org.jetbrains.kotlin.analysis.api.fir",
         "org.jetbrains.kotlin.analysis.api.descriptors",
     )
-}
-
-private class Block : Appendable {
-    private val builder = StringBuilder()
-    private var indent = 0
-
-    override fun append(seq: CharSequence): Appendable = apply {
-        seq.split('\n').forEachIndexed { index, line ->
-            if (index > 0) {
-                builder.append('\n')
-            }
-            appendIndentIfNeeded()
-            builder.append(line)
-        }
-    }
-
-    override fun append(seq: CharSequence, start: Int, end: Int): Appendable = apply {
-        append(seq.subSequence(start, end))
-    }
-
-    override fun append(c: Char): Appendable = apply {
-        if (c != '\n') {
-            appendIndentIfNeeded()
-        }
-        builder.append(c)
-    }
-
-    private fun appendIndentIfNeeded() {
-        if (builder.isEmpty() || builder[builder.lastIndex] == '\n') {
-            builder.append(" ".repeat(2 * indent))
-        }
-    }
-
-    fun withIndent(block: Block.() -> Unit) {
-        indent += 1
-        block(this)
-        indent -= 1
-    }
-
-    override fun toString(): String {
-        return builder.toString()
-    }
 }

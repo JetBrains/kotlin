@@ -15,6 +15,7 @@ dependencies {
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":analysis:low-level-api-fir"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-providers"))
 
     api(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
