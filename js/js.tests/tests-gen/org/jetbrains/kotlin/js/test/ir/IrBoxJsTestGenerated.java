@@ -4995,6 +4995,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("inlineClassEquals.kt")
+        public void testInlineClassEquals() throws Exception {
+            runTest("js/js.translator/testData/box/inline/inlineClassEquals.kt");
+        }
+
+        @Test
         @TestMetadata("inlineDefaultArgument.kt")
         public void testInlineDefaultArgument() throws Exception {
             runTest("js/js.translator/testData/box/inline/inlineDefaultArgument.kt");
