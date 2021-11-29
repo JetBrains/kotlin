@@ -1395,6 +1395,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("funInterfaceConstructorReference.kt")
+        public void testFunInterfaceConstructorReference() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/funInterfaceConstructorReference.kt");
+        }
+
+        @Test
         @TestMetadata("genericConstructorCallWithTypeArguments.kt")
         public void testGenericConstructorCallWithTypeArguments() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/genericConstructorCallWithTypeArguments.kt");

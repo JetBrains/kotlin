@@ -1,0 +1,74 @@
+fun interface KRunnable {
+  abstract fun run()
+
+}
+
+typealias KR = KRunnable
+fun interface KSupplier<T : Any?> {
+  abstract fun get(): T
+
+}
+
+typealias KSS = KSupplier<String>
+fun interface KConsumer<T : Any?> {
+  abstract fun accept(x: T)
+
+}
+
+typealias KCS = KConsumer<String>
+fun test1(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRunnable> {
+  return { // BLOCK
+    local fun KRunnable(fn: Function0<Unit>): KRunnable fn /*-> KRunnable */
+
+    ::KRunnable
+  }
+}
+
+fun test1a(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRunnable> {
+  return { // BLOCK
+    local fun KRunnable(fn: Function0<Unit>): KRunnable fn /*-> KRunnable */
+
+    ::KRunnable
+  }
+}
+
+fun test1b(): KFunction<Runnable> {
+  return { // BLOCK
+    local fun Runnable(fn: Function0<Unit>): Runnable fn /*-> Runnable */
+
+    ::Runnable
+  }
+}
+
+fun test2(): Function1<Function0<String>, KSupplier<String>> {
+  return { // BLOCK
+    local fun KSupplier(fn: Function0<String>): KSupplier<String> fn /*-> KSupplier<String> */
+
+    ::KSupplier
+  }
+}
+
+fun test2a(): Function1<Function0<String>, KSupplier<String>> {
+  return { // BLOCK
+    local fun KSupplier(fn: Function0<String>): KSupplier<String> fn /*-> KSupplier<String> */
+
+    ::KSupplier
+  }
+}
+
+fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
+  return { // BLOCK
+    local fun KConsumer(fn: Function1<@ParameterName(name = "x") String, Unit>): KConsumer<String> fn /*-> KConsumer<String> */
+
+    ::KConsumer
+  }
+}
+
+fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
+  return { // BLOCK
+    local fun KConsumer(fn: Function1<@ParameterName(name = "x") String, Unit>): KConsumer<String> fn /*-> KConsumer<String> */
+
+    ::KConsumer
+  }
+}
+

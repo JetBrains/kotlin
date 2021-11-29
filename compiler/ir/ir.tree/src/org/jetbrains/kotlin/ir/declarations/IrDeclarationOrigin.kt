@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+
 interface IrDeclarationOrigin {
     object DEFINED : IrDeclarationOriginImpl("DEFINED")
     object FAKE_OVERRIDE : IrDeclarationOriginImpl("FAKE_OVERRIDE")
@@ -75,6 +77,7 @@ interface IrDeclarationOrigin {
     object ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE : IrDeclarationOriginImpl("ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE")
     object ADAPTER_FOR_SUSPEND_CONVERSION : IrDeclarationOriginImpl("ADAPTER_FOR_SUSPEND_CONVERSION", isSynthetic = true)
     object ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION : IrDeclarationOriginImpl("ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION")
+    object ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR : IrDeclarationOriginImpl("ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR", isSynthetic = true)
 
     object GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("GENERATED_SAM_IMPLEMENTATION")
     object SYNTHETIC_GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("SYNTHETIC_GENERATED_SAM_IMPLEMENTATION", isSynthetic = true)

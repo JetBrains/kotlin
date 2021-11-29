@@ -18,8 +18,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceConstructorDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -67,32 +71,122 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
         val resolvedDescriptor = resolvedCall.resultingDescriptor
-
+        val callableReferenceType = getTypeInferredByFrontendOrFail(ktCallableReference)
         val callBuilder = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
 
-        val callableReferenceType = getTypeInferredByFrontendOrFail(ktCallableReference)
-        if (resolvedCall.valueArguments.isNotEmpty() ||
+        return when {
+            resolvedDescriptor is FunctionInterfaceConstructorDescriptor ||
+                    resolvedDescriptor.original is FunctionInterfaceConstructorDescriptor ->
+                generateFunctionInterfaceConstructorReference(
+                    ktCallableReference, callableReferenceType, callBuilder.descriptor
+                )
+
+            isAdaptedCallableReference(resolvedCall, resolvedDescriptor, callableReferenceType) ->
+                generateAdaptedCallableReference(ktCallableReference, callBuilder, callableReferenceType)
+
+            else ->
+                statementGenerator.generateCallReceiver(
+                    ktCallableReference,
+                    resolvedDescriptor,
+                    resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,resolvedCall.contextReceivers,
+                    isSafe = false
+                ).call { dispatchReceiverValue, extensionReceiverValue, _ ->
+                    generateCallableReference(
+                        ktCallableReference,
+                        callableReferenceType,
+                        callBuilder.descriptor,
+                        callBuilder.typeArguments
+                    ).also { irCallableReference ->
+                        irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
+                        irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
+                    }
+                }
+        }
+    }
+
+    private fun isAdaptedCallableReference(
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        resolvedDescriptor: CallableDescriptor,
+        callableReferenceType: KotlinType
+    ) = resolvedCall.valueArguments.isNotEmpty() ||
             requiresCoercionToUnit(resolvedDescriptor, callableReferenceType) ||
             requiresSuspendConversion(resolvedDescriptor, callableReferenceType)
-        ) {
-            return generateAdaptedCallableReference(ktCallableReference, callBuilder, callableReferenceType)
-        }
 
-        return statementGenerator.generateCallReceiver(
-            ktCallableReference,
-            resolvedDescriptor, resolvedCall.dispatchReceiver,
-            resolvedCall.extensionReceiver,
-            resolvedCall.contextReceivers,
-            isSafe = false
-        ).call { dispatchReceiverValue, extensionReceiverValue, _ ->
-            generateCallableReference(
-                ktCallableReference,
-                callableReferenceType,
-                callBuilder.descriptor,
-                callBuilder.typeArguments
-            ).also { irCallableReference ->
-                irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
-                irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
+    private fun generateFunctionInterfaceConstructorReference(
+        ktCallableReference: KtCallableReferenceExpression,
+        callableReferenceType: KotlinType,
+        descriptor: CallableDescriptor
+    ): IrExpression {
+        //  {
+        //      fun <ADAPTER_FUN>(function: <FUN_TYPE>): <FUN_INTERFACE_TYPE> =
+        //          <FUN_INTERFACE_TYPE>(function)
+        //      ::<ADAPTER_FUN>
+        //  }
+        val startOffset = ktCallableReference.startOffsetSkippingComments
+        val endOffset = ktCallableReference.endOffset
+
+        val irReferenceType = callableReferenceType.toIrType()
+
+        val irAdapterFun = createFunInterfaceConstructorAdapter(startOffset, endOffset, descriptor)
+
+        val irAdapterRef = IrFunctionReferenceImpl(
+            startOffset, endOffset,
+            type = irReferenceType,
+            symbol = irAdapterFun.symbol,
+            typeArgumentsCount = irAdapterFun.typeParameters.size,
+            valueArgumentsCount = irAdapterFun.valueParameters.size,
+            reflectionTarget = irAdapterFun.symbol,
+            origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+        )
+
+        return IrBlockImpl(
+            startOffset, endOffset,
+            irReferenceType,
+            IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE,
+            listOf(
+                irAdapterFun,
+                irAdapterRef
+            )
+        )
+    }
+
+    private fun createFunInterfaceConstructorAdapter(startOffset: Int, endOffset: Int, descriptor: CallableDescriptor): IrSimpleFunction {
+        val samType = descriptor.returnType
+            ?: throw AssertionError("Unresolved return type: $descriptor")
+        val samClassDescriptor = samType.constructor.declarationDescriptor as? ClassDescriptor
+            ?: throw AssertionError("Class type expected: $samType")
+        val irSamType = samType.toIrType()
+
+        val functionParameter = descriptor.valueParameters.singleOrNull()
+            ?: throw AssertionError("Single value parameter expected: $descriptor")
+
+        return context.irFactory.createFunction(
+            startOffset, endOffset,
+            IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
+            IrSimpleFunctionSymbolImpl(),
+            name = samClassDescriptor.name,
+            visibility = DescriptorVisibilities.LOCAL,
+            modality = Modality.FINAL,
+            returnType = irSamType,
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false, isInfix = false,
+            isExpect = false, isFakeOverride = false
+        ).also { irAdapterFun ->
+            context.symbolTable.withScope(irAdapterFun) {
+                // TODO irAdapterFun.metadata = ...?
+                irAdapterFun.dispatchReceiverParameter = null
+                irAdapterFun.extensionReceiverParameter = null
+
+                val irFnParameter = createAdapterParameter(startOffset, endOffset, functionParameter.name, 0, functionParameter.type)
+                irAdapterFun.valueParameters = listOf(irFnParameter)
+                irAdapterFun.body =
+                    context.irFactory.createExpressionBody(
+                        startOffset, endOffset,
+                        IrTypeOperatorCallImpl(
+                            startOffset, endOffset,
+                            irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
+                            IrGetValueImpl(startOffset, endOffset, irFnParameter.symbol)
+                        )
+                    )
             }
         }
     }

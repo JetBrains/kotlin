@@ -1077,6 +1077,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/funImportedFromObject.kt");
         }
 
+        @TestMetadata("funInterfaceConstructorReference.kt")
+        public void testFunInterfaceConstructorReference() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/funInterfaceConstructorReference.kt");
+        }
+
         @TestMetadata("genericConstructorCallWithTypeArguments.kt")
         public void testGenericConstructorCallWithTypeArguments() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/genericConstructorCallWithTypeArguments.kt");
