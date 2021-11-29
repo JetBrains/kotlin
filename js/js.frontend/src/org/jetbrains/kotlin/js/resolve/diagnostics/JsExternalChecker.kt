@@ -119,7 +119,13 @@ object JsExternalChecker : DeclarationChecker {
             }
         }
 
-        reportOnParametersAndReturnTypesIf(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, KotlinType::isInlineClassType)
+        val valueClassInExternalDiagnostic =
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowValueClassesInExternals))
+                ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+            else
+                ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION
+
+        reportOnParametersAndReturnTypesIf(valueClassInExternalDiagnostic, KotlinType::isInlineClassType)
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsEnableExtensionFunctionInExternals)) {
             reportOnParametersAndReturnTypesIf(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, KotlinType::isExtensionFunctionType)
         }

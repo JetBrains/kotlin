@@ -268,6 +268,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             if (!isIrBackendEnabled()) {
                 this[LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping] = LanguageFeature.State.DISABLED
             }
+            if (isIrBackendEnabled()) {
+                this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
+            }
         }
     }
 }

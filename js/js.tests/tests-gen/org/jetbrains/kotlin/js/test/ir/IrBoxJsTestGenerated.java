@@ -7825,6 +7825,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("valueClass.kt")
+        public void testValueClass() throws Exception {
+            runTest("js/js.translator/testData/box/native/valueClass.kt");
+        }
+
+        @Test
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("js/js.translator/testData/box/native/vararg.kt");

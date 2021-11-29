@@ -858,6 +858,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("inlineClassAsParameterOrReturnType_allowed.kt.kt")
+        public void testInlineClassAsParameterOrReturnType_allowed_kt() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnType_allowed.kt.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClassAsParameterOrReturnType.kt.kt")
         public void testInlineClassAsParameterOrReturnType_kt() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClassAsParameterOrReturnType.kt.kt");

@@ -88,6 +88,10 @@ class LanguageVersionSettingsBuilder {
             }
         }
 
+        if (targetBackend?.isIR == true) {
+            specificFeatures[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
+        }
+
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
     }
 
