@@ -83,7 +83,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     override fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> {
         val classId = owner.classId
         if (classId != GENERATED_CLASS_ID && classId !in classIdsForMatchedClasses) return emptyList()
-        return listOf(buildConstructor(classId, isInner = false).symbol)
+        return listOf(buildConstructor(classId, isInner = false, Key).symbol)
     }
 
     private fun generateNestedClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {
@@ -101,13 +101,13 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         require(owner is FirRegularClassSymbol)
         val matchedClassId = owner.fir.matchedClass ?: return emptyList()
         val matchedClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(matchedClassId) ?: return emptyList()
-        return listOf(buildMaterializeFunction(matchedClassSymbol, callableId).symbol)
+        return listOf(buildMaterializeFunction(matchedClassSymbol, callableId, Key).symbol)
     }
 
     private fun buildClass(classId: ClassId): FirRegularClass {
         return buildRegularClass {
             moduleData = session.moduleData
-            origin = key.origin
+            origin = Key.origin
             classKind = ClassKind.CLASS
             scopeProvider = session.kotlinScopeProvider
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
@@ -140,9 +140,6 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     override fun hasPackage(packageFqName: FqName): Boolean {
         return packageFqName == FOO_PACKAGE
     }
-
-    override val key: FirPluginKey
-        get() = Key
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

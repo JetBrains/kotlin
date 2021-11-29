@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.plugin.types
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirTypeAttributeExtension
-import org.jetbrains.kotlin.fir.plugin.SomePluginKey
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -29,9 +27,6 @@ class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExt
         private val PositiveClassId = ClassId(PACKAGE_FQN, Name.identifier("Positive"))
         private val NegativeClassId = ClassId(PACKAGE_FQN, Name.identifier("Negative"))
     }
-
-    override val key: FirPluginKey
-        get() = SomePluginKey
 
     override fun extractAttributeFromAnnotation(annotation: FirAnnotation): ConeAttribute<*>? {
         val sign = when (annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId) {

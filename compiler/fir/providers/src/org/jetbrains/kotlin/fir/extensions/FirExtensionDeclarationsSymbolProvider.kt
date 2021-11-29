@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.validate
+import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -82,7 +83,11 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             else -> extensionsByTopLevelClassId.getValue()[classId]
         } ?: return null
         val generatedClasses = matchedExtensions
-            .mapNotNull { it.generateClassLikeDeclaration(classId) }
+            .mapNotNull { generatorExtension ->
+                generatorExtension.generateClassLikeDeclaration(classId)?.also { symbol ->
+                    symbol.fir.ownerGenerator = generatorExtension
+                }
+            }
             .onEach { it.fir.validate() }
         return when (generatedClasses.size) {
             0 -> null

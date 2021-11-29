@@ -89,7 +89,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         }
     }
 
-    override val key: SomePluginKey
+    private val key: SomePluginKey
         get() = SomePluginKey
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {

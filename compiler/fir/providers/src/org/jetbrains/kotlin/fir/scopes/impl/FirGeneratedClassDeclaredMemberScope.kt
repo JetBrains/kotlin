@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -144,8 +144,7 @@ internal inline fun <T, V> FirSession.groupExtensionsByName(
 internal fun FirSession.getExtensionsForClass(klass: FirClass): List<FirDeclarationGenerationExtension> {
     val extensions = extensionService.declarationGenerators
     return if (klass.origin.generated) {
-        val pluginKey = (klass.origin as FirDeclarationOrigin.Plugin).key
-        extensions.filter { it.key == pluginKey }
+        listOf(klass.ownerGenerator!!)
     } else {
         extensions
     }

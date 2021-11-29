@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
@@ -42,9 +41,6 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
             }
         )
     }
-
-    override val key: FirPluginKey
-        get() = SomePluginKey
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
         return session.predicateBasedProvider.matches(PREDICATE, declaration)

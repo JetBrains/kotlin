@@ -53,7 +53,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         if (callableId.callableName != MATERIALIZE_NAME) return emptyList()
         val classId = callableId.classId ?: return emptyList()
         val matchedClassSymbol = matchedClasses.firstOrNull { it.classId == classId } ?: return emptyList()
-        return listOf(buildMaterializeFunction(matchedClassSymbol, callableId).symbol)
+        return listOf(buildMaterializeFunction(matchedClassSymbol, callableId, Key).symbol)
     }
 
     override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
@@ -62,7 +62,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         if (matchedClasses.none { it.classId == parentClassId }) return null
         return buildRegularClass {
             moduleData = session.moduleData
-            origin = key.origin
+            origin = Key.origin
             classKind = ClassKind.CLASS
             scopeProvider = session.kotlinScopeProvider
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
@@ -74,7 +74,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
 
     override fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> {
         assert(owner.classId in nestedClassIds)
-        return listOf(buildConstructor(owner.classId, isInner = false).symbol)
+        return listOf(buildConstructor(owner.classId, isInner = false, Key).symbol)
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
@@ -94,9 +94,6 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
             return "AllOpenMembersGeneratorKey"
         }
     }
-
-    override val key: FirPluginKey
-        get() = Key
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

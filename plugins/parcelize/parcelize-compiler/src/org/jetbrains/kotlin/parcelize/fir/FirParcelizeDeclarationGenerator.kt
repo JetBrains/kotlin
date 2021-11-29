@@ -176,7 +176,7 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
         }
     }
 
-    override val key: FirPluginKey
+    private val key: FirPluginKey
         get() = FirParcelizePluginKey
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {

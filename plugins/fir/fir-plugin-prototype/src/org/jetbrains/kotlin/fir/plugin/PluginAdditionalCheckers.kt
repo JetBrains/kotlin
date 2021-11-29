@@ -11,14 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionC
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.plugin.checkers.DummyNameChecker
 import org.jetbrains.kotlin.fir.plugin.checkers.SignedNumberCallChecker
 
 class PluginAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
-    override val key: FirPluginKey
-        get() = SomePluginKey
-
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
             get() = setOf(DummyNameChecker)

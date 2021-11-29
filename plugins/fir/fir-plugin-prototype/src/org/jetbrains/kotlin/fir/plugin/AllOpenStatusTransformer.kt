@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
@@ -38,7 +37,4 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)
     }
-
-    override val key: FirPluginKey
-        get() = SomePluginKey
 }

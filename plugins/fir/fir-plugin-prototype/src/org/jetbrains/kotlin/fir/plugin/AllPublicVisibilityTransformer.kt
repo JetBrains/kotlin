@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -78,7 +77,4 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)
     }
-
-    override val key: FirPluginKey
-        get() = SomePluginKey
 }

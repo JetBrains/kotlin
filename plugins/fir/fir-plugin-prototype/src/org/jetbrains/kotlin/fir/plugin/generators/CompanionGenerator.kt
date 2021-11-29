@@ -99,9 +99,6 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         }
     }
 
-    override val key: FirPluginKey
-        get() = Key
-
     object Key : FirPluginKey() {
         override fun toString(): String {
             return "CompanionGeneratorKey"
