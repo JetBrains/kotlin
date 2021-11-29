@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -15,9 +16,12 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -104,12 +108,18 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         for (supertypeEntry in declaration.superTypeListEntries) {
+            val typeReference = supertypeEntry.typeReference ?: continue
+            val type = trace[BindingContext.TYPE, typeReference] ?: continue
             if (supertypeEntry is KtDelegatedSuperTypeEntry) {
-                trace.report(Errors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION.on(supertypeEntry))
-                return
+                val resolvedCall = supertypeEntry.delegateExpression.getResolvedCall(trace.bindingContext) ?: continue
+                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) ||
+                    resolvedCall.resultingDescriptor !is ValueParameterDescriptor ||
+                    resolvedCall.resultingDescriptor.containingDeclaration != trace.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, primaryConstructor]
+                ) {
+                    trace.report(Errors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION.on(supertypeEntry))
+                    return
+                }
             } else {
-                val typeReference = supertypeEntry.typeReference ?: continue
-                val type = trace[BindingContext.TYPE, typeReference] ?: continue
                 val typeDescriptor = type.constructor.declarationDescriptor ?: continue
                 if (!DescriptorUtils.isInterface(typeDescriptor)) {
                     trace.report(Errors.VALUE_CLASS_CANNOT_EXTEND_CLASSES.on(typeReference))

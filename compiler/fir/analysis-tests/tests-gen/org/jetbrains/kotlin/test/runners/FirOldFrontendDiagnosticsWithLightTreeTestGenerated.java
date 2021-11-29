@@ -16868,6 +16868,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("inlineClassCanImplementInterfaceByDelegation.kt")
+            public void testInlineClassCanImplementInterfaceByDelegation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCanImplementInterfaceByDelegation.kt");
+            }
+
+            @Test
             @TestMetadata("inlineClassCanOnlyImplementInterfaces.kt")
             public void testInlineClassCanOnlyImplementInterfaces() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCanOnlyImplementInterfaces.kt");
