@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 
-fun <T> NamedDomainObjectContainer<T>.locateOrRegister(name: String, configure: T.() -> Unit = {}): NamedDomainObjectProvider<T> {
+internal fun <T> NamedDomainObjectContainer<T>.locateOrRegister(name: String, configure: T.() -> Unit = {}): NamedDomainObjectProvider<T> {
     return if (name in names) named(name, configure)
     else register(name, configure)
 }
