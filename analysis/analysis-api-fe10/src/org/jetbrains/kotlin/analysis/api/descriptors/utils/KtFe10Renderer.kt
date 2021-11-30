@@ -112,7 +112,13 @@ internal class KtFe10Renderer(
         when (descriptor) {
             is TypeAliasDescriptor -> renderTypeAlias(descriptor)
             is TypeParameterDescriptor -> renderTypeParameter(descriptor)
-            is ClassDescriptor -> renderClass(descriptor)
+            is ClassDescriptor -> {
+                if (descriptor.kind == ClassKind.ENUM_ENTRY) {
+                    renderEnumEntry(descriptor)
+                } else {
+                    renderClass(descriptor)
+                }
+            }
             else -> error("Unexpected descriptor kind: $descriptor")
         }
     }
@@ -161,7 +167,7 @@ internal class KtFe10Renderer(
                     ClassKind.CLASS -> "class"
                     ClassKind.INTERFACE -> "interface"
                     ClassKind.ENUM_CLASS -> "enum class"
-                    ClassKind.ENUM_ENTRY -> "enum entry"
+                    ClassKind.ENUM_ENTRY -> error("enum entries should not be rendered via renderClass")
                     ClassKind.ANNOTATION_CLASS -> "annotation class"
                     ClassKind.OBJECT -> "object"
                 }
