@@ -205,9 +205,10 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
 
     dependsOn(":dist")
 
-    if (!project.hasProperty("teamcity")) {
-        dependsOn(generateTypeScriptTests)
-    }
+// TODO uncomment after fixing on Windows
+//    if (!project.hasProperty("teamcity")) {
+//        dependsOn(generateTypeScriptTests)
+//    }
 
     if (jsEnabled) {
         dependsOn(testJsRuntime)
