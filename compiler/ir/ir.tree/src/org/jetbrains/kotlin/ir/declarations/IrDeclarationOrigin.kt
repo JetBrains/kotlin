@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
-
 interface IrDeclarationOrigin {
     object DEFINED : IrDeclarationOriginImpl("DEFINED")
     object FAKE_OVERRIDE : IrDeclarationOriginImpl("FAKE_OVERRIDE")

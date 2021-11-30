@@ -18,7 +18,9 @@ fun interface KConsumer<T : Any?> {
 typealias KCS = KConsumer<String>
 fun test1(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRunnable> {
   return { // BLOCK
-    local fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
+    local fun KRunnable(function: Function0<Unit>): KRunnable {
+      return function /*-> KRunnable */
+    }
 
     ::KRunnable
   }
@@ -26,7 +28,9 @@ fun test1(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRunn
 
 fun test1a(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRunnable> {
   return { // BLOCK
-    local fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
+    local fun KRunnable(function: Function0<Unit>): KRunnable {
+      return function /*-> KRunnable */
+    }
 
     ::KRunnable
   }
@@ -34,7 +38,9 @@ fun test1a(): KFunction1<@ParameterName(name = "function") Function0<Unit>, KRun
 
 fun test1b(): KFunction<KRunnable> {
   return { // BLOCK
-    local fun KRunnable(function: Function0<Unit>): KRunnable function /*-> KRunnable */
+    local fun KRunnable(function: Function0<Unit>): KRunnable {
+      return function /*-> KRunnable */
+    }
 
     ::KRunnable
   }
@@ -42,7 +48,9 @@ fun test1b(): KFunction<KRunnable> {
 
 fun test2(): Function1<Function0<String>, KSupplier<String>> {
   return { // BLOCK
-    local fun KSupplier(function: Function0<String>): KSupplier<String> function /*-> KSupplier<String> */
+    local fun KSupplier(function: Function0<String>): KSupplier<String> {
+      return function /*-> KSupplier<String> */
+    }
 
     ::KSupplier
   }
@@ -50,7 +58,9 @@ fun test2(): Function1<Function0<String>, KSupplier<String>> {
 
 fun test2a(): Function1<Function0<String>, KSupplier<String>> {
   return { // BLOCK
-    local fun KSupplier(function: Function0<String>): KSupplier<String> function /*-> KSupplier<String> */
+    local fun KSupplier(function: Function0<String>): KSupplier<String> {
+      return function /*-> KSupplier<String> */
+    }
 
     ::KSupplier
   }
@@ -58,7 +68,9 @@ fun test2a(): Function1<Function0<String>, KSupplier<String>> {
 
 fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
   return { // BLOCK
-    local fun KConsumer(function: Function1<@ParameterName(name = "x") String, Unit>): KConsumer<String> function /*-> KConsumer<String> */
+    local fun KConsumer(function: Function1<@ParameterName(name = "x") String, Unit>): KConsumer<String> {
+      return function /*-> KConsumer<String> */
+    }
 
     ::KConsumer
   }
@@ -66,7 +78,9 @@ fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
 
 fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
   return { // BLOCK
-    local fun KConsumer(function: Function1<@ParameterName(name = "x") String, Unit>): KConsumer<String> function /*-> KConsumer<String> */
+    local fun KConsumer(function: Function1<@ParameterName(name = "x") String, Unit>): KConsumer<String> {
+      return function /*-> KConsumer<String> */
+    }
 
     ::KConsumer
   }

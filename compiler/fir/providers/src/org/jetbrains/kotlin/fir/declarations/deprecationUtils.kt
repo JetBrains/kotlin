@@ -45,7 +45,7 @@ fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
 
 fun FirAnnotationContainer.getDeprecationInfos(currentVersion: ApiVersion): DeprecationsPerUseSite {
     val deprecationByUseSite = mutableMapOf<AnnotationUseSiteTarget?, DeprecationInfo>()
-    val fromJava = this.safeAs<FirDeclaration>()?.isJavaOrEnhancement == true
+    val fromJava = this is FirDeclaration && this.isJavaOrEnhancement
     annotations.extractDeprecationInfoPerUseSite(currentVersion, fromJava).toMap(deprecationByUseSite)
 
     if (this is FirProperty) {

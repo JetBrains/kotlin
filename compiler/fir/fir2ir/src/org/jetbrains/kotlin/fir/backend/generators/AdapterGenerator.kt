@@ -577,12 +577,18 @@ internal class AdapterGenerator(
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
             )
             irAdapterFunction.valueParameters = listOf(irFunctionParameter)
-            irAdapterFunction.body = irFactory.createExpressionBody(
+            irAdapterFunction.body = irFactory.createBlockBody(
                 startOffset, endOffset,
-                IrTypeOperatorCallImpl(
-                    startOffset, endOffset,
-                    irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
-                    IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol)
+                listOf(
+                    IrReturnImpl(
+                        startOffset, endOffset, components.irBuiltIns.nothingType,
+                        irAdapterFunction.symbol,
+                        IrTypeOperatorCallImpl(
+                            startOffset, endOffset,
+                            irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
+                            IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol)
+                        )
+                    )
                 )
             )
             symbolTable.leaveScope(irAdapterFunction)

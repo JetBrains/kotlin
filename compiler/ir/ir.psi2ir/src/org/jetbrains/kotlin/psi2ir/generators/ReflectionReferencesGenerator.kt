@@ -172,19 +172,25 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             isExpect = false, isFakeOverride = false
         ).also { irAdapterFun ->
             context.symbolTable.withScope(irAdapterFun) {
-                // TODO irAdapterFun.metadata = ...?
+                irAdapterFun.metadata = null
                 irAdapterFun.dispatchReceiverParameter = null
                 irAdapterFun.extensionReceiverParameter = null
 
                 val irFnParameter = createAdapterParameter(startOffset, endOffset, functionParameter.name, 0, functionParameter.type)
                 irAdapterFun.valueParameters = listOf(irFnParameter)
                 irAdapterFun.body =
-                    context.irFactory.createExpressionBody(
+                    context.irFactory.createBlockBody(
                         startOffset, endOffset,
-                        IrTypeOperatorCallImpl(
-                            startOffset, endOffset,
-                            irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
-                            IrGetValueImpl(startOffset, endOffset, irFnParameter.symbol)
+                        listOf(
+                            IrReturnImpl(
+                                startOffset, endOffset, context.irBuiltIns.nothingType,
+                                irAdapterFun.symbol,
+                                IrTypeOperatorCallImpl(
+                                    startOffset, endOffset,
+                                    irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
+                                    IrGetValueImpl(startOffset, endOffset, irFnParameter.symbol)
+                                )
+                            )
                         )
                     )
             }

@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowKotlinFunInterfaceConstructorReference
-// IGNORE_BACKEND: JVM, JS
+// IGNORE_BACKEND: JVM
 //  ^ feature supported in IR-based backends only
 
 fun interface KSupplier<T> {

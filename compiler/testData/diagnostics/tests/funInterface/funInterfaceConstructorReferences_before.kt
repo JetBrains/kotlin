@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -AllowKotlinFunInterfaceConstructorReference -ProhibitJavaSamInterfaceConstructorReference
+// !LANGUAGE: -AllowKotlinFunInterfaceConstructorReference
 
 fun interface Foo {
     fun run()
@@ -7,4 +7,4 @@ fun interface Foo {
 
 val x = ::<!FUN_INTERFACE_CONSTRUCTOR_REFERENCE!>Foo<!>
 val y = Foo { }
-val z = ::Runnable
+val z = ::<!JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE!>Runnable<!>

@@ -365,7 +365,6 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_1_6(1, 6),
     KOTLIN_1_7(1, 7),
     KOTLIN_1_8(1, 8),
-    KOTLIN_1_9(1, 9),
     ;
 
     override val isStable: Boolean

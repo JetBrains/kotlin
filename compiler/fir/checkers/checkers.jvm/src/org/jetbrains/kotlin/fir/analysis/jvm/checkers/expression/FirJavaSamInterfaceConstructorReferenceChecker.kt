@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 object FirJavaSamInterfaceConstructorReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirCallableReferenceAccess) return
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJavaSamInterfaceConstructorReference)) return
 
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         val referredSymbol = reference.resolvedSymbol
