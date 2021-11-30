@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.generators.model
 
 class WithoutJvmInlineTestMethodModel(
-    val source: SimpleTestMethodModel
+    val source: SimpleTestMethodModel,
+    val withAnnotation: Boolean
 ) : MethodModel {
     object Kind : MethodModel.Kind()
 
     override val kind: MethodModel.Kind
         get() = Kind
     override val name: String
-        get() = "${source.name}WithoutJvmInlineAnnotation"
+        get() = source.name + if (withAnnotation) "" else "_valueClasses"
     override val dataString: String
         get() = source.dataString
     override val tags: List<String>

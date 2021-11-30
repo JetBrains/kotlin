@@ -1,9 +1,8 @@
 // WITH_STDLIB
-// WORKS_WITHOUT_JVM_INLINE
+// WORKS_WHEN_VALUE_CLASS
 // !LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Result<T>(val a: Any?)
 
 fun box(): String {

@@ -12,7 +12,7 @@ import java.util.regex.Pattern
 
 fun TestEntityModel.containsWithoutJvmInline(backend: TargetBackend): Boolean = backend == TargetBackend.JVM_IR && when (this) {
     is ClassModel -> methods.any { it.containsWithoutJvmInline(backend) } || innerTestClasses.any { it.containsWithoutJvmInline(backend) }
-    is SimpleTestMethodModel -> file.readLines().any { Regex("^\\s*//\\s*WORKS_WITHOUT_JVM_INLINE\\s*$").matches(it) }
+    is SimpleTestMethodModel -> file.readLines().any { Regex("^\\s*//\\s*WORKS_WHEN_VALUE_CLASS\\s*$").matches(it) }
     else -> false
 }
 
@@ -33,5 +33,6 @@ fun methodModelLocator(
     skipIgnored,
     tags
 ).let { methodModel ->
-    listOf(methodModel) + if (methodModel.containsWithoutJvmInline(targetBackend)) listOf(WithoutJvmInlineTestMethodModel(methodModel)) else emptyList()
+    if (methodModel.containsWithoutJvmInline(targetBackend)) listOf(true, false).map { WithoutJvmInlineTestMethodModel(methodModel, it) }
+    else listOf(methodModel)
 }

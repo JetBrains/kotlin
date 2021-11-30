@@ -26,8 +26,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
 
     fun runTest(
         @TestDataFile testDataFileName: String,
+        expectedFileTransformer: ((String) -> String)? = null,
         beforeDispose: (TestConfiguration) -> Unit = {},
-        expectedFileTransformer: ((String) -> String)? = null
     ) {
         try {
             runTestImpl(testDataFileName, expectedFileTransformer)

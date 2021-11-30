@@ -19291,13 +19291,13 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @Test
         @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
         public void testBoxResultInlineClassOfConstructorCall() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", "@kotlin.jvm.JvmInline"));
         }
 
         @Test
         @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
-        public void testBoxResultInlineClassOfConstructorCallWithoutJvmInlineAnnotation() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("@(kotlin.jvm.)?JvmInline", ""));
+        public void testBoxResultInlineClassOfConstructorCall_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", ""));
         }
 
         @Test

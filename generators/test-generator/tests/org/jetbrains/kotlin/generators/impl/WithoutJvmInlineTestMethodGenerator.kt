@@ -24,7 +24,8 @@ object WithoutJvmInlineTestMethodGenerator : MethodGenerator<WithoutJvmInlineTes
     override fun generateBody(method: WithoutJvmInlineTestMethodModel, p: Printer) {
         with(method) {
             val filePath = KtTestUtil.getFilePath(source.file) + if (source.file.isDirectory) "/" else ""
-            p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\", s -> s.replaceAll(\"@(kotlin.jvm.)?JvmInline\", \"\"));")
+            val replacement = if (method.withAnnotation) "@kotlin.jvm.JvmInline" else ""
+            p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\", s -> s.replaceAll(\"OPTIONAL_JVM_INLINE_ANNOTATION\", \"$replacement\"));")
         }
     }
 }
