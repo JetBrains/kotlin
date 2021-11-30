@@ -441,8 +441,51 @@ private func testSuspendFunctionType1(f: KotlinSuspendFunction1) throws {
 private func testSuspendFunctionType() throws {
     try testSuspendFunctionType0(f: CoroutinesKt.getSuspendLambda0(), expectedResult: "lambda 0")
     try testSuspendFunctionType0(f: CoroutinesKt.getSuspendCallableReference0(), expectedResult: "callable reference 0")
+    try testSuspendFunctionType0(f: CoroutinesKt.getSuspendChild0(), expectedResult: "child 0")
     try testSuspendFunctionType1(f: CoroutinesKt.getSuspendLambda1())
     try testSuspendFunctionType1(f: CoroutinesKt.getSuspendCallableReference1())
+    try testSuspendFunctionType1(f: CoroutinesKt.getSuspendChild1())
+}
+
+private func testKSuspendFunctionType0(f: KotlinKSuspendFunction0, expectedResult: String) throws {
+    try assertTrue((f as AnyObject) is KotlinKSuspendFunction0)
+
+    var result: String? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    f.invoke { _result, _error in
+        completionCalled += 1
+        result = _result as? String
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertEquals(actual: result, expected: expectedResult)
+    try assertNil(error)
+}
+
+private func testKSuspendFunctionType1(f: KotlinKSuspendFunction1) throws {
+    try assertTrue((f as AnyObject) is KotlinKSuspendFunction1)
+
+    var result: String? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    f.invoke(p1: "suspend function type") { _result, _error in
+        completionCalled += 1
+        result = _result as? String
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertEquals(actual: result, expected: "suspend function type 1")
+    try assertNil(error)
+}
+
+private func testKSuspendFunctionType() throws {
+    try testKSuspendFunctionType0(f: CoroutinesKt.getKSuspendCallableReference0(), expectedResult: "callable reference 0")
+    try testKSuspendFunctionType1(f: CoroutinesKt.getKSuspendCallableReference1())
 }
 
 private func testSuspendFunctionSwiftImpl() throws {
@@ -480,6 +523,7 @@ class CoroutinesTests : SimpleTestProvider {
         test("TestImplicitThrows1", testImplicitThrows1)
         test("TestImplicitThrows2", testImplicitThrows2)
         test("TestSuspendFunctionType", testSuspendFunctionType)
+        test("TestKSuspendFunctionType", testSuspendFunctionType)
         test("TestSuspendFunctionSwiftImpl", testSuspendFunctionSwiftImpl)
     }
 }

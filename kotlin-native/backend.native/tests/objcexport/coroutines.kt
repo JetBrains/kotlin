@@ -11,6 +11,7 @@ import kotlin.coroutines.intrinsics.*
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ObjCErrorException
 import kotlin.test.*
+import kotlin.reflect.*
 
 class CoroutineException : Throwable()
 
@@ -185,14 +186,29 @@ class ThrowCancellationExceptionImpl : ThrowCancellationException() {
     }
 }
 
+class suspendFunctionChild0: suspend () -> String {
+    override suspend fun invoke(): String = "child 0"
+}
+
+class suspendFunctionChild1: suspend (String) -> String {
+    override suspend fun invoke(s: String): String = "$s 1"
+}
+
 fun getSuspendLambda0(): suspend () -> String = { "lambda 0" }
 
 private suspend fun suspendCallableReference0Target(): String = "callable reference 0"
 fun getSuspendCallableReference0(): suspend () -> String = ::suspendCallableReference0Target
 
+fun getSuspendChild0() = suspendFunctionChild0()
+
 fun getSuspendLambda1(): suspend (String) -> String = { "$it 1" }
 
 private suspend fun suspendCallableReference1Target(str: String): String = "$str 1"
 fun getSuspendCallableReference1(): suspend (String) -> String = ::suspendCallableReference1Target
+fun getSuspendChild1() = suspendFunctionChild1()
+
 
 suspend fun invoke1(block: suspend (Any?) -> Any?, argument: Any?): Any? = block(argument)
+
+fun getKSuspendCallableReference0(): KSuspendFunction0<String> = ::suspendCallableReference0Target
+fun getKSuspendCallableReference1(): KSuspendFunction1<String, String> = ::suspendCallableReference1Target
