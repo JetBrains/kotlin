@@ -610,10 +610,6 @@ class FirElementSerializer private constructor(
     private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
         val coneType = typeRef.coneType
         return typeProto(coneType, toSuper, correspondingTypeRef = typeRef).also { typeProto ->
-            for (annotation in coneType.attributes.customAnnotations) {
-                extension.serializeTypeAnnotation(annotation, typeProto)
-            }
-
             val compilerAttributes = mutableListOf<ConeAttribute<*>>()
             val extensionAttributes = mutableListOf<ConeAttribute<*>>()
             for (attribute in coneType.attributes) {
@@ -654,7 +650,6 @@ class FirElementSerializer private constructor(
         isDefinitelyNotNullType: Boolean = false,
     ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
-
         when (type) {
             is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeKotlinErrorType -> {
@@ -724,6 +719,10 @@ class FirElementSerializer private constructor(
 
         if (type.isMarkedNullable != builder.nullable) {
             builder.nullable = type.isMarkedNullable
+        }
+
+        for (annotation in type.attributes.customAnnotations) {
+            extension.serializeTypeAnnotation(annotation, builder)
         }
 
         // TODO: abbreviated type
