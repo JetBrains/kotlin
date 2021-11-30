@@ -105,10 +105,7 @@ public object DebugSymbolRenderer {
         }
 
         withIndentInSquareBrackets {
-            for (value in values) {
-                appendLine()
-                renderValue(value)
-            }
+            printCollection(values, separator = "\n") { renderValue(it) }
         }
     }
 
