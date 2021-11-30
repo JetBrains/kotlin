@@ -9,10 +9,28 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 
+/**
+ * A Kotlin constant value. This value amy be used as `const val` initializer or annotation argument.
+ * Also, may represent evaluated constant value. So, `1 + 2` will be represented as `KtIntConstantValue(3)`
+ *
+ * For more info about constant values please see [official Kotlin documentation](https://kotlinlang.org/docs/properties.html#compile-time-constants])
+ */
 public sealed class KtConstantValue(public val constantValueKind: ConstantValueKind<*>) {
+    /**
+     * The constant value. The type of this value is always the type specified in its name, i.e, it is `Boolean` for [KtBooleanConstantValue]
+     *
+     * It is null only for [KtNullConstantValue]
+     */
     public abstract val value: Any?
+
+    /**
+     * Source element from which the value was created. May be null for constants from non-source files.
+     */
     public abstract val sourcePsi: KtElement?
 
+    /**
+     * Constant value represented as Kotlin code. E.g: `1`, `2f, `3u` `null`, `"str"`
+     */
     public abstract fun renderAsKotlinConstant(): String
 
     public class KtNullConstantValue(override val sourcePsi: KtElement?) : KtConstantValue(ConstantValueKind.Null) {
@@ -111,6 +129,9 @@ public sealed class KtConstantValue(public val constantValueKind: ConstantValueK
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
+    /**
+     * Value which is not cosntant or there was an error (e.g, division by 0) bug during value evaluation
+     */
     public class KtErrorConstantValue(
         public val errorMessage: String,
         override val sourcePsi: KtElement?,

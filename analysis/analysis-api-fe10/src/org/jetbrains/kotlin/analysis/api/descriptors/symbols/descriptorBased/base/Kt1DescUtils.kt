@@ -299,9 +299,9 @@ internal fun ConstantValue<*>.toKtAnnotationValue(): KtAnnotationValue {
         is KClassValue -> when (val value = value) {
             is KClassValue.Value.LocalClass -> {
                 val descriptor = value.type.constructor.declarationDescriptor as ClassDescriptor
-                KtLocalKClassAnnotationValue(descriptor.source.getPsi() as KtClassOrObject, sourcePsi = null)
+                KtKClassAnnotationValue.KtLocalKClassAnnotationValue(descriptor.source.getPsi() as KtClassOrObject, sourcePsi = null)
             }
-            is KClassValue.Value.NormalClass -> KtNonLocalKClassAnnotationValue(value.classId, sourcePsi = null)
+            is KClassValue.Value.NormalClass -> KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue(value.classId, sourcePsi = null)
         }
 
         is AnnotationValue -> {
@@ -461,5 +461,5 @@ internal fun AnnotationDescriptor.toKtAnnotationApplication(): KtAnnotationAppli
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments() =
     allValueArguments.map { (name, value) ->
-        KtNamedAnnotationValue(name.asString(), value.toKtAnnotationValue())
+        KtNamedAnnotationValue(name, value.toKtAnnotationValue())
     }

@@ -45,7 +45,7 @@ private class FirNameValuePairForAnnotationArgument(
     override fun setValue(p0: PsiAnnotationMemberValue) = cannotModify()
 
     private val _nameIdentifier: PsiIdentifier by lazyPub {
-        LightIdentifier(parent.manager, constantValue.name)
+        LightIdentifier(parent.manager, constantValue.name.asString())
     }
 
     override fun getNameIdentifier(): PsiIdentifier = _nameIdentifier
@@ -54,5 +54,5 @@ private class FirNameValuePairForAnnotationArgument(
 
     override fun getLiteralValue(): String? = (value as? PsiLiteralExpression)?.value?.toString()
 
-    override fun getName(): String = constantValue.name
+    override fun getName(): String = constantValue.name.asString()
 }

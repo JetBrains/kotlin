@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.renderer
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.annotations.KtUnsupportedAnnotationValue
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -65,5 +64,5 @@ private fun renderConstant(value: FirExpression, useSiteSession: FirSession): St
     val constantValue = FirAnnotationValueConverter.toConstantValue(evaluated ?: value, useSiteSession)
         ?: KtUnsupportedAnnotationValue
 
-    return KtAnnotationValueRenderer.render(constantValue)
+    return constantValue.renderAsSourceCode()
 }

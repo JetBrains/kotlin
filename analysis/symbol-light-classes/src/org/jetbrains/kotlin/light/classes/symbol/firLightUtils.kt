@@ -202,13 +202,13 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             FirPsiExpression(sourcePsi, parent, psiExpression)
         }
         KtUnsupportedAnnotationValue -> null
-        is KtErrorClassAnnotationValue -> null
-        is KtLocalKClassAnnotationValue -> null
-        is KtNonLocalKClassAnnotationValue -> toAnnotationMemberValue(parent)
+        is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> null
+        is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> null
+        is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue -> toAnnotationMemberValue(parent)
     }
 }
 
-private fun KtNonLocalKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
+private fun KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
     val fqName = classId.asSingleFqName()
     val canonicalText = psiType(
         fqName.asString(), parent, boxPrimitiveType = false /* TODO value.arrayNestedness > 0*/,

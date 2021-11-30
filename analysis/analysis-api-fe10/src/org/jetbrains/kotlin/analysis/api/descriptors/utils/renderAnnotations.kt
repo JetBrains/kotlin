@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
+import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationValue
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -39,7 +39,7 @@ internal fun PrettyPrinter.renderFe10Annotations(
             printCollectionIfNotEmpty(valueArguments, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
                 append(name.render())
                 append(" = ")
-                append(KtAnnotationValueRenderer.render(value.toKtAnnotationValue()))
+                append(value.toKtAnnotationValue().renderAsSourceCode())
             }
 
             append(separator)

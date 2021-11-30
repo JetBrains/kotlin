@@ -109,7 +109,8 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         }
 
         printCollection(namedValues, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
-            append(name).append(" = ")
+            append(name.render())
+            append(" = ")
             renderConstantValueDebug(value)
         }
     }
@@ -122,7 +123,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             is KtEnumEntryAnnotationValue -> append(value.callableId?.asSingleFqName()?.render())
             is KtConstantAnnotationValue -> append(value.constantValue.constantValueKind.asString).append("(").append(value.constantValue.value.toString()).append(")")
             KtUnsupportedAnnotationValue -> append(KtUnsupportedAnnotationValue::class.java.simpleName)
-            is KtKClassAnnotationValue -> append(value.render())
+            is KtKClassAnnotationValue -> append(value.renderAsSourceCode())
         }
     }
 

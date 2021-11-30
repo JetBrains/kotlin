@@ -16,21 +16,22 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
-internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSession): Map<String, FirExpression> {
-    if (annotation.resolved) return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name.identifier }
+internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSession): Map<Name, FirExpression> {
+    if (annotation.resolved) return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }
     if (annotation !is FirAnnotationCall) return emptyMap()
     val annotationCone = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: return emptyMap()
 
     val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.primaryConstructorIfAny(session)?.fir
     val annotationCtorParameterNames = annotationPrimaryCtor?.valueParameters?.map { it.name }
 
-    val resultMap = mutableMapOf<String, FirExpression>()
+    val resultMap = mutableMapOf<Name, FirExpression>()
 
     val namesSequence = annotationCtorParameterNames?.asSequence()?.iterator()
 
     for (argument in annotation.argumentList.arguments.filterIsInstance<FirNamedArgumentExpression>()) {
-        resultMap[argument.name.asString()] = argument.expression
+        resultMap[argument.name] = argument.expression
     }
 
     if (namesSequence != null) {
@@ -38,7 +39,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSess
             if (argument is FirNamedArgumentExpression) continue
 
             while (namesSequence.hasNext()) {
-                val name = namesSequence.next().asString()
+                val name = namesSequence.next()
                 if (!resultMap.contains(name)) {
                     resultMap[name] = argument
                     break

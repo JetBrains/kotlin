@@ -17,13 +17,14 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal object FirAnnotationValueConverter {
     fun toNamedConstantValue(
-        argumentMapping: Map<String, FirExpression>,
+        argumentMapping: Map<Name, FirExpression>,
         session: FirSession,
     ): List<KtNamedAnnotationValue> =
         argumentMapping.map { (name, expression) ->
@@ -100,9 +101,9 @@ internal object FirAnnotationValueConverter {
                     is FirConstructorSymbol -> {
                         val classSymbol = resolvedSymbol.getContainingClassSymbol(session) ?: return null
                         if ((classSymbol.fir as? FirClass)?.classKind == ClassKind.ANNOTATION_CLASS) {
-                            val resultMap = mutableMapOf<String, FirExpression>()
+                            val resultMap = mutableMapOf<Name, FirExpression>()
                             argumentMapping?.entries?.forEach { (arg, param) ->
-                                resultMap[param.name.asString()] = arg
+                                resultMap[param.name] = arg
                             }
                             KtAnnotationApplicationValue(
                                 KtAnnotationApplication(
@@ -135,9 +136,12 @@ internal object FirAnnotationValueConverter {
             is FirGetClassCall -> {
                 val symbol = (argument as FirResolvedQualifier).symbol
                 when {
-                    symbol == null -> KtErrorClassAnnotationValue(sourcePsi)
-                    symbol.classId.isLocal -> KtLocalKClassAnnotationValue(symbol.fir.psi as KtClassOrObject, sourcePsi)
-                    else -> KtNonLocalKClassAnnotationValue(symbol.classId, sourcePsi)
+                    symbol == null -> KtKClassAnnotationValue.KtErrorClassAnnotationValue(sourcePsi)
+                    symbol.classId.isLocal -> KtKClassAnnotationValue.KtLocalKClassAnnotationValue(
+                        symbol.fir.psi as KtClassOrObject,
+                        sourcePsi
+                    )
+                    else -> KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue(symbol.classId, sourcePsi)
                 }
             }
             else -> null

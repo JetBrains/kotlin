@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-public data class KtNamedAnnotationValue(val name: String, val expression: KtAnnotationValue)
+import org.jetbrains.kotlin.name.Name
+
+/**
+ * Name-Value pair which is used as annotation argument.
+ */
+public data class KtNamedAnnotationValue(val name: Name, val expression: KtAnnotationValue)

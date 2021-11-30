@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.renderer.render
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -138,7 +139,7 @@ public object DebugSymbolRenderer {
     }
 
     private fun PrettyPrinter.renderNamedConstantValue(value: KtNamedAnnotationValue) {
-        append(value.name).append(" = ")
+        append(value.name.render()).append(" = ")
         renderValue(value.expression)
     }
 

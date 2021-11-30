@@ -36,11 +36,17 @@ public sealed class KtAnnotationValue(
  */
 public object KtUnsupportedAnnotationValue : KtAnnotationValue()
 
+/**
+ * Array of annotation values. E.g: `@A([1, 2])`
+ */
 public class KtArrayAnnotationValue(
     public val values: Collection<KtAnnotationValue>,
     override val sourcePsi: KtElement?,
 ) : KtAnnotationValue()
 
+/**
+ * Other annotation used as argument. E.g: `@A(B)` where `B` is annotation too
+ */
 public class KtAnnotationApplicationValue(
     public val annotationValue: KtAnnotationApplication,
 ) : KtAnnotationValue() {
@@ -48,30 +54,73 @@ public class KtAnnotationApplicationValue(
 }
 
 
-public sealed class KtKClassAnnotationValue : KtAnnotationValue()
+/**
+ * Class reference used as annotation argument. E.g: `@A(String::class)`
+ */
+public sealed class KtKClassAnnotationValue : KtAnnotationValue() {
+    /**
+     * Non-local Class reference used as annotation value. E.g: `@A(String::class)`
+     */
+    public class KtNonLocalKClassAnnotationValue(
+        /**
+         * Fully qualified name of the class used
+         */
+        public val classId: ClassId,
+        override val sourcePsi: KtElement?,
+    ) : KtKClassAnnotationValue()
 
-public class KtNonLocalKClassAnnotationValue(
-    public val classId: ClassId,
-    override val sourcePsi: KtElement?,
-) : KtKClassAnnotationValue()
+    /**
+     * Non-local class reference used as annotation argument.
+     *
+     * E.g:
+     * ```
+     * fun x() {
+     *    class Y
+     *
+     *    @A(B::class)
+     *    fun foo() {}
+     * }
+     * ```
+     */
+    public class KtLocalKClassAnnotationValue(
+        /**
+         * [PsiElement] of the class used. As we can get non-local class only for sources, it is always present.
+         */
+        public val ktClass: KtClassOrObject,
+        override val sourcePsi: KtElement?,
+    ) : KtKClassAnnotationValue()
 
-public class KtLocalKClassAnnotationValue(
-    public val ktClass: KtClassOrObject,
-    override val sourcePsi: KtElement?,
-) : KtKClassAnnotationValue()
+    /**
+     * Non-existing class reference used as annotation argument. E.g: `@A(NON_EXISTING_CLASS::class)`
+     */
+    public class KtErrorClassAnnotationValue(
+        override val sourcePsi: KtElement?,
+    ) : KtKClassAnnotationValue()
+}
 
-public class KtErrorClassAnnotationValue(
-    override val sourcePsi: KtElement?,
-) : KtKClassAnnotationValue()
-
+/**
+ * Some enum entry (enum constant) used as annotation argument. E.g: `@A(Color.RED)`
+ */
 public class KtEnumEntryAnnotationValue(
+    /**
+     * Fully qualified name of used enum entry.
+     */
     public val callableId: CallableId?,
     override val sourcePsi: KtElement?,
 ) : KtAnnotationValue()
 
+/**
+ * Some constant value (which may be used as initializer of `const val`) used as annotation argument. It may be String literal, number literal or some simple expression.
+ * E.g: `@A(1 +2, "a" + "b")` -- both arguments here are [KtConstantAnnotationValue]
+ * @see [KtConstantValue]
+ */
 public class KtConstantAnnotationValue(
     public val constantValue: KtConstantValue,
 ) : KtAnnotationValue()
 
-public fun KtAnnotationValue.render(): String =
+
+/**
+ * Render annotation value, resulted string is a valid Kotlin source code.
+ */
+public fun KtAnnotationValue.renderAsSourceCode(): String =
     KtAnnotationValueRenderer.render(this)
