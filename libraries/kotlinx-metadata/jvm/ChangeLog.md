@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## 0.4.1
+
+- Add `KmProperty.syntheticMethodForDelegate` for optimized delegated properties (KT-39055).
+
 ## 0.4.0
 
 - Update to Kotlin 1.6 with metadata version 1.6, support reading/writing metadata of version 1.7 which will be used in Kotlin 1.7.
