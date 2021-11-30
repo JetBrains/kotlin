@@ -30,6 +30,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
     testCompileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
     Ide.IJ {
         testCompile(intellijDep("devkit"))
