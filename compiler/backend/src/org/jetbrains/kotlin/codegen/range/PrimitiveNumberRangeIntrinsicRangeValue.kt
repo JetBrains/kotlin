@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.kotlin.types.*
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     rangeCall: ResolvedCall<out CallableDescriptor>

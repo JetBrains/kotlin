@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.range.comparison.SignedIntegerComparisonGenerator
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
-import org.jetbrains.kotlin.codegen.range.getRangeOrProgressionElementType
+import org.jetbrains.kotlin.types.getRangeOrProgressionElementType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression

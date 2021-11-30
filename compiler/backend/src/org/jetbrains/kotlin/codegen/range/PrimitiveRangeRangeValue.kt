@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.getRangeOrProgressionElementType
 
 class PrimitiveRangeRangeValue(private val rangeExpression: KtExpression) : ReversableRangeValue {
 

@@ -138,13 +138,6 @@ public class DescriptorAsmUtil {
         return boxedPrimitiveType != null ? boxedPrimitiveType : type;
     }
 
-    public static boolean isPrimitiveNumberClassDescriptor(DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof ClassDescriptor)) {
-            return false;
-        }
-        return isPrimitiveClass((ClassDescriptor) descriptor) && !isBoolean((ClassDescriptor) descriptor);
-    }
-
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, JvmDefaultMode jvmDefaultMode) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
                 (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
