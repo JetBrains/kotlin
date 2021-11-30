@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
@@ -89,7 +90,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         containingClass: IrClass,
         staticOwner: FirCallableDeclaration
     ): Boolean {
-        return !staticOwner.isStatic &&
+        return !staticOwner.isStatic && !containingClass.isFacadeClass &&
                 (!containingClass.isObject || containingClass.isCompanion || !staticOwner.hasAnnotation(JVM_STATIC_CLASS_ID))
     }
 

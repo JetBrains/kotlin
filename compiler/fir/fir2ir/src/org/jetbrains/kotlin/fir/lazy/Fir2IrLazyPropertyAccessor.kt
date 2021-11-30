@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -32,7 +33,7 @@ class Fir2IrLazyPropertyAccessor(
     private val firAccessor: FirPropertyAccessor?,
     private val isSetter: Boolean,
     private val firParentProperty: FirProperty,
-    firParentClass: FirRegularClass,
+    firParentClass: FirRegularClass?,
     symbol: Fir2IrSimpleFunctionSymbol,
     isFakeOverride: Boolean
 ) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
@@ -60,7 +61,7 @@ class Fir2IrLazyPropertyAccessor(
     }
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        val containingClass = parent as? IrClass
+        val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty)
         ) {
             createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
@@ -105,6 +106,7 @@ class Fir2IrLazyPropertyAccessor(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
+        if (firParentClass == null) return@lazyVar emptyList()
         firParentProperty.generateOverriddenAccessorSymbols(
             firParentClass,
             !isSetter,

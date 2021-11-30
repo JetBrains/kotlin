@@ -31,7 +31,7 @@ class Fir2IrLazySimpleFunction(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val fir: FirSimpleFunction,
-    firParent: FirRegularClass,
+    firParent: FirRegularClass?,
     symbol: Fir2IrSimpleFunctionSymbol,
     isFakeOverride: Boolean
 ) : AbstractFir2IrLazyFunction<FirSimpleFunction>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
@@ -90,6 +90,7 @@ class Fir2IrLazySimpleFunction(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
+        if (firParent == null) return@lazyVar emptyList()
         val parent = parent
         if (isFakeOverride && parent is Fir2IrLazyClass) {
             fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(
