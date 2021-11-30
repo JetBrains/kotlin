@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (a: kotlin.Int) }
-targetFunction = ERR<Unresolved call, [/C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean]>
-substitutor = <empty substitutor>

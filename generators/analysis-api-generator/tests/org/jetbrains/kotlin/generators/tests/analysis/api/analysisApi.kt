@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnTypesTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.callResolver.AbstractKtFe10ResolveCallTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.compileTimeConstantProvider.AbstractKtFe10CompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10ReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10WhenMissingCasesTest
@@ -148,8 +149,7 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("callResolver") {
         test(
             fir = AbstractFirResolveCallTest::class,
-            // TODO: re-enable after KtFe10CallResolver is properly implemented
-            fe10 = null // AbstractKtFe10ResolveCallTest::class,
+            fe10 = AbstractKtFe10ResolveCallTest::class,
         ) {
             model("resolveCall")
         }

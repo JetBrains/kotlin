@@ -202,8 +202,11 @@ private fun KotlinType.hasReferenceOtherThan(allowedTypeParameterDescriptors: Se
  */
 @Suppress("UNCHECKED_CAST")
 private fun <T : CallableDescriptor> T.unwrapUseSiteSubstitutionOverride(): T {
-    if (original == this) return this
-    return original.unwrapUseSiteSubstitutionOverride() as T
+    var current: CallableDescriptor = this
+    while (original != current) {
+        current = current.original
+    }
+    return current as T
 }
 
 internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {

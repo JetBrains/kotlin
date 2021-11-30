@@ -1,4 +1,25 @@
-KtDelegatedConstructorCall:
-argumentMapping = { s -> (p1: kotlin.Int) }
-targetFunction = ERR<Unresolved call, [<constructor>(p1: kotlin.Int): Base]>
-kind = SUPER_CALL
+KtErrorCallInfo:
+  candidateCalls = [
+    KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = Base
+          symbol = <constructor>(p1: kotlin.Int): Base
+          valueParameters = [
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: kotlin.Int
+          ]
+      argumentMapping = {
+        s -> (KtVariableLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int)
+      }
+  ]
+  diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>

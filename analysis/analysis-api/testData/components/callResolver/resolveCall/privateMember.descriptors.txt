@@ -3,13 +3,15 @@ KtErrorCallInfo:
     KtSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
         extensionReceiver = null
         signature = KtFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
+          symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
           valueParameters = []
       argumentMapping = {}
   ]
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun foo(): Unit defined in root package in file simpleCallWithNonMatchingArgs.kt>
+  diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>

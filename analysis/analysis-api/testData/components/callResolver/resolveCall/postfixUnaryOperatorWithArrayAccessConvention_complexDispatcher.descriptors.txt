@@ -1,0 +1,71 @@
+KtSuccessCallInfo:
+  call = KtCompoundArrayAccessCall:
+    compoundAccess = IncOrDecOperation:
+      kind = INC
+      precedence = POSTFIX
+      operationPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = m["a"]
+          isSafeNavigation = false
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+    getPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyMap.get(<dispatch receiver>: MyMap<K1, V1>, k: K1): V1
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K1
+        ]
+    indexArguments = [
+      "a"
+    ]
+    setPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classIdIfNonLocal: Foo
+          classKind: INTERFACE
+          companionObject: null
+          isData: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: ABSTRACT
+          name: Foo
+          origin: LIBRARY
+          superTypes: [
+            kotlin/Any
+          ]
+          symbolKind: TOP_LEVEL
+          typeParameters: []
+          visibility: Public
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+      signature = KtFunctionLikeSignature:
+        receiverType = MyMap<kotlin.String, kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = /Foo.set(<extension receiver>: MyMap<K2, V2>, <dispatch receiver>: Foo, k: K2, v: V2): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K2,
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V2
+        ]

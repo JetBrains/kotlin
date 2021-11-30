@@ -1,4 +1,43 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (a: kotlin.Int), "foo" -> (b: kotlin.String), 3.14 -> (value: kotlin.Boolean) }
-targetFunction = ERR<Unresolved call, [/C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit]>
-substitutor = <empty substitutor>
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = c
+          isSafeNavigation = false
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int,
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: kotlin.String,
+            KtVariableLikeSignature:
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = value: kotlin.Boolean
+          ]
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int),
+        "foo" -> (KtVariableLikeSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String),
+        3.14 -> (KtVariableLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = value: kotlin.Boolean)
+      }
+  ]
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun set(a: Int, b: String, value: Boolean): Unit defined in C>

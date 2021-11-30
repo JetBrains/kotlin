@@ -13,11 +13,11 @@ KtSuccessCallInfo:
         valueParameters = [
           KtVariableLikeSignature:
             receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+            returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
             symbol = p1: P1,
           KtVariableLikeSignature:
             receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+            returnType = @R|kotlin.ParameterName|(name = String(b))  kotlin.String
             symbol = p2: P2
         ]
     argumentMapping = {}

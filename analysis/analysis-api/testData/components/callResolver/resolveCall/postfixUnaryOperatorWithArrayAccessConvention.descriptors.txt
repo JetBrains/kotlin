@@ -1,0 +1,52 @@
+KtSuccessCallInfo:
+  call = KtCompoundArrayAccessCall:
+    compoundAccess = IncOrDecOperation:
+      kind = INC
+      precedence = POSTFIX
+      operationPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = m["a"]
+          isSafeNavigation = false
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+    getPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K
+        ]
+    indexArguments = [
+      "a"
+    ]
+    setPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K,
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V
+        ]

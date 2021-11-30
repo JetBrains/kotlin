@@ -9,8 +9,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.reflect.KClass
@@ -51,7 +52,7 @@ internal class KtFe10DiagnosticProvider(
     }
 }
 
-private class KtFe10Diagnostic(private val diagnostic: Diagnostic, override val token: ValidityToken) : KtDiagnosticWithPsi<PsiElement> {
+internal class KtFe10Diagnostic(private val diagnostic: Diagnostic, override val token: ValidityToken) : KtDiagnosticWithPsi<PsiElement> {
     override val severity: Severity
         get() = diagnostic.severity
 
@@ -62,7 +63,9 @@ private class KtFe10Diagnostic(private val diagnostic: Diagnostic, override val 
         get() {
             @Suppress("UNCHECKED_CAST")
             val factory = diagnostic.factory as DiagnosticFactory<UnboundDiagnostic>?
-            return factory?.defaultRenderer?.render(diagnostic) ?: ""
+            return factory?.defaultRenderer?.render(diagnostic)
+                ?: DefaultErrorMessages.getRendererForDiagnostic(diagnostic)?.render(diagnostic)
+                ?: ""
         }
 
     override val psi: PsiElement
