@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
@@ -249,6 +250,9 @@ open class JvmIrCodegenFactory(
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
         val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
+
+        if ((state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true) return
+
         notifyCodegenStart()
         jvmCodegenPhases.invokeToplevel(PhaseConfig(jvmCodegenPhases), context, module)
 

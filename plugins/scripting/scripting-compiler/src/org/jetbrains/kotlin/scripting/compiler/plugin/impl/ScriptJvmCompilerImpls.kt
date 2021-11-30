@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
@@ -192,7 +195,11 @@ private fun doCompile(
     )
 
     val generationState =
-        generate(analysisResult, sourceFiles, context.environment.configuration)
+        generate(analysisResult, sourceFiles, context.environment.configuration, messageCollector)
+
+    if (messageCollector.hasErrors()) return failure(
+        messageCollector
+    )
 
     return makeCompiledScript(
         generationState,
@@ -224,20 +231,27 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 }
 
 private fun generate(
-    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, kotlinCompilerConfiguration: CompilerConfiguration
-): GenerationState = GenerationState.Builder(
-    sourceFiles.first().project,
-    ClassBuilderFactories.BINARIES,
-    analysisResult.moduleDescriptor,
-    analysisResult.bindingContext,
-    sourceFiles,
-    kotlinCompilerConfiguration
-).codegenFactory(
-    if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
-        JvmIrCodegenFactory(
-            kotlinCompilerConfiguration,
-            kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
-        ) else DefaultCodegenFactory
-).build().also {
-    KotlinCodegenFacade.compileCorrectFiles(it)
+    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, kotlinCompilerConfiguration: CompilerConfiguration,
+    messageCollector: MessageCollector
+): GenerationState {
+    val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+    return GenerationState.Builder(
+        sourceFiles.first().project,
+        ClassBuilderFactories.BINARIES,
+        analysisResult.moduleDescriptor,
+        analysisResult.bindingContext,
+        sourceFiles,
+        kotlinCompilerConfiguration
+    ).codegenFactory(
+        if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
+            JvmIrCodegenFactory(
+                kotlinCompilerConfiguration,
+                kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
+            ) else DefaultCodegenFactory
+    ).diagnosticReporter(
+        diagnosticsReporter
+    ).build().also {
+        KotlinCodegenFacade.compileCorrectFiles(it)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
+    }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmInnerClassesSupport
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -97,8 +99,18 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             if (clazz is IrClassImpl && !clazz.isInner ) {
                 val closure = annotator.getClassClosure(clazz)
                 if (closure.capturedValues.singleOrNull()?.owner?.type == irScript.thisReceiver.type) {
-                    if (clazz.isClass) {
-                        capturingClasses.add(clazz)
+                    fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
+                        context.ktDiagnosticReporter.at(clazz).report(factory, (name ?: clazz.name).asString())
+                    }
+                    when {
+                        clazz.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
+                        clazz.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
+                        clazz.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
+                        // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
+                        clazz.isCompanion -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+                        clazz.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
+
+                        clazz.isClass -> capturingClasses.add(clazz)
                     }
                 }
             }

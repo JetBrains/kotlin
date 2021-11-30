@@ -27,6 +27,11 @@ object JvmBackendErrors {
 
     val SUSPENSION_POINT_INSIDE_MONITOR by error1<PsiElement, String>()
 
+    val SCRIPT_CAPTURING_OBJECT by error1<PsiElement, String>()
+    val SCRIPT_CAPTURING_INTERFACE by error1<PsiElement, String>()
+    val SCRIPT_CAPTURING_ENUM by error1<PsiElement, String>()
+    val SCRIPT_CAPTURING_ENUM_ENTRY by error1<PsiElement, String>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJvmErrorMessages)
     }
@@ -60,5 +65,10 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(JvmBackendErrors.TYPEOF_SUSPEND_TYPE, "Suspend functional types are not supported in typeOf")
         map.put(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING)
         map.put(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, "A suspension point at {0} is inside a critical section", STRING)
+
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, "Object {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface {0} captures the script class instance. Try to use class instead", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
     }
 }

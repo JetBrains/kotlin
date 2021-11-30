@@ -40,7 +40,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_IR)
+                model("diagnostics/testsWithJvmBackend", pattern = "^(.+)\\.kts?$", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractDiagnosticsNativeTest> {

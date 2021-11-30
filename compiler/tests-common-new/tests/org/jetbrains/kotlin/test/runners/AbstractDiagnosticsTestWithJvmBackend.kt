@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 
 abstract class AbstractDiagnosticsTestWithJvmBackend<I : ResultingArtifact.BackendInput<I>> : AbstractKotlinCompilerTest() {
     abstract val targetBackend: TargetBackend
@@ -53,6 +54,7 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<I : ResultingArtifact.Backe
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
+            ::ScriptingEnvironmentConfigurator,
         )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
