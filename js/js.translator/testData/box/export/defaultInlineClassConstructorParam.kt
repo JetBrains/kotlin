@@ -12,5 +12,5 @@ class Bar(val koo: Koo = Koo())
 // MODULE: main(lib)
 // FILE: main.js
 function box() {
-    return new main.Bar().koo;
+    return new kotlin_lib.Bar().koo;
 }
