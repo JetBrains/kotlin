@@ -55,11 +55,6 @@ public class LegacyCompareJvmAbiTestGenerated extends AbstractLegacyCompareJvmAb
         runTest("plugins/jvm-abi-gen/testData/compare/constant/");
     }
 
-    @TestMetadata("declarationOrder")
-    public void testDeclarationOrder() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrder/");
-    }
-
     @TestMetadata("declarationOrderInline")
     public void testDeclarationOrderInline() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInline/");
@@ -68,11 +63,6 @@ public class LegacyCompareJvmAbiTestGenerated extends AbstractLegacyCompareJvmAb
     @TestMetadata("declarationOrderInlineCall")
     public void testDeclarationOrderInlineCall() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineCall/");
-    }
-
-    @TestMetadata("declarationOrderInlineNonInline")
-    public void testDeclarationOrderInlineNonInline() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineNonInline/");
     }
 
     @TestMetadata("declarationOrderPrivateInline")
