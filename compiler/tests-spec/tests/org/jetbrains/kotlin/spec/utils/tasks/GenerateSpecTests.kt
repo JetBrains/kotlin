@@ -35,7 +35,7 @@ fun detectDirsWithTestsMapFileOnly(dirName: String, baseDir: String = "."): List
         }
     }
 
-    return excludedDirs.sorted()
+    return excludedDirs.sorted().map { it.replace("\\", "/") }
 }
 
 fun generateTests() {
