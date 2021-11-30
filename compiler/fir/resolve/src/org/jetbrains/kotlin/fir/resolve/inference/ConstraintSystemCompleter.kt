@@ -459,12 +459,10 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
         }
 
         is FirQualifiedAccessExpression -> {
-            explicitReceiver?.processAllContainingCallCandidates(processBlocks, processor)
             processCandidateIfApplicable(processor, processBlocks)
         }
 
         is FirVariableAssignment -> {
-            explicitReceiver?.processAllContainingCallCandidates(processBlocks, processor)
             processCandidateIfApplicable(processor, processBlocks)
             rValue.processAllContainingCallCandidates(processBlocks, processor)
         }
