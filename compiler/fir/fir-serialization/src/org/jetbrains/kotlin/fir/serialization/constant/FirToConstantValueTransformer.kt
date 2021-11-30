@@ -10,16 +10,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.FirAnnotationCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -126,15 +121,16 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
+                val dispatchReceiverValue by lazy { dispatchReceiver.accept(this, data) }
                 when (symbol.callableId.callableName.asString()) {
-                    "toByte" -> ByteValue((dispatchReceiver.accept(this, data)!!.value as Number).toByte())
-                    "toLong" -> LongValue((dispatchReceiver.accept(this, data)!!.value as Number).toLong())
-                    "toShort" -> ShortValue((dispatchReceiver.accept(this, data)!!.value as Number).toShort())
-                    "toFloat" -> FloatValue((dispatchReceiver.accept(this, data)!!.value as Number).toFloat())
-                    "toDouble" -> DoubleValue((dispatchReceiver.accept(this, data)!!.value as Number).toDouble())
-                    "toChar" -> CharValue((dispatchReceiver.accept(this, data)!!.value as Number).toChar())
+                    "toByte" -> ByteValue((dispatchReceiverValue!!.value as Number).toByte())
+                    "toLong" -> LongValue((dispatchReceiverValue!!.value as Number).toLong())
+                    "toShort" -> ShortValue((dispatchReceiverValue!!.value as Number).toShort())
+                    "toFloat" -> FloatValue((dispatchReceiverValue!!.value as Number).toFloat())
+                    "toDouble" -> DoubleValue((dispatchReceiverValue!!.value as Number).toDouble())
+                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toChar())
                     "unaryMinus" -> {
-                        when (val receiverValue = dispatchReceiver.accept(this, data)) {
+                        when (val receiverValue = dispatchReceiverValue) {
                             is ByteValue -> ByteValue((-receiverValue.value).toByte())
                             is LongValue -> LongValue(-receiverValue.value)
                             is ShortValue -> ShortValue((-receiverValue.value).toShort())
