@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByFqNameTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.SymbolsData
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.*
@@ -18,11 +19,11 @@ abstract class AbstractDelegateMemberScopeTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractSymbolByFqNameTest(configurator) {
 
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
         val symbols = with(symbolData) { toSymbols() }
         val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol
             ?: error("Should be a single class symbol, but $symbols found")
-        return classSymbol.getDelegatedMemberScope().getCallableSymbols().toList()
+        return SymbolsData(classSymbol.getDelegatedMemberScope().getCallableSymbols().toList())
     }
 }

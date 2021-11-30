@@ -10,6 +10,7 @@ KtJavaFieldSymbol:
   returnType: ft<kotlin/CharArray, kotlin/CharArray?>
   symbolKind: CLASS_MEMBER
   visibility: Private
+  getDispatchReceiver(): java/lang/String
   deprecationStatus: null
 
 KtJavaFieldSymbol:
@@ -24,6 +25,7 @@ KtJavaFieldSymbol:
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   visibility: Private
+  getDispatchReceiver(): java/lang/String
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -62,6 +64,7 @@ KtJavaFieldSymbol:
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   visibility: Private
+  getDispatchReceiver(): java/lang/String
   deprecationStatus: null
 
 KtSyntheticJavaPropertySymbol:

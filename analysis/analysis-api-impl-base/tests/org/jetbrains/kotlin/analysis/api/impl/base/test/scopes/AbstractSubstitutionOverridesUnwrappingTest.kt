@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.SymbolsData
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -23,13 +24,13 @@ abstract class AbstractSubstitutionOverridesUnwrappingTest(
     configurator: FrontendApiTestConfiguratorService
 ) : AbstractSymbolTest(configurator) {
 
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val declarationUnderCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtClassLikeDeclaration>(ktFile)
         val classSymbolUnderCaret = declarationUnderCaret.getSymbol() as KtClassLikeSymbol
 
         require(classSymbolUnderCaret is KtSymbolWithMembers)
 
-        return classSymbolUnderCaret.getMemberScope().getAllSymbols().toList()
+        return SymbolsData(classSymbolUnderCaret.getMemberScope().getAllSymbols().toList())
     }
 
     override fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol): String {

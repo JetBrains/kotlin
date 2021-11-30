@@ -1,0 +1,19 @@
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class Anno1
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class Anno2
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class Anno3
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class Anno4
+
+interface I
+
+class X : @Anno1 I {
+  fun f(arg: @Anno2 I): @Anno3 I
+
+  val x: @Anno4 I
+}

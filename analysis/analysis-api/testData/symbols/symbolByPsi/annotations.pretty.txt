@@ -1,0 +1,13 @@
+annotation class Anno {
+  constructor(param1: kotlin.String, param2: kotlin.Int)
+
+  val param1: kotlin.String
+
+  val param2: kotlin.Int
+}
+
+@Anno(param1 = "param", param2 = 2)
+class X {
+  @Anno(param1 = "funparam", param2 = 3)
+  fun x()
+}

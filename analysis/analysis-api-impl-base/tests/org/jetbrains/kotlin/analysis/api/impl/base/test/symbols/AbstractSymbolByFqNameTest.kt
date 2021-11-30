@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByFqNameTest(configurator: FrontendApiTestConfiguratorService) : AbstractSymbolTest(configurator) {
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-        return with(symbolData) { toSymbols() }
+        return SymbolsData(with(symbolData) { toSymbols() })
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

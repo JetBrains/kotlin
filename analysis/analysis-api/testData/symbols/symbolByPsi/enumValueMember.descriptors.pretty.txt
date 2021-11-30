@@ -1,0 +1,9 @@
+enum class Style {
+  SHEET;
+
+  constructor(value: kotlin.String)
+
+  abstract val exitAnimation: kotlin.String
+
+  val value: kotlin.String
+}

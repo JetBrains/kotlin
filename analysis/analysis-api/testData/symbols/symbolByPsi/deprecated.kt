@@ -10,7 +10,7 @@ val i2: Int = 1
 var i3: Int = 1
 
 @get:Deprecated("don't use getter of i4")
-@set:Deprecated("don't use getter of i4")
+@set:Deprecated("don't use setter of i4")
 var i4: Int = 1
 
 @Deprecated("don't use f")

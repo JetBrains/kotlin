@@ -15,10 +15,16 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByPsiTest(configurator: FrontendApiTestConfiguratorService) : AbstractSymbolTest(configurator) {
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol> {
-        return ktFile.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.map { declaration ->
+    override val prettyRenderMode: PrettyRenderingMode get() = PrettyRenderingMode.RENDER_SYMBOLS_NESTED
+
+    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
+        val allDeclarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.map { declaration ->
             declaration.getSymbol()
         }
+        return SymbolsData(
+            allDeclarationSymbols,
+            listOf(ktFile.getFileSymbol()),
+        )
     }
 
     private val KtDeclaration.isValidForSymbolCreation

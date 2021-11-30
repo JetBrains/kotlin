@@ -1,0 +1,17 @@
+class MyColor {
+  constructor(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int)
+
+  val x: kotlin.Int
+
+  val y: kotlin.Int
+
+  val z: kotlin.Int
+}
+
+class Some {
+  val delegate: MyColor
+
+  val lambda: kotlin.Lazy<MyColor>
+
+  val nonLazy: MyColor
+}

@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -20,6 +25,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
+    private val renderingOptions = KtDeclarationRendererOptions.DEFAULT
+
+    open val prettyRenderMode: PrettyRenderingMode = PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
@@ -27,17 +36,42 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
         }
     }
 
-    abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): List<KtSymbol>
+    abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val createPointers = SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE !in module.directives
+
+        val prettyRenderOptions = when (prettyRenderMode) {
+            PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE -> renderingOptions
+            PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderingOptions.copy(renderClassMembers = true)
+        }
+
         val pointersWithRendered = analyseOnPooledThreadInReadAction(ktFile) {
-            collectSymbols(ktFile, testServices).map { symbol ->
+            val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
+
+            val pointerWithRenderedSymbol = symbols.map { symbol ->
                 PointerWithRenderedSymbol(
                     if (createPointers) symbol.createPointer() else null,
-                    renderSymbolForComparison(symbol)
+                    renderSymbolForComparison(symbol),
                 )
             }
+
+            val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
+                PointerWithRenderedSymbol(
+                    if (createPointers) symbol.createPointer() else null,
+                    when (symbol) {
+                        is KtDeclarationSymbol -> symbol.render(prettyRenderOptions)
+                        is KtFileSymbol -> prettyPrint {
+                            printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
+                                append((it as KtDeclarationSymbol).render(prettyRenderOptions))
+                            }
+                        }
+                        else -> error(symbol::class.toString())
+                    }
+                )
+            }
+
+            SymbolPointersData(pointerWithRenderedSymbol, pointerWithPrettyRenderedSymbol)
         }
 
         compareResults(pointersWithRendered, testServices)
@@ -45,16 +79,19 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
         configurator.doOutOfBlockModification(ktFile)
 
         if (createPointers) {
-            restoreSymbolsInOtherReadActionAndCompareResults(ktFile, pointersWithRendered, testServices)
+            restoreSymbolsInOtherReadActionAndCompareResults(ktFile, pointersWithRendered.pointers, testServices)
         }
     }
 
     private fun compareResults(
-        pointersWithRendered: List<PointerWithRenderedSymbol>,
+        data: SymbolPointersData,
         testServices: TestServices,
     ) {
-        val actual = pointersWithRendered.joinToString(separator = "\n\n") { it.rendered }
+        val actual = data.pointers.joinToString(separator = "\n\n") { it.rendered }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+
+        val actualPretty = data.pointersForPrettyRendering.joinToString(separator = "\n\n") { it.rendered }
+        testServices.assertions.assertEqualsToTestDataFileSibling(actualPretty, extension = ".pretty.txt")
     }
 
     private fun restoreSymbolsInOtherReadActionAndCompareResults(
@@ -86,4 +123,22 @@ private object SymbolTestDirectives : SimpleDirectivesContainer() {
     )
 }
 
-private data class PointerWithRenderedSymbol(val pointer: KtSymbolPointer<*>?, val rendered: String)
+enum class PrettyRenderingMode {
+    RENDER_SYMBOLS_LINE_BY_LINE,
+    RENDER_SYMBOLS_NESTED,
+}
+
+data class SymbolsData(
+    val symbols: List<KtSymbol>,
+    val symbolsForPrettyRendering: List<KtSymbol> = symbols,
+)
+
+private data class SymbolPointersData(
+    val pointers: List<PointerWithRenderedSymbol>,
+    val pointersForPrettyRendering: List<PointerWithRenderedSymbol>,
+)
+
+private data class PointerWithRenderedSymbol(
+    val pointer: KtSymbolPointer<*>?,
+    val rendered: String,
+)
