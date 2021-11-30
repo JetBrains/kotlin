@@ -82,6 +82,10 @@ class TemporaryValsAnalyzer {
             }
         }
 
+        // Don't run analysis if we have no potential temporary val stores.
+        if (potentiallyTemporaryStores.isEmpty())
+            return emptyList()
+
         // If the method is big, and we couldn't eliminate enough temporary variable store candidates,
         // bail out, treat all variables as non-temporary.
         // Here we estimate memory required to store all relevant information as O(N * M * K),
