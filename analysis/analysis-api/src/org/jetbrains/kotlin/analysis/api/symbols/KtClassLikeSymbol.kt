@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol, KtPossibleMemberSymbol
+public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol, KtDeclarationSymbol
 
 public val KtClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
@@ -26,7 +26,7 @@ public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbo
     public abstract val isReified: Boolean
 }
 
-public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind {
+public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol {
     public abstract val classIdIfNonLocal: ClassId?
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>

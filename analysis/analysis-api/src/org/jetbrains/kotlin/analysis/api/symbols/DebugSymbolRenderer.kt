@@ -39,7 +39,7 @@ public object DebugSymbolRenderer {
 
         withIndent {
             @Suppress("DEPRECATION")
-            (symbol as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
+            (symbol as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
                 appendLine().append("getDispatchReceiver()").append(": ")
                 renderType(dispatchType)
             }

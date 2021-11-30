@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 
-public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind {
+public sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind, KtPossibleMemberSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
@@ -37,7 +37,7 @@ public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
     final override val name: Name get() = fieldName
     final override val psi: PsiElement? get() = null
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
-    final override val origin: KtSymbolOrigin get() = KtSymbolOrigin.PROPERTY_BACKING_FIELD
+    override val origin: KtSymbolOrigin get() = KtSymbolOrigin.PROPERTY_BACKING_FIELD
     final override val callableIdIfNonLocal: CallableId? get() = null
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtType? get() = null

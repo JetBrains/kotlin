@@ -81,7 +81,7 @@ private fun KtAnalysisSession.stringRepresentation(call: KtCall): String {
             }
 
             @Suppress("DEPRECATION")
-            (this@stringValue as? KtPossibleMemberSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
+            (this@stringValue as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
                 append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }

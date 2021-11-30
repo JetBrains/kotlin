@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
@@ -38,7 +39,7 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType>
 
-    public abstract fun getDispatchReceiverType(symbol: KtPossibleMemberSymbol): KtType?
+    public abstract fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType?
 }
 
 public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -133,7 +134,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      */
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Avoid using this function")
-    public fun KtPossibleMemberSymbol.getDispatchReceiverType(): KtType? =
+    public fun KtCallableSymbol.getDispatchReceiverType(): KtType? =
         analysisSession.typeProvider.getDispatchReceiverType(this)
 }
 

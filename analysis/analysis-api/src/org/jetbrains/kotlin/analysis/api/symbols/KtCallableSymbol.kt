@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 
-public abstract class KtCallableSymbol : KtSymbol, KtSymbolWithKind {
+public abstract class KtCallableSymbol : KtSymbol, KtSymbolWithKind, KtPossibleMemberSymbol, KtDeclarationSymbol {
     public abstract val callableIdIfNonLocal: CallableId?
     public abstract val returnType: KtType
 
