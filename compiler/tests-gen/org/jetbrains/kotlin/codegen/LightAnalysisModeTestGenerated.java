@@ -3068,6 +3068,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunInterfaceConstructor extends AbstractLightAnalysisModeTest {
+            @TestMetadata("funInterfaceConstructedObjectsEquality.kt")
+            public void ignoreFunInterfaceConstructedObjectsEquality() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructedObjectsEquality.kt");
+            }
+
             @TestMetadata("funInterfaceConstructor.kt")
             public void ignoreFunInterfaceConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");

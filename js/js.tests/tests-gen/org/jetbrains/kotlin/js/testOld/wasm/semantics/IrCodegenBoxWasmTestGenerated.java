@@ -2216,9 +2216,19 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/funInterfaceConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
+            @TestMetadata("funInterfaceConstructedObjectsEquality.kt")
+            public void testFunInterfaceConstructedObjectsEquality() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructedObjectsEquality.kt");
+            }
+
             @TestMetadata("funInterfaceConstructor.kt")
             public void testFunInterfaceConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
+            }
+
+            @TestMetadata("funInterfaceConstructorEquality.kt")
+            public void testFunInterfaceConstructorEquality() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
             }
         }
 

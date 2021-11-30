@@ -31,6 +31,12 @@ public class FunctionReference extends CallableReference implements FunctionBase
      *         fun useSuspend(f: suspend () -> Unit) {}
      *         useSuspend(::target)
      *     </pre></ul>
+     *     <ul>4 - whether it is a synthetic <code>fun interface</code> constructor, i.e., <pre>
+     *         fun interface KRunnable {
+     *             fun run()
+     *         }
+     *         val kr: (() -> Unit) -> KRunnable = ::KRunnable
+     *     </pre></ul>
      * </li>
      */
     @SinceKotlin(version = "1.4")

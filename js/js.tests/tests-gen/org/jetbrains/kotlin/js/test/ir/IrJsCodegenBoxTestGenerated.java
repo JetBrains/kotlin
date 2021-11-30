@@ -2488,9 +2488,21 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("funInterfaceConstructedObjectsEquality.kt")
+            public void testFunInterfaceConstructedObjectsEquality() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructedObjectsEquality.kt");
+            }
+
+            @Test
             @TestMetadata("funInterfaceConstructor.kt")
             public void testFunInterfaceConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorEquality.kt")
+            public void testFunInterfaceConstructorEquality() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
             }
         }
 

@@ -145,7 +145,10 @@ class ClassCodegen private constructor(
         val smap = context.getSourceMapper(irClass)
         // 1. Any method other than `<clinit>` can add a field and a `<clinit>` statement:
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
-            if (method.name.asString() != "<clinit>" && method.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA) {
+            if (method.name.asString() != "<clinit>" &&
+                method.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA &&
+                method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
+            ) {
                 generateMethod(method, smap)
             }
         }

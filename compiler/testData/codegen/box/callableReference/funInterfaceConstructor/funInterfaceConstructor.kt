@@ -1,6 +1,7 @@
 // !LANGUAGE: +AllowKotlinFunInterfaceConstructorReference
+
 // IGNORE_BACKEND: JVM
-//  ^ feature supported in IR-based backends only
+//  ^ unsupported in old JVM BE
 
 fun interface KSupplier<T> {
     fun get(): T
