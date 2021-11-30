@@ -1,2 +1,2 @@
 Resolved to:
-0: value-parameter bb: kotlin.Int
+0: bb: kotlin.Int

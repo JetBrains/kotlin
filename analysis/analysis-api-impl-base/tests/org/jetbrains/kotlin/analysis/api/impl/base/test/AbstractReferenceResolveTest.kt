@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProv
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.name.FqName
@@ -28,7 +29,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleModuleTest(configurator) {
+abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfiguratorService) :
+    AbstractHLApiSingleModuleTest(configurator) {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
@@ -48,7 +50,9 @@ abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfigu
         }
 
         val resolvedTo =
-            analyseForTest(PsiTreeUtil.findElementOfClassAtOffset(mainKtFile, caretPosition, KtDeclaration::class.java, false) ?: mainKtFile) {
+            analyseForTest(
+                PsiTreeUtil.findElementOfClassAtOffset(mainKtFile, caretPosition, KtDeclaration::class.java, false) ?: mainKtFile
+            ) {
                 val symbols = ktReferences.flatMap { it.resolveToSymbols() }
                 checkReferenceResultForValidity(module, testServices, symbols)
                 renderResolvedTo(symbols)
@@ -91,7 +95,15 @@ abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfigu
             symbolContainerFqName(symbol)?.let { fqName ->
                 append("(in $fqName) ")
             }
-            append(symbol.render(renderingOptions))
+            when (symbol) {
+                is KtDeclarationSymbol -> append(symbol.render(renderingOptions))
+                is KtPackageSymbol -> append("package ${symbol.fqName}")
+                is KtReceiverParameterSymbol -> {
+                    append("extension receiver with type ")
+                    append(symbol.type.render(renderingOptions.typeRendererOptions))
+                }
+                else -> error("Unexpected symbol ${symbol::class}")
+            }
         }
     }
 

@@ -1,2 +1,2 @@
 Resolved to:
-0: <reified T>
+0: reified T
