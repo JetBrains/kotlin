@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
-import org.jetbrains.org.objectweb.asm.tree.FieldNode
-import org.jetbrains.org.objectweb.asm.tree.ParameterNode
 import java.io.File
 
 class JvmAbiOutputExtension(
@@ -46,7 +43,8 @@ class JvmAbiOutputExtension(
         }
     }
 
-    private class AbiOutputFiles(val abiClassInfos: Map<String, AbiClassInfo>, val outputFiles: OutputFileCollection) : OutputFileCollection {
+    private class AbiOutputFiles(val abiClassInfos: Map<String, AbiClassInfo>, val outputFiles: OutputFileCollection) :
+        OutputFileCollection {
         override fun get(relativePath: String): OutputFile? {
             error("AbiOutputFiles does not implement `get`.")
         }
@@ -72,29 +70,46 @@ class JvmAbiOutputExtension(
                         val methodInfo = (abiInfo as AbiClassInfo.Stripped).methodInfo
                         val writer = ClassWriter(0)
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
-                            // We remember all non-inline declarations in the stripped class so that we can
-                            // order them deterministically after all inline methods.
-                            private val fieldNodes = mutableListOf<FieldNode>()
-                            private val methodNodes = mutableListOf<StrippedMethodNode>()
-
                             // Strip private fields.
-                            override fun visitField(access: Int, name: String?, descriptor: String?, signature: String?, value: Any?): FieldVisitor? {
+                            override fun visitField(
+                                access: Int,
+                                name: String?,
+                                descriptor: String?,
+                                signature: String?,
+                                value: Any?
+                            ): FieldVisitor? {
                                 if (access and Opcodes.ACC_PRIVATE != 0)
                                     return null
-                                return FieldNode(Opcodes.API_VERSION, access, name, descriptor, signature, value).also {
-                                    fieldNodes += it
-                                }
+                                return super.visitField(access, name, descriptor, signature, value)
                             }
 
-                            override fun visitMethod(access: Int, name: String, descriptor: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+                            override fun visitMethod(
+                                access: Int,
+                                name: String,
+                                descriptor: String,
+                                signature: String?,
+                                exceptions: Array<out String>?
+                            ): MethodVisitor? {
                                 val info = methodInfo[Method(name, descriptor)]
                                     ?: return null
 
-                                if (info == AbiMethodInfo.KEEP)
-                                    return super.visitMethod(access, name, descriptor, signature, exceptions)
+                                val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
 
-                                return StrippedMethodNode(access, name, descriptor, signature, exceptions).also {
-                                    methodNodes += it
+                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0)
+                                    return visitor
+
+                                return object : MethodVisitor(Opcodes.API_VERSION, visitor) {
+                                    override fun visitCode() {
+                                        with(mv) {
+                                            visitCode()
+                                            visitInsn(Opcodes.ACONST_NULL)
+                                            visitInsn(Opcodes.ATHROW)
+                                            visitMaxs(0, 0)
+                                            visitEnd()
+                                        }
+                                        // Only instructions and locals follow after `visitCode`.
+                                        mv = null
+                                    }
                                 }
                             }
 
@@ -121,18 +136,6 @@ class JvmAbiOutputExtension(
                                     return delegate
                                 return abiMetadataProcessor(delegate)
                             }
-
-                            override fun visitEnd() {
-                                fieldNodes.sortBy { "${it.name}${it.desc}" }
-                                methodNodes.sortBy { "${it.name}${it.desc}" }
-                                for (field in fieldNodes) {
-                                    field.accept(writer)
-                                }
-                                for (method in methodNodes) {
-                                    method.accept(writer)
-                                }
-                                super.visitEnd()
-                            }
                         }, 0)
                         SimpleOutputBinaryFile(outputFile.sourceFiles, outputFile.relativePath, writer.toByteArray())
                     }
@@ -141,119 +144,5 @@ class JvmAbiOutputExtension(
 
             return metadata + classFiles
         }
-    }
-}
-
-private class StrippedMethodNode(
-    val access: Int,
-    val name: String,
-    val desc: String,
-    val signature: String?,
-    val exceptions: Array<out String>?,
-) : MethodVisitor(Opcodes.API_VERSION) {
-    private class MethodAnnotation(
-        val visible: Boolean,
-        val node: AnnotationNode,
-    )
-
-    private class MethodTypeAnnotation(
-        val typeRef: Int,
-        val typePath: TypePath?,
-        val visible: Boolean,
-        val node: AnnotationNode,
-    )
-
-    private class MethodParameterAnnotation(
-        val parameter: Int,
-        val visible: Boolean,
-        val node: AnnotationNode,
-    )
-
-    private val parameters = mutableListOf<ParameterNode>()
-    private val annotations = mutableListOf<MethodAnnotation>()
-    private val typeAnnotations = mutableListOf<MethodTypeAnnotation>()
-    private var visibleAnnotableParameterCount = 0
-    private var invisibleAnnotableParameterCount = 0
-    private val parameterAnnotations = mutableListOf<MethodParameterAnnotation>()
-    private val attributes = mutableListOf<Attribute>()
-
-    override fun visitParameter(name: String?, access: Int) {
-        parameters.add(ParameterNode(name, access))
-    }
-
-    override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor =
-        AnnotationNode(Opcodes.API_VERSION, descriptor).also {
-            annotations.add(MethodAnnotation(visible, it))
-        }
-
-    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean): AnnotationVisitor =
-        AnnotationNode(Opcodes.API_VERSION, descriptor).also {
-            typeAnnotations.add(MethodTypeAnnotation(typeRef, typePath, visible, it))
-        }
-
-    override fun visitAttribute(attribute: Attribute) {
-        attributes.add(attribute)
-    }
-
-    override fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {
-        if (visible) {
-            visibleAnnotableParameterCount = parameterCount
-        } else {
-            invisibleAnnotableParameterCount = parameterCount
-        }
-    }
-
-    override fun visitParameterAnnotation(parameter: Int, descriptor: String, visible: Boolean): AnnotationVisitor =
-        AnnotationNode(Opcodes.API_VERSION, descriptor).also {
-            parameterAnnotations.add(MethodParameterAnnotation(parameter, visible, it))
-        }
-
-    fun accept(classVisitor: ClassVisitor) {
-        val visitor = classVisitor.visitMethod(access, name, desc, signature, exceptions)
-
-        for (parameter in parameters) {
-            visitor.visitParameter(parameter.name, parameter.access)
-        }
-
-        for (annotation in annotations) {
-            visitor.visitAnnotation(annotation.node.desc, annotation.visible)?.let {
-                annotation.node.accept(it)
-            }
-        }
-
-        for (typeAnnotation in typeAnnotations) {
-            visitor.visitTypeAnnotation(
-                typeAnnotation.typeRef,
-                typeAnnotation.typePath,
-                typeAnnotation.node.desc,
-                typeAnnotation.visible,
-            )?.let {
-                typeAnnotation.node.accept(it)
-            }
-        }
-
-        visitor.visitAnnotableParameterCount(visibleAnnotableParameterCount, true)
-        visitor.visitAnnotableParameterCount(invisibleAnnotableParameterCount, false)
-        for (parameterAnnotation in parameterAnnotations) {
-            visitor.visitParameterAnnotation(
-                parameterAnnotation.parameter,
-                parameterAnnotation.node.desc,
-                parameterAnnotation.visible
-            )?.let {
-                parameterAnnotation.node.accept(it)
-            }
-        }
-
-        for (attribute in attributes) {
-            visitor.visitAttribute(attribute)
-        }
-
-        if (access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) == 0) {
-            visitor.visitCode()
-            visitor.visitInsn(Opcodes.ACONST_NULL)
-            visitor.visitInsn(Opcodes.ATHROW)
-            visitor.visitMaxs(0, parameters.size)
-        }
-        visitor.visitEnd()
     }
 }
