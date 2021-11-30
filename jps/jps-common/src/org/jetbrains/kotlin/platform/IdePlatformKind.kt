@@ -66,7 +66,7 @@ abstract class IdePlatformKind {
 
 
         fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): TargetPlatform? =
-            ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
+            ALL_KINDS.firstNotNullOfOrNull { it.platformByCompilerArguments(arguments) }
 
     }
 }
@@ -76,7 +76,7 @@ val TargetPlatform.idePlatformKind: IdePlatformKind
         when {
             list.size == 1 -> list.first()
             list.size > 1 -> list.first().also {
-                Logger.getInstance(IdePlatformKind.javaClass).warn("Found more than one IdePlatformKind [$list] for target [$this].")
+                Logger.getInstance(IdePlatformKind.Companion::class.java).warn("Found more than one IdePlatformKind [$list] for target [$this].")
             }
             else -> error("Unknown platform $this")
         }

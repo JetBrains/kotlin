@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.modules;
 import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.build.JvmSourceRoot;
-import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -27,10 +26,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class KotlinModuleXmlGeneratorTest extends TestCase {
-    private static String getTestDataPath() {
-        return TestUtilsKt.IDEA_TEST_DATA_DIR.getAbsolutePath() + "/modules.xml";
-    }
-
     public void testBasic() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
@@ -45,7 +40,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptySet(),
                 Collections.emptyList()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/basic.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("/basic.xml"), actual);
     }
 
     public void testFiltered() {
@@ -62,7 +57,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.singleton(new File("cp1")),
                 Collections.emptyList()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/filtered.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("/filtered.xml"), actual);
     }
 
     public void testMultiple() {
@@ -94,7 +89,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList()
         );
         String actual = builder.asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/multiple.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("/multiple.xml"), actual);
     }
 
     public void testModularJdkRoot() {
@@ -111,6 +106,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptySet(),
                 Collections.emptyList()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/modularJdkRoot.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("/modularJdkRoot.xml"), actual);
     }
 }
