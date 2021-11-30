@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationValue
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 internal fun PrettyPrinter.renderFe10Annotations(
     annotations: Annotations,
     isSingleLineAnnotations: Boolean,
+    renderAnnotationWithShortNames: Boolean,
     predicate: (ClassId) -> Boolean = { true }
 ) {
     val separator = if (isSingleLineAnnotations) " " else "\n"
@@ -32,7 +32,8 @@ internal fun PrettyPrinter.renderFe10Annotations(
 
         if (annotationClass.fqNameSafe != StandardNames.FqNames.parameterName) {
             append('@')
-            append(annotation.fqName?.shortName()?.asString() ?: "ERROR")
+            val rendered = if (renderAnnotationWithShortNames) annotation.fqName?.shortName()?.render() else annotation.fqName?.render()
+            append(rendered ?: "ERROR")
 
             val valueArguments = annotation.allValueArguments.entries.sortedBy { it.key.asString() }
             printCollectionIfNotEmpty(valueArguments, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->

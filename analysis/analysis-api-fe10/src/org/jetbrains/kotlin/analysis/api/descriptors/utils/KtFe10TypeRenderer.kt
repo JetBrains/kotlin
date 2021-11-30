@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getKtNamedAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import kotlin.reflect.KClass
 
 internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, private val isDebugText: Boolean = false) {
     private companion object {
@@ -47,7 +45,11 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         if (isDebugText) {
             renderTypeAnnotationsDebug(type)
         } else {
-            renderFe10Annotations(type.annotations, isSingleLineAnnotations = true) { classId ->
+            renderFe10Annotations(
+                type.annotations,
+                isSingleLineAnnotations = true,
+                renderAnnotationWithShortNames = options.shortQualifiedNames
+            ) { classId ->
                 classId != StandardClassIds.Annotations.ExtensionFunctionType
             }
         }
