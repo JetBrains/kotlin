@@ -27,7 +27,7 @@ internal class FirIdeRenderer private constructor(
     options: KtDeclarationRendererOptions,
     session: FirSession,
 ) : FirIdeRendererBase(options, session) {
-    fun PrettyPrinter.renderMemberDeclaration(declaration: FirMemberDeclaration) {
+    fun PrettyPrinter.renderMemberDeclaration(declaration: FirDeclaration) {
         when (declaration) {
             is FirAnonymousObject -> renderAnonymousObject(declaration)
             is FirRegularClass -> renderRegularClass(declaration)
@@ -37,7 +37,7 @@ internal class FirIdeRenderer private constructor(
             is FirSimpleFunction -> renderSimpleFunction(declaration)
             is FirBackingField -> renderBackingField()
             is FirEnumEntry -> renderEnumEntry(declaration)
-            is FirProperty -> renderProperty(declaration)
+            is FirProperty -> renderPropertyOrField(declaration)
             is FirValueParameter -> renderValueParameter(declaration)
             is FirField -> renderPropertyOrField(declaration)
             is FirErrorFunction -> error("FirErrorFunction should not be rendered")
@@ -46,9 +46,6 @@ internal class FirIdeRenderer private constructor(
             is FirFile ->  error("FirFile should not be rendered")
             is FirTypeParameter -> renderTypeParameter(declaration)
             is FirAnonymousFunction -> TODO()
-            is FirErrorFunction -> Unit
-            is FirErrorProperty -> Unit
-            is FirBackingField -> Unit
         }
     }
 
@@ -56,30 +53,33 @@ internal class FirIdeRenderer private constructor(
         append("field")
     }
 
-    private fun PrettyPrinter.renderProperty(property: FirProperty) {
-        renderAnnotationsAndModifiers(property)
-        renderValVarPrefix(property)
-        renderTypeParameters(property)
-        renderReceiver(property)
-        renderName(property)
+    private fun PrettyPrinter.renderPropertyOrField(variable: FirVariable) {
+        check(variable is FirProperty || variable is FirField) {
+            "Required either FirProperty or FirField but was ${variable::class.simpleName}"
+        }
+        renderAnnotationsAndModifiers(variable)
+        renderValVarPrefix(variable)
+        renderTypeParameters(variable)
+        renderReceiver(variable)
+        renderName(variable)
         append(": ")
-        renderType(property.returnTypeRef, approximate = options.approximateTypes)
+        renderType(variable.returnTypeRef, approximate = options.approximateTypes)
 
-        renderWhereSuffix(property)
+        renderWhereSuffix(variable)
 
-        fun FirPropertyAccessor?.needToRender() = this != null && (annotations.isNotEmpty() || visibility != property.visibility)
+        fun FirPropertyAccessor?.needToRender() = this != null && (annotations.isNotEmpty() || visibility != variable.visibility)
         val needToRenderAccessors = options.renderClassMembers &&
-                (property.getter.needToRender() || (property.isVar && property.setter.needToRender()))
+                (variable.getter.needToRender() || (variable.isVar && variable.setter.needToRender()))
 
         if (needToRenderAccessors) {
             withIndent {
-                property.getter?.let { getter ->
+                variable.getter?.let { getter ->
                     if (getter.needToRender()) {
                         appendLine()
                         renderPropertyAccessor(getter)
                     }
                 }
-                property.setter?.let { setter ->
+                variable.setter?.let { setter ->
                     if (setter.needToRender()) {
                         appendLine()
                         renderPropertyAccessor(setter)
@@ -341,7 +341,7 @@ internal class FirIdeRenderer private constructor(
 
     companion object {
         fun render(
-            firDeclaration: FirMemberDeclaration,
+            firDeclaration: FirDeclaration,
             options: KtDeclarationRendererOptions,
             session: FirSession
         ): String {

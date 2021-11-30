@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.toConeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
@@ -187,7 +188,7 @@ internal class KtFirTypeProvider(
             .mapTo(mutableListOf()) { it.asKtType() }
     }
 
-    override fun getDispatchReceiverType(symbol: KtPossibleMemberSymbol): KtType? {
+    override fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType? {
         require(symbol is KtFirSymbol<*>)
 
         return symbol.firRef.withFir { declaration ->
