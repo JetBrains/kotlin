@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
@@ -19,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFileScope(
@@ -83,7 +81,11 @@ internal class KtFirFileScope(
         owner.firRef.withFir {
             sequence {
                 it.declarations.forEach { firDeclaration ->
-                    val classLikeDeclaration = (firDeclaration as? FirRegularClass)?.takeIf { klass -> nameFilter(klass.name) }
+                    val classLikeDeclaration = when (firDeclaration) {
+                        is FirTypeAlias -> if (nameFilter(firDeclaration.name)) firDeclaration else null
+                        is FirRegularClass -> if (nameFilter(firDeclaration.name)) firDeclaration else null
+                        else -> null
+                    }
                     if (classLikeDeclaration != null) {
                         yield(builder.classifierBuilder.buildClassLikeSymbol(classLikeDeclaration))
                     }
