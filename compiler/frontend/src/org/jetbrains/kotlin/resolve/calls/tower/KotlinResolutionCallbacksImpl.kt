@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionC
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -79,6 +83,7 @@ class KotlinResolutionCallbacksImpl(
     private val topLevelCallContext: BasicCallResolutionContext,
     private val missingSupertypesResolver: MissingSupertypesResolver,
     private val kotlinCallResolver: KotlinCallResolver,
+    private val resultTypeResolver: ResultTypeResolver,
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
@@ -87,6 +92,15 @@ class KotlinResolutionCallbacksImpl(
         companion object {
             val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
         }
+    }
+
+    override fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType? {
+        val variableWithConstraints = constraintSystem.getBuilder().currentStorage().notFixedTypeVariables[typeVariable] ?: return null
+        return resultTypeResolver.findResultType(
+            constraintSystem.asConstraintSystemCompleterContext(),
+            variableWithConstraints,
+            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+        ) as KotlinType
     }
 
     override fun resolveCallableReferenceArgument(

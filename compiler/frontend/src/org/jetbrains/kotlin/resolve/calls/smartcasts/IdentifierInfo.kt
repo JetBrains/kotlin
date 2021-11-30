@@ -235,7 +235,7 @@ private fun getIdForSimpleNameExpression(
             if (implicitReceiver == null) {
                 selectorInfo
             } else {
-                val receiverInfo = getIdForImplicitReceiver(implicitReceiver, simpleNameExpression)
+                val receiverInfo = getIdForImplicitReceiver(implicitReceiver)
 
                 if (receiverInfo == null) {
                     selectorInfo
@@ -261,15 +261,10 @@ private fun getIdForSimpleNameExpression(
     }
 }
 
-private fun getIdForImplicitReceiver(receiverValue: ReceiverValue?, expression: KtExpression?) =
+private fun getIdForImplicitReceiver(receiverValue: ReceiverValue?): IdentifierInfo? =
     when (receiverValue) {
         is ContextReceiver -> IdentifierInfo.Receiver(receiverValue)
-
         is ImplicitReceiver -> getIdForThisReceiver(receiverValue.declarationDescriptor)
-
-        is TransientReceiver ->
-            throw AssertionError("Transient receiver is implicit for an explicit expression: $expression. Receiver: $receiverValue")
-
         else -> null
     }
 

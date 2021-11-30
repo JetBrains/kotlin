@@ -612,6 +612,10 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL, "Applying ''!!'' to the whole as/is expression without parentheses is deprecated. Please, put parentheses explicitly");
 
         MAP.put(MODIFIER_LIST_NOT_ALLOWED, "Modifiers and annotations are not allowed here, because there are other modifiers or annotations outside of parenthesis");
+        MAP.put(PROGRESSIONS_CHANGING_RESOLVE, "Progressions and ranges types will start implementing Collection interface soon. " +
+                                               "This call will resolve to another declaration: {0}. " +
+                                               "See https://youtrack.jetbrains.com/issue/KT-49276 for more details. " +
+                                               "Please specify a progrssion type of argument explicitly through explicit cast to resolve to a proper declaration.", COMPACT);
 
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES);
 

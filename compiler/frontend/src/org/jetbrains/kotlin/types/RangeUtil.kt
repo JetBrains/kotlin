@@ -281,10 +281,5 @@ fun isCharSequenceIterator(descriptor: CallableDescriptor) =
     }
 
 
-fun isPrimitiveNumberClassDescriptor(descriptor: DeclarationDescriptor?): Boolean {
-    return if (descriptor !is ClassDescriptor) {
-        false
-    } else KotlinBuiltIns.isPrimitiveClass((descriptor as ClassDescriptor?)!!) && !KotlinBuiltIns.isBoolean(
-        (descriptor as ClassDescriptor?)!!
-    )
-}
+fun isPrimitiveNumberClassDescriptor(descriptor: DeclarationDescriptor?): Boolean =
+    descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveClass(descriptor) && !KotlinBuiltIns.isBoolean(descriptor)

@@ -44,6 +44,17 @@ class KotlinCallResolver(
         return kotlinCallCompleter.runCompletion(candidateFactory, candidates, expectedType, resolutionCallbacks)
     }
 
+    fun resolveCall(
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        kotlinCall: KotlinCall,
+        expectedType: UnwrappedType?,
+        collectAllCandidates: Boolean,
+    ): Collection<ResolutionCandidate> {
+        val candidateFactory = createFactory(scopeTower, kotlinCall, resolutionCallbacks, expectedType)
+        return resolveCall(scopeTower, resolutionCallbacks, kotlinCall, collectAllCandidates, candidateFactory)
+    }
+
     fun resolveAndCompleteGivenCandidates(
         scopeTower: ImplicitScopeTower,
         resolutionCallbacks: KotlinResolutionCallbacks,

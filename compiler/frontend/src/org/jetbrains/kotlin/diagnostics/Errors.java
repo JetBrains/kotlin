@@ -208,6 +208,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtModifierList> MODIFIER_LIST_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactoryForDeprecation1<PsiElement, CallableDescriptor> PROGRESSIONS_CHANGING_RESOLVE = DiagnosticFactoryForDeprecation1.create(LanguageFeature.ProgressionsChangingResolve);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors in declarations

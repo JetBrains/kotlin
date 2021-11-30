@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
+import org.jetbrains.kotlin.resolve.checkers.PassingProgressionAsCollectionCallChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -72,8 +75,11 @@ class PSICallResolver(
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
     private val candidateInterceptor: CandidateInterceptor,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val resultTypeResolver: ResultTypeResolver,
 ) {
+    private val callCheckersWithAdditionalResolve = listOf(PassingProgressionAsCollectionCallChecker(kotlinCallResolver))
+
     private val givenCandidatesName = Name.special("<given candidates>")
 
     private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
@@ -114,8 +120,22 @@ class PSICallResolver(
         }
 
         val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
+
         return overloadResolutionResults.also {
             clearCacheForApproximationResults()
+            checkCallWithAdditionalResolve(it, scopeTower, resolutionCallbacks, expectedType, context)
+        }
+    }
+
+    private fun <D : CallableDescriptor> checkCallWithAdditionalResolve(
+        overloadResolutionResults: OverloadResolutionResults<D>,
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        expectedType: UnwrappedType?,
+        context: BasicCallResolutionContext,
+    ) {
+        for (callChecker in callCheckersWithAdditionalResolve) {
+            callChecker.check(overloadResolutionResults, scopeTower, resolutionCallbacks, expectedType, context)
         }
     }
 
@@ -189,7 +209,8 @@ class PSICallResolver(
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
             dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
             this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
-            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver, kotlinCallResolver
+            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver, kotlinCallResolver,
+            resultTypeResolver
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
