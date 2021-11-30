@@ -86,9 +86,7 @@ internal class KtFe10ScopeProvider(
 
     override fun getFileScope(fileSymbol: KtFileSymbol): KtScope = withValidityAssertion {
         require(fileSymbol is KtFe10FileSymbol)
-        val scope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(fileSymbol.psi)
-
-        return KtFe10ScopeLexical(scope, analysisContext)
+        return KtFe10FileScope(fileSymbol.psi, analysisContext, token)
     }
 
     override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope = withValidityAssertion {
