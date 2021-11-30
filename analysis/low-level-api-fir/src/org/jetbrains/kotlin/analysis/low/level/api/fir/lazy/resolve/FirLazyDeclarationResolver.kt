@@ -237,30 +237,45 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
                 return firDeclarationToResolve
             }
         }
-        if (firDeclarationToResolve is FirSyntheticPropertyAccessor) {
-            lazyResolveDeclaration(
-                firDeclarationToResolve.delegate,
-                moduleFileCache,
-                scopeSession,
-                toPhase,
-                checkPCE,
-                skipLocalDeclaration
-            )
-            return firDeclarationToResolve
+        when (firDeclarationToResolve) {
+            is FirSyntheticPropertyAccessor -> {
+                lazyResolveDeclaration(
+                    firDeclarationToResolve.delegate,
+                    moduleFileCache,
+                    scopeSession,
+                    toPhase,
+                    checkPCE,
+                    skipLocalDeclaration
+                )
+                return firDeclarationToResolve
+            }
+
+            is FirBackingField -> {
+                lazyResolveDeclaration(
+                    firDeclarationToResolve.propertySymbol.fir,
+                    moduleFileCache,
+                    scopeSession,
+                    toPhase,
+                    checkPCE,
+                    skipLocalDeclaration
+                )
+            }
+
+            is FirFile -> {
+                lazyResolveFileDeclaration(
+                    firFile = firDeclarationToResolve,
+                    moduleFileCache = moduleFileCache,
+                    toPhase = toPhase,
+                    scopeSession = scopeSession,
+                    checkPCE = checkPCE,
+                )
+                return firDeclarationToResolve
+            }
         }
+
         if (!firDeclarationToResolve.isValidForResolve()) return firDeclarationToResolve
         if (firDeclarationToResolve.resolvePhase >= toPhase) return firDeclarationToResolve
 
-        if (firDeclarationToResolve is FirFile) {
-            lazyResolveFileDeclaration(
-                firFile = firDeclarationToResolve,
-                moduleFileCache = moduleFileCache,
-                toPhase = toPhase,
-                scopeSession = scopeSession,
-                checkPCE = checkPCE,
-            )
-            return firDeclarationToResolve
-        }
 
         val requestedDeclarationDesignation = firDeclarationToResolve.tryCollectDesignationWithFile()
 

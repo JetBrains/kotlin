@@ -304,7 +304,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
         fun buildBackingFieldSymbol(fir: FirBackingField): KtFirBackingFieldSymbol {
             return backingFieldCache.cache(fir) {
-                KtFirBackingFieldSymbol(fir.propertySymbol.fir, resolveState, token, this@KtSymbolByFirBuilder)
+                KtFirBackingFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
         }
 

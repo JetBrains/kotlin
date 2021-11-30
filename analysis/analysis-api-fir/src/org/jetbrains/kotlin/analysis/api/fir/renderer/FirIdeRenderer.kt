@@ -35,15 +35,25 @@ internal class FirIdeRenderer private constructor(
             is FirConstructor -> renderConstructor(declaration)
             is FirPropertyAccessor -> renderPropertyAccessor(declaration)
             is FirSimpleFunction -> renderSimpleFunction(declaration)
+            is FirBackingField -> renderBackingField()
             is FirEnumEntry -> renderEnumEntry(declaration)
             is FirProperty -> renderProperty(declaration)
             is FirValueParameter -> renderValueParameter(declaration)
-            is FirField -> TODO()
+            is FirField -> renderPropertyOrField(declaration)
+            is FirErrorFunction -> error("FirErrorFunction should not be rendered")
+            is FirErrorProperty -> error("FirErrorProperty should not be rendered")
+            is FirAnonymousInitializer -> error("FirAnonymousInitializer should not be rendered")
+            is FirFile ->  error("FirFile should not be rendered")
+            is FirTypeParameter -> renderTypeParameter(declaration)
             is FirAnonymousFunction -> TODO()
             is FirErrorFunction -> Unit
             is FirErrorProperty -> Unit
             is FirBackingField -> Unit
         }
+    }
+
+    private fun PrettyPrinter.renderBackingField() {
+        append("field")
     }
 
     private fun PrettyPrinter.renderProperty(property: FirProperty) {

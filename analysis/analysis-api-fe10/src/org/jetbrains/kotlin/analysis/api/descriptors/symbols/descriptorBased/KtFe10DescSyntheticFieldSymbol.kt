@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class KtFe10DescSyntheticFieldSymbol(
-    private val descriptor: SyntheticFieldDescriptor,
+    val descriptor: SyntheticFieldDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KtBackingFieldSymbol(), KtFe10Symbol {
     override val owningProperty: KtKotlinPropertySymbol

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSyntheticFieldSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getRe
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
@@ -119,13 +121,14 @@ internal class KtFe10TypeProvider(
         return TypeUtils.getAllSupertypes(type.type).map { it.toKtType(analysisContext) }
     }
 
-    override fun getDispatchReceiverType(symbol: KtPossibleMemberSymbol): KtType? {
+    override fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType? {
         assertIsValidAndAccessible()
         require(symbol is KtFe10Symbol)
 
         val descriptor = when (symbol) {
             is KtFe10DescSymbol<*> -> symbol.descriptor as? CallableDescriptor
             is KtFe10PsiSymbol<*, *> -> symbol.descriptor as? CallableDescriptor
+            is KtFe10DescSyntheticFieldSymbol -> symbol.descriptor
             else -> error("No callable descriptor on $symbol")
         }
 

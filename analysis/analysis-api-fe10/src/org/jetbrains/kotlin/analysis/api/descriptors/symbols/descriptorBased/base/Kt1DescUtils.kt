@@ -389,6 +389,7 @@ internal fun getSymbolDescriptor(symbol: KtSymbol): DeclarationDescriptor? {
     return when (symbol) {
         is KtFe10DescSymbol<*> -> symbol.descriptor
         is KtFe10PsiSymbol<*, *> -> symbol.descriptor
+        is KtFe10DescSyntheticFieldSymbol -> symbol.descriptor
         else -> null
     }
 }

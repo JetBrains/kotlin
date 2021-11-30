@@ -69,6 +69,7 @@ internal abstract class FirIdeRendererBase(
             is FirTypeParameter -> declaration.name
             is FirTypeAlias -> declaration.name
             is FirEnumEntry -> declaration.name
+            is FirField -> declaration.name
             else -> TODO("Unexpected declaration ${declaration::class.qualifiedName}")
         }
         append(name.render())

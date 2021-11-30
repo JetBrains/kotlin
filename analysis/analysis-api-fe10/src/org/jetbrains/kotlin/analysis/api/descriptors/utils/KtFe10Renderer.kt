@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -279,6 +280,7 @@ internal class KtFe10Renderer(
 
     private fun KtFe10RendererConsumer.renderCallable(descriptor: CallableDescriptor) {
         when (descriptor) {
+            is SyntheticFieldDescriptor -> renderSyntheticFieldDescriptor()
             is PropertyGetterDescriptor -> renderPropertyAccessor(descriptor)
             is PropertySetterDescriptor -> renderPropertyAccessor(descriptor)
             is PropertyDescriptor -> renderProperty(descriptor)
@@ -288,6 +290,10 @@ internal class KtFe10Renderer(
             is LocalVariableDescriptor -> renderLocalVariable(descriptor)
             else -> error("Unexpected descriptor kind: $descriptor")
         }
+    }
+
+    private fun KtFe10RendererConsumer.renderSyntheticFieldDescriptor() {
+        append("field")
     }
 
     private fun KtFe10RendererConsumer.renderPropertyAccessor(descriptor: PropertyAccessorDescriptor) {
@@ -440,7 +446,12 @@ internal class KtFe10Renderer(
             return
         }
         val isSingleLineAnnotations = declaration is ValueParameterDescriptor || declaration is TypeParameterDescriptor
-        renderFe10Annotations(declaration.annotations, isSingleLineAnnotations, predicate)
+        renderFe10Annotations(
+            declaration.annotations,
+            isSingleLineAnnotations,
+            renderAnnotationWithShortNames = options.typeRendererOptions.shortQualifiedNames,
+            predicate
+        )
     }
 
     private fun KtFe10RendererConsumer.renderModifiers(descriptor: DeclarationDescriptor) {
