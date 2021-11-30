@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -87,7 +86,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             sourcesToCompile = filesToCompile.toList(),
             commonSources = emptyList(),
             javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
-            classpath = listOf(outDir, TestKotlinArtifacts.kotlinStdlib).filter { it.exists() },
+            classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
             friendDirs = emptyList()
         )
 
@@ -115,7 +114,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 
 abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
     override val jsStdlibFile: File
-        get() = KotlinArtifacts.instance.kotlinStdlibJs
+        get() = File("build/js-ir-runtime/full-runtime.klib")
 
     override fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.irProduceKlibDir = true

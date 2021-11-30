@@ -16,14 +16,18 @@ class EnableICFixture(
 
     fun setUp() {
         isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+        @Suppress("DEPRECATION")
         IncrementalCompilation.setIsEnabledForJvm(enableJvmIC)
 
         isICEnabledForJsBackup = IncrementalCompilation.isEnabledForJs()
+        @Suppress("DEPRECATION")
         IncrementalCompilation.setIsEnabledForJs(enableJsIC)
     }
 
     fun tearDown() {
+        @Suppress("DEPRECATION")
         IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
+        @Suppress("DEPRECATION")
         IncrementalCompilation.setIsEnabledForJs(isICEnabledForJsBackup)
     }
 }

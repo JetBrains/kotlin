@@ -203,7 +203,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 isTests,
                 // this excludes the output directories from the class path, to be removed for true incremental compilation
                 outputDirs,
-                friendDirs
+                friendDirs,
+                IncrementalCompilation.isEnabledForJvm()
             )
         }
 

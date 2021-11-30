@@ -247,7 +247,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val jslibJar = PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
         val jslibDir = File(workDir, "KotlinJavaScript")
         try {
-            Decompressor.Zip(jslibJar).extract(jslibDir.toPath())
+            Decompressor.Zip(jslibJar).extract(jslibDir)
         }
         catch (ex: IOException) {
             throw IllegalStateException(ex.message)
@@ -1114,16 +1114,5 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                     assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
             }
         }
-    }
-}
-
-private inline fun <R> withIC(enabled: Boolean = true, fn: () -> R): R {
-    val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-    IncrementalCompilation.setIsEnabledForJvm(enabled)
-
-    try {
-        return fn()
-    } finally {
-        IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
     }
 }

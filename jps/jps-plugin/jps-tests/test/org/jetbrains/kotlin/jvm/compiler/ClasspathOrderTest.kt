@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.kotlin.build.JvmSourceRoot
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -53,7 +54,8 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
             JavaModuleBuildTargetType.PRODUCTION.typeId,
             JavaModuleBuildTargetType.PRODUCTION.isTests,
             setOf(),
-            emptyList()
+            emptyList(),
+            IncrementalCompilation.isEnabledForJvm()
         ).asText().toString()
 
         val xml = File(tmpdir, "module.xml")

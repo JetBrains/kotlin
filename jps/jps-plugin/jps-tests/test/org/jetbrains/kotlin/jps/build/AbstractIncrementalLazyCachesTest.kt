@@ -68,6 +68,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
             when {
                 name.endsWith("incremental-compilation") -> {
+                    @Suppress("DEPRECATION")
                     IncrementalCompilation.setIsEnabledForJvm(modification.dataFile.readAsBool())
                 }
             }

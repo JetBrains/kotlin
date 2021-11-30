@@ -354,6 +354,7 @@ class JpsKotlinCompilerRunner {
             val daemonOptions = configureDaemonOptions()
             val additionalJvmParams = mutableListOf<String>()
 
+            @Suppress("DEPRECATION")
             IncrementalCompilation.toJvmArgs(additionalJvmParams)
 
             val clientFlagFile = KotlinCompilerClient.getOrCreateClientFlagFile(daemonOptions)
