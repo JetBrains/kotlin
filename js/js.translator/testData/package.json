@@ -3,8 +3,8 @@
     "require-from-string": "1.2.0"
   },
   "devDependencies": {
-    "mocha": "3.2.0",
-    "mocha-teamcity-reporter": "1.1.1",
+    "mocha": "9.1.3",
+    "mocha-teamcity-reporter": "4.2.0",
     "typescript": "^4.5.2"
   },
   "scripts": {
