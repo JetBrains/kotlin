@@ -67,7 +67,7 @@ class VariableFixationFinder(
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
-        isTypeInferenceForSelfTypesSupported && hasOnlyDeclaredUpperBoundSelfTypes(variable) ->
+        isTypeInferenceForSelfTypesSupported && hasOnlyDeclaredUpperBoundSelfTypes(variable) && !hasDependencyToOtherTypeVariables(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
