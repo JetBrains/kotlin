@@ -30,7 +30,6 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
-import org.jetbrains.kotlin.test.AndroidStudioTestUtils
 
 @WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
@@ -40,7 +39,7 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     }
 
     override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !AndroidStudioTestUtils.skipIncompatibleTestAgainstAndroidStudio()
+        return super.shouldRunTest()
     }
 
     override fun tearDown() {

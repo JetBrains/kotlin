@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
-    @Deprecated("Use JvmStdlib instead")
     MockRuntime(
         "kotlin-mock-runtime",
         PathUtil.kotlinPathsForDistDirectory.stdlibPath,

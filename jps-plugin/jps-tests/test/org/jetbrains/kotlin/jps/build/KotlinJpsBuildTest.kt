@@ -243,7 +243,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val jslibJar = PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
         val jslibDir = File(workDir, "KotlinJavaScript")
         try {
-            Decompressor.Zip(jslibJar).extract(jslibDir.toPath())
+            Decompressor.Zip(jslibJar).extract(jslibDir)
         }
         catch (ex: IOException) {
             throw IllegalStateException(ex.message)
