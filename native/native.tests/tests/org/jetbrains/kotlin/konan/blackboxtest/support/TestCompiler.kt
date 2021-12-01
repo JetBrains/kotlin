@@ -181,7 +181,7 @@ internal sealed interface TestCompilationResult {
             is DependencyFailures -> fail { describeDependencyFailures() }
         }
 
-        private fun Failure.describeFailure() = loggedData.withErrorMessageHeader(
+        private fun Failure.describeFailure() = loggedData.withErrorMessage(
             when (this@describeFailure) {
                 is CompilerFailure -> "Compilation failed."
                 is UnexpectedFailure -> "Compilation failed with unexpected exception."

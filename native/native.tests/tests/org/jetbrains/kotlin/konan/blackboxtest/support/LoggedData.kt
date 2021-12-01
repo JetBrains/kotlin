@@ -23,8 +23,8 @@ internal abstract class LoggedData {
     protected abstract fun computeText(): String
     final override fun toString() = text
 
-    fun withErrorMessageHeader(errorMessageHeader: String): String = buildString {
-        appendLine(errorMessageHeader)
+    fun withErrorMessage(errorMessage: String): String = buildString {
+        appendLine(errorMessage)
         appendLine()
         appendLine(this@LoggedData)
     }
@@ -90,27 +90,31 @@ internal abstract class LoggedData {
 
     class TestRunParameters(
         private val compilerCall: CompilerCall,
-        private val testCaseId: TestCaseId,
+        private val testCaseId: TestCaseId?,
         private val runArgs: Iterable<String>,
-        private val runParameters: List<TestRunParameter>
+        private val runParameters: List<TestRunParameter>?
     ) : LoggedData() {
         override fun computeText() = buildString {
-            if (testCaseId is TestCaseId.TestDataFile) {
-                appendLine("TEST DATA FILE:")
-                appendLine(testCaseId.file)
-            } else {
-                appendLine("TEST CASE ID:")
-                appendLine(testCaseId)
+            when {
+                testCaseId is TestCaseId.TestDataFile -> {
+                    appendLine("TEST DATA FILE:")
+                    appendLine(testCaseId.file)
+                    appendLine()
+                }
+                testCaseId != null -> {
+                    appendLine("TEST CASE ID:")
+                    appendLine(testCaseId)
+                    appendLine()
+                }
             }
-            appendLine()
             appendArguments("TEST RUN ARGUMENTS:", runArgs)
             appendLine()
-            runParameters.get<TestRunParameter.WithInputData> {
+            runParameters?.get<TestRunParameter.WithInputData> {
                 appendLine("INPUT DATA FILE:")
                 appendLine(inputDataFile)
                 appendLine()
             }
-            runParameters.get<TestRunParameter.WithExpectedOutputData> {
+            runParameters?.get<TestRunParameter.WithExpectedOutputData> {
                 appendLine("EXPECTED OUTPUT DATA FILE:")
                 appendLine(expectedOutputDataFile)
                 appendLine()
@@ -198,13 +202,13 @@ internal abstract class LoggedData {
             appendLine("- Exit code: ${runResult.exitCode ?: "<unknown>"}")
             appendDuration(runResult.duration)
             appendLine()
-            appendLine("========== BEGIN: TEST STDOUT ==========")
+            appendLine("========== BEGIN: STDOUT ==========")
             if (runResult.output.stdOut.isNotEmpty()) appendLine(runResult.output.stdOut.trimEnd())
-            appendLine("========== END: TEST STDOUT ==========")
+            appendLine("========== END: STDOUT ==========")
             appendLine()
-            appendLine("========== BEGIN: TEST STDERR ==========")
+            appendLine("========== BEGIN: STDERR ==========")
             if (runResult.output.stdErr.isNotEmpty()) appendLine(runResult.output.stdErr.trimEnd())
-            appendLine("========== END: TEST STDERR ==========")
+            appendLine("========== END: STDERR ==========")
             return this
         }
     }

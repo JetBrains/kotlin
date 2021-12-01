@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerEx
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_FILE_NAME
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.computeGeneratedSourcesDir
@@ -194,24 +195,9 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
         val expectedOutputDataFile = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
         val testKind = parseTestKind(registeredDirectives, location)
 
-        val extras = when (testKind) {
-            TestKind.REGULAR, TestKind.STANDALONE -> {
-                // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.
-                val needToFixPackageNames = testKind == TestKind.REGULAR
-
-                val testFunctions = checkExistingPackageNamesAndCollectTestFunctions(
-                    testModules = testModules.values,
-                    basePackageName = nominalPackageName,
-                    fixPackageNames = needToFixPackageNames,
-                    testDataFile = testDataFile
-                )
-
-                WithTestRunnerExtras(testFunctions)
-            }
-            TestKind.STANDALONE_NO_TR -> NoTestRunnerExtras(
-                entryPoint = parseEntryPoint(registeredDirectives, location),
-                inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
-            )
+        if (testKind == TestKind.REGULAR) {
+            // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.
+            fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
 
         val testCase = TestCase(
@@ -221,7 +207,13 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = nominalPackageName,
             expectedOutputDataFile = expectedOutputDataFile,
-            extras = extras
+            extras = if (testKind == TestKind.STANDALONE_NO_TR)
+                NoTestRunnerExtras(
+                    entryPoint = parseEntryPoint(registeredDirectives, location),
+                    inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
+                )
+            else
+                WithTestRunnerExtras
         )
         testCase.initialize(findSharedModule = null)
 
@@ -229,122 +221,33 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
     }
 
     companion object {
-        private fun CharSequence.hasAnythingButComments(): Boolean {
-            return dropNonMeaningfulLines().firstOrNull() != null
-        }
-
-        private fun checkExistingPackageNamesAndCollectTestFunctions(
-            testModules: Collection<TestModule.Exclusive>,
-            basePackageName: PackageFQN,
-            fixPackageNames: Boolean,
-            testDataFile: File
-        ): List<TestFunction> {
-            val testFunctions = mutableListOf<TestFunction>()
-
+        private fun fixPackageNames(testModules: Collection<TestModule.Exclusive>, basePackageName: PackageFQN, testDataFile: File) {
             testModules.forEach { testModule ->
                 testModule.files.forEach { testFile ->
-                    val meaningfulLines = testFile.text.dropNonMeaningfulLines()
+                    val firstMeaningfulLine = testFile.text.dropNonMeaningfulLines().firstOrNull()
 
                     // Retrieve the package name if it is declared inside the test file.
-                    val existingPackageName = meaningfulLines.firstOrNull()?.let { (lineNumber, firstMeaningfulLine) ->
-                        getExistingPackageName(lineNumber, firstMeaningfulLine, basePackageName, testDataFile)
-                    }
-
-                    // Compute the package name to be added (if it should be added, of course).
-                    val packageNameToAdd = if (fixPackageNames && existingPackageName == null) basePackageName else null
-
-                    // Collect test functions.
-                    val effectivePackageName = existingPackageName ?: packageNameToAdd ?: ""
-                    collectTestFunctionsNames(meaningfulLines, testDataFile) { functionName ->
-                        testFunctions += TestFunction(effectivePackageName, functionName)
-                    }
-
-                    // Add package declaration (if necessary).
-                    if (packageNameToAdd != null) {
-                        testFile.update { text -> "package $packageNameToAdd $text" }
-                    }
-                }
-            }
-
-            return testFunctions
-        }
-
-        private fun getExistingPackageName(lineNumber: Int, line: String, basePackageName: PackageFQN, testDataFile: File): PackageFQN? {
-            val existingPackageName = line
-                .substringAfter("package ", missingDelimiterValue = "")
-                .trimStart()
-                .takeIf(String::isNotEmpty)
-                ?: return null
-
-            assertTrue(
-                existingPackageName == basePackageName
-                        || (existingPackageName.length > basePackageName.length
-                        && existingPackageName.startsWith(basePackageName)
-                        && existingPackageName[basePackageName.length] == '.')
-            ) {
-                """
-                   ${Location(testDataFile, lineNumber)}: Invalid package name declaration found: $line
-                    Expected: package $basePackageName
-                """.trimIndent()
-            }
-
-            return existingPackageName
-        }
-
-        private inline fun collectTestFunctionsNames(
-            meaningfulLines: Sequence<Pair<Int, String>>,
-            testDataFile: File,
-            crossinline consumeFunctionName: (FunctionName) -> Unit
-        ) {
-            var expectingTestFunction = false
-
-            val extractFunctionName: (lineNumber: Int, line: String) -> Unit = { lineNumber, line ->
-                val match = FUNCTION_REGEX.matchEntire(line)
-                    ?: fail { "${Location(testDataFile, lineNumber)}: Can't parse name of test function: $line" }
-
-                val functionName = match.groupValues[1]
-
-                consumeFunctionName(functionName)
-            }
-
-            val processPossiblyAnnotatedLine: (lineNumber: Int, line: String) -> Unit = { lineNumber, line ->
-                if (line.startsWith('@'))
-                    for (testAnnotation in TEST_ANNOTATIONS) {
-                        if (line.startsWith(testAnnotation)) {
-                            val remainder = line.substringAfter(testAnnotation).trimStart()
-                            if (remainder.isNotEmpty()) extractFunctionName(lineNumber, remainder) else expectingTestFunction = true
-                            break
+                    val existingPackageName = firstMeaningfulLine?.getExistingPackageName()
+                    if (existingPackageName != null) {
+                        // Validate it.
+                        assertTrue(
+                            existingPackageName == basePackageName
+                                    || (existingPackageName.length > basePackageName.length
+                                    && existingPackageName.startsWith(basePackageName)
+                                    && existingPackageName[basePackageName.length] == '.')
+                        ) {
+                            val location = Location(testDataFile, firstMeaningfulLine.number)
+                            """
+                               $location: Invalid package name declaration found: $firstMeaningfulLine
+                                Expected: package $basePackageName
+                            """.trimIndent()
                         }
+                    } else {
+                        // Add package declaration.
+                        testFile.update { text -> "package $basePackageName $text" }
                     }
-            }
-
-            meaningfulLines.forEach { (lineNumber, line) ->
-                if (expectingTestFunction) {
-                    extractFunctionName(lineNumber, line)
-                    expectingTestFunction = false
-                } else
-                    processPossiblyAnnotatedLine(lineNumber, line)
-            }
-        }
-
-        private fun CharSequence.dropNonMeaningfulLines(): Sequence<Pair<Int, String>> {
-            var inMultilineComment = false
-
-            return lineSequence()
-                .mapIndexed { lineNumber, line -> lineNumber to line.trim() }
-                .dropWhile { (_, trimmedLine) ->
-                    when {
-                        inMultilineComment -> inMultilineComment = !trimmedLine.endsWith("*/")
-                        trimmedLine.startsWith("/*") -> inMultilineComment = true
-                        trimmedLine.isMeaningfulLine() -> return@dropWhile false
-                    }
-                    return@dropWhile true
                 }
+            }
         }
-
-        private fun String.isMeaningfulLine() = isNotEmpty() && !startsWith("//") && !startsWith("@file:")
-
-        private val TEST_ANNOTATIONS = listOf("@Test", "@kotlin.test.Test")
-        private val FUNCTION_REGEX = Regex("^\\s*fun\\s+(\\p{javaJavaIdentifierPart}+).*$")
     }
 }

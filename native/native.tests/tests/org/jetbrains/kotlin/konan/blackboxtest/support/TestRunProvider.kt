@@ -9,16 +9,17 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestFunctionExtractor
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildTree
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.isSameOrSubpackageOf
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -31,6 +32,7 @@ internal class TestRunProvider(
 ) : ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory(settings)
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
+    private val cachedTestFunctions = ThreadSafeCache<TestCompilationCacheKey, Collection<TestFunction>>()
 
     fun setProcessors(testDataFile: File, sourceTransformers: List<(String) -> String>) {
         testCaseGroupProvider.setPreprocessors(testDataFile, sourceTransformers)
@@ -61,7 +63,7 @@ internal class TestRunProvider(
      *       }
      *   }
      */
-    fun getSingleTestRun(testCaseId: TestCaseId): TestRun = withTestExecutable(testCaseId) { testCase, executable ->
+    fun getSingleTestRun(testCaseId: TestCaseId): TestRun = withTestExecutable(testCaseId) { testCase, executable, _ ->
         val runParameters = getRunParameters(testCase, testFunction = null)
         TestRun(displayName = /* Unimportant. Used only in dynamic tests. */ "", executable, runParameters, testCase.id)
     }
@@ -96,7 +98,7 @@ internal class TestRunProvider(
      *       }
      *   }
      */
-    fun getTestRuns(testCaseId: TestCaseId): TreeNode<TestRun> = withTestExecutable(testCaseId) { testCase, executable ->
+    fun getTestRuns(testCaseId: TestCaseId): TreeNode<TestRun> = withTestExecutable(testCaseId) { testCase, executable, cacheKey ->
         fun createTestRun(testRunName: String, testFunction: TestFunction?): TestRun {
             val runParameters = getRunParameters(testCase, testFunction)
             return TestRun(testRunName, executable, runParameters, testCase.id)
@@ -109,7 +111,10 @@ internal class TestRunProvider(
                 TreeNode.oneLevel(testRun)
             }
             TestKind.REGULAR, TestKind.STANDALONE -> {
-                val testFunctions = testCase.extras<WithTestRunnerExtras>().testFunctions
+                val testFunctions = cachedTestFunctions.computeIfAbsent(cacheKey) {
+                    extractTestFunctions(executable)
+                }.filterIrrelevant(testCase)
+
                 testFunctions.buildTree(TestFunction::packageName) { testFunction ->
                     createTestRun(testFunction.functionName, testFunction)
                 }
@@ -117,7 +122,7 @@ internal class TestRunProvider(
         }
     }
 
-    private fun <T> withTestExecutable(testCaseId: TestCaseId, action: (TestCase, TestExecutable) -> T): T {
+    private fun <T> withTestExecutable(testCaseId: TestCaseId, action: (TestCase, TestExecutable, TestCompilationCacheKey) -> T): T {
         settings.assertNotDisposed()
 
         val testCaseGroup = testCaseGroupProvider.getTestCaseGroup(testCaseId.testCaseGroupId) ?: fail { "No test case for $testCaseId" }
@@ -125,36 +130,37 @@ internal class TestRunProvider(
 
         val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId" }
 
-        val testCompilation = when (testCase.kind) {
+        val (testCompilation, cacheKey) = when (testCase.kind) {
             TestKind.STANDALONE, TestKind.STANDALONE_NO_TR -> {
                 // Create a separate compilation for each standalone test case.
                 val cacheKey = TestCompilationCacheKey.Standalone(testCaseId)
-                cachedCompilations.computeIfAbsent(cacheKey) {
+                val testCompilation = cachedCompilations.computeIfAbsent(cacheKey) {
                     compilationFactory.testCasesToExecutable(listOf(testCase))
                 }
+                testCompilation to cacheKey
             }
             TestKind.REGULAR -> {
                 // Group regular test cases by compiler arguments.
                 val cacheKey = TestCompilationCacheKey.Grouped(testCaseId.testCaseGroupId, testCase.freeCompilerArgs)
-                cachedCompilations.computeIfAbsent(cacheKey) {
+                val testCompilation = cachedCompilations.computeIfAbsent(cacheKey) {
                     val testCases = testCaseGroup.getRegularOnlyByCompilerArgs(testCase.freeCompilerArgs)
                     assertTrue(testCases.isNotEmpty())
                     compilationFactory.testCasesToExecutable(testCases)
                 }
+                testCompilation to cacheKey
             }
         }
 
         val (executableFile, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
         val executable = TestExecutable(executableFile, loggedCompilerCall)
 
-        return action(testCase, executable)
+        return action(testCase, executable, cacheKey)
     }
 
     private fun getRunParameters(testCase: TestCase, testFunction: TestFunction?): List<TestRunParameter> = with(testCase) {
         when (kind) {
             TestKind.STANDALONE_NO_TR -> {
                 assertTrue(testFunction == null)
-
                 listOfNotNull(
                     extras<NoTestRunnerExtras>().inputDataFile?.let(TestRunParameter::WithInputData),
                     expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
@@ -175,16 +181,32 @@ internal class TestRunProvider(
 
     // Currently, only local test runner is supported.
     fun createRunner(testRun: TestRun): AbstractRunner<*> = with(settings.get<GlobalSettings>()) {
-        when (val target = target) {
-            hostTarget -> LocalTestRunner(testRun, executionTimeout)
-            else -> fail {
-                """
-                    Running at non-host target is not supported yet.
-                    Compilation target: $target
-                    Host target: $hostTarget
-                """.trimIndent()
-            }
-        }
+        if (target == hostTarget)
+            LocalTestRunner(testRun, executionTimeout)
+        else
+            runningAtNonHostTarget()
+    }
+
+    // Currently, only local test function extractor is supported.
+    private fun extractTestFunctions(executable: TestExecutable): Collection<TestFunction> = with(settings.get<GlobalSettings>()) {
+        if (target == hostTarget)
+            LocalTestFunctionExtractor(executable, executionTimeout).run()
+        else
+            runningAtNonHostTarget()
+    }
+
+    private fun Collection<TestFunction>.filterIrrelevant(testCase: TestCase) =
+        if (testCase.kind == TestKind.REGULAR)
+            filter { testFunction -> testFunction.packageName.isSameOrSubpackageOf(testCase.nominalPackageName) }
+        else
+            this
+
+    private fun GlobalSettings.runningAtNonHostTarget(): Nothing = fail {
+        """
+            Running at non-host target is not supported yet.
+            Compilation target: $target
+            Host target: $hostTarget
+        """.trimIndent()
     }
 
     override fun close() {

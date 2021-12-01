@@ -180,11 +180,7 @@ internal class TestCase(
 ) {
     sealed interface Extras
     class NoTestRunnerExtras(val entryPoint: String, val inputDataFile: File?) : Extras
-    class WithTestRunnerExtras(val testFunctions: Collection<TestFunction>) : Extras {
-        companion object {
-            val EMPTY = WithTestRunnerExtras(emptyList())
-        }
-    }
+    object WithTestRunnerExtras : Extras
 
     init {
         when (kind) {

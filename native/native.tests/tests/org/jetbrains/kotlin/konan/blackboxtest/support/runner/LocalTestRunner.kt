@@ -41,7 +41,7 @@ internal class LocalTestRunner(
 
     override fun handleUnexpectedFailure(t: Throwable) = fail {
         LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
-            .withErrorMessageHeader("Test execution failed with unexpected exception.")
+            .withErrorMessage("Test execution failed with unexpected exception.")
     }
 
     inner class ResultHandler(runResult: RunResult.Completed) : AbstractLocalProcessRunner<Unit>.ResultHandler(runResult) {
