@@ -230,12 +230,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
                     val existingPackageName = firstMeaningfulLine?.getExistingPackageName()
                     if (existingPackageName != null) {
                         // Validate it.
-                        assertTrue(
-                            existingPackageName == basePackageName
-                                    || (existingPackageName.length > basePackageName.length
-                                    && existingPackageName.startsWith(basePackageName)
-                                    && existingPackageName[basePackageName.length] == '.')
-                        ) {
+                        assertTrue(existingPackageName.isSameOrSubpackageOf(basePackageName)) {
                             val location = Location(testDataFile, firstMeaningfulLine.number)
                             """
                                $location: Invalid package name declaration found: $firstMeaningfulLine
