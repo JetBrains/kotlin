@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.js
 
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -17,8 +18,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
@@ -74,9 +75,10 @@ class JsCoreScriptingCompiler(
                 override fun getPreviousScripts() = replCompilerState.history.map { it.item.scriptSymbol }
             }
 
-        val mangler = JvmDescriptorMangler(null)
         val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable, generatorExtensions)
-        val providers = generateTypicalIrProviderList(module, psi2irContext.irBuiltIns, psi2irContext.symbolTable, mangler)
+        val providers = generateTypicalIrProviderList(
+            module, psi2irContext.irBuiltIns, psi2irContext.symbolTable, DescriptorByIdSignatureFinderImpl(module, JsManglerDesc)
+        )
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, providers, emptyList(), null) // TODO: deserializer
 
         val context = JsIrBackendContext(
@@ -95,7 +97,7 @@ class JsCoreScriptingCompiler(
                 irModuleFragment.descriptor,
                 psi2irContext.irBuiltIns,
                 psi2irContext.symbolTable,
-                mangler
+                DescriptorByIdSignatureFinderImpl(irModuleFragment.descriptor, JsManglerDesc)
             )
         ).generateUnboundSymbolsAsDependencies()
 

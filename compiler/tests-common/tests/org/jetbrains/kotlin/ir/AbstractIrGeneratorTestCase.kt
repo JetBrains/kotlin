@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -169,8 +170,8 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             )
             val irProviders = generateTypicalIrProviderList(
                 moduleDescriptor, context.irBuiltIns, context.symbolTable,
+                DescriptorByIdSignatureFinderImpl(moduleDescriptor, JsManglerDesc),
                 extensions = generatorExtensions,
-                mangler = JsManglerDesc,
             )
             return psi2ir.generateModuleFragment(context, ktFilesToAnalyze, irProviders, emptyList())
         }

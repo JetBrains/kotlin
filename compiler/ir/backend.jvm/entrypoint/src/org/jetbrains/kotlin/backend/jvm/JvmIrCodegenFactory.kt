@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -95,7 +93,9 @@ open class JvmIrCodegenFactory(
 
         val stubGenerator =
             DeclarationStubGeneratorImpl(
-                psi2irContext.moduleDescriptor, symbolTable, psi2irContext.irBuiltIns, mangler, jvmGeneratorExtensions
+                psi2irContext.moduleDescriptor, symbolTable, psi2irContext.irBuiltIns,
+                DescriptorByIdSignatureFinderImpl(psi2irContext.moduleDescriptor, mangler),
+                jvmGeneratorExtensions
             )
         val frontEndContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
@@ -290,7 +290,7 @@ open class JvmIrCodegenFactory(
     ): List<IrProvider> {
         return generateTypicalIrProviderList(
             irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable,
-            JvmDescriptorMangler(null),
+            DescriptorByIdSignatureFinderImpl(irModuleFragment.descriptor, JvmDescriptorMangler(null)),
             extensions = extensions
         )
     }

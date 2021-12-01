@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -89,7 +90,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
             irModule.descriptor,
             SymbolTable(signaturer, IrFactoryImpl), // TODO
             irModule.irBuiltins,
-            mangler,
+            DescriptorByIdSignatureFinderImpl(irModule.descriptor, mangler)
         )
 
         val baseFile = testServices.moduleStructure.originalTestDataFiles.first()

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class DescriptorByIdSignatureFinderImpl(
     private val moduleDescriptor: ModuleDescriptor,
     private val mangler: KotlinMangler.DescriptorMangler,
-    private val lookupMode: LookupMode
+    private val lookupMode: LookupMode = LookupMode.MODULE_WITH_DEPENDENCIES,
 ) : DescriptorByIdSignatureFinder {
     init {
         assert(lookupMode != LookupMode.MODULE_ONLY || moduleDescriptor is ModuleDescriptorImpl) {
