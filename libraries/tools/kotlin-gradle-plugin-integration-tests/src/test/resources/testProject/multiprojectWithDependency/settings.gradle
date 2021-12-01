@@ -1,1 +1,14 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
+    }
+}
+
 include 'projA', 'projB'

@@ -103,6 +103,43 @@ fun someTest(
 }
 ```
 
+##### Common test fixes
+
+Test infrastructure adds following common fixes to all test projects:
+- applies 'org.jetbrains.kotlin.test.fixes.android' [plugin](../gradle/android-test-fixes/Readme.md). If you are using custom `settings.gradle`
+or `settings.gradle.kts` content in the test project, you need to add this plugin into `pluginManagement`:
+<details open>
+<summary>Kotlin script</summary>
+
+```kotlin
+pluginManagement {
+    repositories {
+        mavenLocal()
+    }
+
+    val test_fixes_version: String by settings
+    plugins {
+       id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
+    }
+}
+```
+</details>
+<details>
+<summary>Groovy</summary>
+
+```groovy
+pluginManagement {
+    repositories {
+        mavenLocal()
+    }
+    
+    plugins {
+       id "org.jetbrains.kotlin.test.fixes.android" version $test_fixes_version
+    }
+}
+```
+</details>
+
 ##### Deprecated tests setup
 
 When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:

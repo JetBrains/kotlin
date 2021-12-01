@@ -1551,6 +1551,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .replace(": ", " = ")
                     .replace("def ", " val ")
                     .replace("new File(cacheRedirectorFile)", "File(cacheRedirectorFile)")
+                    .replace("id \"org.jetbrains.kotlin.test.fixes.android\"", "id(\"org.jetbrains.kotlin.test.fixes.android\")")
             }
             renameTo(projectDir.resolve("app/build.gradle.kts"))
         }

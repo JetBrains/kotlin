@@ -26,7 +26,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.multiplatform.pm20" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.allopen" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}test_fixes_version"
         }
         
         resolutionStrategy {
@@ -67,6 +67,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
 
         val kotlin_version: String by settings
         val android_tools_version: String by settings
+        val test_fixes_version: String by settings
         plugins {
             id("org.jetbrains.kotlin.jvm") version kotlin_version
             id("org.jetbrains.kotlin.kapt") version kotlin_version
@@ -75,7 +76,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.multiplatform") version kotlin_version
             id("org.jetbrains.kotlin.multiplatform.pm20") version kotlin_version
             id("org.jetbrains.kotlin.plugin.allopen") version kotlin_version
-            id("org.jetbrains.kotlin.test.fixes.android") version kotlin_version
+            id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
         }
         
         resolutionStrategy {

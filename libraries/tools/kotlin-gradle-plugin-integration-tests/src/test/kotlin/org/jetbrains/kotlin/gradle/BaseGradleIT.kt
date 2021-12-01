@@ -14,6 +14,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.testbase.applyAndroidTestFixes
 import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
 import org.jetbrains.kotlin.gradle.testbase.extractJavaCompiledSources
 import org.jetbrains.kotlin.gradle.testbase.extractKotlinCompiledSources
@@ -302,6 +303,7 @@ abstract class BaseGradleIT {
                 projectDir.toPath().apply {
                     addPluginManagementToSettings()
                     if (enableCacheRedirector) enableCacheRedirector()
+                    applyAndroidTestFixes()
                 }
             }
         }
@@ -445,7 +447,7 @@ abstract class BaseGradleIT {
         }
 
         val options = defaultBuildOptions()
-        val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
+        val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}", "-Ptest_fixes_version=$KOTLIN_VERSION")
         options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
         val env = createEnvironmentVariablesMap(options)
         val wrapperVersion = chooseWrapperVersionOrFinishTest()
@@ -874,6 +876,7 @@ Finished executing task ':$taskName'|
             }
 
             add("-Pkotlin_version=" + options.kotlinVersion)
+            add("-Ptest_fixes_version=$KOTLIN_VERSION")
             options.incremental?.let {
                 add("-Pkotlin.incremental=$it")
             }
