@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /*
- * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @A
+ * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @DummyFunction
  */
 class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PREDICATE: DeclarationPredicate = has("A".fqn())
+        private val PREDICATE: DeclarationPredicate = has("DummyFunction".fqn())
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider

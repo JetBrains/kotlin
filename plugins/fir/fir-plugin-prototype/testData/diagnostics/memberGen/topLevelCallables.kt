@@ -1,8 +1,8 @@
 package foo
 
-import org.jetbrains.kotlin.fir.plugin.A
+import org.jetbrains.kotlin.fir.plugin.DummyFunction
 
-@A
+@DummyFunction
 class MySuperClass {
     fun test() {
         val s = dummyMySuperClass(this)

@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.fir.plugin.E
+import org.jetbrains.kotlin.fir.plugin.CompanionWithFoo
 
-@E
+@CompanionWithFoo
 class SomeClass
 
 fun takeInt(x: Int) {}

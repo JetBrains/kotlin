@@ -1,7 +1,7 @@
 FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      B
+      ExternalClassWithNested
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bar.Foo
     CONSTRUCTOR visibility:public <> () returnType:bar.Foo [primary]
       BLOCK_BODY
@@ -25,7 +25,7 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      B
+      ExternalClassWithNested
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:bar.Bar
     CONSTRUCTOR visibility:public <> () returnType:bar.Bar [primary]
       BLOCK_BODY

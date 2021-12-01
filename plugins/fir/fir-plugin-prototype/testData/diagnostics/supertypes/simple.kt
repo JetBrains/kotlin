@@ -1,20 +1,20 @@
 package foo
 
-import org.jetbrains.kotlin.fir.plugin.D
+import org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
 
 interface MyInterface {
     fun foo()
 }
 
-@D
+@MyInterfaceSupertype
 abstract class AbstractClass
 
-@D
+@MyInterfaceSupertype
 class FinalClassWithOverride {
     override fun foo() {}
 }
 
-@D
+@MyInterfaceSupertype
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FinalClassWithoutOverride<!> {
     // should be error
 }
@@ -24,7 +24,7 @@ class NotAnnotatedWithOverride {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {}
 }
 
-@D
+@MyInterfaceSupertype
 class AnnotatedClassWithExplicitInheritance : MyInterface {
     override fun foo() {}
 }

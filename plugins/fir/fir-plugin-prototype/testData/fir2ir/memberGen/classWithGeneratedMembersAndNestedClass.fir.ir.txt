@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/classWithGeneratedMembersAndNestedClass.kt
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      C
+      NestedClassAndMaterializeMember
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
     CONSTRUCTOR visibility:public <> () returnType:<root>.Foo [primary]
       BLOCK_BODY

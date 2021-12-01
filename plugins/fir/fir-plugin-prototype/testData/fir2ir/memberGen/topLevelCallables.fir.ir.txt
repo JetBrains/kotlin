@@ -1,7 +1,7 @@
 FILE fqName:foo fileName:/topLevelCallables.kt
   CLASS CLASS name:MySuperClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      A
+      DummyFunction
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.MySuperClass
     CONSTRUCTOR visibility:public <> () returnType:foo.MySuperClass [primary]
       BLOCK_BODY

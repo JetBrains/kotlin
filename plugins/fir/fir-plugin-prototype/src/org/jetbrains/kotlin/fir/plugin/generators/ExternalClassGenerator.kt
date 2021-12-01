@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.name.*
 /*
  * Generates class /foo.AllOpenGenerated with
  *  - empty public constructor
- *  - testClassName() functions for all classes annotated with @B
- *  - NestedClassName nested classes for all classes annotated with @B
+ *  - testClassName() functions for all classes annotated with @ExternalClassWithNested
+ *  - NestedClassName nested classes for all classes annotated with @ExternalClassWithNested
  *  - function `materialize: ClassName` in those nested classes
  *
  * If there are no annotated classes then AllOpenGenerated class is not generated
@@ -41,7 +41,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         private val GENERATED_CLASS_ID = ClassId(FOO_PACKAGE, Name.identifier("AllOpenGenerated"))
         private val MATERIALIZE_NAME = Name.identifier("materialize")
 
-        private val PREDICATE: DeclarationPredicate = has("B".fqn())
+        private val PREDICATE: DeclarationPredicate = has("ExternalClassWithNested".fqn())
     }
 
     object Key : FirPluginKey() {

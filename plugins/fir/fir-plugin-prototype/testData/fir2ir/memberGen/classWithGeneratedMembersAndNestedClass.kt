@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.fir.plugin.C
+import org.jetbrains.kotlin.fir.plugin.NestedClassAndMaterializeMember
 
-@C
+@NestedClassAndMaterializeMember
 class Foo {
     class MyNested
 }

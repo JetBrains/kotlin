@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 /*
- * Generates companion object with fun foo(): Int for each class annotated with @E
+ * Generates companion object with fun foo(): Int for each class annotated with @CompanionWithFoo
  */
 class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PREDICATE = has("E".fqn())
+        private val PREDICATE = has("CompanionWithFoo".fqn())
         private val FOO_NAME = Name.identifier("foo")
     }
 

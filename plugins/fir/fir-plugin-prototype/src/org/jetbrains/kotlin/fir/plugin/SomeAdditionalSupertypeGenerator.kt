@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /*
- * Adds MyInterface supertype for all classes annotated with @D
+ * Adds MyInterface supertype for all classes annotated with @MyInterfaceSupertype
  */
 class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
     companion object {
         private val myInterfaceClassId = ClassId(FqName("foo"), Name.identifier("MyInterface"))
-        private val PREDICATE: DeclarationPredicate = has("D".fqn())
+        private val PREDICATE: DeclarationPredicate = has("MyInterfaceSupertype".fqn())
 
     }
 

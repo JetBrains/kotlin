@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 /*
- * For each class annotated with @C generates
+ * For each class annotated with @NestedClassAndMaterializeMember generates
  *  - member fun materialize(): ClassName
  *  - nested class Nested with default constructor
  */
@@ -37,7 +37,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         private val MATERIALIZE_NAME = Name.identifier("materialize")
         private val NESTED_NAME = Name.identifier("Nested")
 
-        private val PREDICATE: DeclarationPredicate = has("C".fqn())
+        private val PREDICATE: DeclarationPredicate = has("NestedClassAndMaterializeMember".fqn())
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider

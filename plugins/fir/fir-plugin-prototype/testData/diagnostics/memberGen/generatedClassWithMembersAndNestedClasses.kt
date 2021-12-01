@@ -1,14 +1,14 @@
 package bar
 
 import foo.AllOpenGenerated
-import org.jetbrains.kotlin.fir.plugin.B
+import org.jetbrains.kotlin.fir.plugin.ExternalClassWithNested
 
-@B
+@ExternalClassWithNested
 class Foo {
     fun foo() {}
 }
 
-@B
+@ExternalClassWithNested
 class Bar {
     fun bar() {}
 }
