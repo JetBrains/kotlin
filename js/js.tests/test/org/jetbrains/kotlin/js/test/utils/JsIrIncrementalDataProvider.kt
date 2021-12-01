@@ -162,7 +162,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     }
 
     private fun recordIncrementalDataForRuntimeKlib(module: TestModule) {
-        val runtimeKlibPath = JsEnvironmentConfigurator.getStdlibPathsForModule(module)
+        val runtimeKlibPath = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val libs = runtimeKlibPath.map {
             val descriptor = testServices.jsLibraryProvider.getDescriptorByPath(it)
             testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(descriptor)

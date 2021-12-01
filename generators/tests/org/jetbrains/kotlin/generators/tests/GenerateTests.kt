@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -393,6 +394,16 @@ fun main(args: Array<String>) {
 
             testClass<AbstractAllOpenBlackBoxCodegenTest> {
                 model("box")
+            }
+        }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/test",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuJsIrTest> {
+                model("box/")
             }
         }
     }

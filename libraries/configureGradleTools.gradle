@@ -3,6 +3,7 @@ def pluginProjects = [
         project(':kotlin-allopen'),
         project(':kotlin-noarg'),
         project(':kotlin-serialization'),
+        project(':atomicfu'),
         project(':kotlin-lombok')
 ]
 configure(pluginProjects) { project ->
