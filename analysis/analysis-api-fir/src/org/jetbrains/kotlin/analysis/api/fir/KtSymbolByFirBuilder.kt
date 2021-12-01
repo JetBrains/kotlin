@@ -221,6 +221,9 @@ internal class KtSymbolByFirBuilder private constructor(
             fir.unwrapSubstitutionOverrideIfNeeded()?.let {
                 return buildFunctionSymbol(it)
             }
+            if (fir.dispatchReceiverType?.contains { it is ConeStubType } == true) {
+                return buildFunctionSymbol(fir.originalIfFakeOverride() ?: error("Stub type in real declaration"))
+            }
 
             check(fir.origin != FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
