@@ -290,32 +290,33 @@ private fun Path.addDefaultBuildFiles() {
     }
 }
 
-private fun Path.addPluginManagementToSettings() {
+internal fun Path.addPluginManagementToSettings() {
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
-    val fileToUpdate = when {
-        Files.exists(settingsGradle) -> settingsGradle
-        Files.exists(settingsGradleKts) -> settingsGradleKts
-        else -> null
-    }
-
-    if (fileToUpdate == null) {
-        settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-    } else {
-        val settingsContent = fileToUpdate.toFile().readText()
-        if (!settingsContent
-                .lines()
-                .first { !it.startsWith("//") }
-                .startsWith("pluginManagement {")
-        ) {
-            fileToUpdate.toFile().writeText(
+    when {
+        Files.exists(settingsGradle) -> settingsGradle.modify {
+            if (!it.contains("pluginManagement {")) {
                 """
-                    $DEFAULT_GROOVY_SETTINGS_FILE
-                    
-                    $settingsContent
-                    """.trimIndent()
-            )
+                |$DEFAULT_GROOVY_SETTINGS_FILE
+                |                    
+                |$it
+                |""".trimMargin()
+            } else {
+                it
+            }
         }
+        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+            if (!it.contains("pluginManagement {")) {
+                """
+                |$DEFAULT_KOTLIN_SETTINGS_FILE
+                |
+                |$it
+                """.trimMargin()
+            } else {
+                it
+            }
+        }
+        else -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
     }
 }
 
