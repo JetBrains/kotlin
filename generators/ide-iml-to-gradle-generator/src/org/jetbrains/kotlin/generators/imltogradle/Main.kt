@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.imltogradle
 
 import com.google.gson.JsonParser
-import com.intellij.openapi.util.io.systemIndependentPath
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -17,8 +16,7 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.*
 import org.jetbrains.kotlin.generators.imltogradle.GradleDependencyNotation.IntellijDepGradleDependencyNotation
 import java.io.File
-import java.util.*
-import kotlin.system.measureNanoTime
+
 
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
@@ -205,8 +203,8 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement): List<JpsLikeDependen
 
 fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): String {
     return when (sourceRoot.rootType) {
-        is JavaSourceRootType -> "java.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile).systemIndependentPath}\")"
-        is JavaResourceRootType -> "resources.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile).systemIndependentPath}\")"
+        is JavaSourceRootType -> "java.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile).invariantSeparatorsPath}\")"
+        is JavaResourceRootType -> "resources.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile).invariantSeparatorsPath}\")"
         else -> error("Unknown sourceRoot = $sourceRoot")
     }
 }

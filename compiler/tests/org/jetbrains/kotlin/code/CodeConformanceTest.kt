@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.systemIndependentPath
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.LanguageFeature
 import java.io.File
@@ -275,16 +274,16 @@ class CodeConformanceTest : TestCase() {
 
     private class FileMatcher(val root: File, paths: Collection<String>) {
         private val files = paths.map { File(it) }
-        private val paths = files.mapTo(HashSet()) { it.systemIndependentPath }
-        private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
+        private val paths = files.mapTo(HashSet()) { it.invariantSeparatorsPath }
+        private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.invariantSeparatorsPath + "/" }
 
         fun matchExact(file: File): Boolean {
-            return file.relativeTo(root).systemIndependentPath in paths
+            return file.relativeTo(root).invariantSeparatorsPath in paths
         }
 
         fun matchWithContains(file: File): Boolean {
             if (matchExact(file)) return true
-            val relativePath = file.relativeTo(root).systemIndependentPath
+            val relativePath = file.relativeTo(root).invariantSeparatorsPath
             return relativePaths.any { relativePath.startsWith(it) }
         }
     }
@@ -368,7 +367,7 @@ class CodeConformanceTest : TestCase() {
                     for ((repo, files) in repoOccurrencesStableOrder) {
                         appendLine(repo)
                         for (file in files) {
-                            appendLine("  ${file.relativeTo(root).systemIndependentPath}")
+                            appendLine("  ${file.relativeTo(root).invariantSeparatorsPath}")
                         }
                     }
                 }
