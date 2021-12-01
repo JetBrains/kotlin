@@ -21,18 +21,18 @@ basic runtime shipped along with the translator, we only support a subset of all
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 10.11 and later (x86-64), host and target (`-target macos_x64`, default on macOS hosts)
+ * Mac OS X 10.11 and later (x86-64 and arm64), host and target (`-target macos_x64|macos_arm64`, default on macOS hosts)
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
    (`-target linux_x64`, default on Linux hosts, hosted on Linux, Windows and macOS).
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw_x64`,
-   default on Windows hosts).
- * Microsoft Windows x86-32 cross-compiled target (`-target mingw_x86`), hosted on Windows.
- * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target
-   (`-target ios_arm32|ios_arm64|ios_x64`), hosted on macOS.
- * Apple tvOS (arm64 devices, x86 simulator), cross-compiled target
-    (`-target tvos_arm64|tvos_x64`), hosted on macOS.
- * Apple watchOS (arm32/arm64 devices, x86 simulator), cross-compiled target
-     (`-target watchos_arm32|watchos_arm64|watchos_x86|watchos_x64`), hosted on macOS.
+   default on Windows hosts, hosted on Linux, Windows and macOS).
+ * Microsoft Windows x86-32 cross-compiled target (`-target mingw_x86`), hosted on Linux, Windows and macOS.
+ * Apple iOS (armv7 and arm64 devices, x86-64 and arm64 simulators), cross-compiled target
+   (`-target ios_arm32|ios_arm64|ios_x64|ios_simulator_arm64`), hosted on macOS.
+ * Apple tvOS (arm64 devices, x86-64 and arm64 simulators), cross-compiled target
+    (`-target tvos_arm64|tvos_x64|tvos_simulator_arm64`), hosted on macOS.
+ * Apple watchOS (arm32/arm64 devices, x86/x86-64/arm64 simulators), cross-compiled target
+     (`-target watchos_arm32|watchos_arm64|watchos_x86|watchos_x64|watchos_simulator_arm64`), hosted on macOS.
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux, Windows and macOS
  * Linux MIPS big endian, cross-compiled target (`-target mips`), hosted on Linux.
  * Linux MIPS little endian, cross-compiled target (`-target mipsel`), hosted on Linux.
@@ -49,9 +49,9 @@ the following platforms:
 To run _Kotlin/Native_ compiler JDK 8 or later  (JDK) for the host platform has to be installed.
 Produced programs are fully self-sufficient and do not need JVM or other runtime.
 
-On macOS it also requires Xcode 11.0 or newer to be installed.
+On macOS it also requires Xcode 12.5 or newer to be installed.
 
-The language and library version supported by this release match Kotlin 1.5.
+The language and library version supported by this release match Kotlin 1.6.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
@@ -59,8 +59,8 @@ collection algorithm. Multiple threads could be used, but objects must be explic
 between threads, and same object couldn't be accessed by two threads concurrently unless it is frozen.
 See the relevant [documentation](https://kotlinlang.org/docs/native-concurrency.html).
 We are going to lift these multithreading restrictions, which involves implementing a new memory manager.
-More details are available in
-["Kotlin/Native Memory Management Roadmap"](https://blog.jetbrains.com/kotlin/2020/07/kotlin-native-memory-management-roadmap/).
+More details are available in the corresponding roadmap item,
+[KT-49520](https://youtrack.jetbrains.com/issue/KT-49520).
 
 _Kotlin/Native_ provides efficient bidirectional interoperability with C and Objective-C.
 See [the samples](https://github.com/JetBrains/kotlin/tree/master/kotlin-native/samples),
