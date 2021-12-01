@@ -81,7 +81,7 @@ fun AbstractSerialGenerator.allSealedSerializableSubclassesFor(
     klass: ClassDescriptor,
     module: ModuleDescriptor
 ): Pair<List<KotlinType>, List<ClassDescriptor>> {
-    assert(klass.kind == ClassKind.CLASS && klass.modality == Modality.SEALED)
+    assert(klass.modality == Modality.SEALED)
     fun recursiveSealed(klass: ClassDescriptor): Collection<ClassDescriptor> {
         return klass.sealedSubclasses.flatMap { if (it.modality == Modality.SEALED) recursiveSealed(it) else setOf(it) }
     }
@@ -155,7 +155,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     val stdSer = findStandardKotlinTypeSerializer(module, kType) // see if there is a standard serializer
         ?: findEnumTypeSerializer(module, kType)
     if (stdSer != null) return stdSer
-    if (kType.isInterface()) return module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)
+    if (kType.isInterface() && kType.toClassDescriptor?.isSealedSerializableInterface == false) return module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)
     return kType.toClassDescriptor?.classSerializer // check for serializer defined on the type
 }
 

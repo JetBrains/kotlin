@@ -30,4 +30,10 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     public void testMultimoduleInheritance() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/multimoduleInheritance.kt");
     }
+
+    @Test
+    @TestMetadata("sealedInterfaces.kt")
+    public void testSealedInterfaces() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/sealedInterfaces.kt");
+    }
 }

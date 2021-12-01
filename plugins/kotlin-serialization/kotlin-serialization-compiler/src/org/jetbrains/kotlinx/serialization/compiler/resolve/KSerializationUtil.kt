@@ -101,13 +101,16 @@ val KotlinType?.toClassDescriptor: ClassDescriptor?
     }
 
 internal val ClassDescriptor.shouldHaveGeneratedMethodsInCompanion: Boolean
-    get() = this.isSerializableObject || this.isSerializableEnum() || this.kind == ClassKind.CLASS && hasSerializableAnnotation
+    get() = this.isSerializableObject || this.isSerializableEnum() || this.kind == ClassKind.CLASS && hasSerializableAnnotation || this.isSealedSerializableInterface
 
 internal val ClassDescriptor.isSerializableObject: Boolean
     get() = kind == ClassKind.OBJECT && hasSerializableAnnotation
 
 internal val ClassDescriptor.isInternallySerializableObject: Boolean
     get() = kind == ClassKind.OBJECT && hasSerializableAnnotationWithoutArgs
+
+internal val ClassDescriptor.isSealedSerializableInterface: Boolean
+    get() = kind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableAnnotation
 
 internal val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
     get() {
@@ -158,6 +161,7 @@ internal fun ClassDescriptor.isAbstractOrSealedSerializableClass(): Boolean =
 
 internal fun ClassDescriptor.polymorphicSerializerIfApplicableAutomatically(): ClassDescriptor? {
     val serializer = when {
+        kind == ClassKind.INTERFACE && modality == Modality.SEALED -> SpecialBuiltins.sealedSerializer
         kind == ClassKind.INTERFACE -> SpecialBuiltins.polymorphicSerializer
         isInternalSerializable && modality == Modality.ABSTRACT -> SpecialBuiltins.polymorphicSerializer
         isInternalSerializable && modality == Modality.SEALED -> SpecialBuiltins.sealedSerializer
@@ -212,6 +216,7 @@ internal fun ClassDescriptor.needSerializerFactory(): Boolean {
     val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
     if (serializableClass.isSerializableObject) return true
     if (serializableClass.isAbstractOrSealedSerializableClass()) return true
+    if (serializableClass.isSealedSerializableInterface) return true
     if (serializableClass.declaredTypeParameters.isEmpty()) return false
     return true
 }

@@ -40,8 +40,8 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED,
-            "@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums. " +
-                    "Provide serializer manually via e.g. companion object"
+            "@Serializable annotation without arguments can be used only on sealed interfaces." +
+                    "Non-sealed interfaces are polymorphically serializable by default."
         )
         MAP.put(
             SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR,

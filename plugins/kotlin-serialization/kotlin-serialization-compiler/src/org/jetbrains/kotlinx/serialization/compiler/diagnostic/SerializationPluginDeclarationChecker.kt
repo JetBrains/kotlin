@@ -420,4 +420,4 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 }
 
 internal val ClassDescriptor.serializableAnnotationIsUseless: Boolean
-    get() = hasSerializableAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum()
+    get() = hasSerializableAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum() && !isSealedSerializableInterface
