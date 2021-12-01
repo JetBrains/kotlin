@@ -65,7 +65,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     jvmArgs!!.removeIf { it.contains("-Xmx") }
     maxHeapSize = "3g"
-    dependsOn(":plugins:fir:fir-plugin-prototype:plugin-annotations:jar")
+    dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
 }
 
 testsJar()

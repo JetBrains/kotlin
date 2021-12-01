@@ -16,7 +16,7 @@ import java.io.FilenameFilter
 
 class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        private const val ANNOTATIONS_JAR_DIR = "plugins/fir/fir-plugin-prototype/plugin-annotations/build/libs/"
+        private const val ANNOTATIONS_JAR_DIR = "plugins/fir-plugin-prototype/plugin-annotations/build/libs/"
         private val ANNOTATIONS_JAR_FILTER = FilenameFilter { _, name -> name.startsWith("plugin-annotations") && name.endsWith(".jar") }
     }
 
@@ -27,5 +27,5 @@ class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigu
         configuration.addJvmClasspathRoot(jar)
     }
 
-    private val failMessage = { "Jar with annotations does not exist. Please run :plugins:fir:fir-plugin-prototype:plugin-annotations:jar" }
+    private val failMessage = { "Jar with annotations does not exist. Please run :plugins:fir-plugin-prototype:plugin-annotations:jar" }
 }
