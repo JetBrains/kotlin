@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
 object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), FirDeclarationPresenter {
@@ -44,11 +44,8 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
                 (function.name == HASHCODE_NAME || function.name == TO_STRING)
             ) {
                 methodOfAny = true
-            } else {
-                val singleParameter = function.valueParameters.singleOrNull() ?: continue
-                if (singleParameter.returnTypeRef.isNullableAny && function.name == EQUALS) {
-                    methodOfAny = true
-                }
+            } else if (function.isEquals()) {
+                methodOfAny = true
             }
 
             if (methodOfAny) {

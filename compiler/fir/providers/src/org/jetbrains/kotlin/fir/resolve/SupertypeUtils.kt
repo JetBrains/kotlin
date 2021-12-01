@@ -17,12 +17,14 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType>
@@ -40,6 +42,48 @@ abstract class SupertypeSupplier {
         override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
             typeAlias.ensureResolved(FirResolvePhase.SUPER_TYPES)
             return typeAlias.expandedConeType
+        }
+    }
+}
+
+fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): List<FirClassSymbol<*>> {
+    val lookupTags = mutableListOf<ConeClassLikeLookupTag>()
+
+    fun ConeKotlinType.collectClassIds() {
+        when (val unwrappedType = lowerBoundIfFlexible().fullyExpandedType(useSiteSession)) {
+            is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
+            is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
+            else -> {}
+        }
+    }
+
+    type.collectClassIds()
+    return lookupTags.mapNotNull { it.toSymbol(useSiteSession) as? FirClassSymbol<*> }
+}
+
+fun lookupSuperTypes(
+    type: ConeKotlinType,
+    lookupInterfaces: Boolean,
+    deep: Boolean,
+    useSiteSession: FirSession,
+    substituteTypes: Boolean,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+): List<ConeClassLikeType> {
+    return lookupSuperTypes(collectSymbolsForType(type, useSiteSession), lookupInterfaces, deep, useSiteSession, substituteTypes, supertypeSupplier)
+}
+
+fun lookupSuperTypes(
+    symbols: List<FirClassifierSymbol<*>>,
+    lookupInterfaces: Boolean,
+    deep: Boolean,
+    useSiteSession: FirSession,
+    substituteTypes: Boolean,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+): List<ConeClassLikeType> {
+    return SmartList<ConeClassLikeType>().also {
+        val visitedSymbols = SmartSet.create<FirClassifierSymbol<*>>()
+        for (symbol in symbols) {
+            symbol.collectSuperTypes(it, visitedSymbols, deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
         }
     }
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     if (isLocal) {
@@ -86,3 +87,10 @@ var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclara
 
 val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
     get() = fir.originalConstructorIfTypeAlias != null
+
+fun FirSimpleFunction.isEquals(): Boolean {
+    if (name != OperatorNameConventions.EQUALS) return false
+    if (valueParameters.size != 1) return false
+    val parameter = valueParameters.first()
+    return parameter.returnTypeRef.isNullableAny
+}

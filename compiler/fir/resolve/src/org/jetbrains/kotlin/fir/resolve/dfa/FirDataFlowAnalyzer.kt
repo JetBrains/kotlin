@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
@@ -18,24 +19,23 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -570,9 +570,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             rightIsNullable -> processEqNull(node, rightOperand, operation.invert(), ::shouldAddImplicationForStatement)
         }
 
-        if (operation == FirOperation.IDENTITY || operation == FirOperation.NOT_IDENTITY) {
-            processIdentity(node, leftOperand, rightOperand, operation)
-        }
+        processPossibleIdentity(node, leftOperand, rightOperand, operation)
     }
 
     /*
@@ -639,8 +637,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node.flow = flow
     }
 
-    private fun processIdentity(
-        node: EqualityOperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation
+    private fun processPossibleIdentity(
+        node: EqualityOperatorCallNode,
+        leftOperand: FirExpression,
+        rightOperand: FirExpression,
+        operation: FirOperation,
     ) {
         val flow = node.flow
         val expressionVariable = variableStorage.getOrCreateVariable(node.previousFlow, node.fir)
@@ -648,6 +649,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val rightOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, rightOperand)
         val leftOperandType = leftOperand.coneType
         val rightOperandType = rightOperand.coneType
+
+        if (!leftOperandVariable.isReal() && !rightOperandVariable.isReal()) return
+
+        if (operation == FirOperation.EQ || operation == FirOperation.NOT_EQ) {
+            if (hasOverriddenEquals(leftOperandType)) return
+        }
+
         val isEq = operation.isEq()
 
         if (leftOperandVariable.isReal()) {
@@ -661,6 +669,40 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         node.flow = flow
+    }
+
+    private fun hasOverriddenEquals(type: ConeKotlinType): Boolean {
+        val session = components.session
+        val symbolsForType = collectSymbolsForType(type, session)
+        if (symbolsForType.any { it.hasEqualsOverride(session, checkModality = true) }) return true
+
+        val superTypes = lookupSuperTypes(
+            symbolsForType,
+            lookupInterfaces = false,
+            deep = true,
+            session,
+            substituteTypes = false
+        )
+        val superClassSymbols = superTypes.mapNotNull {
+            it.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol
+        }
+
+        return superClassSymbols.any { it.hasEqualsOverride(session, checkModality = false) }
+    }
+
+    private fun FirClassSymbol<*>.hasEqualsOverride(session: FirSession, checkModality: Boolean): Boolean {
+        val status = resolvedStatus
+        if (checkModality && status.modality != Modality.FINAL) return true
+        if (status.isExpect) return true
+        when (classId) {
+            StandardClassIds.Any, StandardClassIds.String -> return false
+        }
+        if (moduleData != session.moduleData) {
+            return true
+        }
+        return session.declaredMemberScope(this)
+            .getFunctions(OperatorNameConventions.EQUALS)
+            .any { it.fir.isEquals() }
     }
 
     // ----------------------------------- Jump -----------------------------------

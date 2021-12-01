@@ -3551,6 +3551,18 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToTypeParameter.kt");
             }
 
+            @Test
+            @TestMetadata("smartcastsFromEquals_differentModule.kt")
+            public void testSmartcastsFromEquals_differentModule() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_differentModule.kt");
+            }
+
+            @Test
+            @TestMetadata("smartcastsFromEquals_sameModule.kt")
+            public void testSmartcastsFromEquals_sameModule() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_sameModule.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans")
             @TestDataPath("$PROJECT_ROOT")

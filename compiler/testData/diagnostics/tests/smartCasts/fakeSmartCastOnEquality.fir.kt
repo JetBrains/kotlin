@@ -34,11 +34,11 @@ fun foo(x: FinalClass?, y: Any) {
         // OK
         x.hashCode()
         // OK
-        y.<!UNRESOLVED_REFERENCE!>use<!>()
+        y.use()
     }
     when (x) {
         // OK (equals from FinalClass)
-        y -> y.<!UNRESOLVED_REFERENCE!>use<!>()
+        y -> y.use()
     }
     when (y) {
         // ERROR (equals from Any)
