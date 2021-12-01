@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestFunction
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListingParseState.*
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+
 internal typealias TestName = String
 internal typealias TestStatus = String
 
@@ -68,5 +73,69 @@ internal fun parseGTestReport(stdOut: String): GTestReport {
     return GTestReport(testStatuses, cleanStdOut.toString())
 }
 
+/**
+ * Extracts [TestFunction]s from GTest listing.
+ *
+ * Example:
+ *   sample.test.SampleTestKt.
+ *     one
+ *     two
+ *
+ * yields TestFunction(sample.test, one) and TestFunction(sample.test, two).
+ */
+internal fun parseGTestListing(rawGTestListing: String): Collection<TestFunction> = buildList {
+    var state: GTestListingParseState = Begin
+
+    rawGTestListing.lineSequence().forEachIndexed { index, line ->
+        fun parseError(message: String): Nothing = fail {
+            buildString {
+                appendLine("$message at line #$index: \"$line\"")
+                appendLine()
+                appendLine("Full listing:")
+                appendLine(rawGTestListing)
+            }
+        }
+
+        state = when {
+            line.isBlank() -> when (state) {
+                is NewTest, is End -> End
+                else -> parseError("Unexpected empty line")
+            }
+            line[0].isWhitespace() -> when (val s = state) {
+                is HasPackageName -> {
+                    this += TestFunction(s.packageName, line.trim())
+                    NewTest(s.packageName)
+                }
+                else -> parseError("Test name encountered before test suite name")
+            }
+            else -> when (state) {
+                is Begin, is NewTest -> {
+                    val packageParts = line.trimEnd().removeSuffix(".").split('.')
+                    if (packageParts.isEmpty()) parseError("Malformed test suite name")
+
+                    // Drop the last part because it is related to class name (or file-class name).
+                    // TODO: How to handle nested classes?
+                    val packageName = packageParts.dropLast(1).joinToString(".")
+
+                    NewTestSuite(packageName)
+                }
+                else -> parseError("Unexpected test suite name")
+            }
+        }
+    }
+}
+
 private val RUN_LINE_REGEX = Regex("""^\[\s+RUN\s+]\s+.*""")
 private val STATUS_LINE_REGEX = Regex("""^\[\s+([A-Z]+)\s+]\s+(\S+)\s+.*""")
+
+private sealed interface GTestListingParseState {
+    object Begin : GTestListingParseState
+    object End : GTestListingParseState
+
+    interface HasPackageName : GTestListingParseState {
+        val packageName: PackageFQN
+    }
+
+    class NewTestSuite(override val packageName: PackageFQN) : HasPackageName
+    class NewTest(override val packageName: PackageFQN) : HasPackageName
+}

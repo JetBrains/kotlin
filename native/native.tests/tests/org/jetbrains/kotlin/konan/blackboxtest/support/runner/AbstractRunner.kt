@@ -22,7 +22,7 @@ internal abstract class AbstractRunner<R> {
         val resultHandler = when (val runResult = run.run()) {
             is RunResult.TimeoutExceeded -> fail {
                 LoggedData.TestRunTimeoutExceeded(getLoggedParameters(), runResult)
-                    .withErrorMessageHeader("Timeout exceeded during test execution.")
+                    .withErrorMessage("Timeout exceeded during test execution.")
             }
             is RunResult.Completed -> buildResultHandler(runResult)
         }
@@ -45,12 +45,12 @@ internal abstract class AbstractRunner<R> {
         abstract fun getLoggedRun(): LoggedData
         abstract fun handle(): R
 
-        protected inline fun <T> verifyExpectation(expected: T, actual: T, crossinline errorMessageHeader: () -> String) {
-            assertEquals(expected, actual) { getLoggedRun().withErrorMessageHeader(errorMessageHeader()) }
+        protected inline fun <T> verifyExpectation(expected: T, actual: T, crossinline errorMessage: () -> String) {
+            assertEquals(expected, actual) { getLoggedRun().withErrorMessage(errorMessage()) }
         }
 
-        protected inline fun verifyExpectation(shouldBeTrue: Boolean, crossinline errorMessageHeader: () -> String) {
-            assertTrue(shouldBeTrue) { getLoggedRun().withErrorMessageHeader(errorMessageHeader()) }
+        protected inline fun verifyExpectation(shouldBeTrue: Boolean, crossinline errorMessage: () -> String) {
+            assertTrue(shouldBeTrue) { getLoggedRun().withErrorMessage(errorMessage()) }
         }
     }
 }

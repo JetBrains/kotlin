@@ -74,3 +74,8 @@ internal fun joinPackageNames(a: PackageFQN, b: PackageFQN): PackageFQN = when {
 
 internal fun String.prependPackageName(packageName: PackageFQN): String =
     if (packageName.isEmpty()) this else "$packageName.$this"
+
+internal fun PackageFQN.isSameOrSubpackageOf(parentPackageName: PackageFQN): Boolean =
+    parentPackageName.isEmpty()
+            || this == parentPackageName
+            || (length > parentPackageName.length && startsWith(parentPackageName) && this[parentPackageName.length] == '.')
