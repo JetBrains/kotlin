@@ -43,6 +43,8 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
     override val hasDescriptor: Boolean
         get() = false
 
+    override var privateSignature: IdSignature? = null
+
     override fun toString(): String {
         if (isBound) return owner.render()
         return "Unbound public symbol for $signature"

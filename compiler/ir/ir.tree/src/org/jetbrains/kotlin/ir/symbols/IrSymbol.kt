@@ -36,6 +36,9 @@ interface IrSymbol {
     val isBound: Boolean
 
     val signature: IdSignature?
+
+    // Used to store signatures in private symbols for JS IC
+    var privateSignature: IdSignature?
 }
 
 val IrSymbol.isPublicApi: Boolean
