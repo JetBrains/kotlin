@@ -789,7 +789,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 call.putValueArgument(index++, irString(""))
                 // signature:   ""
                 call.putValueArgument(index++, irString(""))
-                // flags:       8 = 4 << 1
+                // flags:       8 = 3 << 1
                 call.putValueArgument(index, irInt(8))
             } else if (!isLambda && useOptimizedSuperClass) {
                 val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
