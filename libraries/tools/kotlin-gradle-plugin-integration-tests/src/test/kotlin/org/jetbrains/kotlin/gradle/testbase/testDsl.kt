@@ -231,26 +231,41 @@ private fun setupProjectFromTestResources(
 }
 
 private fun Path.addDefaultBuildFiles() {
-    if (Files.exists(resolve("build.gradle"))) {
-        val settingsFile = resolve("settings.gradle")
-        if (!Files.exists(settingsFile)) {
-            settingsFile.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-        } else {
-            val settingsContent = settingsFile.toFile().readText()
-            if (!settingsContent
-                    .lines()
-                    .first { !it.startsWith("//") }
-                    .startsWith("pluginManagement {")
-            ) {
-                settingsFile.toFile().writeText(
-                    """
-                    $DEFAULT_GROOVY_SETTINGS_FILE
-                    
-                    $settingsContent
-                    """.trimIndent()
-                )
+    addPluginManagementToSettings()
+
+    val buildSrc = resolve("buildSrc")
+    if (Files.exists(buildSrc)) {
+        buildSrc.addPluginManagementToSettings()
+    }
+}
+
+internal fun Path.addPluginManagementToSettings() {
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    when {
+        Files.exists(settingsGradle) -> settingsGradle.modify {
+            if (!it.contains("pluginManagement {")) {
+                """
+                |$DEFAULT_GROOVY_SETTINGS_FILE
+                |                    
+                |$it
+                |""".trimMargin()
+            } else {
+                it
             }
         }
+        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+            if (!it.contains("pluginManagement {")) {
+                """
+                |$DEFAULT_KOTLIN_SETTINGS_FILE
+                |
+                |$it
+                """.trimMargin()
+            } else {
+                it
+            }
+        }
+        else -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
     }
 }
 
