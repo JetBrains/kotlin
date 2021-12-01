@@ -1,7 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1289
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 
+@JsExport
 open class A {
     val foo: Char
         get() = 'X'
@@ -31,6 +30,7 @@ interface I {
     val mutable: Any
 }
 
+@JsExport
 class B : A(), I
 
 fun typeOf(x: dynamic): String = js("typeof x")

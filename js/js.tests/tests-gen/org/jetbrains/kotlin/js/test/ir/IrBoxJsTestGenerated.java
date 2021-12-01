@@ -217,6 +217,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("charInExternalDecl.kt")
+        public void testCharInExternalDecl() throws Exception {
+            runTest("js/js.translator/testData/box/char/charInExternalDecl.kt");
+        }
+
+        @Test
         @TestMetadata("charInStringTemplate.kt")
         public void testCharInStringTemplate() throws Exception {
             runTest("js/js.translator/testData/box/char/charInStringTemplate.kt");
