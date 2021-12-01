@@ -79,21 +79,23 @@ object FirImportsChecker : FirFileChecker() {
                     }
                 }
             }
-        } else {
-            val importedClassId = ClassId.topLevel(importedFqName)
-            val resolvedToClass = importedClassId.resolveToClass(context) != null
-            val resolvedToSymbols = symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), importedName).isNotEmpty()
-            val resolvedToPackages = symbolProvider.getPackage(importedFqName) != null
-            when {
-                resolvedToClass || resolvedToSymbols -> return
-                resolvedToPackages -> reporter.reportOn(import.source, FirErrors.PACKAGE_CANNOT_BE_IMPORTED, context)
-                else -> reporter.reportOn(
-                    import.source,
-                    FirErrors.UNRESOLVED_IMPORT,
-                    importedName.asString(),
-                    context,
-                )
-            }
+            return
+        }
+        when {
+            ClassId.topLevel(importedFqName).resolveToClass(context) != null -> return
+            // Note: two checks below are both heavyweight, so we should do them lazily!
+            symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), importedName).isNotEmpty() -> return
+            symbolProvider.getPackage(importedFqName) != null -> reporter.reportOn(
+                import.source,
+                FirErrors.PACKAGE_CANNOT_BE_IMPORTED,
+                context
+            )
+            else -> reporter.reportOn(
+                import.source,
+                FirErrors.UNRESOLVED_IMPORT,
+                importedName.asString(),
+                context,
+            )
         }
     }
 
