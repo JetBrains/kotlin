@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.AttributeArrayOwner
 import org.jetbrains.kotlin.util.TypeRegistry
 import org.jetbrains.kotlin.types.model.AnnotationMarker
@@ -36,7 +37,7 @@ abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
 class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : AttributeArrayOwner<ConeAttribute<*>, ConeAttribute<*>>(),
     Iterable<ConeAttribute<*>> {
 
-    companion object : TypeRegistry<ConeAttribute<*>, ConeAttribute<*>>() {
+    companion object : ConeTypeRegistry<ConeAttribute<*>, ConeAttribute<*>>() {
         inline fun <reified T : ConeAttribute<T>> attributeAccessor(): ReadOnlyProperty<ConeAttributes, T?> {
             @Suppress("UNCHECKED_CAST")
             return generateNullableAccessor<ConeAttribute<*>, T>(T::class) as ReadOnlyProperty<ConeAttributes, T?>

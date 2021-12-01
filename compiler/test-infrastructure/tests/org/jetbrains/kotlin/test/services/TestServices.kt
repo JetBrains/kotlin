@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMapAccessor
 import org.jetbrains.kotlin.util.ComponentArrayOwner
 import org.jetbrains.kotlin.util.NullableArrayMapAccessor
@@ -28,7 +29,7 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
     override val typeRegistry: TypeRegistry<TestService, TestService>
         get() = Companion
 
-    companion object : TypeRegistry<TestService, TestService>() {
+    companion object : ConeTypeRegistry<TestService, TestService>() {
         inline fun <reified T : TestService> testServiceAccessor(): ArrayMapAccessor<TestService, TestService, T> {
             return generateAccessor(T::class)
         }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.util.AttributeArrayOwner
 import org.jetbrains.kotlin.util.TypeRegistry
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 
@@ -39,6 +40,15 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         inline fun <reified T : TypeAttribute<T>> attributeAccessor(): ReadOnlyProperty<TypeAttributes, T?> {
             @Suppress("UNCHECKED_CAST")
             return generateNullableAccessor<TypeAttribute<*>, T>(T::class) as ReadOnlyProperty<TypeAttributes, T?>
+        }
+
+        override fun <T : TypeAttribute<*>> ConcurrentHashMap<KClass<out TypeAttribute<*>>, Int>.customComputeIfAbsent(
+            kClass: KClass<T>,
+            compute: (KClass<out TypeAttribute<*>>) -> Int
+        ): Int {
+            return this[kClass] ?: synchronized(this) {
+                this[kClass] ?: compute(kClass).also { this.putIfAbsent(kClass, it) }
+            }
         }
 
         val Empty: TypeAttributes = TypeAttributes(listOf(AnnotationsTypeAttribute(Annotations.EMPTY)))

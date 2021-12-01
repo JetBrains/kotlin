@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMapAccessor
 import org.jetbrains.kotlin.util.ComponentArrayOwner
 import org.jetbrains.kotlin.util.TypeRegistry
@@ -18,7 +19,7 @@ annotation class PluginServicesInitialization
 
 @NoMutableState
 class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExtension, List<FirExtension>>(), FirSessionComponent {
-    companion object : TypeRegistry<FirExtension, List<FirExtension>>() {
+    companion object : ConeTypeRegistry<FirExtension, List<FirExtension>>() {
         inline fun <reified P : FirExtension, V : List<P>> registeredExtensions(): ArrayMapAccessor<FirExtension, List<FirExtension>, V> {
             @Suppress("UNCHECKED_CAST")
             return generateAccessor(P::class, default = emptyList<P>() as V)
