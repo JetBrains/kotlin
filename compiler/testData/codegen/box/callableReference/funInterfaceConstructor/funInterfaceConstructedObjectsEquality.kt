@@ -6,6 +6,7 @@
 // IGNORE_BACKEND: WASM
 //  ^ wasm-function[1893]:0x1cf8a: RuntimeError: dereferencing a null pointer
 
+// IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
 //  ^ TypeError: tmp is not a function
 

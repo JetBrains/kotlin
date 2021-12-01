@@ -86,3 +86,13 @@ fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
   }
 }
 
+fun test3b(): KFunction<KConsumer<String>> {
+  return { // BLOCK
+    local fun KConsumer(function: Function1<String, Unit>): KConsumer<String> {
+      return function /*-> KConsumer<String> */
+    }
+
+    ::KConsumer
+  }
+}
+

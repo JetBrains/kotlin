@@ -6,6 +6,7 @@
 // IGNORE_BACKEND: WASM
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
 
+// IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
 

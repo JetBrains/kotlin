@@ -34,3 +34,4 @@ fun test3(): ((String) -> Unit) -> KConsumer<String> = ::KConsumer
 
 fun test3a(): ((String) -> Unit) -> KConsumer<String> = ::KCS
 
+fun test3b(): KFunction<KConsumer<String>> = ::KConsumer
