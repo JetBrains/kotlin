@@ -21,7 +21,7 @@ dependencies {
     testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     
     embeddableTestRuntime(project(":kotlin-scripting-jvm-host"))

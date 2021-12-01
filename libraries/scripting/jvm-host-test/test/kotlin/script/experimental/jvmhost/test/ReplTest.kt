@@ -11,15 +11,46 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.junit.Assert
 import org.junit.Test
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
+import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
+import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ReplTest : TestCase() {
+
+    @Test
+    fun testDecompiledReflection() {
+        checkEvaluateInRepl(
+            sequenceOf(
+                "val x = 1",
+            ),
+            sequenceOf(null),
+            compiledSnippetChecker = { linkedSnippet ->
+                val snippet = linkedSnippet.get()
+                val module = snippet.getCompiledModule() as KJvmCompiledModuleInMemory
+
+                val classLoader = module.createClassLoader(ClassLoader.getSystemClassLoader())
+                val kClass = classLoader.loadClass(snippet.scriptClassFQName).kotlin
+                val constructor = kClass.constructors.single()
+                val scriptInstance = constructor.call(emptyArray<Any>())
+
+                @Suppress("UNCHECKED_CAST")
+                val xProp = kClass.declaredMemberProperties.first { it.name == "x" } as KProperty1<Any, Any>
+                val xValue = xProp.get(scriptInstance)
+
+                assertEquals(1, xValue)
+
+            }
+        )
+    }
 
     @Test
     fun testCompileAndEval() {
@@ -282,7 +313,8 @@ class ReplTest : TestCase() {
             snippets: Sequence<String>,
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-            limit: Int = 0
+            limit: Int = 0,
+            compiledSnippetChecker: CompiledSnippetChecker = {},
         ): Sequence<ResultWithDiagnostics<EvaluatedSnippet>> {
             val replCompiler = KJvmReplCompilerBase<ReplCodeAnalyzerBase>()
             val replEvaluator = BasicJvmReplEvaluator()
@@ -293,6 +325,7 @@ class ReplTest : TestCase() {
                     snippetText.toScriptSource("Line_$snippetNo.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}")
                 runBlocking { replCompiler.compile(snippetSource, compilationConfiguration) }
                     .onSuccess {
+                        compiledSnippetChecker(it)
                         runBlocking { replEvaluator.eval(it, currentEvalConfig) }
                     }
                     .onSuccess {
@@ -307,10 +340,17 @@ class ReplTest : TestCase() {
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
             limit: Int = 0,
-            ignoreDiagnostics: Boolean = false
+            ignoreDiagnostics: Boolean = false,
+            compiledSnippetChecker: CompiledSnippetChecker = {}
         ) {
             val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
-            evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
+            evaluateInRepl(
+                snippets,
+                compilationConfiguration,
+                evaluationConfiguration,
+                limit,
+                compiledSnippetChecker
+            ).forEachIndexed { index, res ->
                 val expectedRes = expectedIter.next()
                 when {
                     res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
@@ -375,9 +415,16 @@ class ReplTest : TestCase() {
             expected: Sequence<Any?>,
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-            limit: Int = 0
+            limit: Int = 0,
+            compiledSnippetChecker: CompiledSnippetChecker = {}
         ) = checkEvaluateInReplDiags(
-            snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit, true
+            snippets,
+            expected.map { ResultWithDiagnostics.Success(it) },
+            compilationConfiguration,
+            evaluationConfiguration,
+            limit,
+            true,
+            compiledSnippetChecker
         )
 
         class TestReceiver(
@@ -389,3 +436,5 @@ class ReplTest : TestCase() {
 
 @Target(AnnotationTarget.FILE)
 annotation class NewAnn
+
+typealias CompiledSnippetChecker = (LinkedSnippet<KJvmCompiledScript>) -> Unit

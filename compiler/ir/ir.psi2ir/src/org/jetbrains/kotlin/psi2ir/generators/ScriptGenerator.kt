@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.toArrayOrPrimitiveArrayType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.util.indexOrMinusOne
+import org.jetbrains.kotlin.ir.util.isCrossinline
+import org.jetbrains.kotlin.ir.util.isNoinline
+import org.jetbrains.kotlin.ir.util.varargElementType
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtScript
@@ -155,6 +156,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     irScript.providedProperties.forEach { add(it.first) }
                 }
                 irConstructor.parent = irScript
+                irConstructor.metadata = DescriptorMetadataSource.Function(descriptor.unsubstitutedPrimaryConstructor)
             }
 
             for (d in ktScript.declarations) {
