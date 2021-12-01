@@ -15,15 +15,15 @@ internal interface TreeNode<T> {
     companion object {
         fun <T> oneLevel(vararg items: T) = oneLevel(listOf(*items))
 
-        fun <T> oneLevel(items: Iterable<T>) = object : TreeNode<T> {
+        fun <T> oneLevel(items: Iterable<T>): List<TreeNode<T>> = listOf(object : TreeNode<T> {
             override val packageSegment get() = ""
             override val items = items.toList()
             override val children get() = emptyList<TreeNode<T>>()
-        }
+        })
     }
 }
 
-internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageFQN, transform: (T) -> R): TreeNode<R> {
+internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageFQN, transform: (T) -> R): Collection<TreeNode<R>> {
     val groupedItems: Map<PackageFQN, List<R>> = groupBy(extractPackageName).mapValues { (_, items) -> items.map(transform) }
 
     // Fast pass.
@@ -44,8 +44,14 @@ internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageFQ
         node.items += items
     }
 
-    // Skip meaningless nodes starting from the root. Compress the resulting tree.
-    return root.skipMeaninglessNodes().apply { compress() }
+    // Skip meaningless nodes starting from the root.
+    val meaningfulNode = root.skipMeaninglessNodes().apply { compress() }
+
+    // Compress the resulting tree.
+    return if (meaningfulNode.items.isNotEmpty() || meaningfulNode.childrenMap.isEmpty())
+        listOf(meaningfulNode)
+    else
+        meaningfulNode.childrenMap.values
 }
 
 private class TreeBuilder<T>(override var packageSegment: String) : TreeNode<T> {
