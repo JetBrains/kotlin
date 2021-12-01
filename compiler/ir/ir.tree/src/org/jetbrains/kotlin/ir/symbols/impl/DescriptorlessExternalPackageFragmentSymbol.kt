@@ -30,7 +30,4 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
     override fun bind(owner: IrExternalPackageFragment) {
         _owner = owner
     }
-
-    override val isPublicApi: Boolean
-        get() = TODO("Not yet implemented")
 }

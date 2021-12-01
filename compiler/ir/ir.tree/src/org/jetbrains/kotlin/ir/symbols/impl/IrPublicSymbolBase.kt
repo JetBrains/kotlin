@@ -61,9 +61,6 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
 
     override val isBound: Boolean
         get() = _owner != null
-
-    override val isPublicApi: Boolean
-        get() = true
 }
 
 class IrClassPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
