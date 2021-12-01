@@ -260,6 +260,8 @@ val Project.protobufRepo: String
 
 fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufVersion"
 fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufVersion"
+fun Project.kotlinxCollectionsImmutable() =
+    "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
 
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
