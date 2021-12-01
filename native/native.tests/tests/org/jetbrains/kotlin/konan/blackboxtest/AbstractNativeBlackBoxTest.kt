@@ -68,22 +68,24 @@ abstract class AbstractNativeBlackBoxTest {
      * This function should be called from a method annotated with [org.junit.jupiter.api.TestFactory].
      */
     internal fun dynamicTestCase(testCaseId: TestCaseId): Collection<DynamicNode> {
-        val rootTestRunNode = testRunProvider.getTestRuns(testCaseId)
-        return buildJUnitDynamicNodes(rootTestRunNode)
+        val testRunNodes = testRunProvider.getTestRuns(testCaseId)
+        return buildJUnitDynamicNodes(testRunNodes)
     }
 
     // We have to use planar (one-level) tree of JUnit5 dynamic nodes, because Gradle does not support yet rendering
     // tests with arbitrary nesting level in their test reports. As long as these reports are consumed by various CI (such as TeamCity)
     // we have almost no chance to display test results in CI properly.
-    private fun buildJUnitDynamicNodes(testRunNode: TreeNode<TestRun>): Collection<DynamicNode> =
+    private fun buildJUnitDynamicNodes(testRunNodes: Collection<TreeNode<TestRun>>): Collection<DynamicNode> =
     // This is the proper implementation that should be used instead:
 //        buildList {
-//            testRunNode.items.mapTo(this) { testRun ->
-//                dynamicTest(testRun.displayName) { runTest(testRun) }
-//            }
+//            testRunNodes.forEach { testRunNode ->
+//                testRunNode.items.mapTo(this) { testRun ->
+//                    dynamicTest(testRun.displayName) { runTest(testRun) }
+//                }
 //
-//            testRunNode.children.mapTo(this) { childTestRunNode ->
-//                dynamicContainer(childTestRunNode.packageSegment, buildJUnitDynamicNodes(childTestRunNode))
+//                testRunNode.children.mapTo(this) { childTestRunNode ->
+//                    dynamicContainer(childTestRunNode.packageSegment, buildJUnitDynamicNodes(childTestRunNode))
+//                }
 //            }
 //        }
         buildList {
@@ -97,7 +99,7 @@ abstract class AbstractNativeBlackBoxTest {
                 children.forEach { it.processItems(ownPackageSegment) }
             }
 
-            testRunNode.processItems("")
+            testRunNodes.forEach { testRunNode -> testRunNode.processItems("") }
         }
 
     private fun performTestRun(testRun: TestRun) {

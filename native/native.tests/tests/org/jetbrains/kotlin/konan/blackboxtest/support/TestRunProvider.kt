@@ -98,7 +98,9 @@ internal class TestRunProvider(
      *       }
      *   }
      */
-    fun getTestRuns(testCaseId: TestCaseId): TreeNode<TestRun> = withTestExecutable(testCaseId) { testCase, executable, cacheKey ->
+    fun getTestRuns(
+        testCaseId: TestCaseId
+    ): Collection<TreeNode<TestRun>> = withTestExecutable(testCaseId) { testCase, executable, cacheKey ->
         fun createTestRun(testRunName: String, testFunction: TestFunction?): TestRun {
             val runParameters = getRunParameters(testCase, testFunction)
             return TestRun(testRunName, executable, runParameters, testCase.id)
