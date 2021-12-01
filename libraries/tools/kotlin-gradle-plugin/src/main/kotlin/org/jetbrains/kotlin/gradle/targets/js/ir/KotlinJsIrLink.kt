@@ -112,7 +112,7 @@ abstract class KotlinJsIrLink @Inject constructor(
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
         }
-        if (incrementalJsIr) {
+        if (incrementalJsIr && mode == DEVELOPMENT) {
             val visitedCompilations = mutableSetOf<KotlinCompilation<*>>()
             val allCacheDirectories = mutableSetOf<File>()
 
