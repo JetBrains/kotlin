@@ -621,7 +621,7 @@ configure([samplesZip, samplesTar]) {
         exclude '**/gradle.properties'
     }
 
-    from(project.rootDir) {
+    from(project.projectDir) {
         include 'licenses/**'
     }
 
