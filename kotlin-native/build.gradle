@@ -565,7 +565,7 @@ configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("crossDistEndorsedCache")
     dependsOn("distSources")
     dependsOn("distDef")
-    from(project.rootDir) {
+    from(project.projectDir) {
         include 'RELEASE_NOTES.md'
         into baseName
     }
