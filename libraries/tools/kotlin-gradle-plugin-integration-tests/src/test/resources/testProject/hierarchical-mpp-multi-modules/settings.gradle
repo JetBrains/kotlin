@@ -1,9 +1,2 @@
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
 rootProject.name = 'multimod-hmpp'
 include ':top-mpp', ':bottom-mpp', ':mpp-additional', ':api-jvm', ':plain-jvm'

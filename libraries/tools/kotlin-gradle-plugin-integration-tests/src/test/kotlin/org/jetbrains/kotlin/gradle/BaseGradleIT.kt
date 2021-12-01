@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testbase.extractJavaCompiledSources
 import org.jetbrains.kotlin.gradle.testbase.extractKotlinCompiledSources
 import org.jetbrains.kotlin.gradle.testbase.prettyPrintXml
 import org.jetbrains.kotlin.gradle.testbase.readAndCleanupTestResults
+import org.jetbrains.kotlin.gradle.testbase.addPluginManagementToSettings
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
@@ -298,7 +299,10 @@ abstract class BaseGradleIT {
                     addHeapDumpOptionsToPropertiesFile()
                 }
 
-                if (enableCacheRedirector) projectDir.toPath().enableCacheRedirector()
+                projectDir.toPath().apply {
+                    addPluginManagementToSettings()
+                    if (enableCacheRedirector) enableCacheRedirector()
+                }
             }
         }
 
