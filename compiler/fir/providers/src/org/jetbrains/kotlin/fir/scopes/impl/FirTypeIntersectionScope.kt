@@ -112,7 +112,7 @@ class FirTypeIntersectionScope private constructor(
                     mostSpecific,
                     FirIntersectionOverrideStorage.ContextForIntersectionOverrideConstruction(
                         this,
-                        extractedOverrides,
+                        baseMembersForIntersection,
                         scopeForMostSpecific
                     )
                 )
