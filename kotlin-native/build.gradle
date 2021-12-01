@@ -536,11 +536,6 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/cache/*/org.jetbrains.kotlin.native.platform.*/**'
         into archiveBaseName
     }
-    from(project.projectDir) {
-        include 'licenses/**'
-        exclude '**/xcode_license.pdf'
-        into archiveBaseName
-    }
 }
 
 task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
@@ -553,14 +548,20 @@ task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/testLibrary'
         into archiveBaseName
     }
-    from(project.projectDir) {
+}
+
+void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean containsPlatformLibraries) {
+    task.from(project.projectDir) {
         include 'licenses/**'
-        if (!isMac()) {
+        if (!containsPlatformLibraries || !isMac()) {
             exclude '**/xcode_license.pdf'
         }
-        into archiveBaseName
+        into task.archiveBaseName
     }
 }
+
+configurePackingLicensesToBundle(bundleRegular, /* containsPlatformLibraries = */ false)
+configurePackingLicensesToBundle(bundlePrebuilt, /* containsPlatformLibraries = */ true)
 
 configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("crossDist")
