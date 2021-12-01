@@ -26,7 +26,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
     }
 
     override fun declarationSignature(declaration: IrDeclaration): IdSignature? {
-        return declarationToSignature[declaration] ?: declaration.symbol.signature
+        return declarationToSignature[declaration] ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
     }
 
     override fun createAnonymousInitializer(

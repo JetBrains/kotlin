@@ -33,6 +33,12 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
         if (delegate === other) return true
         return false
     }
+
+    override var privateSignature: IdSignature?
+        get() = delegate.privateSignature
+        set(value) {
+            delegate.privateSignature = value
+        }
 }
 
 class IrDelegatingClassSymbolImpl(delegate: IrClassSymbol) :

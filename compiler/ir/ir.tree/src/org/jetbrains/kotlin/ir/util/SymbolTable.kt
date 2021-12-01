@@ -488,7 +488,9 @@ open class SymbolTable(
     override fun referenceClassFromLinker(sig: IdSignature): IrClassSymbol =
         classSymbolTable.run {
             if (sig.isPubliclyVisible) referenced(sig, false) { IrClassPublicSymbolImpl(sig) }
-            else IrClassSymbolImpl(signature = sig)
+            else IrClassSymbolImpl().also {
+                it.privateSignature = sig
+            }
         }
 
     val unboundClasses: Set<IrClassSymbol> get() = classSymbolTable.unboundSymbols
@@ -841,7 +843,9 @@ open class SymbolTable(
     override fun referenceSimpleFunctionFromLinker(sig: IdSignature): IrSimpleFunctionSymbol {
         return simpleFunctionSymbolTable.run {
             if (sig.isPubliclyVisible) referenced(sig, false) { IrSimpleFunctionPublicSymbolImpl(sig) }
-            else IrSimpleFunctionSymbolImpl(signature = sig)
+            else IrSimpleFunctionSymbolImpl().also {
+                it.privateSignature = sig
+            }
         }
     }
 
