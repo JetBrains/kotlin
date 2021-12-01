@@ -20,8 +20,8 @@ private val atomicfuCompileDependency = System.getProperty("atomicfu.classpath")
 private val atomicfuRuntime = System.getProperty("atomicfuRuntimeForTests.classpath")
 
 open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
-    "plugins/atomicfu/atomicfu-compiler/testData",
-    "plugins/atomicfu/atomicfu-compiler/testData"
+    pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
+    testGroupOutputDirPrefix = "box/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
