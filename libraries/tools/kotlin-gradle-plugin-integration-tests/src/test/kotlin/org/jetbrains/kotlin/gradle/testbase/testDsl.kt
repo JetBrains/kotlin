@@ -267,6 +267,10 @@ internal fun Path.addPluginManagementToSettings() {
         }
         else -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
     }
+
+    if (Files.exists(resolve("buildSrc"))) {
+        resolve("buildSrc").addPluginManagementToSettings()
+    }
 }
 
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
@@ -290,6 +294,7 @@ internal fun Path.enableAndroidSdk() {
             """.trimIndent()
         )
     acceptAndroidSdkLicenses(androidSdk)
+    applyAndroidTestFixes()
 }
 
 @OptIn(ExperimentalPathApi::class)

@@ -776,7 +776,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assembleDebug", "-Pagp_version=${TestVersions.AGP.AGP_42}")
+            build("assembleDebug", "-Pandroid_tools_version=${TestVersions.AGP.AGP_42}")
         }
     }
 

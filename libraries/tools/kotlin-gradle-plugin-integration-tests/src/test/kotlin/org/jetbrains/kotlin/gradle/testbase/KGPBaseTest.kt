@@ -107,6 +107,8 @@ abstract class KGPBaseTest {
                 }
             }
 
+            arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
+
             return arguments.toList()
         }
     }
