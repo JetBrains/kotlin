@@ -12,7 +12,8 @@ class BytecodeListingTextCollectingVisitor(
     val filter: Filter,
     val withSignatures: Boolean,
     api: Int = Opcodes.API_VERSION,
-    val withAnnotations: Boolean = true
+    val withAnnotations: Boolean = true,
+    val sortDeclarations: Boolean = true,
 ) : ClassVisitor(api) {
     companion object {
         @JvmOverloads
@@ -150,7 +151,9 @@ class BytecodeListingTextCollectingVisitor(
             append(className)
             if (declarationsInsideClass.isNotEmpty()) {
                 append(" {\n")
-                for (declaration in declarationsInsideClass.sortedBy { it.text }) {
+                val orderedDeclarations =
+                    if (sortDeclarations) declarationsInsideClass.sortedBy { it.text } else declarationsInsideClass
+                for (declaration in orderedDeclarations) {
                     append("    ").append(declaration.annotations.joinToString("")).append(declaration.text).append("\n")
                 }
                 append("}")

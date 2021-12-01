@@ -55,6 +55,11 @@ public class IrJvmAbiContentTestGenerated extends AbstractIrJvmAbiContentTest {
         runTest("plugins/jvm-abi-gen/testData/content/class/");
     }
 
+    @TestMetadata("kt50005")
+    public void testKt50005() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
+    }
+
     @TestMetadata("whenMapping")
     public void testWhenMapping() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");
