@@ -21,7 +21,10 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext) : IrNamerBase(
     val nameMap = mutableMapOf<IrDeclaration, JsName>()
 
     private fun IrDeclarationWithName.getName(prefix: String = ""): JsName {
-        return nameMap.getOrPut(this) { JsName(sanitizeName(prefix + getJsNameOrKotlinName().asString()), true) }
+        return nameMap.getOrPut(this) {
+            val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: getJsNameOrKotlinName().asString()
+            JsName(sanitizeName(prefix + name), true)
+        }
     }
 
     val importedModules = mutableListOf<JsImportedModule>()

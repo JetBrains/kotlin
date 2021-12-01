@@ -149,6 +149,12 @@ val createScriptFunctionsPhase = makeJsModulePhase(
     description = "Create functions for initialize and evaluate script"
 ).toModuleLowering()
 
+private val inventNamesForLocalClassesPhase = makeJsModulePhase(
+    ::JsInventNamesForLocalClasses,
+    name = "InventNamesForLocalClasses",
+    description = "Invent names for local classes and anonymous objects",
+).toModuleLowering()
+
 private val annotationInstantiationLowering = makeDeclarationTransformerPhase(
     ::JsAnnotationImplementationTransformer,
     name = "AnnotationImplementation",
@@ -220,13 +226,15 @@ private val sharedVariablesLoweringPhase = makeBodyLoweringPhase(
 private val localClassesInInlineLambdasPhase = makeBodyLoweringPhase(
     ::LocalClassesInInlineLambdasLowering,
     name = "LocalClassesInInlineLambdasPhase",
-    description = "Extract local classes from inline lambdas"
+    description = "Extract local classes from inline lambdas",
+    prerequisite = setOf(inventNamesForLocalClassesPhase)
 )
 
 private val localClassesInInlineFunctionsPhase = makeBodyLoweringPhase(
     ::LocalClassesInInlineFunctionsLowering,
     name = "LocalClassesInInlineFunctionsPhase",
-    description = "Extract local classes from inline functions"
+    description = "Extract local classes from inline functions",
+    prerequisite = setOf(inventNamesForLocalClassesPhase)
 )
 
 private val localClassesExtractionFromInlineFunctionsPhase = makeBodyLoweringPhase(
@@ -807,6 +815,7 @@ private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
 val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
+    inventNamesForLocalClassesPhase,
     annotationInstantiationLowering,
     expectDeclarationsRemovingPhase,
     stripTypeAliasDeclarationsPhase,

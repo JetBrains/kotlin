@@ -67,6 +67,7 @@ class JsIrBackendContext(
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
     val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
 
+    val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
     val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val builtIns = module.builtIns
