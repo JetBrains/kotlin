@@ -18,19 +18,13 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
-import org.jetbrains.kotlin.gradle.testbase.assertFileExists
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Assume.assumeFalse
 import org.junit.Test
-import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.FileFilter
 import java.util.zip.ZipFile
-import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -535,7 +529,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
         assumeFalse(irBackend) // TODO: Support IR version of kotlinx.html
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
         build("publish", "runDceKotlin", "test", "runDceBenchmarkKotlin") {
             assertSuccessful()

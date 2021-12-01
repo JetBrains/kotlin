@@ -1,13 +1,1 @@
-pluginManagement {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
-    plugins {
-        id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
-        id "org.jetbrains.kotlin.kapt" version "$kotlin_version"
-    }
-}
-
 include ':app', ':lib'

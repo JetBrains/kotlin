@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
+    kotlin("js")
     id("kotlin-dce-js")
     `maven-publish`
 }

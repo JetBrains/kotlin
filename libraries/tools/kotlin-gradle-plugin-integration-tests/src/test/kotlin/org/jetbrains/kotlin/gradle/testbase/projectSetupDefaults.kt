@@ -24,6 +24,8 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.android" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.js" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.multiplatform.pm20" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.allopen" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}kotlin_version"
         }
         
@@ -44,6 +46,8 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
                     case "kotlin-dce-js":
                         useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")        
                         break
+                    case "kotlin2js":
+                        useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
                 }
             }
         }
@@ -69,6 +73,8 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.android") version kotlin_version
             id("org.jetbrains.kotlin.js") version kotlin_version
             id("org.jetbrains.kotlin.multiplatform") version kotlin_version
+            id("org.jetbrains.kotlin.multiplatform.pm20") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.allopen") version kotlin_version
             id("org.jetbrains.kotlin.test.fixes.android") version kotlin_version
         }
         
@@ -84,7 +90,8 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
                     "com.android.lint",
                     "com.android.instantapp",
                     "com.android.feature" -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
-                    "kotlin-dce-js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")        
+                    "kotlin-dce-js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
+                    "kotlin2js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
                 }
             }
         }

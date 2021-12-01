@@ -1,9 +1,1 @@
-pluginManagement {
-    repositories {
-        maven { url '<mavenLocalUrl>' }
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
-
 rootProject.name = 'nodeJsDownload'

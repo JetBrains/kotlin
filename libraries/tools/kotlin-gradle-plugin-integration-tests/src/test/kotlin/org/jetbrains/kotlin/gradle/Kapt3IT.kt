@@ -689,7 +689,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         val kaptProject = Project("simple", directoryPrefix = "kapt2").apply { setupWorkingDir(false) }
         kaptProject.projectDir.copyRecursively(projectDir.resolve("simple"))
-        projectDir.resolve("settings.gradle").appendText("include 'simple'")
+        projectDir.resolve("settings.gradle").appendText("\ninclude ':simple'")
         gradleBuildScript().appendText("\ndependencies { implementation project(':simple') }")
 
         testResolveAllConfigurations()

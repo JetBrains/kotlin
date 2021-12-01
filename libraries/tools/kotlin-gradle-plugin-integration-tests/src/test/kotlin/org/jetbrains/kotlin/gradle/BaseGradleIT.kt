@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
+import org.jetbrains.kotlin.gradle.testbase.addPluginManagementToSettings
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
@@ -292,7 +293,10 @@ abstract class BaseGradleIT {
                     addHeapDumpOptionsToPropertiesFile()
                 }
 
-                if (enableCacheRedirector) projectDir.toPath().enableCacheRedirector()
+                projectDir.toPath().apply {
+                    addPluginManagementToSettings()
+                    if (enableCacheRedirector) enableCacheRedirector()
+                }
             }
         }
 
