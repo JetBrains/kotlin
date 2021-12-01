@@ -159,24 +159,7 @@ class Fir2IrConverter(
     private fun registerFileAndClasses(file: FirFile, moduleFragment: IrModuleFragment) {
         val fileEntry = when (file.origin) {
             FirDeclarationOrigin.Source -> PsiIrFileEntry(file.psi as KtFile)
-            FirDeclarationOrigin.Synthetic -> object : IrFileEntry {
-                override val name = file.name
-                override val maxOffset = UNDEFINED_OFFSET
-
-                override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-                    SourceRangeInfo(
-                        "",
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET
-                    )
-
-                override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-                override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
-            }
+            FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
             else -> error("Unsupported file origin: ${file.origin}")
         }
         val irFile = IrFileImpl(
