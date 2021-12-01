@@ -187,6 +187,8 @@ class NaiveSourceBasedFileEntryImpl(
     override val name: String,
     private val lineStartOffsets: IntArray = intArrayOf()
 ) : IrFileEntry {
+    val lineStartOffsetsAreEmpty: Boolean
+        get() = lineStartOffsets.isEmpty()
 
     private val MAX_SAVED_LINE_NUMBERS = 50
 

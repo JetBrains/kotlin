@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
@@ -68,6 +65,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val builder = baseDumper.builderForModule(module)
         for ((testFile, irFile) in testFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
+            if (irFile.shouldSkipDump()) continue
             var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
             if (actualDump.isEmpty()) {
                 actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, normalizeNames = true)

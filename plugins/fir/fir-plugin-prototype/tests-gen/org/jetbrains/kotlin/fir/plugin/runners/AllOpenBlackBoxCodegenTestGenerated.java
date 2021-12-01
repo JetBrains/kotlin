@@ -26,8 +26,32 @@ public class AllOpenBlackBoxCodegenTestGenerated extends AbstractAllOpenBlackBox
     }
 
     @Test
+    @TestMetadata("classWithCompanionObject.kt")
+    public void testClassWithCompanionObject() throws Exception {
+        runTest("plugins/fir/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
+    public void testClassWithGeneratedMembersAndNestedClass() throws Exception {
+        runTest("plugins/fir/fir-plugin-prototype/testData/box/classWithGeneratedMembersAndNestedClass.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
     public void testGeneratedClassWithMembersAndNestedClasses() throws Exception {
         runTest("plugins/fir/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("newSupertype.kt")
+    public void testNewSupertype() throws Exception {
+        runTest("plugins/fir/fir-plugin-prototype/testData/box/newSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelCallables.kt")
+    public void testTopLevelCallables() throws Exception {
+        runTest("plugins/fir/fir-plugin-prototype/testData/box/topLevelCallables.kt");
     }
 }

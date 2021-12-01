@@ -388,10 +388,6 @@ fun main(args: Array<String>) {
                 model("diagnostics")
             }
 
-            testClass<AbstractFir2IrAllOpenTest> {
-                model("fir2ir")
-            }
-
             testClass<AbstractAllOpenBlackBoxCodegenTest> {
                 model("box")
             }

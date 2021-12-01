@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.plugin.SomePluginKey
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -45,7 +45,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
         val function = buildSimpleFunction {
             moduleData = session.moduleData
-            origin = key.origin
+            origin = Key.origin
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
@@ -54,7 +54,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
             returnTypeRef = session.builtinTypes.stringType
             valueParameters += buildValueParameter {
                 moduleData = session.moduleData
-                origin = key.origin
+                origin = Key.origin
                 returnTypeRef = buildResolvedTypeRef {
                     type = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(matchedClassSymbol.classId), emptyArray(), isNullable = false)
                 }
@@ -89,8 +89,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         }
     }
 
-    private val key: SomePluginKey
-        get() = SomePluginKey
+    object Key : FirPluginKey()
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

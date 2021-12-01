@@ -42,6 +42,11 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = fa
     return sb.toString()
 }
 
+fun IrFile.shouldSkipDump(): Boolean {
+    val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false
+    return entry.lineStartOffsetsAreEmpty
+}
+
 class DumpIrTreeVisitor(
     out: Appendable,
     normalizeNames: Boolean = false,

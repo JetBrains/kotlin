@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -23,10 +24,7 @@ import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -59,7 +57,9 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public
-            )
+            ).apply {
+                isCompanion = true
+            }
             name = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
             symbol = FirRegularClassSymbol(classId)
             superTypeRefs += session.builtinTypes.anyType
@@ -86,8 +86,22 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         return listOf(function.symbol)
     }
 
+    override fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> {
+        val constructor = buildConstructor(owner.classId, isInner = false, Key)
+        return listOf(constructor.symbol)
+    }
+
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
-        return setOf(FOO_NAME)
+        if (classSymbol.classKind != ClassKind.OBJECT) return emptySet()
+        if (classSymbol !is FirRegularClassSymbol) return emptySet()
+        val classId = classSymbol.classId
+        if (!classId.isNestedClass || classId.shortClassName != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return emptySet()
+        val origin = classSymbol.origin as? FirDeclarationOrigin.Plugin
+        return if (origin?.key == Key) {
+            setOf(FOO_NAME, SpecialNames.INIT)
+        } else {
+            setOf(FOO_NAME)
+        }
     }
 
     @OptIn(SymbolInternals::class)
