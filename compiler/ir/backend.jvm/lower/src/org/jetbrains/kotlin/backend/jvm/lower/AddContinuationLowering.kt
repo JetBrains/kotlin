@@ -385,8 +385,13 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 // the result is called 'view', just to be consistent with old backend.
 private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrSimpleFunction {
     if (!isSuspend) return this
+    // If superinterface is in another file, the bridge to default method will already have continuation parameter,
+    // so skip it. See KT-47549.
+    if (origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
+        valueParameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+    ) return this
     // We need to use suspend function originals here, since if we use 'this' here,
-    // turing FlowCollector into 'fun interface' leads to AbstractMethodError
+    // turing FlowCollector into 'fun interface' leads to AbstractMethodError. See KT-49294.
     return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
 }
 

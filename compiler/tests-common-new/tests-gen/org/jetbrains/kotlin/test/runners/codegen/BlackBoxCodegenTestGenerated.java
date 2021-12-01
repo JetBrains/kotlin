@@ -9751,12 +9751,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
-        @TestMetadata("kt49294.kt")
-        public void testKt49294() throws Exception {
-            runTest("compiler/testData/codegen/box/coroutines/kt49294.kt");
-        }
-
-        @Test
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
@@ -10582,6 +10576,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/equalsHashCode.kt");
                         }
                     }
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
+            @TestDataPath("$PROJECT_ROOT")
+            public class FunInterface {
+                @Test
+                public void testAllFilesPresentInFunInterface() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @Test
+                @TestMetadata("kt47549.kt")
+                public void testKt47549() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt47549.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47549_1.kt")
+                public void testKt47549_1() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt47549_1.kt");
+                }
+
+                @Test
+                @TestMetadata("kt49294.kt")
+                public void testKt49294() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt49294.kt");
                 }
             }
 

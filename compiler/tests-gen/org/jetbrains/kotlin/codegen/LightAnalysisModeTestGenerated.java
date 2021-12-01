@@ -7280,11 +7280,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/kt49168.kt");
         }
 
-        @TestMetadata("kt49294.kt")
-        public void ignoreKt49294() throws Exception {
-            runTest("compiler/testData/codegen/box/coroutines/kt49294.kt");
-        }
-
         @TestMetadata("suspendFunctionAsSupertype.kt")
         public void ignoreSuspendFunctionAsSupertype() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertype.kt");
@@ -8363,6 +8358,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                             runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/equalsHashCode.kt");
                         }
                     }
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FunInterface extends AbstractLightAnalysisModeTest {
+                @TestMetadata("kt49294.kt")
+                public void ignoreKt49294() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt49294.kt");
+                }
+
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInFunInterface() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("kt47549.kt")
+                public void testKt47549() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt47549.kt");
+                }
+
+                @TestMetadata("kt47549_1.kt")
+                public void testKt47549_1() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt47549_1.kt");
                 }
             }
 
