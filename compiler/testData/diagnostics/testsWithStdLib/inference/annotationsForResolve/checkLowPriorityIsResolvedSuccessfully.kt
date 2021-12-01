@@ -14,3 +14,14 @@ class Scope {
 fun Scope.bar(e: Foo) {
     e.test {}
 }
+
+class Baz
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@kotlin.internal.LowPriorityInOverloadResolution
+constructor(val x: Foo)
+
+fun Baz(x: Foo): Baz {
+    throw NotImplementedError()
+}
+
+fun testBaz(e: Foo) = Baz(e)

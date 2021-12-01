@@ -461,6 +461,7 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
         val annotations = when (val fir = candidate.symbol.fir) {
             is FirSimpleFunction -> fir.annotations
             is FirProperty -> fir.annotations
+            is FirConstructor -> fir.annotations
             else -> return
         }
 
