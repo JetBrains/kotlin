@@ -558,6 +558,10 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         }
         into task.archiveBaseName
     }
+
+    task.from(project.rootProject.file("license")) {
+        into "${task.archiveBaseName.get()}/licenses"
+    }
 }
 
 configurePackingLicensesToBundle(bundleRegular, /* containsPlatformLibraries = */ false)
