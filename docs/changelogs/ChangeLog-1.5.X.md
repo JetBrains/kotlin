@@ -1,5 +1,13 @@
 # CHANGELOG
 
+
+## 1.5.32
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-49798`](https://youtrack.jetbrains.com/issue/KT-49798) [MPP] [Android] AGP 7.1.0+ android target publications leak 'AgpVersionAttr' attribute
+
+
 ## 1.5.31
 
 ### Compiler
