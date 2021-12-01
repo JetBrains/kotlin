@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.net.URI
 
@@ -256,9 +257,11 @@ open class CocoapodsExtension(private val project: Project) {
 
             binary.linkTaskProvider.configure { task ->
 
-                val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
-                task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
-                task.dependsOn(podBuildTaskProvider)
+                if (HostManager.hostIsMac) {
+                    val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
+                    task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
+                    task.dependsOn(podBuildTaskProvider)
+                }
 
                 task.doFirst { _ ->
                     val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)

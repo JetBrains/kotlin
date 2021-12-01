@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMess
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrievePods
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.io.IOException
 import java.io.Reader
@@ -47,7 +48,17 @@ val CocoapodsDependency.schemeName: String
  * to obtain sources or artifacts for the declared dependencies.
  * This task is a part of CocoaPods integration infrastructure.
  */
-open class PodInstallTask : DefaultTask() {
+
+open class CocoapodsTask : DefaultTask() {
+    init {
+        onlyIf {
+            HostManager.hostIsMac
+        }
+    }
+}
+
+
+open class PodInstallTask : CocoapodsTask() {
     init {
         onlyIf { podfile.isPresent }
     }
@@ -98,7 +109,7 @@ open class PodInstallTask : DefaultTask() {
     }
 }
 
-abstract class DownloadCocoapodsTask : DefaultTask() {
+abstract class DownloadCocoapodsTask : CocoapodsTask() {
     @get:Input
     internal lateinit var podName: Provider<String>
 }
@@ -352,7 +363,7 @@ private fun runCommand(
  * The task takes the path to the .podspec file and calls `pod gen`
  * to create synthetic xcode project and workspace.
  */
-open class PodGenTask : DefaultTask() {
+open class PodGenTask : CocoapodsTask() {
 
     init {
         onlyIf {
@@ -423,7 +434,7 @@ open class PodGenTask : DefaultTask() {
 }
 
 
-open class PodSetupBuildTask : DefaultTask() {
+open class PodSetupBuildTask : CocoapodsTask() {
 
     @get:Input
     lateinit var frameworkName: Provider<String>
@@ -470,7 +481,7 @@ private fun getBuildSettingFileName(pod: CocoapodsDependency, sdk: String): Stri
 /**
  * The task compiles external cocoa pods sources.
  */
-open class PodBuildTask : DefaultTask() {
+open class PodBuildTask : CocoapodsTask() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
