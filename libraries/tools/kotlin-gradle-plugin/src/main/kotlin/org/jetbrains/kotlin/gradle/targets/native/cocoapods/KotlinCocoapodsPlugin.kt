@@ -318,10 +318,11 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         _extraOptsProp.addAll(project.provider { pod.extraOpts })
                     }
 
-                    val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
-                    interopTask.inputs.file(podBuildTaskProvider.map {it.buildSettingsFile })
-                    interopTask.dependsOn(podBuildTaskProvider)
-
+                    if (HostManager.hostIsMac) {
+                        val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
+                        interopTask.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
+                        interopTask.dependsOn(podBuildTaskProvider)
+                    }
                     interopTask.doFirst { _ ->
                         // Since we cannot expand the configuration phase of interop tasks
                         // receiving the required environment variables happens on execution phase.
@@ -689,6 +690,12 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     """
                         Dependency on pods requires cocoapods-generate plugin to be installed.
                         If you plan to add dependencies on third party pods, don't forget to install it by executing 'gem install cocoapods-generate' in terminal.
+                    """.trimIndent()
+                )
+            } else if (!HostManager.hostIsMac) {
+                logger.warn(
+                    """
+                        Kotlin Cocoapods Plugin is fully supported on mac machines only. Gradle tasks that can not run on non-mac hosts will be skipped.
                     """.trimIndent()
                 )
             }
