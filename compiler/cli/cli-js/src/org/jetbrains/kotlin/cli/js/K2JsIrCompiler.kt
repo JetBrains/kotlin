@@ -381,10 +381,16 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 else -> JsGenerationGranularity.WHOLE_PROGRAM
             }
             try {
+                val irFactory = when {
+                    arguments.irDceDriven -> PersistentIrFactory()
+                    arguments.irNewIr2Js -> IrFactoryImplForJsIC(WholeWorldStageController())
+                    else -> IrFactoryImpl
+                }
+
                 val ir = compile(
                     module,
                     phaseConfig,
-                    if (arguments.irDceDriven) PersistentIrFactory() else IrFactoryImpl,
+                    irFactory,
                     dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                         arguments.irDceRuntimeDiagnostic,
                         messageCollector
