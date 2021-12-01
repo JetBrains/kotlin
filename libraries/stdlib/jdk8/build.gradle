@@ -34,6 +34,19 @@ sourceSets {
             srcDir 'java9'
         }
     }
+    moduleTest {
+        java {
+            srcDir 'moduleTest'
+        }
+    }
+}
+
+dependencies {
+    moduleTestApi project(':kotlin-stdlib')
+    moduleTestApi project(':kotlin-stdlib-jdk7')
+    moduleTestCompileOnly project
+    moduleTestApi project(':kotlin-test:kotlin-test-junit')
+    moduleTestApi "org.ow2.asm:asm:9.0"
 }
 
 jar {
@@ -94,11 +107,23 @@ task testJdk6Tests(type: Test) { thisTask ->
 }
 
 [JdkMajorVersion.JDK_9, JdkMajorVersion.JDK_10, JdkMajorVersion.JDK_11].forEach { jvmVersion ->
-    tasks.register("jdk${jvmVersion.majorVersion}Test", Test) { thisTask ->
-        check.dependsOn(thisTask)
+    check.dependsOn(tasks.register("jdk${jvmVersion.majorVersion}Test", Test) { thisTask ->
         group = "verification"
-        thisTask.javaLauncher.set(
-                JvmToolchain.getToolchainLauncherFor(project, jvmVersion)
-        )
-    }
+        thisTask.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, jvmVersion))
+    })
 }
+
+compileModuleTestKotlin {
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9))
+}
+
+check.dependsOn(tasks.register("moduleInfoTest", Test) {test ->
+    test.dependsOn(moduleTestClasses)
+    test.group = "verification"
+    test.testClassesDirs = sourceSets.moduleTest.output.classesDirs
+    test.classpath = files(sourceSets.moduleTest.runtimeClasspath, tasks.jar)
+    test.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9))
+    doFirst {
+        test.systemProperty("stdlibJars", test.classpath.filter { it.name.contains('kotlin-stdlib') }.join(File.pathSeparator))
+    }
+})

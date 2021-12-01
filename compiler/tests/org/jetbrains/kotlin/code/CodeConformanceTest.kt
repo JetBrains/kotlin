@@ -46,6 +46,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/kotlin.test/js/it/node_modules",
                 "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
                 "libraries/reflect/build",
+                "libraries/stdlib/jdk8/moduleTest/NonExportedPackagesTest.kt",
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
                 "libraries/stdlib/js-ir-minimal-for-test/.gradle",
