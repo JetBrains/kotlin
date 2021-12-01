@@ -33,9 +33,6 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
         if (delegate === other) return true
         return false
     }
-
-    override val isPublicApi: Boolean
-        get() = delegate.isPublicApi
 }
 
 class IrDelegatingClassSymbolImpl(delegate: IrClassSymbol) :

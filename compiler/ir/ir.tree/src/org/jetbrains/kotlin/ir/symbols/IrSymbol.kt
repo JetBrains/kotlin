@@ -36,9 +36,10 @@ interface IrSymbol {
     val isBound: Boolean
 
     val signature: IdSignature?
-
-    val isPublicApi: Boolean
 }
+
+val IrSymbol.isPublicApi: Boolean
+    get() = signature != null
 
 interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {
     override val owner: B

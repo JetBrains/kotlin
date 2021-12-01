@@ -48,9 +48,6 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
         return "Unbound public symbol for $signature"
     }
 
-    override val isPublicApi: Boolean
-        get() = true
-
     companion object {
         private const val GETTER_PREFIX = "<get"
         private const val SETTER_PREFIX = "<set"
