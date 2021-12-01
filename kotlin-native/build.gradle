@@ -555,6 +555,9 @@ task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
     }
     from(project.projectDir) {
         include 'licenses/**'
+        if (!isMac()) {
+            exclude '**/xcode_license.pdf'
+        }
         into archiveBaseName
     }
 }
