@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.plugin.runners
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 
-abstract class AbstractFirAllOpenDiagnosticTest : AbstractKotlinCompilerTest() {
+abstract class AbstractFirPluginDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         commonFirWithPluginFrontendConfiguration()
     }

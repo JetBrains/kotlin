@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/fir/fir-plugin-prototype/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-public class AllOpenBlackBoxCodegenTestGenerated extends AbstractAllOpenBlackBoxCodegenTest {
+public class FirPluginBlackBoxCodegenTestGenerated extends AbstractFirPluginBlackBoxCodegenTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir/fir-plugin-prototype/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);

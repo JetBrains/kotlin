@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractAllOpenBlackBoxCodegenTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFir2IrAllOpenTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirAllOpenDiagnosticTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
@@ -384,11 +383,11 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/fir/fir-plugin-prototype/tests-gen", "plugins/fir/fir-plugin-prototype/testData") {
-            testClass<AbstractFirAllOpenDiagnosticTest> {
+            testClass<AbstractFirPluginDiagnosticTest> {
                 model("diagnostics")
             }
 
-            testClass<AbstractAllOpenBlackBoxCodegenTest> {
+            testClass<AbstractFirPluginBlackBoxCodegenTest> {
                 model("box")
             }
         }
