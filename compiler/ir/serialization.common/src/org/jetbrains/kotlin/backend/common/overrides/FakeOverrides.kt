@@ -151,7 +151,7 @@ class FakeOverrideBuilder(
     private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: IdSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
-            ?: symbolTable.referenceSimpleFunctionFromLinker(signature)
+            ?: symbolTable.referenceSimpleFunction(signature, false)
         symbolTable.declareSimpleFunction(signature, { symbol }) {
             assert(it === symbol)
             declaration.acquireSymbol(it)
@@ -161,7 +161,7 @@ class FakeOverrideBuilder(
     private fun declarePropertyFakeOverride(declaration: IrFakeOverrideProperty, signature: IdSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
-            ?: symbolTable.referencePropertyFromLinker(signature)
+            ?: symbolTable.referenceProperty(signature, false)
         symbolTable.declareProperty(signature, { symbol }) {
             assert(it === symbol)
             declaration.acquireSymbol(it)

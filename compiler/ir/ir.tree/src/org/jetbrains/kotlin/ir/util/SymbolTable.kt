@@ -53,15 +53,6 @@ interface ReferenceSymbolTable {
     fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol
     fun referenceTypeAlias(sig: IdSignature, reg: Boolean = true): IrTypeAliasSymbol
 
-    fun referenceClassFromLinker(sig: IdSignature) = referenceClass(sig, false)
-    fun referenceConstructorFromLinker(sig: IdSignature) = referenceConstructor(sig, false)
-    fun referenceEnumEntryFromLinker(sig: IdSignature) = referenceEnumEntry(sig, false)
-    fun referenceFieldFromLinker(sig: IdSignature) = referenceField(sig, false)
-    fun referencePropertyFromLinker(sig: IdSignature) = referenceProperty(sig, false)
-    fun referenceSimpleFunctionFromLinker(sig: IdSignature) = referenceSimpleFunction(sig, false)
-    fun referenceGlobalTypeParameterFromLinker(sig: IdSignature) = referenceTypeParameter(sig, false)
-    fun referenceTypeAliasFromLinker(sig: IdSignature) = referenceTypeAlias(sig, false)
-
     fun enterScope(owner: IrSymbol)
     fun enterScope(owner: IrDeclaration)
 
