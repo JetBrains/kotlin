@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMapAccessor
 import org.jetbrains.kotlin.util.ComponentArrayOwner
 import org.jetbrains.kotlin.util.NullableArrayMapAccessor
@@ -18,7 +19,7 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     val sessionProvider: FirSessionProvider?,
     val kind: Kind
 ) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
-    companion object : TypeRegistry<FirSessionComponent, FirSessionComponent>() {
+    companion object : ConeTypeRegistry<FirSessionComponent, FirSessionComponent>() {
         inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateAccessor(T::class)
         }

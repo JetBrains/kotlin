@@ -78,8 +78,13 @@ abstract class TypeRegistry<K : Any, V : Any> {
     }
 
     fun <T : K> getId(kClass: KClass<T>): Int {
-        return idPerType.computeIfAbsent(kClass) { idCounter.getAndIncrement() }
+        return idPerType.customComputeIfAbsent(kClass) { idCounter.getAndIncrement() }
     }
+
+    abstract fun <T : K> ConcurrentHashMap<KClass<out K>, Int>.customComputeIfAbsent(
+        kClass: KClass<T>,
+        compute: (KClass<out K>) -> Int
+    ): Int
 
     fun allValuesThreadUnsafeForRendering(): Map<KClass<out K>, Int> {
         return idPerType

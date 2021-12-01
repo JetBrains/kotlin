@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMap
 import org.jetbrains.kotlin.util.AttributeArrayOwner
 import org.jetbrains.kotlin.util.NullableArrayMapAccessor
@@ -47,7 +48,7 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
  *    object SomeKey : FirDeclarationDataKey()
  *    var FirDeclaration.someString: String? by FirDeclarationDataRegistry.data(SomeKey)
  */
-object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
+object FirDeclarationDataRegistry : ConeTypeRegistry<FirDeclarationDataKey, Any>() {
     fun <K : FirDeclarationDataKey> data(key: K): DeclarationDataAccessor {
         val kClass = key::class
         return DeclarationDataAccessor(generateAnyNullableAccessor(kClass), kClass)
