@@ -536,7 +536,7 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/cache/*/org.jetbrains.kotlin.native.platform.*/**'
         into archiveBaseName
     }
-    from(project.rootDir) {
+    from(project.projectDir) {
         include 'licenses/**'
         exclude '**/xcode_license.pdf'
         into archiveBaseName
@@ -553,7 +553,7 @@ task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/testLibrary'
         into archiveBaseName
     }
-    from(project.rootDir) {
+    from(project.projectDir) {
         include 'licenses/**'
         into archiveBaseName
     }
