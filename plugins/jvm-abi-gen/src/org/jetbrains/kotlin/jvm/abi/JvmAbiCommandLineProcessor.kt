@@ -30,6 +30,14 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                 "Use the legacy two pass implementation of jvm-abi-gen.",
                 false
             )
+
+        val FORMAT_OPTION: CliOption =
+            CliOption(
+                "format",
+                "jar|class",
+                "Whether to produce jars or individual class files. If not provided, this is inferred from outputDir.",
+                false
+            )
     }
 
     override val pluginId: String
@@ -42,6 +50,14 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
         when (option) {
             OUTPUT_PATH_OPTION -> configuration.put(JvmAbiConfigurationKeys.OUTPUT_PATH, value)
             LEGACY_ABI_GEN_OPTION -> configuration.put(JvmAbiConfigurationKeys.LEGACY_ABI_GEN, value == "true")
+            FORMAT_OPTION -> {
+                val outputFormat = when (value) {
+                    "jar" -> JvmAbiOutputFormat.JAR
+                    "class" -> JvmAbiOutputFormat.CLASS
+                    else -> throw CliOptionProcessingException("Unknown output format: $value")
+                }
+                configuration.put(JvmAbiConfigurationKeys.OUTPUT_FORMAT, outputFormat)
+            }
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }

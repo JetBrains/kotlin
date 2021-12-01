@@ -25,12 +25,13 @@ class JvmAbiOutputExtension(
     private val outputPath: File,
     private val abiClassInfos: Map<String, AbiClassInfo>,
     private val messageCollector: MessageCollector,
+    private val outputFormat: JvmAbiOutputFormat,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
         val outputFiles = AbiOutputFiles(abiClassInfos, factory)
-        if (outputPath.extension == "jar") {
+        if (outputFormat == JvmAbiOutputFormat.JAR) {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
                 outputPath,

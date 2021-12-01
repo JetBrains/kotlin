@@ -32,8 +32,18 @@ class JvmAbiComponentRegistrar : ComponentRegistrar {
             // Use the single-pass implementation, using the new ABI flag in the metadata.
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             val builderExtension = JvmAbiClassBuilderInterceptor()
+
             val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-            val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector)
+
+            val outputFormat = configuration.get(JvmAbiConfigurationKeys.OUTPUT_FORMAT)
+                ?: if (outputPath.endsWith(".jar")) JvmAbiOutputFormat.JAR else JvmAbiOutputFormat.CLASS
+
+            val outputExtension = JvmAbiOutputExtension(
+                File(outputPath),
+                builderExtension.abiClassInfo,
+                messageCollector,
+                outputFormat,
+            )
             ClassBuilderInterceptorExtension.registerExtension(project, builderExtension)
             ClassFileFactoryFinalizerExtension.registerExtension(project, outputExtension)
         }
