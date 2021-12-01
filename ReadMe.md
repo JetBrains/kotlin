@@ -16,6 +16,7 @@ Some handy links:
  * [Try Kotlin](https://play.kotlinlang.org/)
  * [Kotlin Standard Library](https://kotlinlang.org/api/latest/jvm/stdlib/index.html)
  * [Issue Tracker](https://youtrack.jetbrains.com/issues/KT)
+ * [Kotlin YouTube Channel](https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw)
  * [Forum](https://discuss.kotlinlang.org/)
  * [Kotlin Blog](https://blog.jetbrains.com/kotlin/)
  * [Subscribe to Kotlin YouTube channel](https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw)
