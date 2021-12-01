@@ -9,6 +9,8 @@ plugins {
 
 val robolectricClasspath by configurations.creating
 val parcelizeRuntimeForTests by configurations.creating
+val layoutLib by configurations.creating
+val layoutLibApi by configurations.creating
 
 dependencies {
     testApi(intellijCoreDep()) { includeJars("intellij-core") }
@@ -71,6 +73,9 @@ dependencies {
 
     parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
     parcelizeRuntimeForTests(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+
+    layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
+    layoutLibApi("com.android.tools.layoutlib:layoutlib-api:26.5.0") { isTransitive = false }
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -111,6 +116,8 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     doFirst {
         systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsProvider.get())
         systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
+        systemProperty("layoutLib.path", layoutLib.singleFile.canonicalPath)
+        systemProperty("layoutLibApi.path", layoutLibApi.singleFile.canonicalPath)
     }
     doLast {
         println(filter)
