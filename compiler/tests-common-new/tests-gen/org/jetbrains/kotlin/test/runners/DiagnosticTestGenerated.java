@@ -32722,6 +32722,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("innerNestedAndAnonymousClasses.kt")
+            public void testInnerNestedAndAnonymousClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/innerNestedAndAnonymousClasses.kt");
+            }
+
+            @Test
             @TestMetadata("invisibleSetterOfJavaClass.kt")
             public void testInvisibleSetterOfJavaClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClass.kt");

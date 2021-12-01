@@ -27,16 +27,16 @@ fun FirVisibilityChecker.isVisible(
         return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, candidate)
     }
 
-    val callInfo = candidate.callInfo
-    val useSiteFile = callInfo.containingFile
-    val containingDeclarations = callInfo.containingDeclarations
-    val session = callInfo.session
-
     // We won't resolve into the backing field
     // in the first place, if it's not accessible.
     if (declaration is FirBackingField) {
         return true
     }
+
+    val callInfo = candidate.callInfo
+    val useSiteFile = callInfo.containingFile
+    val containingDeclarations = callInfo.containingDeclarations
+    val session = callInfo.session
 
     val visible = isVisible(
         declaration,
@@ -46,17 +46,19 @@ fun FirVisibilityChecker.isVisible(
         candidate.dispatchReceiverValue,
         candidate.callInfo.callSite is FirVariableAssignment
     )
-    val backingField = declaration.getBackingFieldIfApplicable()
 
-    if (visible && backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(
-            backingField,
-            session,
-            useSiteFile,
-            containingDeclarations,
-            candidate.dispatchReceiverValue,
-            candidate.callInfo.callSite is FirVariableAssignment,
-        )
+    if (visible) {
+        val backingField = declaration.getBackingFieldIfApplicable()
+        if (backingField != null) {
+            candidate.hasVisibleBackingField = isVisible(
+                backingField,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                candidate.dispatchReceiverValue,
+                candidate.callInfo.callSite is FirVariableAssignment,
+            )
+        }
     }
 
     return visible
@@ -67,10 +69,11 @@ private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField?
 
     // This check prevents resolving protected and
     // public fields.
+    val visibility = field.visibility
     if (
-        field.visibility == Visibilities.PrivateToThis ||
-        field.visibility == Visibilities.Private ||
-        field.visibility == Visibilities.Internal
+        visibility == Visibilities.PrivateToThis ||
+        visibility == Visibilities.Private ||
+        visibility == Visibilities.Internal
     ) {
         return field
     }

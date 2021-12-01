@@ -41,7 +41,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                     val ownerLookupTag = symbol.getOwnerLookupTag() ?: return false
                     if (canSeeProtectedMemberOf(
                             containingDeclarations, dispatchReceiver, ownerLookupTag, session,
-                            isVariableOrNamedFunction = symbol is FirVariableSymbol || symbol is FirNamedFunctionSymbol || symbol is FirPropertyAccessorSymbol,
+                            isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
                             isSyntheticProperty = symbol.fir is FirSyntheticPropertyAccessor,
                             supertypeSupplier
                         )
