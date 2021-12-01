@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import kotlin.time.Duration
 
@@ -55,46 +56,22 @@ internal class LocalTestRunner(
         }
 
         private fun verifyTestWithGTestRunner() {
-            val testStatuses = hashMapOf<TestStatus, MutableSet<TestName>>()
-            val cleanStdOut = StringBuilder()
+            val testReport = parseGTestReport(runResult.output.stdOut)
 
-            var expectStatusLine = false
-            runResult.output.stdOut.lines().forEach { line ->
-                when {
-                    expectStatusLine -> {
-                        val matcher = GTEST_STATUS_LINE_REGEX.matchEntire(line)
-                        if (matcher != null) {
-                            // Read the line with test status.
-                            val testStatus = matcher.groupValues[1]
-                            val testName = matcher.groupValues[2]
-                            testStatuses.getOrPut(testStatus) { hashSetOf() } += testName
-                            expectStatusLine = false
-                        } else {
-                            // If current line is not a status line then it could be only the line with the process' output.
-                            cleanStdOut.appendLine(line)
-                        }
-                    }
-                    line.startsWith(GTEST_RUN_LINE_PREFIX) -> {
-                        expectStatusLine = true // Next line contains either  test status.
-                    }
-                    else -> Unit
-                }
-            }
+            verifyExpectation(!testReport.isEmpty()) { "No tests have been executed." }
 
-            verifyExpectation(testStatuses.isNotEmpty()) { "No tests have been executed." }
-
-            val passedTests = testStatuses[GTEST_STATUS_OK]?.size ?: 0
-            verifyExpectation(passedTests > 0) { "No passed tests." }
+            val passedTests = testReport.getPassedTests()
+            verifyExpectation(passedTests.isNotEmpty()) { "No passed tests." }
 
             testRun.runParameters.get<TestRunParameter.WithFilter> {
-                val excessiveTests = testStatuses.getValue(GTEST_STATUS_OK).filter { testName -> !testMatches(testName) }
+                val excessiveTests = passedTests.filter { testName -> !testMatches(testName) }
                 verifyExpectation(excessiveTests.isEmpty()) { "Excessive tests have been executed: $excessiveTests." }
             }
 
-            val failedTests = (testStatuses - GTEST_STATUS_OK).values.sumOf { it.size }
-            verifyExpectation(0, failedTests) { "There are failed tests." }
+            val failedTests = testReport.getFailedTests().size
+            verifyExpectation(0, failedTests) { "There are $failedTests failed tests." }
 
-            verifyOutputData(mergedOutput = cleanStdOut.toString() + runResult.output.stdErr)
+            verifyOutputData(mergedOutput = testReport.cleanStdOut + runResult.output.stdErr)
         }
 
         private fun verifyPlainTest() = verifyOutputData(mergedOutput = runResult.output.stdOut + runResult.output.stdErr)
@@ -107,13 +84,4 @@ internal class LocalTestRunner(
             }
         }
     }
-
-    companion object {
-        private const val GTEST_RUN_LINE_PREFIX = "[ RUN      ]"
-        private val GTEST_STATUS_LINE_REGEX = Regex("^\\[\\s+([A-Z]+)\\s+]\\s+(\\S+)\\s+.*")
-        private const val GTEST_STATUS_OK = "OK"
-    }
 }
-
-private typealias TestStatus = String
-private typealias TestName = String
