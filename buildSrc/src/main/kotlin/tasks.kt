@@ -110,6 +110,8 @@ fun Project.projectTest(
     }
     return getOrCreateTask<Test>(taskName) {
         doFirst {
+            if (jUnitMode == JUnitMode.JUnit5) return@doFirst
+
             val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns?.toMutableList() ?: mutableSetOf()
             val patterns = filter.includePatterns + commandLineIncludePatterns
             if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
@@ -143,7 +145,7 @@ fun Project.projectTest(
                 val parentNames = if (jUnitMode != JUnitMode.JUnit4) {
                     /*
                      * If we run test from inner test class with junit 5 we need
-                     *   to include all containing classes of our class
+                     * to include all containing classes of our class
                      */
                     val nestedNames = classFileNameWithoutExtension.split("$")
                     mutableListOf(nestedNames.first()).also {
@@ -160,10 +162,10 @@ fun Project.projectTest(
                     } else {
                         if (path == classFileName) return@include true
                         if (!path.endsWith(".class")) return@include false
-                        when(jUnitMode) {
-                            JUnitMode.JUnit5 -> parentNames.any { path.startsWith(it) }
+                        when (jUnitMode) {
                             JUnitMode.JUnit4 -> path.startsWith("$classFileNameWithoutExtension$")
                             JUnitMode.Mix -> parentNames.any { path.startsWith(it) } || path.startsWith("$classFileNameWithoutExtension$")
+                            else -> error("JUnit5 should not be reachable because of early exit")
                         }
                     }
                 }
