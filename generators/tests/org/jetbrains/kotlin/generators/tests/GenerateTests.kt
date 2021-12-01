@@ -347,6 +347,12 @@ fun main(args: Array<String>) {
         }
     }
 */
+
+        testGroup("plugins/fir-plugin-prototype/fir-plugin-ic-test/tests-gen", "plugins/fir-plugin-prototype/fir-plugin-ic-test/testData") {
+            testClass<AbstractIncrementalFirJvmWithPluginCompilerRunnerTest> {
+                model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
+            }
+        }
     }
 
     generateTestGroupSuiteWithJUnit5 {

@@ -1,0 +1,2 @@
+For some reason IC goes to eternal loop of compilation in this test. To observe this comment `FAIL` line in A.kt
+  to make test actually compilable

@@ -1,0 +1,6 @@
+package bar
+
+import org.jetbrains.kotlin.fir.plugin.ExternalClassWithNested
+
+@ExternalClassWithNested
+class B

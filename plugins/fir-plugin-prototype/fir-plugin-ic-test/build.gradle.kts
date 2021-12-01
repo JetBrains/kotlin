@@ -6,32 +6,20 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree.impl"))
-    compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":compiler:plugin-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(project(":kotlin-reflect-api"))
+    testApi(project(":plugins:fir-plugin-prototype"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(projectTests(":compiler:incremental-compilation-impl"))
 
-    testApiJUnit5()
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(project(":kotlin-reflect-api"))
+
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars(
+            "lz4-java",
             "jna",
             "jdom",
             "trove4j",
@@ -61,11 +49,12 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
     useJUnitPlatform()
     jvmArgs!!.removeIf { it.contains("-Xmx") }
     maxHeapSize = "3g"
+    dependsOn(":plugins:fir-plugin-prototype:jar")
     dependsOn(":plugins:fir-plugin-prototype:plugin-annotations:jar")
 }
 
