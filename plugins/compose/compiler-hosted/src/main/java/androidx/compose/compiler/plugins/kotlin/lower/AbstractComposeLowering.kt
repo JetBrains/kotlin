@@ -129,6 +129,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
@@ -136,6 +137,7 @@ import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -213,12 +215,20 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelClass(fqName: FqName): IrClassSymbol {
-        return context.referenceClass(fqName) ?: error("Class not found in the classpath: $fqName")
+        return getTopLevelClassOrNull(fqName) ?: error("Class not found in the classpath: $fqName")
+    }
+
+    fun getTopLevelClassOrNull(fqName: FqName): IrClassSymbol? {
+        return context.referenceClass(fqName)
     }
 
     fun getTopLevelFunction(fqName: FqName): IrFunctionSymbol {
-        return context.referenceFunctions(fqName).firstOrNull()
+        return getTopLevelFunctionOrNull(fqName)
             ?: error("Function not found in the classpath: $fqName")
+    }
+
+    fun getTopLevelFunctionOrNull(fqName: FqName): IrFunctionSymbol? {
+        return context.referenceFunctions(fqName).firstOrNull()
     }
 
     fun getTopLevelFunctions(fqName: FqName): List<IrSimpleFunctionSymbol> {
@@ -234,6 +244,10 @@ abstract class AbstractComposeLowering(
     )
 
     fun getInternalClass(name: String) = getTopLevelClass(
+        ComposeFqNames.internalFqNameFor(name)
+    )
+
+    fun getInternalClassOrNull(name: String) = getTopLevelClassOrNull(
         ComposeFqNames.internalFqNameFor(name)
     )
 
@@ -1253,6 +1267,22 @@ abstract class AbstractComposeLowering(
         } else {
             null
         }
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    fun IrSimpleFunction.sourceKey(): Int {
+        val info = context.irTrace[
+            ComposeWritableSlices.DURABLE_FUNCTION_KEY,
+            this
+        ]
+        if (info != null) {
+            info.used = true
+            return info.key
+        }
+        val signature = symbol.descriptor.computeJvmDescriptor(withName = false)
+        val name = fqNameForIrSerialization
+        val stringKey = "$name$signature"
+        return stringKey.hashCode()
     }
 }
 
