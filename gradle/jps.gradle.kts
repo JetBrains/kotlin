@@ -183,42 +183,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     }
 
                     runConfigurations {
-                        fun idea(
-                            title: String,
-                            sandboxDir: File,
-                            pluginDir: File,
-                            disableProcessCanceledException: Boolean = false
-                        ) {
-                            val useAndroidStudio = rootProject.extra.has("versions.androidStudioRelease")
-                            application(title) {
-                                moduleName = "kotlin.idea-runner.main"
-                                workingDirectory = File(intellijRootDir(), "bin").toString()
-                                mainClass = "com.intellij.idea.Main"
-                                jvmArgs = listOf(
-                                    "-Xmx1250m",
-                                    "-XX:ReservedCodeCacheSize=240m",
-                                    "-XX:+HeapDumpOnOutOfMemoryError",
-                                    "-ea",
-                                    "-Didea.platform.prefix=Idea",
-                                    "-Didea.is.internal=true",
-                                    "-Didea.debug.mode=true",
-                                    "-Didea.system.path=${sandboxDir.absolutePath}",
-                                    "-Didea.config.path=${sandboxDir.absolutePath}/config",
-                                    "-Didea.tooling.debug=true",
-                                    "-Dfus.internal.test.mode=true",
-                                    "-Dapple.laf.useScreenMenuBar=true",
-                                    "-Dapple.awt.graphics.UseQuartz=true",
-                                    "-Dsun.io.useCanonCaches=false",
-                                    "-Dplugin.path=${pluginDir.absolutePath}",
-                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}",
-                                    if (useAndroidStudio) "-Didea.platform.prefix=AndroidStudio" else ""
-                                ).joinToString(" ")
-                            }
-                        }
-
-                        idea("[JPS] IDEA", ideaSandboxDir, ideaPluginDir)
-
-                        idea("[JPS] IDEA (No ProcessCanceledException)", ideaSandboxDir, ideaPluginDir, disableProcessCanceledException = true)
 
                         defaults<JUnit> {
                             configureForKotlin()
