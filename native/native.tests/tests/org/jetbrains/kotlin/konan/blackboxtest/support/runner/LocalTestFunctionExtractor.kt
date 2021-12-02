@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestFunction
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import kotlin.time.Duration
@@ -18,6 +19,7 @@ internal class LocalTestFunctionExtractor(
 ) : AbstractLocalProcessRunner<Collection<TestFunction>>(executionTimeout) {
     override val visibleProcessName get() = "Test function extractor"
     override val programArgs = listOf(executable.executableFile.path, "--ktest_list_tests")
+    override val outputFilter get() = TestOutputFilter.NO_FILTERING
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(
         compilerCall = executable.loggedCompilerCall,
@@ -37,6 +39,6 @@ internal class LocalTestFunctionExtractor(
         runResult: RunResult.Completed
     ) : AbstractLocalProcessRunner<Collection<TestFunction>>.ResultHandler(runResult) {
         override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
-        override fun doHandle() = parseGTestListing(runResult.output.stdOut)
+        override fun doHandle() = parseGTestListing(runResult.processOutput.stdOut.filteredOutput)
     }
 }

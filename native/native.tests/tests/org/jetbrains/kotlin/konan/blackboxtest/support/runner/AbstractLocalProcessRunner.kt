@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner.AbstractRun
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.readOutput
 import kotlin.time.*
 
@@ -14,6 +15,7 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
     protected abstract val visibleProcessName: String
     protected abstract val executable: TestExecutable
     protected abstract val programArgs: List<String>
+    protected abstract val outputFilter: TestOutputFilter
 
     protected open fun customizeProcess(process: Process) = Unit
 
@@ -33,7 +35,7 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
         val (process, hasFinishedOnTime) = result
 
         // Don't use blocking read from stdout/stderr on non-finished process. If the process is hanging this would result in hanging test.
-        val output = process.readOutput(nonBlocking = !hasFinishedOnTime)
+        val output = process.readOutput(outputFilter, nonBlocking = !hasFinishedOnTime)
 
         if (hasFinishedOnTime) {
             val exitCode: Int = process.exitValue()

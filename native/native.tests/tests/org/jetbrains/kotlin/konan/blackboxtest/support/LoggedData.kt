@@ -203,11 +203,13 @@ internal abstract class LoggedData {
             appendDuration(runResult.duration)
             appendLine()
             appendLine("========== BEGIN: STDOUT ==========")
-            if (runResult.output.stdOut.isNotEmpty()) appendLine(runResult.output.stdOut.trimEnd())
+            val stdOut = runResult.processOutput.stdOut.filteredOutput
+            if (stdOut.isNotEmpty()) appendLine(stdOut.trimEnd())
             appendLine("========== END: STDOUT ==========")
             appendLine()
             appendLine("========== BEGIN: STDERR ==========")
-            if (runResult.output.stdErr.isNotEmpty()) appendLine(runResult.output.stdErr.trimEnd())
+            val stdErr = runResult.processOutput.stdErr
+            if (stdErr.isNotEmpty()) appendLine(stdErr.trimEnd())
             appendLine("========== END: STDERR ==========")
             return this
         }

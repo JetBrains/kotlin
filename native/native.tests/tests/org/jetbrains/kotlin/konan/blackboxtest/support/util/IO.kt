@@ -32,12 +32,12 @@ internal fun InputStream.readBytesNonBlocking(): ByteArray {
     return result.toByteArray()
 }
 
-internal fun Process.readOutput(nonBlocking: Boolean): ProcessOutput {
+internal fun Process.readOutput(outputFilter: TestOutputFilter, nonBlocking: Boolean): ProcessOutput {
     val stdOut = if (nonBlocking) inputStream.readBytesNonBlocking() else inputStream.readBytes()
     val stdErr = if (nonBlocking) errorStream.readBytesNonBlocking() else errorStream.readBytes()
 
     return ProcessOutput(
-        stdOut = stdOut.toString(Charsets.UTF_8),
+        stdOut = outputFilter.filter(stdOut.toString(Charsets.UTF_8)),
         stdErr = stdErr.toString(Charsets.UTF_8)
     )
 }
