@@ -157,19 +157,17 @@ internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean =
 
 internal fun ResolvedComponentResult.toModuleIdentifiers(): List<KotlinModuleIdentifier> {
     val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
-    return classifiers.map { moduleClassifier ->
-        when (val id = id) {
-            is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
-            is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
-            else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
-        }
-    }
+    return classifiers.map { moduleClassifier -> toModuleIdentifier(moduleClassifier) }
 }
 
 // FIXME this mapping doesn't have enough information to choose auxiliary modules
 internal fun ResolvedComponentResult.toSingleModuleIdentifier(): KotlinModuleIdentifier {
     val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
     val moduleClassifier = classifiers.single() // FIXME handle multiple capabilities
+    return toModuleIdentifier(moduleClassifier)
+}
+
+private fun ResolvedComponentResult.toModuleIdentifier(moduleClassifier: String?): KotlinModuleIdentifier {
     return when (val id = id) {
         is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
         is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
