@@ -166,10 +166,11 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     private fun propertyReferenceKind(expression: IrCallableReference<*>, mutable: Boolean, i: Int): PropertyReferenceKind {
         check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
+        val symbols = context.ir.symbols
         return PropertyReferenceKind(
-            context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
-            context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
-            context.ir.symbols.reflection.owner.functions.single {
+            symbols.getPropertyReferenceClass(mutable, i, false),
+            symbols.getPropertyReferenceClass(mutable, i, true),
+            symbols.reflection.owner.functions.single {
                 it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i")
             }
         )

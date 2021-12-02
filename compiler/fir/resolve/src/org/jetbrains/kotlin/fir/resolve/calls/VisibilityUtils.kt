@@ -69,14 +69,10 @@ private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField?
 
     // This check prevents resolving protected and
     // public fields.
-    val visibility = field.visibility
-    if (
-        visibility == Visibilities.PrivateToThis ||
-        visibility == Visibilities.Private ||
-        visibility == Visibilities.Internal
-    ) {
-        return field
+    return when (field.visibility) {
+        Visibilities.PrivateToThis,
+        Visibilities.Private,
+        Visibilities.Internal -> field
+        else -> null
     }
-
-    return null
 }

@@ -517,21 +517,21 @@ class ExpressionsConverter(
         var firSelector: FirExpression? = null
         var firReceiver: FirExpression? = null //before dot
         dotQualifiedExpression.forEachChildren {
-            when (it.tokenType) {
+            when (val tokenType = it.tokenType) {
                 DOT -> isSelector = true
                 SAFE_ACCESS -> {
                     isSafe = true
                     isSelector = true
                 }
                 else -> {
-                    val isEffectiveSelector = isSelector && it.tokenType != TokenType.ERROR_ELEMENT
+                    val isEffectiveSelector = isSelector && tokenType != TokenType.ERROR_ELEMENT
                     val firExpression =
                         getAsFirExpression<FirExpression>(it, "Incorrect ${if (isEffectiveSelector) "selector" else "receiver"} expression")
                     if (isEffectiveSelector) {
-                        val callExpressionCallee = if (it.tokenType == CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
+                        val callExpressionCallee = if (tokenType == CALL_EXPRESSION) it.getFirstChildExpressionUnwrapped() else null
                         firSelector =
-                            if (it.tokenType is KtNameReferenceExpressionElementType ||
-                                (it.tokenType == CALL_EXPRESSION && callExpressionCallee?.tokenType != LAMBDA_EXPRESSION)
+                            if (tokenType is KtNameReferenceExpressionElementType ||
+                                (tokenType == CALL_EXPRESSION && callExpressionCallee?.tokenType != LAMBDA_EXPRESSION)
                             ) {
                                 firExpression
                             } else {
