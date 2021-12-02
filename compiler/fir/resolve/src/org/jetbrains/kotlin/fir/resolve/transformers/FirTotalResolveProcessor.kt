@@ -9,16 +9,21 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 
-class FirTotalResolveProcessor(session: FirSession, enablePluginPhases: Boolean = false) {
+class FirTotalResolveProcessor(session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
 
-    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(session, scopeSession, enablePluginPhases)
+    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(
+        session,
+        scopeSession,
+        pluginPhasesEnabled = session.extensionService.registeredExtensionsSize > 0
+    )
 
     fun process(files: List<FirFile>) {
         for (processor in processors) {

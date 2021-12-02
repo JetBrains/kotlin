@@ -80,7 +80,7 @@ class FirAnalyzerFacade(
     override fun runResolution(): List<FirFile> {
         if (firFiles == null) buildRawFir()
         if (_scopeSession != null) return firFiles!!
-        val resolveProcessor = FirTotalResolveProcessor(session, enablePluginPhases)
+        val resolveProcessor = FirTotalResolveProcessor(session)
         resolveProcessor.process(firFiles!!)
         _scopeSession = resolveProcessor.scopeSession
         return firFiles!!
