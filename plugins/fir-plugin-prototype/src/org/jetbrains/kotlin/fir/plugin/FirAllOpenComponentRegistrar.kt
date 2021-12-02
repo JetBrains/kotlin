@@ -22,5 +22,6 @@ class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
         +::ExternalClassGenerator
         +::AdditionalMembersGenerator
         +::CompanionGenerator
+        +::MembersOfSerializerGenerator
     }
 }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
@@ -88,4 +89,12 @@ fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner
     }.also {
         it.containingClassForStaticMemberAttr = lookupTag
     }
+}
+
+fun ClassId.toSimpleConeType(): ConeClassLikeType {
+    return ConeClassLikeTypeImpl(
+        ConeClassLikeLookupTagImpl(this),
+        emptyArray(),
+        isNullable = false
+    )
 }

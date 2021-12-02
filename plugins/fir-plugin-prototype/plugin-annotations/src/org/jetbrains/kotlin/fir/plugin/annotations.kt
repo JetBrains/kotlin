@@ -13,6 +13,9 @@ annotation class NestedClassAndMaterializeMember
 annotation class MyInterfaceSupertype
 annotation class CompanionWithFoo
 
+annotation class MySerializable
+annotation class CoreSerializer
+
 annotation class AllPublic(val visibility: Visibility)
 
 @Target(AnnotationTarget.TYPE)

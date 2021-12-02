@@ -1,0 +1,78 @@
+FILE: serializer.kt
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|() public final object FirstSerializer : R|kotlin/Any| {
+        private constructor(): R|FirstSerializer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun serializeA(x: R|A|): R|kotlin/Unit| {
+        }
+
+        public final fun serializeB(x: R|B|): R|kotlin/Unit| {
+        }
+
+        public final fun serializeC(x: R|C|): R|kotlin/Unit| {
+        }
+
+        public final fun serializeD(x: R|D|): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|() public final object SecondSerializer : R|kotlin/Any| {
+        private constructor(): R|SecondSerializer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun serializeA(x: R|A|): R|kotlin/Unit| {
+        }
+
+        public final fun serializeB(x: R|B|): R|kotlin/Unit| {
+        }
+
+        public final fun serializeC(x: R|C|): R|kotlin/Unit| {
+        }
+
+        public final fun serializeD(x: R|D|): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun testFirstSerializer(): R|kotlin/Unit| {
+        Q|FirstSerializer|.R|/FirstSerializer.serializeA|(R|/A.A|())
+        Q|FirstSerializer|.R|/FirstSerializer.serializeB|(R|/B.B|())
+        Q|FirstSerializer|.R|/FirstSerializer.serializeC|(R|/C.C|())
+        Q|FirstSerializer|.R|/FirstSerializer.serializeD|(R|/D.D|())
+    }
+    public final fun testSecondSerializer(): R|kotlin/Unit| {
+        Q|SecondSerializer|.R|/SecondSerializer.serializeA|(R|/A.A|())
+        Q|SecondSerializer|.R|/SecondSerializer.serializeB|(R|/B.B|())
+        Q|SecondSerializer|.R|/SecondSerializer.serializeC|(R|/C.C|())
+        Q|SecondSerializer|.R|/SecondSerializer.serializeD|(R|/D.D|())
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/testFirstSerializer|()
+        R|/testSecondSerializer|()
+        ^box String(OK)
+    }

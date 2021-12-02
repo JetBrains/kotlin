@@ -50,6 +50,12 @@ public class FirPluginBlackBoxCodegenTestGenerated extends AbstractFirPluginBlac
     }
 
     @Test
+    @TestMetadata("serializer.kt")
+    public void testSerializer() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelCallables.kt")
     public void testTopLevelCallables() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
