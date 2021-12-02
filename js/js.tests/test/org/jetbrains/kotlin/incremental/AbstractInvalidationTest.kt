@@ -13,10 +13,7 @@ import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ModuleInfo
-import org.jetbrains.kotlin.codegen.ModuleInfoParser
-import org.jetbrains.kotlin.codegen.ProjectInfo
-import org.jetbrains.kotlin.codegen.ProjectInfoParser
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
@@ -270,8 +267,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     companion object {
-        const val PROJECT_INFO_FILE = "project.info"
-        const val MODULE_INFO_FILE = "module.info"
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
     }
 

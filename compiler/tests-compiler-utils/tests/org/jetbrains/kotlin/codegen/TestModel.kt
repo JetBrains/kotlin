@@ -44,6 +44,8 @@ class ModuleInfo(val moduleName: String) {
 }
 
 const val MODULES_LIST = "MODULES"
+const val PROJECT_INFO_FILE = "project.info"
+const val MODULE_INFO_FILE = "module.info"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\s*:?$")
 
