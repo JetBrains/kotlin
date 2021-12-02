@@ -208,7 +208,6 @@ fun prepareDeps(
     }
 }
 
-prepareDeps(intellij, intellijCore, sources, jpsStandalone, intellijVersion)
 if (intellijVersionForIde != null) {
     prepareDeps(intellijForIde, intellijCoreForIde, sourcesForIde, jpsStandaloneForIde, intellijVersionForIde)
 }

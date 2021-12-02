@@ -204,7 +204,6 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
-tasks["build"].dependsOn(":prepare-deps:build")
 sourceSets["main"].withConvention(org.gradle.api.tasks.GroovySourceSet::class) {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         groovy.srcDir("../kotlin-native/build-tools/src/main/groovy")
