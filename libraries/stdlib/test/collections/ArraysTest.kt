@@ -2205,7 +2205,7 @@ class ArraysTest {
 
     @Test
     fun shufflePredictably() {
-        val numbers = List(16) { it }
+        val numbers = List(32) { it }
         testShuffleR(numbers.map(Int::toInt).toIntArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toLong).toLongArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toByte).toByteArray(), { r -> shuffle(r) }, { toList() })
@@ -2220,7 +2220,7 @@ class ArraysTest {
         testShuffleR(numbers.map(Int::toUByte).toUByteArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toUShort).toUShortArray(), { r -> shuffle(r) }, { toList() })
 
-        testShuffleR(arrayOf(1, "x", null, Any(), 'a', 2u, 5.0), { r -> shuffle(r) }, { toList() })
+        testShuffleR(arrayOf(1, "x", null, Any(), 'a', 2u, 5.0, 3L, true, 0), { r -> shuffle(r) }, { toList() })
     }
 
     @Test
