@@ -41,6 +41,10 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>(
             "Enable Live Literals code generation (with per-file enabled flags)"
         )
+    val GENERATE_FUNCTION_KEY_META_CLASSES_KEY =
+        CompilerConfigurationKey<Boolean>(
+            "Generate function key meta classes"
+        )
     val SOURCE_INFORMATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Include source information in generated code")
     val METRICS_DESTINATION_KEY =
@@ -69,6 +73,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "liveLiteralsEnabled",
             "<true|false>",
             "Enable Live Literals code generation (with per-file enabled flags)",
+            required = false,
+            allowMultipleOccurrences = false
+        )
+        val GENERATE_FUNCTION_KEY_META_CLASSES_OPTION = CliOption(
+            "generateFunctionKeyMetaClasses",
+            "<true|false>",
+            "Generate function key meta classes with annotations indicating the " +
+                "functions and their group keys. Generally used for tooling.",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -120,6 +132,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(
         LIVE_LITERALS_ENABLED_OPTION,
         LIVE_LITERALS_V2_ENABLED_OPTION,
+        GENERATE_FUNCTION_KEY_META_CLASSES_OPTION,
         SOURCE_INFORMATION_ENABLED_OPTION,
         METRICS_DESTINATION_OPTION,
         REPORTS_DESTINATION_OPTION,
@@ -139,6 +152,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         LIVE_LITERALS_V2_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
+            value == "true"
+        )
+        GENERATE_FUNCTION_KEY_META_CLASSES_OPTION -> configuration.put(
+            ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY,
             value == "true"
         )
         SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
@@ -220,6 +237,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
                 false
             )
+            val generateFunctionKeyMetaClasses = configuration.get(
+                ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY,
+                false
+            )
             val sourceInformationEnabled = configuration.get(
                 ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
                 false
@@ -268,6 +289,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 ComposeIrGenerationExtension(
                     liveLiteralsEnabled = liveLiteralsEnabled,
                     liveLiteralsV2Enabled = liveLiteralsV2Enabled,
+                    generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
                     sourceInformationEnabled = sourceInformationEnabled,
                     intrinsicRememberEnabled = intrinsicRememberEnabled,
                     decoysEnabled = decoysEnabled,

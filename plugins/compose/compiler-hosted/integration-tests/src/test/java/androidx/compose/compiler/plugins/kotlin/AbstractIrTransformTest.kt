@@ -67,6 +67,7 @@ import java.io.File
 abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val liveLiteralsEnabled get() = false
     open val liveLiteralsV2Enabled get() = false
+    open val generateFunctionKeyMetaClasses get() = false
     open val sourceInformationEnabled get() = true
     open val decoysEnabled get() = false
     open val metricsDestination: String? get() = null
@@ -74,6 +75,7 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     protected val extension = ComposeIrGenerationExtension(
         liveLiteralsEnabled,
         liveLiteralsV2Enabled,
+        generateFunctionKeyMetaClasses,
         sourceInformationEnabled,
         intrinsicRememberEnabled = true,
         decoysEnabled,
