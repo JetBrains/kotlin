@@ -13,6 +13,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.project.model.KotlinModule
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmCompilerPlugin
 
 interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
@@ -33,6 +34,8 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
     fun makePublic()
 
     companion object {
+        val KotlinModuleIdentifier.moduleName get() = moduleClassifier ?: MAIN_MODULE_NAME
+
         const val MAIN_MODULE_NAME = "main"
         const val TEST_MODULE_NAME = "test"
     }

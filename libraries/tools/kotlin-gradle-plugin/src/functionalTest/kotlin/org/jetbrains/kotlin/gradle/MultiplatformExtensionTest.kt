@@ -31,7 +31,6 @@ abstract class MultiplatformExtensionTest {
 
     @BeforeTest
     open fun setup() {
-        addBuildEventsListenerRegistryMock(project)
         kotlin = project.applyMultiplatformPlugin()
     }
 
@@ -82,6 +81,7 @@ abstract class MultiplatformExtensionTest {
 }
 
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
+    addBuildEventsListenerRegistryMock(this)
     plugins.apply("kotlin-multiplatform")
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension
 }
