@@ -12,7 +12,7 @@ dependencies {
     testImplementation(project(":kotlin-reflect"))
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
     testImplementation(intellijPluginDep("java"))
-    testImplementation(intellijDep()) { includeJars("commons-lang-2.4") }
+    testImplementation(intellijDep()) { includeJars("commons-lang-2.4", "serviceMessages", rootProject = rootProject) }
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))

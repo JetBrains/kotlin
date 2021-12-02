@@ -66,9 +66,10 @@ internal sealed interface TestRunParameter {
         }
     }
 
-    object WithGTestLogger : TestRunParameter {
+    object WithTCTestLogger : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) {
-            programArgs += "--ktest_logger=GTEST"
+            programArgs += "--ktest_logger=TEAMCITY"
+            programArgs += "--ktest_no_exit_code"
         }
     }
 
