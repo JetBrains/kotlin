@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestName
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseTCTestReport
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import kotlin.time.Duration
@@ -24,6 +26,9 @@ internal class LocalTestRunner(
         add(executable.executableFile.path)
         testRun.runParameters.forEach { it.applyTo(this) }
     }
+
+    override val outputFilter: TestOutputFilter
+        get() = if (testRun.runParameters.has<TestRunParameter.WithTCTestLogger>()) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(
         compilerCall = executable.loggedCompilerCall,
@@ -50,15 +55,14 @@ internal class LocalTestRunner(
         override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
 
         override fun doHandle() {
-            if (testRun.runParameters.has<TestRunParameter.WithTCTestLogger>()) {
-                verifyTCTestLoggerOutput()
-            } else {
-                verifyPlainOutput()
-            }
+            verifyTestReport(runResult.processOutput.stdOut.testReport)
+
+            val mergedOutput = runResult.processOutput.stdOut.filteredOutput + runResult.processOutput.stdErr
+            verifyNonTestOutput(mergedOutput)
         }
 
-        private fun verifyTCTestLoggerOutput() {
-            val testReport = parseTCTestReport(runResult.output.stdOut)
+        private fun verifyTestReport(testReport: TestReport?) {
+            if (testReport == null) return
 
             verifyExpectation(!testReport.isEmpty()) { "No tests have been found." }
 
@@ -77,22 +81,18 @@ internal class LocalTestRunner(
             verifyNoSuchTests(testReport.failedTests, "There are failed tests")
 
             assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
-
-            verifyNonTestOutput { testReport.nonTestOutput + runResult.output.stdErr }
         }
 
         private fun verifyNoSuchTests(tests: Collection<TestName>, subject: String) = verifyExpectation(tests.isEmpty()) {
             buildString {
-                append(subject).appendLine(":")
-                tests.forEach { append(" - ").appendLine(it) }
+                append(subject).append(':')
+                tests.forEach { appendLine().append(" - ").append(it) }
             }
         }
 
-        private fun verifyPlainOutput() = verifyNonTestOutput { runResult.output.stdOut + runResult.output.stdErr }
-
-        private fun verifyNonTestOutput(nonTestOutput: () -> String) {
+        private fun verifyNonTestOutput(nonTestOutput: String) {
             testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {
-                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()), convertLineSeparators(nonTestOutput())) {
+                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()), convertLineSeparators(nonTestOutput)) {
                     "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                 }
             }

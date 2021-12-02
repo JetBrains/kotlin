@@ -18,14 +18,25 @@ internal typealias TestName = String
 internal class TestReport(
     val passedTests: Collection<TestName>,
     val failedTests: Collection<TestName>,
-    val ignoredTests: Collection<TestName>,
-    val nonTestOutput: String
+    val ignoredTests: Collection<TestName>
 ) {
     fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
 }
 
+internal interface TestOutputFilter {
+    fun filter(testOutput: String): FilteredOutput
+
+    class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
+
+    companion object {
+        val NO_FILTERING = object : TestOutputFilter {
+            override fun filter(testOutput: String) = FilteredOutput(testOutput, null)
+        }
+    }
+}
+
 /**
- * Parses TC test reports like this:
+ * Processed TC test reports like this:
  *
  *   ##teamcity[testSuiteStarted name='sample.test.SampleTestKt' locationHint='ktest:suite://sample.test.SampleTestKt']
  *   ##teamcity[testStarted name='one' locationHint='ktest:test://sample.test.SampleTestKt.one']
@@ -33,24 +44,30 @@ internal class TestReport(
  *   ##teamcity[testIgnored name='two']
  *   ##teamcity[testSuiteFinished name='sample.test.SampleTestKt']
  */
-internal fun parseTCTestReport(rawTCTestOutput: String): TestReport {
-    val callback = TCTestMessageParserCallback()
-    ServiceMessagesParser().parse(rawTCTestOutput, callback)
+internal object TCTestOutputFilter : TestOutputFilter {
+    override fun filter(testOutput: String): TestOutputFilter.FilteredOutput {
+        val callback = TCTestMessageParserCallback()
+        ServiceMessagesParser().parse(testOutput, callback)
+        callback.finish()
 
-    assertTrue(callback.errors.isEmpty()) {
-        buildString {
-            appendLine("Failed to parse TC test output.")
-            callback.errors.forEach { error ->
+        assertTrue(callback.errors.isEmpty()) {
+            buildString {
+                appendLine("Failed to parse TC test output.")
+                callback.errors.forEach { error ->
+                    appendLine()
+                    append("Error: ").appendLine(error)
+                }
                 appendLine()
-                append("Error: ").appendLine(error)
+                appendLine("Full test output:")
+                append(testOutput)
             }
-            appendLine()
-            appendLine("Test output:")
-            append(rawTCTestOutput)
         }
-    }
 
-    return callback.getReport()
+        return TestOutputFilter.FilteredOutput(
+            filteredOutput = callback.nonTestOutput.toString(),
+            testReport = TestReport(callback.passedTests, callback.failedTests, callback.ignoredTests)
+        )
+    }
 }
 
 private class TCTestMessageParserCallback : ServiceMessageParserCallback {
@@ -143,11 +160,9 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
         errors += error()
     }
 
-    fun getReport(): TestReport {
+    fun finish() {
         // The last test state is "TestStarted" this likely means that the test process terminated during test execution (SIGSEGV, etc).
         state.safeAs<State.TestStarted>()?.let { failedTests += it.testName }
-
-        return TestReport(passedTests, failedTests, ignoredTests, nonTestOutput.toString())
     }
 }
 
