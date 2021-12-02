@@ -1,0 +1,28 @@
+// A.class
+// ------------------------------------------
+public abstract interface A : kotlin/Any {
+
+  // signature: f()V
+  public open fun f(): kotlin/Unit
+
+  // module name: test-module
+
+  // has method bodies in interface
+}
+// B.class
+// ------------------------------------------
+public abstract interface B : A {
+
+  // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
+}
+// B$DefaultImpls.class
+// ------------------------------------------
+synthetic class
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

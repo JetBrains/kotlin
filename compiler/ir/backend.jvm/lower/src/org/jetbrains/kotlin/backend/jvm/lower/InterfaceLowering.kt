@@ -65,7 +65,9 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
     private fun handleInterface(irClass: IrClass) {
         val jvmDefaultMode = context.state.jvmDefaultMode
-        val isCompatibilityMode = jvmDefaultMode.isCompatibility && !irClass.hasJvmDefaultNoCompatibilityAnnotation()
+        val isCompatibilityMode =
+            (jvmDefaultMode.isCompatibility && !irClass.hasJvmDefaultNoCompatibilityAnnotation()) ||
+                    (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE && irClass.hasJvmDefaultWithCompatibilityAnnotation())
         // There are 6 cases for functions on interfaces:
         for (function in irClass.functions) {
             when {

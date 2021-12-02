@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.util.findImplementationFromInterface
 
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
 val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
+val JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithCompatibility")
 val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
 
 @JvmField
@@ -77,6 +78,8 @@ fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
 fun DeclarationDescriptor.hasJvmDefaultNoCompatibilityAnnotation(): Boolean =
     this.annotations.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
 
+fun DeclarationDescriptor.hasJvmDefaultWithCompatibilityAnnotation(): Boolean =
+    this.annotations.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)
 
 fun CallableMemberDescriptor.hasPlatformDependentAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)

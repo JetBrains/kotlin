@@ -21,7 +21,7 @@ object JvmFlags {
     fun getPropertyFlags(isMovedFromInterfaceCompanion: Boolean): Int =
         IS_MOVED_FROM_INTERFACE_COMPANION.toFlags(isMovedFromInterfaceCompanion)
 
-    fun getClassFlags(isAllInterfaceBodiesInside: Boolean, isAllCompatibilityMode: Boolean): Int =
-        ARE_INTERFACE_METHOD_BODIES_INSIDE.toFlags(isAllInterfaceBodiesInside) or IS_ALL_COMPATIBILITY_MODE.toFlags(isAllCompatibilityMode)
+    fun getClassFlags(isAllInterfaceBodiesInside: Boolean, isCompatibilityMode: Boolean): Int =
+        ARE_INTERFACE_METHOD_BODIES_INSIDE.toFlags(isAllInterfaceBodiesInside) or IS_ALL_COMPATIBILITY_MODE.toFlags(isCompatibilityMode)
 
 }

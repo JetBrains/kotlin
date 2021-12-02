@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultNoCompatibilityAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultWithCompatibilityAnnotation
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -98,7 +100,8 @@ class JvmSerializerExtension @JvmOverloads constructor(
                 JvmProtoBuf.jvmClassFlags,
                 JvmFlags.getClassFlags(
                     jvmDefaultMode.forAllMethodsWithBody,
-                    JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode
+                    (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode && !descriptor.hasJvmDefaultNoCompatibilityAnnotation()) ||
+                            (JvmDefaultMode.ALL_INCOMPATIBLE == jvmDefaultMode && descriptor.hasJvmDefaultWithCompatibilityAnnotation())
                 )
             )
         }

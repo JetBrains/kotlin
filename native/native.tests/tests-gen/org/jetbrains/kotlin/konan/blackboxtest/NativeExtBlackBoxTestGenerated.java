@@ -26040,6 +26040,29 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
                             runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization/basic.kt");
                         }
                     }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+                    public class WithCompatibility {
+                        @Test
+                        public void testAllFilesPresentInWithCompatibility() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+
+                        @Test
+                        @TestMetadata("defaultArgs.kt")
+                        public void testDefaultArgs() throws Exception {
+                            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/defaultArgs.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("simple.kt")
+                        public void testSimple() throws Exception {
+                            runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/simple.kt");
+                        }
+                    }
                 }
 
                 @Nested

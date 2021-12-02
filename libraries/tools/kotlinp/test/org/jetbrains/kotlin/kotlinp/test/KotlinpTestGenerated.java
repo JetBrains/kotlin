@@ -140,5 +140,15 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         public void testAllFilesPresentInJvmDefault() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
+
+        @TestMetadata("withCompatibility.kt")
+        public void testWithCompatibility() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/jvmDefault/withCompatibility.kt");
+        }
+
+        @TestMetadata("withoutCompatibility.kt")
+        public void testWithoutCompatibility() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/jvmDefault/withoutCompatibility.kt");
+        }
     }
 }

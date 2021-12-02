@@ -19,6 +19,7 @@ object JvmNames {
     val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
     val JVM_DEFAULT_CLASS_ID = ClassId.topLevel(JVM_DEFAULT_FQ_NAME)
     val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
+    val JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithCompatibility")
     val JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID = ClassId.topLevel(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
     val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
     val JVM_OVERLOADS_CLASS_ID = ClassId.topLevel(JVM_OVERLOADS_FQ_NAME)
