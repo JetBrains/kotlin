@@ -16,7 +16,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.coroutines.Continuation
 
-class CompressedNamesTest {
+@Suppress("ClassName")
+class TestInfra_CompressedNamesTest {
     @Test
     fun targetNameCompression() {
         val knownTargets: Set<KonanTarget> = KonanTarget.predefinedTargets.values.toSet()
