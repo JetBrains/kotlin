@@ -26,7 +26,7 @@ private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,
     SingleClassTestModelAllFilesPresentedMethodGenerator,
-    WithoutJvmInlineTestMethodGenerator,
+    TransformingTestMethodGenerator,
 )
 
 object TestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {

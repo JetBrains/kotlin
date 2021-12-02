@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators
 import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPresentMethodGenerator
 import org.jetbrains.kotlin.generators.impl.SimpleTestMethodGenerator
 import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresentedMethodGenerator
-import org.jetbrains.kotlin.generators.impl.WithoutJvmInlineTestMethodGenerator
+import org.jetbrains.kotlin.generators.impl.TransformingTestMethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
@@ -26,7 +26,7 @@ private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,
     SingleClassTestModelAllFilesPresentedMethodGenerator,
-    WithoutJvmInlineTestMethodGenerator,
+    TransformingTestMethodGenerator,
 )
 
 object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {

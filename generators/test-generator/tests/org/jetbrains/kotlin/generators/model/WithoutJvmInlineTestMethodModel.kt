@@ -6,17 +6,11 @@
 package org.jetbrains.kotlin.generators.model
 
 class WithoutJvmInlineTestMethodModel(
-    val source: SimpleTestMethodModel,
+    source: SimpleTestMethodModel,
     val withAnnotation: Boolean
-) : MethodModel {
-    object Kind : MethodModel.Kind()
-
-    override val kind: MethodModel.Kind
-        get() = Kind
-    override val name: String
-        get() = source.name + if (withAnnotation) "" else "_valueClasses"
-    override val dataString: String
-        get() = source.dataString
-    override val tags: List<String>
-        get() = source.tags
+) : TransformingTestMethodModel(
+    source,
+    transformer = "s -> s.replaceAll(\"OPTIONAL_JVM_INLINE_ANNOTATION\", \"${if (withAnnotation) "@kotlin.jvm.JvmInline" else ""}\")"
+) {
+    override val name: String = source.name + if (withAnnotation) "" else "_valueClasses"
 }

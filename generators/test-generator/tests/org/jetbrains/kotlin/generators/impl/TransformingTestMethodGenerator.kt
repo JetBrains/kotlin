@@ -8,24 +8,23 @@ package org.jetbrains.kotlin.generators.impl
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.RunTestMethodModel
-import org.jetbrains.kotlin.generators.model.WithoutJvmInlineTestMethodModel
+import org.jetbrains.kotlin.generators.model.TransformingTestMethodModel
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 
-object WithoutJvmInlineTestMethodGenerator : MethodGenerator<WithoutJvmInlineTestMethodModel>() {
+object TransformingTestMethodGenerator : MethodGenerator<TransformingTestMethodModel>() {
 
     override val kind: MethodModel.Kind
-        get() = WithoutJvmInlineTestMethodModel.Kind
+        get() = TransformingTestMethodModel.Kind
 
-    override fun generateSignature(method: WithoutJvmInlineTestMethodModel, p: Printer) {
+    override fun generateSignature(method: TransformingTestMethodModel, p: Printer) {
         generateDefaultSignature(method, p)
     }
 
-    override fun generateBody(method: WithoutJvmInlineTestMethodModel, p: Printer) {
+    override fun generateBody(method: TransformingTestMethodModel, p: Printer) {
         with(method) {
             val filePath = KtTestUtil.getFilePath(source.file) + if (source.file.isDirectory) "/" else ""
-            val replacement = if (method.withAnnotation) "@kotlin.jvm.JvmInline" else ""
-            p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\", s -> s.replaceAll(\"OPTIONAL_JVM_INLINE_ANNOTATION\", \"$replacement\"));")
+            p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\", ${method.transformer});")
         }
     }
 }
