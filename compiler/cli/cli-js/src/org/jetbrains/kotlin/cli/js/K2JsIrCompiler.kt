@@ -206,14 +206,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val includes = arguments.includes!!
 
-            // TODO: deduplicate
-            val mainModule = run {
-                if (sourcesFiles.isNotEmpty()) {
-                    messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
-                }
-                MainModule.Klib(includes)
-            }
-
             val start = System.currentTimeMillis()
 
             val updated = actualizeCacheForModule(
