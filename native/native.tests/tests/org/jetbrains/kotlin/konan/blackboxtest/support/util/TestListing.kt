@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestFunction
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListingParseState as State
@@ -48,14 +48,12 @@ internal fun parseGTestListing(rawGTestListing: String): Collection<TestFunction
             }
             else -> when (state) {
                 is State.Begin, is State.NewTest -> {
-                    val packageParts = line.trimEnd().removeSuffix(".").split('.')
-                    if (packageParts.isEmpty()) parseError("Malformed test suite name")
+                    val packageSegments = line.trimEnd().removeSuffix(".").split('.')
+                    if (packageSegments.isEmpty()) parseError("Malformed test suite name")
 
                     // Drop the last part because it is related to class name (or file-class name).
                     // TODO: How to handle nested classes?
-                    val packageName = packageParts.dropLast(1).joinToString(".")
-
-                    State.NewTestSuite(packageName)
+                    State.NewTestSuite(PackageName(packageSegments.dropLast(1)))
                 }
                 else -> parseError("Unexpected test suite name")
             }
@@ -66,11 +64,11 @@ internal fun parseGTestListing(rawGTestListing: String): Collection<TestFunction
 private sealed interface GTestListingParseState {
     object Begin : State
     object End : State
-    class NewTestSuite(override val packageName: PackageFQN) : State, HasPackageName
-    class NewTest(override val packageName: PackageFQN) : State, HasPackageName
+    class NewTestSuite(override val packageName: PackageName) : State, HasPackageName
+    class NewTest(override val packageName: PackageName) : State, HasPackageName
 
     interface HasPackageName {
-        val packageName: PackageFQN
+        val packageName: PackageName
     }
 }
 

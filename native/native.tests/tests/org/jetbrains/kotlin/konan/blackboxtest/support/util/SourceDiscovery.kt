@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 
 internal typealias SourceText = CharSequence
 internal typealias SourceLine = String
@@ -17,10 +17,11 @@ internal data class NumberedSourceLine(val number: Int, val text: SourceLine) : 
 internal fun SourceText.hasAnythingButComments(): Boolean =
     dropNonMeaningfulLines().firstOrNull() != null
 
-internal fun NumberedSourceLine.getExistingPackageName(): PackageFQN? =
+internal fun NumberedSourceLine.getExistingPackageName(): PackageName? =
     text.substringAfter("package ", missingDelimiterValue = "")
         .trimStart()
         .takeIf(String::isNotEmpty)
+        ?.let(::PackageName)
 
 internal fun SourceText.dropNonMeaningfulLines(): Sequence<NumberedSourceLine> {
     var inMultilineComment = false

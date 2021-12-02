@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated.KEYWORDS
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
-import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.math.min
 
-internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageFQN {
+internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
         """
             The file is outside of the directory.
@@ -26,13 +25,13 @@ internal fun computePackageName(testDataBaseDir: File, testDataFile: File): Pack
         .relativeTo(testDataBaseDir)
         .resolve(testDataFile.nameWithoutExtension)
         .toPath()
-        .map(Path::name)
-        .joinToString(".") { packagePart ->
-            if (packagePart in KEYWORDS)
-                "_${packagePart}_"
+        .map { pathSegment ->
+            val packageSegment = pathSegment.name
+            if (packageSegment in KEYWORDS)
+                "_${packageSegment}_"
             else
                 buildString {
-                    packagePart.forEachIndexed { index, ch ->
+                    packageSegment.forEachIndexed { index, ch ->
                         if (ch.isJavaIdentifierPart()) {
                             if (index == 0 && !ch.isJavaIdentifierStart()) {
                                 // If the first character is not suitable for start, escape it with '_'.
@@ -46,36 +45,42 @@ internal fun computePackageName(testDataBaseDir: File, testDataFile: File): Pack
                     }
                 }
         }
+        .let(::PackageName)
 }
 
-internal fun Set<PackageFQN>.findCommonPackageName(): PackageFQN? = when (size) {
-    0 -> null
+internal fun Set<PackageName>.findCommonPackageName(): PackageName = when (size) {
+    0 -> PackageName.EMPTY
     1 -> first()
-    else -> map { packageName: PackageFQN ->
-        packageName.split('.')
-    }.reduce { commonPackageNameParts: List<String>, packageNameParts: List<String> ->
-        ArrayList<String>(min(commonPackageNameParts.size, packageNameParts.size)).apply {
-            val i = commonPackageNameParts.iterator()
-            val j = packageNameParts.iterator()
+    else -> map { packageName -> packageName.segments }
+        .reduce { commonSegments: List<String>, segments: List<String> ->
+            buildList(min(commonSegments.size, segments.size)) {
+                val i = commonSegments.iterator()
+                val j = segments.iterator()
 
-            while (i.hasNext() && j.hasNext()) {
-                val packageNamePart = i.next()
-                if (packageNamePart == j.next()) add(packageNamePart) else break
+                while (i.hasNext() && j.hasNext()) {
+                    val segment = i.next()
+                    if (segment == j.next()) add(segment) else break
+                }
             }
         }
-    }.takeIf { it.isNotEmpty() }?.joinToString(".")
+        .let(::PackageName)
 }
 
-internal fun joinPackageNames(a: PackageFQN, b: PackageFQN): PackageFQN = when {
+internal fun joinPackageNames(a: PackageName, b: PackageName): PackageName = when {
     a.isEmpty() -> b
     b.isEmpty() -> a
-    else -> "$a.$b"
+    else -> PackageName(a.segments + b.segments)
 }
 
-internal fun String.prependPackageName(packageName: PackageFQN): String =
+internal fun String.prependPackageName(packageName: PackageName): String =
     if (packageName.isEmpty()) this else "$packageName.$this"
 
-internal fun PackageFQN.isSameOrSubpackageOf(parentPackageName: PackageFQN): Boolean =
-    parentPackageName.isEmpty()
-            || this == parentPackageName
-            || (length > parentPackageName.length && startsWith(parentPackageName) && this[parentPackageName.length] == '.')
+internal fun PackageName.startsWith(other: PackageName): Boolean {
+    if (segments.size < other.segments.size) return false
+
+    for (i in other.segments.indices) {
+        if (segments[i] != other.segments[i]) return false
+    }
+
+    return true
+}

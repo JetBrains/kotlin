@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestName
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
@@ -28,9 +29,9 @@ internal sealed interface TestRunParameter {
         abstract fun testMatches(testName: String): Boolean
     }
 
-    class WithPackageFilter(packageName: PackageFQN) : WithFilter() {
+    class WithPackageFilter(packageName: PackageName) : WithFilter() {
         init {
-            assertTrue(packageName.isNotEmpty())
+            assertFalse(packageName.isEmpty())
         }
 
         private val packagePrefix = "$packageName."
@@ -39,11 +40,11 @@ internal sealed interface TestRunParameter {
             programArgs += "--ktest_filter=$packagePrefix*"
         }
 
-        override fun testMatches(testName: String) = testName.startsWith(packagePrefix)
+        override fun testMatches(testName: TestName) = testName.startsWith(packagePrefix)
     }
 
     class WithFunctionFilter(val testFunction: TestFunction) : WithFilter() {
-        private val packagePrefix = if (testFunction.packageName.isNotEmpty()) "${testFunction.packageName}." else ""
+        private val packagePrefix = if (testFunction.packageName.isEmpty()) "" else "${testFunction.packageName}."
 
         override fun applyTo(programArgs: MutableList<String>) {
             programArgs += "--ktest_regex_filter=${packagePrefix.replace(".", "\\.")}([^\\.]+)\\.${testFunction.functionName}"

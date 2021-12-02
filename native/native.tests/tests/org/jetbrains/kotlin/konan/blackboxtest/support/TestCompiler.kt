@@ -113,7 +113,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
     private fun multiModuleArtifactFile(modules: Collection<TestModule>, extension: String): File {
         var filesCount = 0
         var hash = 0
-        val uniquePackageNames = hashSetOf<PackageFQN>()
+        val uniquePackageNames = hashSetOf<PackageName>()
 
         modules.forEach { module ->
             module.files.forEach { file ->
@@ -132,7 +132,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
             repeat(4 - prefix.length) { append('0') }
             append(prefix).append('-')
 
-            if (commonPackageName != null)
+            if (!commonPackageName.isEmpty())
                 append(commonPackageName.compressedPackageName).append('-')
 
             append(prettyHash(hash))
@@ -143,7 +143,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
         return artifactDirForPackageName(commonPackageName).resolve(artifactFileName)
     }
 
-    private fun artifactDirForPackageName(packageName: PackageFQN?): File {
+    private fun artifactDirForPackageName(packageName: PackageName?): File {
         val baseDir = settings.get<Binaries>().testBinariesDir
         val outputDir = if (packageName != null) baseDir.resolve(packageName.compressedPackageName) else baseDir
 
