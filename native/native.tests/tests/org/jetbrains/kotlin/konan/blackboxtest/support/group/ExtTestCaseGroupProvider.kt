@@ -279,7 +279,7 @@ private class ExtTestDataFile(
     private fun patchPackageNames(isStandaloneTest: Boolean) = with(structure) {
         if (isStandaloneTest) return // Don't patch packages for standalone tests.
 
-        val basePackageName = FqName(testDataFileSettings.nominalPackageName)
+        val basePackageName = FqName(testDataFileSettings.nominalPackageName.toString())
 
         val oldPackageNames: Set<FqName> = filesToTransform.mapToSet { it.packageFqName }
         val oldToNewPackageNameMapping: Map<FqName, FqName> = oldPackageNames.associateWith { oldPackageName ->
@@ -650,7 +650,7 @@ private class ExtTestDataFileSettings(
     val optInsForCompiler: Set<String>,
     val expectActualLinker: Boolean,
     val generatedSourcesDir: File,
-    val nominalPackageName: PackageFQN
+    val nominalPackageName: PackageName
 )
 
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?

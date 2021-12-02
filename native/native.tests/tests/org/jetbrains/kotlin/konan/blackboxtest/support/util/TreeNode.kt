@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 
 internal interface TreeNode<T> {
-    val packageSegment: String
+    val packageSegment: PackageName
     val items: Collection<T>
     val children: Collection<TreeNode<T>>
 
@@ -16,15 +16,15 @@ internal interface TreeNode<T> {
         fun <T> oneLevel(vararg items: T) = oneLevel(listOf(*items))
 
         fun <T> oneLevel(items: Iterable<T>): List<TreeNode<T>> = listOf(object : TreeNode<T> {
-            override val packageSegment get() = ""
+            override val packageSegment get() = PackageName.EMPTY
             override val items = items.toList()
             override val children get() = emptyList<TreeNode<T>>()
         })
     }
 }
 
-internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageFQN, transform: (T) -> R): Collection<TreeNode<R>> {
-    val groupedItems: Map<PackageFQN, List<R>> = groupBy(extractPackageName).mapValues { (_, items) -> items.map(transform) }
+internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageName, transform: (T) -> R): Collection<TreeNode<R>> {
+    val groupedItems: Map<PackageName, List<R>> = groupBy(extractPackageName).mapValues { (_, items) -> items.map(transform) }
 
     // Fast pass.
     when (groupedItems.size) {
@@ -33,13 +33,14 @@ internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageFQ
     }
 
     // Long pass.
-    val root = TreeBuilder<R>("")
+    val root = TreeBuilder<R>(PackageName.EMPTY)
 
     // Populate the tree.
-    groupedItems.forEach { (packageFQN, items) ->
+    groupedItems.forEach { (packageName, items) ->
         var node = root
-        packageFQN.split('.').forEach { packageSegment ->
-            node = node.childrenMap.computeIfAbsent(packageSegment) { TreeBuilder(packageSegment) }
+        packageName.segments.forEach { packageSegment ->
+            val packageSegmentAsName = PackageName(listOf(packageSegment))
+            node = node.childrenMap.computeIfAbsent(packageSegmentAsName) { TreeBuilder(packageSegmentAsName) }
         }
         node.items += items
     }
@@ -54,9 +55,9 @@ internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageFQ
         meaningfulNode.childrenMap.values
 }
 
-private class TreeBuilder<T>(override var packageSegment: String) : TreeNode<T> {
+private class TreeBuilder<T>(override var packageSegment: PackageName) : TreeNode<T> {
     override val items = mutableListOf<T>()
-    val childrenMap = hashMapOf<String, TreeBuilder<T>>()
+    val childrenMap = hashMapOf<PackageName, TreeBuilder<T>>()
     override val children: Collection<TreeBuilder<T>> get() = childrenMap.values
 }
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
 import org.apache.commons.lang.StringUtils.splitByCharacterTypeCamelCase
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageFQN
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -48,9 +48,9 @@ internal val Architecture.compressedName: String
 internal val Class<*>.compressedSimpleName: String
     get() = splitByCharacterTypeCamelCase(simpleName).joinToString("") { it.take(3) }
 
-internal val PackageFQN.compressedPackageName: String
+internal val PackageName.compressedPackageName: String
     get() {
-        val sanitizedName = replace('.', '_')
+        val sanitizedName = segments.joinToString("_")
         return if (sanitizedName.length > COMPRESSED_PACKAGE_FQN_MAX_LENGTH) {
             val suffix = "-" + prettyHash(sanitizedName.hashCode())
             sanitizedName.substring(0, COMPRESSED_PACKAGE_FQN_MAX_LENGTH - suffix.length) + suffix

@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.joinPackageNames
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.prependPackageName
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestRun
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
@@ -89,7 +90,7 @@ abstract class AbstractNativeBlackBoxTest {
 //            }
 //        }
         buildList {
-            fun TreeNode<TestRun>.processItems(parentPackageSegment: String) {
+            fun TreeNode<TestRun>.processItems(parentPackageSegment: PackageName) {
                 val ownPackageSegment = joinPackageNames(parentPackageSegment, packageSegment)
                 items.mapTo(this@buildList) { testRun ->
                     val displayName = testRun.displayName.prependPackageName(ownPackageSegment)
@@ -99,7 +100,7 @@ abstract class AbstractNativeBlackBoxTest {
                 children.forEach { it.processItems(ownPackageSegment) }
             }
 
-            testRunNodes.forEach { testRunNode -> testRunNode.processItems("") }
+            testRunNodes.forEach { testRunNode -> testRunNode.processItems(PackageName.EMPTY) }
         }
 
     private fun performTestRun(testRun: TestRun) {

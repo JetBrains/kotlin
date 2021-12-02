@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.compressedName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.compressedPackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.compressedSimpleName
@@ -89,5 +90,10 @@ class TestInfra_CompressedNamesTest {
             "foo_bar_baz_foo_bar_baz_foo_bar-a4571752",
             "foo.bar.baz.foo.bar.baz.foo.bar.baz.foo.bar.baz.foo.bar.baz".compressedPackageName
         )
+    }
+
+    companion object {
+        private val String.compressedPackageName
+            get() = PackageName(this).compressedPackageName
     }
 }

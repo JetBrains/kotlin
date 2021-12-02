@@ -221,7 +221,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
     }
 
     companion object {
-        private fun fixPackageNames(testModules: Collection<TestModule.Exclusive>, basePackageName: PackageFQN, testDataFile: File) {
+        private fun fixPackageNames(testModules: Collection<TestModule.Exclusive>, basePackageName: PackageName, testDataFile: File) {
             testModules.forEach { testModule ->
                 testModule.files.forEach { testFile ->
                     val firstMeaningfulLine = testFile.text.dropNonMeaningfulLines().firstOrNull()
@@ -230,7 +230,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
                     val existingPackageName = firstMeaningfulLine?.getExistingPackageName()
                     if (existingPackageName != null) {
                         // Validate it.
-                        assertTrue(existingPackageName.isSameOrSubpackageOf(basePackageName)) {
+                        assertTrue(existingPackageName.startsWith(basePackageName)) {
                             val location = Location(testDataFile, firstMeaningfulLine.number)
                             """
                                $location: Invalid package name declaration found: $firstMeaningfulLine

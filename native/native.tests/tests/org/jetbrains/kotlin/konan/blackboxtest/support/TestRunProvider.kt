@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestFunctionE
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildTree
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.isSameOrSubpackageOf
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -199,7 +199,7 @@ internal class TestRunProvider(
 
     private fun Collection<TestFunction>.filterIrrelevant(testCase: TestCase) =
         if (testCase.kind == TestKind.REGULAR)
-            filter { testFunction -> testFunction.packageName.isSameOrSubpackageOf(testCase.nominalPackageName) }
+            filter { testFunction -> testFunction.packageName.startsWith(testCase.nominalPackageName) }
         else
             this
 
