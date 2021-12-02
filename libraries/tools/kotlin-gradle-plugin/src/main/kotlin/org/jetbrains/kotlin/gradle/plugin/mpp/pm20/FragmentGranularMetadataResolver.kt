@@ -89,7 +89,7 @@ internal class FragmentGranularMetadataResolver(
                     We can safely assume that a metadata extractor can be created, because the project structure metadata already
                     had to be read in order to create the Kotlin module and infer fragment visibility.
                     */
-                    val metadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
+                    val projectStructureMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
                         project, resolvedComponentResult, configurationToResolve, true
                     ) ?: error(
                         "Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id} despite " +
@@ -97,19 +97,19 @@ internal class FragmentGranularMetadataResolver(
                     )
 
                     val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
-                        ?: checkNotNull(metadataExtractor.getProjectStructureMetadata())
+                        ?: checkNotNull(projectStructureMetadataExtractor.getProjectStructureMetadata())
 
 
-                    val metadataProvider = when (metadataExtractor) {
+                    val metadataProvider = when (projectStructureMetadataExtractor) {
                         is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
-                            dependencyProject = metadataExtractor.dependencyProject,
-                            moduleIdentifier = metadataExtractor.moduleIdentifier
+                            dependencyProject = projectStructureMetadataExtractor.dependencyProject,
+                            moduleIdentifier = projectStructureMetadataExtractor.moduleIdentifier
                         )
 
                         is JarMppDependencyProjectStructureMetadataExtractor -> CompositeMetadataJar(
                             moduleIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent).toString(),
                             projectStructureMetadata = projectStructureMetadata,
-                            primaryArtifactFile = metadataExtractor.primaryArtifactFile,
+                            primaryArtifactFile = projectStructureMetadataExtractor.primaryArtifactFile,
                             hostSpecificArtifactsBySourceSet = if (
                                 dependencyModule is ExternalImportedKotlinModule && chosenFragments != null
                             ) resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments) else emptyMap(),
