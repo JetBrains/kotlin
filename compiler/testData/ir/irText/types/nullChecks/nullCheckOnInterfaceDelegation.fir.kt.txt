@@ -28,7 +28,7 @@ class Delegated : IFoo {
   }
 
   override fun foo(): String {
-    return <this>.#<$$delegate_0>.foo()
+    return <this>.#<$$delegate_0>.foo() /*!! String */
   }
 
   local /* final field */ val <$$delegate_0>: Derived = Derived()

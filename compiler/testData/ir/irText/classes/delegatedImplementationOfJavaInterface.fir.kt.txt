@@ -19,7 +19,7 @@ class Test : J {
 
   @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
-    return <this>.#<$$delegate_0>.returnNotNull()
+    return <this>.#<$$delegate_0>.returnNotNull() /*!! String */
   }
 
   @Nullable

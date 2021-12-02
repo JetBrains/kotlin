@@ -55,7 +55,7 @@ class TestJFoo : IFoo {
   }
 
   override fun foo(): String {
-    return <this>.#<$$delegate_0>.foo()
+    return <this>.#<$$delegate_0>.foo() /*!! String */
   }
 
   local /* final field */ val <$$delegate_0>: JFoo = JFoo()
@@ -70,7 +70,7 @@ class TestK1 : IFoo {
   }
 
   override fun foo(): String {
-    return <this>.#<$$delegate_0>.foo()
+    return <this>.#<$$delegate_0>.foo() /*!! String */
   }
 
   local /* final field */ val <$$delegate_0>: K1 = K1()
@@ -115,7 +115,7 @@ class TestK4 : IFoo {
   }
 
   override fun foo(): String {
-    return <this>.#<$$delegate_0>.foo()
+    return <this>.#<$$delegate_0>.foo() /*!! String */
   }
 
   local /* final field */ val <$$delegate_0>: K4 = K4()

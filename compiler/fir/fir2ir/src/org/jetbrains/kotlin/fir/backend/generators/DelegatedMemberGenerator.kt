@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -61,12 +62,13 @@ class DelegatedMemberGenerator(
 
     fun generateBodies() {
         for ((declaration, irField, delegateToSymbol, delegateToLookupTag) in bodiesInfo) {
+            val callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(delegateToSymbol.fir.returnTypeRef)
             when (declaration) {
                 is IrSimpleFunction -> {
                     val member = declarationStorage.getIrFunctionSymbol(
                         delegateToSymbol as FirNamedFunctionSymbol, delegateToLookupTag
                     ).owner as? IrSimpleFunction ?: continue
-                    val body = createDelegateBody(irField, declaration, member)
+                    val body = createDelegateBody(irField, declaration, member, callTypeCanBeNullable)
                     declaration.body = body
                 }
                 is IrProperty -> {
@@ -74,10 +76,10 @@ class DelegatedMemberGenerator(
                         delegateToSymbol as FirPropertySymbol, delegateToLookupTag
                     ).owner as? IrProperty ?: continue
                     val getter = declaration.getter!!
-                    getter.body = createDelegateBody(irField, getter, member.getter!!)
+                    getter.body = createDelegateBody(irField, getter, member.getter!!, callTypeCanBeNullable)
                     if (declaration.isVar) {
                         val setter = declaration.setter!!
-                        setter.body = createDelegateBody(irField, setter, member.setter!!)
+                        setter.body = createDelegateBody(irField, setter, member.setter!!, false)
                     }
                 }
             }
@@ -226,7 +228,8 @@ class DelegatedMemberGenerator(
     private fun createDelegateBody(
         irField: IrField,
         delegateFunction: IrSimpleFunction,
-        superFunction: IrSimpleFunction
+        superFunction: IrSimpleFunction,
+        callTypeCanBeNullable: Boolean
     ): IrBlockBody {
         val startOffset = irField.startOffset
         val endOffset = irField.endOffset
@@ -268,10 +271,14 @@ class DelegatedMemberGenerator(
                 )
             }
         }
+        val resultType = delegateFunction.returnType
+        val irCastOrCall =
+            if (callTypeCanBeNullable && !resultType.isNullable()) Fir2IrImplicitCastInserter.implicitNotNullCast(irCall)
+            else irCall
         if (superFunction.returnType.isUnit() || superFunction.returnType.isNothing()) {
-            body.statements.add(irCall)
+            body.statements.add(irCastOrCall)
         } else {
-            val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegateFunction.symbol, irCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegateFunction.symbol, irCastOrCall)
             body.statements.add(irReturn)
         }
         return body

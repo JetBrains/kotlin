@@ -137,9 +137,10 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestJFoo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestJFoo'
-          CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.JFoo visibility:local [final]' type=<root>.JFoo origin=null
-              receiver: GET_VAR '<this>: <root>.TestJFoo declared in <root>.TestJFoo.foo' type=<root>.TestJFoo origin=null
+          TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=kotlin.String origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.JFoo visibility:local [final]' type=<root>.JFoo origin=null
+                receiver: GET_VAR '<this>: <root>.TestJFoo declared in <root>.TestJFoo.foo' type=<root>.TestJFoo origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.JFoo visibility:local [final]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.JFoo' type=<root>.JFoo origin=null
@@ -168,9 +169,10 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestK1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK1'
-          CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String [fake_override] declared in <root>.K1' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K1 visibility:local [final]' type=<root>.K1 origin=null
-              receiver: GET_VAR '<this>: <root>.TestK1 declared in <root>.TestK1.foo' type=<root>.TestK1 origin=null
+          TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String [fake_override] declared in <root>.K1' type=kotlin.String origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K1 visibility:local [final]' type=<root>.K1 origin=null
+                receiver: GET_VAR '<this>: <root>.TestK1 declared in <root>.TestK1.foo' type=<root>.TestK1 origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.K1 visibility:local [final]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1' type=<root>.K1 origin=null
@@ -261,9 +263,10 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestK4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK4'
-          CALL 'public final fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4' type=kotlin.String origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K4 visibility:local [final]' type=<root>.K4 origin=null
-              receiver: GET_VAR '<this>: <root>.TestK4 declared in <root>.TestK4.foo' type=<root>.TestK4 origin=null
+          TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL 'public final fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4' type=kotlin.String origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K4 visibility:local [final]' type=<root>.K4 origin=null
+                receiver: GET_VAR '<this>: <root>.TestK4 declared in <root>.TestK4.foo' type=<root>.TestK4 origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.K4 visibility:local [final]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K4' type=<root>.K4 origin=null
