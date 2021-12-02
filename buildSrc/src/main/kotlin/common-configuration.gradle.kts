@@ -161,6 +161,10 @@ fun Project.configureKotlinCompilationOptions() {
         // TODO: fix remaining warnings and remove this property.
         val tasksWithWarnings = listOf(
             ":kotlin-gradle-plugin:compileCommonKotlin",
+            // Temporarily disable -Werror for the following modules because of deprecation warning for `-Xjvm-default=compatibility`.
+            // These modules should be removed after they are migrated to `-Xjvm-default=all/all-compatibility`.
+            ":compiler:frontend:compileKotlin",
+            ":kotlin-scripting-intellij:compileKotlin",
         )
 
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra

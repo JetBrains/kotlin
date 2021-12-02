@@ -70,15 +70,22 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
-        val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         if (jvmDefaultMode.forAllMethodsWithBody) {
             messageCollector.report(
                 ERROR,
                 "'-Xjvm-default=${jvmDefaultMode.description}' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'"
             )
         }
+    }
+
+    if (jvmDefaultMode == JvmDefaultMode.ENABLE || jvmDefaultMode == JvmDefaultMode.ENABLE_WITH_DEFAULT_IMPLS) {
+        messageCollector.report(
+            WARNING,
+            "'-Xjvm-default=${jvmDefaultMode.description}' is deprecated, please use '-Xjvm-default=all|all-compatibility'"
+        )
     }
 
     val stringConcat = arguments.stringConcat
