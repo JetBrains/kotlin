@@ -57,3 +57,8 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
 }
 
 val generateTests by generator("org.jetbrains.kotlinx.serialization.TestGeneratorKt")
+
+//TODO: could be removed after bootstrap
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
+}

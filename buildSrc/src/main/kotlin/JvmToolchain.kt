@@ -70,10 +70,6 @@ fun Project.configureJvmToolchain(
                     options.encoding = "UTF-8"
                 }
             }
-
-        tasks.withType<KotlinCompile>().configureEach {
-            kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
-        }
     }
 }
 

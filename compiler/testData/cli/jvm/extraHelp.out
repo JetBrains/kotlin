@@ -73,8 +73,6 @@ where advanced options include:
                                                               in the interface (annotating an existing method can break binary compatibility).
                              -Xjvm-default=compatibility      Deprecated. Allow usages of @JvmDefault; generate a compatibility accessor
                                                               in the DefaultImpls class in addition to the default interface method.
-  -Xjvm-default-allow-non-default-inheritance
-                             Allow inheritance from 'all*' modes for 'disable' one
   -Xklib=<path>              Paths to cross-platform libraries in .klib format
   -Xlambdas={class|indy}     Select code generation scheme for lambdas.
                              -Xlambdas=indy                      Generate lambdas using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
