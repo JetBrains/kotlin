@@ -333,9 +333,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 
-    @Argument(value = "-Xjvm-default-allow-non-default-inheritance", description = "Allow inheritance from 'all*' modes for 'disable' one")
-    var jvmDefaultAllowDisableAgainstAll: Boolean by FreezableVar(false)
-
     @Argument(
         value = "-Xdefault-script-extension",
         valueDescription = "<script filename extension>",
@@ -530,7 +527,6 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies || useFir
         result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
         result[JvmAnalysisFlags.useIR] = !useOldBackend
-        result[JvmAnalysisFlags.jvmDefaultAllowNonDefaultInheritance] = jvmDefaultAllowDisableAgainstAll
         return result
     }
 

@@ -6,12 +6,12 @@ interface A {
     }
 }
 
-interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>B<!> : A {
+interface B : A {
 }
 
 
-open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo<!> : B
-open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo2<!> : B, A
+open class Foo : B
+open class Foo2 : B, A
 
 open class FooNoError : B {
     override fun test() {

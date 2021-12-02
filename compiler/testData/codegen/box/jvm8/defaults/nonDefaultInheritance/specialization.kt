@@ -16,7 +16,6 @@ interface Foo2<T> {
 
 // MODULE: main(lib)
 // !JVM_DEFAULT_MODE: disable
-// !JVM_DEFAULT_ALLOW_NON_DEFAULT_INHERITANCE
 // FILE: main.kt
 class DerivedClass : Foo<String>
 

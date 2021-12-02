@@ -71,7 +71,6 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(AnalysisFlags.allowKotlinPackage, trueOrNull(LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in directives)),
 
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
-            analysisFlag(JvmAnalysisFlags.jvmDefaultAllowNonDefaultInheritance, trueOrNull(LanguageSettingsDirectives.JVM_DEFAULT_ALLOW_NON_DEFAULT_INHERITANCE in directives)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
             analysisFlag(JvmAnalysisFlags.sanitizeParentheses, trueOrNull(LanguageSettingsDirectives.SANITIZE_PARENTHESES in directives)),
             analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),

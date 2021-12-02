@@ -29,13 +29,12 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.util.getNonPrivateTraitMembersForDelegation
 
-class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: Project) : DeclarationChecker {
+class JvmDefaultChecker(private val jvmTarget: JvmTarget, project: Project) : DeclarationChecker {
 
     private val ideService = LanguageVersionSettingsProvider.getInstance(project)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
-        val allowNonDefaultInheritance = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultAllowNonDefaultInheritance)
 
         val jvmDefaultAnnotation = descriptor.annotations.findAnnotation(JVM_DEFAULT_FQ_NAME)
         jvmDefaultAnnotation?.let { annotationDescriptor ->
@@ -62,19 +61,6 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
                 return@check
             }
         }
-
-        if (!allowNonDefaultInheritance) {
-            if (descriptor is ClassDescriptor) {
-                val hasDeclaredJvmDefaults =
-                    descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().any {
-                        it.kind.isReal && it.isCompiledToJvmDefault(jvmDefaultMode)
-                    }
-                if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, jvmDefaultMode)) {
-                    context.trace.report(ErrorsJvm.JVM_DEFAULT_THROUGH_INHERITANCE.on(declaration))
-                }
-            }
-        }
-
 
         if (jvmDefaultAnnotation == null && !jvmDefaultMode.forAllMethodsWithBody && isInterface(descriptor.containingDeclaration)) {
             val memberDescriptor = descriptor as? CallableMemberDescriptor ?: return
@@ -217,19 +203,6 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
             }
         if (implicitDefaultImplsDelegate != null) return implicitDefaultImplsDelegate
         return classMembers.firstNotNullOfOrNull { findPossibleClashMember(it, jvmDefaultMode) }
-    }
-
-    private fun checkJvmDefaultsInHierarchy(descriptor: DeclarationDescriptor, jvmDefaultMode: JvmDefaultMode): Boolean {
-        if (jvmDefaultMode.isEnabled) return true
-
-        if (descriptor !is ClassDescriptor) return true
-
-        return descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
-            .all { memberDescriptor ->
-                memberDescriptor.kind.isReal || OverridingUtil.filterOutOverridden(memberDescriptor.overriddenDescriptors.toSet()).all {
-                    !isInterface(it.containingDeclaration) || !it.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode) || it.modality == Modality.ABSTRACT
-                }
-            }
     }
 
     private fun CallableMemberDescriptor.isCompiledToJvmDefaultWithProperMode(compilationDefaultMode: JvmDefaultMode) =

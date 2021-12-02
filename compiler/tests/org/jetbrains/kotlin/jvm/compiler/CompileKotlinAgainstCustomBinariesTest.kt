@@ -553,7 +553,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             "source.kt",
             tmpdir,
             listOf(library),
-            additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=disable", "-Xjvm-default-allow-non-default-inheritance")
+            additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=disable")
         )
     }
 
