@@ -26,15 +26,17 @@ import org.jetbrains.kotlin.psi.KtElement
  *  [KtAnnotationApplicationValue] represents annotation types (with annotation fq name and arguments); and
  *  [KtArrayAnnotationValue] abstracts an array of [KtAnnotationValue]s.
  */
-public sealed class KtAnnotationValue(
-    public open val sourcePsi: KtElement? = null
-)
+public sealed class KtAnnotationValue {
+    public abstract val sourcePsi: KtElement?
+}
 
 
 /**
  * This represents an unsupported expression used as an annotation value.
  */
-public object KtUnsupportedAnnotationValue : KtAnnotationValue()
+public object KtUnsupportedAnnotationValue : KtAnnotationValue() {
+    override val sourcePsi: KtElement? get() = null
+}
 
 /**
  * Array of annotation values. E.g: `@A([1, 2])`
@@ -116,7 +118,9 @@ public class KtEnumEntryAnnotationValue(
  */
 public class KtConstantAnnotationValue(
     public val constantValue: KtConstantValue,
-) : KtAnnotationValue()
+) : KtAnnotationValue() {
+    override val sourcePsi: KtElement? get() = constantValue.sourcePsi
+}
 
 
 /**

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -453,7 +454,7 @@ internal fun createKtInitializerValue(
 internal fun AnnotationDescriptor.toKtAnnotationApplication(): KtAnnotationApplication {
     return KtAnnotationApplication(
         annotationClass?.maybeLocalClassId,
-        (source as? PsiSourceElement)?.psi as? KtAnnotationEntry,
+        (source as? PsiSourceElement)?.psi as? KtCallElement,
         (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget(),
         getKtNamedAnnotationArguments(),
     )

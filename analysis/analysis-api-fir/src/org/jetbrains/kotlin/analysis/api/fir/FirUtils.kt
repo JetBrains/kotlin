@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -76,7 +77,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
 internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession): KtAnnotationApplication {
     return KtAnnotationApplication(
         fullyExpandedClassId(useSiteSession),
-        psi as? KtAnnotationEntry,
+        psi as? KtCallElement,
         useSiteTarget,
         FirAnnotationValueConverter.toNamedConstantValue(
             mapAnnotationParameters(this, useSiteSession),

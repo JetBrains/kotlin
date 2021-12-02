@@ -29,7 +29,7 @@ public data class KtAnnotationApplication(
      *
      * Present only for declarations from sources. For declarations from other places (libraries, stdlib) it's `null`
      */
-    public val psi: KtAnnotationEntry?,
+    public val psi: KtCallElement?,
 
     /**
      * [AnnotationUseSiteTarget] to which annotation was applied. May be not-null only for annotation applications for declarations.

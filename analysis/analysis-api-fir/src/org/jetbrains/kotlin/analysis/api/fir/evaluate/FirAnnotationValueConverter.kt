@@ -108,7 +108,7 @@ internal object FirAnnotationValueConverter {
                             KtAnnotationApplicationValue(
                                 KtAnnotationApplication(
                                     resolvedSymbol.callableId.classId,
-                                    psi as? KtAnnotationEntry,
+                                    psi as? KtCallElement,
                                     useSiteTarget = null,
                                     toNamedConstantValue(resultMap, session),
                                 )
