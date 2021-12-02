@@ -25,10 +25,6 @@ public actual fun interface Comparator<T> {
     public actual fun compare(a: T, b: T): Int
 }
 
-// From kotlin.kt
-
-
-
 // From numbers.kt
 
 actual fun Double.isNaN(): Boolean = this != this
@@ -87,22 +83,22 @@ public actual fun Float.Companion.fromBits(bits: Int): Float = wasm_f32_reinterp
 //@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
 //public typealias Volatile = kotlin.jvm.Volatile
 
-
-
-
 // from lazy.kt
 
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> = TODO("Wasm stdlib: Kotlin")
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
+ */
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [mode] parameter is ignored. */
-public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = TODO("Wasm stdlib: Kotlin")
+public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [lock] parameter is ignored.
  */
-public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = TODO("Wasm stdlib: Kotlin")
+public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_LAZY
 // WITH_STDLIB
 
 val b: First by lazy {

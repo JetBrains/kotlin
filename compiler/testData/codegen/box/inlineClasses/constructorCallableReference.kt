@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // KJS_FULL_RUNTIME
 // SKIP_MANGLE_VERIFICATION
-// IGNORE_BACKEND: WASM
 
 interface I {
     companion object {

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_LAZY
 // WITH_STDLIB
 
 fun <C : Any> diContext(context: C): DIContext<C> = DIContext(TypeToken(), context)
