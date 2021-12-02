@@ -106,9 +106,6 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
     useAndroidJar()
 
-    val androidPluginPath = File(intellijRootDir(), "plugins/android/lib").canonicalPath
-    systemProperty("ideaSdk.androidPlugin.path", androidPluginPath)
-
     val parcelizeRuntimeForTestsProvider = project.provider { parcelizeRuntimeForTests.asPath }
     val robolectricClasspathProvider = project.provider { robolectricClasspath.asPath }
     doFirst {

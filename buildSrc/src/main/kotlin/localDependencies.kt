@@ -113,4 +113,11 @@ object IntellijRootUtils {
     }
 }
 
-fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
+fun Project.ideaHomePathForTests() = rootProject.buildDir.resolve("ideaHomeForTests")
+
+fun Project.ideaBuildNumberFileForTests() = File(ideaHomePathForTests(), "build.txt")
+
+fun Project.writeIdeaBuildNumberForTests() {
+    ideaHomePathForTests().mkdirs()
+    ideaBuildNumberFileForTests().writeText("IC-${rootProject.extra["versions.intellijSdk"]}")
+}

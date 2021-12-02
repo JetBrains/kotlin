@@ -108,7 +108,9 @@ val jmhCompile by tasks.registering(JavaCompile::class) {
 }
 
 val jmhExec by tasks.registering(JavaExec::class) {
+    dependsOn(":createIdeaHomeForTests")
     dependsOn(tasks["compileTestJava"])
+
     doFirst {
         classpath = files(
             tasks["compactClasspath"].outputs.files.singleFile.absolutePath,
@@ -120,7 +122,7 @@ val jmhExec by tasks.registering(JavaExec::class) {
     main = "org.openjdk.jmh.Main"
 
     workingDir = rootDir
-    systemProperty("idea.home.path", project.intellijRootDir().absolutePath)
+    systemProperty("idea.home.path", project.ideaHomePathForTests().absolutePath)
     systemProperty("idea.max.intellisense.filesize", 5000 * 1024)
     configurations.plusAssign(project.configurations["api"])
 }

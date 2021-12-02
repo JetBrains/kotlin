@@ -627,6 +627,13 @@ val syncMutedTests = tasks.register("syncMutedTests") {
     dependsOn(":compiler:tests-mutes:tc-integration:run")
 }
 
+tasks.register("createIdeaHomeForTests") {
+    outputs.file(ideaBuildNumberFileForTests())
+    doFirst {
+        writeIdeaBuildNumberForTests()
+    }
+}
+
 tasks {
     named<Delete>("clean") {
         delete += setOf("$buildDir/repo", distDir)

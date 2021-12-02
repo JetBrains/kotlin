@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ideaExt.*
 val ideaPluginDir: File by extra
 val ideaSandboxDir: File by extra
 val ideaSdkPath: String
-    get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
+    get() = rootProject.ideaHomePathForTests().absolutePath
 
 fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
     add("-${prefix}fir.bench.prefix=$path")

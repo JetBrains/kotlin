@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ideaExt.*
 val ideaPluginDir: File by extra
 val ideaSandboxDir: File by extra
 val ideaSdkPath: String
-    get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
+    get() = rootProject.ideaHomePathForTests().absolutePath
 
 fun JUnit.configureForKotlin(xmx: String = "1600m") {
     vmParameters = listOf(
@@ -134,6 +134,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     rootProject.afterEvaluate {
+
+        writeIdeaBuildNumberForTests()
 
         setupFirRunConfiguration()
         setupGenerateAllTestsRunConfiguration()
