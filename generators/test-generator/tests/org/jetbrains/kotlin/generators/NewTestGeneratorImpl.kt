@@ -209,8 +209,8 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             var first = true
 
             for (methodModel in testMethods) {
-                if (methodModel is RunTestMethodModel) continue
-                if (!methodModel.shouldBeGenerated()) continue
+                if (methodModel is RunTestMethodModel) continue // should also skip its imports
+                if (!methodModel.shouldBeGenerated()) continue // should also skip its imports
 
                 if (first) {
                     first = false

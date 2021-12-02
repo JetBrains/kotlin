@@ -15699,8 +15699,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
 
             @Test
             @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
-            public void testBoxResultInlineClassOfConstructorCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+            public void testBoxResultInlineClassOfConstructorCall_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", ""));
             }
 
             @Test

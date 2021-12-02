@@ -38,6 +38,11 @@ class SingleClassTestModel(
             }
             true
         }
+        if (result.any { it is WithoutJvmInlineTestMethodModel }) {
+            val additionalRunner =
+                RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
+            result.add(additionalRunner)
+        }
         result.sortedWith { o1: MethodModel, o2: MethodModel -> o1.name.compareTo(o2.name, ignoreCase = true) }
     }
 

@@ -15,7 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 abstract class AbstractNativeBlackBoxTest {
     internal lateinit var testRunProvider: TestRunProvider
 
-    fun runTest(@TestDataFile testDataFilePath: String): Unit = with(testRunProvider) {
+    @Suppress("UNUSED_PARAMETER")
+    @JvmOverloads
+    fun runTest(@TestDataFile testDataFilePath: String, sourceTransformer: (String) -> String = { it }): Unit = with(testRunProvider) {
         val testDataFile = getAbsoluteFile(testDataFilePath)
         val testRun = getSingleTestRun(testDataFile)
         val testRunner = createRunner(testRun)

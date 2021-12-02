@@ -117,6 +117,11 @@ class SimpleTestClassModel(
                 }
             }
         }
+        if (result.any { it is WithoutJvmInlineTestMethodModel }) {
+            val additionalRunner =
+                RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
+            result.add(additionalRunner)
+        }
         result.sortWith(BY_NAME)
         result
     }
