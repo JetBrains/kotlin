@@ -103,6 +103,7 @@ class Fir2IrConverter(
 
         //   5. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
+        delegatedMemberGenerator.generateBodies()
         for (firFile in allFirFiles) {
             firFile.accept(fir2irVisitor, null)
         }

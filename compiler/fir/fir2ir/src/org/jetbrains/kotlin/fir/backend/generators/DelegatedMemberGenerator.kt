@@ -50,6 +50,40 @@ class DelegatedMemberGenerator(
     private val baseFunctionSymbols = mutableMapOf<IrFunction, List<FirNamedFunctionSymbol>>()
     private val basePropertySymbols = mutableMapOf<IrProperty, List<FirPropertySymbol>>()
 
+    private data class DeclarationBodyInfo(
+        val declaration: IrDeclaration,
+        val field: IrField,
+        val delegateToSymbol: FirCallableSymbol<*>
+    )
+
+    private val bodiesInfo = mutableListOf<DeclarationBodyInfo>()
+
+    fun generateBodies() {
+        for ((declaration, irField, delegateToSymbol) in bodiesInfo) {
+            when (declaration) {
+                is IrSimpleFunction -> {
+                    val member = declarationStorage.getIrFunctionSymbol(
+                        delegateToSymbol as FirNamedFunctionSymbol
+                    ).owner as? IrSimpleFunction ?: continue
+                    val body = createDelegateBody(irField, declaration, member)
+                    declaration.body = body
+                }
+                is IrProperty -> {
+                    val member = declarationStorage.getIrPropertySymbol(
+                        delegateToSymbol as FirPropertySymbol
+                    ).owner as? IrProperty ?: continue
+                    val getter = declaration.getter!!
+                    getter.body = createDelegateBody(irField, getter, member.getter!!)
+                    if (declaration.isVar) {
+                        val setter = declaration.setter!!
+                        setter.body = createDelegateBody(irField, setter, member.setter!!)
+                    }
+                }
+            }
+        }
+        bodiesInfo.clear()
+    }
+
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
@@ -61,18 +95,14 @@ class DelegatedMemberGenerator(
                     .unwrapDelegateTarget(subClassLookupTag, firField)
                     ?: return@processAllFunctions
 
-            val member =
-                declarationStorage.getIrFunctionSymbol(unwrapped.symbol).owner as? IrSimpleFunction
-                    ?: return@processAllFunctions
-
             if (shouldSkipDelegationFor(unwrapped)) {
                 return@processAllFunctions
             }
 
             val irSubFunction = generateDelegatedFunction(
-                subClass, firSubClass, irField, member, functionSymbol.fir
+                subClass, firSubClass, functionSymbol.fir
             )
-
+            bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, unwrapped.symbol)
             declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
             subClass.addMember(irSubFunction)
         }
@@ -85,17 +115,14 @@ class DelegatedMemberGenerator(
                     .unwrapDelegateTarget(subClassLookupTag, firField)
                     ?: return@processAllProperties
 
-            val member = declarationStorage.getIrPropertySymbol(unwrapped.symbol).owner as? IrProperty
-                ?: return@processAllProperties
-
             if (shouldSkipDelegationFor(unwrapped)) {
                 return@processAllProperties
             }
 
             val irSubProperty = generateDelegatedProperty(
-                subClass, firSubClass, irField, member, propertySymbol.fir
+                subClass, firSubClass, propertySymbol.fir
             )
-
+            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, unwrapped.symbol)
             declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
             subClass.addMember(irSubProperty)
         }
@@ -146,8 +173,6 @@ class DelegatedMemberGenerator(
     private fun generateDelegatedFunction(
         subClass: IrClass,
         firSubClass: FirClass,
-        irField: IrField,
-        superFunction: IrSimpleFunction,
         delegateOverride: FirSimpleFunction
     ): IrSimpleFunction {
         val delegateFunction =
@@ -164,8 +189,6 @@ class DelegatedMemberGenerator(
         baseFunctionSymbols[delegateFunction] = baseSymbols
         annotationGenerator.generate(delegateFunction, delegateOverride)
 
-        val body = createDelegateBody(irField, delegateFunction, superFunction)
-        delegateFunction.body = body
         return delegateFunction
     }
 
@@ -226,8 +249,6 @@ class DelegatedMemberGenerator(
     private fun generateDelegatedProperty(
         subClass: IrClass,
         firSubClass: FirClass,
-        irField: IrField,
-        superProperty: IrProperty,
         firDelegateProperty: FirProperty
     ): IrProperty {
         val delegateProperty =
@@ -244,8 +265,8 @@ class DelegatedMemberGenerator(
         basePropertySymbols[delegateProperty] = baseSymbols
         annotationGenerator.generate(delegateProperty, firDelegateProperty)
 
-        delegateProperty.getter!!.body = createDelegateBody(irField, delegateProperty.getter!!, superProperty.getter!!)
-        delegateProperty.getter!!.overriddenSymbols =
+        val getter = delegateProperty.getter!!
+        getter.overriddenSymbols =
             firDelegateProperty.generateOverriddenAccessorSymbols(
                 firSubClass,
                 isGetter = true,
@@ -256,8 +277,8 @@ class DelegatedMemberGenerator(
             )
         annotationGenerator.generate(delegateProperty.getter!!, firDelegateProperty)
         if (delegateProperty.isVar) {
-            delegateProperty.setter!!.body = createDelegateBody(irField, delegateProperty.setter!!, superProperty.setter!!)
-            delegateProperty.setter!!.overriddenSymbols =
+            val setter = delegateProperty.setter!!
+            setter.overriddenSymbols =
                 firDelegateProperty.generateOverriddenAccessorSymbols(
                     firSubClass, isGetter = false, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
