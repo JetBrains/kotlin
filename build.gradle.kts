@@ -347,6 +347,9 @@ extra["tasksWithWarnings"] = listOf(
     ":kotlin-gradle-plugin:compileKotlin",
     ":kotlin-gradle-plugin:compileCommonKotlin",
     ":kotlin-gradle-plugin:compileGradle70Kotlin"
+    //Tremporary disable -Werror to switch on new diagnostic
+    ":compiler:frontend:compileKotlin",
+    ":kotlin-scripting-intellij:compileKotlin",
 )
 
 val tasksWithWarnings: List<String> by extra
