@@ -169,9 +169,15 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
-    preferGetter: Boolean
+    preferGetter: Boolean,
+    explicitReceiver: FirExpression? = null
 ) = when (this) {
-    is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter)
+    is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(
+        dispatchReceiver,
+        declarationStorage,
+        preferGetter,
+        explicitReceiver
+    )
     is FirClassifierSymbol<*> -> toSymbol(session, classifierStorage)
     else -> error("Unknown symbol: $this")
 }
@@ -182,13 +188,21 @@ fun FirReference.toSymbolForCall(
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
     conversionScope: Fir2IrConversionScope,
-    preferGetter: Boolean = true
+    preferGetter: Boolean = true,
+    explicitReceiver: FirExpression? = null // Actual only for callable references
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference ->
-            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter)
+            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter, explicitReceiver)
         is FirErrorNamedReference ->
-            candidateSymbol?.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter)
+            candidateSymbol?.toSymbolForCall(
+                dispatchReceiver,
+                session,
+                classifierStorage,
+                declarationStorage,
+                preferGetter,
+                explicitReceiver
+            )
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
@@ -207,10 +221,20 @@ fun FirReference.toSymbolForCall(
 private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     declarationStorage: Fir2IrDeclarationStorage,
-    preferGetter: Boolean
+    preferGetter: Boolean,
+    explicitReceiver: FirExpression? = null
 ): IrSymbol? {
     val dispatchReceiverLookupTag = when (dispatchReceiver) {
-        is FirNoReceiverExpression -> null
+        is FirNoReceiverExpression -> {
+            val containingClass = containingClass()
+            if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
+                // Make sure that symbol is not extension and is not from inline class
+                val coneType = ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.defaultType()
+                coneType?.findClassRepresentation(coneType, declarationStorage.session)
+            } else {
+                null
+            }
+        }
         else -> {
             val coneType = dispatchReceiver.typeRef.coneType
             dispatchReceiver.typeRef.coneType.findClassRepresentation(coneType, declarationStorage.session)

@@ -77,7 +77,8 @@ class CallAndReferenceGenerator(
         }
 
         val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(
-            callableReferenceAccess.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope
+            callableReferenceAccess.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope,
+            explicitReceiver = callableReferenceAccess.explicitReceiver
         )
         // val x by y ->
         //   val `x$delegate` = y
