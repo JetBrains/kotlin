@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestReport
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestName
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseTCTestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import kotlin.time.Duration
 
 internal class LocalTestRunner(
@@ -48,37 +50,49 @@ internal class LocalTestRunner(
         override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
 
         override fun doHandle() {
-            if (testRun.runParameters.has<TestRunParameter.WithGTestLogger>()) {
-                verifyTestWithGTestRunner()
+            if (testRun.runParameters.has<TestRunParameter.WithTCTestLogger>()) {
+                verifyTCTestLoggerOutput()
             } else {
-                verifyPlainTest()
+                verifyPlainOutput()
             }
         }
 
-        private fun verifyTestWithGTestRunner() {
-            val testReport = parseGTestReport(runResult.output.stdOut)
+        private fun verifyTCTestLoggerOutput() {
+            val testReport = parseTCTestReport(runResult.output.stdOut)
 
-            verifyExpectation(!testReport.isEmpty()) { "No tests have been executed." }
-
-            val passedTests = testReport.getPassedTests()
-            verifyExpectation(passedTests.isNotEmpty()) { "No passed tests." }
+            verifyExpectation(!testReport.isEmpty()) { "No tests have been found." }
 
             testRun.runParameters.get<TestRunParameter.WithFilter> {
-                val excessiveTests = passedTests.filter { testName -> !testMatches(testName) }
-                verifyExpectation(excessiveTests.isEmpty()) { "Excessive tests have been executed: $excessiveTests." }
+                verifyNoSuchTests(
+                    testReport.passedTests.filter { testName -> !testMatches(testName) },
+                    "Excessive tests have been executed"
+                )
+
+                verifyNoSuchTests(
+                    testReport.ignoredTests.filter { testName -> !testMatches(testName) },
+                    "Excessive tests have been ignored"
+                )
             }
 
-            val failedTests = testReport.getFailedTests().size
-            verifyExpectation(0, failedTests) { "There are $failedTests failed tests." }
+            verifyNoSuchTests(testReport.failedTests, "There are failed tests")
 
-            verifyOutputData(mergedOutput = testReport.cleanStdOut + runResult.output.stdErr)
+            assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
+
+            verifyNonTestOutput { testReport.nonTestOutput + runResult.output.stdErr }
         }
 
-        private fun verifyPlainTest() = verifyOutputData(mergedOutput = runResult.output.stdOut + runResult.output.stdErr)
+        private fun verifyNoSuchTests(tests: Collection<TestName>, subject: String) = verifyExpectation(tests.isEmpty()) {
+            buildString {
+                append(subject).appendLine(":")
+                tests.forEach { append(" - ").appendLine(it) }
+            }
+        }
 
-        private fun verifyOutputData(mergedOutput: String) {
+        private fun verifyPlainOutput() = verifyNonTestOutput { runResult.output.stdOut + runResult.output.stdErr }
+
+        private fun verifyNonTestOutput(nonTestOutput: () -> String) {
             testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {
-                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()), convertLineSeparators(mergedOutput)) {
+                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()), convertLineSeparators(nonTestOutput())) {
                     "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                 }
             }

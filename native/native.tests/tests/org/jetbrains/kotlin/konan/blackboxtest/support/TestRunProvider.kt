@@ -169,12 +169,12 @@ internal class TestRunProvider(
                 )
             }
             TestKind.STANDALONE -> listOfNotNull(
-                TestRunParameter.WithGTestLogger,
+                TestRunParameter.WithTCTestLogger,
                 testFunction?.let(TestRunParameter::WithFunctionFilter),
                 expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
             )
             TestKind.REGULAR -> listOfNotNull(
-                TestRunParameter.WithGTestLogger,
+                TestRunParameter.WithTCTestLogger,
                 testFunction?.let(TestRunParameter::WithFunctionFilter) ?: TestRunParameter.WithPackageFilter(nominalPackageName),
                 expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
             )

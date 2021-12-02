@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.opentest4j.TestAbortedException
 
 internal abstract class AbstractRunner<R> {
     protected abstract fun buildRun(): AbstractRun
@@ -29,11 +30,12 @@ internal abstract class AbstractRunner<R> {
 
         resultHandler.handle()
     } catch (t: Throwable) {
-        if (t is AssertionError)
-            throw t
-        else {
-            // An unexpected failure.
-            handleUnexpectedFailure(t)
+        when (t) {
+            is AssertionError, is TestAbortedException -> throw t
+            else -> {
+                // An unexpected failure.
+                handleUnexpectedFailure(t)
+            }
         }
     }
 

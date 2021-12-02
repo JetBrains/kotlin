@@ -12,6 +12,7 @@ dependencies {
     testImplementation(project(":kotlin-reflect"))
     testImplementation(intellijCore())
     testImplementation(commonDependency("commons-lang:commons-lang"))
+    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
