@@ -116,7 +116,7 @@ abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorServi
     }
 }
 
-private object SymbolTestDirectives : SimpleDirectivesContainer() {
+object SymbolTestDirectives : SimpleDirectivesContainer() {
     val DO_NOT_CHECK_SYMBOL_RESTORE by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet",
         applicability = DirectiveApplicability.Global

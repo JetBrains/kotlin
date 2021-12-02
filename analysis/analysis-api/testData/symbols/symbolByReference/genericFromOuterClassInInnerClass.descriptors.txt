@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/TopLevel.Child.withOuter
+  callableIdIfNonLocal: test/TopLevel.Base.withOuter
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -13,12 +13,12 @@ KtFunctionSymbol:
   isSuspend: false
   modality: FINAL
   name: withOuter
-  origin: SOURCE
+  origin: LIBRARY
   receiverType: null
   returnType: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): test/TopLevel<Outer>.test/TopLevel.Base<test/SomeClass>
+  getDispatchReceiver(): test/TopLevel<Outer>.test/TopLevel.Base<T>
   deprecationStatus: null

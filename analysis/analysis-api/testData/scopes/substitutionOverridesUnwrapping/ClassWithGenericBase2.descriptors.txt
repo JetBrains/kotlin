@@ -1,0 +1,41 @@
+KtKotlinPropertySymbol:
+  callableIdIfNonLocal: test/Base.noGeneric
+  name: noGeneric
+  origin: LIBRARY
+  getDispatchReceiver(): test/Base<T>
+
+KtKotlinPropertySymbol:
+  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGeneric
+  name: withOuterGeneric
+  origin: SOURCE
+  getDispatchReceiver(): test/Base<test/Foo>
+
+KtKotlinPropertySymbol:
+  callableIdIfNonLocal: test/Base.withOwnGeneric
+  name: withOwnGeneric
+  origin: LIBRARY
+  getDispatchReceiver(): test/Base<T>
+
+KtKotlinPropertySymbol:
+  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGeneric
+  name: withOuterAndOwnGeneric
+  origin: SOURCE
+  getDispatchReceiver(): test/Base<test/Foo>
+
+KtFunctionSymbol:
+  callableIdIfNonLocal: kotlin/Any.equals
+  name: equals
+  origin: LIBRARY
+  getDispatchReceiver(): kotlin/Any
+
+KtFunctionSymbol:
+  callableIdIfNonLocal: kotlin/Any.hashCode
+  name: hashCode
+  origin: LIBRARY
+  getDispatchReceiver(): kotlin/Any
+
+KtFunctionSymbol:
+  callableIdIfNonLocal: kotlin/Any.toString
+  name: toString
+  origin: LIBRARY
+  getDispatchReceiver(): kotlin/Any

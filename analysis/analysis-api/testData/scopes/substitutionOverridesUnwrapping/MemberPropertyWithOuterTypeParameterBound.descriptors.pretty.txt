@@ -1,0 +1,9 @@
+val <Own : test.ClassA> Own.withOwnGeneric_InterfaceWithValBase: test.ClassA
+
+abstract val <Own : test.ClassB> Own.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase: test.ClassA
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String

@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.ba
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10Renderer
-import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10TypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtProperty
@@ -128,27 +125,85 @@ internal val CallableMemberDescriptor.ktHasStableParameterNames: Boolean
     }
 
 internal fun CallableDescriptor.toKtCallableSymbol(analysisContext: Fe10AnalysisContext): KtCallableSymbol? {
-    return when (this) {
-        is PropertyGetterDescriptor -> KtFe10DescPropertyGetterSymbol(this, analysisContext)
-        is PropertySetterDescriptor -> KtFe10DescPropertySetterSymbol(this, analysisContext)
-        is SamConstructorDescriptor -> KtFe10DescSamConstructorSymbol(this, analysisContext)
-        is ConstructorDescriptor -> toKtConstructorSymbol(analysisContext)
+    return when (val unwrapped = unwrapFakeOverrideIfNeeded()) {
+        is PropertyGetterDescriptor -> KtFe10DescPropertyGetterSymbol(unwrapped, analysisContext)
+        is PropertySetterDescriptor -> KtFe10DescPropertySetterSymbol(unwrapped, analysisContext)
+        is SamConstructorDescriptor -> KtFe10DescSamConstructorSymbol(unwrapped, analysisContext)
+        is ConstructorDescriptor -> unwrapped.toKtConstructorSymbol(analysisContext)
         is FunctionDescriptor -> {
-            if (DescriptorUtils.isAnonymousFunction(this)) {
-                KtFe10DescAnonymousFunctionSymbol(this, analysisContext)
+            if (DescriptorUtils.isAnonymousFunction(unwrapped)) {
+                KtFe10DescAnonymousFunctionSymbol(unwrapped, analysisContext)
             } else {
-                KtFe10DescFunctionSymbol.build(this, analysisContext)
+                KtFe10DescFunctionSymbol.build(unwrapped, analysisContext)
             }
         }
-        is SyntheticFieldDescriptor -> KtFe10DescSyntheticFieldSymbol(this, analysisContext)
-        is LocalVariableDescriptor -> KtFe10DescLocalVariableSymbol(this, analysisContext)
-        is ValueParameterDescriptor -> KtFe10DescValueParameterSymbol(this, analysisContext)
-        is SyntheticJavaPropertyDescriptor -> KtFe10DescSyntheticJavaPropertySymbol(this, analysisContext)
-        is JavaForKotlinOverridePropertyDescriptor -> KtFe10DescSyntheticJavaPropertySymbolForOverride(this, analysisContext)
-        is JavaPropertyDescriptor -> KtFe10DescJavaFieldSymbol(this, analysisContext)
-        is PropertyDescriptorImpl -> KtFe10DescKotlinPropertySymbol(this, analysisContext)
+        is SyntheticFieldDescriptor -> KtFe10DescSyntheticFieldSymbol(unwrapped, analysisContext)
+        is LocalVariableDescriptor -> KtFe10DescLocalVariableSymbol(unwrapped, analysisContext)
+        is ValueParameterDescriptor -> KtFe10DescValueParameterSymbol(unwrapped, analysisContext)
+        is SyntheticJavaPropertyDescriptor -> KtFe10DescSyntheticJavaPropertySymbol(unwrapped, analysisContext)
+        is JavaForKotlinOverridePropertyDescriptor -> KtFe10DescSyntheticJavaPropertySymbolForOverride(unwrapped, analysisContext)
+        is JavaPropertyDescriptor -> KtFe10DescJavaFieldSymbol(unwrapped, analysisContext)
+        is PropertyDescriptorImpl -> KtFe10DescKotlinPropertySymbol(unwrapped, analysisContext)
         else -> null
     }
+}
+
+/**
+ * This logic should be equivalent to
+ * [org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder.unwrapSubstitutionOverrideIfNeeded]. But this method unwrap all fake
+ * overrides that do not change the signature.
+ */
+internal fun CallableDescriptor.unwrapFakeOverrideIfNeeded(): CallableDescriptor {
+    val useSiteUnwrapped = unwrapUseSiteSubstitutionOverride()
+    if (useSiteUnwrapped !is CallableMemberDescriptor) return useSiteUnwrapped
+    if (useSiteUnwrapped.kind.isReal) return useSiteUnwrapped
+    val overriddenDescriptor = useSiteUnwrapped.overriddenDescriptors.singleOrNull()?.unwrapUseSiteSubstitutionOverride()
+        ?: return useSiteUnwrapped
+    if (hasTypeReferenceAffectingSignature(useSiteUnwrapped, overriddenDescriptor)) {
+        return useSiteUnwrapped
+    }
+    return overriddenDescriptor.unwrapFakeOverrideIfNeeded()
+}
+
+private fun hasTypeReferenceAffectingSignature(
+    descriptor: CallableMemberDescriptor,
+    overriddenDescriptor: CallableMemberDescriptor
+): Boolean {
+    val containingClass = (descriptor.containingDeclaration as? ClassifierDescriptorWithTypeParameters)
+    val typeParametersFromOuterClass = buildList { containingClass?.let { collectTypeParameters(it) } }
+    val allowedTypeParameters = (overriddenDescriptor.typeParameters + typeParametersFromOuterClass).toSet()
+    return overriddenDescriptor.returnType?.hasReferenceOtherThan(allowedTypeParameters) == true ||
+            overriddenDescriptor.extensionReceiverParameter?.type?.hasReferenceOtherThan(allowedTypeParameters) == true ||
+            overriddenDescriptor.valueParameters.any { it.type.hasReferenceOtherThan(allowedTypeParameters) }
+}
+
+private fun MutableList<TypeParameterDescriptor>.collectTypeParameters(innerClass: ClassifierDescriptorWithTypeParameters) {
+    if (!innerClass.isInner) return
+    val outerClass = innerClass.containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: return
+    addAll(outerClass.declaredTypeParameters)
+    collectTypeParameters(outerClass)
+}
+
+private fun KotlinType.hasReferenceOtherThan(allowedTypeParameterDescriptors: Set<TypeParameterDescriptor>): Boolean {
+    return when (this) {
+        is SimpleType -> {
+            val declarationDescriptor = constructor.declarationDescriptor
+            if (declarationDescriptor !is AbstractTypeParameterDescriptor) return false
+            declarationDescriptor !in allowedTypeParameterDescriptors ||
+                    declarationDescriptor.upperBounds.any { it.hasReferenceOtherThan(allowedTypeParameterDescriptors) }
+        }
+        else -> arguments.any { it.type.hasReferenceOtherThan(allowedTypeParameterDescriptors) }
+    }
+}
+
+/**
+ * Use-site substitution override are tracked through [CallableDescriptor.getOriginal]. Note that overridden symbols are accessed through
+ * [CallableDescriptor.getOverriddenDescriptors] instead, which is separate from [CallableDescriptor.getOriginal].
+ */
+@Suppress("UNCHECKED_CAST")
+private fun <T : CallableDescriptor> T.unwrapUseSiteSubstitutionOverride(): T {
+    if (original == this) return this
+    return original.unwrapUseSiteSubstitutionOverride() as T
 }
 
 internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {

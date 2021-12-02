@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDecla
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeCreator.AbstractKtFe10TypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10HasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10DeclarationReturnTypeTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.scopes.AbstractKtFe10SubstitutionOverridesUnwrappingTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
@@ -67,7 +68,7 @@ private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
     group("scopes") {
         test(
             fir = AbstractFirSubstitutionOverridesUnwrappingTest::class,
-            fe10 = null,
+            fe10 = AbstractKtFe10SubstitutionOverridesUnwrappingTest::class,
         ) {
             model("substitutionOverridesUnwrapping")
         }

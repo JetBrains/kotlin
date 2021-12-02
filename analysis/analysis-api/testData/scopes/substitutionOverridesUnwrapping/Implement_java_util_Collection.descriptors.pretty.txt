@@ -1,0 +1,31 @@
+override operator fun iterator(): kotlin.collections.MutableIterator<EE?!>
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+fun size(): kotlin.Int
+
+fun isEmpty(): kotlin.Boolean
+
+operator fun contains(p0: kotlin.Anykotlin.Any?!): kotlin.Boolean
+
+fun toArray(): kotlin.Array<kotlin.Anykotlin.Any?!>kotlin.Array<out kotlin.Anykotlin.Any?!>?!
+
+fun <T : kotlin.Anykotlin.Any?!> toArray(p0: kotlin.Array<TT?!>kotlin.Array<out TT?!>?!): kotlin.Array<TT?!>kotlin.Array<out TT?!>?!
+
+fun add(p0: EE?!): kotlin.Boolean
+
+fun remove(p0: kotlin.Anykotlin.Any?!): kotlin.Boolean
+
+fun containsAll(p0: kotlin.collections.MutableCollection<*>kotlin.collections.Collection<*>?!): kotlin.Boolean
+
+fun addAll(p0: kotlin.collections.MutableCollection<out EE?!>kotlin.collections.Collection<EE?!>?!): kotlin.Boolean
+
+fun removeAll(p0: kotlin.collections.MutableCollection<*>kotlin.collections.Collection<*>?!): kotlin.Boolean
+
+fun retainAll(p0: kotlin.collections.MutableCollection<*>kotlin.collections.Collection<*>?!): kotlin.Boolean
+
+fun clear()
