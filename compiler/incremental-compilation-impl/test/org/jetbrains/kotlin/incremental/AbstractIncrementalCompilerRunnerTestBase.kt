@@ -42,7 +42,22 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
     fun doTest(path: String) {
         val testDir = File(path)
+        val failFile = testDir.resolve(FAIL_FILE_NAME)
+        var testPassed = false
+        try {
+            doTestImpl(testDir)
+            testPassed = true
+        } catch (e: Throwable) {
+            if (!failFile.exists()) {
+                throw e
+            }
+        }
+        if (testPassed && failFile.exists()) {
+            fail("Test is successful and $FAIL_FILE_NAME can be removed")
+        }
+    }
 
+    private fun doTestImpl(testDir: File) {
         fun Iterable<File>.relativePaths() =
             map { it.relativeTo(workingDir).path.replace('\\', '/') }
 
@@ -181,6 +196,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         protected fun abiSnapshotFile(cacheDir: File): File = File(cacheDir, IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
 
         private const val ARGUMENTS_FILE_NAME = "args.txt"
+        private const val FAIL_FILE_NAME = "fail.txt"
 
         private fun parseAdditionalArgs(testDir: File): List<String> {
             return File(testDir, ARGUMENTS_FILE_NAME)
