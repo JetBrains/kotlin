@@ -17472,6 +17472,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("objectExtendsInnerWithDelegatingConstructor.kt")
+            public void testObjectExtendsInnerWithDelegatingConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsInnerWithDelegatingConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("objectExtendsLocalCaptureInSuperCall.kt")
             public void testObjectExtendsLocalCaptureInSuperCall() throws Exception {
                 runTest("compiler/testData/codegen/box/innerNested/superConstructorCall/objectExtendsLocalCaptureInSuperCall.kt");
