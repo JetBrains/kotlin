@@ -1253,4 +1253,11 @@ class PatternTest {
         regex = Regex(patString, RegexOption.DOT_MATCHES_ALL)
         assertFalse(regex.containsMatchIn(testString))
     }
+
+    @Test fun testFailedFindDotQuantifier() {
+        val regex = Regex("For.+ \\(1\\)")
+        val result = regex.find("This is good (1), For You")
+
+        assertNull(result)
+    }
 }

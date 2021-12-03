@@ -97,8 +97,8 @@ internal abstract class AbstractSet(val type: Int = 0) {
           ?: -1
 
     /**
-     * @param leftLimit - an index, to finish search back (left limit, inclusive).
-     * @param rightLimit - an index to start search from (right limit, exclusive).
+     * @param leftLimit - an index, to finish search back (left limit).
+     * @param rightLimit - an index to start search from (right limit).
      * @param testString - test string.
      * @param matchResult - match result.
      * @return an index to start back search next time if this search fails(new left bound);

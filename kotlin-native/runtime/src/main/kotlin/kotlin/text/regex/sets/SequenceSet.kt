@@ -75,7 +75,7 @@ open internal class SequenceSet(substring: CharSequence, val ignoreCase: Boolean
         var index = rightLimit
         while (index >= leftLimit) {
             index = testString.lastIndexOf(patternString, index, ignoreCase)
-            if (index < 0) {
+            if (index < 0 || index < leftLimit) {
                 return -1
             }
             // Check if we have a supplementary code point at the beginning or at the end of the string.
