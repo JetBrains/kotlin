@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TCTestOutputFilter
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail

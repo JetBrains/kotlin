@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
 import jetbrains.buildServer.messages.serviceMessages.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.FunctionName
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TCTestReportParseState as State
 import java.text.ParseException
-
-internal typealias TestName = String
 
 internal class TestReport(
     val passedTests: Collection<TestName>,
@@ -120,25 +118,25 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
             is TestIgnored -> when (state) {
                 is State.TestSuiteStarted,
                 is State.TestIgnored,
-                is State.TestFinished -> State.TestIgnored(state.testSuite, message.functionName).also { ignoredTests += it.testName }
+                is State.TestFinished -> State.TestIgnored(state.testSuite, message.simpleTestName).also { ignoredTests += it.testName }
                 else -> unexpectedMessage()
             }
             is TestStarted -> when (state) {
                 is State.TestSuiteStarted,
                 is State.TestIgnored,
-                is State.TestFinished -> State.TestStarted(state.testSuite, message.testName)
+                is State.TestFinished -> State.TestStarted(state.testSuite, message.simpleTestName)
                 else -> unexpectedMessage()
             }
             is TestFailed -> when (val s = state) {
                 is State.TestStarted -> {
                     nonTestOutput.append(message.stacktrace)
-                    State.TestFailed(s.testSuite, message.testName).also { failedTests += it.testName }
+                    State.TestFailed(s.testSuite, message.simpleTestName).also { failedTests += it.testName }
                 }
                 else -> unexpectedMessage()
             }
             is TestFinished -> when (state) {
-                is State.TestStarted -> State.TestFinished(state.testSuite, message.testName).also { passedTests += it.testName }
-                is State.TestFailed -> State.TestFinished(state.testSuite, message.testName)
+                is State.TestStarted -> State.TestFinished(state.testSuite, message.simpleTestName).also { passedTests += it.testName }
+                is State.TestFailed -> State.TestFinished(state.testSuite, message.simpleTestName)
                 else -> unexpectedMessage()
             }
             else -> {
@@ -172,17 +170,17 @@ private sealed interface TCTestReportParseState {
     class TestSuiteStarted(val testSuiteName: String) : State
     object TestSuiteFinished : State
 
-    sealed class TestState(val testSuite: TestSuiteStarted, val functionName: FunctionName) : State {
-        val testName: TestName get() = "${testSuite.testSuiteName}.$functionName"
+    sealed class TestState(val testSuite: TestSuiteStarted, val simpleTestName: String) : State {
+        val testName: TestName get() = TestName("${testSuite.testSuiteName}.$simpleTestName")
     }
 
-    class TestIgnored(testSuite: TestSuiteStarted, functionName: FunctionName) : TestState(testSuite, functionName)
-    class TestStarted(testSuite: TestSuiteStarted, functionName: FunctionName) : TestState(testSuite, functionName)
-    class TestFailed(testSuite: TestSuiteStarted, functionName: FunctionName) : TestState(testSuite, functionName)
-    class TestFinished(testSuite: TestSuiteStarted, functionName: FunctionName) : TestState(testSuite, functionName)
+    class TestIgnored(testSuite: TestSuiteStarted, simpleTestName: String) : TestState(testSuite, simpleTestName)
+    class TestStarted(testSuite: TestSuiteStarted, simpleTestName: String) : TestState(testSuite, simpleTestName)
+    class TestFailed(testSuite: TestSuiteStarted, simpleTestName: String) : TestState(testSuite, simpleTestName)
+    class TestFinished(testSuite: TestSuiteStarted, simpleTestName: String) : TestState(testSuite, simpleTestName)
 }
 
-private val State.testSuite: State.TestSuiteStarted
+private inline val State.testSuite: State.TestSuiteStarted
     get() = if (this is State.TestSuiteStarted) this else cast<State.TestState>().testSuite
 
-private val BaseTestMessage.functionName: FunctionName get() = testName
+private inline val BaseTestMessage.simpleTestName get() = testName

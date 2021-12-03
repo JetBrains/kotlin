@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestName
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.startsWith
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
@@ -26,45 +26,27 @@ internal sealed interface TestRunParameter {
     fun applyTo(programArgs: MutableList<String>)
 
     sealed class WithFilter : TestRunParameter {
-        abstract fun testMatches(testName: String): Boolean
+        abstract fun testMatches(testName: TestName): Boolean
     }
 
-    class WithPackageFilter(packageName: PackageName) : WithFilter() {
+    class WithPackageFilter(private val packageName: PackageName) : WithFilter() {
         init {
             assertFalse(packageName.isEmpty())
         }
 
-        private val packagePrefix = "$packageName."
-
         override fun applyTo(programArgs: MutableList<String>) {
-            programArgs += "--ktest_filter=$packagePrefix*"
+            programArgs += "--ktest_filter=$packageName.*"
         }
 
-        override fun testMatches(testName: TestName) = testName.startsWith(packagePrefix)
+        override fun testMatches(testName: TestName) = testName.packageName.startsWith(packageName)
     }
 
-    class WithFunctionFilter(val testFunction: TestFunction) : WithFilter() {
-        private val packagePrefix = if (testFunction.packageName.isEmpty()) "" else "${testFunction.packageName}."
-
+    class WithTestFilter(val testName: TestName) : WithFilter() {
         override fun applyTo(programArgs: MutableList<String>) {
-            programArgs += "--ktest_regex_filter=${packagePrefix.replace(".", "\\.")}([^\\.]+)\\.${testFunction.functionName}"
+            programArgs += "--ktest_filter=$testName"
         }
 
-        override fun testMatches(testName: String): Boolean {
-            val remainder = if (packagePrefix.isNotEmpty()) {
-                if (!testName.startsWith(packagePrefix)) return false
-                testName.substringAfter(packagePrefix)
-            } else
-                testName
-
-            val suffix = remainder
-                .split('.')
-                .takeIf { it.size == 2 }
-                ?.last()
-                ?: return false
-
-            return suffix == testFunction.functionName
-        }
+        override fun testMatches(testName: TestName) = this.testName == testName
     }
 
     object WithTCTestLogger : TestRunParameter {

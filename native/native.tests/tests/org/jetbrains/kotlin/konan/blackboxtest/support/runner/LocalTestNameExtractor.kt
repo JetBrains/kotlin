@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestFunction
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import kotlin.time.Duration
 
-internal class LocalTestFunctionExtractor(
+internal class LocalTestNameExtractor(
     override val executable: TestExecutable,
     executionTimeout: Duration
-) : AbstractLocalProcessRunner<Collection<TestFunction>>(executionTimeout) {
-    override val visibleProcessName get() = "Test function extractor"
+) : AbstractLocalProcessRunner<Collection<TestName>>(executionTimeout) {
+    override val visibleProcessName get() = "Test name extractor"
     override val programArgs = listOf(executable.executableFile.path, "--ktest_list_tests")
     override val outputFilter get() = TestOutputFilter.NO_FILTERING
 
@@ -32,12 +32,12 @@ internal class LocalTestFunctionExtractor(
 
     override fun handleUnexpectedFailure(t: Throwable) = JUnit5Assertions.fail {
         LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
-            .withErrorMessage("Test function extraction failed with unexpected exception.")
+            .withErrorMessage("Test name extraction failed with unexpected exception.")
     }
 
     inner class ResultHandler(
         runResult: RunResult.Completed
-    ) : AbstractLocalProcessRunner<Collection<TestFunction>>.ResultHandler(runResult) {
+    ) : AbstractLocalProcessRunner<Collection<TestName>>.ResultHandler(runResult) {
         override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
         override fun doHandle() = parseGTestListing(runResult.processOutput.stdOut.filteredOutput)
     }
