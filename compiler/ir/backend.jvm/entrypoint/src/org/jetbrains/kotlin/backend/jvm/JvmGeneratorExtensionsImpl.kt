@@ -110,7 +110,9 @@ open class JvmGeneratorExtensionsImpl(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
             facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
             deserializedSource,
-            stubGenerator
+            deserializeIr = { facade ->
+                stubGenerator.extensions.deserializeClass(facade, stubGenerator, facade.parent, allowErrorNodes = false)
+            }
         ).also {
             it.createParameterDeclarations()
             classNameOverride[it] = facadeName
