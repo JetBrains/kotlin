@@ -824,12 +824,6 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
-            @TestMetadata("localDeclaration.kt")
-            public void testLocalDeclaration() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/contextReceivers/localDeclaration.kt");
-            }
-
-            @Test
             @TestMetadata("overloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloadPriority.kt");

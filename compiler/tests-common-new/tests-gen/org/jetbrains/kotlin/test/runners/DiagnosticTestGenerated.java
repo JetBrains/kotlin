@@ -10589,6 +10589,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("contextKeywordWithElvis.kt")
+                public void testContextKeywordWithElvis() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextKeywordWithElvis.kt");
+                }
+
+                @Test
                 @TestMetadata("contextReceiverTypeParamsUsage.kt")
                 public void testContextReceiverTypeParamsUsage() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextReceiverTypeParamsUsage.kt");
@@ -10634,12 +10640,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("lazy.kt")
                 public void testLazy() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/lazy.kt");
-                }
-
-                @Test
-                @TestMetadata("localDeclaration.kt")
-                public void testLocalDeclaration() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/localDeclaration.kt");
                 }
 
                 @Test

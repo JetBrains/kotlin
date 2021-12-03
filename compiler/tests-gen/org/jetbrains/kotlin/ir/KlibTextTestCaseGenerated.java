@@ -633,11 +633,6 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/lazy.kt");
             }
 
-            @TestMetadata("localDeclaration.kt")
-            public void testLocalDeclaration() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/contextReceivers/localDeclaration.kt");
-            }
-
             @TestMetadata("overloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/overloadPriority.kt");

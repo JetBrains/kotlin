@@ -1,0 +1,11 @@
+package
+
+public fun calculateResult(/*0*/ context: Context?): kotlin.Unit
+
+public final class Context {
+    public constructor Context(/*0*/ project: kotlin.Any?)
+    public final val project: kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

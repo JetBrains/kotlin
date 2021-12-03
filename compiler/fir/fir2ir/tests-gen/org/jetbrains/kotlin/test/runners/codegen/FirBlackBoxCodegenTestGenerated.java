@@ -16224,12 +16224,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
-            @TestMetadata("localDeclaration.kt")
-            public void testLocalDeclaration() throws Exception {
-                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/localDeclaration.kt");
-            }
-
-            @Test
             @TestMetadata("overload.kt")
             public void testOverload() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/overload.kt");
