@@ -24,7 +24,7 @@ internal class TestReport(
 internal interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
-    class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
+    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
 
     companion object {
         val NO_FILTERING = object : TestOutputFilter {
