@@ -92,6 +92,7 @@ abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), Kotl
 
     @TaskAction
     fun performDce(inputChanges: InputChanges) {
+        validateCompilerClasspath()
         // in case of explicit `all` strategy do not perform incremental copy
         val shouldPerformIncrementalCopy = isDevMode && !isExplicitDevModeAllStrategy
 
