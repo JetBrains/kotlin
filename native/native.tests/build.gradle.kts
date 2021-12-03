@@ -58,9 +58,9 @@ enum class TestProperty(shortName: String) {
     }
 }
 
-if (kotlinBuildProperties.isKotlinNativeEnabled) {
-    projectTest(taskName = "test", jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":kotlin-native:dist" /*, ":kotlin-native:distPlatformLibs"*/)
+fun Test.setUpBlackBoxTest(tag: String) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        dependsOn(":kotlin-native:dist")
         workingDir = rootDir
 
         maxHeapSize = "6G" // Extra heap space for Kotlin/Native compiler.
@@ -85,10 +85,10 @@ if (kotlinBuildProperties.isKotlinNativeEnabled) {
         TestProperty.USE_CACHE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
 
-        useJUnitPlatform()
-    }
-} else {
-    getOrCreateTask<Test>(taskName = "test") {
+        useJUnitPlatform {
+            includeTags(tag)
+        }
+    } else {
         doFirst {
             throw GradleException(
                 """
@@ -99,6 +99,26 @@ if (kotlinBuildProperties.isKotlinNativeEnabled) {
             )
         }
     }
+}
+
+val infrastructureTest by projectTest(taskName = "infrastructureTest", jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform {
+        includeTags("infrastructure")
+    }
+}
+
+val dailyTest by projectTest(taskName = "dailyTest", jUnitMode = JUnitMode.JUnit5) {
+    setUpBlackBoxTest("daily")
+}
+
+// Just an alias for daily test task.
+val test: Task by tasks.getting {
+    dependsOn(dailyTest)
+}
+
+projectTest(taskName = "fullTest", jUnitMode = JUnitMode.JUnit5) {
+    dependsOn(dailyTest, infrastructureTest)
+    // TODO: migrate and attach K/N blackbox tests from kotlin-native/backend.native/tests
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeBlackboxTestsKt") {

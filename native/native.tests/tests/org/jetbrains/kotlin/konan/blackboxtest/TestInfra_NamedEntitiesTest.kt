@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Suppress("ClassName")
+@Tag("infrastructure")
 class TestInfra_NamedEntitiesTest {
     @Test
     fun parsePackageName() {

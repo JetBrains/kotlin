@@ -10,8 +10,10 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCase as TC
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 
+@Tag("daily")
 @PredefinedTestCases(
     TC(
         name = "nativeStdlib",

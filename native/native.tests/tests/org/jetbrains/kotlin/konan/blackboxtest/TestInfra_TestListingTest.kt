@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Suppress("ClassName")
+@Tag("infrastructure")
 class TestInfra_TestListingTest {
     @Test
     fun successfullyParsed() = assertEquals(
