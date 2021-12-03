@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +49,7 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
     open lateinit var returnTypeRef: FirTypeRef
     open var deprecation: DeprecationsPerUseSite? = null
     open var containerSource: DeserializedContainerSource? = null
-    open var dispatchReceiverType: ConeKotlinType? = null
+    open var dispatchReceiverType: ConeSimpleKotlinType? = null
     open lateinit var name: Name
     open var initializer: FirExpression? = null
     open var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

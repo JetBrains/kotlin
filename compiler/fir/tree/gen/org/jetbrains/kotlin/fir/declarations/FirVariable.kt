@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -35,7 +35,7 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
-    abstract override val dispatchReceiverType: ConeKotlinType?
+    abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract val name: Name
     abstract override val symbol: FirVariableSymbol<out FirVariable>
     abstract val initializer: FirExpression?

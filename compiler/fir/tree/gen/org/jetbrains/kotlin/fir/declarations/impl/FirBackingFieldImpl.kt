@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -42,7 +42,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
-    override val dispatchReceiverType: ConeKotlinType?,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val name: Name,
     override var delegate: FirExpression?,
     override val isVar: Boolean,

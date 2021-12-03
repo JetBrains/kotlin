@@ -87,7 +87,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             intersectedTypes.mapNotNullTo(mutableListOf()) {
                 it.scope(useSiteSession, scopeSession, requiredPhase)
             },
-            type
+            this
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredPhase)
         is ConeIntegerLiteralType -> error("ILT should not be in receiver position")

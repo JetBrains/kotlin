@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -46,7 +46,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
+    var dispatchReceiverType: ConeSimpleKotlinType? = null
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorFunctionSymbol

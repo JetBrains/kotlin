@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
@@ -44,7 +44,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
-    override val dispatchReceiverType: ConeKotlinType?,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val valueParameters: MutableList<FirValueParameter>,
     override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,

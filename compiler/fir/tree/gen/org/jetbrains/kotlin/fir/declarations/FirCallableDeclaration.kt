@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
@@ -34,7 +34,7 @@ sealed class FirCallableDeclaration : FirTypedDeclaration() {
     abstract val deprecation: DeprecationsPerUseSite?
     abstract override val symbol: FirCallableSymbol<out FirCallableDeclaration>
     abstract val containerSource: DeserializedContainerSource?
-    abstract val dispatchReceiverType: ConeKotlinType?
+    abstract val dispatchReceiverType: ConeSimpleKotlinType?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableDeclaration(this, data)
 

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -60,7 +60,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override var status: FirDeclarationStatus,
     override val symbol: FirNamedFunctionSymbol,
     annotationBuilder: () -> List<FirAnnotation>,
-    override val dispatchReceiverType: ConeKotlinType?,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirSimpleFunction() {
     init {
         symbol.bind(this)
@@ -193,7 +193,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     override lateinit var status: FirDeclarationStatus
-    override var dispatchReceiverType: ConeKotlinType? = null
+    override var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
     lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotation> = mutableListOf()

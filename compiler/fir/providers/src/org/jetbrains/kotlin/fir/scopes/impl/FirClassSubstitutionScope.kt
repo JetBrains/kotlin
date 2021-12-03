@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -117,6 +114,10 @@ class FirClassSubstitutionScope(
 
     private fun ConeKotlinType.substitute(substitutor: ConeSubstitutor): ConeKotlinType? {
         return substitutor.substituteOrNull(this)
+    }
+
+    private fun ConeSimpleKotlinType.substitute(substitutor: ConeSubstitutor): ConeSimpleKotlinType? {
+        return substitutor.substituteOrNull(this) as ConeSimpleKotlinType?
     }
 
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
@@ -247,7 +248,7 @@ class FirClassSubstitutionScope(
 
     private data class SubstitutedData(
         val typeParameters: List<FirTypeParameterRef>,
-        val dispatchReceiverType: ConeKotlinType?,
+        val dispatchReceiverType: ConeSimpleKotlinType?,
         val receiverType: ConeKotlinType?,
         val returnType: ConeKotlinType?,
         val substitutor: ConeSubstitutor,
@@ -324,7 +325,7 @@ class FirClassSubstitutionScope(
             session,
             member,
             original,
-            substitutor.substituteOrSelf(dispatchReceiverTypeForSubstitutedMembers),
+            substitutor.substituteOrSelf(dispatchReceiverTypeForSubstitutedMembers) as ConeSimpleKotlinType?,
             newReturnType,
             newGetterParameterTypes,
             newSetterParameterTypes,

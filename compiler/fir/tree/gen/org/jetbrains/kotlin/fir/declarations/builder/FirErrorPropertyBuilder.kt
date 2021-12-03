@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -46,7 +46,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
+    var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
     var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()

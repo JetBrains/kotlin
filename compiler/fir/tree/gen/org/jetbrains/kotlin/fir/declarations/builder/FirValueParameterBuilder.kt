@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -46,7 +46,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open lateinit var returnTypeRef: FirTypeRef
     open var deprecation: DeprecationsPerUseSite? = null
     open var containerSource: DeserializedContainerSource? = null
-    open var dispatchReceiverType: ConeKotlinType? = null
+    open var dispatchReceiverType: ConeSimpleKotlinType? = null
     open lateinit var name: Name
     open var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()

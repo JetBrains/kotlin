@@ -89,7 +89,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirCallableSymbol", "out FirCallableDeclaration")
 
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
-            +field("dispatchReceiverType", coneKotlinTypeType, nullable = true)
+            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
         }
 
         function.configure {

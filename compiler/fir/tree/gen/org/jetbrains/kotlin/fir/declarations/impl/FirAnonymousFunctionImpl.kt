@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
@@ -43,7 +43,7 @@ internal class FirAnonymousFunctionImpl(
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
-    override val dispatchReceiverType: ConeKotlinType?,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,

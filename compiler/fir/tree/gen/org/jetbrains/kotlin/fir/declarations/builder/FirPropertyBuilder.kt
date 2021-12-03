@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -52,7 +52,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     var receiverTypeRef: FirTypeRef? = null
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
+    var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
     var initializer: FirExpression? = null
     var delegate: FirExpression? = null

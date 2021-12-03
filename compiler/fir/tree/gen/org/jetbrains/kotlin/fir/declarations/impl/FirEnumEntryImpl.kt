@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -42,7 +42,7 @@ internal class FirEnumEntryImpl(
     override var returnTypeRef: FirTypeRef,
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
-    override val dispatchReceiverType: ConeKotlinType?,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val name: Name,
     override var initializer: FirExpression?,
     override var backingField: FirBackingField?,

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -41,7 +41,7 @@ interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuil
     abstract var returnTypeRef: FirTypeRef
     abstract var deprecation: DeprecationsPerUseSite?
     abstract var containerSource: DeserializedContainerSource?
-    abstract var dispatchReceiverType: ConeKotlinType?
+    abstract var dispatchReceiverType: ConeSimpleKotlinType?
     abstract val valueParameters: MutableList<FirValueParameter>
     abstract var body: FirBlock?
     override fun build(): FirFunction

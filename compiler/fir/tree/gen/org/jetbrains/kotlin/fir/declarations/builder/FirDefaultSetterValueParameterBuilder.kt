@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -47,7 +47,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var receiverTypeRef: FirTypeRef? = null
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
+    var dispatchReceiverType: ConeSimpleKotlinType? = null
     var initializer: FirExpression? = null
     var delegate: FirExpression? = null
     var isVar: Boolean = false

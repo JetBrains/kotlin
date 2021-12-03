@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -46,7 +46,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var returnTypeRef: FirTypeRef
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
+    var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
     var initializer: FirExpression? = null
     var backingField: FirBackingField? = null

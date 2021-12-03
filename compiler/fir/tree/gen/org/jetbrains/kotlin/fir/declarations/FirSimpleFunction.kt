@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -35,7 +35,7 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
-    abstract override val dispatchReceiverType: ConeKotlinType?
+    abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?

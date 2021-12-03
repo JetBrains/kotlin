@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -94,7 +94,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?
         get() = null
 
-    override val dispatchReceiverType: ConeKotlinType?
+    override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

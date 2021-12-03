@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -39,7 +39,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override var status: FirDeclarationStatus,
     @Volatile
     override var resolvePhase: FirResolvePhase,
-    override val dispatchReceiverType: ConeKotlinType?,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirConstructor() {
     override val receiverTypeRef: FirTypeRef? get() = null
     override var deprecation: DeprecationsPerUseSite? = null

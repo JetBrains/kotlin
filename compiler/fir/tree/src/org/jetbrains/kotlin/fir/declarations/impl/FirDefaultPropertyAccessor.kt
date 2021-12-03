@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -66,7 +66,7 @@ abstract class FirDefaultPropertyAccessor(
         get() = if (status is FirResolvedDeclarationStatus) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES
         set(_) {}
 
-    override val dispatchReceiverType: ConeKotlinType?
+    override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = propertySymbol?.dispatchReceiverType
 
     final override var body: FirBlock?

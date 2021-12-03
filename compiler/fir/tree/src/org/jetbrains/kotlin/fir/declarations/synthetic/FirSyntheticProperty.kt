@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -39,7 +39,7 @@ class FirSyntheticProperty(
     override val returnTypeRef: FirTypeRef
         get() = getter.returnTypeRef
 
-    override val dispatchReceiverType: ConeKotlinType?
+    override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = getter.dispatchReceiverType
 
     override val source: KtSourceElement?
