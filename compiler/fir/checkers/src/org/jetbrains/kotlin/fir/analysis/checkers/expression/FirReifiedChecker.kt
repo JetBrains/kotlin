@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -56,23 +55,19 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
             return
         }
 
-        var factory: KtDiagnosticFactory1<FirTypeParameterSymbol>? = null
-
-        lateinit var symbol: FirTypeParameterSymbol
         if (typeArgument is ConeTypeParameterType) {
-            factory = if (isArray) {
+            val factory = if (isArray) {
                 FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context)
             } else {
                 FirErrors.TYPE_PARAMETER_AS_REIFIED
             }
-            symbol = typeArgument.toSymbol(context.session) as FirTypeParameterSymbol
+            val symbol = typeArgument.lookupTag.typeParameterSymbol
+            if (!symbol.isReified) {
+                reporter.reportOn(source, factory, symbol, context)
+            }
         } else if (typeArgument != null && typeArgument.cannotBeReified()) {
             reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
             return
-        }
-
-        if (factory != null && !symbol.isReified) {
-            reporter.reportOn(source, factory, symbol, context)
         }
     }
 
