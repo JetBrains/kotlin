@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.coroutines.Continuation
 
 @Suppress("ClassName")
+@Tag("infrastructure")
 class TestInfra_CompressedNamesTest {
     @Test
     fun targetNameCompression() {

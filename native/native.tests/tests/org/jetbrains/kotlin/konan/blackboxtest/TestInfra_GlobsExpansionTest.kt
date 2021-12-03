@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.sanitizedName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
 @Suppress("ClassName")
+@Tag("infrastructure")
 class TestInfra_GlobsExpansionTest {
     private lateinit var testDir: File
 
