@@ -59,9 +59,9 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.IFooBar' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IFooBar visibility:local [final]' type=<root>.IFooBar origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.FooBarImpl visibility:local [final]' type=<root>.FooBarImpl origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.IFooBar visibility:local [final]
+    FIELD DELEGATE name:<$$delegate_0> type:<root>.FooBarImpl visibility:local [final]
       EXPRESSION_BODY
         GET_OBJECT 'CLASS OBJECT name:FooBarImpl modality:FINAL visibility:public superTypes:[<root>.IFooBar]' type=<root>.FooBarImpl
     FUN name:bar visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Unit

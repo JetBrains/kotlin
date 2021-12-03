@@ -31,7 +31,7 @@ class Delegated : IFoo {
     return <this>.#<$$delegate_0>.foo()
   }
 
-  local /* final field */ val <$$delegate_0>: IFoo = Derived()
+  local /* final field */ val <$$delegate_0>: Derived = Derived()
 
 }
 

@@ -30,7 +30,7 @@ class C : IFooBar {
     <this>.#<$$delegate_0>.foo()
   }
 
-  local /* final field */ val <$$delegate_0>: IFooBar = FooBarImpl
+  local /* final field */ val <$$delegate_0>: FooBarImpl = FooBarImpl
   override fun bar() {
   }
 

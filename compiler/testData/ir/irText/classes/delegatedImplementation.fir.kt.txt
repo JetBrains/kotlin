@@ -96,7 +96,7 @@ class Test1 : IBase {
     (<this>.#<$$delegate_0>, <this>).qux()
   }
 
-  local /* final field */ val <$$delegate_0>: IBase = BaseImpl
+  local /* final field */ val <$$delegate_0>: BaseImpl = BaseImpl
 
 }
 
@@ -119,7 +119,7 @@ class Test2 : IBase, IOther {
     (<this>.#<$$delegate_0>, <this>).qux()
   }
 
-  local /* final field */ val <$$delegate_0>: IBase = BaseImpl
+  local /* final field */ val <$$delegate_0>: BaseImpl = BaseImpl
   override val x: String
     override get(): String {
       return <this>.#<$$delegate_1>.<get-x>()

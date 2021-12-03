@@ -216,7 +216,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.foo' type=<root>.Test1 origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test1.foo' type=kotlin.Int origin=null
           s: GET_VAR 's: kotlin.String declared in <root>.Test1.foo' type=kotlin.String origin=null
@@ -227,7 +227,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test1'
           CALL 'public abstract fun bar (): kotlin.Int declared in <root>.IBase' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.bar' type=<root>.Test1 origin=null
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test1, $receiver:kotlin.String) returnType:kotlin.Unit
       overridden:
@@ -236,10 +236,10 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun qux (): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.qux' type=<root>.Test1 origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test1.qux' type=kotlin.String origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]
+    FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]
       EXPRESSION_BODY
         GET_OBJECT 'CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]' type=<root>.BaseImpl
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -269,7 +269,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.foo' type=<root>.Test2 origin=null
           x: GET_VAR 'x: kotlin.Int declared in <root>.Test2.foo' type=kotlin.Int origin=null
           s: GET_VAR 's: kotlin.String declared in <root>.Test2.foo' type=kotlin.String origin=null
@@ -280,7 +280,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test2'
           CALL 'public abstract fun bar (): kotlin.Int declared in <root>.IBase' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.bar' type=<root>.Test2 origin=null
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.String) returnType:kotlin.Unit
       overridden:
@@ -289,10 +289,10 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun qux (): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]' type=<root>.BaseImpl origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.qux' type=<root>.Test2 origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test2.qux' type=kotlin.String origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]
+    FIELD DELEGATE name:<$$delegate_0> type:<root>.BaseImpl visibility:local [final]
       EXPRESSION_BODY
         GET_OBJECT 'CLASS OBJECT name:BaseImpl modality:FINAL visibility:public superTypes:[<root>.IBase]' type=<root>.BaseImpl
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
