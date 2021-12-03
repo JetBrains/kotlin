@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.name.Name
 
@@ -18,7 +18,7 @@ class JvmFileFacadeClass(
     origin: IrDeclarationOrigin,
     name: Name,
     source: SourceElement,
-    private val stubGenerator: DeclarationStubGenerator
+    private val deserializeIr: (IrClass) -> Boolean,
 ) : IrClassImpl(
     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
     IrClassSymbolImpl(), name, ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
@@ -28,7 +28,6 @@ class JvmFileFacadeClass(
     private var irLoaded: Boolean? = null
 
     override fun loadIr(): Boolean {
-        return irLoaded ?:
-            stubGenerator.extensions.deserializeClass(this, stubGenerator, parent, allowErrorNodes = false).also { irLoaded = it }
+        return irLoaded ?: deserializeIr(this).also { irLoaded = it }
     }
 }
