@@ -74,7 +74,7 @@ fun test3(workers: Array<Worker>) {
     assertEquals(seen.size, workers.size)
 }
 
-fun test4() {
+fun test4LegacyMM() {
     assertFailsWith<InvalidMutabilityException> {
         AtomicReference(Data(1))
     }
@@ -83,7 +83,25 @@ fun test4() {
     }
 }
 
-fun test5() {
+fun test4() {
+    run {
+        val ref = AtomicReference(Data(1))
+        assertEquals(1, ref.value.value)
+    }
+    run {
+        val ref = AtomicReference<Data?>(null)
+        ref.compareAndSwap(null, Data(2))
+        assertEquals(2, ref.value!!.value)
+    }
+    run {
+        val ref = AtomicReference<Data?>(null).freeze()
+        assertFailsWith<InvalidMutabilityException> {
+            ref.compareAndSwap(null, Data(2))
+        }
+    }
+}
+
+fun test5LegacyMM() {
     assertFailsWith<InvalidMutabilityException> {
         AtomicReference<Data?>(null).value = Data(2)
     }
@@ -91,6 +109,14 @@ fun test5() {
     val value = Data(3).freeze()
     assertEquals(null, ref.value)
     ref.value = value
+    assertEquals(3, ref.value!!.value)
+}
+
+fun test5() {
+    val ref = AtomicReference<Data?>(null)
+    ref.value = Data(2)
+    assertEquals(2, ref.value!!.value)
+    ref.value = Data(3).freeze()
     assertEquals(3, ref.value!!.value)
 }
 
@@ -128,8 +154,13 @@ fun test7() {
     test1(workers)
     test2(workers)
     test3(workers)
-    test4()
-    test5()
+    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
+        test4()
+        test5()
+    } else {
+        test4LegacyMM()
+        test5LegacyMM()
+    }
     test6()
     test7()
 

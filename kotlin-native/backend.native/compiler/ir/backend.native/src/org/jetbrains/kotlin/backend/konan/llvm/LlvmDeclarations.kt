@@ -322,7 +322,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
-            val storage = if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
+            val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, getLLVMType(declaration.type))
             } else {
                 addKotlinGlobal(name, getLLVMType(declaration.type), isExported = false)

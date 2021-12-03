@@ -265,10 +265,17 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
         (this.parent as IrDeclaration).findTopLevelDeclaration()
 }
 
-internal val IrClass.isFrozen: Boolean
-    get() = annotations.hasAnnotation(KonanFqNames.frozen) ||
-            // RTTI is used for non-reference type box:
-            !this.defaultType.binaryTypeIsReference()
+internal fun IrClass.isFrozen(context: Context): Boolean {
+    val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
+    return when {
+        !context.config.freezing.freezeImplicit -> false
+        annotations.hasAnnotation(KonanFqNames.frozen) -> true
+        annotations.hasAnnotation(KonanFqNames.frozenLegacyMM) && isLegacyMM -> true
+        // RTTI is used for non-reference type box:
+        !this.defaultType.binaryTypeIsReference() -> true
+        else -> false
+    }
+}
 
 fun IrConstructorCall.getAnnotationStringValue() = getValueArgument(0).safeAs<IrConst<String>>()?.value
 

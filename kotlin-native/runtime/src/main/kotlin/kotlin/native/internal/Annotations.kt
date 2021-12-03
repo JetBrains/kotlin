@@ -49,6 +49,13 @@ public annotation class ExportForCompiler
 internal annotation class Frozen
 
 /**
+ * Similar to `@Frozen`, but works only for legacy MM. On the new MM this has no effect.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class FrozenLegacyMM
+
+/**
  * Fields of annotated class won't be sorted.
  */
 @Target(AnnotationTarget.CLASS)

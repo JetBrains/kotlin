@@ -215,7 +215,7 @@ private fun debugString(value: Any?): String {
  * Otherwise memory leak could happen. To detect such leaks [kotlin.native.internal.GC.detectCycles]
  * in debug mode could be helpful.
  */
-@Frozen
+@FrozenLegacyMM
 @LeakDetectorCandidate
 @NoReorderFields
 public class AtomicReference<T> {
@@ -232,7 +232,9 @@ public class AtomicReference<T> {
      * @throws InvalidMutabilityException if reference is not frozen.
      */
     constructor(value: T) {
-        checkIfFrozen(value)
+        if (this.isFrozen) {
+            checkIfFrozen(value)
+        }
         value_ = value
     }
 

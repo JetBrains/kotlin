@@ -53,7 +53,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        if (irClass.isFrozen && context.config.freezing.freezeImplicit)
+        if (irClass.isFrozen(context))
            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {

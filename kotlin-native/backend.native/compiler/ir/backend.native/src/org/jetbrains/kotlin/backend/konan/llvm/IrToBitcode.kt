@@ -56,16 +56,20 @@ internal enum class ObjectStorageKind {
 }
 
 // TODO: maybe unannotated singleton objects shall be accessed from main thread only as well?
-internal val IrField.storageKind: FieldStorageKind get() {
+internal fun IrField.storageKind(context: Context): FieldStorageKind {
     // TODO: Is this correct?
     val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
+    val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
+    // TODO: simplify, once IR types are fully there.
+    val typeAnnotations = (type.classifierOrNull?.owner as? IrAnnotationContainer)?.annotations
+    val typeFrozen = typeAnnotations?.hasAnnotation(KonanFqNames.frozen) == true ||
+        (typeAnnotations?.hasAnnotation(KonanFqNames.frozenLegacyMM) == true && isLegacyMM)
     return when {
         annotations.hasAnnotation(KonanFqNames.threadLocal) -> FieldStorageKind.THREAD_LOCAL
+        !isLegacyMM && !context.config.freezing.freezeImplicit -> FieldStorageKind.GLOBAL
         !isFinal -> FieldStorageKind.GLOBAL
         annotations.hasAnnotation(KonanFqNames.sharedImmutable) -> FieldStorageKind.SHARED_FROZEN
-        // TODO: simplify, once IR types are fully there.
-        (type.classifierOrNull?.owner as? IrAnnotationContainer)
-                ?.annotations?.hasAnnotation(KonanFqNames.frozen) == true -> FieldStorageKind.SHARED_FROZEN
+        typeFrozen -> FieldStorageKind.SHARED_FROZEN
         else -> FieldStorageKind.GLOBAL
     }
 }
@@ -83,15 +87,14 @@ internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
     else -> ObjectStorageKind.SHARED
 }
 
-val IrField.isGlobalNonPrimitive get() = when  {
+internal fun IrField.isGlobalNonPrimitive(context: Context) = when  {
         type.computePrimitiveBinaryTypeOrNull() != null -> false
-        else -> storageKind == FieldStorageKind.GLOBAL
+        else -> storageKind(context) == FieldStorageKind.GLOBAL
     }
 
 
 internal fun IrField.shouldBeFrozen(context: Context): Boolean =
-        this.storageKind == FieldStorageKind.SHARED_FROZEN &&
-                (context.memoryModel != MemoryModel.EXPERIMENTAL || context.config.freezing.freezeImplicit)
+        this.storageKind(context) == FieldStorageKind.SHARED_FROZEN
 
 internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
     val generator = RTTIGenerator(context)
@@ -376,7 +379,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
                             context.llvm.initializersGenerationState.topLevelFields
-                                    .filter { it.storageKind != FieldStorageKind.THREAD_LOCAL }
+                                    .filter { it.storageKind(context) != FieldStorageKind.THREAD_LOCAL }
                                     .filterNot { it.shouldBeInitializedEagerly }
                                     .forEach { initGlobalField(it) }
                             ret(null)
@@ -393,7 +396,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
                             context.llvm.initializersGenerationState.topLevelFields
-                                    .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                                    .filter { it.storageKind(context) == FieldStorageKind.THREAD_LOCAL }
                                     .filterNot { it.shouldBeInitializedEagerly }
                                     .forEach { initThreadLocalField(it) }
                             ret(null)
@@ -494,7 +497,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 appendingTo(bbInit) {
                     context.llvm.initializersGenerationState.topLevelFields
                             .filter { !context.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
-                            .filterNot { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                            .filterNot { it.storageKind(context) == FieldStorageKind.THREAD_LOCAL }
                             .forEach { initGlobalField(it) }
                     context.llvm.initializersGenerationState.moduleGlobalInitializers.forEach {
                         evaluateSimpleFunctionCall(it, emptyList(), Lifetime.IRRELEVANT)
@@ -510,7 +513,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     }
                     context.llvm.initializersGenerationState.topLevelFields
                             .filter { !context.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
-                            .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                            .filter { it.storageKind(context) == FieldStorageKind.THREAD_LOCAL }
                             .forEach { initThreadLocalField(it) }
                     context.llvm.initializersGenerationState.moduleThreadLocalInitializers.forEach {
                         evaluateSimpleFunctionCall(it, emptyList(), Lifetime.IRRELEVANT)
@@ -531,7 +534,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.initializersGenerationState.topLevelFields
                             // Only if a subject for memory management.
                             .forEach { irField ->
-                                if (irField.type.binaryTypeIsReference() && irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
+                                if (irField.type.binaryTypeIsReference() && irField.storageKind(context) != FieldStorageKind.THREAD_LOCAL) {
                                     val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
                                             functionGenerationContext
                                     )
@@ -1687,7 +1690,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
                 evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>).llvm
             } else {
-                if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive) {
+                if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive(context)) {
                     functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
                 val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
@@ -1706,7 +1709,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun needMutationCheck(irClass: IrClass): Boolean {
         // For now we omit mutation checks on immutable types, as this allows initialization in constructor
         // and it is assumed that API doesn't allow to change them.
-        return !irClass.isFrozen
+        return !irClass.isFrozen(context)
     }
 
     private fun isZeroConstValue(value: IrExpression): Boolean {
@@ -1756,7 +1759,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val globalAddress = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
                     functionGenerationContext
             )
-            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.GLOBAL)
+            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.shouldBeFrozen(context))
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
