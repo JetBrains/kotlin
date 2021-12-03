@@ -23,10 +23,11 @@ namespace mm {
 // Optional data that's lazily allocated only for objects that need it.
 class ExtraObjectData : private Pinned, public KonanAllocatorAware {
 public:
+    // flags are stored as single atomic uint32, values are bit numbers in that uint32
     enum Flags : uint32_t {
-        FLAGS_NONE = 0,
-        FLAGS_FROZEN = 1 << 0,
-        FLAGS_NEVER_FROZEN = 1 << 1,
+        FLAGS_FROZEN = 0,
+        FLAGS_NEVER_FROZEN = 1,
+        FLAGS_IN_FINALIZER_QUEUE = 2,
     };
 
     static constexpr unsigned WEAK_REF_TAG = 1;
@@ -49,7 +50,9 @@ public:
     bool HasAssociatedObject() noexcept;
     void DetachAssociatedObject() noexcept;
 
-    std::atomic<Flags>& flags() noexcept { return flags_; }
+    bool getFlag(Flags value) noexcept { return (flags_.load() & (1u << static_cast<uint32_t>(value))) != 0; }
+    void setFlag(Flags value) noexcept { flags_.fetch_or(1u << static_cast<uint32_t>(value)); }
+
 
     bool HasWeakReferenceCounter() noexcept { return hasPointerBits(weakReferenceCounterOrBaseObject_.load(), WEAK_REF_TAG); }
     void ClearWeakReferenceCounter() noexcept;
@@ -84,7 +87,7 @@ private:
     // Must be first to match `TypeInfo` layout.
     const TypeInfo* typeInfo_;
 
-    std::atomic<Flags> flags_ = FLAGS_NONE;
+    std::atomic<uint32_t> flags_ = 0;
 
 #ifdef KONAN_OBJC_INTEROP
     void* associatedObject_ = nullptr;
