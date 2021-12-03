@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -39,13 +38,14 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
         if (!context.session.visibilityChecker.isVisible(
                 firClassLikeDeclaration, context.session, firFile, context.containingDeclarations,
                 dispatchReceiver = null,
-            )) {
+            )
+        ) {
             reporter.reportOn(expression.source, FirErrors.INVISIBLE_REFERENCE, symbol, context)
             return
         }
 
         if (firClassLikeDeclaration is FirTypeAlias) {
-            (firClassLikeDeclaration.expandedConeType?.toSymbol(context.session) as? FirClassLikeSymbol)?.let {
+            firClassLikeDeclaration.expandedConeType?.toSymbol(context.session)?.let {
                 checkClassLikeSymbol(it, expression, context, reporter)
             }
         }

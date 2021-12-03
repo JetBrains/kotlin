@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -116,7 +117,7 @@ object FirSupertypesChecker : FirClassChecker() {
     }
 
     private fun checkClassCannotBeExtendedDirectly(
-        symbol: FirBasedSymbol<*>?,
+        symbol: FirClassifierSymbol<*>?,
         reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,
         context: CheckerContext

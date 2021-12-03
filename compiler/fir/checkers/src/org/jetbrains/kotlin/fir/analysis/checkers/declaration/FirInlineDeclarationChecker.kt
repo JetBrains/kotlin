@@ -323,13 +323,11 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             }
         }
 
-        private fun FirBasedSymbol<*>.isDefinedInInlineFunction(): Boolean {
+        private fun FirClassifierSymbol<*>.isDefinedInInlineFunction(): Boolean {
             return when (val symbol = this) {
-                is FirAnonymousFunctionSymbol -> true
-                is FirCallableSymbol<*> -> symbol.isLocalMember
                 is FirAnonymousObjectSymbol -> true
                 is FirRegularClassSymbol -> symbol.classId.isLocal
-                else -> error("Unknown callable declaration type: $symbol")
+                is FirTypeAliasSymbol, is FirTypeParameterSymbol -> error("Unexpected classifier declaration type: $symbol")
             }
         }
 

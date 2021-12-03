@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -207,8 +208,12 @@ fun ConeKotlinType.isUnsafeVarianceType(session: FirSession): Boolean {
     return type.attributes.unsafeVarianceType != null
 }
 
-fun ConeKotlinType.toSymbol(session: FirSession): FirBasedSymbol<*>? {
+fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
     return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
+}
+
+fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
+    return lookupTag.toSymbol(session)
 }
 
 fun ConeKotlinType.toFirResolvedTypeRef(

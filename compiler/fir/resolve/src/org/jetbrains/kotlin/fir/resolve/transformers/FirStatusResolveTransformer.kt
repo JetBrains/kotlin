@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNa
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
@@ -378,12 +382,12 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
-        val superClass = typeRef.coneType.toSymbol(session)?.fir
-        superClass?.ensureResolved(FirResolvePhase.SUPER_TYPES)
-        when (superClass) {
-            is FirRegularClass -> forceResolveStatusesOfClass(superClass)
-            is FirTypeAlias -> forceResolveStatusOfCorrespondingClass(superClass.expandedTypeRef)
-            else -> {}
+        val superClassSymbol = typeRef.coneType.toSymbol(session)
+        superClassSymbol?.ensureResolved(FirResolvePhase.SUPER_TYPES)
+        when (superClassSymbol) {
+            is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
+            is FirTypeAliasSymbol -> forceResolveStatusOfCorrespondingClass(superClassSymbol.fir.expandedTypeRef)
+            is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> {}
         }
     }
 

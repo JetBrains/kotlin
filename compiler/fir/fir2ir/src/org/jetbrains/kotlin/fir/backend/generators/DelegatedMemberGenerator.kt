@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -87,11 +85,14 @@ class DelegatedMemberGenerator(
         bodiesInfo.clear()
     }
 
-    private fun FirTypeParameter.boundClass(): FirClass {
-        val boundType = bounds.first().coneType.fullyExpandedType(session).lowerBoundIfFlexible()
-        val boundClassifier = boundType.toSymbol(session)!!.fir
-        if (boundClassifier is FirClass) return boundClassifier
-        return (boundClassifier as FirTypeParameter).boundClass()
+    private fun FirClassifierSymbol<*>?.boundClass(): FirClass {
+        return when (this) {
+            is FirRegularClassSymbol -> fir
+            is FirAnonymousObjectSymbol -> fir
+            is FirTypeParameterSymbol ->
+                fir.bounds.first().coneType.fullyExpandedType(session).lowerBoundIfFlexible().toSymbol(session).boundClass()
+            is FirTypeAliasSymbol, null -> throw AssertionError(this?.fir?.render())
+        }
     }
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
@@ -100,11 +101,7 @@ class DelegatedMemberGenerator(
 
         val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
         val delegateToType = firField.initializer!!.typeRef.coneType.fullyExpandedType(session).lowerBoundIfFlexible()
-        val delegateToClass = when (val fir = delegateToType.toSymbol(session)?.fir) {
-            is FirClass -> fir
-            is FirTypeParameter -> fir.boundClass()
-            else -> throw AssertionError("${fir?.render()}")
-        }
+        val delegateToClass = delegateToType.toSymbol(session).boundClass()
 
         val delegateToScope = delegateToClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
         val delegateToLookupTag = (delegateToType as? ConeClassLikeType)?.lookupTag

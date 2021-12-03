@@ -63,7 +63,7 @@ fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope 
     this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
 
 fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
-    return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session) as? FirClassLikeSymbol<*>
+    return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)
 }
 
 /**
@@ -75,9 +75,7 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
      */
     fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, exclude: MutableSet<FirClassSymbol<*>>): Boolean {
         for (it in other.resolvedSuperTypeRefs) {
-            val candidate = it.toClassLikeSymbol(session)
-                ?.fullyExpandedClass(session) as? FirClassSymbol<*>
-                ?: continue
+            val candidate = it.toClassLikeSymbol(session)?.fullyExpandedClass(session) ?: continue
 
             if (candidate in exclude) {
                 continue
@@ -156,14 +154,14 @@ fun FirClassSymbol<*>.getContainingDeclarationSymbol(session: FirSession): FirCl
 /**
  * Returns the FirClassLikeDeclaration that the
  * sequence of FirTypeAlias'es points to starting
- * with `this`. Or null if something goes wrong.
+ * with `this`. Or null if something goes wrong or we have anonymous object symbol.
  */
-fun FirClassLikeSymbol<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClassSymbol? {
+tailrec fun FirClassLikeSymbol<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClassSymbol? {
     return when (this) {
         is FirRegularClassSymbol -> this
-        is FirTypeAliasSymbol -> (resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
-            ?.toSymbol(useSiteSession) as? FirClassLikeSymbol<*>)?.fullyExpandedClass(useSiteSession)
-        else -> null
+        is FirAnonymousObjectSymbol -> null
+        is FirTypeAliasSymbol -> resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
+            ?.toSymbol(useSiteSession)?.fullyExpandedClass(useSiteSession)
     }
 }
 
@@ -214,8 +212,6 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
 
     return overriddenFunctions
 }
-
-
 
 /**
  * Returns the modality of the class

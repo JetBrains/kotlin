@@ -276,16 +276,16 @@ object CheckDslScopeViolation : ResolutionStage() {
             }
             is ConeDefinitelyNotNullType -> collectDslMarkerAnnotations(context, type.original)
             is ConeIntersectionType -> type.intersectedTypes.forEach { collectDslMarkerAnnotations(context, it) }
-            is ConeLookupTagBasedType -> {
-                val classDeclaration = type.toSymbol(context.session)?.fir as? FirClassLikeDeclaration ?: return
+            is ConeClassLikeType -> {
+                val classDeclaration = type.toSymbol(context.session)?.fir ?: return
                 collectDslMarkerAnnotations(context, classDeclaration.annotations)
-                when {
-                    classDeclaration is FirClass -> {
+                when (classDeclaration) {
+                    is FirClass -> {
                         for (superType in classDeclaration.superConeTypes) {
                             collectDslMarkerAnnotations(context, superType)
                         }
                     }
-                    type is ConeClassLikeType -> {
+                    is FirTypeAlias -> {
                         type.directExpansionType(context.session)?.let {
                             collectDslMarkerAnnotations(context, it)
                         }
