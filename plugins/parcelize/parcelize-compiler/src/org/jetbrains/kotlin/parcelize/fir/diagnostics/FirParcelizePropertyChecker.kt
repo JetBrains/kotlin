@@ -38,7 +38,8 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
             if (
                 !fromPrimaryConstructor &&
                 (declaration.hasBackingField || declaration.delegate != null) &&
-                !declaration.hasIgnoredOnParcel()
+                !declaration.hasIgnoredOnParcel() &&
+                !containingClassSymbol.hasCustomParceler(context.session)
             ) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED, context)
             }

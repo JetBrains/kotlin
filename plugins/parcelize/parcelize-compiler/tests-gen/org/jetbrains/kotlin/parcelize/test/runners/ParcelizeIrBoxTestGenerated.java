@@ -74,6 +74,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     }
 
     @Test
+    @TestMetadata("constructorWithoutValOrVar.kt")
+    public void testConstructorWithoutValOrVar() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/constructorWithoutValOrVar.kt");
+    }
+
+    @Test
     @TestMetadata("customNewArray.kt")
     public void testCustomNewArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customNewArray.kt");
@@ -83,6 +89,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("customParcelable.kt")
     public void testCustomParcelable() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelable.kt");
+    }
+
+    @Test
+    @TestMetadata("customParcelerChecks.kt")
+    public void testCustomParcelerChecks() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelerChecks.kt");
     }
 
     @Test
