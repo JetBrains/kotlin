@@ -43,7 +43,7 @@ object JvmFlag {
          * class.
          */
         @JvmField
-        val HAS_METHOD_BODIES_IN_INTERFACE = booleanFlag(JF.ARE_INTERFACE_METHOD_BODIES_INSIDE)
+        val HAS_METHOD_BODIES_IN_INTERFACE = booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE)
 
         /**
          * Applied to an interface compiled with -Xjvm-default=all-compatibility.
@@ -53,7 +53,7 @@ object JvmFlag {
          * clients compiled without all-compatibility.
          */
         @JvmField
-        val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_ALL_COMPATIBILITY_MODE)
+        val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
     }
 
     private fun booleanFlag(f: F.BooleanFlagField): Flag =

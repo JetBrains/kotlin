@@ -15,13 +15,13 @@ object JvmFlags {
     val IS_MOVED_FROM_INTERFACE_COMPANION = Flags.FlagField.booleanFirst()
 
     //Class
-    val ARE_INTERFACE_METHOD_BODIES_INSIDE = Flags.FlagField.booleanFirst()
-    val IS_ALL_COMPATIBILITY_MODE = Flags.FlagField.booleanAfter(ARE_INTERFACE_METHOD_BODIES_INSIDE)
+    val IS_COMPILED_IN_JVM_DEFAULT_MODE = Flags.FlagField.booleanFirst()
+    val IS_COMPILED_IN_COMPATIBILITY_MODE = Flags.FlagField.booleanAfter(IS_COMPILED_IN_JVM_DEFAULT_MODE)
 
     fun getPropertyFlags(isMovedFromInterfaceCompanion: Boolean): Int =
         IS_MOVED_FROM_INTERFACE_COMPANION.toFlags(isMovedFromInterfaceCompanion)
 
     fun getClassFlags(isAllInterfaceBodiesInside: Boolean, isCompatibilityMode: Boolean): Int =
-        ARE_INTERFACE_METHOD_BODIES_INSIDE.toFlags(isAllInterfaceBodiesInside) or IS_ALL_COMPATIBILITY_MODE.toFlags(isCompatibilityMode)
+        IS_COMPILED_IN_JVM_DEFAULT_MODE.toFlags(isAllInterfaceBodiesInside) or IS_COMPILED_IN_COMPATIBILITY_MODE.toFlags(isCompatibilityMode)
 
 }

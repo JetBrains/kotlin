@@ -139,7 +139,7 @@ class JvmClassFileBasedSymbolProvider(
     }
 
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
-        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
+        JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
     override fun getPackage(fqName: FqName): FqName? =
         javaFacade.getPackage(fqName)

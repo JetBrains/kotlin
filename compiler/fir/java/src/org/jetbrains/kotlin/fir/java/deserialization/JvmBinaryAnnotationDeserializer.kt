@@ -86,7 +86,7 @@ class JvmBinaryAnnotationDeserializer(
         val jvmClassFlags = runIf(containingClassProto?.hasExtension(JvmProtoBuf.jvmClassFlags) == true) {
             containingClassProto?.getExtension(JvmProtoBuf.jvmClassFlags)
         }
-        val allCompatibilityModeIsEnabled = jvmClassFlags?.let { JvmFlags.IS_ALL_COMPATIBILITY_MODE.get(it) } ?: true
+        val allCompatibilityModeIsEnabled = jvmClassFlags?.let { JvmFlags.IS_COMPILED_IN_COMPATIBILITY_MODE.get(it) } ?: true
         return findJvmBinaryClassAndLoadMemberAnnotations(
             signature,
             searchInDefaultImpls = classIsInterface && allCompatibilityModeIsEnabled
