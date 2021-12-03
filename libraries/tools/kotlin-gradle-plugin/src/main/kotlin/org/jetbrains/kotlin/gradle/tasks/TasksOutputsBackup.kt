@@ -28,7 +28,7 @@ internal class TaskOutputsBackup(
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputs.files.toSortedSet().forEachIndexed { index, outputPath ->
             val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
-            if (outputPath.isDirectory && Files.list(outputPath.toPath()).findFirst().isPresent) {
+            if (outputPath.isDirectory && Files.list(outputPath.toPath()).use { it.findFirst().isPresent }) {
                 snapshotsDir
                     .map { it.file(pathInSnapshot) }
                     .get()
