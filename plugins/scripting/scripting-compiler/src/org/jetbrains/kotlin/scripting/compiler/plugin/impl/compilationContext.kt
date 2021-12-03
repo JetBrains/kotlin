@@ -48,11 +48,8 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.KotlinJars
-import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 const val SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.base.compiler.arguments"
 
@@ -233,8 +230,17 @@ private fun createInitialCompilerConfiguration(
 
         setupJvmSpecificArguments(baseArguments)
 
-        // Default value differs from the argument's default (see #KT-29405 and #KT-29319)
-        put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+        val definedTarget = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jvmTarget]
+        if (definedTarget != null) {
+            val target = JvmTarget.values().find { it.description == definedTarget }
+            if (target == null) {
+                messageCollector.report(
+                    CompilerMessageSeverity.STRONG_WARNING, "Unknown JVM target \"$definedTarget\", using default"
+                )
+            } else {
+                put(JVMConfigurationKeys.JVM_TARGET, target)
+            }
+        }
 
         val jdkHomeFromConfigurations = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jdkHome]
             // TODO: check if this is redundant and/or incorrect since the default is now taken from the host configuration anyway (the one linked to the compilation config)
