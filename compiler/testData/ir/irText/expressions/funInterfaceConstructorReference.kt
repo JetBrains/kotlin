@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowKotlinFunInterfaceConstructorReference
+// !LANGUAGE: +KotlinFunInterfaceConstructorReference
 // WITH_REFLECT
 import kotlin.reflect.*
 

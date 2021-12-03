@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowKotlinFunInterfaceConstructorReference
+// !LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 // DONT_TARGET_EXACT_BACKEND: JVM
 //  ^ old JVM BE generates bogus code that fails in 'invoke', but works almost as expected in terms of equality

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 object FirFunInterfaceConstructorReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirCallableReferenceAccess) return
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowKotlinFunInterfaceConstructorReference)) return
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.KotlinFunInterfaceConstructorReference)) return
 
         val reference = expression.calleeReference.resolved ?: return
         val referredSymbol = reference.resolvedSymbol
