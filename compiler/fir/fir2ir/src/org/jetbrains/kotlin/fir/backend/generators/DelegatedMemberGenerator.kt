@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.name.ClassId
@@ -201,6 +202,16 @@ class DelegatedMemberGenerator(
                 }
             delegateFunction.valueParameters.forEach {
                 putValueArgument(it.index, IrGetValueImpl(startOffset, endOffset, it.type, it.symbol))
+            }
+            superFunction.typeParameters.forEach {
+                putTypeArgument(
+                    it.index, IrSimpleTypeImpl(
+                        delegateFunction.typeParameters[it.index].symbol,
+                        hasQuestionMark = false,
+                        arguments = emptyList(),
+                        annotations = emptyList()
+                    )
+                )
             }
         }
         if (superFunction.returnType.isUnit() || superFunction.returnType.isNothing()) {

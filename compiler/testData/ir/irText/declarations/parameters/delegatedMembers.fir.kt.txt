@@ -19,7 +19,7 @@ class Test<TT : Any?> : IBase<TT> {
   }
 
   override fun <X : Any?> qux(t: TT, x: X) {
-    <this>.#<$$delegate_0>.qux</* null */>(t = t, x = x)
+    <this>.#<$$delegate_0>.qux<X>(t = t, x = x)
   }
 
   override val bar: Int

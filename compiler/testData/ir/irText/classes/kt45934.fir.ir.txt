@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/kt45934.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo <C> (): @[FlexibleNullability] kotlin.collections.List<@[FlexibleNullability] C of <root>.C.foo?>? declared in <root>.C'
           CALL 'public abstract fun foo <C> (): @[FlexibleNullability] kotlin.collections.List<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I' type=@[FlexibleNullability] kotlin.collections.List<@[FlexibleNullability] C of <root>.C.foo?>? origin=null
-            <C>: <none>
+            <C>: C of <root>.C.foo
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.I visibility:local [final]' type=<root>.I origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.I visibility:local [final]

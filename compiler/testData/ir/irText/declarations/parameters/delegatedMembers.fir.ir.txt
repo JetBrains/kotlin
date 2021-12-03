@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       VALUE_PARAMETER name:x index:1 type:X of <root>.Test.qux
       BLOCK_BODY
         CALL 'public abstract fun qux <X> (t: T of <root>.IBase, x: X of <root>.IBase.qux): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          <X>: <none>
+          <X>: X of <root>.Test.qux
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<TT of <root>.Test> visibility:local [final]' type=<root>.IBase<TT of <root>.Test> origin=null
             receiver: GET_VAR '<this>: <root>.Test<TT of <root>.Test> declared in <root>.Test.qux' type=<root>.Test<TT of <root>.Test> origin=null
           t: GET_VAR 't: TT of <root>.Test declared in <root>.Test.qux' type=TT of <root>.Test origin=null
