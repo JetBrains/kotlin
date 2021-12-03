@@ -22,3 +22,38 @@ internal class PackageName private constructor(private val fqn: String, val segm
         val EMPTY = PackageName("", emptyList())
     }
 }
+
+/**
+ * Represents a single test name (i.e. a function annotated with [kotlin.test.Test]) inside of a [TestFile].
+ *
+ * [packageName] - containing package name. For the sake of simplification [packageName] may also include top-level and nested class names,
+ *   but it does not include package-part class name (i.e. "SomethingKt").
+ * [packagePartClassName] - package-part class name (if there is any)
+ * [functionName] - name of test function
+ */
+internal data class TestName(private val fqn: String) {
+    val packageName: PackageName
+    val packagePartClassName: String?
+    val functionName: String
+
+    init {
+        val segments = fqn.split('.').toMutableList()
+        functionName = segments.removeLast()
+
+        val maybePackagePartClassSegment = segments.lastOrNull()
+        packagePartClassName = if (maybePackagePartClassSegment?.firstOrNull()?.isEffectivelyUpperCase() == true
+            && maybePackagePartClassSegment.endsWith("Kt")
+        ) {
+            segments.removeLast()
+        } else
+            null
+
+        packageName = PackageName(segments)
+    }
+
+    override fun toString() = fqn
+
+    companion object {
+        private fun Char.isEffectivelyUpperCase() = if (isUpperCase()) true else !isLowerCase()
+    }
+}

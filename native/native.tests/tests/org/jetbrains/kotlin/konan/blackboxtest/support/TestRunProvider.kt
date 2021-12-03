@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtr
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestFunctionExtractor
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestNameExtractor
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
@@ -32,7 +32,7 @@ internal class TestRunProvider(
 ) : ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory(settings)
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
-    private val cachedTestFunctions = ThreadSafeCache<TestCompilationCacheKey, Collection<TestFunction>>()
+    private val cachedTestNames = ThreadSafeCache<TestCompilationCacheKey, Collection<TestName>>()
 
     fun setProcessors(testDataFile: File, sourceTransformers: List<(String) -> String>) {
         testCaseGroupProvider.setPreprocessors(testDataFile, sourceTransformers)
@@ -64,7 +64,7 @@ internal class TestRunProvider(
      *   }
      */
     fun getSingleTestRun(testCaseId: TestCaseId): TestRun = withTestExecutable(testCaseId) { testCase, executable, _ ->
-        val runParameters = getRunParameters(testCase, testFunction = null)
+        val runParameters = getRunParameters(testCase, testName = null)
         TestRun(displayName = /* Unimportant. Used only in dynamic tests. */ "", executable, runParameters, testCase.id)
     }
 
@@ -101,24 +101,24 @@ internal class TestRunProvider(
     fun getTestRuns(
         testCaseId: TestCaseId
     ): Collection<TreeNode<TestRun>> = withTestExecutable(testCaseId) { testCase, executable, cacheKey ->
-        fun createTestRun(testRunName: String, testFunction: TestFunction?): TestRun {
-            val runParameters = getRunParameters(testCase, testFunction)
+        fun createTestRun(testRunName: String, testName: TestName?): TestRun {
+            val runParameters = getRunParameters(testCase, testName)
             return TestRun(testRunName, executable, runParameters, testCase.id)
         }
 
         when (testCase.kind) {
             TestKind.STANDALONE_NO_TR -> {
                 val testRunName = testCase.extras<NoTestRunnerExtras>().entryPoint.substringAfterLast('.')
-                val testRun = createTestRun(testRunName, testFunction = null)
+                val testRun = createTestRun(testRunName, testName = null)
                 TreeNode.oneLevel(testRun)
             }
             TestKind.REGULAR, TestKind.STANDALONE -> {
-                val testFunctions = cachedTestFunctions.computeIfAbsent(cacheKey) {
-                    extractTestFunctions(executable)
+                val testNames = cachedTestNames.computeIfAbsent(cacheKey) {
+                    extractTestNames(executable)
                 }.filterIrrelevant(testCase)
 
-                testFunctions.buildTree(TestFunction::packageName) { testFunction ->
-                    createTestRun(testFunction.functionName, testFunction)
+                testNames.buildTree(TestName::packageName) { testName ->
+                    createTestRun(testName.functionName, testName)
                 }
             }
         }
@@ -159,10 +159,10 @@ internal class TestRunProvider(
         return action(testCase, executable, cacheKey)
     }
 
-    private fun getRunParameters(testCase: TestCase, testFunction: TestFunction?): List<TestRunParameter> = with(testCase) {
+    private fun getRunParameters(testCase: TestCase, testName: TestName?): List<TestRunParameter> = with(testCase) {
         when (kind) {
             TestKind.STANDALONE_NO_TR -> {
-                assertTrue(testFunction == null)
+                assertTrue(testName == null)
                 listOfNotNull(
                     extras<NoTestRunnerExtras>().inputDataFile?.let(TestRunParameter::WithInputData),
                     expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
@@ -170,12 +170,12 @@ internal class TestRunProvider(
             }
             TestKind.STANDALONE -> listOfNotNull(
                 TestRunParameter.WithTCTestLogger,
-                testFunction?.let(TestRunParameter::WithFunctionFilter),
+                testName?.let(TestRunParameter::WithTestFilter),
                 expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
             )
             TestKind.REGULAR -> listOfNotNull(
                 TestRunParameter.WithTCTestLogger,
-                testFunction?.let(TestRunParameter::WithFunctionFilter) ?: TestRunParameter.WithPackageFilter(nominalPackageName),
+                testName?.let(TestRunParameter::WithTestFilter) ?: TestRunParameter.WithPackageFilter(nominalPackageName),
                 expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
             )
         }
@@ -189,17 +189,17 @@ internal class TestRunProvider(
             runningAtNonHostTarget()
     }
 
-    // Currently, only local test function extractor is supported.
-    private fun extractTestFunctions(executable: TestExecutable): Collection<TestFunction> = with(settings.get<GlobalSettings>()) {
+    // Currently, only local test name extractor is supported.
+    private fun extractTestNames(executable: TestExecutable): Collection<TestName> = with(settings.get<GlobalSettings>()) {
         if (target == hostTarget)
-            LocalTestFunctionExtractor(executable, executionTimeout).run()
+            LocalTestNameExtractor(executable, executionTimeout).run()
         else
             runningAtNonHostTarget()
     }
 
-    private fun Collection<TestFunction>.filterIrrelevant(testCase: TestCase) =
+    private fun Collection<TestName>.filterIrrelevant(testCase: TestCase) =
         if (testCase.kind == TestKind.REGULAR)
-            filter { testFunction -> testFunction.packageName.startsWith(testCase.nominalPackageName) }
+            filter { testName -> testName.packageName.startsWith(testCase.nominalPackageName) }
         else
             this
 

@@ -15,13 +15,6 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
-internal typealias FunctionName = String
-
-/**
- * Represents a single test function (i.e. a function annotated with [kotlin.test.Test]) inside of a [TestFile].
- */
-internal data class TestFunction(val packageName: PackageName, val functionName: FunctionName)
-
 /**
  * Represents a single file that will be supplied to the compiler.
  */
