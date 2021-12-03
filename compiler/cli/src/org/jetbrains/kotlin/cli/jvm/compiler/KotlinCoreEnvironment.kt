@@ -239,7 +239,7 @@ class KotlinCoreEnvironment private constructor(
         val javaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
-        val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE, 0)
+        val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
         val javaModuleFinder = CliJavaModuleFinder(
             jdkHome,
             messageCollector,
@@ -289,7 +289,7 @@ class KotlinCoreEnvironment private constructor(
             CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
         )
 
-        val finderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != 0)
+        val finderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
 

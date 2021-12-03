@@ -56,7 +56,7 @@ class ClasspathRootsResolver(
     private val requireStdlibModule: Boolean,
     private val outputDirectory: VirtualFile?,
     private val javaFileManager: KotlinCliJavaFileManager,
-    private val jdkRelease: Int
+    private val jdkRelease: Int?
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
@@ -125,7 +125,7 @@ class ClasspathRootsResolver(
                 modules += module
             }
         }
-        if (jdkRelease <= 0 || jdkRelease >= 9) {
+        if (jdkRelease == null || jdkRelease >= 9) {
             addModularRoots(modules, result)
         } else {
             //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place

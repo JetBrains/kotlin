@@ -36,7 +36,7 @@ class CliJavaModuleFinder(
     private val messageCollector: MessageCollector?,
     private val javaFileManager: KotlinCliJavaFileManager,
     project: Project,
-    private val releaseTarget: Int
+    private val jdkRelease: Int?
 ) : JavaModuleFinder {
 
     private val jrtFileSystemRoot = jdkHome?.path?.let { path ->
@@ -59,7 +59,7 @@ class CliJavaModuleFinder(
 
         val ctSym = lib.findChild("ct.sym")
             ?: return@lazy reportError(
-                "This JDK does not have the 'ct.sym' file required for the '-Xjdk-release=$releaseTarget' option: ${jdkHome.path}"
+                "This JDK does not have the 'ct.sym' file required for the '-Xjdk-release=$jdkRelease' option: ${jdkHome.path}"
             )
         
         ctSym
@@ -93,7 +93,7 @@ class CliJavaModuleFinder(
         get() = compilationJdkVersion >= 12
 
     private val useLastJdkApi: Boolean
-        get() = releaseTarget == 0 || releaseTarget == compilationJdkVersion
+        get() = jdkRelease == null || jdkRelease == compilationJdkVersion
 
     fun addUserModule(module: JavaModule) {
         userModules.putIfAbsent(module.name, module)
@@ -160,14 +160,14 @@ class CliJavaModuleFinder(
 
     fun listFoldersForRelease(): List<VirtualFile> {
         if (ctSymRootFolder == null) return emptyList()
-        return ctSymRootFolder!!.children.filter { matchesRelease(it.name, releaseTarget) }.flatMap {
+        return ctSymRootFolder!!.children.filter { matchesRelease(it.name, jdkRelease!!) }.flatMap {
             if (isCompilationJDK12OrLater)
                 it.children.toList()
             else {
                 listOf(it)
             }
         }.apply {
-            if (isEmpty()) reportError("'-Xrelease=${releaseTarget}' option is not supported by used JDK: ${jdkHome?.path}")
+            if (isEmpty()) reportError("'-Xrelease=${jdkRelease}' option is not supported by used JDK: ${jdkHome?.path}")
         }
     }
 
@@ -180,12 +180,12 @@ class CliJavaModuleFinder(
                 }
             }
         } else {
-            if (this.releaseTarget > 8 && ctSymRootFolder != null) {
-                ctSymRootFolder!!.findChild(codeFor(releaseTarget) + if (!isCompilationJDK12OrLater) "-modules" else "")?.apply {
+            if (this.jdkRelease!! > 8 && ctSymRootFolder != null) {
+                ctSymRootFolder!!.findChild(codeFor(jdkRelease) + if (!isCompilationJDK12OrLater) "-modules" else "")?.apply {
                     children.forEach {
                         result[it.name] = it
                     }
-                } ?: reportError("Can't find modules signatures in `ct.sym` file for `-Xrelease=$releaseTarget` in ${ctSymFile!!.path}")
+                } ?: reportError("Can't find modules signatures in `ct.sym` file for `-Xrelease=$jdkRelease` in ${ctSymFile!!.path}")
             }
         }
         return result
