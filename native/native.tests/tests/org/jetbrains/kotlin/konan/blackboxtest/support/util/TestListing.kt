@@ -23,17 +23,20 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListingParseSta
  *    and TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "two")
  */
 internal fun parseGTestListing(listing: String): Collection<TestName> = buildList {
+    fun parseError(message: String, index: Int, line: String): Nothing = fail {
+        buildString {
+            appendLine("$message at line #$index: \"$line\"")
+            appendLine()
+            appendLine("Full listing:")
+            appendLine(listing)
+        }
+    }
+
     var state: State = State.Begin
 
-    listing.lineSequence().forEachIndexed { index, line ->
-        fun parseError(message: String): Nothing = fail {
-            buildString {
-                appendLine("$message at line #$index: \"$line\"")
-                appendLine()
-                appendLine("Full listing:")
-                appendLine(listing)
-            }
-        }
+    val lines = listing.lines()
+    lines.forEachIndexed { index, line ->
+        fun parseError(message: String): Nothing = parseError(message, index, line)
 
         state = when {
             index == 0 && line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) -> state
@@ -58,6 +61,9 @@ internal fun parseGTestListing(listing: String): Collection<TestName> = buildLis
             }
         }
     }
+
+    if (state is State.NewTestSuite)
+        parseError("Test name expected before test suite name", lines.lastIndex, lines.last())
 }
 
 private sealed interface GTestListingParseState {
