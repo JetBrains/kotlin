@@ -86,7 +86,9 @@ open class ParcelizeAnnotationChecker : CallChecker {
 
     private fun checkIgnoredOnParcelUsage(annotationEntry: KtAnnotationEntry, context: CallCheckerContext, element: KtModifierListOwner) {
         if (element is KtParameter && PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) is KtPrimaryConstructor) {
-            context.trace.report(ErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY.on(annotationEntry))
+            if (!element.hasDefaultValue()) {
+                context.trace.report(ErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY.on(annotationEntry))
+            }
         } else if (element !is KtProperty || PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) !is KtClassOrObject) {
             context.trace.report(ErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL.on(annotationEntry))
         }

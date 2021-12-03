@@ -159,7 +159,7 @@ object KtDefaultErrorMessagesParcelize {
 
         map.put(
             INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
-            "'@IgnoredOnParcel' is inapplicable to properties declared in the primary constructor"
+            "'@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor"
         )
 
         map.put(
