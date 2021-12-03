@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/nullCheckOnInterfaceDelegation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegated
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.Delegated'
-          CALL 'public abstract fun foo (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+          CALL 'public final fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Derived visibility:local [final]' type=<root>.Derived origin=null
               receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.foo' type=<root>.Delegated origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.Derived visibility:local [final]

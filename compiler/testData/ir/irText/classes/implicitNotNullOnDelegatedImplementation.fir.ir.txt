@@ -137,7 +137,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestJFoo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestJFoo'
-          CALL 'public abstract fun foo (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+          CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.JFoo visibility:local [final]' type=<root>.JFoo origin=null
               receiver: GET_VAR '<this>: <root>.TestJFoo declared in <root>.TestJFoo.foo' type=<root>.TestJFoo origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.JFoo visibility:local [final]
@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestK1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK1'
-          CALL 'public abstract fun foo (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+          CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String [fake_override] declared in <root>.K1' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K1 visibility:local [final]' type=<root>.K1 origin=null
               receiver: GET_VAR '<this>: <root>.TestK1 declared in <root>.TestK1.foo' type=<root>.TestK1 origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.K1 visibility:local [final]
@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestK2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK2'
-          CALL 'public abstract fun foo (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+          CALL 'public final fun foo (): kotlin.String declared in <root>.K2' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K2 visibility:local [final]' type=<root>.K2 origin=null
               receiver: GET_VAR '<this>: <root>.TestK2 declared in <root>.TestK2.foo' type=<root>.TestK2 origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.K2 visibility:local [final]
@@ -230,7 +230,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestK3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK3'
-          CALL 'public abstract fun foo (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+          CALL 'public open fun foo (): kotlin.String [fake_override] declared in <root>.K3' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K3 visibility:local [final]' type=<root>.K3 origin=null
               receiver: GET_VAR '<this>: <root>.TestK3 declared in <root>.TestK3.foo' type=<root>.TestK3 origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.K3 visibility:local [final]
@@ -261,7 +261,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.TestK4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK4'
-          CALL 'public abstract fun foo (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+          CALL 'public final fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.K4 visibility:local [final]' type=<root>.K4 origin=null
               receiver: GET_VAR '<this>: <root>.TestK4 declared in <root>.TestK4.foo' type=<root>.TestK4 origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.K4 visibility:local [final]

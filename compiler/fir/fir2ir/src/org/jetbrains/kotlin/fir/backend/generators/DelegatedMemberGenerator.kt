@@ -10,14 +10,17 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.processAllFunctions
-import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A generator for delegated members from implementation by delegation.
@@ -43,34 +47,31 @@ class DelegatedMemberGenerator(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
 
-    companion object {
-        private val PLATFORM_DEPENDENT_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.PlatformDependent"))
-    }
-
     private val baseFunctionSymbols = mutableMapOf<IrFunction, List<FirNamedFunctionSymbol>>()
     private val basePropertySymbols = mutableMapOf<IrProperty, List<FirPropertySymbol>>()
 
     private data class DeclarationBodyInfo(
         val declaration: IrDeclaration,
         val field: IrField,
-        val delegateToSymbol: FirCallableSymbol<*>
+        val delegateToSymbol: FirCallableSymbol<*>,
+        val delegateToLookupTag: ConeClassLikeLookupTag?
     )
 
     private val bodiesInfo = mutableListOf<DeclarationBodyInfo>()
 
     fun generateBodies() {
-        for ((declaration, irField, delegateToSymbol) in bodiesInfo) {
+        for ((declaration, irField, delegateToSymbol, delegateToLookupTag) in bodiesInfo) {
             when (declaration) {
                 is IrSimpleFunction -> {
                     val member = declarationStorage.getIrFunctionSymbol(
-                        delegateToSymbol as FirNamedFunctionSymbol
+                        delegateToSymbol as FirNamedFunctionSymbol, delegateToLookupTag
                     ).owner as? IrSimpleFunction ?: continue
                     val body = createDelegateBody(irField, declaration, member)
                     declaration.body = body
                 }
                 is IrProperty -> {
                     val member = declarationStorage.getIrPropertySymbol(
-                        delegateToSymbol as FirPropertySymbol
+                        delegateToSymbol as FirPropertySymbol, delegateToLookupTag
                     ).owner as? IrProperty ?: continue
                     val getter = declaration.getter!!
                     getter.body = createDelegateBody(irField, getter, member.getter!!)
@@ -84,25 +85,43 @@ class DelegatedMemberGenerator(
         bodiesInfo.clear()
     }
 
+    private fun FirTypeParameter.boundClass(): FirClass {
+        val boundType = bounds.first().coneType.fullyExpandedType(session).lowerBoundIfFlexible()
+        val boundClassifier = boundType.toSymbol(session)!!.fir
+        if (boundClassifier is FirClass) return boundClassifier
+        return (boundClassifier as FirTypeParameter).boundClass()
+    }
+
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val delegateToType = firField.initializer!!.typeRef.coneType.fullyExpandedType(session).lowerBoundIfFlexible()
+        val delegateToClass = when (val fir = delegateToType.toSymbol(session)?.fir) {
+            is FirClass -> fir
+            is FirTypeParameter -> fir.boundClass()
+            else -> throw AssertionError("${fir?.render()}")
+        }
+
+        val delegateToScope = delegateToClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val delegateToLookupTag = (delegateToType as? ConeClassLikeType)?.lookupTag
+
         subClassScope.processAllFunctions { functionSymbol ->
             val unwrapped =
-                functionSymbol
-                    .unwrapDelegateTarget(subClassLookupTag, firField)
+                functionSymbol.unwrapDelegateTarget(subClassLookupTag, firField)
                     ?: return@processAllFunctions
 
-            if (shouldSkipDelegationFor(unwrapped)) {
-                return@processAllFunctions
-            }
+            val delegateToSymbol = findDelegateToSymbol(
+                unwrapped.symbol,
+                delegateToScope::processFunctionsByName,
+                delegateToScope::processOverriddenFunctions
+            ) ?: return@processAllFunctions
 
             val irSubFunction = generateDelegatedFunction(
                 subClass, firSubClass, functionSymbol.fir
             )
-            bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, unwrapped.symbol)
+            bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
             declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
             subClass.addMember(irSubFunction)
         }
@@ -111,42 +130,54 @@ class DelegatedMemberGenerator(
             if (propertySymbol !is FirPropertySymbol) return@processAllProperties
 
             val unwrapped =
-                propertySymbol
-                    .unwrapDelegateTarget(subClassLookupTag, firField)
+                propertySymbol.unwrapDelegateTarget(subClassLookupTag, firField)
                     ?: return@processAllProperties
 
-            if (shouldSkipDelegationFor(unwrapped)) {
-                return@processAllProperties
-            }
+            val delegateToSymbol = findDelegateToSymbol(
+                unwrapped.symbol,
+                { name, processor ->
+                    delegateToScope.processPropertiesByName(name) {
+                        if (it !is FirPropertySymbol) return@processPropertiesByName
+                        processor(it)
+                    }
+                },
+                delegateToScope::processOverriddenProperties
+            ) ?: return@processAllProperties
 
             val irSubProperty = generateDelegatedProperty(
                 subClass, firSubClass, propertySymbol.fir
             )
-            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, unwrapped.symbol)
+            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
             declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
             subClass.addMember(irSubProperty)
         }
     }
 
-    private fun shouldSkipDelegationFor(unwrapped: FirCallableDeclaration): Boolean {
-        // See org.jetbrains.kotlin.resolve.jvm.JvmDelegationFilter
-        return (unwrapped is FirSimpleFunction && unwrapped.isDefaultJavaMethod()) ||
-                unwrapped.hasAnnotation(JVM_DEFAULT_CLASS_ID) ||
-                unwrapped.hasAnnotation(PLATFORM_DEPENDENT_CLASS_ID)
-    }
-
-    private fun FirSimpleFunction.isDefaultJavaMethod(): Boolean =
-        when {
-            isIntersectionOverride ->
-                baseForIntersectionOverride!!.isDefaultJavaMethod()
-            isSubstitutionOverride ->
-                originalForSubstitutionOverride!!.isDefaultJavaMethod()
-            else -> {
-                // Check that we have a non-abstract method from Java interface
-                origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
+    private inline fun <reified S : FirCallableSymbol<*>> findDelegateToSymbol(
+        unwrappedSymbol: S,
+        processCallables: (name: Name, processor: (S) -> Unit) -> Unit,
+        crossinline processOverridden: (base: S, processor: (S) -> ProcessorAction) -> ProcessorAction
+    ): S? {
+        var result: S? = null
+        // The purpose of this code is to find member in delegate-to scope
+        // which matches or overrides unwrappedSymbol (which is in turn taken from subclass scope).
+        processCallables(unwrappedSymbol.name) { candidateSymbol ->
+            if (result != null) return@processCallables
+            if (candidateSymbol === unwrappedSymbol) {
+                result = candidateSymbol
+                return@processCallables
+            }
+            processOverridden(candidateSymbol) {
+                if (it === unwrappedSymbol) {
+                    result = candidateSymbol
+                    ProcessorAction.STOP
+                } else {
+                    ProcessorAction.NEXT
+                }
             }
         }
-
+        return result
+    }
 
     fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
         val superClasses by lazy(LazyThreadSafetyMode.NONE) {
@@ -275,36 +306,58 @@ class DelegatedMemberGenerator(
                 declarationStorage,
                 fakeOverrideGenerator
             )
-        annotationGenerator.generate(delegateProperty.getter!!, firDelegateProperty)
+        annotationGenerator.generate(getter, firDelegateProperty)
         if (delegateProperty.isVar) {
             val setter = delegateProperty.setter!!
             setter.overriddenSymbols =
                 firDelegateProperty.generateOverriddenAccessorSymbols(
                     firSubClass, isGetter = false, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
-            annotationGenerator.generate(delegateProperty.setter!!, firDelegateProperty)
+            annotationGenerator.generate(setter, firDelegateProperty)
         }
 
         return delegateProperty
     }
 
+    companion object {
+        private val PLATFORM_DEPENDENT_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.PlatformDependent"))
+        private fun <S : FirCallableSymbol<D>, D : FirCallableDeclaration> S.unwrapDelegateTarget(
+            subClassLookupTag: ConeClassLikeLookupTag,
+            firField: FirField,
+        ): D? {
+            val callable = this.fir as? D ?: return null
+
+            val delegatedWrapperData = callable.delegatedWrapperData ?: return null
+            if (delegatedWrapperData.containingClass != subClassLookupTag) return null
+            if (delegatedWrapperData.delegateField != firField) return null
+
+            val wrapped = delegatedWrapperData.wrapped as? D ?: return null
+
+            @Suppress("UNCHECKED_CAST")
+            val wrappedSymbol = wrapped.symbol as? S ?: return null
+
+            @Suppress("UNCHECKED_CAST")
+            return (wrappedSymbol.unwrapCallRepresentative().fir as D).takeIf { !shouldSkipDelegationFor(it) }
+        }
+
+        private fun shouldSkipDelegationFor(unwrapped: FirCallableDeclaration): Boolean {
+            // See org.jetbrains.kotlin.resolve.jvm.JvmDelegationFilter
+            return (unwrapped is FirSimpleFunction && unwrapped.isDefaultJavaMethod()) ||
+                    unwrapped.hasAnnotation(JVM_DEFAULT_CLASS_ID) ||
+                    unwrapped.hasAnnotation(PLATFORM_DEPENDENT_CLASS_ID)
+        }
+
+        private fun FirSimpleFunction.isDefaultJavaMethod(): Boolean =
+            when {
+                isIntersectionOverride ->
+                    baseForIntersectionOverride!!.isDefaultJavaMethod()
+                isSubstitutionOverride ->
+                    originalForSubstitutionOverride!!.isDefaultJavaMethod()
+                else -> {
+                    // Check that we have a non-abstract method from Java interface
+                    origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
+                }
+            }
+    }
 }
 
-private fun <S : FirCallableSymbol<D>, D : FirCallableDeclaration> S.unwrapDelegateTarget(
-    subClassLookupTag: ConeClassLikeLookupTag,
-    firField: FirField,
-): D? {
-    val callable = this.fir as? D ?: return null
-
-    val delegatedWrapperData = callable.delegatedWrapperData ?: return null
-    if (delegatedWrapperData.containingClass != subClassLookupTag) return null
-    if (delegatedWrapperData.delegateField != firField) return null
-
-    val wrapped = delegatedWrapperData.wrapped as? D ?: return null
-
-    @Suppress("UNCHECKED_CAST")
-    val wrappedSymbol = wrapped.symbol as? S ?: return null
-
-    @Suppress("UNCHECKED_CAST")
-    return wrappedSymbol.unwrapCallRepresentative().fir as D
-}
