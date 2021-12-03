@@ -337,14 +337,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @TaskAction
     fun execute(inputChanges: InputChanges) {
-        KotlinBuildStatsService.applyIfInitialised {
-            if (name.contains("Test"))
-                it.report(BooleanMetrics.TESTS_EXECUTED, true)
-            else
-                it.report(BooleanMetrics.COMPILATION_STARTED, true)
-        }
         val buildMetrics = metrics.get()
         buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+            KotlinBuildStatsService.applyIfInitialised {
+                if (name.contains("Test"))
+                    it.report(BooleanMetrics.TESTS_EXECUTED, true)
+                else
+                    it.report(BooleanMetrics.COMPILATION_STARTED, true)
+            }
             validateCompilerClasspath()
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
