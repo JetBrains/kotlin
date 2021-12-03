@@ -15644,6 +15644,10 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         @TestDataPath("$PROJECT_ROOT")
         @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
         public class InlineClasses {
+            public InlineClasses() {
+                register("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", ""));
+            }
+
             @Test
             public void testAllFilesPresentInInlineClasses() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
@@ -15700,7 +15704,11 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @Test
             @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
             public void testBoxResultInlineClassOfConstructorCall_valueClasses() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", ""));
+                runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+                /*
+                  There is a registered source transformer for the testcase:
+                  s -> s.replaceAll("OPTIONAL_JVM_INLINE_ANNOTATION", "")
+                */
             }
 
             @Test

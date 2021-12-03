@@ -24,6 +24,10 @@ internal class TestRunProvider(
     private val compilationFactory = TestCompilationFactory(environment)
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
+    fun setProcessors(testDataFile: File, sourceTransformers: List<(String) -> String>) {
+        testCaseGroupProvider.setPreprocessors(testDataFile, sourceTransformers)
+    }
+
     fun getSingleTestRun(testDataFile: File): TestRun {
         environment.assertNotDisposed()
 

@@ -38,6 +38,7 @@ import java.io.File
 internal class ExtTestCaseGroupProvider(
     private val environment: TestEnvironment
 ) : TestCaseGroupProvider, TestDisposable(parentDisposable = environment) {
+    private val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
@@ -55,7 +56,9 @@ internal class ExtTestCaseGroupProvider(
         val testCases = mutableListOf<TestCase>()
 
         testDataFiles.forEach { testDataFile ->
-            val extTestDataFile = ExtTestDataFile(environment, structureFactory, testDataFile)
+            val extTestDataFile = ExtTestDataFile(
+                environment, structureFactory, testDataFile, sourceTransformers[testDataFile.canonicalPath] ?: listOf()
+            )
 
             if (extTestDataFile.isRelevant)
                 testCases += extTestDataFile.createTestCase(
@@ -67,6 +70,13 @@ internal class ExtTestCaseGroupProvider(
         }
 
         TestCaseGroup.Default(disabledTestDataFileNames, testCases)
+    }
+
+    override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
+        if (preprocessors.isNotEmpty())
+            sourceTransformers[testDataDir.canonicalPath] = preprocessors
+        else
+            sourceTransformers.remove(testDataDir.canonicalPath)
     }
 
     override fun getTestCaseGroup(testDataDir: File): TestCaseGroup? {
@@ -117,10 +127,11 @@ internal class ExtTestCaseGroupProvider(
 private class ExtTestDataFile(
     private val environment: TestEnvironment,
     structureFactory: ExtTestDataFileStructureFactory,
-    private val testDataFile: File
+    private val testDataFile: File,
+    sourceTransformers: List<(String) -> String>
 ) {
     private val structure by lazy {
-        structureFactory.ExtTestDataFileStructure(testDataFile) { line ->
+        structureFactory.ExtTestDataFileStructure(testDataFile, sourceTransformers) { line ->
             // Remove all diagnostic parameters from the text. Examples:
             //   <!NO_TAIL_CALLS_FOUND!>, <!NON_TAIL_RECURSIVE_CALL!>, <!>.
             line.replace(DIAGNOSTIC_REGEX) { match -> match.groupValues[1] }
@@ -642,12 +653,16 @@ private typealias SharedModuleCache = (moduleName: String, generator: SharedModu
 private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
-    inner class ExtTestDataFileStructure(originalTestDataFile: File, initialCleanUpTransformation: (String) -> String) {
+    inner class ExtTestDataFileStructure(
+        originalTestDataFile: File,
+        sourceTransformers: List<(String) -> String>,
+        initialCleanUpTransformation: (String) -> String
+    ) {
         init {
             assertNotDisposed()
         }
 
-        private val filesAndModules = FilesAndModules(originalTestDataFile, initialCleanUpTransformation)
+        private val filesAndModules = FilesAndModules(originalTestDataFile, initialCleanUpTransformation, sourceTransformers)
 
         val directives: Directives get() = filesAndModules.directives
 
@@ -803,12 +818,16 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             ExtTestModule(name, dependencies, friends)
     }
 
-    private inner class FilesAndModules(originalTestDataFile: File, initialCleanUpTransformation: (String) -> String) {
+    private inner class FilesAndModules(
+        originalTestDataFile: File,
+        initialCleanUpTransformation: (String) -> String,
+        sourceTransformers: List<(String) -> String>
+    ) {
         private val testFileFactory = ExtTestFileFactory()
 
         private val generatedFiles = TestFiles.createTestFiles(
             /* testFileName = */ DEFAULT_FILE_NAME,
-            /* expectedText = */ originalTestDataFile.readText(),
+            /* expectedText = */ originalTestDataFile.applySourceTransformers(sourceTransformers),
             /* factory = */ testFileFactory,
             /* preserveLocations = */ true
         )

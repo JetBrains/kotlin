@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 import kotlin.reflect.KClass
 
@@ -96,7 +95,7 @@ class TestGroup(
             pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
             excludedPattern: String? = null,
             testMethod: String = "doTest",
-            singleClass: Boolean = false, // if true then tests from subdirectories will be flatten to single class
+            singleClass: Boolean = false, // if true then tests from subdirectories will be flattened to single class
             testClassName: String? = null, // specific name for generated test class
             // which backend will be used in test. Specifying value may affect some test with
             // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated

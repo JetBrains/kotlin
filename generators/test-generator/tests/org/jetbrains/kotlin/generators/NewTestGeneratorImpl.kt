@@ -208,6 +208,17 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
 
             var first = true
 
+            val transformers = testClassModel.predefinedTransformers(false)
+
+            if (transformers.isNotEmpty()) {
+                p.println("public ${testClassModel.name}() {")
+                p.pushIndent()
+                transformers.forEach { (path, transformer) -> p.println("register(\"$path\", $transformer);") }
+                p.popIndent()
+                p.println("}")
+                first = false
+            }
+
             for (methodModel in testMethods) {
                 if (methodModel is RunTestMethodModel) continue // should also skip its imports
                 if (!methodModel.shouldBeGenerated()) continue // should also skip its imports
@@ -274,4 +285,9 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         }
         return false
     }
+
+    private fun TestClassModel.predefinedTransformers(recursive: Boolean): List<Pair<String, String>> =
+        methods.mapNotNull { method ->
+            (method as? TransformingTestMethodModel)?.takeIf { it.isNative }?.let { it.source.file.path to it.transformer }
+        } + if (recursive) innerTestClasses.flatMap { it.predefinedTransformers(recursive) } else listOf()
 }

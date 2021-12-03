@@ -30,6 +30,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      */
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         enclosingTestInstance.testRunProvider = getOrCreateTestRunProvider()
+        enclosingTestInstance.onRunProviderSet()
 
         // Set the essential compiler property.
         System.setProperty("kotlin.native.home", getOrCreateGlobalEnvironment().kotlinNativeHome.path)
