@@ -131,7 +131,8 @@ class MainKtsTest {
     @Test
     fun testCyclicImportError() {
         val res = evalFile(File("$TEST_DATA_ROOT/import-cycle-1.main.kts"))
-        assertFailed("Unable to handle recursive script dependencies", res)
+        // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
+        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", res = res)
     }
 
     @Test
@@ -228,11 +229,26 @@ class MainKtsTest {
     }
 
     private fun assertFailed(expectedError: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        assertFailedAny(expectedError, res = res)
+    }
+
+    private fun assertFailedAny(vararg expectedErrors: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        val reports = res.reports.map { diag ->
+            diag.message +
+                    generateSequence(diag.exception) { it.cause }
+                        .filter { !(it.message != null && diag.message.contains(it.message!!)) }
+                        .joinToString("\n  Caused by: ", "\n  ") { it.message ?: it.toString() }
+        }
+        val expected = when (expectedErrors.size) {
+            0 -> ""
+            1 -> " with the message \"${expectedErrors[0]}\""
+            else -> " with any of the messages: ${expectedErrors.joinToString("\", \"", "\"", "\";")}"
+        }
         Assert.assertTrue(
-            "test failed - expecting a failure with the message \"$expectedError\" but received " +
+            "test failed - expecting a failure$expected but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("$expectedError") }
+                    ":\n  ${reports.joinToString("\n  ")}",
+            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.contains(it) } }
         )
     }
 

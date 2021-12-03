@@ -43,6 +43,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-old-backend")
 }
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules

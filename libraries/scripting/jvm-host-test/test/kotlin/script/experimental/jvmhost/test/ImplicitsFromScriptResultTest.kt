@@ -35,7 +35,10 @@ import kotlin.script.experimental.jvmhost.JvmScriptCompiler
  */
 class ImplicitsFromScriptResultTest : TestCase() {
     fun testImplicits() {
-        if (System.getProperty("kotlin.script.base.compiler.arguments")?.contains("-Xuse-ir") != true) {
+        if (System.getProperty("kotlin.script.base.compiler.arguments")?.let {
+                !it.contains("-Xuse-ir") || it.contains("-Xuse-old-backend")
+            } == true
+        ) {
             // the implementation of the Compiler Host doesn't work with IR - the inter-script symbol table
             // should be maintained to make it run (see latest REPL compiler implementations for details
             // TODO: consider either fix it or rewrite to the REPL compiler
