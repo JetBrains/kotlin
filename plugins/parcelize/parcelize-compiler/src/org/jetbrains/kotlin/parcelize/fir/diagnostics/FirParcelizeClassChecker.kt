@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_ID
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_CLASS_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -129,5 +130,12 @@ fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
     return resolvedSuperTypeRefs.any {
         val symbol = it.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
         symbol.annotations.any { it.classId in PARCELIZE_CLASS_CLASS_IDS }
+    }
+}
+
+fun FirRegularClass.hasCustomParceler(session: FirSession): Boolean {
+    val companion = companionObjectSymbol ?: return false
+    return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
+        it.classId in PARCELER_CLASS_IDS
     }
 }

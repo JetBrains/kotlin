@@ -184,8 +184,8 @@ abstract class ParcelizeIrTransformerBase(
             val topLevelScope = getParcelerScope()
 
             return constructor.valueParameters.map { parameter ->
-                val property = properties.first { it.name == parameter.name }
-                if (property.hasAnyAnnotation(IGNORED_ON_PARCEL_FQ_NAMES)) {
+                val property = properties.firstOrNull { it.name == parameter.name }
+                if (property == null || property.hasAnyAnnotation(IGNORED_ON_PARCEL_FQ_NAMES)) {
                     null
                 } else {
                     val localScope = property.getParcelerScope(topLevelScope)

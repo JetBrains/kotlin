@@ -32,6 +32,7 @@ object ParcelizeNames {
     val TYPE_PARCELER_CLASS_IDS = createClassIds("TypeParceler")
     val WRITE_WITH_CLASS_IDS = createClassIds("WriteWith")
     val IGNORED_ON_PARCEL_CLASS_IDS = createClassIds("IgnoredOnParcel")
+    val PARCELER_CLASS_IDS = createClassIds("Parceler")
     val PARCELIZE_CLASS_CLASS_IDS = createClassIds("Parcelize")
     val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
 
