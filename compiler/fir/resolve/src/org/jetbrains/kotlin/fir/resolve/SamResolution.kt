@@ -58,8 +58,8 @@ class FirSamResolverImpl(
         return when (type) {
             is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(session))
             is ConeFlexibleType -> ConeFlexibleType(
-                getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
-                getFunctionTypeForPossibleSamType(type.upperBound) ?: return null,
+                getFunctionTypeForPossibleSamType(type.lowerBound)?.lowerBoundIfFlexible() ?: return null,
+                getFunctionTypeForPossibleSamType(type.upperBound)?.upperBoundIfFlexible() ?: return null,
             )
             is ConeClassErrorType, is ConeStubType -> null
             // TODO: support those types as well

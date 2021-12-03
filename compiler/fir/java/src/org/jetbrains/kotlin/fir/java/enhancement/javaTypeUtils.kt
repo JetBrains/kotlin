@@ -86,14 +86,13 @@ private fun ClassId.mutableToReadOnly(): ClassId? {
     return JavaToKotlinClassMap.mutableToReadOnly(this)
 }
 
-private fun ConeKotlinType.enhanceInflexibleType(
+private fun ConeSimpleKotlinType.enhanceInflexibleType(
     session: FirSession,
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
     subtreeSizes: List<Int>,
-): ConeKotlinType? {
-    require(this !is ConeFlexibleType) { "$this should not be flexible" }
+): ConeSimpleKotlinType? {
     val shouldEnhance = position.shouldEnhance()
     if ((!shouldEnhance && typeArguments.isEmpty()) || this !is ConeLookupTagBasedType) {
         return null

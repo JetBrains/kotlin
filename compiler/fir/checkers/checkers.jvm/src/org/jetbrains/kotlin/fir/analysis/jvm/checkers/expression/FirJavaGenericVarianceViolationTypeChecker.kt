@@ -132,6 +132,12 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
                 lowerBound.removeOutProjection(isCovariant),
                 upperBound.removeOutProjection(isCovariant)
             )
+            is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
+        }
+    }
+
+    private fun ConeSimpleKotlinType.removeOutProjection(isCovariant: Boolean): ConeSimpleKotlinType {
+        return when (this) {
             is ConeCapturedType -> ConeCapturedType(
                 captureStatus,
                 lowerType?.removeOutProjection(isCovariant),
