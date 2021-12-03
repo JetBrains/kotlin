@@ -132,7 +132,7 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
 
         MAP.put(
             ErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
-            "'@IgnoredOnParcel' is inapplicable to properties declared in the primary constructor"
+            "'@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor"
         )
 
         MAP.put(

@@ -152,6 +152,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     }
 
     @Test
+    @TestMetadata("ignoredOnParcel.kt")
+    public void testIgnoredOnParcel() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/ignoredOnParcel.kt");
+    }
+
+    @Test
     @TestMetadata("intArray.kt")
     public void testIntArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/intArray.kt");

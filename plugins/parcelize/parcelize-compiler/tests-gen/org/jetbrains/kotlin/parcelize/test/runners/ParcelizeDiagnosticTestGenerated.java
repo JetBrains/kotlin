@@ -67,6 +67,18 @@ public class ParcelizeDiagnosticTestGenerated extends AbstractParcelizeDiagnosti
     }
 
     @Test
+    @TestMetadata("ignoredOnParcelDefaultValues.kt")
+    public void testIgnoredOnParcelDefaultValues() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/ignoredOnParcelDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("ignoredOnParcelUnsupportedType.kt")
+    public void testIgnoredOnParcelUnsupportedType() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/ignoredOnParcelUnsupportedType.kt");
+    }
+
+    @Test
     @TestMetadata("kt20062.kt")
     public void testKt20062() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/kt20062.kt");

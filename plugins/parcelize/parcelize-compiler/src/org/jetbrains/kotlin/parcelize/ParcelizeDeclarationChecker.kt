@@ -226,6 +226,12 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         }
 
         val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
+
+        // Don't check parameters which won't be serialized
+        if (descriptor.annotations.any { it.fqName in IGNORED_ON_PARCEL_FQ_NAMES }) {
+            return
+        }
+
         val type = descriptor.type
 
         if (!type.isError && !containerClass.hasCustomParceler()) {
