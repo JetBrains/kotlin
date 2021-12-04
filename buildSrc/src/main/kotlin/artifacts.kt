@@ -168,33 +168,6 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     return javadocTask
 }
 
-fun Project.modularJar(body: Jar.() -> Unit): TaskProvider<Jar> {
-    val modularJar = configurations.maybeCreate("modularJar").apply {
-        isCanBeConsumed = true
-        isCanBeResolved = false
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("modular-jar"))
-        }
-    }
-
-    val modularJarTask = getOrCreateTask<Jar>("modularJar") {
-        archiveClassifier.set("modular")
-
-        body()
-    }
-
-    addArtifact("modularJar", modularJarTask)
-    addArtifact("archives", modularJarTask)
-
-    configurePublishedComponent {
-        addVariantsFromConfiguration(modularJar) { mapToMavenScope("runtime") }
-    }
-
-    return modularJarTask
-}
-
-
 fun Project.standardPublicJars() {
     runtimeJar()
     sourcesJar()

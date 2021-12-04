@@ -89,13 +89,6 @@ allprojects { project ->
         }
     }
 
-    project.ext.configureModularJar = { lambda = {} ->
-        ArtifactsKt.modularJar(project) { task ->
-            lambda.delegate = task
-            lambda()
-        }
-    }
-
     dependencies.ext.kotlinStdlib = { suffix ->
         DependenciesKt.kotlinStdlib(project, suffix, null)
     }

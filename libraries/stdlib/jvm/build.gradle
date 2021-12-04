@@ -93,18 +93,10 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-configureModularJar {
-    dependsOn(jar)
-    manifestAttributes(manifest, project, 'Main', true)
-
-    from zipTree(jar.outputs.files.singleFile)
-}
-
 artifacts {
     archives sourcesJar
     sources sourcesJar
     distSources distSourcesJar
-    archives modularJar
 }
 
 DexMethodCountKt.dexMethodCount(project) { task ->

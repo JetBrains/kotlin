@@ -51,19 +51,10 @@ jar {
     from sourceSets.java9.output
 }
 
-configureModularJar {
-    dependsOn(jar)
-    manifestAttributes(manifest, project, 'Main', true)
-
-    from zipTree(jar.outputs.files.singleFile)
-}
-
 
 artifacts {
     archives sourcesJar
     sources sourcesJar
-
-    archives modularJar
 }
 
 compileKotlin {

@@ -28,13 +28,6 @@ jar {
     }
 }
 
-configureModularJar {
-    dependsOn(jar)
-    manifestAttributes(manifest, project, 'Test', true)
-
-    from zipTree(jar.outputs.files.singleFile)
-}
-
 configureSourcesJar()
 
 configureJavadocJar()

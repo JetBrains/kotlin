@@ -236,18 +236,6 @@ val result by task<Jar> {
 
 javadocJar()
 
-modularJar {
-    dependsOn(intermediate)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from {
-        zipTree(intermediate.get().singleOutputFile())
-    }
-    from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
-        include("META-INF/versions/**")
-    }
-    callGroovy("manifestAttributes", manifest, project, "Main", true)
-}
-
 dexMethodCount {
     dependsOn(result)
     jarFile = result.get().outputs.files.single()
