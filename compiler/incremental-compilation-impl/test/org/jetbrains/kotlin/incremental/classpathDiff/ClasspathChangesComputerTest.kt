@@ -293,7 +293,7 @@ private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder,
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshotAll(protoBased).map { it.addHash() }
+        val classSnapshots = classFiles.snapshotAll(protoBased).map { it.withHash }
         ClasspathEntrySnapshot(
             classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
         )

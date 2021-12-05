@@ -27,40 +27,38 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
-/**
- * Storage versioning:
- * 0 - only name and value hashes are saved
- * 1 - name and scope are saved
- */
 class LookupSymbolKeyDescriptor(
     /** If `true`, original values are saved; if `false`, only hashes are saved. */
     private val storeFullFqNames: Boolean = false
 ) : KeyDescriptor<LookupSymbolKey> {
 
     override fun read(input: DataInput): LookupSymbolKey {
-        val version = input.readByte()
-        return when (version.toInt()) {
-            0 -> {
-                val name = input.readUTF()
-                val scope = input.readUTF()
-                LookupSymbolKey(name.hashCode(), scope.hashCode(), name, scope)
-            }
-            1 -> {
-                val first = input.readInt()
-                val second = input.readInt()
-                LookupSymbolKey(first, second, "", "")
-            }
-            else -> throw IllegalArgumentException("Unknown version of LookupSymbolKeyDescriptor=${version}")
+        // Note: The value of the storeFullFqNames variable below may or may not be the same as LookupSymbolKeyDescriptor.storeFullFqNames.
+        // Byte value `0` means storeFullFqNames == true, see `save` function below.
+        val storeFullFqNames = when (val byteValue = input.readByte().toInt()) {
+            0 -> true
+            1 -> false
+            else -> error("Unexpected byte value for storeFullFqNames: $byteValue")
+        }
+        return if (storeFullFqNames) {
+            val name = input.readUTF()
+            val scope = input.readUTF()
+            LookupSymbolKey(name.hashCode(), scope.hashCode(), name, scope)
+        } else {
+            val nameHash = input.readInt()
+            val scopeHash = input.readInt()
+            LookupSymbolKey(nameHash, scopeHash, "", "")
         }
     }
 
     override fun save(output: DataOutput, value: LookupSymbolKey) {
+        // Write a Byte value `0` to represent storeFullFqNames == true for historical reasons (if we switch this value to `1` or write a
+        // Boolean instead, it might impact some tests).
+        output.writeByte(if (storeFullFqNames) 0 else 1)
         if (storeFullFqNames) {
-            output.writeByte(0)
             output.writeUTF(value.name)
             output.writeUTF(value.scope)
         } else {
-            output.writeByte(1)
             output.writeInt(value.nameHash)
             output.writeInt(value.scopeHash)
         }

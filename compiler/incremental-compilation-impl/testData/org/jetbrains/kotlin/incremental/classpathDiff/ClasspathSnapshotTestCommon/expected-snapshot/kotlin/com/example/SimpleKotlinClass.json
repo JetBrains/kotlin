@@ -41,5 +41,9 @@
     {
       "internalName": "java/lang/Object"
     }
-  ]
+  ],
+  "withHash$delegate": {
+    "initializer": {},
+    "_value": {}
+  }
 }
