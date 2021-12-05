@@ -41,17 +41,25 @@ class ClasspathEntrySnapshot(
 sealed class ClassSnapshot {
 
     /** Computes the hash of this [ClassSnapshot] and returns a [ClassSnapshotWithHash]. */
-    fun addHash() = ClassSnapshotWithHash(this, ClassSnapshotExternalizer.toByteArray(this).md5())
+    val withHash: ClassSnapshotWithHash by lazy {
+        ClassSnapshotWithHash(this, ClassSnapshotExternalizer.toByteArray(this).md5())
+    }
 }
 
 /** Contains a [ClassSnapshot] and its hash. */
-class ClassSnapshotWithHash(val classSnapshot: ClassSnapshot, val hash: Long)
+class ClassSnapshotWithHash(val classSnapshot: ClassSnapshot, val hash: Long) {
+
+    override fun toString() = classSnapshot.toString()
+}
 
 /** [ClassSnapshot] of a Kotlin class. */
 class KotlinClassSnapshot(
     val classInfo: KotlinClassInfo,
     val supertypes: List<JvmClassName>
-) : ClassSnapshot()
+) : ClassSnapshot() {
+
+    override fun toString() = classInfo.classId.toString()
+}
 
 /** [ClassSnapshot] of a Java class. */
 sealed class JavaClassSnapshot : ClassSnapshot()
@@ -81,6 +89,8 @@ class RegularJavaClassSnapshot(
             check(it == JvmClassName.byInternalName(classAbiExcludingMembers.name))
         }
     }
+
+    override fun toString() = classId.toString()
 }
 
 /** The ABI snapshot of a Java element (e.g., class, field, or method). */

@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.ICReporterBase
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -42,15 +45,16 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
 import org.jetbrains.kotlin.incremental.classpathDiff.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
-import org.jetbrains.kotlin.incremental.storage.ListExternalizer
-import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -141,8 +145,9 @@ class IncrementalJvmCompilerRunner(
             projectDir,
             File(args.destination),
             reporter,
-            storeFullFqNamesInLookupCache = withSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
-            )
+            storeFullFqNamesInLookupCache = withSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled,
+            trackChangesInLookupCache = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
+        )
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =
         args.destinationAsFile
@@ -210,9 +215,10 @@ class IncrementalJvmCompilerRunner(
         return abiSnapshots
     }
 
-    // Used by `calculateSourcesToCompileImpl` and `performWorkAfterCompilation` methods below.
-    // Thread safety: There is no concurrent access to this variable.
-    private var currentClasspathSnapshot: ClasspathSnapshot? = null
+    // Used by `calculateSourcesToCompileImpl` and `performWorkAfterSuccessfulCompilation` methods below.
+    // Thread safety: There is no concurrent access to these variables.
+    private var currentClasspathSnapshot: List<ClassSnapshotWithHash>? = null
+    private var shrunkCurrentClasspathAgainstPreviousLookups: List<ClassSnapshotWithHash>? = null
 
     private fun calculateSourcesToCompileImpl(
         caches: IncrementalJvmCachesManager,
@@ -225,15 +231,22 @@ class IncrementalJvmCompilerRunner(
 
         val classpathChanges = when (classpathChanges) {
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
-            is Empty -> ChangesEither.Known(emptySet(), emptySet())
+            is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
             is ToBeComputedByIncrementalCompiler -> reporter.measure(BuildTime.COMPUTE_CLASSPATH_CHANGES) {
                 check(currentClasspathSnapshot == null)
                 currentClasspathSnapshot = reporter.measure(BuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
-                    CachedClasspathSnapshotSerializer.load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
+                    val classpathSnapshot =
+                        CachedClasspathSnapshotSerializer.load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
+                    reporter.measure(BuildTime.REMOVE_DUPLICATE_CLASSES) {
+                        classpathSnapshot.removeDuplicateAndInaccessibleClasses()
+                    }
+                }
+                check(shrunkCurrentClasspathAgainstPreviousLookups == null)
+                shrunkCurrentClasspathAgainstPreviousLookups = reporter.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+                    ClasspathSnapshotShrinker.shrink(currentClasspathSnapshot!!, caches.lookupCache, reporter)
                 }
                 ClasspathChangesComputer.computeChangedAndImpactedSet(
-                    currentClasspathSnapshot!!,
-                    caches.lookupCache,
+                    shrunkCurrentClasspathAgainstPreviousLookups!!,
                     classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                     reporter
                 ).getChanges()
@@ -243,7 +256,7 @@ class IncrementalJvmCompilerRunner(
             is ClasspathSnapshotDisabled -> reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
                 val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild(BuildAttribute.IC_IS_NOT_ENABLED)
                 reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
-                val scopes = caches.lookupCache.lookupMap.keys.map { it.scope.ifBlank { it.name } }.distinct()
+                val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
                 getClasspathChanges(
                     args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter, abiSnapshots, withSnapshot,
@@ -456,34 +469,13 @@ class IncrementalJvmCompilerRunner(
 
     override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager) {
         if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-            reporter.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
-                shrinkAndSaveClasspathSnapshot(classpathChanges, caches.lookupCache)
+            reporter.measure(BuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
+                shrinkAndSaveClasspathSnapshot(
+                    classpathChanges, caches.lookupCache, currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups,
+                    reporter
+                )
             }
         }
-    }
-
-    private fun shrinkAndSaveClasspathSnapshot(classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled, lookupStorage: LookupStorage) {
-        val classpathSnapshot = currentClasspathSnapshot ?: reporter.measure(BuildTime.LOAD_CLASSPATH_SNAPSHOT) {
-            CachedClasspathSnapshotSerializer.load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles)
-        }
-        val shrunkClasspathSnapshot = reporter.measure(BuildTime.SHRINK_CLASSPATH_SNAPSHOT) {
-            ClasspathSnapshotShrinker.shrink(classpathSnapshot, lookupStorage, reporter)
-        }
-        reporter.measure(BuildTime.SAVE_SHRUNK_CLASSPATH_SNAPSHOT) {
-            ListExternalizer(ClassSnapshotWithHashExternalizer).saveToFile(
-                classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
-                shrunkClasspathSnapshot
-            )
-        }
-
-        reporter.addMetric(
-            BuildPerformanceMetric.ORIGINAL_CLASSPATH_SNAPSHOT_SIZE,
-            classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() }
-        )
-        reporter.addMetric(
-            BuildPerformanceMetric.SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
-            classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.length()
-        )
     }
 }
 

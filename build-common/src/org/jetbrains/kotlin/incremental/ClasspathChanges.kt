@@ -11,7 +11,7 @@ import java.io.Serializable
 
 /**
  * Changes to the classpath of the `KotlinCompile` task, or information to compute them later by the Kotlin incremental compiler (see
- * [ClasspathSnapshotEnabled.ToBeComputedByIncrementalCompiler].
+ * [ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler].
  */
 sealed class ClasspathChanges : Serializable {
 
@@ -19,9 +19,12 @@ sealed class ClasspathChanges : Serializable {
 
         abstract val classpathSnapshotFiles: ClasspathSnapshotFiles
 
-        class Empty(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : ClasspathSnapshotEnabled()
+        sealed class IncrementalRun : ClasspathSnapshotEnabled() {
 
-        class ToBeComputedByIncrementalCompiler(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : ClasspathSnapshotEnabled()
+            class NoChanges(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : IncrementalRun()
+
+            class ToBeComputedByIncrementalCompiler(override val classpathSnapshotFiles: ClasspathSnapshotFiles) : IncrementalRun()
+        }
 
         class NotAvailableDueToMissingClasspathSnapshot(override val classpathSnapshotFiles: ClasspathSnapshotFiles) :
             ClasspathSnapshotEnabled()

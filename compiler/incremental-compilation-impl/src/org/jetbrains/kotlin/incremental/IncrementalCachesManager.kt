@@ -27,7 +27,9 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     cachesRootDir: File,
     rootProjectDir: File?,
     protected val reporter: ICReporter,
-    storeFullFqNamesInLookupCache: Boolean = false) {
+    storeFullFqNamesInLookupCache: Boolean = false,
+    trackChangesInLookupCache: Boolean = false
+) {
     val pathConverter = IncrementalFileToPathConverter(rootProjectDir)
     private val caches = arrayListOf<BasicMapsOwner>()
 
@@ -43,7 +45,8 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     private val lookupCacheDir = File(cachesRootDir, "lookups").apply { mkdirs() }
 
     val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, reporter, pathConverter).apply { registerCache() }
-    val lookupCache: LookupStorage = LookupStorage(lookupCacheDir, pathConverter, storeFullFqNamesInLookupCache).apply { registerCache() }
+    val lookupCache: LookupStorage =
+        LookupStorage(lookupCacheDir, pathConverter, storeFullFqNamesInLookupCache, trackChangesInLookupCache).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
     @Synchronized
@@ -80,8 +83,15 @@ class IncrementalJvmCachesManager(
     rootProjectDir: File?,
     outputDir: File,
     reporter: ICReporter,
-    storeFullFqNamesInLookupCache: Boolean = false
-    ) : IncrementalCachesManager<IncrementalJvmCache>(cacheDirectory, rootProjectDir, reporter, storeFullFqNamesInLookupCache) {
+    storeFullFqNamesInLookupCache: Boolean = false,
+    trackChangesInLookupCache: Boolean = false
+) : IncrementalCachesManager<IncrementalJvmCache>(
+    cacheDirectory,
+    rootProjectDir,
+    reporter,
+    storeFullFqNamesInLookupCache,
+    trackChangesInLookupCache
+) {
     private val jvmCacheDir = File(cacheDirectory, "jvm").apply { mkdirs() }
     override val platformCache = IncrementalJvmCache(jvmCacheDir, outputDir, pathConverter).apply { registerCache() }
 }

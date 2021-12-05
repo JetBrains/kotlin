@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
 import org.jetbrains.kotlin.gradle.utils.Printer
 import java.io.File
-import java.util.*
 import kotlin.math.max
 
 internal class PlainTextBuildReportWriter(
@@ -102,7 +101,7 @@ internal class PlainTextBuildReportWriter(
 
         p.withIndent("Build performance metrics:") {
             for (metric in BuildPerformanceMetric.values()) {
-                p.println("${metric.name}: ${allBuildMetrics[metric]}")
+                allBuildMetrics[metric]?.let { p.println("${metric.name}: $it") }
             }
         }
         p.println()

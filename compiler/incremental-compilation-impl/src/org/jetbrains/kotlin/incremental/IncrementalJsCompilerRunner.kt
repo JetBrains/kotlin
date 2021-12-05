@@ -126,7 +126,7 @@ class IncrementalJsCompilerRunner(
         val classpathChanges = getClasspathChanges(
             libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter,
             mapOf(), false, caches.platformCache,
-            caches.lookupCache.lookupMap.keys.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
+            caches.lookupCache.lookupSymbols.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
         )
 
         @Suppress("UNUSED_VARIABLE") // for sealed when

@@ -27,19 +27,16 @@ import java.util.*
 object ClasspathChangesComputer {
 
     /**
-     * Computes changes between the current and previous [ClasspathSnapshot]s, plus unchanged elements that are impacted by the changes.
+     * Computes changes between the current and previous shrunk [ClasspathSnapshot]s, plus unchanged elements that are impacted by the
+     * changes.
      *
      * NOTE: The original classpath may contain duplicate classes, but the shrunk classpath must not contain duplicate classes.
      */
     fun computeChangedAndImpactedSet(
-        currentClasspathSnapshot: ClasspathSnapshot,
-        lookupStorageInPreviousRun: LookupStorage,
+        shrunkCurrentClasspathSnapshot: List<ClassSnapshotWithHash>,
         shrunkPreviousClasspathSnapshotFile: File,
         metrics: BuildMetricsReporter
     ): ChangeSet {
-        val shrunkCurrentClasspathSnapshot = metrics.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-            ClasspathSnapshotShrinker.shrink(currentClasspathSnapshot, lookupStorageInPreviousRun, metrics)
-        }
         val shrunkPreviousClasspathSnapshot = metrics.measure(BuildTime.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT) {
             ListExternalizer(ClassSnapshotWithHashExternalizer).loadFromFile(shrunkPreviousClasspathSnapshotFile)
         }

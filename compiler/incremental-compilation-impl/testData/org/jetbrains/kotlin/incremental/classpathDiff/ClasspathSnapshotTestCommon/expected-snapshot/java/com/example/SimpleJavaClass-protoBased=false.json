@@ -44,5 +44,9 @@
   "className$delegate": {
     "initializer": {},
     "_value": {}
+  },
+  "withHash$delegate": {
+    "initializer": {},
+    "_value": {}
   }
 }

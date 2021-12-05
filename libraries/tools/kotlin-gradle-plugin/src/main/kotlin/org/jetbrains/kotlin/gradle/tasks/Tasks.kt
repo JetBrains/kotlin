@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.*
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
@@ -852,7 +853,7 @@ abstract class KotlinCompile @Inject constructor(
             )
             when {
                 !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
-                inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> Empty(classpathSnapshotFiles)
+                inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> NoChanges(classpathSnapshotFiles)
                 !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
                     // When this happens, it means that the classpath snapshot in the previous run was not saved for some reason. It's
                     // likely that there were no source files to compile, so the task action was skipped (see
