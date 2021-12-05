@@ -12423,7 +12423,7 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
 
         private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
-            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath, transformer);
+            KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
         }
 
         public void testAllFilesPresentInInlineClasses() throws Exception {

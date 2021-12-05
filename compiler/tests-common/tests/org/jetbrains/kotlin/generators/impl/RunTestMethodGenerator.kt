@@ -18,15 +18,16 @@ object RunTestMethodGenerator : MethodGenerator<RunTestMethodModel>() {
 
     override fun generateBody(method: RunTestMethodModel, p: Printer) {
         with(method) {
-            val transformerPostfix = if (method.withTransformer) ", transformer" else ""
+            val modifiedTestMethodName =
+                if (withTransformer) "path -> ${testMethodName}WithTransformer(path, transformer)" else "this::$testMethodName"
             if (!isWithTargetBackend()) {
-                p.println("KotlinTestUtils.${method.testRunnerMethodName}(this::$testMethodName, this, testDataFilePath$transformerPostfix);")
+                p.println("KotlinTestUtils.$testRunnerMethodName($modifiedTestMethodName, this, testDataFilePath);")
             } else {
                 val className = TargetBackend::class.java.simpleName
                 val additionalArguments = if (additionalRunnerArguments.isNotEmpty())
                     additionalRunnerArguments.joinToString(separator = ", ", prefix = ", ")
                 else ""
-                p.println("KotlinTestUtils.$testRunnerMethodName(this::$testMethodName, $className.$targetBackend, testDataFilePath$additionalArguments$transformerPostfix);")
+                p.println("KotlinTestUtils.$testRunnerMethodName($modifiedTestMethodName, $className.$targetBackend, testDataFilePath$additionalArguments);")
             }
         }
     }

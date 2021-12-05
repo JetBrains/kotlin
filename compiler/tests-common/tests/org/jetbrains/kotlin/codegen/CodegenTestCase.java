@@ -48,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
@@ -515,9 +516,13 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @Override
     protected void doTest(@NotNull String filePath) throws Exception {
+        doTestWithTransformer(filePath, s -> s);
+    }
+
+    protected void doTestWithTransformer(@NotNull String filePath, @NotNull Function<String, String> sourceTransformer) throws Exception {
         File file = new File(filePath);
 
-        String expectedText = KtTestUtil.doLoadFile(file);
+        String expectedText = sourceTransformer.apply(KtTestUtil.doLoadFile(file));
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
         doMultiFileTest(file, testFiles);

@@ -55,11 +55,12 @@ abstract class BasicWasmBoxTest(
         TODO("TestWithCoroutinesPackageReplacement are not supported")
     }
 
-    fun doTest(filePath: String) {
+    fun doTest(filePath: String) = doTestWithTransformer(filePath) { it }
+    fun doTestWithTransformer(filePath: String, transformer: java.util.function.Function<String, String>) {
         val file = File(filePath)
 
         val outputDir = getOutputDir(file)
-        val fileContent = KtTestUtil.doLoadFile(file)
+        val fileContent = transformer.apply(KtTestUtil.doLoadFile(file))
 
         TestFileFactoryImpl().use { testFactory ->
             val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true)

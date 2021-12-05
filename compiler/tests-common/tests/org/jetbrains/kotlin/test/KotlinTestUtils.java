@@ -430,11 +430,7 @@ public class KotlinTestUtils {
     }
 
     public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile, null);
-    }
-
-    public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile, @NotNull Function<String, String> contentTransformer) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile, contentTransformer);
+        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
     }
 
     public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
@@ -459,15 +455,8 @@ public class KotlinTestUtils {
         runTest0(test, targetBackend, testDataFile);
     }
 
-    public static void runTest(
-            DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile,
-            @NotNull Function<String, String> contentTransformer
-    ) throws Exception {
-        runTest0(test, targetBackend, testDataFile, contentTransformer);
-    }
-
     public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile, null);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile);
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
@@ -479,16 +468,10 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath, null);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath);
     }
 
-    public static void runTest0(
-            DoTest test, TargetBackend targetBackend, String testDataFilePath, @NotNull Function<String, String> contentTransformer
-    ) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath, contentTransformer);
-    }
-
-    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath, @SuppressWarnings("unused") @Nullable Function<String, String> contentTransformer) throws Exception {
+    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
         if (testCase != null && !isRunTestOverridden(testCase)) {
             Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
