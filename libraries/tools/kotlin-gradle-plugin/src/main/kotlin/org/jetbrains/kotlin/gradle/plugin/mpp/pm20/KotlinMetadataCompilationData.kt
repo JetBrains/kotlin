@@ -146,6 +146,9 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "KotlinNativeMetadata")
 
+    override val artifactsTaskName: String
+        get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "klib")
+
     override val isActive: Boolean
         get() = fragment.isNativeShared()
 

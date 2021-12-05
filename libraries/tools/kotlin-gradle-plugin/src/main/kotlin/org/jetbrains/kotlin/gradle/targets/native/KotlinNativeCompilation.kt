@@ -59,6 +59,9 @@ abstract class AbstractKotlinNativeCompilation(
     compilationName: String
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName), KotlinNativeCompilationData<KotlinCommonOptions> {
 
+    override val artifactsTaskName: String
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "klib")
+
     override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { defaultSourceSet.languageSettings }
 
     override val compileKotlinTask: KotlinNativeCompile

@@ -24,6 +24,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
@@ -47,7 +48,9 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import java.io.File
+import java.util.concurrent.Callable
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
     createDefaultSourceSets = true,
@@ -440,20 +443,31 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
             project.project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTaskProvider)
 
+            val artifactsTaskProvider = project.registerTask<Zip>(compilation.artifactsTaskName) {
+                it.description = "Assembles an archive containing the main classes."
+                it.group = BasePlugin.BUILD_GROUP
+                it.archiveExtension.set("klib")
+                it.archiveAppendix.set(compilation.compilationPurpose)
+                val output = compilation.output
+                it.from(project.zipTree(project.provider { output.classesDirs.singleFile }))
+                it.from(Callable { output.resourcesDir }) { spec -> spec.into("$KLIB_DEFAULT_COMPONENT_NAME/resources") }
+                it.dependsOn(compilation.compileAllTaskName)
+            }
+
             if (compilation.isMainCompilationData()) {
                 if (compilation is KotlinNativeCompilation) {
                     project.project.tasks.getByName(compilation.target.artifactsTaskName).apply {
-                        dependsOn(compileTaskProvider)
+                        dependsOn(artifactsTaskProvider)
                     }
                 }
 
                 project.project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
-                    dependsOn(compileTaskProvider)
+                    dependsOn(artifactsTaskProvider)
                 }
             }
             val shouldAddCompileOutputsToElements = compilation.owner is KotlinGradleVariant || compilation.isMainCompilationData()
             if (shouldAddCompileOutputsToElements) {
-                createRegularKlibArtifact(compilation, compileTaskProvider)
+                createRegularKlibArtifact(compilation, artifactsTaskProvider)
             }
 
             if (compilation is AbstractKotlinNativeCompilation) {
@@ -489,8 +503,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         internal fun createRegularKlibArtifact(
             compilation: KotlinNativeCompilationData<*>,
-            compileTask: TaskProvider<out KotlinNativeCompile>
-        ) = createKlibArtifact(compilation, compileTask.map { it.outputFile.get() }, null, compileTask)
+            artifactsTask: TaskProvider<Zip>
+        ) = createKlibArtifact(compilation, artifactsTask.map { it.archiveFile.get().asFile }, null, artifactsTask)
 
         private fun createKlibArtifact(
             compilation: KotlinNativeCompilationData<*>,
