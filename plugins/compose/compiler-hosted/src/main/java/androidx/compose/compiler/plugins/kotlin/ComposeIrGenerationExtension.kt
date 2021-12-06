@@ -26,6 +26,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.CopyDefaultValuesFromExpectLowering
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.KlibAssignableParamTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.DurableFunctionKeyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.RecordDecoySignaturesTransformer
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     @Suppress("unused") private val liveLiteralsV2Enabled: Boolean = false,
+    private val generateFunctionKeyMetaClasses: Boolean = false,
     private val sourceInformationEnabled: Boolean = true,
     private val intrinsicRememberEnabled: Boolean = true,
     private val decoysEnabled: Boolean = false,
@@ -96,6 +98,15 @@ class ComposeIrGenerationExtension(
         ).lower(moduleFragment)
 
         ComposableFunInterfaceLowering(pluginContext).lower(moduleFragment)
+
+        val functionKeyTransformer = DurableFunctionKeyTransformer(
+            pluginContext,
+            symbolRemapper,
+            bindingTrace,
+            metrics
+        )
+
+        functionKeyTransformer.lower(moduleFragment)
 
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
@@ -187,6 +198,10 @@ class ComposeIrGenerationExtension(
                 bindingTrace,
                 metrics,
             ).lower(moduleFragment)
+        }
+
+        if (generateFunctionKeyMetaClasses) {
+            functionKeyTransformer.includeFunctionKeyMetaClasses()
         }
 
         if (metricsDestination != null) {
