@@ -47,6 +47,12 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("js/js.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractJsKLibABITestCase> {
+                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
+            }
+        }
+
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData") {
             testClass<AbstractInvalidationTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
