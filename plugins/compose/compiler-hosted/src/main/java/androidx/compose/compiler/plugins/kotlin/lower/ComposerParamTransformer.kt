@@ -391,6 +391,7 @@ class ComposerParamTransformer(
             containerSource
         ).also { fn ->
             if (this is IrSimpleFunction) {
+                fn.copyAttributes(this)
                 val propertySymbol = correspondingPropertySymbol
                 if (propertySymbol != null) {
                     fn.correspondingPropertySymbol = propertySymbol

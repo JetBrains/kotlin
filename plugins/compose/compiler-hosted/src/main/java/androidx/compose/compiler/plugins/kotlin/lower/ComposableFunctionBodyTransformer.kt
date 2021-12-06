@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -829,14 +830,14 @@ class ComposableFunctionBodyTransformer(
                         irStartReplaceableGroup(
                             body,
                             scope,
-                            declaration.irSourceKey()
+                            irFunctionSourceKey()
                         )
                     collectSourceInformation &&
                         !declaration.descriptor.hasExplicitGroupsAnnotation() ->
                         irSourceInformationMarkerStart(
                             body,
                             scope,
-                            declaration.irSourceKey()
+                            irFunctionSourceKey()
                         )
                     else -> null
                 },
@@ -972,7 +973,7 @@ class ComposableFunctionBodyTransformer(
                 body.endOffset,
                 listOfNotNull(
                     if (collectSourceInformation && scope.isInlinedLambda)
-                        irStartReplaceableGroup(body, scope)
+                        irStartReplaceableGroup(body, scope, irFunctionSourceKey())
                     else null,
                     *sourceInformationPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
@@ -1147,7 +1148,7 @@ class ComposableFunctionBodyTransformer(
                 irStartRestartGroup(
                     body,
                     scope,
-                    declaration.irSourceKey()
+                    irFunctionSourceKey()
                 ),
                 *skipPreamble.statements.toTypedArray(),
                 transformedBody,
@@ -1818,6 +1819,16 @@ class ComposableFunctionBodyTransformer(
         return hash
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun functionSourceKey(): Int {
+        val fn = currentFunctionScope.function
+        if (fn is IrSimpleFunction) {
+            return fn.sourceKey()
+        } else {
+            error("expected simple function: ${fn::class}")
+        }
+    }
+
     private fun IrElement.irSourceKey(): IrConst<Int> {
         return IrConstImpl(
             UNDEFINED_OFFSET,
@@ -1825,6 +1836,16 @@ class ComposableFunctionBodyTransformer(
             context.irBuiltIns.intType,
             IrConstKind.Int,
             sourceKey()
+        )
+    }
+
+    private fun irFunctionSourceKey(): IrConst<Int> {
+        return IrConstImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            context.irBuiltIns.intType,
+            IrConstKind.Int,
+            functionSourceKey()
         )
     }
 
