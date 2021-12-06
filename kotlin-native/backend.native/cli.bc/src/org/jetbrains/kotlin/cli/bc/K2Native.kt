@@ -83,14 +83,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             if (e is KonanCompilationException || e is CompilationErrorException)
                 return ExitCode.COMPILATION_ERROR
 
-            configuration.report(ERROR, """
-                |Compilation failed: ${e.message}
+            val message = buildString {
+                appendLine("Compilation failed: ${e.message}")
+                appendLine()
+                appendLine(" * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}")
+                appendLine(" * Compiler version info: Konan: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}")
+                appendLine(" * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}")
+                appendLine()
+            }
 
-                | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
-                | * Compiler version info: Konan: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}
-                | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
-
-                """.trimMargin())
+            configuration.report(ERROR, message)
             throw e
         }
 
