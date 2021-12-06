@@ -315,6 +315,9 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             val loopVariablePosition = findLoopVariablePosition(irForLoopBlock.statements[1]) ?: return
             val (loopVariableContainer, loopVariableIndex) = loopVariablePosition
             val loopVariable = loopVariableContainer.statements[loopVariableIndex] as? IrVariable ?: return
+            val loopVariableInitializer = loopVariable.initializer ?: return
+            if (loopVariableInitializer !is IrGetValue) return
+            if (loopVariableInitializer.symbol != inductionVariable.symbol) return
 
             val inductionVariableType = inductionVariable.type
             val loopVariableType = loopVariable.type

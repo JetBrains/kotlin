@@ -23,8 +23,8 @@ class WithIndexLoopHeader(
     context: CommonBackendContext
 ) : ForLoopHeader {
 
-    private val nestedLoopHeader: ForLoopHeader
-    private val indexVariable: IrVariable
+    val nestedLoopHeader: ForLoopHeader
+    val indexVariable: IrVariable
     private val ownsIndexVariable: Boolean
     private val incrementIndexStatement: IrStatement?
 

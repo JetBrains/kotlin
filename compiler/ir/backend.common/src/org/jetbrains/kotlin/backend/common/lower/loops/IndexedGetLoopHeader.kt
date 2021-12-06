@@ -21,6 +21,9 @@ class IndexedGetLoopHeader(
     context: CommonBackendContext
 ) : NumericForLoopHeader<IndexedGetHeaderInfo>(headerInfo, builder, context) {
 
+    private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
+    private val javaLikeCounterLoopBuilder = JavaLikeCounterLoopBuilder(context)
+
     override val loopInitStatements =
         listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
 
@@ -48,20 +51,25 @@ class IndexedGetLoopHeader(
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {
-        // Loop is lowered into something like:
-        //
-        //   var inductionVar = 0
-        //   var last = objectVariable.size
-        //   while (inductionVar < last) {
-        //       val loopVar = objectVariable.get(inductionVar)
-        //       inductionVar++
-        //       // Loop body
-        //   }
-        val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
-            label = oldLoop.label
-            condition = buildLoopCondition(this@with)
-            body = newBody
+        val newLoopCondition = buildLoopCondition(this@with)
+        if (preferJavaLikeCounterLoop) {
+            javaLikeCounterLoopBuilder.buildJavaLikeDoWhileCounterLoop(oldLoop, newLoopCondition, newBody, loopOrigin = null)
+        } else {
+            // Loop is lowered into something like:
+            //
+            //   var inductionVar = 0
+            //   var last = objectVariable.size
+            //   while (inductionVar < last) {
+            //       val loopVar = objectVariable.get(inductionVar)
+            //       inductionVar++
+            //       // Loop body
+            //   }
+            val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                label = oldLoop.label
+                condition = newLoopCondition
+                body = newBody
+            }
+            LoopReplacement(newLoop, newLoop)
         }
-        LoopReplacement(newLoop, newLoop)
     }
 }

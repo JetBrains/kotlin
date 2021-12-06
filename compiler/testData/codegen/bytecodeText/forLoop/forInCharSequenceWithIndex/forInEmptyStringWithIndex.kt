@@ -31,4 +31,4 @@ fun box(): String {
 // 4 ISTORE
 // 0 IADD
 // 0 ISUB
-// 1 IINC
+// 0 IINC

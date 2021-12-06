@@ -21,6 +21,6 @@ fun f() {
 // 1 LOCALVARIABLE c C L3 L\d+ 0
 
 // JVM_IR_TEMPLATES
-// 1 ISTORE 2\s+L3
+// 1 ISTORE 2\s+L4
 // 1 ILOAD 2\s+INVOKEVIRTUAL java/io/PrintStream.print \(C\)V
-// 1 LOCALVARIABLE c C L3 L\d+ 2
+// 1 LOCALVARIABLE c C L4 L\d+ 2
