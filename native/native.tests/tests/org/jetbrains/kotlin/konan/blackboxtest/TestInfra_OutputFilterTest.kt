@@ -3,14 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.support
+package org.jetbrains.kotlin.konan.blackboxtest
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TCTestOutputFilter
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Suppress("ClassName")
+@Tag("infrastructure")
 class TestInfra_OutputFilterTest {
     @Test
     fun noFiltering() {
