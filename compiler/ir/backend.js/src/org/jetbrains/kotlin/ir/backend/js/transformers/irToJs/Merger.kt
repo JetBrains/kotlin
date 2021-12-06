@@ -115,7 +115,20 @@ class Merger(
         return rootNode
     }
 
+    private fun assertSingleDefinition() {
+        val definitions = mutableSetOf<String>()
+        fragments.forEach {
+            it.definitions.forEach {
+                if (!definitions.add(it)) {
+                    error("Clashing definitions with tag '$it'")
+                }
+            }
+        }
+    }
+
     fun merge(): JsProgram {
+        assertSingleDefinition()
+
         linkJsNames()
 
         val moduleBody = mutableListOf<JsStatement>().also {
