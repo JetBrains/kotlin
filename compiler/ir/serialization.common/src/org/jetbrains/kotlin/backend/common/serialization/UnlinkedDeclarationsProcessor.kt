@@ -235,7 +235,7 @@ internal class UnlinkedDeclarationsProcessor(
             expression.transformChildrenVoid()
             val symbol = expression.symbol
 
-            if (!symbol.isUnlinked()) return expression
+            if (!symbol.isUnlinked() && !expression.type.isUnlinked()) return expression
 
             reportWarning(
                 "Accessing declaration contains unlinked symbol ${symbol.signature?.render() ?: ""}",

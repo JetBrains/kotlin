@@ -250,7 +250,6 @@ abstract class KotlinIrLinker(
                 if (ta is IrTypeProjection) {
                     val projected = ta.type
                     if (projected.isUnlinked(visited)) {
-                        result.add(classifier)
                         return true
                     }
                 }
