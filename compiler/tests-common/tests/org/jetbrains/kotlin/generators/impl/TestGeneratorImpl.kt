@@ -124,7 +124,12 @@ private class TestGeneratorImplInstance(
         p.println("import " + KtTestUtil::class.java.canonicalName + ";")
 
         for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
-            p.println("import ${clazz.name};")
+            val realName = when (clazz) {
+                TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
+                    "org.jetbrains.kotlin.test.runners.TransformersFunctions"
+                else -> clazz.name
+            }
+            p.println("import $realName;")
         }
 
         if (suiteClassPackage != baseTestClassPackage) {

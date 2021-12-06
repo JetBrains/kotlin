@@ -16,7 +16,10 @@ abstract class TransformingTestMethodModel(val source: SimpleTestMethodModel, va
     override val tags: List<String>
         get() = source.tags
 
+    object TransformerFunctionsClassPlaceHolder
     object Kind : MethodModel.Kind()
+
+    override fun imports(): Collection<Class<*>> = super.imports() + TransformerFunctionsClassPlaceHolder::class.java
 
     internal val isNative
         get() = source.targetBackend in listOf(TargetBackend.NATIVE, TargetBackend.ANY)

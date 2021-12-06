@@ -129,7 +129,12 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             p.println("import ${KtTestUtil::class.java.canonicalName};")
 
             for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
-                p.println("import ${clazz.name};")
+                val realName = when (clazz) {
+                    TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
+                        "org.jetbrains.kotlin.test.runners.TransformersFunctions"
+                    else -> clazz.name
+                }
+                p.println("import $realName;")
             }
 
             if (suiteClassPackage != baseTestClassPackage) {
@@ -208,7 +213,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
 
             var first = true
 
-            val transformers = testClassModel.predefinedTransformers(false)
+            val transformers = testClassModel.predefinedNativeTransformers(false)
 
             if (transformers.isNotEmpty()) {
                 p.println("public ${testClassModel.name}() {")
@@ -286,8 +291,8 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         return false
     }
 
-    private fun TestClassModel.predefinedTransformers(recursive: Boolean): List<Pair<String, String>> =
+    private fun TestClassModel.predefinedNativeTransformers(recursive: Boolean): List<Pair<String, String>> =
         methods.mapNotNull { method ->
             (method as? TransformingTestMethodModel)?.takeIf { it.isNative }?.let { it.source.file.path to it.transformer }
-        } + if (recursive) innerTestClasses.flatMap { it.predefinedTransformers(recursive) } else listOf()
+        } + if (recursive) innerTestClasses.flatMap { it.predefinedNativeTransformers(recursive) } else listOf()
 }
