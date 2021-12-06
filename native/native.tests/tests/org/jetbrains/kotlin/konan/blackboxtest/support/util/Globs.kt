@@ -5,31 +5,32 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import kotlin.io.path.name
 
 /**
- * Naive sub-optimal implementation of glob expansion.
+ * Naive suboptimal implementation of glob expansion.
  */
-internal fun expandGlobTo(unexpendedPath: File, output: MutableCollection<File>) {
-    val normalizedUnexpandedPath = Paths.get(unexpendedPath.path).toAbsolutePath().normalize()
+internal fun expandGlobTo(unexpandedPath: File, output: MutableCollection<File>) {
+    assertTrue(unexpandedPath.isAbsolute) { "Path must be absolute: $unexpandedPath" }
 
-    val paths = generateSequence(normalizedUnexpandedPath) { it.parent }.toMutableList().apply { reverse() }
+    val paths: List<File> = generateSequence(unexpandedPath) { it.parentFile }.toMutableList().apply { reverse() }
     for (index in 1 until paths.size) {
-        val path = paths[index]
+        val path: File = paths[index]
 
         val isGlob = '*' in path.name
         if (isGlob) {
-            val basePath = paths[index - 1]
+            val basePath: File = paths[index - 1]
+            val basePathAsPath: Path = basePath.toPath()
 
-            val pattern = basePath.relativize(normalizedUnexpandedPath).toString()
-            val matcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
+            val pattern: String = unexpandedPath.relativeTo(basePath).path
+            val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
 
-            Files.walkFileTree(basePath, object : SimpleFileVisitor<Path>() {
+            Files.walkFileTree(basePathAsPath, object : SimpleFileVisitor<Path>() {
                 override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    if (matcher.matches(basePath.relativize(file))) output += file.toFile()
+                    if (matcher.matches(basePathAsPath.relativize(file))) output += file.toFile()
                     return FileVisitResult.CONTINUE
                 }
             })
@@ -39,7 +40,7 @@ internal fun expandGlobTo(unexpendedPath: File, output: MutableCollection<File>)
     }
 
     // No globs to expand.
-    output += normalizedUnexpandedPath.toFile()
+    output += unexpandedPath
 }
 
 internal fun expandGlob(unexpendedPath: File): Collection<File> = buildList { expandGlobTo(unexpendedPath, this) }
