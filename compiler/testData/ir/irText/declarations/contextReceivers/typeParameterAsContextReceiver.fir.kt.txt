@@ -1,0 +1,12 @@
+fun <T : Any?> useContext(block: Function1<T, Unit>) {
+}
+
+fun test() {
+  with<Int, Unit>(receiver = 42, block = local fun Int.<anonymous>() {
+    useContext<Int>(block = local fun <anonymous>(i: Int) {
+      i.toDouble() /*~> Unit */
+    }
+)
+  }
+)
+}
