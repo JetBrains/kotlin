@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -121,7 +124,14 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
     private fun finalizeScriptClass(irScriptClass: IrClass, irScript: IrScript, symbolRemapper: ScriptsToClassesSymbolRemapper) {
         val typeRemapper = SimpleTypeRemapper(symbolRemapper)
         val capturingClasses = collectCapturingClasses(irScript)
-        val scriptTransformer = ScriptToClassTransformer(irScript, irScriptClass, symbolRemapper, typeRemapper, context, capturingClasses, innerClassesSupport)
+        val scriptTransformer = ScriptToClassTransformer(
+            irScript,
+            irScriptClass,
+            typeRemapper,
+            context,
+            capturingClasses,
+            innerClassesSupport
+        )
         val lambdaPatcher = ScriptFixLambdasTransformer(irScript, irScriptClass, context)
 
         irScriptClass.thisReceiver = scriptTransformer.scriptClassReceiver
@@ -312,7 +322,6 @@ data class ScriptFixLambdasTransformerContext(
 private class ScriptToClassTransformer(
     val irScript: IrScript,
     val irScriptClass: IrClass,
-    val symbolRemapper: SymbolRemapper,
     val typeRemapper: TypeRemapper,
     val context: JvmBackendContext,
     val capturingClasses: Set<IrClassImpl>,
