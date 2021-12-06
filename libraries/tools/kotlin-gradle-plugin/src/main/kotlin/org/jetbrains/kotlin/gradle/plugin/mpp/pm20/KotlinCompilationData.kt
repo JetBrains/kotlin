@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.GradleModuleVariantResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.project.model.VariantResolution
 import org.jetbrains.kotlin.project.model.refinesClosure
 
 interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : KotlinVariantCompilationData<T> {
@@ -27,11 +30,27 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
         get() = owner.refinesClosure.filterIsInstance<KotlinGradleVariant>().associate { it.disambiguateName("") to it.kotlinSourceRoots }
 
     override val friendPaths: Iterable<FileCollection>
-        // TODO for now, all output classes of the module are considered friends, even those not on the classpath
         get() {
-            // FIXME support compiling against the artifact task outputs
-            // TODO note for Android: see the friend artifacts code in KotlinAndroidCompilation
-            return owner.containingModule.project.kpmModules.flatMap { it.variants.map { it.compilationOutputs.classesDirs } }
+            // TODO note for Android: see the friend artifacts code in KotlinAndroidCompilation; should we port it here?
+            return listOf(
+                project.filesProvider {
+                    val friendVariants = resolveFriendVariants()
+                    val friendModuleClassifiers = friendVariants.map { it.containingModule.moduleClassifier }.toSet()
+                    val artifactView = owner.compileDependenciesConfiguration
+                        .incoming.artifactView { view ->
+                            view.componentFilter { id ->
+                                // FIXME rewrite using the proper module resolution after those changes are merged
+                                val asProject = id as? ProjectComponentIdentifier
+                                asProject?.build?.isCurrentBuild == true &&
+                                        asProject.projectPath == owner.project.path
+                            }
+                        }.artifacts
+                    artifactView.filter {
+                        // FIXME rewrite using the proper module resolution after those changes are merged
+                        moduleClassifiersFromCapabilities(it.variant.capabilities).any { it in friendModuleClassifiers }
+                    }.map { it.file }
+                }
+            )
         }
 
     override val moduleName: String
@@ -41,6 +60,29 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
 
     override val ownModuleName: String
         get() = owner.ownModuleName()
+
+    private fun resolveFriendVariants(): Iterable<KotlinGradleVariant> {
+        val moduleResolver = GradleModuleDependencyResolver.getForCurrentBuild(project)
+        val variantResolver = GradleModuleVariantResolver.getForCurrentBuild(project)
+        val dependencyGraphResolver = GradleKotlinDependencyGraphResolver(moduleResolver)
+
+        val friendModules =
+            ((dependencyGraphResolver.resolveDependencyGraph(owner.containingModule) as? GradleDependencyGraph)
+                ?: error("Failed to resolve dependencies of ${owner.containingModule}"))
+                .allDependencyModules
+                .filterIsInstance<KotlinGradleModule>()
+                .filter {
+                    // the module comes from the same Gradle project // todo: extend to other friends once supported
+                    it.project == owner.containingModule.project &&
+                            // also, important to check that the owner variant really requests this module:
+                            variantResolver.getChosenVariant(owner, it) is VariantResolution.VariantMatch
+                }
+
+        val friendVariants = friendModules.map {
+            (variantResolver.getChosenVariant(owner, it) as VariantResolution.VariantMatch).chosenVariant
+        }
+        return friendVariants.filterIsInstance<KotlinGradleVariant>()
+    }
 }
 
 fun KotlinCompilationData<*>.isMainCompilationData(): Boolean = when (this) {
