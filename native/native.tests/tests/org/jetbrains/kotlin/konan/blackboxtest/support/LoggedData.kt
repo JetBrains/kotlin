@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.RunResult
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeEnvVars
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeProperties
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import kotlin.time.Duration
@@ -29,9 +31,26 @@ internal abstract class LoggedData {
         appendLine(this@LoggedData)
     }
 
+    class JVMEnvironment : LoggedData() {
+        private val properties = SafeProperties()
+
+        override fun computeText() = buildString {
+            appendLine("ENVIRONMENT VARIABLES:")
+            SafeEnvVars.forEach { (name, safeValue) ->
+                append("- ").append(name).append(" = ").appendLine(safeValue)
+            }
+            appendLine()
+            appendLine("JVM PROPERTIES:")
+            properties.forEach { (name, safeValue) ->
+                append("- ").append(name).append(" = ").appendLine(safeValue)
+            }
+        }
+    }
+
     class CompilerParameters(
         private val compilerArgs: Array<String>,
-        private val sourceModules: Collection<TestModule>
+        private val sourceModules: Collection<TestModule>,
+        private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
     ) : LoggedData() {
         private val testDataFiles: List<File>
             get() = buildList {
@@ -44,6 +63,8 @@ internal abstract class LoggedData {
 
         override fun computeText() = buildString {
             appendArguments("COMPILER ARGUMENTS:", listOf("\$\$kotlinc-native\$\$") + compilerArgs)
+            appendLine()
+            appendLine(environment)
 
             val testDataFiles = testDataFiles
             if (testDataFiles.isNotEmpty()) {
