@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroup
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroupId
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
@@ -19,7 +17,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.junit.jupiter.api.fail
 import java.io.File
 
-internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) : TestCaseGroupProvider {
+internal class PredefinedTestCaseGroupProvider(private val settings: Settings, annotation: PredefinedTestCases) : TestCaseGroupProvider {
     private val testCaseIdToPredefinedTestCase: Map<TestCaseId.Named, PredefinedTestCase> = buildMap {
         annotation.testCases.forEach { predefinedTestCase ->
             val testCaseId = TestCaseId.Named(predefinedTestCase.name)
@@ -76,31 +74,38 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
         return lazyTestCaseGroups[testCaseGroupId.cast()]
     }
 
-    companion object {
-        private fun Array<String>.expandGlobs(noExpandedFilesErrorMessage: () -> String): Set<File> {
-            val files = buildSet {
-                this@expandGlobs.forEach { pathPattern -> expandGlobTo(getAbsoluteFile(pathPattern), this) }
+    private fun Array<String>.expandGlobs(noExpandedFilesErrorMessage: () -> String): Set<File> {
+        val files = buildSet {
+            this@expandGlobs.forEach { pathPattern ->
+                expandGlobTo(getAbsoluteFile(substituteRealPaths(pathPattern)), this)
             }
-            assertTrue(files.isNotEmpty(), noExpandedFilesErrorMessage)
-            return files
+        }
+        assertTrue(files.isNotEmpty(), noExpandedFilesErrorMessage)
+        return files
+    }
+
+    private fun Array<String>.parseCompilerArgs(parsingErrorMessage: () -> String): TestCompilerArgs =
+        if (isEmpty())
+            TestCompilerArgs.EMPTY
+        else {
+            val freeCompilerArgs = map { arg -> substituteRealPaths(arg) }
+            val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
+            assertTrue(forbiddenCompilerArgs.isEmpty()) {
+                """
+                    ${parsingErrorMessage()}
+
+                    Forbidden compiler arguments found: $forbiddenCompilerArgs
+                    All arguments: $this
+                """.trimIndent()
+            }
+
+            TestCompilerArgs(freeCompilerArgs)
         }
 
-        private fun Array<String>.parseCompilerArgs(parsingErrorMessage: () -> String): TestCompilerArgs =
-            if (isEmpty())
-                TestCompilerArgs.EMPTY
-            else {
-                val freeCompilerArgs = asList()
-                val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
-                assertTrue(forbiddenCompilerArgs.isEmpty()) {
-                    """
-                        ${parsingErrorMessage()}
-                        
-                        Forbidden compiler arguments found: $forbiddenCompilerArgs
-                        All arguments: $this
-                    """.trimIndent()
-                }
-
-                TestCompilerArgs(freeCompilerArgs)
-            }
-    }
+    private fun substituteRealPaths(value: String): String =
+        if ('$' in value) {
+            // N.B. Here, more substitutions can be supported in the future if it would be necessary.
+            value.replace(PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION, settings.get<GlobalSettings>().kotlinNativeHome.path)
+        } else
+            value
 }

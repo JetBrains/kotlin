@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCase as TC
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
 import org.junit.jupiter.api.Tag
@@ -44,4 +45,4 @@ class NativeStdlibBlackBoxTest : AbstractNativeBlackBoxTest() {
     fun nativeStdlib() = dynamicTestCase(TestCaseId.Named("nativeStdlib"))
 }
 
-private const val KOTLIN_NATIVE_STDLIB_PATH = "kotlin-native/dist/klib/common/stdlib"
+private const val KOTLIN_NATIVE_STDLIB_PATH = "$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"

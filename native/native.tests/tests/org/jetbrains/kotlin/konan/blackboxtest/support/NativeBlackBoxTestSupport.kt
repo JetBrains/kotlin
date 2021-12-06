@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -154,21 +150,23 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             testSettings: TestSettings,
             testSettingsAnnotation: Annotation?
         ): TestCaseGroupProvider {
-            // Try to find a constructor that accepts the annotation.
+            // Try to find a constructor that accepts the setting and the annotation.
             if (testSettingsAnnotation != null) {
                 val testSettingsAnnotationClass = testSettingsAnnotation.annotationClass
                 testSettings.providerClass.constructors.asSequence()
                     .forEach { c ->
-                        val p = c.parameters.singleOrNull() ?: return@forEach
-                        if (p.hasTypeOf(testSettingsAnnotationClass)) return c.call(testSettingsAnnotation).cast()
+                        val (p1, p2) = c.parameters.takeIf { it.size == 2 } ?: return@forEach
+                        if (p1.hasTypeOf<Settings>() && p2.hasTypeOf(testSettingsAnnotationClass))
+                            return c.call(settings, testSettingsAnnotation).cast()
                     }
             }
 
-            // ... or settings at least.
+            // ... or the settings at least.
             testSettings.providerClass.constructors.asSequence()
                 .forEach { c ->
                     val p = c.parameters.singleOrNull() ?: return@forEach
-                    if (p.hasTypeOf<Settings>()) return c.call(settings).cast()
+                    if (p.hasTypeOf<Settings>())
+                        return c.call(settings).cast()
                 }
 
             fail { "No suitable constructor for ${testSettings.providerClass}" }
