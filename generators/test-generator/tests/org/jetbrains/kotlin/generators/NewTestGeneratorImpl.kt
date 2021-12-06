@@ -131,7 +131,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
                 val realName = when (clazz) {
                     TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
-                        "org.jetbrains.kotlin.test.runners.TransformersFunctions"
+                        "org.jetbrains.kotlin.test.utils.TransformersFunctions"
                     else -> clazz.name
                 }
                 p.println("import $realName;")

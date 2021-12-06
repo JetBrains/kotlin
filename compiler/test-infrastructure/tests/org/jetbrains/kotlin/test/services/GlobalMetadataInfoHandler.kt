@@ -51,7 +51,7 @@ class GlobalMetadataInfoHandler(
         infos += codeMetaInfos
     }
 
-    fun compareAllMetaDataInfos(expectedTransformer: ((String) -> String)?) {
+    fun compareAllMetaDataInfos() {
         // TODO: adapt to multiple testdata files
         val moduleStructure = testServices.moduleStructure
         val builder = StringBuilder()
@@ -66,18 +66,15 @@ class GlobalMetadataInfoHandler(
                     codeMetaInfos,
                     testServices.sourceFileProvider.getContentOfSourceFile(file)
                 )
-                builder.append(fileBuilder.stripAdditionalEmptyLines(file))
+                val reverseTransformers = testServices.sourceFileProvider.preprocessors.filterIsInstance<ReversibleSourceFilePreprocessor>()
+                val initialFileContent = fileBuilder.stripAdditionalEmptyLines(file).toString()
+                val actualFileContent =
+                    reverseTransformers.foldRight(initialFileContent) { transformer, source -> transformer.revert(file, source) }
+                builder.append(actualFileContent)
             }
         }
         val actualText = builder.toString()
-        val expectedFile = moduleStructure.originalTestDataFiles.single()
-        if (expectedTransformer != null) {
-            val expectedContent = expectedFile.readText().let(expectedTransformer)
-            val message = "Actual data differs from transformed content of file $expectedFile"
-            testServices.assertions.assertEquals(expectedContent, actualText) { message }
-        } else {
-            testServices.assertions.assertEqualsToFile(expectedFile, actualText)
-        }
+        testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
     }
 
     private fun StringBuilder.stripAdditionalEmptyLines(file: TestFile): CharSequence {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.NativeBlackBoxTestCaseGroupProvider;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.ExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.runners.TransformersFunctions;
+import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15705,11 +15705,8 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @Test
             @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
             public void testBoxResultInlineClassOfConstructorCall() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions::removeOptionalJvmInlineAnnotation
                 runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
-                /*
-                  There is a registered source transformer for the testcase:
-                  TransformersFunctions::removeOptionalJvmInlineAnnotation
-                */
             }
 
             @Test

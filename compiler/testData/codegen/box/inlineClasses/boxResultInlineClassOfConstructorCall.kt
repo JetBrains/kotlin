@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// !LANGUAGE: +ValueClasses
+// LANGUAGE: +ValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Result<T>(val a: Any?)

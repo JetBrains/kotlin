@@ -23,14 +23,21 @@ object TransformingTestMethodGenerator : MethodGenerator<TransformingTestMethodM
 
     override fun generateBody(method: TransformingTestMethodModel, p: Printer) {
         with(method) {
+            if (registerInConstructor) {
+                val lines = transformer.lines()
+                val message = "There is a registered source transformer for the testcase"
+                if (lines.size > 1) {
+                    p.println("/*")
+                    p.println("  $message:")
+                    lines.forEach { p.println("  $it") }
+                    p.println("*/")
+                } else {
+                    val restOfLine = lines.firstOrNull()?.takeIf { it.isNotBlank() }?.let { ": $it" } ?: ""
+                    p.println("// $message$restOfLine")
+                }
+            }
             val filePath = KtTestUtil.getFilePath(source.file) + if (source.file.isDirectory) "/" else ""
             p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\"${if (registerInConstructor) "" else ", $transformer"});")
-            if (registerInConstructor) {
-                p.println("/*")
-                p.println("  There is a registered source transformer for the testcase:")
-                transformer.lines().forEach { p.println("  $it") }
-                p.println("*/")
-            }
         }
     }
 }

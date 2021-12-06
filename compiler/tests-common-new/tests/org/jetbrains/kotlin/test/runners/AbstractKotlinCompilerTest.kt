@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import org.junit.jupiter.api.BeforeEach
@@ -81,18 +82,17 @@ abstract class AbstractKotlinCompilerTest {
         testRunner(filePath, configuration).runTest(filePath)
     }
 
-    @JvmOverloads
     open fun runTest(
         @TestDataFile filePath: String,
-        actualContentModifier: (String) -> String,
-        expectedContentModifier: ((String) -> String)? = actualContentModifier
+        contentModifier: ReplacingSourceTransformer,
     ) {
-        class SourceTransformer(testServices: TestServices) : SourceFilePreprocessor(testServices) {
-            override fun process(file: TestFile, content: String): String = content.let(actualContentModifier)
+        class SourceTransformer(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
+            override fun process(file: TestFile, content: String): String = contentModifier.invokeForTestFile(file, content)
+            override fun revert(file: TestFile, actualContent: String): String = contentModifier.revertForFile(file, actualContent)
         }
         testRunner(filePath) {
-            configuration.let { it() } // property configuration, not method
-            useSourcePreprocessor({ SourceTransformer(it) })
-        }.runTest(filePath, expectedFileTransformer = expectedContentModifier)
+            configuration.invoke(this)
+            useSourcePreprocessor(::SourceTransformer)
+        }.runTest(filePath)
     }
 }
