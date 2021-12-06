@@ -17,13 +17,26 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.deprecation.createDeprecationDiagnostic
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
         if (element.parent is KtThisExpression) return
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NoDeprecationOnDeprecatedEnumEntries) && element is KtEnumEntrySuperclassReferenceExpression) {
+            val referencedEnum =
+                (element.getResolvedCall(context.trace.bindingContext)?.resultingDescriptor as? ConstructorDescriptor)?.constructedClass
+            if (referencedEnum == targetDescriptor) {
+                return
+            }
+        }
 
         for (deprecation in context.deprecationResolver.getDeprecations(targetDescriptor)) {
             context.trace.report(createDeprecationDiagnostic(element, deprecation, context.languageVersionSettings))
