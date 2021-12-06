@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilation.Companion.resultingArtifactPath
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
@@ -41,13 +42,12 @@ internal class TestCompilationFactory(private val settings: Settings) {
         cachedCompilations[cacheKey]?.let { return it }
 
         // Long pass.
-        val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs
+        val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
+        val extras = testCases.first().extras // Should be identical inside the same test case group.
         val libraries = rootModules.flatMapToSet { it.allDependencies }.map { moduleToKlib(it, freeCompilerArgs) }
         val friends = rootModules.flatMapToSet { it.allFriends }.map { moduleToKlib(it, freeCompilerArgs) }
 
         return cachedCompilations.computeIfAbsent(cacheKey) {
-            val entryPoint = testCases.singleOrNull()?.safeExtras<NoTestRunnerExtras>()?.entryPoint
-
             TestCompilationImpl(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
@@ -56,7 +56,17 @@ internal class TestCompilationFactory(private val settings: Settings) {
                 expectedArtifactFile = artifactFileForExecutable(rootModules),
                 specificCompilerArgs = {
                     add("-produce", "program")
-                    if (entryPoint != null) add("-entry", entryPoint) else add("-generate-test-runner")
+                    when (extras) {
+                        is NoTestRunnerExtras -> add("-entry", extras.entryPoint)
+                        is WithTestRunnerExtras -> {
+                            val testRunnerArg = when (extras.runnerType) {
+                                TestRunnerType.DEFAULT -> "-generate-test-runner"
+                                TestRunnerType.WORKER -> "-generate-worker-test-runner"
+                                TestRunnerType.NO_EXIT -> "-generate-no-exit-test-runner"
+                            }
+                            add(testRunnerArg)
+                        }
+                    }
                     settings.get<GlobalSettings>().getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
                         add("-Xcache-directory=$rootCacheDir")
                     }

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
@@ -177,7 +178,7 @@ internal class TestCase(
 ) {
     sealed interface Extras
     class NoTestRunnerExtras(val entryPoint: String, val inputDataFile: File?) : Extras
-    object WithTestRunnerExtras : Extras
+    class WithTestRunnerExtras(val runnerType: TestRunnerType) : Extras
 
     init {
         when (kind) {
@@ -256,7 +257,7 @@ internal interface TestCaseGroupId {
 internal interface TestCaseGroup {
     fun isEnabled(testCaseId: TestCaseId): Boolean
     fun getByName(testCaseId: TestCaseId): TestCase?
-    fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs): Collection<TestCase>
+    fun getRegularOnly(freeCompilerArgs: TestCompilerArgs, runnerType: TestRunnerType): Collection<TestCase>
 
     class Default(
         private val disabledTestCaseIds: Set<TestCaseId>,
@@ -267,15 +268,20 @@ internal interface TestCaseGroup {
         override fun isEnabled(testCaseId: TestCaseId) = testCaseId !in disabledTestCaseIds
         override fun getByName(testCaseId: TestCaseId) = testCasesById[testCaseId]
 
-        override fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs) =
-            testCasesById.values.filter { it.kind == TestKind.REGULAR && it.freeCompilerArgs == freeCompilerArgs }
+        override fun getRegularOnly(freeCompilerArgs: TestCompilerArgs, runnerType: TestRunnerType) =
+            testCasesById.values.filter { testCase ->
+                testCase.kind == TestKind.REGULAR
+                        && testCase.extras<WithTestRunnerExtras>().runnerType == runnerType
+                        && testCase.freeCompilerArgs == freeCompilerArgs
+            }
     }
 
     companion object {
         val ALL_DISABLED = object : TestCaseGroup {
             override fun isEnabled(testCaseId: TestCaseId) = false
-            override fun getByName(testCaseId: TestCaseId) = fail { "This function should not be called" }
-            override fun getRegularOnlyByCompilerArgs(freeCompilerArgs: TestCompilerArgs) = fail { "This function should not be called" }
+            override fun getByName(testCaseId: TestCaseId) = unsupported()
+            override fun getRegularOnly(freeCompilerArgs: TestCompilerArgs, runnerType: TestRunnerType) = unsupported()
+            private fun unsupported(): Nothing = fail { "This function should not be called" }
         }
     }
 }

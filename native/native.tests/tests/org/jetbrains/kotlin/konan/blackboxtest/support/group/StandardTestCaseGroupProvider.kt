@@ -213,7 +213,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
                     inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
                 )
             else
-                WithTestRunnerExtras
+                WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
         )
         testCase.initialize(findSharedModule = null)
 
