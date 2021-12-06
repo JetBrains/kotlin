@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 
 interface KotlinFragmentConfigurationInstantiator {
     fun create(
         module: KotlinGradleModule,
-        names: FragmentNameDisambiguation,
+        names: KotlinNameDisambiguation,
         dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration
 }

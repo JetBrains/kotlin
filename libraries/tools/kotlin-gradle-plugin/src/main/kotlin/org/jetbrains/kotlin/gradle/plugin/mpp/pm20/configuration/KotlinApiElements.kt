@@ -10,13 +10,14 @@ import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 
 interface KotlinApiElementsConfigurationInstantiator : KotlinFragmentConfigurationInstantiator
 
 object DefaultKotlinApiElementsConfigurationInstantiator : KotlinApiElementsConfigurationInstantiator {
     override fun create(
         module: KotlinGradleModule,
-        names: FragmentNameDisambiguation,
+        names: KotlinNameDisambiguation,
         dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("apiElements")).apply {

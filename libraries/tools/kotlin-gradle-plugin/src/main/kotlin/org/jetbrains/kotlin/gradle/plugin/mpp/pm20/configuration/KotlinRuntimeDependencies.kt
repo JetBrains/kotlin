@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 interface KotlinRuntimeDependenciesConfigurationInstantiator : KotlinFragmentConfigurationInstantiator
@@ -15,7 +16,7 @@ interface KotlinRuntimeDependenciesConfigurationInstantiator : KotlinFragmentCon
 object DefaultKotlinRuntimeDependenciesConfigurationInstantiator : KotlinRuntimeDependenciesConfigurationInstantiator {
     override fun create(
         module: KotlinGradleModule,
-        names: FragmentNameDisambiguation,
+        names: KotlinNameDisambiguation,
         dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("runtimeDependencies")).apply {

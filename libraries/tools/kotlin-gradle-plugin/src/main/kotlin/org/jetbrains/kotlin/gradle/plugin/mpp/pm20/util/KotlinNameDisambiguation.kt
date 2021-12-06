@@ -12,14 +12,8 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KotlinModule
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 
-internal typealias FragmentNameDisambiguation = KotlinFragmentNameDisambiguation
-
-internal fun FragmentNameDisambiguation(module: KotlinModule, fragmentName: String): FragmentNameDisambiguation {
-    return DefaultKotlinFragmentNameDisambiguation(module, fragmentName)
-}
-
 /**
- * Mechanism for disambiguating/scoping names for a certain fragment.
+ * Mechanism for disambiguating/scoping names for certain entities (e.g. fragments)
  * e.g. Certain fragments might want to create a configuration called 'api'. However, the name scope
  * of Gradle configurations is bound to the Gradle project which requires providing different names of mentioned configurations
  * for FragmentFoo and FragmentBar.
@@ -36,14 +30,20 @@ internal fun FragmentNameDisambiguation(module: KotlinModule, fragmentName: Stri
  * fragmentBar.disambiguateName("api") == "fragmentBarTestApi"
  * ```
  */
-interface KotlinFragmentNameDisambiguation {
+interface KotlinNameDisambiguation {
     fun disambiguateName(simpleName: String): String
+}
+
+/* Default implementation for fragments */
+
+internal fun FragmentNameDisambiguation(module: KotlinModule, fragmentName: String): KotlinNameDisambiguation {
+    return DefaultKotlinFragmentNameDisambiguation(module, fragmentName)
 }
 
 private class DefaultKotlinFragmentNameDisambiguation(
     private val module: KotlinModule,
     private val fragmentName: String
-) : KotlinFragmentNameDisambiguation {
+) : KotlinNameDisambiguation {
     override fun disambiguateName(simpleName: String): String {
         return KotlinModuleFragment.disambiguateName(module, fragmentName, simpleName)
     }

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 
 fun <T : KotlinNativeVariantInternal> KotlinNativeVariantFactory(
     nativeVariantInstantiator: KotlinNativeVariantInstantiator<T>,

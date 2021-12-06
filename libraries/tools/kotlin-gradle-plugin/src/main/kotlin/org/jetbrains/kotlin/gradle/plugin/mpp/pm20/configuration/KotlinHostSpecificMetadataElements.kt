@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.isHostSpecificKonanTargetsSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 interface KotlinHostSpecificMetadataElementsConfigurationInstantiator : KotlinFragmentConfigurationInstantiator
@@ -23,7 +24,7 @@ fun DefaultKotlinHostSpecificMetadataElementsConfigurationInstantiator(
 private object DefaultKotlinHostSpecificMetadataElementsConfigurationInstantiator :
     KotlinHostSpecificMetadataElementsConfigurationInstantiator {
     override fun create(
-        module: KotlinGradleModule, names: FragmentNameDisambiguation, dependencies: KotlinFragmentDependencyConfigurations
+        module: KotlinGradleModule, names: KotlinNameDisambiguation, dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("hostSpecificMetadataElements")).apply {
             isCanBeResolved = false
