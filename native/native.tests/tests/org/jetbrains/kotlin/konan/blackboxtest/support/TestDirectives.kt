@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.FREE_COMPI
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -32,6 +33,14 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 
             - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
               The entry point can be customized Note that @kotlin.Test annotations are ignored.
+        """.trimIndent()
+    )
+
+    val TEST_RUNNER by enumDirective<TestRunnerType>(
+        description = """
+            Usage: // TEST_RUNNER: [DEFAULT, WORKER, NO_EXIT]
+            Specify test runner type.
+            Note that this directive makes sense only in combination with // KIND: REGULAR or // KIND: STANDALONE
         """.trimIndent()
     )
 
@@ -81,6 +90,12 @@ internal enum class TestKind {
     STANDALONE_NO_TR;
 }
 
+internal enum class TestRunnerType {
+    DEFAULT,
+    WORKER,
+    NO_EXIT
+}
+
 internal class TestCompilerArgs(val compilerArgs: List<String>) {
     private val uniqueCompilerArgs = compilerArgs.toSet()
     override fun hashCode() = uniqueCompilerArgs.hashCode()
@@ -113,6 +128,14 @@ internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location:
 
     val values = registeredDirectives[KIND]
     return values.singleOrNull() ?: fail { "$location: Exactly one test kind expected in $KIND directive: $values" }
+}
+
+internal fun parseTestRunner(registeredDirectives: RegisteredDirectives, location: Location): TestRunnerType {
+    if (TEST_RUNNER !in registeredDirectives)
+        return TestRunnerType.DEFAULT // The default one.
+
+    val values = registeredDirectives[TEST_RUNNER]
+    return values.singleOrNull() ?: fail { "$location: Exactly one test runner type expected in $TEST_RUNNER directive: $values" }
 }
 
 internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, location: Location): String {

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
@@ -138,9 +139,10 @@ internal class TestRunProvider(
             }
             TestKind.REGULAR -> {
                 // Group regular test cases by compiler arguments.
-                val cacheKey = TestCompilationCacheKey.Grouped(testCaseId.testCaseGroupId, testCase.freeCompilerArgs)
+                val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
+                val cacheKey = TestCompilationCacheKey.Grouped(testCaseId.testCaseGroupId, testCase.freeCompilerArgs, testRunnerType)
                 val testCompilation = cachedCompilations.computeIfAbsent(cacheKey) {
-                    val testCases = testCaseGroup.getRegularOnlyByCompilerArgs(testCase.freeCompilerArgs)
+                    val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testRunnerType)
                     assertTrue(testCases.isNotEmpty())
                     compilationFactory.testCasesToExecutable(testCases)
                 }
@@ -212,6 +214,10 @@ internal class TestRunProvider(
 
     private sealed class TestCompilationCacheKey {
         data class Standalone(val testCaseId: TestCaseId) : TestCompilationCacheKey()
-        data class Grouped(val testCaseGroupId: TestCaseGroupId, val freeCompilerArgs: TestCompilerArgs) : TestCompilationCacheKey()
+        data class Grouped(
+            val testCaseGroupId: TestCaseGroupId,
+            val freeCompilerArgs: TestCompilerArgs,
+            val runnerType: TestRunnerType
+        ) : TestCompilationCacheKey()
     }
 }

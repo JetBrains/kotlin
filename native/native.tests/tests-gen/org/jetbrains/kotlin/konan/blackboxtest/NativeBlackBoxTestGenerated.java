@@ -91,15 +91,33 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("regular_simple_default_tr.kt")
+        public void testRegular_simple_default_tr() throws Exception {
+            runTest("native/native.tests/testData/samples/regular_simple_default_tr.kt");
+        }
+
+        @Test
         @TestMetadata("regular_simple_explicit_kind.kt")
         public void testRegular_simple_explicit_kind() throws Exception {
             runTest("native/native.tests/testData/samples/regular_simple_explicit_kind.kt");
         }
 
         @Test
+        @TestMetadata("regular_simple_noexit_tr.kt")
+        public void testRegular_simple_noexit_tr() throws Exception {
+            runTest("native/native.tests/testData/samples/regular_simple_noexit_tr.kt");
+        }
+
+        @Test
         @TestMetadata("regular_simple_with_output.kt")
         public void testRegular_simple_with_output() throws Exception {
             runTest("native/native.tests/testData/samples/regular_simple_with_output.kt");
+        }
+
+        @Test
+        @TestMetadata("regular_simple_worker_tr.kt")
+        public void testRegular_simple_worker_tr() throws Exception {
+            runTest("native/native.tests/testData/samples/regular_simple_worker_tr.kt");
         }
 
         @Test
@@ -157,9 +175,27 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("standalone_simple_default_tr.kt")
+        public void testStandalone_simple_default_tr() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_simple_default_tr.kt");
+        }
+
+        @Test
+        @TestMetadata("standalone_simple_noexit_tr.kt")
+        public void testStandalone_simple_noexit_tr() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_simple_noexit_tr.kt");
+        }
+
+        @Test
         @TestMetadata("standalone_simple_with_output.kt")
         public void testStandalone_simple_with_output() throws Exception {
             runTest("native/native.tests/testData/samples/standalone_simple_with_output.kt");
+        }
+
+        @Test
+        @TestMetadata("standalone_simple_worker_tr.kt")
+        public void testStandalone_simple_worker_tr() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_simple_worker_tr.kt");
         }
 
         @Nested

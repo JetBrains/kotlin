@@ -58,7 +58,7 @@ internal class PredefinedTestCaseGroupProvider(private val settings: Settings, a
                 .parseCompilerArgs { "Failed to parse free compiler arguments for test case $testCaseId" },
             nominalPackageName = PackageName(testCaseId.uniqueName),
             expectedOutputDataFile = null,
-            extras = WithTestRunnerExtras
+            extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT) // TODO: pass TR from the predefined configuration here
         )
         testCase.initialize(null)
 
