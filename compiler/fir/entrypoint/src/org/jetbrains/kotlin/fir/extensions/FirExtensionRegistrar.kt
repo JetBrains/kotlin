@@ -5,17 +5,23 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import kotlin.reflect.KClass
 
-abstract class FirExtensionRegistrar {
-    companion object : ProjectExtensionDescriptor<FirExtensionRegistrar>(
-        name = "org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar",
-        extensionClass = FirExtensionRegistrar::class.java
-    ) {
+abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
+    companion object {
+        fun getInstances(project: Project): List<FirExtensionRegistrar> {
+            @Suppress("UNCHECKED_CAST")
+            return FirExtensionRegistrarAdapter.getInstances(project) as List<FirExtensionRegistrar>
+        }
+
+        fun registerExtension(project: Project, extension: FirExtensionRegistrar) {
+            FirExtensionRegistrarAdapter.registerExtension(project, extension)
+        }
+
         internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
