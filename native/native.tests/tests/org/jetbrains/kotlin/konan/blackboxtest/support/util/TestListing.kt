@@ -39,7 +39,7 @@ internal fun parseGTestListing(listing: String): Collection<TestName> = buildLis
         fun parseError(message: String): Nothing = parseError(message, index, line)
 
         state = when {
-            index == 0 && line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) -> state
+            line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) && state is State.Begin -> State.Begin
             line.isBlank() -> when (state) {
                 is State.NewTest, is State.End -> State.End
                 else -> parseError("Unexpected empty line")
