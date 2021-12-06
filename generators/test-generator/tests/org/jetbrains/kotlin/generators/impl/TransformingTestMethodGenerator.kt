@@ -24,8 +24,8 @@ object TransformingTestMethodGenerator : MethodGenerator<TransformingTestMethodM
     override fun generateBody(method: TransformingTestMethodModel, p: Printer) {
         with(method) {
             val filePath = KtTestUtil.getFilePath(source.file) + if (source.file.isDirectory) "/" else ""
-            p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\"${if (isNative) "" else ", $transformer"});")
-            if (isNative) {
+            p.println("${RunTestMethodModel.METHOD_NAME}(\"$filePath\"${if (registerInConstructor) "" else ", $transformer"});")
+            if (registerInConstructor) {
                 p.println("/*")
                 p.println("  There is a registered source transformer for the testcase:")
                 transformer.lines().forEach { p.println("  $it") }

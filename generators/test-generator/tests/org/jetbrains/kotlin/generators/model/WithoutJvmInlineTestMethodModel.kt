@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.generators.model
 
 class WithoutJvmInlineTestMethodModel(
     source: SimpleTestMethodModel,
-    val withAnnotation: Boolean
+    withAnnotation: Boolean,
+    withPostfix: Boolean,
 ) : TransformingTestMethodModel(
     source,
     transformer = "TransformersFunctions::" +
             if (withAnnotation) "replaceOptionalJvmInlineAnnotationWithReal" else "removeOptionalJvmInlineAnnotation"
 ) {
-    override val name: String = source.name + if (withAnnotation) "" else "_valueClasses"
+    override val name: String = source.name + if (withPostfix) "_valueClasses" else ""
 }
