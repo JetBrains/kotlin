@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -65,9 +67,14 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         }
     }
 
-    protected abstract fun createTargetConfigurator(): KotlinTargetConfigurator<T>
+    protected abstract fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<T>
 
     protected abstract fun instantiateTarget(name: String): T
+
+    private val kpmVariantClass = kpmVariantClass(konanTarget)
+
+    protected val isKpm: Boolean
+        get() = project.hasKpmModel && kpmVariantClass != null
 
     override fun createTarget(name: String): T {
         setupNativeCompiler()
@@ -77,7 +84,10 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             disambiguationClassifier = name
             preset = this@AbstractKotlinNativeTargetPreset
 
-            val compilationFactory = KotlinNativeCompilationFactory(this)
+            val compilationFactory =
+                if (isKpm)
+                    KotlinMappedNativeCompilationFactory(this, checkNotNull(kpmVariantClass))
+                else KotlinNativeCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
@@ -106,6 +116,16 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     companion object {
         private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
+
+        // FIXME: codegen
+        internal fun kpmVariantClass(konanTarget: KonanTarget): Class<out KotlinNativeVariantInternal>? = when (konanTarget) {
+            KonanTarget.IOS_ARM64 -> KotlinIosArm64Variant::class.java
+            KonanTarget.IOS_X64 -> KotlinIosX64Variant::class.java
+            KonanTarget.LINUX_X64 -> KotlinLinuxX64Variant::class.java
+            KonanTarget.MACOS_ARM64 -> KotlinMacosArm64Variant::class.java
+            KonanTarget.MACOS_X64 -> KotlinMacosX64Variant::class.java
+            else -> null
+        }
     }
 
 }
@@ -113,8 +133,12 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget) :
     AbstractKotlinNativeTargetPreset<KotlinNativeTarget>(name, project, konanTarget) {
 
-    override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTarget> =
-        KotlinNativeTargetConfigurator()
+    override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTarget> {
+        val configurator = KotlinNativeTargetConfigurator<KotlinNativeTarget>()
+        return if (isKpm)
+            KpmAwareTargetConfigurator(configurator)
+        else configurator
+    }
 
     override fun instantiateTarget(name: String): KotlinNativeTarget {
         return project.objects.newInstance(KotlinNativeTarget::class.java, project, konanTarget)
@@ -124,8 +148,12 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
 open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
     AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithHostTests>(name, project, konanTarget) {
 
-    override fun createTargetConfigurator(): KotlinNativeTargetWithHostTestsConfigurator =
-        KotlinNativeTargetWithHostTestsConfigurator()
+    override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTargetWithHostTests> {
+        val configurator = KotlinNativeTargetWithHostTestsConfigurator()
+        return if (isKpm)
+            KpmAwareTargetWithTestsConfigurator(configurator)
+        else configurator
+    }
 
     override fun instantiateTarget(name: String): KotlinNativeTargetWithHostTests =
         project.objects.newInstance(KotlinNativeTargetWithHostTests::class.java, project, konanTarget)
@@ -134,8 +162,12 @@ open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project,
 open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
     AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithSimulatorTests>(name, project, konanTarget) {
 
-    override fun createTargetConfigurator(): KotlinNativeTargetWithSimulatorTestsConfigurator =
-        KotlinNativeTargetWithSimulatorTestsConfigurator()
+    override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTargetWithSimulatorTests> {
+        val configurator = KotlinNativeTargetWithSimulatorTestsConfigurator()
+        return if (isKpm)
+            KpmAwareTargetConfigurator(configurator)
+        else configurator
+    }
 
     override fun instantiateTarget(name: String): KotlinNativeTargetWithSimulatorTests =
         project.objects.newInstance(KotlinNativeTargetWithSimulatorTests::class.java, project, konanTarget)
