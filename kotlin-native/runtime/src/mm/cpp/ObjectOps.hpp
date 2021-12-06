@@ -29,6 +29,9 @@ OBJ_GETTER(CompareAndSwapHeapRef, ObjHeader** location, ObjHeader* expected, Obj
 OBJ_GETTER(AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept;
 OBJ_GETTER(AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept;
 
+// This does not take into account how much storage did the underlying allocator (malloc/mimalloc) reserved.
+size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
+
 } // namespace mm
 } // namespace kotlin
 

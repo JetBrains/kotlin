@@ -193,9 +193,10 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         RuntimeLogInfo(
                 {kTagGC}, "Collected root set of size %zu of which %zu are stable refs in %" PRIu64 " microseconds", graySet.size(),
                 stableRef, timeRootSetUs - timeSuspendUs);
-        gc::Mark<MarkTraits>(std::move(graySet));
+        auto markStats = gc::Mark<MarkTraits>(std::move(graySet));
         auto timeMarkUs = konan::getTimeMicros();
-        RuntimeLogDebug({kTagGC}, "Marked in %" PRIu64 " microseconds", timeMarkUs - timeRootSetUs);
+        RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds. Processed %zu duplicate entries in the gray set", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs, markStats.duplicateEntries);
+        scheduler.gcData().UpdateAliveSetBytes(markStats.aliveHeapSetBytes);
         gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
         auto timeSweepExtraObjectsUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);

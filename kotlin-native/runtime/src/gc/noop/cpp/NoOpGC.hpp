@@ -8,6 +8,7 @@
 
 #include <cstddef>
 
+#include "Allocator.hpp"
 #include "GCScheduler.hpp"
 #include "Utils.hpp"
 #include "Types.h"
@@ -26,6 +27,8 @@ class NoOpGC : private Pinned {
 public:
     class ObjectData {};
 
+    using Allocator = AlignedAllocator;
+
     class ThreadData : private Pinned {
     public:
         using ObjectData = NoOpGC::ObjectData;
@@ -40,6 +43,8 @@ public:
         void PerformFullGC() noexcept {}
 
         void OnOOM(size_t size) noexcept {}
+
+        Allocator CreateAllocator() noexcept { return Allocator(); }
 
     private:
     };

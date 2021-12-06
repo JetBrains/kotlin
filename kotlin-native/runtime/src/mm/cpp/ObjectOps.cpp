@@ -69,3 +69,13 @@ OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, 
     // `ArrayHeader` and `ObjHeader` are expected to be compatible.
     RETURN_OBJ(reinterpret_cast<ObjHeader*>(array));
 }
+
+size_t mm::GetAllocatedHeapSize(ObjHeader* object) noexcept {
+    RuntimeAssert(object->heap(), "Object must be a heap object");
+    const auto* typeInfo = object->type_info();
+    if (typeInfo->IsArray()) {
+        return mm::ObjectFactory<gc::GC>::ThreadQueue::ArrayAllocatedSize(typeInfo, object->array()->count_);
+    } else {
+        return mm::ObjectFactory<gc::GC>::ThreadQueue::ObjectAllocatedSize(typeInfo);
+    }
+}

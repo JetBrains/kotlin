@@ -20,6 +20,7 @@ namespace {
 class GCEmptySchedulerData : public gc::GCSchedulerData {
     void OnSafePoint(gc::GCSchedulerThreadData& threadData) noexcept override {}
     void OnPerformFullGC() noexcept override {}
+    void UpdateAliveSetBytes(size_t bytes) noexcept override {}
 };
 
 class GCSchedulerDataWithTimer : public gc::GCSchedulerData {
@@ -39,6 +40,8 @@ public:
     }
 
     void OnPerformFullGC() noexcept override {}
+
+    void UpdateAliveSetBytes(size_t bytes) noexcept override {}
 
 private:
     void OnTimer() noexcept {
@@ -82,6 +85,8 @@ public:
     }
 
     void OnPerformFullGC() noexcept override { timeOfLastGcNs_ = currentTimeCallbackNs_(); }
+
+    void UpdateAliveSetBytes(size_t bytes) noexcept override {}
 
 private:
     gc::GCSchedulerConfig& config_;

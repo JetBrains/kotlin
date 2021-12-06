@@ -8,6 +8,7 @@
 
 #include <cstddef>
 
+#include "Allocator.hpp"
 #include "GCScheduler.hpp"
 #include "ObjectFactory.hpp"
 #include "Types.h"
@@ -48,6 +49,7 @@ public:
     class ThreadData : private Pinned {
     public:
         using ObjectData = SameThreadMarkAndSweep::ObjectData;
+        using Allocator = AllocatorWithGC<AlignedAllocator, ThreadData>;
 
         explicit ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
@@ -61,6 +63,8 @@ public:
 
         void OnOOM(size_t size) noexcept;
 
+        Allocator CreateAllocator() noexcept { return Allocator(AlignedAllocator(), *this); }
+
     private:
         void SafePointRegular(size_t weight) noexcept;
         void SafePointSlowPath(SafepointFlag flag) noexcept;
@@ -68,6 +72,8 @@ public:
         SameThreadMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
     };
+
+    using Allocator = ThreadData::Allocator;
 
     SameThreadMarkAndSweep() noexcept;
     ~SameThreadMarkAndSweep() = default;

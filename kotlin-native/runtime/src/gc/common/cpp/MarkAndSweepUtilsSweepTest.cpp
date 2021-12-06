@@ -53,9 +53,12 @@ struct GC {
         State state = State::kUnmarked;
     };
 
+    using Allocator = gc::AlignedAllocator;
+
     struct ThreadData {
         void SafePointAllocation(size_t) {}
         void OnOOM(size_t) {}
+        Allocator CreateAllocator() { return Allocator(); }
     };
 };
 

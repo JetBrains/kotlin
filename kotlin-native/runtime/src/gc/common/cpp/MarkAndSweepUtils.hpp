@@ -9,6 +9,7 @@
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "Memory.h"
+#include "ObjectOps.hpp"
 #include "ObjectTraversal.hpp"
 #include "Runtime.h"
 #include "Types.h"
@@ -16,9 +17,19 @@
 namespace kotlin {
 namespace gc {
 
+struct MarkStats {
+    // How many objects are alive.
+    size_t aliveHeapSet = 0;
+    // How many objects are alive in bytes. Note: this does not include overhead of malloc/mimalloc itself.
+    size_t aliveHeapSetBytes = 0;
+    // How many times a marked object was found in the mark queue.
+    size_t duplicateEntries = 0;
+};
+
 // TODO: Because of `graySet` this implementation may allocate heap memory during GC.
 template <typename Traits>
-void Mark(KStdVector<ObjHeader*> graySet) noexcept {
+MarkStats Mark(KStdVector<ObjHeader*> graySet) noexcept {
+    MarkStats stats;
     while (!graySet.empty()) {
         ObjHeader* top = graySet.back();
         graySet.pop_back();
@@ -27,8 +38,11 @@ void Mark(KStdVector<ObjHeader*> graySet) noexcept {
 
         if (top->heap()) {
             if (!Traits::TryMark(top)) {
+                ++stats.duplicateEntries;
                 continue;
             }
+            stats.aliveHeapSet++;
+            stats.aliveHeapSetBytes += mm::GetAllocatedHeapSize(top);
         }
 
         if (top->heap() || top->local()) {
@@ -46,6 +60,7 @@ void Mark(KStdVector<ObjHeader*> graySet) noexcept {
             }
         }
     }
+    return stats;
 }
 
 template <typename Traits>
