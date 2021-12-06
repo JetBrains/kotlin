@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 class EvaluatorFragmentInfo(
     val classDescriptor: ClassDescriptor,
     val methodDescriptor: FunctionDescriptor,
-    parameterDescriptors: List<DeclarationDescriptor>,
+    val parameters: List<EvaluatorFragmentParameterInfo>,
 ) {
-    var parameters: List<EvaluatorFragmentParameterInfo> = parameterDescriptors.map { EvaluatorFragmentParameterInfo(it, false) }
 
     companion object {
         // Used in the IntelliJ Kotlin JVM Debugger Plug-In (CodeFragmentCompiler)
@@ -35,9 +34,7 @@ class EvaluatorFragmentInfo(
             methodDescriptor: FunctionDescriptor,
             parametersWithInfo: List<EvaluatorFragmentParameterInfo>
         ) =
-            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, listOf()).apply {
-                parameters = parametersWithInfo
-            }
+            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, parametersWithInfo)
     }
 }
 
