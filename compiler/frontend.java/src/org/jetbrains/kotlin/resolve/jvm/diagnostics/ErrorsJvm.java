@@ -124,6 +124,8 @@ public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, String> JVM_DEFAULT_IN_JVM6_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_REQUIRED_FOR_OVERRIDE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> LOCAL_JVM_RECORD = DiagnosticFactory0.create(ERROR);

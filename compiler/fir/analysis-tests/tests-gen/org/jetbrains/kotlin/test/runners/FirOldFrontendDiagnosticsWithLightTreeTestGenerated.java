@@ -33923,6 +33923,34 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Nested
+                @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility")
+                @TestDataPath("$PROJECT_ROOT")
+                public class JvmDefaultWithCompatibility {
+                    @Test
+                    public void testAllFilesPresentInJvmDefaultWithCompatibility() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("target6.kt")
+                    public void testTarget6() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility/target6.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("target8.kt")
+                    public void testTarget8() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility/target8.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("target8Disabled.kt")
+                    public void testTarget8Disabled() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility/target8Disabled.kt");
+                    }
+                }
+
+                @Nested
                 @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithoutCompatibility")
                 @TestDataPath("$PROJECT_ROOT")
                 public class JvmDefaultWithoutCompatibility {
