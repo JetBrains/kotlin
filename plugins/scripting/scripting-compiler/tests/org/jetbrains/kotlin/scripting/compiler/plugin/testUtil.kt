@@ -177,7 +177,7 @@ fun runWithK2JVMCompiler(
         )
     }
     try {
-        val outLines = out.lines()
+        val outLines = if (out.isEmpty()) emptyList() else out.lines()
         Assert.assertEquals(
             "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
             expectedAllOutPatterns.size, outLines.size

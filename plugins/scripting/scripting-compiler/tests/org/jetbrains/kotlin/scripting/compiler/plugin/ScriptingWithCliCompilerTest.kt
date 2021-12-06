@@ -73,7 +73,6 @@ class ScriptingWithCliCompilerTest {
                 "-expression",
                 "\\@file:CompilerOptions(\"-Xunknown1\")"
             ),
-            listOf(""),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
                 "unresolved reference: CompilerOptions"
@@ -89,7 +88,6 @@ class ScriptingWithCliCompilerTest {
                 "-expression",
                 "\\@file:CompilerOptions(\"-Xunknown1\")"
             ),
-            listOf(""),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
                 "expecting an element"
@@ -109,7 +107,6 @@ class ScriptingWithCliCompilerTest {
                 "-script",
                 scriptFile.path
             ),
-            listOf(""),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
                 "unrecognized script type: someScript.+"
@@ -122,7 +119,6 @@ class ScriptingWithCliCompilerTest {
                 "-script",
                 scriptFile.path
             ),
-            listOf(""),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
                 "error: invalid argument: -abracadabra"
@@ -135,7 +131,6 @@ class ScriptingWithCliCompilerTest {
                 "-script",
                 scriptFile.path
             ),
-            listOf(""),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
                 "error: invalid argument: -abracadabra"
