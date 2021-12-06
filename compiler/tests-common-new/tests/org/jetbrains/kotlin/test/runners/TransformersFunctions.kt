@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import java.io.File
+
 object TransformersFunctions {
     @JvmStatic
     fun replaceOptionalJvmInlineAnnotationWithReal(source: String): String {
@@ -14,5 +16,13 @@ object TransformersFunctions {
     @JvmStatic
     fun removeOptionalJvmInlineAnnotation(source: String): String {
         return source.replace("OPTIONAL_JVM_INLINE_ANNOTATION", "")
+    }
+
+    object Android {
+        val forAll: List<(String) -> String> = listOf(
+            TransformersFunctions::replaceOptionalJvmInlineAnnotationWithReal,
+        )
+        val forSpecificFile: Map<File, (String) -> String> = mapOf(
+        )
     }
 }
