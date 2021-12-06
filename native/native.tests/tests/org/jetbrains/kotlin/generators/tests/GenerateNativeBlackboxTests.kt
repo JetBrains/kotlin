@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.NativeBlackBoxTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.ExtTestCaseGroupProvider
+import org.jetbrains.kotlin.test.TargetBackend
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
@@ -21,12 +22,12 @@ fun main() {
                 suiteTestClassName = "NativeExtBlackBoxTestGenerated",
                 annotations = listOf(annotation(NativeBlackBoxTestCaseGroupProvider::class.java, ExtTestCaseGroupProvider::class.java))
             ) {
-                model("codegen/box")
-                model("codegen/boxInline")
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }
 
-        // Samples (how to utilize abilities of new test infrastructure).
+        // Samples (how to utilize the abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest> {
                 model("samples")
