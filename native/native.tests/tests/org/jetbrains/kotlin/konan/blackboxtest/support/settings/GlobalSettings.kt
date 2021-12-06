@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 import java.net.URLClassLoader
 import kotlin.time.Duration
@@ -30,7 +30,7 @@ internal class GlobalSettings(
 
     companion object {
         private val defaultKotlinNativeHome: File
-            get() = System.getProperty(KOTLIN_NATIVE_HOME)?.let(::File) ?: JUnit5Assertions.fail { "Non-specified $KOTLIN_NATIVE_HOME system property" }
+            get() = System.getProperty(KOTLIN_NATIVE_HOME)?.let(::File) ?: fail { "Non-specified $KOTLIN_NATIVE_HOME system property" }
 
         // Use isolated cached class loader.
         private val defaultKotlinNativeClassLoader: Lazy<ClassLoader> = lazy {
@@ -38,7 +38,7 @@ internal class GlobalSettings(
                 ?.split(':', ';')
                 ?.map { File(it).toURI().toURL() }
                 ?.toTypedArray()
-                ?: JUnit5Assertions.fail { "Non-specified $COMPILER_CLASSPATH system property" }
+                ?: fail { "Non-specified $COMPILER_CLASSPATH system property" }
 
             URLClassLoader(nativeClassPath, /* no parent class loader */ null).apply { setDefaultAssertionStatus(true) }
         }
@@ -46,7 +46,7 @@ internal class GlobalSettings(
         private val defaultTestMode: TestMode = run {
             val testModeName = System.getProperty(TEST_MODE) ?: return@run TestMode.WITH_MODULES
 
-            TestMode.values().firstOrNull { it.name == testModeName } ?: JUnit5Assertions.fail {
+            TestMode.values().firstOrNull { it.name == testModeName } ?: fail {
                 buildString {
                     appendLine("Unknown test mode name $testModeName.")
                     appendLine("One of the following test modes should be passed through $TEST_MODE system property:")
@@ -60,7 +60,7 @@ internal class GlobalSettings(
         private val defaultCacheSettings: CacheSettings = run {
             val useCacheValue = System.getProperty(USE_CACHE)
             val useCache = if (useCacheValue != null) {
-                useCacheValue.toBooleanStrictOrNull() ?: JUnit5Assertions.fail { "Invalid value for $USE_CACHE system property: $useCacheValue" }
+                useCacheValue.toBooleanStrictOrNull() ?: fail { "Invalid value for $USE_CACHE system property: $useCacheValue" }
             } else
                 true
 
@@ -71,13 +71,13 @@ internal class GlobalSettings(
             val executionTimeoutValue = System.getProperty(EXECUTION_TIMEOUT)
             if (executionTimeoutValue != null) {
                 executionTimeoutValue.toLongOrNull()?.milliseconds
-                    ?: JUnit5Assertions.fail { "Invalid value for $EXECUTION_TIMEOUT system property: $executionTimeoutValue" }
+                    ?: fail { "Invalid value for $EXECUTION_TIMEOUT system property: $executionTimeoutValue" }
             } else
                 DEFAULT_EXECUTION_TIMEOUT
         }
 
         private val projectBuildDir: File
-            get() = System.getenv(PROJECT_BUILD_DIR)?.let(::File) ?: JUnit5Assertions.fail { "Non-specified $PROJECT_BUILD_DIR environment variable" }
+            get() = System.getenv(PROJECT_BUILD_DIR)?.let(::File) ?: fail { "Non-specified $PROJECT_BUILD_DIR environment variable" }
 
         private const val KOTLIN_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
         private const val COMPILER_CLASSPATH = "kotlin.internal.native.test.compilerClasspath"

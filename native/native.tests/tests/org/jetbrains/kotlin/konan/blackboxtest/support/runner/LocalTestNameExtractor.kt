@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import kotlin.time.Duration
 
 internal class LocalTestNameExtractor(
@@ -30,7 +30,7 @@ internal class LocalTestNameExtractor(
 
     override fun buildResultHandler(runResult: RunResult.Completed) = ResultHandler(runResult)
 
-    override fun handleUnexpectedFailure(t: Throwable) = JUnit5Assertions.fail {
+    override fun handleUnexpectedFailure(t: Throwable) = fail {
         LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
             .withErrorMessage("Test name extraction failed with unexpected exception.")
     }
