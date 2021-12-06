@@ -51,7 +51,7 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
                 resolve("examples/classes/Subsub2Class.kt")
             }
 
-        }.addPluginTestRuntimeClasspath()
+        }
 
         runner.build().apply {
             assertTaskSuccess(":apiCheck")
@@ -90,7 +90,7 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
                 resolve("examples/classes/Subsub2Class.kt")
             }
 
-        }.addPluginTestRuntimeClasspath()
+        }
 
         runner.buildAndFail().apply {
             assertTaskNotRun(":apiCheck")
@@ -118,7 +118,7 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
                 resolve("examples/classes/Subsub2Class.kt")
             }
 
-        }.addPluginTestRuntimeClasspath()
+        }
         runner.build().apply {
             assertTaskSuccess(":apiDump")
             assertTaskSuccess(":jvmApiDump")

@@ -24,6 +24,8 @@ class CasesPublicAPITest {
     @[Rule JvmField]
     val testName = TestName()
 
+    @Test fun annotations() { snapshotAPIAndCompare(testName.methodName) }
+
     @Test fun companions() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun default() { snapshotAPIAndCompare(testName.methodName) }

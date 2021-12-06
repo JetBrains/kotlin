@@ -27,11 +27,11 @@ fun isStatic(access: Int) = access and Opcodes.ACC_STATIC != 0
 fun isFinal(access: Int) = access and Opcodes.ACC_FINAL != 0
 fun isSynthetic(access: Int) = access and Opcodes.ACC_SYNTHETIC != 0
 
-
 fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
     isPublic(access)
             && !isLocal()
             && !isWhenMappings()
+            && !isSyntheticAnnotationClass()
             && (classVisibility?.isPublic(isPublishedApi()) ?: true)
 
 
@@ -39,6 +39,7 @@ val ClassNode.innerClassNode: InnerClassNode? get() = innerClasses.singleOrNull 
 fun ClassNode.isLocal() = outerMethod != null
 fun ClassNode.isInner() = innerClassNode != null
 fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
+fun ClassNode.isSyntheticAnnotationClass() = isSynthetic(access) && name.contains("\$annotationImpl\$")
 
 val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
 val ClassNode.outerClassName: String? get() = innerClassNode?.outerName

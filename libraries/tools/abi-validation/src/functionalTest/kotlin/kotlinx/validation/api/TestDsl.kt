@@ -30,6 +30,7 @@ internal fun BaseKotlinGradleTest.test(fn: BaseKotlinScope.() -> Unit): GradleRu
         .withProjectDir(rootProjectDir)
         .withPluginClasspath()
         .withArguments(baseKotlinScope.runner.arguments)
+        .addPluginTestRuntimeClasspath()
     // disabled because of: https://github.com/gradle/gradle/issues/6862
     // .withDebug(baseKotlinScope.runner.debug)
 }
@@ -140,3 +141,11 @@ internal fun readFileList(fileName: String): String {
     return File(resource.toURI()).readText()
 }
 
+private fun GradleRunner.addPluginTestRuntimeClasspath() = apply {
+    val cpResource = javaClass.classLoader.getResourceAsStream("plugin-classpath.txt")
+        ?.let { InputStreamReader(it) }
+        ?: throw IllegalStateException("Could not find classpath resource")
+
+    val pluginClasspath = pluginClasspath + cpResource.readLines().map { File(it) }
+    withPluginClasspath(pluginClasspath)
+}
