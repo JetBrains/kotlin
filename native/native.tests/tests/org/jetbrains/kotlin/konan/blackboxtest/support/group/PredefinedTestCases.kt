@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
 
 @Target(AnnotationTarget.CLASS)
 @TestSettings(providerClass = PredefinedTestCaseGroupProvider::class)
-annotation class PredefinedTestCases(vararg val testCases: PredefinedTestCase)
+internal annotation class PredefinedTestCases(vararg val testCases: PredefinedTestCase)
 
 @Target()
-annotation class PredefinedTestCase(val name: String, val freeCompilerArgs: Array<String>, val sourceLocations: Array<String>)
+internal annotation class PredefinedTestCase(val name: String, val freeCompilerArgs: Array<String>, val sourceLocations: Array<String>)
+
+internal object PredefinedPaths {
+    const val KOTLIN_NATIVE_DISTRIBUTION = "\$KOTLIN_NATIVE_DISTRIBUTION\$"
+}
