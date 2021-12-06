@@ -60,7 +60,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private val COMMON = FlavorConfig(TargetBackend.ANDROID,"common", 3)
     private val REFLECT = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
-    private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 3)
+    private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 4)
     private val REFLECT_IR = FlavorConfig(TargetBackend.ANDROID_IR,"reflect_ir", 1)
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {

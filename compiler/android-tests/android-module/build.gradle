@@ -85,6 +85,10 @@ android {
             dimension "box"
         }
 
+        common_ir3 {
+            dimension "box"
+        }
+
         reflect_ir0 {
             dimension "box"
         }
