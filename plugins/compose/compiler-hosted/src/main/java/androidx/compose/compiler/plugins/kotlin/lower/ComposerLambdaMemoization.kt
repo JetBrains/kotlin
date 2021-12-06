@@ -94,7 +94,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 private class CaptureCollector {
@@ -730,10 +729,7 @@ class ComposerLambdaMemoization(
             // key parameter
             putValueArgument(
                 index++,
-                irBuilder.irInt(
-                    @Suppress("DEPRECATION")
-                    symbol.descriptor.fqNameSafe.hashCode() xor expression.startOffset
-                )
+                irBuilder.irInt(expression.function.sourceKey())
             )
 
             // tracked parameter
