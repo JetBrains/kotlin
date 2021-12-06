@@ -140,6 +140,10 @@ open class KotlinNativeTarget @Inject constructor(
             String::class.java
         )
     }
+
+    internal val isKpm: Boolean
+        get() = project.hasKpmModel &&
+                AbstractKotlinNativeTargetPreset.kpmVariantClass(konanTarget) != null
 }
 
 private val hostManager by lazy { HostManager() }
