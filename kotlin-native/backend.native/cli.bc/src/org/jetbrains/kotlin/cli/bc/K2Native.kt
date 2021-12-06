@@ -87,7 +87,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 appendLine("Compilation failed: ${e.message}")
                 appendLine()
                 appendLine(" * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}")
-                appendLine(" * Compiler version info: Konan: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}")
+                appendLine(" * Compiler version info: Kotlin/Native: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}")
                 appendLine(" * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}")
                 appendLine()
             }
