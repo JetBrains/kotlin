@@ -15,7 +15,9 @@ In particular:
 
 A few precautions:
 * As with the previous MM, memory is not reclaimed eagerly: an object is reclaimed only when GC happens. This extends to Swift/ObjC objects that crossed interop boundary into Kotlin/Native.
-* `AtomicReference` from `kotlin.native.concurrent` still requires freezing the `value`. Instead, you can use `FreezableAtomicReference` or `AtomicRef` from `atomicfu`. _Note that `atomicfu` has not reached 1.x yet_.
+* Prior to 1.6.20 `AtomicReference` from `kotlin.native.concurrent` still required freezing the `value`, and we suggested using `FreezableAtomicReference` instead.
+  Starting with 1.6.20 `AtomicReference` on the new MM behaves exactly like `FreezableAtomicReference`.
+  Alternatively, you can use `AtomicRef` from `atomicfu`. _Note that `atomicfu` has not reached 1.x yet_.
 * `deinit` on Swift/ObjC objects (and the objects they refer to) will be called on a different thread if these objects cross interop boundary into Kotlin/Native.
 * When calling Kotlin suspend functions from Swift, completion handlers might be called on threads other than the main.
 
