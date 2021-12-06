@@ -6,21 +6,25 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -63,14 +67,8 @@ public object DebugSymbolRenderer {
                 renderProperty(KtNamedSymbol::name, symbol)
             }
             renderProperty(KtCallableSymbol::origin, symbol)
-
-            @Suppress("DEPRECATION")
-            (symbol as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
-                appendLine().append("getDispatchReceiver()").append(": ")
-                renderType(dispatchType)
-            }
         }
-    }.toString()
+    }
 
     private fun PrettyPrinter.renderProperty(property: KProperty<*>, vararg args: Any) {
         try {

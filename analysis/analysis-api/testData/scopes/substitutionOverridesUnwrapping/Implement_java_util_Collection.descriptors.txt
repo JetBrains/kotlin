@@ -2,94 +2,78 @@ KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.iterator
   name: iterator
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals
   name: equals
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.toString
   name: toString
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.size
   name: size
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.isEmpty
   name: isEmpty
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.contains
   name: contains
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.toArray
   name: toArray
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.toArray
   name: toArray
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.add
   name: add
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.remove
   name: remove
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.containsAll
   name: containsAll
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.addAll
   name: addAll
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.removeAll
   name: removeAll
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.retainAll
   name: retainAll
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.clear
   name: clear
   origin: JAVA
-  getDispatchReceiver(): java/util/Collection<E>

@@ -2,28 +2,23 @@ KtFunctionSymbol:
   callableIdIfNonLocal: test/TopLevel.Base.noGeneric
   name: noGeneric
   origin: LIBRARY
-  getDispatchReceiver(): test/TopLevel<Outer>.test/TopLevel.Base
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/OtherTopLevel.Child.withOuter
   name: withOuter
   origin: SOURCE
-  getDispatchReceiver(): test/TopLevel<test/SomeClass>.test/TopLevel.Base
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals
   name: equals
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.toString
   name: toString
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any

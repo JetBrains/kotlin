@@ -2,31 +2,26 @@ KtFunctionSymbol:
   callableIdIfNonLocal: test/MyClass.funWithOuterAndOwnGenericsAndBounds
   name: funWithOuterAndOwnGenericsAndBounds
   origin: SOURCE
-  getDispatchReceiver(): test/MyClass
 
 KtKotlinPropertySymbol:
   callableIdIfNonLocal: test/MyClass.propWithOuterAndOwnGenericsAndBounds
   name: propWithOuterAndOwnGenericsAndBounds
   origin: SOURCE
-  getDispatchReceiver(): test/MyClass
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals
   name: equals
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.toString
   name: toString
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtConstructorSymbol:
   callableIdIfNonLocal: null

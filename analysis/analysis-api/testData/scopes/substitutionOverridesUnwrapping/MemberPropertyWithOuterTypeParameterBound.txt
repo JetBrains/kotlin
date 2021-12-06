@@ -2,31 +2,26 @@ KtKotlinPropertySymbol:
   callableIdIfNonLocal: test/MyInterface.withOwnGeneric_InterfaceWithValBase
   name: withOwnGeneric_InterfaceWithValBase
   origin: SOURCE
-  getDispatchReceiver(): test/MyInterface<T>
 
 KtKotlinPropertySymbol:
   callableIdIfNonLocal: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
   name: withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
   origin: SOURCE
-  getDispatchReceiver(): test/Inheritor
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals
   name: equals
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.toString
   name: toString
   origin: LIBRARY
-  getDispatchReceiver(): kotlin/Any
 
 KtConstructorSymbol:
   callableIdIfNonLocal: null
