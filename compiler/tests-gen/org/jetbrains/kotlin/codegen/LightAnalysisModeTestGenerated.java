@@ -11407,6 +11407,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt49793_object.kt");
             }
 
+            @TestMetadata("kt50019_noOptimizedCallableReferences.kt")
+            public void testKt50019_noOptimizedCallableReferences() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt50019_noOptimizedCallableReferences.kt");
+            }
+
             @TestMetadata("mutable.kt")
             public void testMutable() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/mutable.kt");
