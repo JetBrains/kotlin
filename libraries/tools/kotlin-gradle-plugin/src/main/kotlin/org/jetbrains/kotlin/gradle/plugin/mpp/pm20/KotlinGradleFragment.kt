@@ -28,8 +28,8 @@ import javax.inject.Inject
 open class KotlinGradleFragmentInternal @Inject constructor(
     final override val containingModule: KotlinGradleModule,
     final override val fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations
-) : KotlinGradleFragment, KotlinDependencyConfigurations by dependencyConfigurations {
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations
+) : KotlinGradleFragment, KotlinFragmentDependencyConfigurations by dependencyConfigurations {
 
     final override fun getName(): String = fragmentName
 

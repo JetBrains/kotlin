@@ -24,8 +24,8 @@ fun KotlinCommonFragmentFactory(
 
 class KotlinCommonFragmentInstantiator(
     private val module: KotlinGradleModule,
-    private val dependencyConfigurationsFactory: KotlinDependencyConfigurationsFactory =
-        DefaultKotlinDependencyConfigurationsFactory
+    private val dependencyConfigurationsFactory: KotlinFragmentDependencyConfigurationsFactory =
+        DefaultKotlinFragmentDependencyConfigurationsFactory
 ) : KotlinGradleFragmentFactory.FragmentInstantiator<KotlinGradleFragmentInternal> {
     override fun create(name: String): KotlinGradleFragmentInternal {
         val names = FragmentNameDisambiguation(module, name)

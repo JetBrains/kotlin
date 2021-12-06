@@ -26,8 +26,8 @@ fun KotlinJvmVariantFactory(
 class KotlinJvmVariantInstantiator(
     private val module: KotlinGradleModule,
 
-    private val dependenciesConfigurationFactory: KotlinDependencyConfigurationsFactory =
-        DefaultKotlinDependencyConfigurationsFactory,
+    private val dependenciesConfigurationFactory: KotlinFragmentDependencyConfigurationsFactory =
+        DefaultKotlinFragmentDependencyConfigurationsFactory,
 
     private val compileDependenciesConfigurationInstantiator: KotlinCompileDependenciesConfigurationInstantiator =
         DefaultKotlinCompileDependenciesConfigurationInstantiator,

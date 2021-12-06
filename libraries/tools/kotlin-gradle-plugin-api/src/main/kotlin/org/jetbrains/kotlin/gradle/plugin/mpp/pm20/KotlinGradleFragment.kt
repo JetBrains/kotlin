@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.refinesClosure
 
-interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinDependencyConfigurations, Named {
+interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
 
     override val containingModule: KotlinGradleModule

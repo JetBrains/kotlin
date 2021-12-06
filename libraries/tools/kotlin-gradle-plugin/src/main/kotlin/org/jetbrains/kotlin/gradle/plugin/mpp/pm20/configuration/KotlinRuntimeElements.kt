@@ -18,7 +18,7 @@ object DefaultKotlinRuntimeElementsConfigurationInstantiator : KotlinRuntimeElem
     override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencies: KotlinDependencyConfigurations
+        dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("runtimeElements")).apply {
             isCanBeResolved = false

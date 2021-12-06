@@ -17,7 +17,7 @@ object DefaultKotlinApiElementsConfigurationInstantiator : KotlinApiElementsConf
     override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencies: KotlinDependencyConfigurations
+        dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("apiElements")).apply {
             isCanBeResolved = false

@@ -18,7 +18,7 @@ abstract class KotlinNativeVariantInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     val konanTarget: KonanTarget,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     final override val hostSpecificMetadataElementsConfiguration: Configuration?
@@ -50,7 +50,7 @@ class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
     private val constructor: (
         containingModule: KotlinGradleModule,
         fragmentName: String,
-        dependencyConfigurations: KotlinDependencyConfigurations,
+        dependencyConfigurations: KotlinFragmentDependencyConfigurations,
         compileDependencyConfiguration: Configuration,
         apiElementsConfiguration: Configuration,
         hostSpecificMetadataElementsConfiguration: Configuration?
@@ -59,7 +59,7 @@ class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
     operator fun invoke(
         containingModule: KotlinGradleModule,
         fragmentName: String,
-        dependencyConfigurations: KotlinDependencyConfigurations,
+        dependencyConfigurations: KotlinFragmentDependencyConfigurations,
         compileDependencyConfiguration: Configuration,
         apiElementsConfiguration: Configuration,
         hostSpecificMetadataElementsConfiguration: Configuration?
@@ -76,7 +76,7 @@ class KotlinNativeVariantConstructor<T : KotlinNativeVariantInternal>(
 open class KotlinLinuxX64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     hostSpecificMetadataElementsConfiguration: Configuration?
@@ -99,7 +99,7 @@ open class KotlinLinuxX64Variant @Inject constructor(
 open class KotlinMacosX64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     hostSpecificMetadataElementsConfiguration: Configuration?
@@ -121,7 +121,7 @@ open class KotlinMacosX64Variant @Inject constructor(
 
 open class KotlinMacosArm64Variant @Inject constructor(
     containingModule: KotlinGradleModule, fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     hostSpecificMetadataElementsConfiguration: Configuration?
@@ -144,7 +144,7 @@ open class KotlinMacosArm64Variant @Inject constructor(
 open class KotlinIosX64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     hostSpecificMetadataElementsConfiguration: Configuration?
@@ -167,7 +167,7 @@ open class KotlinIosX64Variant @Inject constructor(
 open class KotlinIosArm64Variant @Inject constructor(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     hostSpecificMetadataElementsConfiguration: Configuration?

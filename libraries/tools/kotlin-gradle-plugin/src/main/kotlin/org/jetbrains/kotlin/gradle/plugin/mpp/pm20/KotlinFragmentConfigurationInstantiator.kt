@@ -12,6 +12,6 @@ interface KotlinFragmentConfigurationInstantiator {
     fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencies: KotlinDependencyConfigurations
+        dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration
 }

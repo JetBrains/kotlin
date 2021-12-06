@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.project.model.KotlinPlatformTypeAttribute
 abstract class KotlinGradleVariantInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     final override val compileDependenciesConfiguration: Configuration,
     final override val apiElementsConfiguration: Configuration
 ) : KotlinGradleFragmentInternal(
@@ -79,7 +78,7 @@ internal val KotlinGradleVariant.defaultSourceArtifactTaskName: String
 abstract class KotlinGradleVariantWithRuntimeInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     final override val runtimeDependenciesConfiguration: Configuration,
@@ -104,7 +103,7 @@ private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String)
 
 abstract class KotlinGradlePublishedVariantWithRuntime(
     containingModule: KotlinGradleModule, fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     runtimeDependencyConfiguration: Configuration,

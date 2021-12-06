@@ -17,7 +17,7 @@ object DefaultKotlinCompileDependenciesConfigurationInstantiator : KotlinCompile
     override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencies: KotlinDependencyConfigurations
+        dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("compileDependencies")).apply {
             isCanBeConsumed = false

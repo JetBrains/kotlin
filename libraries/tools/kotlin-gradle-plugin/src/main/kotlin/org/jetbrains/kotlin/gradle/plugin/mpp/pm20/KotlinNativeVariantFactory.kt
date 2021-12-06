@@ -23,8 +23,8 @@ class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
 
     private val kotlinNativeVariantConstructor: KotlinNativeVariantConstructor<T>,
 
-    private val dependenciesConfigurationFactory: KotlinDependencyConfigurationsFactory =
-        DefaultKotlinDependencyConfigurationsFactory,
+    private val dependenciesConfigurationFactory: KotlinFragmentDependencyConfigurationsFactory =
+        DefaultKotlinFragmentDependencyConfigurationsFactory,
 
     private val compileDependenciesConfigurationInstantiator: KotlinCompileDependenciesConfigurationInstantiator =
         DefaultKotlinCompileDependenciesConfigurationInstantiator,

@@ -16,7 +16,7 @@ object DefaultKotlinRuntimeDependenciesConfigurationInstantiator : KotlinRuntime
     override fun create(
         module: KotlinGradleModule,
         names: FragmentNameDisambiguation,
-        dependencies: KotlinDependencyConfigurations
+        dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("runtimeDependencies")).apply {
             isCanBeConsumed = false

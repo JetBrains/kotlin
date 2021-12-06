@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 open class KotlinJvmVariant(
     containingModule: KotlinGradleModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinDependencyConfigurations,
+    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
     compileDependenciesConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     runtimeDependenciesConfiguration: Configuration,

@@ -23,7 +23,7 @@ fun DefaultKotlinHostSpecificMetadataElementsConfigurationInstantiator(
 private object DefaultKotlinHostSpecificMetadataElementsConfigurationInstantiator :
     KotlinHostSpecificMetadataElementsConfigurationInstantiator {
     override fun create(
-        module: KotlinGradleModule, names: FragmentNameDisambiguation, dependencies: KotlinDependencyConfigurations
+        module: KotlinGradleModule, names: FragmentNameDisambiguation, dependencies: KotlinFragmentDependencyConfigurations
     ): Configuration {
         return module.project.configurations.maybeCreate(names.disambiguateName("hostSpecificMetadataElements")).apply {
             isCanBeResolved = false
