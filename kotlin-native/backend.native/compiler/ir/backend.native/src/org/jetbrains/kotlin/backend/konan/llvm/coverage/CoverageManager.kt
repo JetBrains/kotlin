@@ -120,3 +120,12 @@ internal class CoverageManager(val context: Context) {
             emptyList()
         }
 }
+
+internal fun runCoveragePass(context: Context) {
+    if (!context.coverage.enabled) return
+    val passManager = LLVMCreatePassManager()!!
+    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, context.llvm.targetTriple)
+    context.coverage.addLateLlvmPasses(passManager)
+    LLVMRunPassManager(passManager, context.llvmModule)
+    LLVMDisposePassManager(passManager)
+}

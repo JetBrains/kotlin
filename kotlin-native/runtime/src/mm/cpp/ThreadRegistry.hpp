@@ -55,7 +55,7 @@ private:
     ThreadRegistry();
     ~ThreadRegistry();
 
-    static THREAD_LOCAL_VARIABLE Node* currentThreadDataNode_;
+    static THREAD_LOCAL_VARIABLE Node* currentThreadDataNode_ __attribute__((annotate("current_thread_tlv")));
 
     SingleLockList<ThreadData, Mutex> list_;
 };

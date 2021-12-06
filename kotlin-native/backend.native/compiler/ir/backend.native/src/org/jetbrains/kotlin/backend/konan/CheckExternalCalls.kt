@@ -9,12 +9,6 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
-private fun getBasicBlocks(function: LLVMValueRef) =
-        generateSequence(LLVMGetFirstBasicBlock(function)) { LLVMGetNextBasicBlock(it) }
-
-private fun getInstructions(function: LLVMBasicBlockRef) =
-        generateSequence(LLVMGetFirstInstruction(function)) { LLVMGetNextInstruction(it) }
-
 private fun LLVMValueRef.isFunctionCall() = LLVMIsACallInst(this) != null || LLVMIsAInvokeInst(this) != null
 
 private fun LLVMValueRef.isExternalFunction() = LLVMGetFirstBasicBlock(this) == null
@@ -172,18 +166,8 @@ private const val functionListSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCou
 internal fun checkLlvmModuleExternalCalls(context: Context) {
     val staticData = context.llvm.staticData
 
-    val annotations = staticData.getGlobal("llvm.global.annotations")?.getInitializer()
 
-    val ignoredFunctions = annotations?.run {
-        getOperands(this).mapNotNull {
-            val annotationName = LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString()
-            if (annotationName == "no_external_calls_check") {
-                LLVMGetOperand(LLVMGetOperand(it, 0), 0)!!.name
-            } else {
-                null
-            }
-        }.toSet()
-    } ?: emptySet()
+    val ignoredFunctions = (context.llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
 
     val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {
@@ -193,7 +177,7 @@ internal fun checkLlvmModuleExternalCalls(context: Context) {
 
     val checker = CallsChecker(context, goodFunctions)
     getFunctions(context.llvmModule!!)
-            .filter { !it.isExternalFunction() && it.name !in ignoredFunctions }
+            .filter { !it.isExternalFunction() && it !in ignoredFunctions }
             .forEach(checker::processFunction)
     // otherwise optimiser can inline it
     staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true);

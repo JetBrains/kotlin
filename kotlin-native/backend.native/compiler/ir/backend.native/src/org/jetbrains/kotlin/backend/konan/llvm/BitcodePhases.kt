@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
@@ -366,6 +367,18 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
         op = { context, _ -> runLlvmOptimizationPipeline(context) }
+)
+
+internal val coveragePhase = makeKonanModuleOpPhase(
+        name = "Coverage",
+        description = "Produce coverage information",
+        op = { context, _ -> runCoveragePass(context) }
+)
+
+internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase(
+        name = "OptimizeTLSDataLoads",
+        description = "Optimize multiple loads of thread data",
+        op = { context, _ -> removeMultipleThreadDataLoads(context) }
 )
 
 internal val produceOutputPhase = namedUnitPhase(

@@ -5,7 +5,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.makeVisibilityHiddenLikeLlvmInternalizePass
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.konan.target.*
 
 private fun initializeLlvmGlobalPassRegistry() {
@@ -25,17 +25,6 @@ private fun initializeLlvmGlobalPassRegistry() {
     LLVMInitializeObjCARCOpts(passRegistry)
 }
 
-internal fun shouldRunLateBitcodePasses(context: Context): Boolean {
-    return context.coverage.enabled
-}
-
-internal fun runLateBitcodePasses(context: Context, llvmModule: LLVMModuleRef) {
-    val passManager = LLVMCreatePassManager()!!
-    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, context.llvm.targetTriple)
-    context.coverage.addLateLlvmPasses(passManager)
-    LLVMRunPassManager(passManager, llvmModule)
-    LLVMDisposePassManager(passManager)
-}
 
 private class LlvmPipelineConfiguration(context: Context) {
 
@@ -182,9 +171,6 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         LLVMPassManagerBuilderDispose(passBuilder)
         LLVMDisposeTargetMachine(targetMachine)
         LLVMDisposePassManager(modulePasses)
-    }
-    if (shouldRunLateBitcodePasses(context)) {
-        runLateBitcodePasses(context, llvmModule)
     }
 }
 

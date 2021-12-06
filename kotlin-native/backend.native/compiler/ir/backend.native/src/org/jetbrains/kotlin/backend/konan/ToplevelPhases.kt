@@ -512,6 +512,16 @@ internal val bitcodePhase = NamedCompilerPhase(
                 cStubsPhase
 )
 
+private val bitcodePostprocessingPhase = NamedCompilerPhase(
+        name = "BitcodePostprocessing",
+        description = "Optimize and rewrite bitcode",
+        lower = checkExternalCallsPhase then
+                bitcodeOptimizationPhase then
+                coveragePhase then
+                optimizeTLSDataLoadsPhase then
+                rewriteExternalCallsCheckerGlobals
+)
+
 private val backendCodegen = namedUnitPhase(
         name = "Backend codegen",
         description = "Backend code generation",
@@ -527,9 +537,7 @@ private val backendCodegen = namedUnitPhase(
                 verifyBitcodePhase then
                 printBitcodePhase then
                 linkBitcodeDependenciesPhase then
-                checkExternalCallsPhase then
-                bitcodeOptimizationPhase then
-                rewriteExternalCallsCheckerGlobals then
+                bitcodePostprocessingPhase then
                 unitSink()
 )
 
@@ -578,10 +586,11 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
         disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY)
-        disableUnless(bitcodeOptimizationPhase, config.produce.involvesLinkStage)
+        disableUnless(bitcodePostprocessingPhase, config.produce.involvesLinkStage)
         disableUnless(linkBitcodeDependenciesPhase, config.produce.involvesLinkStage)
-        disableUnless(checkExternalCallsPhase, config.produce.involvesLinkStage && getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
-        disableUnless(rewriteExternalCallsCheckerGlobals, config.produce.involvesLinkStage && getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
+        disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
+        disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
+        disableUnless(optimizeTLSDataLoadsPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(objectFilesPhase, config.produce.involvesLinkStage)
         disableUnless(linkerPhase, config.produce.involvesLinkStage)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)

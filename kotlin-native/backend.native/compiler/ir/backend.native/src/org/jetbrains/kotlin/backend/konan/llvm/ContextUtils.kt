@@ -590,6 +590,18 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
 
+    val runtimeAnnotationMap by lazy {
+        context.llvm.staticData.getGlobal("llvm.global.annotations")
+                ?.getInitializer()
+                ?.let { getOperands(it) }
+                ?.groupBy(
+                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
+                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
+                )
+                ?.filterKeys { it != "" }
+                ?: emptyMap()
+    }
+
 
     private object lazyRtFunction {
         operator fun provideDelegate(
