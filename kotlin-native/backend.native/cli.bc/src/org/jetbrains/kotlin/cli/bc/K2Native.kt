@@ -86,7 +86,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             val message = buildString {
                 appendLine("Compilation failed: ${e.message}")
                 appendLine()
-                appendLine(" * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}")
+
+                val sourceFiles = environment.getSourceFiles()
+                if (sourceFiles.isNotEmpty())
+                    appendLine(" * Source files: ${sourceFiles.joinToString(transform = KtFile::getName)}")
+
+                val pluginClasspaths = arguments.pluginClasspaths
+                if (!pluginClasspaths.isNullOrEmpty())
+                    appendLine(" * Plugins: ${pluginClasspaths.joinToString()}")
+
                 appendLine(" * Compiler version info: Kotlin/Native: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}")
                 appendLine(" * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}")
                 appendLine()
