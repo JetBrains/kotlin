@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.IrVerifier
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
-import org.jetbrains.kotlin.ir.util.shouldSkipDump
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.groupWithTestFiles
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -30,7 +29,6 @@ class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(test
 
             IrVerifier(assertions).verifyWithAssert(irFile)
 
-            if (irFile.shouldSkipDump()) continue
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
 
             val irFileCopy = irFile.deepCopyWithSymbols()

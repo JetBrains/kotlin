@@ -37,12 +37,13 @@ fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false
     }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
+    if (shouldSkipDump()) return ""
     val sb = StringBuilder()
     accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, normalizeNames), null)
     return sb.toString()
 }
 
-fun IrFile.shouldSkipDump(): Boolean {
+private fun IrFile.shouldSkipDump(): Boolean {
     val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false
     return entry.lineStartOffsetsAreEmpty
 }

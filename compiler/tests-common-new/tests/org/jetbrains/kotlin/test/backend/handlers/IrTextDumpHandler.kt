@@ -65,7 +65,6 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val builder = baseDumper.builderForModule(module)
         for ((testFile, irFile) in testFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
-            if (irFile.shouldSkipDump()) continue
             var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
             if (actualDump.isEmpty()) {
                 actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, normalizeNames = true)
