@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <results>
-  <testsuite name="org.foo.test.TestKt" tests="3" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+  <testsuite name="org.foo.test.TestKt" tests="4" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
     <properties/>
     <testcase name="fooTest" classname="org.foo.test.TestKt" time="..."/>
     <testcase name="barTest" classname="org.foo.test.TestKt" time="..."/>
