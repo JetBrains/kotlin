@@ -435,8 +435,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 it.destinationDirectory.set(project.klibOutputDirectory(compilation).resolve("klib"))
             }
 
-
-            compilation.output.classesDirs.from(compileTaskProvider.flatMap { it.outputFile })
+            compilation.output.classesDirs.from(compileTaskProvider.map { it.outputFile })
 
             project.project.tasks.named(compilation.compileAllTaskName).configure {
                 it.dependsOn(compileTaskProvider)
