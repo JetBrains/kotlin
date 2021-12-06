@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
 
 @Target(AnnotationTarget.CLASS)
@@ -12,7 +13,12 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
 internal annotation class PredefinedTestCases(vararg val testCases: PredefinedTestCase)
 
 @Target()
-internal annotation class PredefinedTestCase(val name: String, val freeCompilerArgs: Array<String>, val sourceLocations: Array<String>)
+internal annotation class PredefinedTestCase(
+    val name: String,
+    val runnerType: TestRunnerType,
+    val freeCompilerArgs: Array<String>,
+    val sourceLocations: Array<String>
+)
 
 internal object PredefinedPaths {
     const val KOTLIN_NATIVE_DISTRIBUTION = "\$KOTLIN_NATIVE_DISTRIBUTION\$"

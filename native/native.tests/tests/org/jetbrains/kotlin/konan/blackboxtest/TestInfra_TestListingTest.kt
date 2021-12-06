@@ -38,7 +38,9 @@ class TestInfra_TestListingTest {
         ).map(::TestName),
         parseGTestListing(
             """
-                |Seed: 12345
+                |Seed: 123
+                |Seed: 456
+                |Seed: -789
                 |Foo.
                 |  bar
                 |  baz
