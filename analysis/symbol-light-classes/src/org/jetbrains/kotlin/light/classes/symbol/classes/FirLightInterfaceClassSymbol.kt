@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.classes
+package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
-import org.jetbrains.kotlin.light.classes.symbol.FirLightClassForClassOrObjectSymbol
-import org.jetbrains.kotlin.light.classes.symbol.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.light.classes.symbol.classes.createInheritanceList
+import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 
 internal class FirLightInterfaceClassSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,

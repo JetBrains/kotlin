@@ -36,7 +36,7 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 ) : FirLightClassBase(manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
 
-    private val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
+    protected val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
 
     private val _isDeprecated: Boolean by lazyPub {
         classOrObjectSymbol.hasDeprecatedAnnotation()

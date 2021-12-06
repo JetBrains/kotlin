@@ -3,15 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.classes
+package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.light.classes.symbol.*
 
 internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
@@ -28,9 +26,10 @@ internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
 
     private val _modifierList: PsiModifierList? by lazyPub {
 
-        val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
-
         val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel), PsiModifier.ABSTRACT)
+        if (!isTopLevel && !classOrObjectSymbol.isInner) {
+            modifiers.add(PsiModifier.STATIC)
+        }
 
         val annotations = classOrObjectSymbol.computeAnnotations(
             parent = this@FirLightInterfaceOrAnnotationClassSymbol,

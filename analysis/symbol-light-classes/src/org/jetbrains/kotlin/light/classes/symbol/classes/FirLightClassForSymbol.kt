@@ -58,8 +58,6 @@ internal open class FirLightClassForSymbol(
         return visibility
     }
 
-    private val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
-
     private val _modifierList: PsiModifierList? by lazyPub {
 
         val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel))
