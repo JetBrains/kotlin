@@ -54,7 +54,6 @@ internal data class Entry(
 }
 
 open class GenerateCompilationDatabase @Inject constructor(@Input val target: String,
-                                                           @Internal val srcRoot: File,
                                                            @Internal val files: Iterable<File>,
                                                            @Input val executable: String,
                                                            @Input val compilerFlags: List<String>,
@@ -69,10 +68,6 @@ open class GenerateCompilationDatabase @Inject constructor(@Input val target: St
         get() = outputDir.absolutePath
 
     @get:Input
-    val srcRootPath: String
-        get() = srcRoot.absolutePath
-
-    @get:Input
     val pathsToFiles: Iterable<String>
         get() = files.map { it.absolutePath }
 
@@ -81,7 +76,7 @@ open class GenerateCompilationDatabase @Inject constructor(@Input val target: St
         val plugin = project.extensions.getByType<ExecClang>()
         val executable = plugin.resolveExecutable(executable)
         val args = listOf(executable) + compilerFlags + plugin.clangArgsForCppRuntime(target)
-        val entries: List<Entry> = files.map { Entry.create(srcRoot, it, args, outputDir) }
+        val entries: List<Entry> = files.map { Entry.create(it.parentFile, it, args, outputDir) }
         Entry.writeListTo(outputFile, entries)
     }
 }
@@ -128,7 +123,6 @@ fun createCompilationDatabasesFromCompileToBitcodeTasks(project: Project, name: 
         project.tasks.create("${task.name}_CompilationDatabase",
                 GenerateCompilationDatabase::class.java,
                 task.target,
-                task.srcRoot,
                 task.inputFiles,
                 task.executable,
                 task.compilerFlags,

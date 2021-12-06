@@ -43,7 +43,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
     fun create(
             name: String,
-            srcDir: File = project.file("src/$name"),
+            srcRoot: File = project.file("src/$name"),
             outputGroup: String = "main",
             configurationBlock: CompileToBitcode.() -> Unit = {}
     ) {
@@ -55,7 +55,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                 project.tasks.register(
                         "${targetName}${name.snakeCaseToCamelCase().capitalize()}${suffixForSanitizer(sanitizer)}",
                         CompileToBitcode::class.java,
-                        srcDir, name, targetName, outputGroup
+                        srcRoot, name, targetName, outputGroup
                 ).configure {
                     this.sanitizer = sanitizer
                     group = BasePlugin.BUILD_GROUP

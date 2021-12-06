@@ -62,6 +62,7 @@ abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeParameters> {
     }
 }
 
+// TODO: Get rid of storing srcRoot in the task.
 abstract class CompileToBitcode @Inject constructor(
         @Internal val srcRoot: File,
         @Input val folderName: String,
