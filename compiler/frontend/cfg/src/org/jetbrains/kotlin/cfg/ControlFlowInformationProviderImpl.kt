@@ -812,15 +812,31 @@ class ControlFlowInformationProviderImpl private constructor(
             for (element in pseudocode.getValueElements(value)) {
                 trace.record(USED_AS_EXPRESSION, element, isUsedAsExpression)
                 trace.record(USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
-                if (isUsedAsExpression && element is KtTryExpression) {
-                    trace.record(USED_AS_EXPRESSION, element.tryBlock, true)
-                    for (catchClause in element.catchClauses) {
-                        val body = catchClause.catchBody ?: continue
-                        trace.record(USED_AS_EXPRESSION, body, true)
+                if (isUsedAsExpression) {
+                    when (element) {
+                        is KtTryExpression -> {
+                            element.tryBlock.recordUsedAsExpression()
+                            for (catchClause in element.catchClauses) {
+                                catchClause.catchBody?.recordUsedAsExpression()
+                            }
+                        }
+                        is KtIfExpression -> {
+                            (element.then as? KtBlockExpression)?.recordUsedAsExpression()
+                            (element.`else` as? KtBlockExpression)?.recordUsedAsExpression()
+                        }
+                        is KtWhenExpression -> {
+                            for (entry in element.entries) {
+                                (entry.expression as? KtBlockExpression)?.recordUsedAsExpression()
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun KtExpression.recordUsedAsExpression() {
+        trace.record(USED_AS_EXPRESSION, this, true)
     }
 
     private fun checkForSuspendLambdaAndMarkParameters(pseudocode: Pseudocode) {

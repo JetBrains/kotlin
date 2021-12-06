@@ -1,0 +1,24 @@
+FILE fqName:<root> fileName:/kt50028.kt
+  FUN name:test_1 visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test_1 (): kotlin.String declared in <root>'
+        WHEN type=kotlin.String origin=WHEN
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: BLOCK type=kotlin.Nothing origin=null
+              RETURN type=kotlin.Nothing from='public final fun test_1 (): kotlin.String declared in <root>'
+                CONST String type=kotlin.String value=""
+  FUN name:test_2 visibility:public modality:FINAL <> (b:kotlin.Boolean) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:b index:0 type:kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test_2 (b: kotlin.Boolean): kotlin.Boolean declared in <root>'
+        WHEN type=kotlin.Boolean origin=IF
+          BRANCH
+            if: GET_VAR 'b: kotlin.Boolean declared in <root>.test_2' type=kotlin.Boolean origin=null
+            then: BLOCK type=kotlin.Boolean origin=null
+              CONST Boolean type=kotlin.Boolean value=true
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: BLOCK type=kotlin.Nothing origin=null
+              THROW type=kotlin.Nothing
+                CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String) [primary] declared in kotlin.NotImplementedError' type=kotlin.NotImplementedError origin=null
