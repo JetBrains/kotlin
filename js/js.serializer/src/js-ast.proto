@@ -403,6 +403,7 @@ message Fragment {
     repeated IrClassModel ir_class_model = 14;
     optional string dts = 15;
     optional int32 suite_function = 16;
+    repeated int32 definitions = 17;
 }
 
 message InlinedLocalDeclarations {

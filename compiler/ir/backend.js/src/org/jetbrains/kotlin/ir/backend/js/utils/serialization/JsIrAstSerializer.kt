@@ -86,6 +86,10 @@ class JsIrAstSerializer: JsAstSerializerBase() {
             fragmentBuilder.setSuiteFunction(serialize(it))
         }
 
+        fragment.definitions.forEach {
+            fragmentBuilder.addDefinitions(serialize(it))
+        }
+
         return fragmentBuilder.build()
     }
 
