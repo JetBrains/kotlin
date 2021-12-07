@@ -127,6 +127,18 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("standalone_notr_long_running.kt")
+        public void testStandalone_notr_long_running() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_notr_long_running.kt");
+        }
+
+        @Test
+        @TestMetadata("standalone_notr_long_running_and_verbose.kt")
+        public void testStandalone_notr_long_running_and_verbose() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_notr_long_running_and_verbose.kt");
+        }
+
+        @Test
         @TestMetadata("standalone_notr_multifile_entry_point.kt")
         public void testStandalone_notr_multifile_entry_point() throws Exception {
             runTest("native/native.tests/testData/samples/standalone_notr_multifile_entry_point.kt");
@@ -166,6 +178,12 @@ public class NativeBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         @TestMetadata("standalone_notr_simple_with_output.kt")
         public void testStandalone_notr_simple_with_output() throws Exception {
             runTest("native/native.tests/testData/samples/standalone_notr_simple_with_output.kt");
+        }
+
+        @Test
+        @TestMetadata("standalone_notr_too_verbose.kt")
+        public void testStandalone_notr_too_verbose() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_notr_too_verbose.kt");
         }
 
         @Test
