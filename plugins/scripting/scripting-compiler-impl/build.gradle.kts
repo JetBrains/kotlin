@@ -55,8 +55,3 @@ javadocJar()
 projectTest {
     workingDir = rootDir
 }
-
-//TODO: could be removed after bootstrap
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
-}

@@ -118,8 +118,3 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
         println(filter.includePatterns)
     }
 }
-
-//TODO: could be removed after bootstrap
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
-}
