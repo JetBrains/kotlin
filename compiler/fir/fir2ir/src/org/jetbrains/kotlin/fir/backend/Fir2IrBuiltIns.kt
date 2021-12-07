@@ -44,6 +44,13 @@ class Fir2IrBuiltIns(
     internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall? =
         extensionFunctionTypeAnnotationSymbol?.toConstructorCall()
 
+    private val rawTypeAnnotationSymbol by lazy {
+        annotationSymbolById(StandardClassIds.Annotations.RawTypeAnnotation)
+    }
+
+    internal fun rawTypeAnnotationConstructorCall(): IrConstructorCall? =
+        rawTypeAnnotationSymbol?.toConstructorCall()
+
     private fun annotationSymbolById(id: ClassId): IrClassSymbol? =
         provider?.getClassSymbolById(id) ?: session.symbolProvider.getClassLikeSymbolByClassId(id)?.toSymbol(
             session, classifierStorage, ConversionTypeContext.DEFAULT

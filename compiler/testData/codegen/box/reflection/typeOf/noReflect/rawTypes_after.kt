@@ -1,7 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: Expected <test.C<java.lang.Object?, java.lang.Number> (Kotlin reflection is not available)>,
-// actual <test.C<*, *> (Kotlin reflection is not available)>
 // WITH_STDLIB
 // FILE: box.kt
 

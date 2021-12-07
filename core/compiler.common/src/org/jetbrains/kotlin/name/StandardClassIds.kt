@@ -153,6 +153,7 @@ object StandardClassIds {
         val JvmDefault = "JvmDefault".jvmId()
         val JvmRepeatable = "JvmRepeatable".jvmId()
 
+        val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
@@ -100,7 +101,8 @@ class Fir2IrTypeConverter(
     fun ConeKotlinType.toIrType(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
         annotations: List<FirAnnotation> = emptyList(),
-        hasFlexibleNullability: Boolean = false
+        hasFlexibleNullability: Boolean = false,
+        addRawTypeAnnotation: Boolean = false
     ): IrType {
         return when (this) {
             is ConeKotlinErrorType -> createErrorType()
@@ -122,17 +124,22 @@ class Fir2IrTypeConverter(
                             typeAnnotations += it
                         }
                     }
-                    isExtensionFunctionType -> {
-                        if (annotations.getAnnotationsByClassId(StandardClassIds.Annotations.ExtensionFunctionType).isEmpty()) {
-                            builtIns.extensionFunctionTypeAnnotationConstructorCall()?.let {
-                                typeAnnotations += it
-                            }
-                        }
-                    }
                     hasFlexibleNullability -> {
                         builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
                             typeAnnotations += it
                         }
+                    }
+                }
+
+                if (isExtensionFunctionType && annotations.getAnnotationsByClassId(ExtensionFunctionType).isEmpty()) {
+                    builtIns.extensionFunctionTypeAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
+                    }
+                }
+
+                if (addRawTypeAnnotation) {
+                    builtIns.rawTypeAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
                     }
                 }
 
@@ -143,9 +150,19 @@ class Fir2IrTypeConverter(
                 val expandedType = fullyExpandedType(session)
                 val approximatedType = approximateType(expandedType)
                 IrSimpleTypeImpl(
-                    irSymbol, !typeContext.definitelyNotNull && approximatedType.isMarkedNullable,
-                    approximatedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
-                    typeAnnotations
+                    irSymbol,
+                    hasQuestionMark = !typeContext.definitelyNotNull && approximatedType.isMarkedNullable,
+                    arguments = approximatedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
+                    annotations = typeAnnotations
+                )
+            }
+            is ConeRawType -> {
+                // Upper bound has star projections here, so we take lower one
+                // (some reflection tests rely on this)
+                lowerBound.toIrType(
+                    typeContext,
+                    hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
+                    addRawTypeAnnotation = true
                 )
             }
             is ConeFlexibleType -> {
