@@ -466,6 +466,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jdkPathDoesNotExist.args");
         }
 
+        @TestMetadata("jdkRelease.args")
+        public void testJdkRelease() throws Exception {
+            runTest("compiler/testData/cli/jvm/jdkRelease.args");
+        }
+
         @TestMetadata("jspecifyByLv15.args")
         public void testJspecifyByLv15() throws Exception {
             runTest("compiler/testData/cli/jvm/jspecifyByLv15.args");
