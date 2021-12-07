@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -141,6 +142,39 @@ class NativePlatformLibsIT : BaseGradleIT() {
             buildWithLightDist("assemble") {
                 assertSuccessful()
                 assertNotContains("Generate platform libraries for ")
+            }
+        }
+    }
+
+    @Test
+    fun testLinkerArgsViaGradleProperties() {
+        with(Project("native-platform-libraries")) {
+            setupWorkingDir()
+            gradleProperties().apply {
+                configureJvmMemory()
+                appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
+            }
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleBuildScript().appendText("""
+                kotlin.linuxX64() {
+                    binaries.sharedLib {
+                        freeCompilerArgs += "-Xmen=pool"
+                    }
+                }
+            """.trimIndent())
+            build("linkDebugSharedLinuxX64") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileKotlinLinuxX64",
+                    ":linkDebugSharedLinuxX64"
+                )
+                withNativeCommandLineArguments("linkDebugSharedLinuxX64") {
+                    assertTrue(it.contains("-Xfoo=bar"))
+                    assertTrue(it.contains("-Xbaz=qux"))
+                    assertTrue(it.contains("-Xmen=pool"))
+                }
+                assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries.so")
+                assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries_api.h")
             }
         }
     }

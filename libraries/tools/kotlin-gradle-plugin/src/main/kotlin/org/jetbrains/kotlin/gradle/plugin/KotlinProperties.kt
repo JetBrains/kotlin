@@ -255,6 +255,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
 
     /**
+     * Allows a user to specify free compiler arguments for K/N linker.
+     */
+    val nativeLinkArgs: List<String>
+        get() = property("kotlin.native.linkArgs").orEmpty().split(' ').filterNot { it.isBlank() }
+
+    /**
      * Forces to run a compilation in a separate JVM.
      */
     val nativeDisableCompilerDaemon: Boolean?
