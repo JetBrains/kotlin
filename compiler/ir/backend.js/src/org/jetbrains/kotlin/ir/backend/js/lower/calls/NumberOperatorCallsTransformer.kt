@@ -41,7 +41,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         irBuiltIns.intType.let {
             add(it, OperatorNames.SHL, intrinsics.jsBitShiftL)
             add(it, OperatorNames.SHR, intrinsics.jsBitShiftR)
-            add(it, OperatorNames.SHRU, intrinsics.jsBitShiftRU)
+            // shifting of a negative int to 0 bytes returns the unsigned int, therefore we have to cast it back to the signed int
+            add(it, OperatorNames.SHRU) { call -> irBinaryOp(call, intrinsics.jsBitShiftRU, toInt32 = true) }
             add(it, OperatorNames.AND, intrinsics.jsBitAnd)
             add(it, OperatorNames.OR, intrinsics.jsBitOr)
             add(it, OperatorNames.XOR, intrinsics.jsBitXor)

@@ -8071,6 +8071,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("intBitOperations.kt")
+        public void testIntBitOperations() throws Exception {
+            runTest("js/js.translator/testData/box/number/intBitOperations.kt");
+        }
+
+        @Test
         @TestMetadata("intConversions.kt")
         public void testIntConversions() throws Exception {
             runTest("js/js.translator/testData/box/number/intConversions.kt");
