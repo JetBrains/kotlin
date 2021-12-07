@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
  */
 @InternalIdeApi
 interface IdeFragmentDependencyResolver {
+    val project: Project
     fun resolveDependencies(moduleName: String, fragmentName: String): List<IdeFragmentDependency>
 
     companion object {
@@ -35,8 +36,16 @@ interface IdeFragmentDependencyResolver {
     }
 }
 
+internal fun IdeFragmentDependencyResolver.resolveDependencies(kotlinGradleFragment: KotlinGradleFragment): List<IdeFragmentDependency> {
+    require(kotlinGradleFragment.project == project) {
+        "IdeFragmentDependencyResolver for project ${project.path} can't resolve dependencies for foreign fragment " +
+                "${kotlinGradleFragment.project.path}:${kotlinGradleFragment.containingModule.name}/${kotlinGradleFragment.name}"
+    }
+    return resolveDependencies(kotlinGradleFragment.containingModule.name, kotlinGradleFragment.name)
+}
+
 private class IdeFragmentDependencyResolverImpl(
-    private val project: Project,
+    override val project: Project,
     private val fragmentGranularMetadataResolverFactory: FragmentGranularMetadataResolverFactory
 ) : IdeFragmentDependencyResolver {
     override fun resolveDependencies(moduleName: String, fragmentName: String): List<IdeFragmentDependency> {

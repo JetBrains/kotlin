@@ -7,8 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
 import java.io.File
 
 /**
@@ -29,7 +31,19 @@ data class IdeLocalSourceFragmentDependency(
     val projectName: String,
     val kotlinModuleName: String,
     val kotlinFragmentName: String
-) : IdeFragmentDependency()
+) : IdeFragmentDependency() {
+    constructor(
+        project: Project,
+        kotlinModuleName: String,
+        kotlinFragmentName: String
+    ) : this(
+        buildId = project.currentBuildId(),
+        projectPath = project.path,
+        projectName = project.name,
+        kotlinModuleName = kotlinModuleName,
+        kotlinFragmentName = kotlinFragmentName
+    )
+}
 
 /**
  * Binary dependency provided by a (maven) repository
