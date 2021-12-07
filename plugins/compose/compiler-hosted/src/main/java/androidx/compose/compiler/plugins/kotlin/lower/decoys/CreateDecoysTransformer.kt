@@ -186,7 +186,7 @@ class CreateDecoysTransformer(
             updateFrom(original)
             name = newName
             returnType = original.returnType
-            isPrimary = false
+            isPrimary = (original as? IrConstructor)?.isPrimary ?: false
             isOperator = false
         }
         newFunction.annotations = original.annotations

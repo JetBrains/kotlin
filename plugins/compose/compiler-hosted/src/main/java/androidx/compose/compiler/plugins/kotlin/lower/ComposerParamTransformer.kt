@@ -429,7 +429,10 @@ class ComposerParamTransformer(
                     fn,
                     name = newName,
                     type = newType,
-                    isAssignable = param.defaultValue != null
+                    isAssignable = param.defaultValue != null,
+                    defaultValue = param.defaultValue?.copyWithNewTypeParams(
+                        source = this, target = fn
+                    )
                 )
             }
             fn.annotations = annotations.toList()
