@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 fun FirSession.convertToIr(
     scopeSession: ScopeSession,
     firFiles: List<FirFile>,
-    extensions: GeneratorExtensions,
+    fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>
 ): Fir2IrResult {
     val mangler = JvmDescriptorMangler(null)
@@ -39,8 +40,9 @@ fun FirSession.convertToIr(
 
     return Fir2IrConverter.createModuleFragment(
         this, scopeSession, firFiles + commonFirFiles,
-        languageVersionSettings, mangler, signaturer,
-        extensions, FirJvmKotlinMangler(this), IrFactoryImpl,
+        languageVersionSettings, signaturer,
+        fir2IrExtensions,
+        FirJvmKotlinMangler(this), IrFactoryImpl,
         FirJvmVisibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(),
         irGeneratorExtensions

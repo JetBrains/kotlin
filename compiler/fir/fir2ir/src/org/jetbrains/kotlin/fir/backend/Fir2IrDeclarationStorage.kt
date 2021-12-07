@@ -1257,15 +1257,14 @@ class Fir2IrDeclarationStorage(
     private fun createIrLazyFunction(
         fir: FirSimpleFunction,
         signature: IdSignature,
-        lazyParent: Fir2IrLazyClass,
+        lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
         val symbol = Fir2IrSimpleFunctionSymbol(signature, fir.containerSource)
         val firFunctionSymbol = fir.symbol
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareSimpleFunction(signature, { symbol }) {
-                val isFakeOverride = firFunctionSymbol is FirNamedFunctionSymbol &&
-                        fir.isSubstitutionOrIntersectionOverride &&
+                val isFakeOverride = fir.isSubstitutionOrIntersectionOverride &&
                         firFunctionSymbol.dispatchReceiverClassOrNull() !=
                         firFunctionSymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                 Fir2IrLazySimpleFunction(
@@ -1336,7 +1335,7 @@ class Fir2IrDeclarationStorage(
     private fun createIrLazyProperty(
         fir: FirProperty,
         signature: IdSignature,
-        lazyParent: Fir2IrLazyClass,
+        lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
         val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
