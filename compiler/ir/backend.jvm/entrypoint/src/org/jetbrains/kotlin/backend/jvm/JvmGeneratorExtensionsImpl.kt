@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.jvm.lower.SingletonObjectJvmStaticTransformer
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeFromByteArray
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -110,9 +109,7 @@ open class JvmGeneratorExtensionsImpl(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
             facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
             deserializedSource,
-            deserializeIr = { facade ->
-                stubGenerator.extensions.deserializeClass(facade, stubGenerator, facade.parent, allowErrorNodes = false)
-            }
+            deserializeIr = { facade -> deserializeClass(facade, stubGenerator, facade.parent, allowErrorNodes = false) }
         ).also {
             it.createParameterDeclarations()
             classNameOverride[it] = facadeName
@@ -136,7 +133,7 @@ open class JvmGeneratorExtensionsImpl(
             irClass,
             JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
         )
-        irClass.transform(SingletonObjectJvmStaticTransformer(stubGenerator.irBuiltIns, cachedFields), null)
+        irClass.handleJvmStaticInSingletonObjects(stubGenerator.irBuiltIns, cachedFields)
         return true
     }
 

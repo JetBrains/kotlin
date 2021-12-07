@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -38,7 +39,7 @@ abstract class AbstractFirAnalyzerFacade {
 
     abstract fun runResolution(): List<FirFile>
 
-    abstract fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult
+    abstract fun convertToIr(fir2IrExtensions: Fir2IrExtensions): Fir2IrResult
 }
 
 class FirAnalyzerFacade(
@@ -101,7 +102,7 @@ class FirAnalyzerFacade(
         return collectedDiagnostics!!
     }
 
-    override fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
+    override fun convertToIr(fir2IrExtensions: Fir2IrExtensions): Fir2IrResult {
         if (_scopeSession == null) runResolution()
         val mangler = JvmDescriptorMangler(null)
         val signaturer = JvmIdSignatureDescriptor(mangler)
@@ -113,8 +114,9 @@ class FirAnalyzerFacade(
 
         return Fir2IrConverter.createModuleFragment(
             session, _scopeSession!!, firFiles!! + commonFirFiles,
-            languageVersionSettings, mangler, signaturer,
-            extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
+            languageVersionSettings, signaturer,
+            fir2IrExtensions,
+            FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions

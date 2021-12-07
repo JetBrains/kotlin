@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -144,11 +145,15 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyGenerationStarted()
         performanceManager?.notifyIRTranslationStarted()
 
-        val extensions = JvmGeneratorExtensionsImpl(moduleConfiguration)
-        val fir2IrResult = firResult.session.convertToIr(firResult.scopeSession, firResult.fir, extensions, irGenerationExtensions)
+        val fir2IrResult = firResult.session.convertToIr(
+            firResult.scopeSession, firResult.fir,
+            JvmFir2IrExtensions(moduleConfiguration),
+            irGenerationExtensions
+        )
 
         performanceManager?.notifyIRTranslationFinished()
 
+        val extensions = JvmGeneratorExtensionsImpl(moduleConfiguration)
         val generationState = runBackend(
             allSources,
             fir2IrResult,
