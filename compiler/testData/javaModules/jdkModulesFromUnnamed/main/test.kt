@@ -3,11 +3,11 @@ fun main() {
     val b: javax.naming.Binding? = null
     println(b)
 
-    // Module jdk.net
-    val j: jdk.net.Sockets? = null
+    // Module java.logging
+    val j: java.util.logging.Filter? = null
     println(j)
 
-    // Module jdk.httpserver
-    val s: com.sun.net.httpserver.HttpServer? = null
+    // Module java.desktop
+    val s: javax.swing.JFrame? = null
     println(s)
 }

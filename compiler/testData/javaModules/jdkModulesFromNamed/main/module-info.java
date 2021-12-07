@@ -1,6 +1,6 @@
 module main {
     requires java.naming;
-    requires jdk.net;
+    requires java.logging;
 
     requires kotlin.stdlib;
 }
