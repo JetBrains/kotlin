@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SingleSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getType
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForAbstractMethod
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class KtFe10ExpressionTypeProvider(
@@ -54,7 +56,12 @@ class KtFe10ExpressionTypeProvider(
         }
 
         val bindingContext = analysisContext.analyze(unwrapped, AnalysisMode.PARTIAL)
-        val kotlinType = expression.getType(bindingContext) ?: analysisContext.builtIns.unitType
+        val smartCastType = when (val smartCastType = bindingContext[BindingContext.SMARTCAST, expression]) {
+            is SingleSmartCast -> smartCastType.type
+            is MultipleSmartCasts -> intersectWrappedTypes(smartCastType.map.values)
+            else -> null
+        }
+        val kotlinType = smartCastType ?: expression.getType(bindingContext) ?: analysisContext.builtIns.unitType
         return kotlinType.toKtType(analysisContext)
     }
 

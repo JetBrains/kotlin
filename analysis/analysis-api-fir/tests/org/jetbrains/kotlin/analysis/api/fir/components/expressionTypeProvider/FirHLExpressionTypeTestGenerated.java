@@ -157,6 +157,30 @@ public class FirHLExpressionTypeTestGenerated extends AbstractFirHLExpressionTyp
     }
 
     @Test
+    @TestMetadata("smartcast_asCallArg.kt")
+    public void testSmartcast_asCallArg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_asCallArg.kt");
+    }
+
+    @Test
+    @TestMetadata("smartcast_asReceiver.kt")
+    public void testSmartcast_asReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_asReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartcast_multi.kt")
+    public void testSmartcast_multi() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_multi.kt");
+    }
+
+    @Test
+    @TestMetadata("smartcast_unused.kt")
+    public void testSmartcast_unused() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_unused.kt");
+    }
+
+    @Test
     @TestMetadata("stringLiteral.kt")
     public void testStringLiteral() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/stringLiteral.kt");

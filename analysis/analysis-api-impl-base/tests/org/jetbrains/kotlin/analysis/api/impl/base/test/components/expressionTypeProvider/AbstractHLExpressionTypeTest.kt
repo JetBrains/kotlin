@@ -10,13 +10,19 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProv
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractHLExpressionTypeTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
+        val selected = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        val expression = when (selected) {
+            is KtExpression -> selected
+            is KtValueArgument -> selected.getArgumentExpression()
+            else -> null
+        } ?: error("expect an expression but got ${selected.text}")
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expression) { expression.getKtType()?.render() }
         }

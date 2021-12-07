@@ -1,0 +1,2 @@
+expression: a
+type: (A&B)
