@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -600,6 +601,15 @@ class ComposerLambdaMemoization(
         )
 
         if (!collector.hasCaptures) {
+            if (!context.platform.isJvm() && hasTypeParameter(expression.type)) {
+                // This is a workaround
+                // for TypeParameters having initial parents (old IrFunctions before deepCopy).
+                // Otherwise it doesn't compile on k/js and k/native (can't find symbols).
+                // Ideally we will find a solution to remap symbols of TypeParameters in
+                // ComposableSingletons properties after ComposerParamTransformer
+                // (deepCopy in ComposerParamTransformer didn't help).
+                return wrapped
+            }
             return irGetComposableSingleton(
                 lambdaExpression = wrapped,
                 lambdaType = expression.type
@@ -607,6 +617,10 @@ class ComposerLambdaMemoization(
         } else {
             return wrapped
         }
+    }
+
+    private fun hasTypeParameter(type: IrType): Boolean {
+        return type.anyTypeArgument { true }
     }
 
     private fun irGetComposableSingleton(
