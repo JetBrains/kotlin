@@ -78,9 +78,6 @@ class CapturedType(
     override val attributes: TypeAttributes = TypeAttributes.Empty
 ) : SimpleType(), SubtypingRepresentatives, CapturedTypeMarker {
 
-    override val annotations: Annotations
-        get() = attributes.toDefaultAnnotations()
-
     override val arguments: List<TypeProjection>
         get() = listOf()
 

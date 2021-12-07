@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 
 abstract class TypeSubstitution {
     companion object {
@@ -50,6 +51,7 @@ abstract class TypeSubstitution {
         override fun filterAnnotations(annotations: Annotations) = this@TypeSubstitution.filterAnnotations(annotations)
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
             this@TypeSubstitution.prepareTopLevelType(topLevelType, position)
+
         override fun isEmpty() = this@TypeSubstitution.isEmpty()
     }
 }
@@ -144,23 +146,26 @@ fun KotlinType.replace(
 ): KotlinType {
     if ((newArguments.isEmpty() || newArguments === arguments) && newAnnotations === annotations) return this
 
+    val newAttributes = attributes.replaceAnnotations(
+        // Specially handle FilteredAnnotations here due to FilteredAnnotations.isEmpty()
+        if (newAnnotations is FilteredAnnotations && newAnnotations.isEmpty()) Annotations.EMPTY else newAnnotations
+    )
+
     return when (val unwrapped = unwrap()) {
         is FlexibleType -> KotlinTypeFactory.flexibleType(
-            unwrapped.lowerBound.replace(newArguments, newAnnotations),
-            unwrapped.upperBound.replace(newArgumentsForUpperBound, newAnnotations)
+            unwrapped.lowerBound.replace(newArguments, newAttributes),
+            unwrapped.upperBound.replace(newArgumentsForUpperBound, newAttributes)
         )
-        is SimpleType -> unwrapped.replace(newArguments, newAnnotations)
+        is SimpleType -> unwrapped.replace(newArguments, newAttributes)
     }
 }
 
 @JvmOverloads
 fun SimpleType.replace(
     newArguments: List<TypeProjection> = arguments,
-    newAnnotations: Annotations = annotations
+    newAttributes: TypeAttributes = attributes
 ): SimpleType {
-    if (newArguments.isEmpty() && newAnnotations === annotations) return this
-
-    val newAttributes = attributes.replaceAnnotations(newAnnotations)
+    if (newArguments.isEmpty() && newAttributes === attributes) return this
 
     if (newArguments.isEmpty()) {
         return replaceAttributes(newAttributes)

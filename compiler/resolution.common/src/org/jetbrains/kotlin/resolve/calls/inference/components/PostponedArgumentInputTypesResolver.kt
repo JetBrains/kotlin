@@ -411,7 +411,7 @@ class PostponedArgumentInputTypesResolver(
                 argument.isFunctionExpressionWithReceiver() -> true
                 else -> parameterTypesInfo.isExtensionFunction
             },
-            annotations = parameterTypesInfo.annotations
+            attributes = parameterTypesInfo.annotations
         )
 
         getBuilder().addSubtypeConstraint(

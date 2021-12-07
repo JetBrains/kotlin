@@ -52,6 +52,8 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     abstract val isMarkedNullable: Boolean
     abstract val memberScope: MemberScope
     abstract val attributes: TypeAttributes
+    override val annotations: Annotations
+        get() = attributes.annotations
 
     abstract fun unwrap(): UnwrappedType
 
@@ -125,7 +127,6 @@ abstract class WrappedType : KotlinType() {
     open fun isComputed(): Boolean = true
     protected abstract val delegate: KotlinType
 
-    override val annotations: Annotations get() = delegate.annotations
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
@@ -210,12 +211,11 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
 
     abstract fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
 
-    override val annotations: Annotations get() = delegate.annotations
+    override val attributes: TypeAttributes get() = delegate.attributes
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
-    override val attributes: TypeAttributes get() = delegate.attributes
 
     override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
 

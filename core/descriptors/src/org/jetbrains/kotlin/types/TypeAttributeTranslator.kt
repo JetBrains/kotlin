@@ -25,7 +25,9 @@ object DefaultTypeAttributeTranslator : TypeAttributeTranslator {
         typeConstructor: TypeConstructor?,
         containingDeclaration: DeclarationDescriptor?
     ): TypeAttributes {
-        return TypeAttributes.create(listOf(AnnotationsTypeAttribute(annotations)))
+        return if (annotations.isEmpty())
+            TypeAttributes.Empty else
+            TypeAttributes.create(listOf(AnnotationsTypeAttribute(annotations)))
     }
 
     override fun toAnnotations(attributes: TypeAttributes): Annotations {

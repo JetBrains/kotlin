@@ -206,7 +206,6 @@ private class SimpleTypeImpl(
     @TypeRefinement
     override val hasNotTrivialRefinementFactory: Boolean get() = true
 
-    override val annotations: Annotations get() = Annotations.EMPTY
     override val attributes: TypeAttributes get() = TypeAttributes.Empty
 
     override fun replaceAttributes(newAttributes: TypeAttributes) =
@@ -254,7 +253,6 @@ class SupposititiousSimpleType(private val realType: SimpleType, val overwritten
     override val arguments: List<TypeProjection> = realType.arguments
     override val isMarkedNullable: Boolean = realType.isMarkedNullable
     override val memberScope: MemberScope = realType.memberScope
-    override val annotations: Annotations = realType.annotations
     override val attributes: TypeAttributes get() = realType.attributes
 }
 
@@ -275,8 +273,6 @@ private class SimpleTypeWithAttributes(
     delegate: SimpleType,
     override val attributes: TypeAttributes
 ) : DelegatingSimpleTypeImpl(delegate) {
-    override val annotations: Annotations
-        get() = attributes.toDefaultAnnotations()
     @TypeRefinement
     override fun replaceDelegate(delegate: SimpleType) = SimpleTypeWithAttributes(delegate, attributes)
 }
