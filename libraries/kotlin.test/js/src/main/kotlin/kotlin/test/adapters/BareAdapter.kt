@@ -23,4 +23,12 @@ internal open class BareAdapter : FrameworkAdapter {
             testFn()
         }
     }
+
+    override fun beforeEach(name: String, beforeFn: () -> Any?) {
+        beforeFn()
+    }
+
+    override fun afterEach(name: String, afterFn: () -> Any?) {
+        afterFn()
+    }
 }

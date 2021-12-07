@@ -42,4 +42,8 @@ internal class QUnitAdapter : FrameworkAdapter {
         }
         possiblePromise
     }
+
+    override fun beforeEach(name: String, beforeFn: () -> Any?) = QUnit.beforeEach(name, beforeFn)
+
+    override fun afterEach(name: String, afterFn: () -> Any?) = QUnit.afterEach(name, afterFn)
 }
