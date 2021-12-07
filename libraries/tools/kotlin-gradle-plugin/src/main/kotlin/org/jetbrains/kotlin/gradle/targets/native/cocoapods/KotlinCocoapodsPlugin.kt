@@ -66,7 +66,7 @@ internal class CocoapodsBuildDirs(val project: Project) {
     fun externalSources(fileName: String) = externalSources.resolve(fileName)
 
     fun fatFramework(buildType: NativeBuildType) =
-        root.resolve("fat-frameworks/${buildType.toString().toLowerCase()}")
+        root.resolve("fat-frameworks/${buildType.getName()}")
 }
 
 internal fun String.asValidFrameworkName() = replace('-', '_')
@@ -241,7 +241,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     kotlin.native.cocoapods.paths.frameworks
                     kotlin.native.cocoapods.paths.headers
                 are not supported and will be ignored since Cocoapods plugin generates all required properties automatically.
-                """.trimIndent())
+                """.trimIndent()
+            )
         }
 
         if (platforms == null || archs == null) {
@@ -568,16 +569,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         buildType: NativeBuildType
     ): TaskProvider<XCFrameworkTask> =
         with(project) {
-            registerTask("podPublish${buildType.name.toLowerCase().capitalize()}XCFramework") { task ->
+            registerTask(lowerCamelCaseName(POD_FRAMEWORK_PREFIX, "publish", buildType.getName(), "XCFramework")) { task ->
                 multiplatformExtension.supportedTargets().all { target ->
-                    target.binaries.matching { it.buildType == buildType }.withType(Framework::class.java) { framework ->
-                        task.from(framework)
-                    }
+                    target.binaries.matching { it.buildType == buildType && it.name.startsWith(POD_FRAMEWORK_PREFIX) }
+                        .withType(Framework::class.java) { framework ->
+                            task.from(framework)
+                        }
                 }
                 task.outputDir = cocoapodsExtension.publishDir
                 task.buildType = buildType
                 task.baseName = project.provider { cocoapodsExtension.frameworkNameInternal }
-                task.description = "Produces ${buildType.name.toLowerCase().capitalize()} XCFramework for all requested targets"
+                task.description = "Produces ${buildType.getName().capitalize()} XCFramework for all requested targets"
                 task.group = TASK_GROUP
             }
         }
@@ -589,30 +591,31 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         buildType: NativeBuildType
     ): TaskProvider<PodspecTask> =
         with(project) {
-            val task = tasks.register("podSpec${buildType.name.toLowerCase().capitalize()}", PodspecTask::class.java) { task ->
-                task.description = "Generates podspec for ${buildType.name.toLowerCase().capitalize()} XCFramework publishing"
-                task.outputDir.set(xcFrameworkTask.map { it.outputDir.resolve(it.buildType.getName()) })
-                task.needPodspec = provider { true }
-                task.publishing.set(true)
-                task.pods.set(cocoapodsExtension.pods)
-                task.specName.set(cocoapodsExtension.name)
-                task.version.set(cocoapodsExtension.version ?: version.toString())
-                task.extraSpecAttributes.set(cocoapodsExtension.extraSpecAttributes)
-                task.homepage.set(cocoapodsExtension.homepage)
-                task.license.set(cocoapodsExtension.license)
-                task.authors.set(cocoapodsExtension.authors)
-                task.summary.set(cocoapodsExtension.summary)
-                task.source.set(cocoapodsExtension.source)
-                task.frameworkName = provider { cocoapodsExtension.frameworkNameInternal }
-                task.ios = provider { cocoapodsExtension.ios }
-                task.osx = provider { cocoapodsExtension.osx }
-                task.tvos = provider { cocoapodsExtension.tvos }
-                task.watchos = provider { cocoapodsExtension.watchos }
-                val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
-                if (generateWrapper) {
-                    task.dependsOn(":wrapper")
+            val task =
+                tasks.register(lowerCamelCaseName(POD_FRAMEWORK_PREFIX, "spec", buildType.getName()), PodspecTask::class.java) { task ->
+                    task.description = "Generates podspec for ${buildType.getName().capitalize()} XCFramework publishing"
+                    task.outputDir.set(xcFrameworkTask.map { it.outputDir.resolve(it.buildType.getName()) })
+                    task.needPodspec = provider { true }
+                    task.publishing.set(true)
+                    task.pods.set(cocoapodsExtension.pods)
+                    task.specName.set(cocoapodsExtension.name)
+                    task.version.set(cocoapodsExtension.version ?: version.toString())
+                    task.extraSpecAttributes.set(cocoapodsExtension.extraSpecAttributes)
+                    task.homepage.set(cocoapodsExtension.homepage)
+                    task.license.set(cocoapodsExtension.license)
+                    task.authors.set(cocoapodsExtension.authors)
+                    task.summary.set(cocoapodsExtension.summary)
+                    task.source.set(cocoapodsExtension.source)
+                    task.frameworkName = provider { cocoapodsExtension.frameworkNameInternal }
+                    task.ios = provider { cocoapodsExtension.ios }
+                    task.osx = provider { cocoapodsExtension.osx }
+                    task.tvos = provider { cocoapodsExtension.tvos }
+                    task.watchos = provider { cocoapodsExtension.watchos }
+                    val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
+                    if (generateWrapper) {
+                        task.dependsOn(":wrapper")
+                    }
                 }
-            }
             xcFrameworkTask.dependsOn(task)
             return task
         }
@@ -624,29 +627,27 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     ) =
         with(project) {
             multiplatformExtension.supportedTargets().all { target ->
-                target.binaries.matching { it.buildType == buildType }.withType(Framework::class.java) { framework ->
+                target.binaries.matching { it.buildType == buildType && it.name.startsWith(POD_FRAMEWORK_PREFIX) }
+                    .withType(Framework::class.java) { framework ->
 
-                    val appleTarget = AppleTarget.values().firstOrNull { it.targets.contains(target.konanTarget) } ?: return@withType
-                    val fatFrameworkTaskName =
-                        "pod${buildType.name.toLowerCase().capitalize()}${appleTarget.targetName.capitalize()}FatFramework"
-                    val fatFrameworkTask = if (fatFrameworkTaskName in tasks.names) {
-                        tasks.named(fatFrameworkTaskName, FatFrameworkTask::class.java)
-                    } else {
-                        tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) { fatTask ->
+                        val appleTarget = AppleTarget.values().firstOrNull { it.targets.contains(target.konanTarget) } ?: return@withType
+                        val fatFrameworkTaskName =
+                            lowerCamelCaseName(POD_FRAMEWORK_PREFIX, buildType.getName(), appleTarget.targetName, "FatFramework")
+                        val fatFrameworkTask = locateOrRegisterTask<FatFrameworkTask>(fatFrameworkTaskName) { fatTask ->
                             fatTask.baseName = framework.baseName
-                            fatTask.destinationDir = XCFrameworkTask.fatFrameworkDir(this, fatTask.fatFrameworkName, buildType, appleTarget)
+                            fatTask.destinationDir =
+                                XCFrameworkTask.fatFrameworkDir(this, fatTask.fatFrameworkName, buildType, appleTarget)
                             fatTask.onlyIf {
                                 fatTask.frameworks.size > 1
                             }
                         }
-                    }
 
-                    fatFrameworkTask.configure {
-                        it.from(framework)
-                    }
+                        fatFrameworkTask.configure {
+                            it.from(framework)
+                        }
 
-                    xcFrameworkTask.dependsOn(fatFrameworkTask)
-                }
+                        xcFrameworkTask.dependsOn(fatFrameworkTask)
+                    }
             }
         }
 

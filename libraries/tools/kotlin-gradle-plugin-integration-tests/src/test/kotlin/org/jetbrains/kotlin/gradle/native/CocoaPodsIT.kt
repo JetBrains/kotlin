@@ -942,7 +942,8 @@ class CocoaPodsIT : BaseGradleIT() {
 
             assertEquals(publishPodspecContent, actualPodspecContentWithoutBlankLines)
         }
-
+        //test that manually created frameworks are not included into cocoapods xcframework
+        project.gradleBuildScript().appendToKotlinBlock("iosX64(\"iOS\") {binaries.framework{}}")
         project.testWithWrapper(":podPublishXCFramework")
     }
 
