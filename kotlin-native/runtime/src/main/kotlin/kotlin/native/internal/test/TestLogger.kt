@@ -30,10 +30,10 @@ internal open class TestLoggerWithStatistics: BaseTestLogger() {
     override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) = statistics.reset()
 
     override fun finishSuite(suite: TestSuite, timeMillis: Long) = statistics.registerSuite()
-    override fun ignoreSuite(suite: TestSuite) = statistics.registerIgnore(suite.size)
+    override fun ignoreSuite(suite: TestSuite) = statistics.registerIgnore(suite)
     override fun pass(testCase: TestCase, timeMillis: Long) = statistics.registerPass()
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) = statistics.registerFail(testCase)
-    override fun ignore(testCase: TestCase) = statistics.registerIgnore()
+    override fun ignore(testCase: TestCase) = statistics.registerIgnore(testCase)
 }
 
 internal class SilentTestLogger: BaseTestLogger() {

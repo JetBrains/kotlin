@@ -187,6 +187,9 @@ open class KonanGTest : KonanTest() {
 
         Pattern.compile("\\[  FAILED  ] ([0-9]*) tests.*").matcher(output)
                 .apply { if (find()) fail(group(1).toInt()) }
+
+        Pattern.compile("\\[  SKIPPED ] ([0-9]*) test.*").matcher(output)
+                .apply { if (find()) skip(group(1).toInt()) }
         if (total == 0) {
             // No test were run. Try to find if we've tried to run something
             error(Pattern.compile("\\[={10}] Running ([0-9]*) tests from ([0-9]*) test cases\\..*")
