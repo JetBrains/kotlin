@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // IGNORE_LIGHT_ANALYSIS
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // LANGUAGE: +InlineClassImplementationByDelegation
 
 interface I {
