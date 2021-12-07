@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
 import kotlin.test.fail
 
-class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
+abstract class JavaModulesIntegrationTest(private val jdkHome: File) : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
         get() = "compiler/testData/javaModules/"
 
@@ -32,7 +32,7 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
-            "-jdk-home", KtTestUtil.getJdk11Home().path,
+            "-jdk-home", jdkHome.path,
             "-Xmodule-path=$paths"
         )
         if (addModules.isNotEmpty()) {
