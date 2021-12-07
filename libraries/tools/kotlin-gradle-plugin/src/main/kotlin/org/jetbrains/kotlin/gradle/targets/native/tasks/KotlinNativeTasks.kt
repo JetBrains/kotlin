@@ -520,7 +520,8 @@ constructor(
     override val additionalCompilerOptions: Provider<Collection<String>> = project.provider {
         kotlinOptions.freeCompilerArgs +
                 compilation.kotlinOptions.freeCompilerArgs +
-                ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
+                ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList()) +
+                PropertiesProvider(project).nativeLinkArgs
     }
 
     override val kotlinOptions: KotlinCommonToolOptions = NativeLinkOptions()
