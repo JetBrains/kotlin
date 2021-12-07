@@ -111,7 +111,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
         override var allWarningsAsErrors: Boolean = false
         override var suppressWarnings: Boolean = false
         override var verbose: Boolean = false
-        override var freeCompilerArgs: List<String> = listOf()
+        override var freeCompilerArgs: List<String> = PropertiesProvider(project).nativeLinkArgs
     }
 
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
