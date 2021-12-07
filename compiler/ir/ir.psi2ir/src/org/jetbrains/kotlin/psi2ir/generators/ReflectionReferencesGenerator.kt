@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceConstructorDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -43,6 +44,8 @@ import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
 class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -88,7 +91,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 statementGenerator.generateCallReceiver(
                     ktCallableReference,
                     resolvedDescriptor,
-                    resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,resolvedCall.contextReceivers,
+                    resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver, resolvedCall.contextReceivers,
                     isSafe = false
                 ).call { dispatchReceiverValue, extensionReceiverValue, _ ->
                     generateCallableReference(
@@ -119,7 +122,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     ): IrExpression {
         //  {
         //      fun <ADAPTER_FUN>(function: <FUN_TYPE>): <FUN_INTERFACE_TYPE> =
-        //          <FUN_INTERFACE_TYPE>(function)
+        //          <FUN_INTERFACE_TYPE>(function!!)
         //      ::<ADAPTER_FUN>
         //  }
         val startOffset = ktCallableReference.startOffsetSkippingComments
@@ -176,23 +179,40 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 irAdapterFun.dispatchReceiverParameter = null
                 irAdapterFun.extensionReceiverParameter = null
 
-                val irFnParameter = createAdapterParameter(startOffset, endOffset, functionParameter.name, 0, functionParameter.type)
+                val fnType = functionParameter.type
+
+                val irFnParameter = createAdapterParameter(startOffset, endOffset, functionParameter.name, 0, fnType)
+                val irFnType = irFnParameter.type
+
+                val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
+                val checkNotNullSubstituted =
+                    checkNotNull.substitute(
+                        TypeSubstitutor.create(
+                            mapOf(checkNotNull.typeParameters[0].typeConstructor to TypeProjectionImpl(fnType))
+                        )
+                    ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$fnType")
+
                 irAdapterFun.valueParameters = listOf(irFnParameter)
                 irAdapterFun.body =
-                    context.irFactory.createBlockBody(
-                        startOffset, endOffset,
-                        listOf(
-                            IrReturnImpl(
-                                startOffset, endOffset, context.irBuiltIns.nothingType,
-                                irAdapterFun.symbol,
-                                IrTypeOperatorCallImpl(
-                                    startOffset, endOffset,
-                                    irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
-                                    IrGetValueImpl(startOffset, endOffset, irFnParameter.symbol)
-                                )
+                    IrBlockBodyBuilder(
+                        context,
+                        Scope(irAdapterFun.symbol),
+                        startOffset,
+                        endOffset
+                    ).blockBody {
+                        +irReturn(
+                            irSamConversion(
+                                irCall(context.irBuiltIns.checkNotNullSymbol).also { irCall ->
+                                    this@ReflectionReferencesGenerator.context.callToSubstitutedDescriptorMap[irCall] =
+                                        checkNotNullSubstituted
+                                    irCall.type = irFnType
+                                    irCall.putTypeArgument(0, irFnType)
+                                    irCall.putValueArgument(0, irGet(irFnParameter))
+                                },
+                                irSamType
                             )
                         )
-                    )
+                    }
             }
         }
     }

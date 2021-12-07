@@ -65,7 +65,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1'
                 TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
-                  GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=EXCLEXCL
+                    <T0>: kotlin.Function0<kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test1a visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
     BLOCK_BODY
@@ -76,7 +78,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a'
                 TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
-                  GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=EXCLEXCL
+                    <T0>: kotlin.Function0<kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test1b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KRunnable>
     BLOCK_BODY
@@ -87,7 +91,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1b'
                 TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
-                  GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1b.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=EXCLEXCL
+                    <T0>: kotlin.Function0<kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1b.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1b' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
@@ -98,7 +104,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2'
                 TYPE_OP type=<root>.KSupplier<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KSupplier<kotlin.String>
-                  GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.String> origin=EXCLEXCL
+                    <T0>: kotlin.Function0<kotlin.String>
+                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
           FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2a visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
@@ -109,7 +117,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2a'
                 TYPE_OP type=<root>.KSupplier<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KSupplier<kotlin.String>
-                  GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2a.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.String> origin=EXCLEXCL
+                    <T0>: kotlin.Function0<kotlin.String>
+                    arg0: GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2a.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
           FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2a' type=kotlin.reflect.KFunction1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>>
     BLOCK_BODY
@@ -120,7 +130,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3'
                 TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
-                  GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=EXCLEXCL
+                    <T0>: kotlin.Function1<kotlin.String, kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3a visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>>
     BLOCK_BODY
@@ -131,7 +143,9 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a'
                 TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
-                  GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3a.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=EXCLEXCL
+                    <T0>: kotlin.Function1<kotlin.String, kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3a.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KConsumer<kotlin.String>>
     BLOCK_BODY
@@ -142,5 +156,7 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3b'
                 TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
-                  GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3b.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=EXCLEXCL
+                    <T0>: kotlin.Function1<kotlin.String, kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test3b.KConsumer' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3b' type=kotlin.reflect.KFunction1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>

@@ -3602,6 +3602,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testFunInterfaceConstructorEquality() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
             }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorThrowsNpe.kt")
+            public void testFunInterfaceConstructorThrowsNpe() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorThrowsNpe.kt");
+            }
         }
 
         @Nested

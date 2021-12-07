@@ -501,7 +501,7 @@ internal class AdapterGenerator(
         callableReference.convertWithOffsets { startOffset: Int, endOffset: Int ->
             //  {
             //      fun <ADAPTER_FUN>(function: <FUN_TYPE>): <FUN_INTERFACE_TYPE> =
-            //          <FUN_INTERFACE_TYPE>(function)
+            //          <FUN_INTERFACE_TYPE>(function!!)
             //      ::<ADAPTER_FUN>
             //  }
 
@@ -581,12 +581,16 @@ internal class AdapterGenerator(
                 startOffset, endOffset,
                 listOf(
                     IrReturnImpl(
-                        startOffset, endOffset, components.irBuiltIns.nothingType,
-                        irAdapterFunction.symbol,
+                        startOffset, endOffset, components.irBuiltIns.nothingType, irAdapterFunction.symbol,
                         IrTypeOperatorCallImpl(
-                            startOffset, endOffset,
-                            irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
-                            IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol)
+                            startOffset, endOffset, irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
+                            IrCallImpl(
+                                startOffset, endOffset, irFunctionType, irBuiltIns.checkNotNullSymbol,
+                                typeArgumentsCount = 1, valueArgumentsCount = 1, origin = IrStatementOrigin.EXCLEXCL
+                            ).apply {
+                                putTypeArgument(0, irFunctionType)
+                                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol))
+                            }
                         )
                     )
                 )

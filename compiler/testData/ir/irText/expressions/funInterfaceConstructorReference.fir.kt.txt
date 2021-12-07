@@ -19,7 +19,7 @@ fun interface KConsumer<T : Any?> {
 fun test1(): KFunction1<Function0<Unit>, KRunnable> {
   return { // BLOCK
     local fun KRunnable(function: Function0<Unit>): KRunnable {
-      return function /*-> KRunnable */
+      return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
 
     ::KRunnable
@@ -29,7 +29,7 @@ fun test1(): KFunction1<Function0<Unit>, KRunnable> {
 fun test1a(): KFunction1<Function0<Unit>, KRunnable> {
   return { // BLOCK
     local fun KRunnable(function: Function0<Unit>): KRunnable {
-      return function /*-> KRunnable */
+      return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
 
     ::KRunnable
@@ -39,7 +39,7 @@ fun test1a(): KFunction1<Function0<Unit>, KRunnable> {
 fun test1b(): KFunction<KRunnable> {
   return { // BLOCK
     local fun KRunnable(function: Function0<Unit>): KRunnable {
-      return function /*-> KRunnable */
+      return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
 
     ::KRunnable
@@ -49,7 +49,7 @@ fun test1b(): KFunction<KRunnable> {
 fun test2(): Function1<Function0<String>, KSupplier<String>> {
   return { // BLOCK
     local fun KSupplier(function: Function0<String>): KSupplier<String> {
-      return function /*-> KSupplier<String> */
+      return CHECK_NOT_NULL<Function0<String>>(arg0 = function) /*-> KSupplier<String> */
     }
 
     ::KSupplier
@@ -59,7 +59,7 @@ fun test2(): Function1<Function0<String>, KSupplier<String>> {
 fun test2a(): Function1<Function0<String>, KSupplier<String>> {
   return { // BLOCK
     local fun KSupplier(function: Function0<String>): KSupplier<String> {
-      return function /*-> KSupplier<String> */
+      return CHECK_NOT_NULL<Function0<String>>(arg0 = function) /*-> KSupplier<String> */
     }
 
     ::KSupplier
@@ -69,7 +69,7 @@ fun test2a(): Function1<Function0<String>, KSupplier<String>> {
 fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
   return { // BLOCK
     local fun KConsumer(function: Function1<String, Unit>): KConsumer<String> {
-      return function /*-> KConsumer<String> */
+      return CHECK_NOT_NULL<Function1<String, Unit>>(arg0 = function) /*-> KConsumer<String> */
     }
 
     ::KConsumer
@@ -79,7 +79,7 @@ fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
 fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
   return { // BLOCK
     local fun KConsumer(function: Function1<String, Unit>): KConsumer<String> {
-      return function /*-> KConsumer<String> */
+      return CHECK_NOT_NULL<Function1<String, Unit>>(arg0 = function) /*-> KConsumer<String> */
     }
 
     ::KConsumer
@@ -89,7 +89,7 @@ fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
 fun test3b(): KFunction<KConsumer<String>> {
   return { // BLOCK
     local fun KConsumer(function: Function1<String, Unit>): KConsumer<String> {
-      return function /*-> KConsumer<String> */
+      return CHECK_NOT_NULL<Function1<String, Unit>>(arg0 = function) /*-> KConsumer<String> */
     }
 
     ::KConsumer

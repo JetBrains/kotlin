@@ -317,6 +317,9 @@ fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irReinterpretCast(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, type, argument)
 
+fun IrBuilderWithScope.irSamConversion(argument: IrExpression, type: IrType) =
+    typeOperator(type, argument, IrTypeOperator.SAM_CONVERSION, type)
+
 fun IrBuilderWithScope.irInt(value: Int, type: IrType = context.irBuiltIns.intType) =
     IrConstImpl.int(startOffset, endOffset, type, value)
 

@@ -3518,6 +3518,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testFunInterfaceConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
             }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorThrowsNpe.kt")
+            public void testFunInterfaceConstructorThrowsNpe() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorThrowsNpe.kt");
+            }
         }
 
         @Nested
