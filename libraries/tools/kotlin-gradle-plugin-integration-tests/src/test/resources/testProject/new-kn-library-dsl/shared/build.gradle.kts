@@ -12,6 +12,9 @@ kotlin {
 kotlinArtifacts {
     Native.Library("mylib") {
         target = linuxX64
+        kotlinOptions {
+            freeCompilerArgs += "-Xmen=pool"
+        }
     }
     Native.Library("myslib") {
         target = linuxX64

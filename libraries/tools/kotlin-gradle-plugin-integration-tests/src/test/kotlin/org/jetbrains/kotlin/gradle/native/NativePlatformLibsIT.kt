@@ -159,6 +159,40 @@ class NativePlatformLibsIT : BaseGradleIT() {
     }
 
     @Test
+    fun testLinkerArgsViaGradleProperties() {
+        with(Project("native-platform-libraries")) {
+            setupWorkingDir()
+            gradleProperties().apply {
+                configureJvmMemory()
+                appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
+            }
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleBuildScript().appendText("""
+                kotlin.linuxX64() {
+                    binaries.sharedLib {
+                        freeCompilerArgs += "-Xmen=pool"
+                    }
+                }
+            """.trimIndent())
+            build("linkDebugSharedLinuxX64") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileKotlinLinuxX64",
+                    ":linkDebugSharedLinuxX64"
+                )
+                assertContains("-Xfoo=bar")
+                assertContains("-Xbaz=qux")
+                assertContains("-Xmen=pool")
+                assertContains("w: Flag is not supported by this version of the compiler: -Xfoo=bar")
+                assertContains("w: Flag is not supported by this version of the compiler: -Xbaz=qux")
+                assertContains("w: Flag is not supported by this version of the compiler: -Xmen=pool")
+                assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries.so")
+                assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries_api.h")
+            }
+        }
+    }
+
+    @Test
     fun testNoGenerationForUnsupportedHost() {
         deleteInstalledCompilers()
 

@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 
 class NativeLibraryDslIT : BaseGradleIT() {
@@ -70,6 +73,36 @@ class NativeLibraryDslIT : BaseGradleIT() {
                 assertTasksNotExecuted(
                     ":lib:compileKotlinLinuxX64"
                 )
+                withNativeCommandLineArguments(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
+                    assertFalse(it.contains("-Xfoo=bar"))
+                    assertFalse(it.contains("-Xbaz=qux"))
+                    assertTrue(it.contains("-Xmen=pool"))
+                }
+                assertFileExists("/shared/build/out/dynamic/linux_x64/debug/libmylib.so")
+                assertFileExists("/shared/build/out/dynamic/linux_x64/debug/libmylib_api.h")
+            }
+        }
+    }
+
+    @Test
+    fun `link shared library from single gradle module with additional link args`() {
+        with(Project("new-kn-library-dsl")) {
+            setupWorkingDir()
+            gradleProperties().appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
+            build(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":shared:compileKotlinLinuxX64",
+                    ":shared:assembleMylibDebugSharedLibraryLinuxX64"
+                )
+                assertTasksNotExecuted(
+                    ":lib:compileKotlinLinuxX64"
+                )
+                withNativeCommandLineArguments(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
+                    assertTrue(it.contains("-Xfoo=bar"))
+                    assertTrue(it.contains("-Xbaz=qux"))
+                    assertTrue(it.contains("-Xmen=pool"))
+                }
                 assertFileExists("/shared/build/out/dynamic/linux_x64/debug/libmylib.so")
                 assertFileExists("/shared/build/out/dynamic/linux_x64/debug/libmylib_api.h")
             }
