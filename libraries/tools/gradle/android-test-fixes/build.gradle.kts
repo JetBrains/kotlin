@@ -50,3 +50,7 @@ tasks.withType<PublishToMavenRepository>()
             enabled = false
         }
     }
+
+tasks.named("publishPlugins") {
+    enabled = false
+}
