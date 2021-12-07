@@ -10,14 +10,21 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument
+import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
+import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -32,6 +39,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 /**
  * A generator that converts callable references or arguments that needs an adapter in between. This covers:
@@ -47,7 +55,27 @@ internal class AdapterGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
-    private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
+    private val samResolver = FirSamResolverImpl(session, scopeSession)
+
+    private val starProjectionApproximator = object : AbstractConeSubstitutor(session.typeContext) {
+        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+            if (type !is ConeClassLikeType || type.typeArguments.none { it == ConeStarProjection }) return null
+            val fir = type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner ?: return null
+            val typeParameters = fir.typeParameters.map { it.symbol.fir }
+            if (typeParameters.size != type.typeArguments.size) return null
+            val newTypeArguments = typeParameters.zip(type.typeArguments).map { (parameter, argument) ->
+                if (argument == ConeStarProjection) {
+                    parameter.bounds.first().coneType
+                } else {
+                    argument
+                }
+            }
+            return type.withArguments(newTypeArguments.toTypedArray())
+        }
+    }
+
+    private fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
+        with(typeConverter) { toIrType(typeContext) }
 
     internal fun needToGenerateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
@@ -354,6 +382,74 @@ internal class AdapterGenerator(
         with(callGenerator) {
             return irCall.applyTypeArguments(callableReferenceAccess)
         }
+    }
+
+    internal fun IrExpression.applySamConversionIfNeeded(
+        argument: FirExpression,
+        parameter: FirValueParameter?,
+        substitutor: ConeSubstitutor,
+        shouldUnwrapVarargType: Boolean = false
+    ): IrExpression {
+        if (parameter == null) {
+            return this
+        }
+        if (this is IrVararg) {
+            // element-wise SAM conversion if and only if we can build 1-to-1 mapping for elements.
+            if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
+                return this
+            }
+            val argumentMapping = this.elements.zip(argument.arguments).toMap()
+            // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
+            val irVarargElements = elements as MutableList<IrVarargElement>
+            irVarargElements.replaceAll { irVarargElement ->
+                if (irVarargElement is IrExpression) {
+                    val firVarargArgument =
+                        argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
+                    irVarargElement.applySamConversionIfNeeded(firVarargArgument, parameter, substitutor, shouldUnwrapVarargType = true)
+                } else
+                    irVarargElement
+            }
+            return this
+        }
+        if (!needSamConversion(argument, parameter)) {
+            return this
+        }
+        val samFirType = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let {
+            var substituted = substitutor.substituteOrSelf(it)
+            substituted = starProjectionApproximator.substituteOrSelf(substituted)
+            if (substituted is ConeRawType) substituted.lowerBound else substituted
+        }
+        var samType = samFirType?.toIrType(ConversionTypeContext.WITH_INVARIANT) ?: createErrorType()
+        if (shouldUnwrapVarargType) {
+            samType = samType.getArrayElementType(irBuiltIns)
+        }
+        // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
+        if (!samType.isSamType) return this
+        return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
+    }
+
+    private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
+        // If the type of the argument is already an explicitly subtype of the type of the parameter, we don't need SAM conversion.
+        if (argument.typeRef !is FirResolvedTypeRef ||
+            AbstractTypeChecker.isSubtypeOf(
+                session.typeContext.newTypeCheckerState(
+                    errorTypesEqualToAnything = false, stubTypesEqualToAnything = true
+                ),
+                argument.typeRef.coneType,
+                parameter.returnTypeRef.coneType,
+                isFromNullabilityConstraint = true
+            )
+        ) {
+            return false
+        }
+        // If the expected type is a built-in functional type, we don't need SAM conversion.
+        val expectedType = argument.getExpectedType(parameter)
+        if (expectedType is ConeTypeParameterType || expectedType.isBuiltinFunctionalType(session)) {
+            return false
+        }
+        // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
+        val expectedFunctionType = samResolver.getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
+        return argument.isFunctional(session, scopeSession, expectedFunctionType)
     }
 
     /**
