@@ -102,6 +102,9 @@ class CliJavaModuleFinder(
     val allObservableModules: Sequence<JavaModule>
         get() = systemModules + userModules.values
 
+    //Cache system modules for JDK 9-11 to preserve virtual files as one folder could be mapped to several modules
+    private val systemModulesCache = mutableMapOf<String, JavaModule.Explicit>()
+
     val systemModules: Sequence<JavaModule.Explicit>
         get() = if (useLastJdkApi) modulesRoot?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule) else
             ctSymModules.values.asSequence().mapNotNull { findSystemModule(it, true) }
@@ -116,15 +119,18 @@ class CliJavaModuleFinder(
         val file = moduleRoot.findChild(if (useSig) PsiJavaModule.MODULE_INFO_CLASS + ".sig" else PsiJavaModule.MODULE_INFO_CLS_FILE)
             ?: return null
         val moduleInfo = JavaModuleInfo.read(file, javaFileManager, allScope) ?: return null
-        return JavaModule.Explicit(
-            moduleInfo,
-            when {
-                useLastJdkApi -> listOf(JavaModule.Root(moduleRoot, isBinary = true, isBinarySignature = useSig))
-                useSig -> createModuleFromSignature(moduleInfo)
-                else -> error("Can't find ${moduleRoot.path} module")
-            },
-            file, true
-        )
+        return systemModulesCache.getOrPut(moduleInfo.moduleName) {
+            JavaModule.Explicit(
+                moduleInfo,
+                when {
+                    useLastJdkApi -> listOf(JavaModule.Root(moduleRoot, isBinary = true, isBinarySignature = useSig))
+                    useSig -> createModuleFromSignature(moduleInfo)
+                    else -> error("Can't find ${moduleRoot.path} module")
+                },
+                file, true
+            )
+        }
+
     }
 
     private fun createModuleFromSignature(moduleInfo: JavaModuleInfo): List<JavaModule.Root> {
@@ -143,10 +149,16 @@ class CliJavaModuleFinder(
             }
 
 
-        return listFoldersForRelease().map { virtualFile ->
+        return listFoldersForRelease.mapNotNull { virtualFile ->
+            val rootFolder = when {
+                isCompilationJDK12OrLater -> if (virtualFile.name == moduleInfo.moduleName) virtualFile else return@mapNotNull null
+                else -> {
+                    if (virtualFile.children.none { it.name in packageParts }) return@mapNotNull null
+                    ModuleVirtualFileForRootPart(virtualFile.parent, virtualFile, packageParts, "")
+                }
+            }
             JavaModule.Root(
-                if (isCompilationJDK12OrLater) virtualFile
-                else ModuleVirtualFileForRootPart(virtualFile.parent, virtualFile, packageParts, ""),
+                rootFolder,
                 isBinary = true,
                 isBinarySignature = true
             )
@@ -158,9 +170,9 @@ class CliJavaModuleFinder(
     private fun matchesRelease(fileName: String, release: Int) =
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
 
-    fun listFoldersForRelease(): List<VirtualFile> {
-        if (ctSymRootFolder == null) return emptyList()
-        return ctSymRootFolder!!.children.filter { matchesRelease(it.name, jdkRelease!!) }.flatMap {
+    val listFoldersForRelease: List<VirtualFile> by lazy {
+        if (ctSymRootFolder == null) emptyList()
+        else ctSymRootFolder!!.children.filter { matchesRelease(it.name, jdkRelease!!) }.flatMap {
             if (isCompilationJDK12OrLater)
                 it.children.toList()
             else {
@@ -174,7 +186,7 @@ class CliJavaModuleFinder(
     private fun collectModuleRoots(): Map<String, VirtualFile> {
         val result = mutableMapOf<String, VirtualFile>()
         if (isCompilationJDK12OrLater) {
-            listFoldersForRelease().forEach { modulesRoot ->
+            listFoldersForRelease.forEach { modulesRoot ->
                 modulesRoot.findChild("module-info.sig")?.let {
                     result[modulesRoot.name] = modulesRoot
                 }
