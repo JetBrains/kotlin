@@ -88,7 +88,7 @@ internal class FirLightAnonymousClassForSymbol(
     }
 
     private val _ownInnerClasses: List<FirLightClassBase> by lazyPub {
-        anonymousObjectSymbol.createInnerClasses(manager)
+        anonymousObjectSymbol.createInnerClasses(manager, this, kotlinOrigin)
     }
 
     override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses

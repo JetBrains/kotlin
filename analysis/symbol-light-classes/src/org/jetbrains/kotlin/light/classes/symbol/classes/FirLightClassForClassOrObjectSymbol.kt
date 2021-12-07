@@ -79,7 +79,7 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
         _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     private val _ownInnerClasses: List<FirLightClassBase> by lazyPub {
-        classOrObjectSymbol.createInnerClasses(manager)
+        classOrObjectSymbol.createInnerClasses(manager, this, kotlinOrigin)
     }
 
     override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses

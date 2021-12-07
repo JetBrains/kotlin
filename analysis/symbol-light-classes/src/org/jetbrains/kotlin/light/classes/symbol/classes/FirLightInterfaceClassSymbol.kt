@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThi
 import org.jetbrains.kotlin.light.classes.symbol.classes.createInheritanceList
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 
-internal class FirLightInterfaceClassSymbol(
+internal open class FirLightInterfaceClassSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightInterfaceOrAnnotationClassSymbol(classOrObjectSymbol, manager) {
