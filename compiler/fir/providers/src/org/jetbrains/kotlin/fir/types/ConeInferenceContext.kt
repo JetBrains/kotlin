@@ -58,10 +58,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
-        annotations: List<AnnotationMarker>?
+        attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
-        val attributesList = annotations?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
-        val attributes: ConeAttributes = if (isExtensionFunction) {
+        val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
+        val coneAttributes: ConeAttributes = if (isExtensionFunction) {
             require(constructor is ConeClassLikeLookupTag && constructor.isBuiltinFunctionalType())
             // We don't want to create new instance of ConeAttributes which
             //   contains only CompilerConeAttributes.ExtensionFunctionType
@@ -81,12 +81,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 constructor,
                 (arguments as List<ConeTypeProjection>).toTypedArray(),
                 nullable,
-                attributes,
+                coneAttributes,
             )
             is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(
                 constructor,
                 nullable,
-                attributes
+                coneAttributes
             )
             else -> error("!")
         }

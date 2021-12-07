@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.types.model.*
 object NewCommonSuperTypeCalculator {
     fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         val maxDepth = types.maxOfOrNull { it.typeDepth() } ?: 0
-        return commonSuperType(types, -maxDepth, true).replaceTypeAttributes(unionTypeAttributes(types))
+        return commonSuperType(types, -maxDepth, true).let { it.replaceTypeAttributes(unionTypeAttributes(listOf(it) + types)) }
     }
 
     private fun TypeSystemCommonSuperTypesContext.commonSuperType(

@@ -80,7 +80,7 @@ interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean = false,
-        annotations: List<AnnotationMarker>? = null
+        attributes: List<AnnotationMarker>? = null
     ): SimpleTypeMarker
 
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
@@ -499,6 +499,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
+
+    fun KotlinTypeMarker.hasCustomAttributes(): Boolean
 
     fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker>
 

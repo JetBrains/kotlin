@@ -207,16 +207,13 @@ class NewCapturedType(
         captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection, typeParameter: TypeParameterDescriptor
     ) : this(captureStatus, NewCapturedTypeConstructor(projection, typeParameter = typeParameter), lowerType)
 
-    override val annotations: Annotations
-        get() = attributes.toDefaultAnnotations()
-
     override val arguments: List<TypeProjection> get() = listOf()
 
     override val memberScope: MemberScope // todo what about foo().bar() where foo() return captured type?
         get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
-        NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable)
+        NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable, isProjectionNotNull)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         NewCapturedType(captureStatus, constructor, lowerType, attributes, newNullability)

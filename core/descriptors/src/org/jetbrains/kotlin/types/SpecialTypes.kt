@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType
 
-    override val annotations: Annotations get() = delegate.annotations
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable

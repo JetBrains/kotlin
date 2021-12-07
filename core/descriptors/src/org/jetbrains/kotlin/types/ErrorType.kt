@@ -27,9 +27,6 @@ open class ErrorType @JvmOverloads internal constructor(
     override val isMarkedNullable: Boolean = false,
     open val presentableName: String = "???"
 ) : SimpleType() {
-    override val annotations: Annotations
-        get() = Annotations.EMPTY
-
     override val attributes: TypeAttributes
         get() = TypeAttributes.Empty
 

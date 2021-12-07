@@ -145,7 +145,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
 
     private fun makeCollectionOfAnyType(builtIns: KotlinBuiltIns): KotlinType =
         KotlinTypeFactory.simpleNotNullType(
-            Annotations.EMPTY,
+            TypeAttributes.Empty,
             builtIns.collection,
             listOf(TypeProjectionImpl(builtIns.nullableAnyType))
         )
@@ -162,7 +162,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
         val newType = intersectTypes(
             listOf(
                 KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY,
+                    TypeAttributes.Empty,
                     builtIns.collection,
                     listOf(TypeProjectionImpl(progressionOrRangeElementType))
                 ),

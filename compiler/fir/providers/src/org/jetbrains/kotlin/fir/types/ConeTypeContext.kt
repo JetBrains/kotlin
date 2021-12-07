@@ -420,6 +420,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return attributes.toList()
     }
 
+    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
+        require(this is ConeKotlinType)
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttribute
+        return this.attributes.any { it !in compilerAttributes && it !is CustomAnnotationTypeAttribute }
+    }
+
     override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
         require(this is ConeKotlinType)
         val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttribute

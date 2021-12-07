@@ -332,10 +332,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
-        annotations: List<AnnotationMarker>?
+        attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
-        val ourAnnotations = annotations?.filterIsInstance<IrConstructorCall>()
-        require(ourAnnotations?.size == annotations?.size)
+        val ourAnnotations = attributes?.filterIsInstance<IrConstructorCall>()
+        require(ourAnnotations?.size == attributes?.size)
         return IrSimpleTypeImpl(
             constructor as IrClassifierSymbol,
             nullable,
@@ -404,6 +404,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
         require(this is IrType)
         return this.annotations.map { object : AnnotationMarker, IrElement by it {} }
+    }
+
+    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
+        return false
     }
 
     override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {

@@ -51,7 +51,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
             }
         }
 
-        val Empty: TypeAttributes = TypeAttributes(listOf(AnnotationsTypeAttribute(Annotations.EMPTY)))
+        val Empty: TypeAttributes = TypeAttributes(emptyList())
 
         fun create(attributes: List<TypeAttribute<*>>): TypeAttributes {
             return if (attributes.isEmpty()) {
@@ -70,6 +70,8 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         }
     }
 
+    val size: Int get() = arrayMap.size
+
     fun union(other: TypeAttributes): TypeAttributes {
         return perform(other) { this.union(it) }
     }
@@ -87,15 +89,11 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         return arrayMap[index] != null
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     operator fun plus(attribute: TypeAttribute<*>): TypeAttributes {
         if (attribute in this) return this
         if (isEmpty()) return TypeAttributes(attribute)
-        val newAttributes = buildList {
-            addAll(this)
-            add(attribute)
-        }
-        return TypeAttributes(newAttributes)
+        val newAttributes = this.toList() + attribute
+        return create(newAttributes)
     }
 
     fun remove(attribute: TypeAttribute<*>): TypeAttributes {
@@ -119,6 +117,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
 
     override val typeRegistry: TypeRegistry<TypeAttribute<*>, TypeAttribute<*>>
         get() = Companion
+
 }
 
 fun TypeAttributes.toDefaultAnnotations(): Annotations =
@@ -127,6 +126,9 @@ fun TypeAttributes.toDefaultAnnotations(): Annotations =
 fun Annotations.toDefaultAttributes(): TypeAttributes = DefaultTypeAttributeTranslator.toAttributes(this)
 
 fun TypeAttributes.replaceAnnotations(newAnnotations: Annotations): TypeAttributes {
-    val withoutCustom = (annotationsAttribute?.let { this.remove(it) } ?: this)
-    return withoutCustom.add(newAnnotations.toDefaultAttributes())
+    if (annotations === newAnnotations) return this
+    val withoutAnnotations = annotationsAttribute?.let { this.remove(it) } ?: this
+    // Check if iterator hasNext to handle FilteredAnnotations.isEmpty() with OldInference
+    if (!newAnnotations.iterator().hasNext() && newAnnotations.isEmpty()) return withoutAnnotations
+    return withoutAnnotations.plus(AnnotationsTypeAttribute(newAnnotations))
 }

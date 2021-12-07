@@ -135,7 +135,7 @@ class TypeAliasExpander(
         replaceAttributes(createdCombinedAttributes(newAttributes))
 
     private fun SimpleType.combineAttributes(newAttributes: TypeAttributes): SimpleType =
-        if (isError) this else replaceAttributes(newAttributes = createdCombinedAttributes(newAttributes))
+        if (isError) this else replace(newAttributes = createdCombinedAttributes(newAttributes))
 
     private fun KotlinType.createdCombinedAttributes(newAttributes: TypeAttributes): TypeAttributes {
         if (isError) return attributes

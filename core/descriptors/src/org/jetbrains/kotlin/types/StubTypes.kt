@@ -58,9 +58,6 @@ abstract class AbstractStubType(val originalTypeVariable: TypeConstructor, overr
     override val arguments: List<TypeProjection>
         get() = emptyList()
 
-    override val annotations: Annotations
-        get() = Annotations.EMPTY
-
     override val attributes: TypeAttributes
         get() = TypeAttributes.Empty
 
