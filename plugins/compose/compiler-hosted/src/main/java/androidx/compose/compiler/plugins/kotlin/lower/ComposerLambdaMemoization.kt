@@ -797,8 +797,12 @@ class ComposerLambdaMemoization(
         expression: IrExpression,
         captures: List<IrValueDeclaration>
     ): IrExpression {
+        // Kotlin/JS doesn't have an optimization for non-capturing lambdas
+        // https://youtrack.jetbrains.com/issue/KT-49923
+        val skipNonCapturingLambdas = !context.platform.isJs()
+
         // If the function doesn't capture, Kotlin's default optimization is sufficient
-        if (captures.isEmpty()) {
+        if (captures.isEmpty() && skipNonCapturingLambdas) {
             metrics.recordLambda(
                 composable = false,
                 memoized = true,
