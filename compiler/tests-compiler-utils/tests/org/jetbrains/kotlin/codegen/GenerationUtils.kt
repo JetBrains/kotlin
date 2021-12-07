@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -113,10 +114,12 @@ object GenerationUtils {
             emptyList(),
             IrGenerationExtension.getInstances(project)
         )
-        val extensions = JvmGeneratorExtensionsImpl(configuration)
-        val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
+        val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(
+            JvmFir2IrExtensions(configuration)
+        )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
+        val extensions = JvmGeneratorExtensionsImpl(configuration)
         val codegenFactory = JvmIrCodegenFactory(
             configuration,
             configuration.get(CLIConfigurationKeys.PHASE_CONFIG),

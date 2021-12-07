@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -45,8 +44,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class Fir2IrConverter(
@@ -65,8 +62,7 @@ class Fir2IrConverter(
         irGenerationExtensions: Collection<IrGenerationExtension>,
         fir2irVisitor: Fir2IrVisitor,
         languageVersionSettings: LanguageVersionSettings,
-        descriptorMangler: KotlinMangler.DescriptorMangler,
-        extensions: StubGeneratorExtensions,
+        fir2IrExtensions: Fir2IrExtensions,
     ) {
         for (firFile in allFirFiles) {
             registerFileAndClasses(firFile, irModuleFragment)
@@ -103,12 +99,7 @@ class Fir2IrConverter(
             firFile.accept(fir2irVisitor, null)
         }
 
-        val stubGenerator = DeclarationStubGeneratorImpl(
-            irModuleFragment.descriptor, symbolTable, irBuiltIns,
-            DescriptorByIdSignatureFinderImpl(irModuleFragment.descriptor, descriptorMangler),
-            extensions
-        )
-        irModuleFragment.acceptVoid(ExternalPackageParentPatcher(stubGenerator))
+        irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
 
         evaluateConstants(irModuleFragment)
 
@@ -419,9 +410,8 @@ class Fir2IrConverter(
             scopeSession: ScopeSession,
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
-            descriptorMangler: KotlinMangler.DescriptorMangler,
             signaturer: IdSignatureComposer,
-            generatorExtensions: GeneratorExtensions,
+            fir2IrExtensions: Fir2IrExtensions,
             mangler: FirMangler,
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
@@ -469,8 +459,7 @@ class Fir2IrConverter(
             }
 
             converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, languageVersionSettings,
-                descriptorMangler, generatorExtensions
+                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, languageVersionSettings, fir2IrExtensions
             )
 
             return Fir2IrResult(irModuleFragment, symbolTable, components)

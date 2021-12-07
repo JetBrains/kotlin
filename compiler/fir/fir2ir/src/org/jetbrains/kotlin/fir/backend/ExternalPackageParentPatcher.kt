@@ -6,25 +6,26 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-// TODO: could be a lowering
-internal class ExternalPackageParentPatcher(private val stubGenerator: DeclarationStubGenerator) : IrElementVisitorVoid {
+// TODO: should be a lowering
+internal class ExternalPackageParentPatcher(
+    private val components: Fir2IrComponents,
+    private val fir2IrExtensions: Fir2IrExtensions
+) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
         super.visitMemberAccess(expression)
-        val callee = expression.symbol.owner as? IrDeclaration ?: return
+        val callee = expression.symbol.owner as? IrMemberWithContainerSource ?: return
         if (callee.parent is IrExternalPackageFragment) {
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
-            val parentClass = stubGenerator.generateOrGetFacadeClass(callee.descriptor) ?: return
+            val parentClass = fir2IrExtensions.generateOrGetFacadeClass(callee, components) ?: return
+            parentClass.parent = callee.parent
             callee.parent = parentClass
             when (callee) {
                 is IrProperty -> handleProperty(callee, parentClass)
