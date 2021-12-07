@@ -3520,9 +3520,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("funInterfaceConstructorThrowsNpe.kt")
-            public void testFunInterfaceConstructorThrowsNpe() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorThrowsNpe.kt");
+            @TestMetadata("funInterfaceConstructorOfImplicitKFunctionType.kt")
+            public void testFunInterfaceConstructorOfImplicitKFunctionType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
             }
         }
 

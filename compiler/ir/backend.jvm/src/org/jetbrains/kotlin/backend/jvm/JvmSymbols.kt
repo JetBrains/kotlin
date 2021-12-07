@@ -377,6 +377,14 @@ class JvmSymbols(
         }
     }
 
+    val funInterfaceConstructorReferenceClass =
+        createClass(FqName("kotlin.jvm.internal.FunInterfaceConstructorReference"), classModality = Modality.OPEN) { irClass ->
+            irClass.superTypes = listOf(irBuiltIns.anyType)
+            irClass.addConstructor().also { irConstructor ->
+                irConstructor.addValueParameter("funInterface", javaLangClass.starProjectedType)
+            }
+        }
+
     fun getFunction(parameterCount: Int): IrClassSymbol = irBuiltIns.functionN(parameterCount).symbol
 
     private val jvmFunctionClasses = storageManager.createMemoizedFunction { n: Int ->

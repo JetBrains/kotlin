@@ -593,6 +593,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             samSuperType
                 ?: when {
                     isLambda -> context.ir.symbols.lambdaClass
+                    isAdaptedFunInterfaceConstructorReference -> context.ir.symbols.funInterfaceConstructorReferenceClass
                     useOptimizedSuperClass -> when {
                         isAdaptedReference -> context.ir.symbols.adaptedFunctionReference
                         else -> context.ir.symbols.functionReferenceImpl
@@ -743,22 +744,29 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }
 
                 // Super constructor:
+                // - For fun interface constructor references, super class is kotlin.jvm.internal.FunInterfaceConstructorReference
+                //   with single constructor 'public FunInterfaceConstructorReference(Class funInterface)'
                 // - For SAM references, the super class is Any
                 // - For lambdas, accepts arity
                 // - For optimized function references (1.4+), accepts:
                 //       arity, [receiver], owner, name, signature, flags
                 // - For unoptimized function references, accepts:
                 //       arity, [receiver]
-                val constructor = if (samSuperType != null) {
-                    context.irBuiltIns.anyClass.owner.constructors.single()
-                } else {
-                    val expectedArity =
-                        if (isLambda && !isAdaptedReference) 1
-                        else 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
-                    superType.getClass()!!.constructors.single {
-                        it.valueParameters.size == expectedArity
+                val constructor =
+                    when {
+                        isAdaptedFunInterfaceConstructorReference ->
+                            context.ir.symbols.funInterfaceConstructorReferenceClass.owner.constructors.single()
+                        samSuperType != null ->
+                            context.irBuiltIns.anyClass.owner.constructors.single()
+                        else -> {
+                            val expectedArity =
+                                if (isLambda && !isAdaptedReference) 1
+                                else 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
+                            superType.getClass()!!.constructors.single {
+                                it.valueParameters.size == expectedArity
+                            }
+                        }
                     }
-                }
 
                 body = context.createJvmIrBuilder(symbol).run {
                     irBlockBody(startOffset, endOffset) {
@@ -776,28 +784,24 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             call: IrFunctionAccessExpression,
             generateBoundReceiver: IrBuilder.() -> IrExpression
         ) {
-            var index = 0
-            call.putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
-            if (boundReceiver != null) {
-                call.putValueArgument(index++, generateBoundReceiver())
-            }
             if (isAdaptedFunInterfaceConstructorReference) {
-                val owner = kClassReference(constructedFunInterfaceSymbol!!.owner.defaultType)
-                // owner:       <FUN_INTERFACE_TYPE>
-                call.putValueArgument(index++, kClassToJavaClass(owner))
-                // name:        ""
-                call.putValueArgument(index++, irString(""))
-                // signature:   ""
-                call.putValueArgument(index++, irString(""))
-                // flags:       8 = 3 << 1
-                call.putValueArgument(index, irInt(8))
-            } else if (!isLambda && useOptimizedSuperClass) {
-                val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
-                val owner = calculateOwnerKClass(callableReferenceTarget.parent)
-                call.putValueArgument(index++, kClassToJavaClass(owner))
-                call.putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
-                call.putValueArgument(index++, generateSignature(callableReferenceTarget.symbol))
-                call.putValueArgument(index, irInt(getFunctionReferenceFlags(callableReferenceTarget)))
+                val funInterfaceKClassRef = kClassReference(constructedFunInterfaceSymbol!!.owner.defaultType)
+                val funInterfaceJavaClassRef = kClassToJavaClass(funInterfaceKClassRef)
+                call.putValueArgument(0, funInterfaceJavaClassRef)
+            } else {
+                var index = 0
+                call.putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
+                if (boundReceiver != null) {
+                    call.putValueArgument(index++, generateBoundReceiver())
+                }
+                if (!isLambda && useOptimizedSuperClass) {
+                    val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
+                    val owner = calculateOwnerKClass(callableReferenceTarget.parent)
+                    call.putValueArgument(index++, kClassToJavaClass(owner))
+                    call.putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
+                    call.putValueArgument(index++, generateSignature(callableReferenceTarget.symbol))
+                    call.putValueArgument(index, irInt(getFunctionReferenceFlags(callableReferenceTarget)))
+                }
             }
         }
 

@@ -3078,9 +3078,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructor.kt");
             }
 
-            @TestMetadata("funInterfaceConstructorThrowsNpe.kt")
-            public void ignoreFunInterfaceConstructorThrowsNpe() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorThrowsNpe.kt");
+            @TestMetadata("funInterfaceConstructorOfImplicitKFunctionType.kt")
+            public void ignoreFunInterfaceConstructorOfImplicitKFunctionType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
             }
 
             private void runTest(String testDataFilePath) throws Exception {

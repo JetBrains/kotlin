@@ -3604,6 +3604,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("funInterfaceConstructorIsKFunction.kt")
+            public void testFunInterfaceConstructorIsKFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorIsKFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorOfImplicitKFunctionType.kt")
+            public void testFunInterfaceConstructorOfImplicitKFunctionType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
+            }
+
+            @Test
             @TestMetadata("funInterfaceConstructorThrowsNpe.kt")
             public void testFunInterfaceConstructorThrowsNpe() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorThrowsNpe.kt");

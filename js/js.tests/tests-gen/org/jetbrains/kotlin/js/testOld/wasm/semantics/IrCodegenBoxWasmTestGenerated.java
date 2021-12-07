@@ -2230,6 +2230,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testFunInterfaceConstructorEquality() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
             }
+
+            @TestMetadata("funInterfaceConstructorIsKFunction.kt")
+            public void testFunInterfaceConstructorIsKFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorIsKFunction.kt");
+            }
+
+            @TestMetadata("funInterfaceConstructorOfImplicitKFunctionType.kt")
+            public void testFunInterfaceConstructorOfImplicitKFunctionType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/callableReference/function")

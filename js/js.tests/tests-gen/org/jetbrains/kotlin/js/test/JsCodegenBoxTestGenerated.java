@@ -2462,6 +2462,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testFunInterfaceConstructorEquality() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorEquality.kt");
             }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorIsKFunction.kt")
+            public void testFunInterfaceConstructorIsKFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorIsKFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("funInterfaceConstructorOfImplicitKFunctionType.kt")
+            public void testFunInterfaceConstructorOfImplicitKFunctionType() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/funInterfaceConstructor/funInterfaceConstructorOfImplicitKFunctionType.kt");
+            }
         }
 
         @Nested
