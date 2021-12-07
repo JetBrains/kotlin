@@ -17323,7 +17323,7 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             public class DelegationByUnderlyingType {
                 @Test
                 public void testAllFilesPresentInDelegationByUnderlyingType() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
 
                 @Test
