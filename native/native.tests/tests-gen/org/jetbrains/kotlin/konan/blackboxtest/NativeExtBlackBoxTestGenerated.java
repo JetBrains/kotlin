@@ -7731,12 +7731,6 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
-            @TestMetadata("kt49645.kt")
-            public void testKt49645() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/kt49645.kt");
-            }
-
-            @Test
             @TestMetadata("lastExpressionIsLoop.kt")
             public void testLastExpressionIsLoop() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
