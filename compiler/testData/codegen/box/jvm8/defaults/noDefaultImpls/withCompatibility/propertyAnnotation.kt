@@ -4,17 +4,18 @@
 // WITH_RUNTIME
 // CHECK_BYTECODE_LISTING
 
+annotation class MyAnn
+
 @JvmDefaultWithCompatibility
 interface Test {
-    fun test(s: String ="OK"): String {
-        return s
-    }
+    @MyAnn
+    val prop: String
+        get() = "OK"
 }
 
-class TestClass : Test {
-
-}
+class TestClass : Test
 
 fun box(): String {
-    return TestClass().test()
+    val testClass = TestClass()
+    return testClass.prop
 }

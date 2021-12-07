@@ -21438,14 +21438,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class WithCompatibility extends AbstractLightAnalysisModeTest {
-                    @TestMetadata("defaultArgs.kt")
-                    public void ignoreDefaultArgs() throws Exception {
-                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/defaultArgs.kt");
-                    }
-
-                    @TestMetadata("simple.kt")
-                    public void ignoreSimple() throws Exception {
-                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/simple.kt");
+                    @TestMetadata("suspend.kt")
+                    public void ignoreSuspend() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/suspend.kt");
                     }
 
                     private void runTest(String testDataFilePath) throws Exception {
@@ -21454,6 +21449,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                     public void testAllFilesPresentInWithCompatibility() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+
+                    @TestMetadata("defaultArgs.kt")
+                    public void testDefaultArgs() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/defaultArgs.kt");
+                    }
+
+                    @TestMetadata("differentCases.kt")
+                    public void testDifferentCases() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/differentCases.kt");
+                    }
+
+                    @TestMetadata("propertyAnnotation.kt")
+                    public void testPropertyAnnotation() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/propertyAnnotation.kt");
+                    }
+
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/simple.kt");
                     }
                 }
             }

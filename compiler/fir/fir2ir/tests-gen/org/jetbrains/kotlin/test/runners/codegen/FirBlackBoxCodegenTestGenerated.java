@@ -25804,9 +25804,27 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     }
 
                     @Test
+                    @TestMetadata("differentCases.kt")
+                    public void testDifferentCases() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/differentCases.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("propertyAnnotation.kt")
+                    public void testPropertyAnnotation() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/propertyAnnotation.kt");
+                    }
+
+                    @Test
                     @TestMetadata("simple.kt")
                     public void testSimple() throws Exception {
                         runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/simple.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("suspend.kt")
+                    public void testSuspend() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/suspend.kt");
                     }
                 }
             }
