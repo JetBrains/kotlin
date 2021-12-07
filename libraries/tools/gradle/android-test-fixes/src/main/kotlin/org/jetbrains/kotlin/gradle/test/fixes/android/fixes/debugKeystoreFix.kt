@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.gradle.test.fixes.android.fixes
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.TestExtension
+import org.gradle.api.Action
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.test.fixes.android.TestFixesProperties
@@ -20,12 +24,17 @@ import org.jetbrains.kotlin.gradle.test.fixes.android.TestFixesProperties
 internal fun Project.applyDebugKeystoreFix(
     testFixesProperties: TestFixesProperties
 ) {
-    plugins.withId("com.android.application") {
-        extensions.configure<AppExtension> {
-            logger.info("Reconfiguring Android debug keystore")
-            buildTypes.named("debug") {
-                it.signingConfig?.storeFile = file(testFixesProperties.androidDebugKeystoreLocation)
-            }
+    plugins.withId("com.android.application", debugFix<AppExtension>(testFixesProperties))
+    plugins.withId("com.android.test", debugFix<TestExtension>(testFixesProperties))
+}
+
+private inline fun <reified AndroidExtension : BaseExtension> Project.debugFix(
+    testFixesProperties: TestFixesProperties,
+): Action<Plugin<*>> = Action {
+    extensions.configure<AndroidExtension> {
+        logger.info("Reconfiguring Android debug keystore")
+        buildTypes.named("debug") {
+            it.signingConfig?.storeFile = file(testFixesProperties.androidDebugKeystoreLocation)
         }
     }
 }
