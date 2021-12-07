@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
@@ -1054,11 +1053,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val owner: FirContractDescriptionOwner? = when (qualifiedAccess) {
             is FirFunctionCall -> qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction
             is FirQualifiedAccessExpression -> {
-                val property = (qualifiedAccess.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
+                val property = qualifiedAccess.calleeReference.resolvedSymbol?.fir as? FirProperty
                 property?.getter
             }
             is FirVariableAssignment -> {
-                val property = (qualifiedAccess.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty
+                val property = qualifiedAccess.lValue.resolvedSymbol?.fir as? FirProperty
                 property?.setter
             }
             else -> null
@@ -1146,7 +1145,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
-        val property = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirProperty ?: return
+        val property = assignment.lValue.resolvedSymbol?.fir as? FirProperty ?: return
         // TODO: add unstable smartcast
         if (property.isLocal || !property.isVar) {
             exitVariableInitialization(node, assignment.rValue, property, assignment, hasExplicitType = false)

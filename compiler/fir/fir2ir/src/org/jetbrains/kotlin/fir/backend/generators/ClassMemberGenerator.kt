@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -294,7 +294,7 @@ internal class ClassMemberGenerator(
 
     internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType()
-        val referencedSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
+        val referencedSymbol = calleeReference.resolvedSymbol as? FirConstructorSymbol
             ?: return convertWithOffsets { startOffset, endOffset ->
                 IrErrorCallExpressionImpl(
                     startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"

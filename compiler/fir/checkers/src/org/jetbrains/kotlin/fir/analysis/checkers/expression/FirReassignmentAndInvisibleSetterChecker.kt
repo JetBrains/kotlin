@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -100,7 +100,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val valueParameter = (expression.lValue as? FirResolvedNamedReference)?.resolvedSymbol as? FirValueParameterSymbol ?: return
+        val valueParameter = expression.lValue.resolvedSymbol as? FirValueParameterSymbol ?: return
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter, context)
     }
 }

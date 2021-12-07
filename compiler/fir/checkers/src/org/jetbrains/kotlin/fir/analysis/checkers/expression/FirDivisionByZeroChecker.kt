@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +25,7 @@ object FirDivisionByZeroChecker : FirFunctionCallChecker() {
         val firstValue = (expression.arguments.singleOrNull() as? FirConstExpression<*>)?.value
         if (firstValue != null && (firstValue == 0L || firstValue == 0.0f || firstValue == 0.0)) {
             val callableId =
-                ((expression.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId
+                (expression.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId
             if (callableId != null && callableId.packageName == defaultPackageName && callableId.callableName == defaultDivName) {
                 reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO, context)
             }

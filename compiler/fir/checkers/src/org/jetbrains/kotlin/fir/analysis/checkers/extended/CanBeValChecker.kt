@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
@@ -85,8 +85,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val symbol = (node.fir.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirPropertySymbol
-                ?: return
+            val symbol = node.fir.calleeReference.resolvedSymbol as? FirPropertySymbol ?: return
             if (symbol !in localProperties) return
             unprocessedProperties.remove(symbol)
 

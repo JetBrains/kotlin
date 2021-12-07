@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
@@ -35,7 +35,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
         reporter: DiagnosticReporter
     ) {
         // UNRESOLVED_REFERENCE will be reported separately.
-        val reference = callableReferenceAccess.calleeReference as? FirResolvedNamedReference ?: return
+        val reference = callableReferenceAccess.calleeReference.resolved ?: return
 
         val source = reference.source ?: return
         if (source.kind is KtFakeSourceElementKind) return

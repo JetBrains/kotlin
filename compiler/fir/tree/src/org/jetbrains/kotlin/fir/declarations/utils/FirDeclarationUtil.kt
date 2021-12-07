@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -39,8 +39,7 @@ val FirClass.delegateFields: List<FirField>
 
 val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
     get() {
-        val reference = calleeReference as? FirResolvedNamedReference ?: return null
-        return reference.resolvedSymbol as? FirPropertySymbol
+        return calleeReference.resolvedSymbol as? FirPropertySymbol
     }
 
 inline val FirDeclaration.isJava: Boolean

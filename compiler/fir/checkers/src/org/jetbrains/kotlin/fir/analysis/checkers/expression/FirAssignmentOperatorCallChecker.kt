@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirAssignmentOperatorCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val resolvedCallee = expression.calleeReference as? FirResolvedNamedReference ?: return
-        val resolvedCalleeSymbol = resolvedCallee.resolvedSymbol as? FirNamedFunctionSymbol ?: return
+        val resolvedCalleeSymbol = expression.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return
         val resolvedCalleeName = resolvedCalleeSymbol.name
         if (expression.origin != FirFunctionCallOrigin.Operator ||
             resolvedCalleeName !in FirOperationNameConventions.ASSIGNMENT_NAMES

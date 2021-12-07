@@ -492,7 +492,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
 
         val lhsReference = leftArgument.toReference()
-        val lhsSymbol = (lhsReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*>
+        val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
         val lhsVariable = lhsSymbol?.fir
         val lhsIsVar = lhsVariable?.isVar == true
 

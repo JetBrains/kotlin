@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
@@ -797,8 +796,7 @@ class Fir2IrDeclarationStorage(
         val origin = property.computeIrOrigin(predefinedOrigin)
         classifierStorage.preCacheTypeParameters(property)
         if (property.delegate != null) {
-            val delegateReference = (property.delegate as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference
-            (delegateReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
+            ((property.delegate as? FirQualifiedAccess)?.calleeReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
                 classifierStorage.preCacheTypeParameters(it)
             }
         }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -92,10 +92,9 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                 }
 
                 override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-                    val namedReference = qualifiedAccessExpression.calleeReference as? FirResolvedNamedReference ?: return
 
                     @OptIn(SymbolInternals::class)
-                    val referredParameter = namedReference.resolvedSymbol.fir as? FirValueParameter ?: return
+                    val referredParameter = qualifiedAccessExpression.calleeReference.resolvedSymbol?.fir as? FirValueParameter ?: return
                     val referredParameterIndex = function.valueParameters.indexOf(referredParameter)
                     // Skip if the referred parameter is not declared in the same function.
                     if (referredParameterIndex < 0) return

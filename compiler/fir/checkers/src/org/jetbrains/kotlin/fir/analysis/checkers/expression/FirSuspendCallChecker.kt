@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -39,7 +40,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     internal val KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, BUILTIN_SUSPEND_NAME)
 
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
+        val reference = expression.calleeReference.resolved ?: return
         val symbol = reference.resolvedSymbol as? FirCallableSymbol ?: return
         if (reference.name == BUILTIN_SUSPEND_NAME ||
             symbol is FirNamedFunctionSymbol && symbol.name == BUILTIN_SUSPEND_NAME

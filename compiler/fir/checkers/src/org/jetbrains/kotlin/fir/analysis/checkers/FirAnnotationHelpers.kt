@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -40,7 +40,7 @@ fun FirRegularClass.getRetention(): AnnotationRetention {
 fun FirAnnotation.getRetention(): AnnotationRetention {
     val retentionArgument = findArgumentByName(ParameterNames.retentionValue) as? FirQualifiedAccessExpression
         ?: return AnnotationRetention.RUNTIME
-    val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
+    val retentionName = retentionArgument.calleeReference.resolved?.name?.asString()
         ?: return AnnotationRetention.RUNTIME
     return AnnotationRetention.values().firstOrNull { it.name == retentionName } ?: AnnotationRetention.RUNTIME
 }
@@ -74,7 +74,7 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
-        val targetName = (targetExpression?.calleeReference as? FirResolvedNamedReference)?.name?.asString() ?: return@mapNotNullTo null
+        val targetName = targetExpression?.calleeReference?.resolved?.name?.asString() ?: return@mapNotNullTo null
         KotlinTarget.values().firstOrNull { target -> target.name == targetName }
     }
 }

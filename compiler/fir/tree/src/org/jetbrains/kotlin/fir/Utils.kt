@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -68,4 +71,7 @@ val FirFile.packageFqName: FqName
 
 val FirElement.psi: PsiElement? get() = (source as? KtPsiSourceElement)?.psi
 val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?.psi
+
+val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolvedNamedReference
+val FirReference.resolvedSymbol: FirBasedSymbol<*>? get() = resolved?.resolvedSymbol
 

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -37,7 +37,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         if (!allowedSourceKinds.contains(expression.source?.kind)) return
         if (expression is FirAnnotation || expression is FirDelegatedConstructorCall) return //checked by FirDeprecatedTypeChecker
         val resolvable = expression as? FirResolvable ?: return
-        val reference = resolvable.calleeReference as? FirResolvedNamedReference ?: return
+        val reference = resolvable.calleeReference.resolved ?: return
         val referencedSymbol = reference.resolvedSymbol
 
         reportDeprecationIfNeeded(reference.source, referencedSymbol, expression, context, reporter)

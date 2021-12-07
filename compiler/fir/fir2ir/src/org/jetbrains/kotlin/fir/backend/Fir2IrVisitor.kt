@@ -275,7 +275,7 @@ class Fir2IrVisitor(
         }
         val initializer = variable.initializer
         val isNextVariable = initializer is FirFunctionCall &&
-                initializer.resolvedNamedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
+                (initializer.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId?.isIteratorNext() == true &&
                 variable.source.psi?.parent is KtForExpression
         val irVariable = declarationStorage.createIrVariable(
             variable, conversionScope.parentFromStack(),
@@ -393,11 +393,6 @@ class Fir2IrVisitor(
         return checkedSafeCallSubject.convertWithOffsets { startOffset, endOffset ->
             IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
         }
-    }
-
-    private fun FirFunctionCall.resolvedNamedFunctionSymbol(): FirNamedFunctionSymbol? {
-        val calleeReference = (calleeReference as? FirResolvedNamedReference) ?: return null
-        return calleeReference.resolvedSymbol as? FirNamedFunctionSymbol
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: Any?): IrElement {

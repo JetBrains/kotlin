@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
@@ -107,9 +107,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
 
     private val FirExpression.safeAsTypeParameterSymbol: FirTypeParameterSymbol?
         get() {
-            return ((this as? FirQualifiedAccessExpression)
-                ?.calleeReference as? FirResolvedNamedReference)
-                ?.resolvedSymbol as? FirTypeParameterSymbol
+            return (this as? FirQualifiedAccessExpression)?.calleeReference?.resolvedSymbol as? FirTypeParameterSymbol
         }
 
     private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =

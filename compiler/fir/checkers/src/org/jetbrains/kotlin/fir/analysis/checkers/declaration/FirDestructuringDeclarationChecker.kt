@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeConstraintSystemHasContradiction
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -185,7 +185,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
 
     private val FirQualifiedAccessExpression.resolvedVariable: FirVariable?
         get() {
-            val symbol = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*> ?: return null
+            val symbol = calleeReference.resolvedSymbol as? FirVariableSymbol<*> ?: return null
             symbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
             @OptIn(SymbolInternals::class)
             return symbol.fir

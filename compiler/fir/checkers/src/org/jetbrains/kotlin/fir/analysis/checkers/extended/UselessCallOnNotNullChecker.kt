@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.classId
@@ -33,7 +33,7 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
     }
 
     private fun FirQualifiedAccessExpression.getCallableId() =
-        ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId
+        (calleeReference.resolvedSymbol as? FirNamedFunctionSymbol)?.callableId
 
     private fun FirExpression.getPackage() =
         typeRef.coneType.classId?.packageFqName.toString()

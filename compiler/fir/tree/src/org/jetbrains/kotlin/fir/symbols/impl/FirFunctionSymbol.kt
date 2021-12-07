@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.name.*
 
@@ -63,7 +64,7 @@ class FirConstructorSymbol(
     val resolvedDelegatedConstructor: FirConstructorSymbol?
         get() {
             val delegatedConstructorCall = resolvedDelegatedConstructorCall ?: return null
-            return (delegatedConstructorCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
+            return delegatedConstructorCall.calleeReference.resolvedSymbol as? FirConstructorSymbol
         }
 
     val resolvedDelegatedConstructorCall: FirDelegatedConstructorCall?
