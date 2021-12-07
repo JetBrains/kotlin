@@ -414,12 +414,10 @@ internal class AdapterGenerator(
         if (!needSamConversion(argument, parameter)) {
             return this
         }
-        val samFirType = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let {
-            var substituted = substitutor.substituteOrSelf(it)
-            substituted = starProjectionApproximator.substituteOrSelf(substituted)
-            if (substituted is ConeRawType) substituted.lowerBound else substituted
-        }
-        var samType = samFirType?.toIrType(ConversionTypeContext.WITH_INVARIANT) ?: createErrorType()
+        val parameterType = parameter.returnTypeRef.coneType
+        val substitutedParameterType = starProjectionApproximator.substituteOrSelf(substitutor.substituteOrSelf(parameterType))
+        val samFirType = if (substitutedParameterType is ConeRawType) substitutedParameterType.lowerBound else substitutedParameterType
+        var samType = samFirType.toIrType(ConversionTypeContext.WITH_INVARIANT)
         if (shouldUnwrapVarargType) {
             samType = samType.getArrayElementType(irBuiltIns)
         }
@@ -448,8 +446,12 @@ internal class AdapterGenerator(
             return false
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
-        val expectedFunctionType = samResolver.getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
+        val expectedFunctionType = getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
         return argument.isFunctional(session, scopeSession, expectedFunctionType)
+    }
+
+    internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
+        return samResolver.getFunctionTypeForPossibleSamType(parameterType)
     }
 
     /**
@@ -468,21 +470,22 @@ internal class AdapterGenerator(
      */
     internal fun IrExpression.applySuspendConversionIfNeeded(
         argument: FirExpression,
-        parameter: FirValueParameter?
+        parameterType: ConeKotlinType,
+        samFunctionType: ConeKotlinType?
     ): IrExpression {
         // TODO: should refer to LanguageVersionSettings.SuspendConversion
         if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
             return this
         }
-        val expectedType = parameter?.returnTypeRef?.coneType ?: return this
         // Expect the expected type to be a suspend functional type.
-        if (!expectedType.isSuspendFunctionType(session)) {
+        val potentialFunctionType = samFunctionType ?: parameterType
+        if (!potentialFunctionType.isSuspendFunctionType(session)) {
             return this
         }
-        val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
+        val expectedFunctionalType = potentialFunctionType.suspendFunctionTypeToFunctionType(session)
 
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, argument) ?: return this
-        val suspendConvertedType = expectedType.toIrType() as IrSimpleType
+        val suspendConvertedType = potentialFunctionType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, type, invokeSymbol)
             // TODO add a bound receiver property to IrFunctionExpressionImpl?

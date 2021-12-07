@@ -657,7 +657,9 @@ class CallAndReferenceGenerator(
         with(adapterGenerator) {
             if (parameter?.returnTypeRef is FirResolvedTypeRef) {
                 // Java type case (from annotations)
-                irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameter)
+                val parameterType = parameter.returnTypeRef.coneType
+                val samFunctionType = getFunctionTypeForPossibleSamType(parameterType)
+                irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameterType, samFunctionType)
                 irArgument = irArgument.applySamConversionIfNeeded(argument, parameter, substitutor)
             }
         }

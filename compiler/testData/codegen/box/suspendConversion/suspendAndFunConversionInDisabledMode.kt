@@ -1,8 +1,6 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: SuspendAndFunConversionInDisabledModeKt$box$1 cannot be cast to kotlin.jvm.functions.Function1
 
 fun interface Runnable {
     fun run()
