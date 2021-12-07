@@ -4,9 +4,11 @@
  */
 
 @file:Suppress("FunctionName")
+@file:OptIn(InternalIdeApi::class)
 
 package org.jetbrains.kotlin.gradle.ide
 
+import org.jetbrains.kotlin.gradle.plugin.ide.InternalIdeApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
