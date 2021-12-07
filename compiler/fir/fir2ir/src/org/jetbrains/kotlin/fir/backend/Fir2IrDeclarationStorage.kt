@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -20,10 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
-import org.jetbrains.kotlin.fir.expressions.FirComponentCall
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
@@ -945,17 +943,41 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrField(field: FirField): IrField? = fieldCache[field]
 
-    fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass): IrField {
-        val irField = createIrField(
-            field,
-            typeRef = field.initializer?.typeRef ?: field.returnTypeRef,
-            origin = IrDeclarationOrigin.DELEGATE
-        )
-        irField.setAndModifyParent(irClass)
+    fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass): IrField? {
+        // Either take a corresponding constructor property backing field,
+        // or create a separate delegate field
+        val irField = getOrCreateDelegateIrField(field, owner, irClass)
         delegatedMemberGenerator.generate(irField, field, owner, irClass)
         if (owner.isLocalClassOrAnonymousObject()) {
             delegatedMemberGenerator.generateBodies()
         }
+        // If it's a property backing field, it should not be added to the class in Fir2IrConverter, so it's not returned
+        return irField.takeIf { it.correspondingPropertySymbol == null }
+    }
+
+    private fun getOrCreateDelegateIrField(field: FirField, owner: FirClass, irClass: IrClass): IrField {
+        val initializer = field.initializer
+        if (initializer is FirQualifiedAccessExpression && initializer.explicitReceiver == null) {
+            val resolvedSymbol = initializer.calleeReference.resolvedSymbol as? FirValueParameterSymbol
+            if (resolvedSymbol is FirValueParameterSymbol) {
+                val name = resolvedSymbol.name
+                val constructorProperty = owner.declarations.filterIsInstance<FirProperty>().find {
+                    it.name == name && it.source?.kind is KtFakeSourceElementKind.PropertyFromParameter
+                }
+                if (constructorProperty != null) {
+                    val irProperty = getOrCreateIrProperty(constructorProperty, irClass)
+                    val backingField = irProperty.backingField!!
+                    fieldCache[field] = backingField
+                    return backingField
+                }
+            }
+        }
+        val irField = createIrField(
+            field,
+            typeRef = initializer?.typeRef ?: field.returnTypeRef,
+            origin = IrDeclarationOrigin.DELEGATE
+        )
+        irField.setAndModifyParent(irClass)
         return irField
     }
 

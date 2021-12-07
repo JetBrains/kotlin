@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/kt43342.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun containsKey (key: K of <root>.ControlFlowInfo): kotlin.Boolean declared in <root>.ControlFlowInfo'
           CALL 'public abstract fun containsKey (key: K of kotlin.collections.Map): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.containsKey' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
             key: GET_VAR 'key: K of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.containsKey' type=K of <root>.ControlFlowInfo origin=null
     FUN DELEGATED_MEMBER name:containsValue visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, value:V of <root>.ControlFlowInfo) returnType:kotlin.Boolean
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/kt43342.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun containsValue (value: V of <root>.ControlFlowInfo): kotlin.Boolean declared in <root>.ControlFlowInfo'
           CALL 'public abstract fun containsValue (value: V of kotlin.collections.Map): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.containsValue' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
             value: GET_VAR 'value: V of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.containsValue' type=V of <root>.ControlFlowInfo origin=null
     FUN DELEGATED_MEMBER name:get visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo) returnType:V of <root>.ControlFlowInfo? [operator]
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/kt43342.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun get (key: K of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo? [operator] declared in <root>.ControlFlowInfo'
           CALL 'public abstract fun get (key: K of kotlin.collections.Map): V of kotlin.collections.Map? [operator] declared in kotlin.collections.Map' type=V of <root>.ControlFlowInfo? origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.get' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
             key: GET_VAR 'key: K of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo.get' type=K of <root>.ControlFlowInfo origin=null
     FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.Boolean
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/kt43342.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.ControlFlowInfo'
           CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
               receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.isEmpty' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:entries visibility:public modality:OPEN [val]
       overridden:
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-entries> (): kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>> declared in <root>.ControlFlowInfo'
             CALL 'public abstract fun <get-entries> (): kotlin.collections.Set<kotlin.collections.Map.Entry<K of kotlin.collections.Map, V of kotlin.collections.Map>> declared in kotlin.collections.Map' type=kotlin.collections.Set<kotlin.collections.Map.Entry<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>> origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-entries>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:keys visibility:public modality:OPEN [val]
       overridden:
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-keys> (): kotlin.collections.Set<K of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo'
             CALL 'public abstract fun <get-keys> (): kotlin.collections.Set<K of kotlin.collections.Map> declared in kotlin.collections.Map' type=kotlin.collections.Set<K of <root>.ControlFlowInfo> origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-keys>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/kt43342.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.ControlFlowInfo'
             CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.Map' type=kotlin.Int origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-size>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY DELEGATED_MEMBER name:values visibility:public modality:OPEN [val]
       overridden:
@@ -100,11 +100,8 @@ FILE fqName:<root> fileName:/kt43342.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-values> (): kotlin.collections.Collection<V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo'
             CALL 'public abstract fun <get-values> (): kotlin.collections.Collection<V of kotlin.collections.Map> declared in kotlin.collections.Map' type=kotlin.collections.Collection<V of <root>.ControlFlowInfo> origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-values>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]
-      EXPRESSION_BODY
-        GET_VAR 'map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<init>' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     PROPERTY name:map visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]
         EXPRESSION_BODY

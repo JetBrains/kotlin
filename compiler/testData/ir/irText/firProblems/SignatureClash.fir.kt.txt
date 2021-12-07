@@ -37,10 +37,9 @@ data class DataClass : Derived, Delegate {
   }
 
   override fun bar() {
-    <this>.#<$$delegate_0>.bar()
+    <this>.#delegate.bar()
   }
 
-  local /* final field */ val <$$delegate_0>: Delegate = delegate
   val delegate: Delegate
     field = delegate
     get

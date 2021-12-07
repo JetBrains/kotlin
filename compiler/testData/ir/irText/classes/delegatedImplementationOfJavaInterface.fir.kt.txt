@@ -6,32 +6,31 @@ class Test : J {
   }
 
   override fun takeNotNull(x: @EnhancedNullability String) {
-    <this>.#<$$delegate_0>.takeNotNull(x = x)
+    <this>.#j.takeNotNull(x = x)
   }
 
   override fun takeNullable(x: String?) {
-    <this>.#<$$delegate_0>.takeNullable(x = x)
+    <this>.#j.takeNullable(x = x)
   }
 
   override fun takeFlexible(x: @FlexibleNullability String?) {
-    <this>.#<$$delegate_0>.takeFlexible(x = x)
+    <this>.#j.takeFlexible(x = x)
   }
 
   @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
-    return <this>.#<$$delegate_0>.returnNotNull() /*!! String */
+    return <this>.#j.returnNotNull() /*!! String */
   }
 
   @Nullable
   override fun returnNullable(): String? {
-    return <this>.#<$$delegate_0>.returnNullable()
+    return <this>.#j.returnNullable()
   }
 
   override fun returnsFlexible(): @FlexibleNullability String? {
-    return <this>.#<$$delegate_0>.returnsFlexible()
+    return <this>.#j.returnsFlexible()
   }
 
-  local /* final field */ val <$$delegate_0>: J = j
   private val j: J
     field = j
     private get

@@ -45,23 +45,22 @@ class Test2 : IBase<String> {
   }
 
   override fun <B : Any?> foo(a: String, b: B) {
-    <this>.#<$$delegate_0>.foo<B>(a = a, b = b)
+    <this>.#j.foo<B>(a = a, b = b)
   }
 
   override val <C : Any?> C.id: Map<String, C>?
     override get(): Map<String, C>? {
-      return (<this>.#<$$delegate_0>, <this>).<get-id><C>()
+      return (<this>.#j, <this>).<get-id><C>()
     }
 
   override var <D : Any?> List<D>.x: D?
     override get(): D? {
-      return (<this>.#<$$delegate_0>, <this>).<get-x><D>()
+      return (<this>.#j, <this>).<get-x><D>()
     }
     override set(<set-?>: D?) {
-      (<this>.#<$$delegate_0>, <this>).<set-x><D>(<set-?> = <set-?>)
+      (<this>.#j, <this>).<set-x><D>(<set-?> = <set-?>)
     }
 
-  local /* final field */ val <$$delegate_0>: IBase<String> = j
   var j: IBase<String>
     field = j
     get

@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       VALUE_PARAMETER name:x index:0 type:@[EnhancedNullability] kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun takeNotNull (x: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+          $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeNotNull' type=<root>.Test origin=null
           x: GET_VAR 'x: @[EnhancedNullability] kotlin.String declared in <root>.Test.takeNotNull' type=@[EnhancedNullability] kotlin.String origin=null
     FUN DELEGATED_MEMBER name:takeNullable visibility:public modality:OPEN <> ($this:<root>.Test, x:kotlin.String?) returnType:kotlin.Unit
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.String?
       BLOCK_BODY
         CALL 'public abstract fun takeNullable (x: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+          $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeNullable' type=<root>.Test origin=null
           x: GET_VAR 'x: kotlin.String? declared in <root>.Test.takeNullable' type=kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:takeFlexible visibility:public modality:OPEN <> ($this:<root>.Test, x:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       VALUE_PARAMETER name:x index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
         CALL 'public abstract fun takeFlexible (x: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+          $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeFlexible' type=<root>.Test origin=null
           x: GET_VAR 'x: @[FlexibleNullability] kotlin.String? declared in <root>.Test.takeFlexible' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:returnNotNull visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[EnhancedNullability] kotlin.String
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
         RETURN type=kotlin.Nothing from='public open fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.Test'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
             CALL 'public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
                 receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNotNull' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:returnNullable visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.String?
       annotations:
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun returnNullable (): kotlin.String? declared in <root>.Test'
           CALL 'public abstract fun returnNullable (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNullable' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:returnsFlexible visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[FlexibleNullability] kotlin.String?
       overridden:
@@ -66,11 +66,8 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun returnsFlexible (): @[FlexibleNullability] kotlin.String? declared in <root>.Test'
           CALL 'public abstract fun returnsFlexible (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnsFlexible' type=<root>.Test origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]
-      EXPRESSION_BODY
-        GET_VAR 'j: <root>.J declared in <root>.Test.<init>' type=<root>.J origin=null
     PROPERTY name:j visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]
         EXPRESSION_BODY

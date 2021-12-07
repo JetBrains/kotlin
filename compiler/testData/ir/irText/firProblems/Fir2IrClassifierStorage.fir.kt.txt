@@ -46,15 +46,14 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
 
   override val session: FirSession
     override get(): FirSession {
-      return <this>.#<$$delegate_0>.<get-session>()
+      return <this>.#components.<get-session>()
     }
 
   override val classifierStorage: Fir2IrClassifierStorage
     override get(): Fir2IrClassifierStorage {
-      return <this>.#<$$delegate_0>.<get-classifierStorage>()
+      return <this>.#components.<get-classifierStorage>()
     }
 
-  local /* final field */ val <$$delegate_0>: Fir2IrComponents = components
   private val components: Fir2IrComponents
     field = components
     private get

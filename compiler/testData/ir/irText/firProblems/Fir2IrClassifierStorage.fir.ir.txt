@@ -127,7 +127,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-session> (): <root>.FirSession declared in <root>.Fir2IrClassifierStorage'
             CALL 'public abstract fun <get-session> (): <root>.FirSession declared in <root>.Fir2IrComponents' type=<root>.FirSession origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Fir2IrComponents visibility:local [final]' type=<root>.Fir2IrComponents origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
                 receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-session>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY DELEGATED_MEMBER name:classifierStorage visibility:public modality:OPEN [val]
       overridden:
@@ -140,11 +140,8 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-classifierStorage> (): <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage'
             CALL 'public abstract fun <get-classifierStorage> (): <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponents' type=<root>.Fir2IrClassifierStorage origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Fir2IrComponents visibility:local [final]' type=<root>.Fir2IrComponents origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
                 receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.Fir2IrComponents visibility:local [final]
-      EXPRESSION_BODY
-        GET_VAR 'components: <root>.Fir2IrComponents declared in <root>.Fir2IrClassifierStorage.<init>' type=<root>.Fir2IrComponents origin=null
     PROPERTY name:components visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]
         EXPRESSION_BODY

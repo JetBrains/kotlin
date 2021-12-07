@@ -96,11 +96,8 @@ FILE fqName:<root> fileName:/SignatureClash.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         CALL 'public abstract fun bar (): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Delegate visibility:local [final]' type=<root>.Delegate origin=null
+          $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
             receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.bar' type=<root>.DataClass origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.Delegate visibility:local [final]
-      EXPRESSION_BODY
-        GET_VAR 'delegate: <root>.Delegate declared in <root>.DataClass.<init>' type=<root>.Delegate origin=null
     PROPERTY name:delegate visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]
         EXPRESSION_BODY
