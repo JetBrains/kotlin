@@ -55,6 +55,8 @@ interface FrontendApiTestConfiguratorService {
     fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {}
 
     fun doOutOfBlockModification(file: KtFile)
+
+    fun preprocessTestDataPath(path: Path) : Path = path
 }
 
 abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfiguratorService) : TestWithDisposable() {
@@ -138,7 +140,7 @@ abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfigur
     }
 
     protected fun runTest(@TestDataFile path: String) {
-        testDataPath = Paths.get(path)
+        testDataPath = configurator.preprocessTestDataPath(Paths.get(path))
         val testConfiguration = testConfiguration(path, configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
         val testServices = testConfiguration.testServices

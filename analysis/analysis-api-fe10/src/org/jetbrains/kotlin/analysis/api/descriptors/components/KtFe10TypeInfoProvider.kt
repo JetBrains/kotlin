@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.types.DefinitelyNotNullType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 internal class KtFe10TypeInfoProvider(
@@ -36,5 +39,18 @@ internal class KtFe10TypeInfoProvider(
     override fun canBeNull(type: KtType): Boolean = withValidityAssertion {
         require(type is KtFe10Type)
         return TypeUtils.isNullableType(type.type)
+    }
+
+    override fun isDenotable(type: KtType): Boolean {
+        require(type is KtFe10Type)
+        val kotlinType = type.type
+        return kotlinType.isDenotable()
+    }
+
+    private fun KotlinType.isDenotable(): Boolean {
+        if (this is DefinitelyNotNullType) return false
+        return constructor.isDenotable &&
+                constructor.declarationDescriptor?.name != SpecialNames.NO_NAME_PROVIDED &&
+                arguments.all { it.type.isDenotable() }
     }
 }

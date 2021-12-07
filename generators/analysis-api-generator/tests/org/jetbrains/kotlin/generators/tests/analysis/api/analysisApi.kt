@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDecla
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeCreator.AbstractKtFe10TypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10HasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.scopes.AbstractKtFe10SubstitutionOverridesUnwrappingTest
+import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10IsDenotableTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.typeCreator.AbstractFirT
 import org.jetbrains.kotlin.analysis.api.fir.components.typeInfoProvider.AbstractFirFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirHasCommonSubtypeTest
+import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirIsDenotableTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
 import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
@@ -256,6 +258,9 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
         }
         test(fir = AbstractFirGetSuperTypesTest::class, fe10 = null) {
             model("superTypes")
+        }
+        test(fir = AbstractFirIsDenotableTest::class, fe10 = AbstractKtFe10IsDenotableTest::class) {
+            model("isDenotable", excludedPattern = ".*\\.descriptors\\.kt$")
         }
     }
 

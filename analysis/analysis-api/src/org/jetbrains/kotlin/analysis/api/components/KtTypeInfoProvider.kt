@@ -19,9 +19,17 @@ public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun isFunctionalInterfaceType(type: KtType): Boolean
     public abstract fun getFunctionClassKind(type: KtType): FunctionClassKind?
     public abstract fun canBeNull(type: KtType): Boolean
+    public abstract fun isDenotable(type: KtType): Boolean
 }
 
 public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Returns true if this type is denotable. A denotable type is a type that can be written in Kotlin by end users. See
+     * https://kotlinlang.org/spec/type-system.html#type-kinds for more details.
+     */
+    public val KtType.isDenotable: Boolean
+        get() = analysisSession.typeInfoProvider.isDenotable(this)
+
     /**
      * Returns true if this type is a functional interface type, a.k.a. SAM type, e.g., Runnable.
      */

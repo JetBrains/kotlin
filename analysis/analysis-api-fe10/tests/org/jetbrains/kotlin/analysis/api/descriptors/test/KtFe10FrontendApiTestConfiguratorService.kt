@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import java.nio.file.Path
+import kotlin.io.path.extension
+import kotlin.io.path.nameWithoutExtension
 
 object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
     override val testPrefix: String
@@ -63,5 +66,11 @@ object KtFe10FrontendApiTestConfiguratorService : FrontendApiTestConfiguratorSer
 
     override fun doOutOfBlockModification(file: KtFile) {
         // TODO not supported yet
+    }
+
+    override fun preprocessTestDataPath(path: Path): Path {
+        val newPath = path.resolveSibling(path.nameWithoutExtension + "." + testPrefix + "." + path.extension)
+        if (newPath.toFile().exists()) return newPath
+        return path
     }
 }

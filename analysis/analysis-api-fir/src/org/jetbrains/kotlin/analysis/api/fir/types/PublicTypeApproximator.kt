@@ -20,7 +20,7 @@ internal object PublicTypeApproximator {
         return approximator.approximateToSuperType(type, PublicApproximatorConfiguration(approximateLocalTypes))
     }
 
-    private class PublicApproximatorConfiguration(
+    internal class PublicApproximatorConfiguration(
         override val localTypes: Boolean
     ) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
         override val allFlexible: Boolean get() = false

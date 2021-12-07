@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.analysis.api.components.KtTypeInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
+import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.functionClassKind
+import org.jetbrains.kotlin.fir.types.typeApproximator
 
 internal class KtFirTypeInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -33,4 +35,12 @@ internal class KtFirTypeInfoProvider(
     }
 
     override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull
+
+    override fun isDenotable(type: KtType): Boolean {
+        val coneType = (type as KtFirType).coneType
+        return analysisSession.rootModuleSession.typeApproximator.approximateToSuperType(
+            coneType,
+            PublicTypeApproximator.PublicApproximatorConfiguration(false)
+        ) == null
+    }
 }
