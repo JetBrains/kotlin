@@ -321,8 +321,10 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 addOverride("computeFqName") { irString(functionReferenceTarget.computeFullName()) }
 
 
-                functionReference.symbol.owner.dispatchReceiverParameter
-                        ?.takeIf { it in boundFunctionParameters }
+                listOfNotNull(
+                        functionReference.symbol.owner.dispatchReceiverParameter,
+                        functionReference.symbol.owner.extensionReceiverParameter
+                ).singleOrNull { it in boundFunctionParameters }
                         ?.let { receiver ->
                             addOverrideInner("computeReceiver") { f ->
                                 irGetField(irGet(f.dispatchReceiverParameter!!), argumentToPropertiesMap[receiver]!!)
