@@ -604,11 +604,11 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     return declaration
 }
 
-private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext?): Boolean {
-    if (context?.additionalExportedDeclarationNames?.contains(declaration.fqNameWhenAvailable) == true)
+private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+    if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
 
-    if (context?.additionalExportedDeclarations?.contains(declaration) == true)
+    if (context.additionalExportedDeclarations.contains(declaration))
         return true
 
     if (declaration is IrOverridableDeclaration<*>) {
@@ -633,28 +633,26 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     }
 }
 
-fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext?): Boolean {
+fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
     if (this.resolveFakeOverride(allowAbstract = true)?.parentClassOrNull.isExportedInterface()) {
         return true
     }
 
-    return context?.irBuiltIns?.enumClass?.let { enumClass ->
-        overriddenSymbols
-            .asSequence()
-            .map { it.owner }
-            .filterIsInstance<IrOverridableDeclaration<*>>()
-            .filter { it.overriddenSymbols.isEmpty() }
-            .mapNotNull { it.parentClassOrNull }
-            .map { it.symbol }
-            .any { it == enumClass }
-    } == true
+    return overriddenSymbols
+        .asSequence()
+        .map { it.owner }
+        .filterIsInstance<IrOverridableDeclaration<*>>()
+        .filter { it.overriddenSymbols.isEmpty() }
+        .mapNotNull { it.parentClassOrNull }
+        .map { it.symbol }
+        .any { it == context.irBuiltIns.enumClass }
 }
 
-fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext?): Boolean =
+fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
     overriddenSymbols
         .any { shouldDeclarationBeExported(it.owner as IrDeclarationWithName, context) }
 
-fun IrDeclaration.isExported(context: JsIrBackendContext?): Boolean {
+fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExported(candidate, context)
 }
