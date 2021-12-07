@@ -377,6 +377,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
     fun TypeConstructorMarker.isLocalType(): Boolean
+    fun TypeConstructorMarker.isAnonymous(): Boolean
     fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
 
     val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?

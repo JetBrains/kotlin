@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.AbstractTypeParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
@@ -42,6 +43,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return declarationDescriptor?.classId?.isLocal == true
+    }
+
+    override fun TypeConstructorMarker.isAnonymous(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return declarationDescriptor?.classId?.shortClassName == SpecialNames.ANONYMOUS
     }
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?

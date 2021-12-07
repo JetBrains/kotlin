@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
@@ -308,6 +309,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is IrClassSymbol) return false
         return this.owner.classId?.isLocal == true
+    }
+
+    override fun TypeConstructorMarker.isAnonymous(): Boolean {
+        if (this !is IrClassSymbol) return false
+        return this.owner.classId?.shortClassName == SpecialNames.ANONYMOUS
     }
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?

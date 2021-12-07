@@ -25,6 +25,12 @@ open class TypeApproximatorConfiguration {
     open val intersectionTypesInContravariantPositions = false
     open val localTypes = false
 
+    /**
+     * Whether to approximate anonymous type. This flag does not have any effect if `localTypes` is true because all anonymous types are
+     * local.
+     */
+    open val anonymous = false
+
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
         true  // false means that this type we can leave as is

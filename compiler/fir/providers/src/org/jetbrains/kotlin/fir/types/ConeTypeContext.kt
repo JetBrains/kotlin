@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
@@ -45,6 +46,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
         return classId.isLocal
+    }
+
+    override fun TypeConstructorMarker.isAnonymous(): Boolean {
+        if (this !is ConeClassLikeLookupTag) return false
+        return name == SpecialNames.ANONYMOUS
     }
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?

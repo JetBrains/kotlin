@@ -169,9 +169,9 @@ abstract class AbstractTypeApproximator(
 
     private fun approximateLocalTypes(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, toSuper: Boolean): SimpleTypeMarker? {
         if (!toSuper) return null
-        if (!conf.localTypes) return null
+        if (!conf.localTypes && !conf.anonymous) return null
         val constructor = type.typeConstructor()
-        val needApproximate = conf.localTypes && constructor.isLocalType()
+        val needApproximate = (conf.localTypes && constructor.isLocalType()) || (conf.anonymous && constructor.isAnonymous())
         if (!needApproximate) return null
         val superConstructor = constructor.supertypes().first().typeConstructor()
         val typeCheckerContext = newTypeCheckerState(
