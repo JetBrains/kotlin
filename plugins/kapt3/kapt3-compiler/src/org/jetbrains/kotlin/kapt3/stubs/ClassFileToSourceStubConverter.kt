@@ -56,12 +56,8 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -123,8 +119,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     val bindings: Map<String, KaptJavaFileObject>
         get() = mutableBindings
 
-    private val typeMapper
-        get() = kaptContext.generationState.typeMapper
+    private val typeMapper = KaptTypeMapper
 
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
 
@@ -510,7 +505,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
         val declarationDescriptor = kaptContext.bindingContext[BindingContext.CLASS, declaration] ?: return defaultSuperTypes
 
-        if (typeMapper.mapType(declarationDescriptor) != Type.getObjectType(clazz.name)) {
+        if (typeMapper.mapType(declarationDescriptor.defaultType) != Type.getObjectType(clazz.name)) {
             return defaultSuperTypes
         }
 
@@ -1494,7 +1489,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
     }
 
-    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT)
+    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
 
     private fun getFileForClass(c: ClassNode): KtFile? = kaptContext.origins[c]?.element?.containingFile as? KtFile
 
