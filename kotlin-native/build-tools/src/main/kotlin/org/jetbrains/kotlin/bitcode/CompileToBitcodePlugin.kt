@@ -55,8 +55,11 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                 project.tasks.register(
                         "${targetName}${name.snakeCaseToCamelCase().capitalize()}${suffixForSanitizer(sanitizer)}",
                         CompileToBitcode::class.java,
-                        srcRoot, name, targetName, outputGroup
+                        name, targetName, outputGroup
                 ).configure {
+                    srcDirs = project.files(srcRoot.resolve("cpp"))
+                    headersDirs = srcDirs + project.files(srcRoot.resolve("headers"))
+
                     this.sanitizer = sanitizer
                     group = BasePlugin.BUILD_GROUP
                     val sanitizerDescription = when (sanitizer) {

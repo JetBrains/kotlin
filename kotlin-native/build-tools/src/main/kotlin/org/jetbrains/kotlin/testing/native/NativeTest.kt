@@ -241,17 +241,18 @@ private fun createTestTask(
         val task = project.tasks.findByName(name) as? CompileToBitcode ?:
             project.tasks.create(name,
                     CompileToBitcode::class.java,
-                    it.srcRoot,
                     "${it.folderName}Tests",
                     target, "test"
                     ).apply {
+                srcDirs = it.srcDirs
+                headersDirs = it.headersDirs + googleTestExtension.headersDirs
+
                 this.sanitizer = sanitizer
                 excludeFiles = emptyList()
                 includeFiles = listOf("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
                 dependsOn(it)
                 dependsOn("downloadGoogleTest")
                 compilerArgs.addAll(it.compilerArgs)
-                headersDirs += googleTestExtension.headersDirs
                 this.configureCompileToBitcode()
             }
         if (task.inputFiles.count() == 0)

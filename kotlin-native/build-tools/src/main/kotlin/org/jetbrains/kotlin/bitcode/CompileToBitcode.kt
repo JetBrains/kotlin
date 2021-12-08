@@ -62,9 +62,7 @@ abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeParameters> {
     }
 }
 
-// TODO: Get rid of storing srcRoot in the task.
 abstract class CompileToBitcode @Inject constructor(
-        @Internal val srcRoot: File,
         @Input val folderName: String,
         @Input val target: String,
         @Input val outputGroup: String
@@ -94,9 +92,9 @@ abstract class CompileToBitcode @Inject constructor(
 
     // Source files and headers are registered as inputs by the `inputFiles` and `headers` properties.
     @Internal
-    var srcDirs: FileCollection = project.files(srcRoot.resolve("cpp"))
+    var srcDirs: FileCollection = project.files()
     @Internal
-    var headersDirs: FileCollection = srcDirs + project.files(srcRoot.resolve("headers"))
+    var headersDirs: FileCollection = project.files()
 
     @Input
     var language = Language.CPP

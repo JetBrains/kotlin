@@ -69,6 +69,7 @@ bitcode {
     }
 
     create("mimalloc") {
+        val srcRoot = file("src/mimalloc")
         language = CompileToBitcode.Language.C
         includeFiles = listOf("**/*.c")
         excludeFiles += listOf("**/alloc-override*.c", "**/page-queue.c", "**/static.c", "**/bitmap.inc.c")
@@ -82,6 +83,7 @@ bitcode {
     }
 
     create("libbacktrace") {
+        val srcRoot = file("src/libbacktrace")
         val targetInfo = HostManager().targetByName(target)
         language = CompileToBitcode.Language.C
         val useMachO = targetInfo.family.isAppleFamily
