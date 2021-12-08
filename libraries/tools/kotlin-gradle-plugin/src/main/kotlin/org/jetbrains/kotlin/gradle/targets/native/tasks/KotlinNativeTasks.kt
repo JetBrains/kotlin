@@ -239,7 +239,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
 
     @Optional
     @Classpath
-    var compilerPluginClasspath: FileCollection? = null
+    open var compilerPluginClasspath: FileCollection? = null
 
     /**
      * Plugin Data provided by [KpmCompilerPlugin]
