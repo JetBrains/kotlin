@@ -44,6 +44,7 @@ annotation class JvmDefault
  * Used only with `-Xjvm-default=compatibility|all-compatibility`.
  */
 @SinceKotlin("1.4")
+@Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 annotation class JvmDefaultWithoutCompatibility
 
