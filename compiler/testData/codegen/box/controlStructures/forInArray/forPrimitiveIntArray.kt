@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun box(): String {
     val a = IntArray(5)
     var sum = 0

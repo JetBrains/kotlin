@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR
 // FIR status: context receivers aren't yet supported
-// WITH_RUNTIME
+// WITH_STDLIB
 
 interface NumberOperations {
     operator fun Number.plus(other: Number): Number

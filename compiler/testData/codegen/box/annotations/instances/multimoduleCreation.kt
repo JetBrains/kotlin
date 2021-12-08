@@ -3,7 +3,7 @@
 // Please specify value for 'A.kClass' explicitly
 // TARGET_BACKEND: JVM_IR
 // IGNORE_DEXING
-// WITH_RUNTIME
+// WITH_STDLIB
 // !LANGUAGE: +InstantiationOfAnnotationClasses
 
 // MODULE: lib

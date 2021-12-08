@@ -1,6 +1,6 @@
 // !LANGUAGE: +KotlinFunInterfaceConstructorReference
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 // DONT_TARGET_EXACT_BACKEND: JVM
