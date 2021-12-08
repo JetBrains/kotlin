@@ -91,7 +91,9 @@ internal class LocalTestRunner(
 
         private fun verifyNonTestOutput(nonTestOutput: String) {
             testRun.runParameters.get<TestRunParameter.WithExpectedOutputData> {
-                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()), convertLineSeparators(nonTestOutput)) {
+                // Don't use verifyExpectation(expected, actual) to avoid exposing potentially large test output in exception message
+                // and blowing up test logs.
+                verifyExpectation(convertLineSeparators(expectedOutputDataFile.readText()) == convertLineSeparators(nonTestOutput)) {
                     "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                 }
             }

@@ -75,7 +75,7 @@ internal abstract class AbstractLocalProcessRunner<R>(private val executionTimeo
 
     abstract inner class ResultHandler(runResult: RunResult.Completed) : AbstractRunner<R>.ResultHandler(runResult) {
         override fun handle(): R {
-            verifyExpectation(0, runResult.exitCode) { "$visibleProcessName exited with non-zero code." }
+            verifyExpectation(runResult.exitCode == 0) { "$visibleProcessName exited with non-zero code." }
 
             return doHandle()
         }

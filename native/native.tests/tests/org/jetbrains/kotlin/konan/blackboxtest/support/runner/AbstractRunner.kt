@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.opentest4j.TestAbortedException
@@ -46,10 +45,6 @@ internal abstract class AbstractRunner<R> {
     abstract inner class ResultHandler(protected val runResult: RunResult.Completed) {
         abstract fun getLoggedRun(): LoggedData
         abstract fun handle(): R
-
-        protected inline fun <T> verifyExpectation(expected: T, actual: T, crossinline errorMessage: () -> String) {
-            assertEquals(expected, actual) { getLoggedRun().withErrorMessage(errorMessage()) }
-        }
 
         protected inline fun verifyExpectation(shouldBeTrue: Boolean, crossinline errorMessage: () -> String) {
             assertTrue(shouldBeTrue) { getLoggedRun().withErrorMessage(errorMessage()) }

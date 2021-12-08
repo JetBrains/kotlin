@@ -98,9 +98,7 @@ internal abstract class LoggedData {
                 appendLine("- Exit code: ${exitCode.code} (${exitCode.name})")
                 appendDuration(duration)
                 appendLine()
-                appendLine("========== BEGIN: RAW COMPILER OUTPUT ==========")
-                if (compilerOutput.isNotEmpty()) appendLine(compilerOutput.trimEnd())
-                appendLine("========== END: RAW COMPILER OUTPUT ==========")
+                appendPotentiallyLargeOutput(compilerOutput, "RAW COMPILER OUTPUT", truncateLargeOutput = false)
                 appendLine()
                 appendLine(parameters)
             }
@@ -223,16 +221,24 @@ internal abstract class LoggedData {
             appendLine("- Exit code: ${runResult.exitCode ?: "<unknown>"}")
             appendDuration(runResult.duration)
             appendLine()
-            appendLine("========== BEGIN: STDOUT ==========")
-            val stdOut = runResult.processOutput.stdOut.filteredOutput
-            if (stdOut.isNotEmpty()) appendLine(stdOut.trimEnd())
-            appendLine("========== END: STDOUT ==========")
+            appendPotentiallyLargeOutput(runResult.processOutput.stdOut.filteredOutput, "STDOUT", truncateLargeOutput = true)
             appendLine()
-            appendLine("========== BEGIN: STDERR ==========")
-            val stdErr = runResult.processOutput.stdErr
-            if (stdErr.isNotEmpty()) appendLine(stdErr.trimEnd())
-            appendLine("========== END: STDERR ==========")
+            appendPotentiallyLargeOutput(runResult.processOutput.stdErr, "STDERR", truncateLargeOutput = true)
             return this
         }
+
+        private fun StringBuilder.appendPotentiallyLargeOutput(output: String, subject: String, truncateLargeOutput: Boolean) {
+            appendLine("========== BEGIN: $subject ==========")
+            if (output.length > MAX_PRINTED_OUTPUT_LENGTH && truncateLargeOutput) {
+                append(output.substring(0, MAX_PRINTED_OUTPUT_LENGTH).trimEnd()).appendLine("...")
+                appendLine()
+                appendLine("********** The output is too large (${output.length} characters in total), it has been truncated to avoid excessive logs **********")
+            } else if (output.isNotEmpty()) {
+                appendLine(output.trimEnd())
+            }
+            appendLine("========== END: $subject ==========")
+        }
+
+        private const val MAX_PRINTED_OUTPUT_LENGTH = 8 * 1024
     }
 }
