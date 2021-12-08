@@ -538,14 +538,14 @@ fun IrFactory.createStaticFunctionWithReceivers(
         var offset = 0
         val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
             this,
-            name = Name.identifier("this"),
+            name = Name.identifier("\$this"),
             index = offset++,
             type = remap(dispatchReceiverType!!),
             origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
         )
         val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
             this,
-            name = Name.identifier("receiver"),
+            name = Name.identifier("\$receiver"),
             index = offset++,
             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
             remapTypeMap = typeParameterMap

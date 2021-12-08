@@ -876,7 +876,7 @@ public final class X$Companion : java/lang/Object {
 }
 
 public final class X$DefaultImpls : java/lang/Object {
-    public static void def(X this)
+    public static void def(X $this)
 }
 
 public abstract interface X : java/lang/Object {
