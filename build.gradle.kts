@@ -327,9 +327,6 @@ extra["compilerArtifactsForIde"] = listOf(
 // TODO: fix remaining warnings and remove this property.
 extra["tasksWithWarnings"] = listOf(
     ":kotlin-gradle-plugin:compileKotlin",
-    //Tremporary disable -Werror to switch on new diagnostic
-    ":compiler:frontend:compileKotlin",
-    ":kotlin-scripting-intellij:compileKotlin",
 )
 
 val tasksWithWarnings: List<String> by extra
@@ -511,6 +508,21 @@ allprojects {
             }
             if (renderDiagnosticNames) {
                 freeCompilerArgs += "-Xrender-internal-diagnostic-names"
+            }
+
+            //TODO these modules should be properly migrated
+            if (!project.path.contains("-gradle") &&
+                !project.path.startsWith(":binary-compatibility-validator") &&
+                //TODO: remove after removing 1.6 target
+                //HACK: filter modules with JVM target 1.6
+                !project.path.startsWith(":core") &&
+                !project.path.contains("runtime") &&
+                !project.path.startsWith(":kotlin-stdlib") &&
+                !project.path.startsWith(":kotlinx-metadata") &&
+                !project.path.startsWith(":kotlin-scripting") &&
+                !project.path.startsWith(":compiler:tests-common-jvm6")
+            ) {
+                freeCompilerArgs += "-Xjvm-default=all"
             }
         }
     }
