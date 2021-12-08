@@ -73,6 +73,7 @@ class FileDeserializationState(
             fileProto.actualList,
             ::addIdSignature,
             linker::handleExpectActualMapping,
+            symbolProcessor = linker.symbolProcessor,
         ) { idSig, symbolKind ->
 
             val topLevelSig = idSig.topLevelSignature()

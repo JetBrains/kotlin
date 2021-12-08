@@ -36,7 +36,8 @@ abstract class KotlinIrLinker(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
-    private val allowUnboundSymbols: Boolean = false
+    private val allowUnboundSymbols: Boolean = false,
+    val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
 
     // Kotlin-MPP related data. Consider some refactoring
