@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 enum class StabilityBits(val bits: Int) {
@@ -160,13 +161,25 @@ class ClassStabilityTransformer(
             it.putValueArgument(0, irConst(parameterMask))
         }
 
-        cls.declarations += makeStabilityField().also { f ->
+        val stabilityField = makeStabilityField().also { f ->
             f.parent = cls
             f.initializer = IrExpressionBodyImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 stableExpr
             )
+        }
+
+        if (context.platform.isJvm()) {
+            cls.declarations += stabilityField
+        } else {
+            // This ensures proper mangles in k/js and k/native (since kotlin 1.6.0-rc2)
+            val stabilityProp = makeStabilityProp().also {
+                it.parent = cls
+                it.backingField = stabilityField
+            }
+            stabilityField.correspondingPropertySymbol = stabilityProp.symbol
+            cls.declarations += stabilityProp
         }
 
         return result
