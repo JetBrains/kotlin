@@ -41225,6 +41225,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt50108.kt")
+        public void testKt50108() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt50108.kt");
+        }
+
+        @Test
+        @TestMetadata("kt50108_java.kt")
+        public void testKt50108_java() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt50108_java.kt");
+        }
+
+        @Test
         @TestMetadata("nonInlinedSamWrapper.kt")
         public void testNonInlinedSamWrapper() throws Exception {
             runTest("compiler/testData/codegen/box/sam/nonInlinedSamWrapper.kt");

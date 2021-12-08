@@ -32622,6 +32622,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Sam extends AbstractLightAnalysisModeTest {
+        @TestMetadata("kt50108.kt")
+        public void ignoreKt50108() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt50108.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -32753,6 +32758,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt49226.kt")
         public void testKt49226() throws Exception {
             runTest("compiler/testData/codegen/box/sam/kt49226.kt");
+        }
+
+        @TestMetadata("kt50108_java.kt")
+        public void testKt50108_java() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt50108_java.kt");
         }
 
         @TestMetadata("nonInlinedSamWrapper.kt")
