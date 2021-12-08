@@ -3456,6 +3456,16 @@ internal class JvmDefaultInDeclarationImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.JvmDefaultInDeclaration(), KtAbstractFirDiagnostic<KtElement>
 
+internal class JvmDefaultWithCompatibilityInDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.JvmDefaultWithCompatibilityInDeclaration(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JvmDefaultWithCompatibilityNotOnInterfaceImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.JvmDefaultWithCompatibilityNotOnInterface(), KtAbstractFirDiagnostic<KtElement>
+
 internal class UsageOfJvmDefaultThroughSuperCallImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

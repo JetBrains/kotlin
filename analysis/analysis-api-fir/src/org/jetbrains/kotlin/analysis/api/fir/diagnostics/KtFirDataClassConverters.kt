@@ -4110,6 +4110,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION) { firDiagnostic ->
+        JvmDefaultWithCompatibilityInDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE) { firDiagnostic ->
+        JvmDefaultWithCompatibilityNotOnInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL) { firDiagnostic ->
         UsageOfJvmDefaultThroughSuperCallImpl(
             firDiagnostic as KtPsiDiagnostic,
