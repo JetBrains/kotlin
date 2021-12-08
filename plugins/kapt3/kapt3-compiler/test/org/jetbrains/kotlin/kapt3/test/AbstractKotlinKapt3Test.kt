@@ -332,7 +332,16 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
                 }
             }
         }
-        KotlinTestUtils.assertEqualsToFile(txtFile, actual)
+
+        val irTxtFile = File(txtFile.parentFile, txtFile.nameWithoutExtension + "_ir.txt")
+        val expectedFile =
+            if (backend.isIR && irTxtFile.exists()) irTxtFile
+            else txtFile
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
+
+        if (backend.isIR && txtFile.exists() && irTxtFile.exists() && txtFile.readText() == irTxtFile.readText()) {
+            fail("JVM and JVM_IR golden files are identical. Remove $irTxtFile.")
+        }
     }
 }
 
