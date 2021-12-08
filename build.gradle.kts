@@ -347,9 +347,6 @@ extra["tasksWithWarnings"] = listOf(
     ":kotlin-gradle-plugin:compileKotlin",
     ":kotlin-gradle-plugin:compileCommonKotlin",
     ":kotlin-gradle-plugin:compileGradle70Kotlin"
-    //Tremporary disable -Werror to switch on new diagnostic
-    ":compiler:frontend:compileKotlin",
-    ":kotlin-scripting-intellij:compileKotlin",
 )
 
 val tasksWithWarnings: List<String> by extra
@@ -548,6 +545,23 @@ allprojects {
             }
             if (renderDiagnosticNames) {
                 freeCompilerArgs += "-Xrender-internal-diagnostic-names"
+            }
+
+            //TODO these modules should be properly migrated
+            if (!project.path.contains("-gradle") &&
+                !project.path.contains(":binary-compatibility-validator") &&
+                !project.path.contains("runtime") &&
+                //TODO: tune performance in tree and tree.impl modules
+                !project.path.contains(":compiler:ir.tree") &&
+                //HACK: filter modules with JVM target 1.6
+                //TODO: remove after removing 1.6 target
+                !project.path.startsWith(":core") &&
+                !project.path.startsWith(":kotlin-stdlib") &&
+                !project.path.startsWith(":kotlinx-metadata") &&
+                !project.path.startsWith(":kotlin-scripting") &&
+                !project.path.startsWith(":compiler:tests-common-jvm6")
+            ) {
+                freeCompilerArgs += "-Xjvm-default=all"
             }
         }
     }
