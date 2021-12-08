@@ -517,6 +517,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-test:kotlin-test-js",
             ":kotlin-test:kotlin-test-js-ir",
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+            ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it",
             ":kotlin-test:kotlin-test-wasm",
             ":native:native.tests"
 
@@ -538,6 +539,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
     project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
     project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
+    project(':kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it').projectDir = "$rootDir/libraries/kotlin.test/js-ir/it" as File
     project(':kotlin-test:kotlin-test-wasm').projectDir = "$rootDir/libraries/kotlin.test/wasm" as File
     project(':native:native.tests').projectDir = "$rootDir/native/native.tests" as File
 }

@@ -178,6 +178,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 
     val longClassSymbol = getInternalClassWithoutPackage("kotlin.Long")
+    val promiseClassSymbol: IrClassSymbol by context.lazy2 {
+        getInternalClassWithoutPackage("kotlin.js.Promise")
+    }
 
     val longToDouble = context.symbolTable.referenceSimpleFunction(
         context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(

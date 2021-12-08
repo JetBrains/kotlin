@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -168,14 +169,59 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
         if (afterFuns.isEmpty()) {
             body.statements += returnStatement
-        } else {
-            body.statements += JsIrBuilder.buildTry(context.irBuiltIns.unitType).apply {
-                tryResult = returnStatement
-                finallyExpression = JsIrBuilder.buildComposite(context.irBuiltIns.unitType).apply {
-                    statements += afterFuns.map {
+            return
+        }
+
+        if (context is JsIrBackendContext && (testFun.returnType as? IrSimpleType)?.classifier == context.intrinsics.promiseClassSymbol) {
+            val finally = context.intrinsics.promiseClassSymbol.owner.declarations
+                .filterIsInstance<IrSimpleFunction>()
+                .first {
+                    it.name.asString() == "finally"
+                }
+
+            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
+
+            val afterFunction = context.irFactory.buildFun {
+                this.name = Name.identifier("${irClass.name.asString()} after test fun")
+                this.returnType = context.irBuiltIns.unitType
+                this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                parent = fn
+                this.body = context.irFactory.createBlockBody(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    afterFuns.map {
                         JsIrBuilder.buildCall(it.symbol).apply {
                             dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
                         }
+                    }
+                )
+            }
+
+            val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
+
+            val returnValue = JsIrBuilder.buildCall(
+                finally.symbol
+            ).apply {
+                this.dispatchReceiver = returnStatement.value
+                putValueArgument(0, finallyLambda)
+            }
+
+            body.statements += JsIrBuilder.buildReturn(
+                fn.symbol,
+                returnValue,
+                fn.returnType
+            )
+
+            return
+        }
+
+        body.statements += JsIrBuilder.buildTry(context.irBuiltIns.unitType).apply {
+            tryResult = returnStatement
+            finallyExpression = JsIrBuilder.buildComposite(context.irBuiltIns.unitType).apply {
+                statements += afterFuns.map {
+                    JsIrBuilder.buildCall(it.symbol).apply {
+                        dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
                     }
                 }
             }

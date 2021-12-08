@@ -44,14 +44,22 @@ class AsyncTest {
 
     var log = ""
 
+    var afterLog = ""
+
     @BeforeTest
     fun before() {
         log = ""
     }
 
+    // Until bootstrap update
+    @AfterTest
+    fun after() {
+//        assertEquals(afterLog, "after")
+    }
+
     fun promise(v: Int) = Promise<Int> { resolve, reject ->
         log += "a"
-        js("setTimeout")({ log += "c"; resolve(v) }, 100)
+        js("setTimeout")({ log += "c"; afterLog += "after"; resolve(v) }, 100)
         log += "b"
     }
 

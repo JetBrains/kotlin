@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -121,13 +122,36 @@ class JSTestGenerator(val context: TranslationContext) {
 
         if (afterDescriptors.isEmpty()) {
             functionToTest.body.statements += JsReturn(functionDescriptor.buildCall())
+            return functionToTest
         }
-        else {
-            functionToTest.body.statements += JsTry(
-                    JsBlock(JsReturn(functionDescriptor.buildCall())),
-                    listOf(),
-                    JsBlock(afterDescriptors.map { it.buildCall().makeStmt() }))
+
+        val declarationDescriptor: ClassifierDescriptor? = functionDescriptor.returnType?.constructor?.declarationDescriptor
+        val promiseClass = findPromise()
+        if (declarationDescriptor == promiseClass) {
+            val call = functionDescriptor.buildCall()
+            val finallyDescriptor = DescriptorUtils.getFunctionByName(promiseClass.unsubstitutedMemberScope, Name.identifier("finally"))
+            functionToTest.body.statements += JsReturn(
+                CallTranslator.buildCall(
+                    context,
+                    finallyDescriptor,
+                    listOf(
+                        JsFunction(
+                            scope,
+                            JsBlock(afterDescriptors.map { it.buildCall().makeStmt() }),
+                            "function for after funs test"
+                        )
+                    ),
+                    call
+                )
+            )
+            return functionToTest
         }
+
+        functionToTest.body.statements += JsTry(
+            JsBlock(JsReturn(functionDescriptor.buildCall())),
+            listOf(),
+            JsBlock(afterDescriptors.map { it.buildCall().makeStmt() })
+        )
 
         return functionToTest
     }
@@ -141,6 +165,9 @@ class JSTestGenerator(val context: TranslationContext) {
             JsNew(ReferenceTranslator.translateAsTypeReference(this, context), args)
         }
     }
+
+    fun findPromise(): ClassDescriptor =
+        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(promiseFqName))!!
 
     private val suiteRef: JsExpression by lazy { findFunction("suite") }
     private val testRef: JsExpression by lazy { findFunction("test") }
@@ -163,6 +190,8 @@ class JSTestGenerator(val context: TranslationContext) {
 
     private val FunctionDescriptor.isAfter
         get() = annotationFinder("AfterTest", "kotlin.test")
+
+    private val promiseFqName = FqName("kotlin.js.Promise")
 
     private fun DeclarationDescriptor.annotationFinder(shortName: String, vararg packages: String) = packages.any { packageName ->
         annotations.hasAnnotation(FqName("$packageName.$shortName"))

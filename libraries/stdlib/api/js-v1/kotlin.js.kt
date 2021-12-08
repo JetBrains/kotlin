@@ -283,6 +283,8 @@ public open external class Promise<out T> {
 
     public open fun <S> catch(onRejected: (kotlin.Throwable) -> S): kotlin.js.Promise<S>
 
+    public open fun finally(onFinally: () -> kotlin.Unit): kotlin.js.Promise<T>
+
     @kotlin.internal.LowPriorityInOverloadResolution
     public open fun <S> then(onFulfilled: ((T) -> S)?): kotlin.js.Promise<S>
 

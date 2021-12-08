@@ -34,6 +34,8 @@ class CompilationException(
             val irStartOffset = irStartOffset
                 ?: return UNDEFINED_OFFSET
 
+            if (irStartOffset == UNDEFINED_OFFSET) return UNDEFINED_OFFSET
+
             val lineNumber = file?.fileEntry?.getLineNumber(irStartOffset)
                 ?: return UNDEFINED_OFFSET
 
@@ -44,6 +46,8 @@ class CompilationException(
         get() {
             val irStartOffset = irStartOffset
                 ?: return UNDEFINED_OFFSET
+
+            if (irStartOffset == UNDEFINED_OFFSET) return UNDEFINED_OFFSET
 
             val columnNumber = file?.fileEntry?.getColumnNumber(irStartOffset)
                 ?: return UNDEFINED_OFFSET

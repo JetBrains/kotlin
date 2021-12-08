@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "test-jasmine": "jasmine build/jsSources/jasmine-reporter.js build/compileSync/test/testDevelopmentExecutable/kotlin/kotlin-kotlin-test-js-ir-it-test.js",
+    "test-jest": "jest",
+    "test-mocha": "mocha --reporter build/jsSources/mocha-reporter.js build/compileSync/test/testDevelopmentExecutable/kotlin/kotlin-kotlin-test-js-ir-it-test.js",
+    "test-qunit": "qunit -c build/jsSources/qunit-reporter.js -t build/compileSync/test/testDevelopmentExecutable/kotlin/kotlin-kotlin-test-js-ir-it-test.js",
+    "test-tape": "tape build/jsSources/tape-reporter.js build/jsSources/tape-plugin.js build/compileSync/test/testDevelopmentExecutable/kotlin/kotlin-kotlin-test-js-ir-it-test.js"
+  },
+  "devDependencies": {
+    "jasmine": "^2.9.0",
+    "jest": "^20.0.4",
+    "mocha": "^3.4.2",
+    "qunit": "^1.0.0",
+    "tape": "~4.10.0"
+  },
+  "jest": {
+    "testResultsProcessor": "<rootDir>/build/jsSources/jest-reporter.js",
+    "testRegex": "-test\\.js$"
+  }
+}
