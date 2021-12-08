@@ -35,6 +35,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirOptInMarkedDeclarationChecker,
         )
 
+    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
+        get() = setOf(
+            FirKClassWithIncorrectTypeArgumentChecker,
+        )
+
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirContractChecker,
@@ -49,6 +54,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunctionTypeParametersSyntaxChecker,
             FirOperatorModifierChecker,
             FirTailrecFunctionChecker,
+            FirTopLevelFunctionsChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>
@@ -65,6 +71,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirPropertyFromParameterChecker,
             FirLocalVariableTypeParametersSyntaxChecker,
             FirDelegateUsesExtensionPropertyTypeParameterChecker,
+            FirTopLevelPropertiesChecker,
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>
@@ -116,9 +123,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val fileCheckers: Set<FirFileChecker>
         get() = setOf(
-            FirKClassWithIncorrectTypeArgumentChecker,
-            FirTopLevelFunctionsChecker,
-            FirTopLevelPropertiesChecker,
             FirImportsChecker,
             FirUnresolvedInMiddleOfImportChecker,
         )

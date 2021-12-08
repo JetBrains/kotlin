@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -19,26 +18,21 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelFunctionsChecker : FirFileChecker() {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (topLevelDeclaration in declaration.declarations) {
-            if (topLevelDeclaration is FirSimpleFunction) {
-                checkFunction(topLevelDeclaration, reporter, context)
-            }
-        }
-    }
+object FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
+    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        // Only report on top level callable declarations
+        if (context.containingDeclarations.size > 1) return
 
-    private fun checkFunction(function: FirSimpleFunction, reporter: DiagnosticReporter, context: CheckerContext) {
-        val source = function.source ?: return
+        val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
-        if (function.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return
-        if (function.isExternal) return
-        if (!function.hasBody && !function.isExpect) {
-            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, function.symbol, context)
+        if (declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return
+        if (declaration.isExternal) return
+        if (!declaration.hasBody && !declaration.isExpect) {
+            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol, context)
         }
 
-        checkExpectDeclarationVisibilityAndBody(function, source, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(declaration, source, reporter, context)
     }
 }

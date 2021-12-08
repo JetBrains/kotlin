@@ -61,6 +61,7 @@ fun main(args: Array<String>) {
     val declarationPackage = "$basePackage.checkers.declaration"
     generateCheckersComponents(generationPath, declarationPackage, "FirDeclarationChecker") {
         alias<FirDeclaration>("BasicDeclarationChecker")
+        alias<FirCallableDeclaration>("CallableDeclarationChecker")
         alias<FirFunction>("FunctionChecker")
         alias<FirSimpleFunction>("SimpleFunctionChecker")
         alias<FirProperty>("PropertyChecker")

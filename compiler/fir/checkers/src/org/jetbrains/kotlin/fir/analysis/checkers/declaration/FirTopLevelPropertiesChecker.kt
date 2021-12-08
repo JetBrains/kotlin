@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
@@ -24,32 +27,27 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelPropertiesChecker : FirFileChecker() {
-    override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (topLevelDeclaration in declaration.declarations) {
-            if (topLevelDeclaration is FirProperty) {
-                checkProperty(topLevelDeclaration, reporter, context)
-            }
-        }
-    }
+object FirTopLevelPropertiesChecker : FirPropertyChecker() {
+    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+        // Only report on top level callable declarations
+        if (context.containingDeclarations.size > 1) return
 
-    private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
-        val source = property.source ?: return
+        val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = source.getModifierList()
 
-        withSuppressedDiagnostics(property, context) {
+        withSuppressedDiagnostics(declaration, context) {
             checkPropertyInitializer(
                 containingClass = null,
-                property,
+                declaration,
                 modifierList,
-                isInitialized = property.initializer != null,
+                isInitialized = declaration.initializer != null,
                 reporter,
                 context
             )
-            checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
+            checkExpectDeclarationVisibilityAndBody(declaration, source, reporter, context)
         }
     }
 }
