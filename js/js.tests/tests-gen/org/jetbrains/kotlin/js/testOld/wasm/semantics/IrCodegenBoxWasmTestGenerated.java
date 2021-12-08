@@ -25484,6 +25484,26 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");
         }
 
+        @TestMetadata("concatGenericWithNullablePrimitiveUpperBound.kt")
+        public void testConcatGenericWithNullablePrimitiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatGenericWithNullablePrimitiveUpperBound.kt");
+        }
+
+        @TestMetadata("concatGenericWithPrimitiveUpperBound.kt")
+        public void testConcatGenericWithPrimitiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatGenericWithPrimitiveUpperBound.kt");
+        }
+
+        @TestMetadata("concatGenericWithStringUpperBound.kt")
+        public void testConcatGenericWithStringUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatGenericWithStringUpperBound.kt");
+        }
+
+        @TestMetadata("concatNullableGenericWithPrimitiveUpperBound.kt")
+        public void testConcatNullableGenericWithPrimitiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatNullableGenericWithPrimitiveUpperBound.kt");
+        }
+
         @TestMetadata("constInStringTemplate.kt")
         public void testConstInStringTemplate() throws Exception {
             runTest("compiler/testData/codegen/box/strings/constInStringTemplate.kt");
@@ -25532,6 +25552,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("kt47917.kt")
         public void testKt47917() throws Exception {
             runTest("compiler/testData/codegen/box/strings/kt47917.kt");
+        }
+
+        @TestMetadata("kt50140.kt")
+        public void testKt50140() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt50140.kt");
         }
 
         @TestMetadata("kt5389_stringBuilderGet.kt")

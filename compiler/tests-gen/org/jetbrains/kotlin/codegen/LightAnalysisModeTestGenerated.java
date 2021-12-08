@@ -34040,6 +34040,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/strings/concatDynamicWithSpecialSymbols.kt");
         }
 
+        @TestMetadata("concatGenericWithNullablePrimitiveUpperBound.kt")
+        public void testConcatGenericWithNullablePrimitiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatGenericWithNullablePrimitiveUpperBound.kt");
+        }
+
+        @TestMetadata("concatGenericWithPrimitiveUpperBound.kt")
+        public void testConcatGenericWithPrimitiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatGenericWithPrimitiveUpperBound.kt");
+        }
+
+        @TestMetadata("concatGenericWithStringUpperBound.kt")
+        public void testConcatGenericWithStringUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatGenericWithStringUpperBound.kt");
+        }
+
+        @TestMetadata("concatNullableGenericWithPrimitiveUpperBound.kt")
+        public void testConcatNullableGenericWithPrimitiveUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatNullableGenericWithPrimitiveUpperBound.kt");
+        }
+
         @TestMetadata("constInStringTemplate.kt")
         public void testConstInStringTemplate() throws Exception {
             runTest("compiler/testData/codegen/box/strings/constInStringTemplate.kt");
@@ -34083,6 +34103,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt42457_old.kt")
         public void testKt42457_old() throws Exception {
             runTest("compiler/testData/codegen/box/strings/kt42457_old.kt");
+        }
+
+        @TestMetadata("kt50140.kt")
+        public void testKt50140() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt50140.kt");
         }
 
         @TestMetadata("kt5389_stringBuilderGet.kt")

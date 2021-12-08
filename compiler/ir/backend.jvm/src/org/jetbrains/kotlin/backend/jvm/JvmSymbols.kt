@@ -195,7 +195,13 @@ class JvmSymbols(
             overriddenSymbols = overriddenSymbols + any.functionByName("toString")
         }
 
-        val appendTypes = with(irBuiltIns) { listOf(anyNType, stringType, booleanType, charType, intType, longType, floatType, doubleType) }
+        val appendTypes = with(irBuiltIns) {
+            listOf(
+                anyNType,
+                stringType.makeNullable(),
+                booleanType, charType, intType, longType, floatType, doubleType
+            )
+        }
         for (type in appendTypes) {
             klass.addFunction("append", klass.defaultType).apply {
                 addValueParameter("value", type)

@@ -31682,6 +31682,30 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("concatGenericWithNullablePrimitiveUpperBound.kt")
+            public void testConcatGenericWithNullablePrimitiveUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/strings/concatGenericWithNullablePrimitiveUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("concatGenericWithPrimitiveUpperBound.kt")
+            public void testConcatGenericWithPrimitiveUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/strings/concatGenericWithPrimitiveUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("concatGenericWithStringUpperBound.kt")
+            public void testConcatGenericWithStringUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/strings/concatGenericWithStringUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("concatNullableGenericWithPrimitiveUpperBound.kt")
+            public void testConcatNullableGenericWithPrimitiveUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/strings/concatNullableGenericWithPrimitiveUpperBound.kt");
+            }
+
+            @Test
             @TestMetadata("constInStringTemplate.kt")
             public void testConstInStringTemplate() throws Exception {
                 runTest("compiler/testData/codegen/box/strings/constInStringTemplate.kt");
@@ -31739,6 +31763,12 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @TestMetadata("kt47917.kt")
             public void testKt47917() throws Exception {
                 runTest("compiler/testData/codegen/box/strings/kt47917.kt");
+            }
+
+            @Test
+            @TestMetadata("kt50140.kt")
+            public void testKt50140() throws Exception {
+                runTest("compiler/testData/codegen/box/strings/kt50140.kt");
             }
 
             @Test

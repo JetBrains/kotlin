@@ -77,7 +77,7 @@ private fun IrSimpleType.buildPossiblyInnerType(classifier: IrClass?, index: Int
     )
 }
 
-internal val IrTypeParameter.representativeUpperBound: IrType
+val IrTypeParameter.representativeUpperBound: IrType
     get() {
         assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: ${render()}" }
 

@@ -81,10 +81,10 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         private val IrCall.isStringPlusCall: Boolean
             get() {
                 val function = symbol.owner
-                val receiver = dispatchReceiver ?: extensionReceiver
+                val receiverParameter = function.dispatchReceiverParameter ?: function.extensionReceiverParameter
 
-                return receiver != null
-                        && receiver.type.isStringClassType()
+                return receiverParameter != null
+                        && receiverParameter.type.isStringClassType()
                         && function.returnType.isStringClassType()
                         && function.valueParameters.size == 1
                         && function.name == OperatorNameConventions.PLUS

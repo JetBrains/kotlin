@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -43,22 +45,6 @@ private val IrClass.toStringFunction: IrSimpleFunction
         with(FlattenStringConcatenationLowering) { it.isToString }
     }
 
-
-private fun IrBuilderWithScope.normalizeArgument(expression: IrExpression): IrExpression =
-    if (expression.type.isByte() || expression.type.isShort()) {
-        // There is no special append or valueOf function for byte and short on the JVM.
-        irImplicitCast(expression, context.irBuiltIns.intType)
-    } else if (expression is IrConst<*> && expression.kind == IrConstKind.String && (expression.value as String).length == 1) {
-        // PSI2IR generates const Strings for 1-length literals in string templates (e.g., the space between x and y in "$x $y").
-        // We want to use the more efficient `append(Char)` function in such cases. This mirrors the behavior of the non-IR backend.
-        //
-        // In addition, this also means `append(Char)` will be used for the space in the following case: `x + " " + y`. The non-IR
-        // backend will still use `append(String)` in this case.
-        irChar((expression.value as String)[0])
-    } else {
-        expression
-    }
-
 private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
     val argument = normalizeArgument(expression)
     val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
@@ -67,6 +53,51 @@ private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
         putValueArgument(0, argument)
     }
 }
+
+private fun JvmIrBuilder.normalizeArgument(expression: IrExpression): IrExpression {
+    val type = expression.type
+    if (type.isByte() || type.isShort()) {
+        // There is no special append or valueOf function for byte and short on the JVM.
+        return irImplicitCast(expression, context.irBuiltIns.intType)
+    }
+
+    if (expression is IrConst<*> && expression.kind == IrConstKind.String && (expression.value as String).length == 1) {
+        // PSI2IR generates const Strings for 1-length literals in string templates (e.g., the space between x and y in "$x $y").
+        // We want to use the more efficient `append(Char)` function in such cases. This mirrors the behavior of the non-IR backend.
+        //
+        // In addition, this also means `append(Char)` will be used for the space in the following case: `x + " " + y`.
+        // The non-IR backend will still use `append(String)` in this case.
+        // NB KT-50091 shows an outlier where this might be actually less efficient, but in general we prefer `Char`.
+        return irChar((expression.value as String)[0])
+    }
+
+    val typeParameterSymbol = type.classifierOrNull as? IrTypeParameterSymbol
+    if (typeParameterSymbol != null) {
+        // Upcast type parameter to upper bound with specialized 'append' function
+        val upperBound = typeParameterSymbol.owner.representativeUpperBound
+        if (upperBound.classifierOrNull == context.irBuiltIns.stringClass) {
+            //  T <: String || T <: String? =>
+            //      upcast to 'String?'
+            return irImplicitCast(expression, context.irBuiltIns.stringType.makeNullable())
+        }
+        if (!(type as IrSimpleType).hasQuestionMark) {
+            if (upperBound.isByte() || upperBound.isShort()) {
+                //  Expression type is not null,
+                //  T <: Byte || T <: Short =>
+                //      upcast to Int
+                return irImplicitCast(expression, context.irBuiltIns.intType)
+            } else if (upperBound.isPrimitiveType()) {
+                //  Expression type is not null,
+                //  T <: P, P is primitive type (other than 'Byte' or 'Short') =>
+                //      upcast to P
+                return irImplicitCast(expression, upperBound)
+            }
+        }
+    }
+
+    return expression
+}
+
 
 private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrExpression? {
     if (InlineClassAbi.unboxType(expression.type) == null)
@@ -114,21 +145,33 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
 
     private val toStringFunction = stringBuilder.toStringFunction
 
-    private val defaultAppendFunction = stringBuilder.functions.single {
-        it.name.asString() == "append" &&
-                it.valueParameters.size == 1 &&
-                it.valueParameters.single().type.isNullableAny()
-    }
+    private val appendAnyNFunction =
+        findStringBuilderAppendFunctionWithParameter { it.type.isNullableAny() }!!
 
-    private val appendFunctions: Map<IrType, IrSimpleFunction?> =
-        (context.irBuiltIns.primitiveIrTypes + context.irBuiltIns.stringType).associateWith { type ->
-            stringBuilder.functions.singleOrNull {
-                it.name.asString() == "append" && it.valueParameters.singleOrNull()?.type == type
-            }
+    private val appendStringNFunction =
+        findStringBuilderAppendFunctionWithParameter { it.type.classOrNull == context.irBuiltIns.stringClass }!!
+
+    private val appendFunctionsByParameterType: Map<IrType, IrSimpleFunction> =
+        stringBuilder.functions
+            .filter { it.isAppendFunction() }
+            .associateBy { it.valueParameters[0].type }
+
+    private inline fun findStringBuilderAppendFunctionWithParameter(predicate: (IrValueParameter) -> Boolean) =
+        stringBuilder.functions.find {
+            it.isAppendFunction() && predicate(it.valueParameters[0])
         }
 
-    private fun typeToAppendFunction(type: IrType): IrSimpleFunction =
-        appendFunctions[type] ?: defaultAppendFunction
+    private fun IrSimpleFunction.isAppendFunction() =
+        name.asString() == "append" && valueParameters.size == 1
+
+    private fun typeToAppendFunction(type: IrType): IrSimpleFunction {
+        appendFunctionsByParameterType[type]?.let { return it }
+
+        if (type.classOrNull == context.irBuiltIns.stringClass)
+            return appendStringNFunction
+
+        return appendAnyNFunction
+    }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid(this)
