@@ -117,8 +117,11 @@ fun buildCrossModuleReferenceInfo(modules: Iterable<IrModuleFragment>): CrossMod
 }
 
 val IrModuleFragment.safeName: String
+    get() = name.asString().safeModuleName
+
+val String.safeModuleName: String
     get() {
-        var result = name.asString()
+        var result = this
 
         if (result.startsWith('<')) result = result.substring(1)
         if (result.endsWith('>')) result = result.substring(0, result.length - 1)

@@ -53,6 +53,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         const val OLD_MODULE_SUFFIX = "_old"
 
         private const val OUTPUT_DIR_NAME = "outputDir"
+        private const val RECOMPILED_OUTPUT_DIR_NAME = "outputDir-recompiled"
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
         private const val DCE_OUTPUT_DIR_NAME = "dceOutputDir"
         private const val MINIFICATION_OUTPUT_DIR_NAME = "minOutputDir"
@@ -80,6 +81,10 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return getJsArtifactsOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
+        fun getRecompiledJsModuleArtifactPath(testServices: TestServices, moduleName: String): String {
+            return getJsArtifactsRecompiledOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+        }
+
         fun getJsKlibArtifactPath(testServices: TestServices, moduleName: String): String {
             return getJsKlibOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName)
         }
@@ -90,6 +95,10 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getJsArtifactsOutputDir(testServices: TestServices): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_DIR_NAME)
+        }
+
+        fun getJsArtifactsRecompiledOutputDir(testServices: TestServices): File {
+            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(RECOMPILED_OUTPUT_DIR_NAME)
         }
 
         fun getJsKlibOutputDir(testServices: TestServices): File {
