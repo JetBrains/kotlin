@@ -24,13 +24,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     private val allFailedExceptions = mutableListOf<WrappedException>()
     private val allRanHandlers = mutableSetOf<AnalysisHandler<*>>()
 
-    fun runTest(
-        @TestDataFile testDataFileName: String,
-        expectedFileTransformer: ((String) -> String)? = null,
-        beforeDispose: (TestConfiguration) -> Unit = {},
-    ) {
+    fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (TestConfiguration) -> Unit = {}) {
         try {
-            runTestImpl(testDataFileName, expectedFileTransformer)
+            runTestImpl(testDataFileName)
         } finally {
             try {
                 testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
@@ -42,7 +38,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
     }
 
-    private fun runTestImpl(@TestDataFile testDataFileName: String, expectedFileTransformer: ((String) -> String)?) {
+    private fun runTestImpl(@TestDataFile testDataFileName: String) {
         val services = testConfiguration.testServices
 
         @Suppress("NAME_SHADOWING")
@@ -70,14 +66,10 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             if (it.shouldSkipTest()) return
         }
 
-        runTestPipeline(moduleStructure, services, expectedFileTransformer)
+        runTestPipeline(moduleStructure, services)
     }
 
-    fun runTestPipeline(
-        moduleStructure: TestModuleStructure,
-        services: TestServices,
-        expectedFileTransformer: ((String) -> String)?,
-    ) {
+    fun runTestPipeline(moduleStructure: TestModuleStructure, services: TestServices) {
         val globalMetadataInfoHandler = testConfiguration.testServices.globalMetadataInfoHandler
         globalMetadataInfoHandler.parseExistingMetadataInfosFromAllSources()
 
@@ -105,7 +97,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
         if (testConfiguration.metaInfoHandlerEnabled) {
             withAssertionCatching(WrappedException::FromMetaInfoHandler) {
-                globalMetadataInfoHandler.compareAllMetaDataInfos(expectedFileTransformer)
+                globalMetadataInfoHandler.compareAllMetaDataInfos()
             }
         }
 

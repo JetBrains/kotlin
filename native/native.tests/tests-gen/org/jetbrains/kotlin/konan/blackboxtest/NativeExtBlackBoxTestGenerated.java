@@ -15646,7 +15646,7 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
         @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
         public class InlineClasses {
             public InlineClasses() {
-                register("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", TransformersFunctions::removeOptionalJvmInlineAnnotation);
+                register("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -15705,7 +15705,7 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             @Test
             @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
             public void testBoxResultInlineClassOfConstructorCall() throws Exception {
-                // There is a registered source transformer for the testcase: TransformersFunctions::removeOptionalJvmInlineAnnotation
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
             }
 

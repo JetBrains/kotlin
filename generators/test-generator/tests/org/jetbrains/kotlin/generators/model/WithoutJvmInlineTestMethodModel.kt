@@ -11,8 +11,8 @@ class WithoutJvmInlineTestMethodModel(
     withPostfix: Boolean,
 ) : TransformingTestMethodModel(
     source,
-    transformer = "TransformersFunctions::" +
-            if (withAnnotation) "replaceOptionalJvmInlineAnnotationWithReal" else "removeOptionalJvmInlineAnnotation"
+    transformer = "TransformersFunctions.get" +
+            if (withAnnotation) "ReplaceOptionalJvmInlineAnnotationWithReal()" else "RemoveOptionalJvmInlineAnnotation()"
 ) {
     override val name: String = source.name + if (withPostfix) "_valueClasses" else ""
 }

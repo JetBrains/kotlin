@@ -15,6 +15,10 @@ abstract class SourceFilePreprocessor(val testServices: TestServices) {
     abstract fun process(file: TestFile, content: String): String
 }
 
+abstract class ReversibleSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
+    abstract fun revert(file: TestFile, actualContent: String): String
+}
+
 abstract class SourceFileProvider : TestService {
     abstract val kotlinSourceDirectory: File
     abstract val javaSourceDirectory: File
@@ -23,11 +27,12 @@ abstract class SourceFileProvider : TestService {
     abstract fun getContentOfSourceFile(testFile: TestFile): String
     abstract fun getRealFileForSourceFile(testFile: TestFile): File
     abstract fun getRealFileForBinaryFile(testFile: TestFile): File
+    abstract val preprocessors: List<SourceFilePreprocessor>
 }
 
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
 
-class SourceFileProviderImpl(val testServices: TestServices, val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
+class SourceFileProviderImpl(val testServices: TestServices, override val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
     override val kotlinSourceDirectory: File = testServices.getOrCreateTempDirectory("kotlin-files")
     override val javaSourceDirectory: File = testServices.getOrCreateTempDirectory("java-files")
     override val javaBinaryDirectory: File = testServices.getOrCreateTempDirectory("java-binary-files")
