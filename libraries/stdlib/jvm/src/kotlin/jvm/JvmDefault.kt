@@ -51,6 +51,8 @@ annotation class JvmDefaultWithoutCompatibility
 
 /**
  * Forces the compiler to generate compatibility accessors for the annotated interface in the `DefaultImpls` class.
+ * Please note that if an interface is annotated with this annotation for binary compatibility, public derived Kotlin interfaces should also be annotated with it,
+ * because their `DefaultImpls` methods will be used to access implementations from the `DefaultImpls` class of the original interface.
  *
  * Used only with `-Xjvm-default=all`. For more details refer to `-Xjvm-default` documentation.
  */
