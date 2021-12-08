@@ -1,4 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: IllegalStateException: Usage of default value argument for this annotation is not yet possible.
+// Please specify value for 'A.kClass' explicitly
 // TARGET_BACKEND: JVM_IR
 // IGNORE_DEXING
 // WITH_RUNTIME

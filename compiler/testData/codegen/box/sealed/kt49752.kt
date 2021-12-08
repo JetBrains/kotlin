@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: a new FE 1.0 test, failed with FIR, need to review
+// FIR status: several false UPPER_BOUND_VIOLATED are reported
 
 abstract class Interpreter<IS, TS, SELF>
         where IS : Interpreter.Intermediary<SELF>,
