@@ -92,8 +92,7 @@ class JsIrBackendFacade(
             val outputFile = if (firstTimeCompilation) {
                 File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + ".js")
             } else {
-                val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + ".js")
-                File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
+                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + ".js")
             }
             val moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
             val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
@@ -296,8 +295,7 @@ class JsIrBackendFacade(
 
         dependencies.forEach { (moduleId, outputs) ->
             val moduleWrappedCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(outputs.jsCode, moduleKind, moduleId)
-            val dependencyPath = outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
-            File(dependencyPath).write(moduleWrappedCode)
+            outputFile.augmentWithModuleName(moduleId).write(moduleWrappedCode)
         }
     }
 
@@ -326,4 +324,9 @@ class JsIrBackendFacade(
     override fun shouldRunAnalysis(module: TestModule): Boolean {
         return JsEnvironmentConfigurator.isMainModule(module, testServices)
     }
+}
+
+fun File.augmentWithModuleName(moduleName: String): File {
+    check(absolutePath.endsWith("_v5.js"))
+    return File(absolutePath.removeSuffix("_v5.js") + "-${moduleName}_v5.js")
 }

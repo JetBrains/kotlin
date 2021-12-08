@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
+import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts.Js
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import java.io.File
 
 class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: Js) {
@@ -46,10 +50,28 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
             }
         }
 
-        val originalOutput = FileUtil.loadFile(originalArtifact.outputFile)
-        val recompiledOutput = FileUtil.loadFile(incrementalArtifact.outputFile)
-        testServices.assertions.assertEquals(originalOutput, recompiledOutput) { "Output file changed after recompilation" }
+        val originalFilesToCheck = originalArtifact.allFiles()
+        val recompiledFilesToCheck = incrementalArtifact.allFiles()
+
+        testServices.assertions.assertEquals(originalFilesToCheck.size, recompiledFilesToCheck.size)
+
+        for ((originalFile, recompiledFile) in originalFilesToCheck.zip(recompiledFilesToCheck)) {
+            testServices.assertions.assertEquals(originalFile.name, recompiledFile.name)
+
+            val originalOutput = FileUtil.loadFile(originalFile)
+            val recompiledOutput = FileUtil.loadFile(recompiledFile)
+
+            testServices.assertions.assertEquals(originalOutput, recompiledOutput) {
+                "Output file changed after recompilation"
+            }
+        }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+}
+
+private fun Js.JsIrArtifact.allFiles(): Collection<File> {
+    return listOf(outputFile) + compilerResult.outputs!!.dependencies.map { (moduleId, _) ->
+        outputFile.augmentWithModuleName(moduleId)
+    }.sortedBy { it.name }
 }

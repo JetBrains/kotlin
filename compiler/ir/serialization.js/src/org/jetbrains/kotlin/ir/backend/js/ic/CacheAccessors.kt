@@ -52,6 +52,8 @@ interface PersistentCacheProvider {
 
     fun filePaths(): Iterable<String>
 
+    fun moduleName(): String
+
     companion object {
         val EMPTY = object : PersistentCacheProvider {
             override fun fileFingerPrint(path: String): Hash {
@@ -87,6 +89,10 @@ interface PersistentCacheProvider {
             }
 
             override fun filePaths(): Iterable<String> = emptyList()
+
+            override fun moduleName(): String {
+                TODO("Not yet implemented")
+            }
         }
     }
 }
@@ -191,6 +197,10 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
             } else null
         }
     }
+
+    override fun moduleName(): String {
+        TODO("Not yet implemented")
+    }
 }
 
 interface PersistentCacheConsumer {
@@ -204,6 +214,7 @@ interface PersistentCacheConsumer {
     fun invalidateForFile(path: String)
 
     fun commitLibraryPath(libraryPath: String, flatHash: ULong, transHash: ULong)
+    fun commitModuleName(moduleName: String)
 
     companion object {
         val EMPTY = object : PersistentCacheConsumer {
@@ -244,6 +255,9 @@ interface PersistentCacheConsumer {
 
             override fun commitSourceMap(path: String, mapData: ByteArray) {
 
+            }
+
+            override fun commitModuleName(moduleName: String) {
             }
         }
     }
@@ -345,5 +359,9 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
             it.println(flatHash.toString(16))
             it.println(transHash.toString(16))
         }
+    }
+
+    override fun commitModuleName(moduleName: String) {
+        TODO("Not yet implemented")
     }
 }
