@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 
-@Tag("daily")
+@Tag("external")
 @PredefinedTestCases(
     TC(
         name = "nativeStdlib",
@@ -54,7 +54,7 @@ import org.junit.jupiter.api.TestFactory
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
-class NativeStdlibBlackBoxTest : AbstractNativeBlackBoxTest() {
+class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun kotlinTest() = dynamicTestCase(TestCaseId.Named("kotlinTest"))
 

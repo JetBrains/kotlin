@@ -103,23 +103,18 @@ fun Test.setUpBlackBoxTest(tag: String) {
     }
 }
 
-val infrastructureTest by projectTest(taskName = "infrastructureTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpBlackBoxTest("infrastructure")
-}
+// Tasks that run different sorts of tests. Most frequent use case: running specific tests from the IDE.
+val infrastructureTest = projectTest("infrastructureTest", jUnitMode = JUnitMode.JUnit5) { setUpBlackBoxTest("infrastructure") }
+val externalTest = projectTest("externalTest", jUnitMode = JUnitMode.JUnit5) { setUpBlackBoxTest("external") }
 
-val dailyTest by projectTest(taskName = "dailyTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpBlackBoxTest("daily")
-}
+// Tasks that do not run tests directly, but group other test tasks. Most frequent use case: running groups of tests on CI server.
+val dailyTest by tasks.registering(Test::class) { dependsOn(externalTest) }
+val fullTest by tasks.registering(Test::class) { dependsOn(dailyTest, infrastructureTest) }
 
 // Just an alias for daily test task.
-val test: Task by tasks.getting {
-    dependsOn(dailyTest)
-}
+val test by tasks.getting(Test::class) { dependsOn(dailyTest) }
 
-projectTest(taskName = "fullTest", jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(dailyTest, infrastructureTest)
-    // TODO: migrate and attach K/N blackbox tests from kotlin-native/backend.native/tests
-}
+tasks.withType<Test> { group = "verification" }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeBlackboxTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))

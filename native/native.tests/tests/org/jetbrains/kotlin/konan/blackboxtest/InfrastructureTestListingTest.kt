@@ -11,9 +11,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@Suppress("ClassName")
 @Tag("infrastructure")
-class TestInfra_TestListingTest {
+class InfrastructureTestListingTest {
     @Test
     fun successfullyParsed() = assertEquals(
         listOf(

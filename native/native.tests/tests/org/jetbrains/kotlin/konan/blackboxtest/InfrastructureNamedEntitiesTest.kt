@@ -11,9 +11,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@Suppress("ClassName")
 @Tag("infrastructure")
-class TestInfra_NamedEntitiesTest {
+class InfrastructureNamedEntitiesTest {
     @Test
     fun parsePackageName() {
         listOf(

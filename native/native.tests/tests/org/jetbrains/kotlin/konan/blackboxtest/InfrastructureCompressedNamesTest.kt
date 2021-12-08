@@ -18,9 +18,8 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.coroutines.Continuation
 
-@Suppress("ClassName")
 @Tag("infrastructure")
-class TestInfra_CompressedNamesTest {
+class InfrastructureCompressedNamesTest {
     @Test
     fun targetNameCompression() {
         val knownTargets: Set<KonanTarget> = KonanTarget.predefinedTargets.values.toSet()
