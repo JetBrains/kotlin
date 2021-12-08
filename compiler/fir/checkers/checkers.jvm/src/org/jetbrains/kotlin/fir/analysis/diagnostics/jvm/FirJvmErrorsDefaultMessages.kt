@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAUL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_REQUIRED_FOR_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_THROUGH_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME
@@ -177,10 +176,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, "'@JvmDefault' is required for an override of a '@JvmDefault' member")
         map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING)
-        map.put(
-            JVM_DEFAULT_THROUGH_INHERITANCE,
-            "Inheritance from an interface with '@JvmDefault' members is only allowed with -Xjvm-default option"
-        )
         map.put(
             USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL,
             "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option"

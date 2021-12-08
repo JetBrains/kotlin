@@ -7,7 +7,7 @@ interface A {
 }
 
 // FILE: 2.kt
-interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>B<!> : A {
+interface B : A {
 
 }
 
@@ -23,7 +23,7 @@ open class Foo : B {
         super.test()
     }
 }
-open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo2<!> : B
+open class Foo2 : B
 
 open class Bar : Foo2() {
     override fun test() {
@@ -37,7 +37,7 @@ open class Bar2 : Bar() {
     }
 }
 
-class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers<!>: Foo2(), B {
+class ManySupers: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.test()
@@ -45,7 +45,7 @@ class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers<!>: Foo2(), B {
     }
 }
 
-class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers2<!>: Foo2(), C {
+class ManySupers2: Foo2(), C {
     fun foo() {
         super<Foo2>.test()
         super<C>.test()
@@ -53,7 +53,7 @@ class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers2<!>: Foo2(), C {
     }
 }
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers3<!><!>: Bar2(), C {
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class ManySupers3<!>: Bar2(), C {
     fun foo() {
         super<Bar2>.test()
         super<C>.test()

@@ -3456,11 +3456,6 @@ internal class JvmDefaultInDeclarationImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.JvmDefaultInDeclaration(), KtAbstractFirDiagnostic<KtElement>
 
-internal class JvmDefaultThroughInheritanceImpl(
-    override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.JvmDefaultThroughInheritance(), KtAbstractFirDiagnostic<KtDeclaration>
-
 internal class UsageOfJvmDefaultThroughSuperCallImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

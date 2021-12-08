@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
@@ -71,48 +69,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        if (declaration is FirClass) {
-            val unsubstitutedScope = declaration.unsubstitutedScope(context)
-            val hasDeclaredJvmDefaults = unsubstitutedScope is FirClassUseSiteMemberScope &&
-                    unsubstitutedScope.directOverriddenFunctions.keys.any {
-                        it.isCompiledToJvmDefault(jvmDefaultMode)
-                    }
-            if (!hasDeclaredJvmDefaults && !declaration.checkJvmDefaultsInHierarchy(jvmDefaultMode, context)) {
-                reporter.reportOn(declaration.source, FirJvmErrors.JVM_DEFAULT_THROUGH_INHERITANCE, context)
-            }
-        }
-
         checkNonJvmDefaultOverridesJavaDefault(defaultAnnotation, jvmDefaultMode, declaration, context, reporter)
-    }
-
-    private fun FirDeclaration.checkJvmDefaultsInHierarchy(jvmDefaultMode: JvmDefaultMode, context: CheckerContext): Boolean {
-        if (jvmDefaultMode.isEnabled) return true
-
-        if (this !is FirClass) return true
-
-        val unsubstitutedScope = unsubstitutedScope(context)
-        if (unsubstitutedScope is FirClassUseSiteMemberScope) {
-            val directOverriddenFunctions = unsubstitutedScope.directOverriddenFunctions.flatMap { it.value }.toSet()
-
-            for (key in unsubstitutedScope.overrideByBase.keys) {
-                if (directOverriddenFunctions.contains(key)) {
-                    continue
-                }
-
-                if (key.getOverriddenDeclarations().all {
-                        it.modality == Modality.ABSTRACT ||
-                                !it.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode) ||
-                                it.containingClass()?.toFirRegularClassSymbol(context.session)?.isInterface != true
-                    }
-                ) {
-                    continue
-                }
-
-                return false
-            }
-        }
-
-        return true
     }
 
     private fun checkNonJvmDefaultOverridesJavaDefault(
