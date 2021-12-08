@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -96,7 +97,8 @@ class JsIrBackendFacade(
             }
             val moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
             val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
-            val compiledModule = generateJsFromAst(moduleName, moduleKind, testServices.jsIrIncrementalDataProvider.getCaches())
+            val sourceMapsInfo = SourceMapsInfo.from(configuration)
+            val compiledModule = generateJsFromAst(moduleName, moduleKind, sourceMapsInfo, testServices.jsIrIncrementalDataProvider.getCaches())
             return BinaryArtifacts.Js.JsIrArtifact(
                 outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
             ).dump(module)

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
@@ -282,7 +283,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val caches = loadModuleCaches(icCaches)
                 val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!
 
-                val compiledModule = generateJsFromAst(moduleName, moduleKind, caches)
+                val compiledModule = generateJsFromAst(moduleName, moduleKind, SourceMapsInfo.from(configurationJs), caches)
 
                 val outputs = compiledModule.outputs!!
 
