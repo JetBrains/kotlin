@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 class Test {
     private var a = FilterValueDelegate<Float>()
     private inner class FilterValueDelegate<T>
