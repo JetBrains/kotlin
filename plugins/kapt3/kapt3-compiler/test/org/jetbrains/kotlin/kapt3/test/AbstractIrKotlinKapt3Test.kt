@@ -7,10 +7,6 @@ package org.jetbrains.kotlin.kapt3.test
 
 import org.jetbrains.kotlin.test.TargetBackend
 
-/*
-Currently Kapt3 only works with the old backend. To enable IR, modify the isIrBackend variable computation in GenerationsUtils.compileFiles()
-*/
-
 abstract class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTest() {
     override val backend = TargetBackend.JVM_IR
 }

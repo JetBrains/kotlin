@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 class Test {
     val simple: String = "123"
 

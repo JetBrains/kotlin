@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 package test
 
 class Test<T : CharSequence, N : Number> {

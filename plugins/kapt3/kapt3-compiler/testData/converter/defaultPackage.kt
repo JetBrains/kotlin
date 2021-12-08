@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // STRICT
 
 //FILE: test/ClassRefAnnotation.java
