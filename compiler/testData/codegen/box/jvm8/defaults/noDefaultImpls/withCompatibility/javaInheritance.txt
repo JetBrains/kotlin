@@ -1,0 +1,32 @@
+@kotlin.Metadata
+public interface KBase {
+    // source: 'KBase.kt'
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class KClass {
+    // source: 'main.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class KDerived$DefaultImpls {
+    // source: 'main.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test2(@org.jetbrains.annotations.NotNull p0: KDerived): java.lang.String
+    public final inner class KDerived$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface KDerived {
+    // source: 'main.kt'
+    public synthetic static method access$test2$jd(p0: KDerived): java.lang.String
+    public @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+    public final inner class KDerived$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class MainKt {
+    // source: 'main.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -21489,6 +21489,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                         runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/differentCases.kt");
                     }
 
+                    @TestMetadata("javaInheritance.kt")
+                    public void testJavaInheritance() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/javaInheritance.kt");
+                    }
+
                     @TestMetadata("propertyAnnotation.kt")
                     public void testPropertyAnnotation() throws Exception {
                         runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/propertyAnnotation.kt");

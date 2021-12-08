@@ -25856,6 +25856,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     }
 
                     @Test
+                    @TestMetadata("javaInheritance.kt")
+                    public void testJavaInheritance() throws Exception {
+                        runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/javaInheritance.kt");
+                    }
+
+                    @Test
                     @TestMetadata("propertyAnnotation.kt")
                     public void testPropertyAnnotation() throws Exception {
                         runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility/propertyAnnotation.kt");
