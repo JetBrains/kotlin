@@ -155,6 +155,40 @@ object NewCommonSuperTypeCalculator {
         return supertypes
     }
 
+    private fun TypeSystemCommonSuperTypesContext.commonSuperTypeForBuilderInferenceStubTypes(
+        stubTypes: List<SimpleTypeMarker>,
+        stateStubTypesNotEqual: TypeCheckerState,
+    ): SimpleTypeMarker {
+        require(stubTypes.isNotEmpty()) { "There should be stub types to compute common super type on them" }
+
+        var areAllDefNotNull = true
+        var areThereAnyNullable = false
+        val typesToUniquify = buildList {
+            for (stubType in stubTypes) {
+                when {
+                    stubType is DefinitelyNotNullTypeMarker -> add(stubType.original())
+                    stubType.isMarkedNullable() -> {
+                        areThereAnyNullable = true
+                        areAllDefNotNull = false
+                        add(stubType.withNullability(false))
+                    }
+                    else -> {
+                        areAllDefNotNull = false
+                        add(stubType)
+                    }
+                }
+            }
+        }
+
+        return uniquify(typesToUniquify, stateStubTypesNotEqual).singleOrNull()?.let {
+            when {
+                areAllDefNotNull -> it.makeSimpleTypeDefinitelyNotNullOrNotNull()
+                areThereAnyNullable -> it.withNullability(true)
+                else -> it
+            }
+        } ?: nullableAnyType()
+    }
+
     /*
     * Common Supertype calculator works with proper types and stub types (which is a replacement for non-proper types)
     * Also, there are two invariant related to stub types:
@@ -176,20 +210,19 @@ object NewCommonSuperTypeCalculator {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
         }
 
-        val nonStubTypeVariables = types.filter { !it.isStubTypeForBuilderInference() }
-        val areAllNonStubTypesNothing = nonStubTypeVariables.isNotEmpty() && nonStubTypeVariables.all { it.isNothing() }
-        if (nonStubTypeVariables.size == 1 && !areAllNonStubTypesNothing) return nonStubTypeVariables.single()
+        val (builderInferenceStubTypes, nonBuilderInferenceStubTypes) = types.partition { it.isStubTypeForBuilderInference() }
+        val areAllNonBuilderInferenceStubTypesNothing =
+            nonBuilderInferenceStubTypes.isNotEmpty() && nonBuilderInferenceStubTypes.all { it.isNothing() }
 
-        if (nonStubTypeVariables.isEmpty() || areAllNonStubTypesNothing) {
-            val stubTypeVariables = types.filter { it.isStubType() }
-            val uniqueStubTypes =
-                stubTypeVariables.distinctBy { it.asDefinitelyNotNullType()?.original()?.typeConstructor() ?: it.typeConstructor() }
+        if (nonBuilderInferenceStubTypes.size == 1 && !areAllNonBuilderInferenceStubTypesNothing)
+            return nonBuilderInferenceStubTypes.single()
 
-            if (uniqueStubTypes.size > 1) return nullableAnyType()
-
-            if (stubTypeVariables.none { it.isDefinitelyNotNullType() }) {
-                return uniquify(stubTypeVariables.ifEmpty { types }, stateStubTypesNotEqual).singleOrNull() ?: return nullableAnyType()
+        if (builderInferenceStubTypes.isNotEmpty()) {
+            // Common super type between any non stub type (except Nothing) and stub one is always Any?
+            if (nonBuilderInferenceStubTypes.isNotEmpty() && !areAllNonBuilderInferenceStubTypesNothing) {
+                return nullableAnyType()
             }
+            return commonSuperTypeForBuilderInferenceStubTypes(builderInferenceStubTypes, stateStubTypesNotEqual)
         }
 
         val uniqueTypes = uniquify(nonTypeVariables, stateStubTypesNotEqual)

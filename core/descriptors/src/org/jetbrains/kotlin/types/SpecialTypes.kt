@@ -112,7 +112,7 @@ class DefinitelyNotNullType private constructor(
                     }
 
 
-                    DefinitelyNotNullType(type.lowerIfFlexible(), useCorrectedNullabilityForTypeParameters)
+                    DefinitelyNotNullType(type.lowerIfFlexible().makeNullableAsSpecified(false), useCorrectedNullabilityForTypeParameters)
                 }
 
                 else -> null
