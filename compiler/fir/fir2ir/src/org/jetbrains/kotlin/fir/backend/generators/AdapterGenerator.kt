@@ -395,21 +395,9 @@ internal class AdapterGenerator(
         }
         if (this is IrVararg) {
             // element-wise SAM conversion if and only if we can build 1-to-1 mapping for elements.
-            if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
-                return this
+            return applyConversionOnVararg(argument) { firVarargArgument ->
+                applySamConversionIfNeeded(firVarargArgument, parameter, substitutor, shouldUnwrapVarargType = true)
             }
-            val argumentMapping = this.elements.zip(argument.arguments).toMap()
-            // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
-            val irVarargElements = elements as MutableList<IrVarargElement>
-            irVarargElements.replaceAll { irVarargElement ->
-                if (irVarargElement is IrExpression) {
-                    val firVarargArgument =
-                        argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
-                    irVarargElement.applySamConversionIfNeeded(firVarargArgument, parameter, substitutor, shouldUnwrapVarargType = true)
-                } else
-                    irVarargElement
-            }
-            return this
         }
         if (!needSamConversion(argument, parameter)) {
             return this
@@ -424,6 +412,27 @@ internal class AdapterGenerator(
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
+    }
+
+    private fun IrVararg.applyConversionOnVararg(
+        argument: FirExpression,
+        conversion: IrExpression.(FirExpression) -> IrExpression
+    ): IrExpression {
+        if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
+            return this
+        }
+        val argumentMapping = this.elements.zip(argument.arguments).toMap()
+        // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
+        val irVarargElements = elements as MutableList<IrVarargElement>
+        irVarargElements.replaceAll { irVarargElement ->
+            if (irVarargElement is IrExpression) {
+                val firVarargArgument =
+                    argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
+                irVarargElement.conversion(firVarargArgument)
+            } else
+                irVarargElement
+        }
+        return this
     }
 
     private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
@@ -470,22 +479,26 @@ internal class AdapterGenerator(
      */
     internal fun IrExpression.applySuspendConversionIfNeeded(
         argument: FirExpression,
-        parameterType: ConeKotlinType,
-        samFunctionType: ConeKotlinType?
+        parameterType: ConeKotlinType
     ): IrExpression {
         // TODO: should refer to LanguageVersionSettings.SuspendConversion
         if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
             return this
         }
         // Expect the expected type to be a suspend functional type.
-        val potentialFunctionType = samFunctionType ?: parameterType
-        if (!potentialFunctionType.isSuspendFunctionType(session)) {
+        if (!parameterType.isSuspendFunctionType(session)) {
             return this
         }
-        val expectedFunctionalType = potentialFunctionType.suspendFunctionTypeToFunctionType(session)
+        val expectedFunctionalType = parameterType.suspendFunctionTypeToFunctionType(session)
+        if (this is IrVararg) {
+            // element-wise conversion if and only if we can build 1-to-1 mapping for elements.
+            return applyConversionOnVararg(argument) { firVarargArgument ->
+                applySuspendConversionIfNeeded(firVarargArgument, parameterType)
+            }
+        }
 
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, argument) ?: return this
-        val suspendConvertedType = potentialFunctionType.toIrType() as IrSimpleType
+        val suspendConvertedType = parameterType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, type, invokeSymbol)
             // TODO add a bound receiver property to IrFunctionExpressionImpl?
@@ -500,7 +513,10 @@ internal class AdapterGenerator(
         }
     }
 
-    private fun findInvokeSymbol(expectedFunctionalType: ConeClassLikeType, argument: FirExpression): IrSimpleFunctionSymbol? {
+    private fun findInvokeSymbol(
+        expectedFunctionalType: ConeClassLikeType,
+        argument: FirExpression
+    ): IrSimpleFunctionSymbol? {
         val argumentType = argument.typeRef.coneType
         val argumentTypeWithInvoke = argumentType.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) ?: return null
 
