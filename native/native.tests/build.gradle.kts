@@ -102,9 +102,7 @@ fun Test.setUpBlackBoxTest(tag: String) {
 }
 
 val infrastructureTest by projectTest(taskName = "infrastructureTest", jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform {
-        includeTags("infrastructure")
-    }
+    setUpBlackBoxTest("infrastructure")
 }
 
 val dailyTest by projectTest(taskName = "dailyTest", jUnitMode = JUnitMode.JUnit5) {
