@@ -128,6 +128,7 @@ fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBacken
 fun generateJsFromAst(
     mainModuleName: String,
     moduleKind: ModuleKind,
+    sourceMapsInfo: SourceMapsInfo?,
     caches: Map<String, ModuleCache>,
 ): CompilerResult {
     val deserializer = JsIrAstDeserializer()
@@ -143,7 +144,7 @@ fun generateJsFromAst(
             mainModuleName = mainModuleName,
             moduleKind = moduleKind,
             jsIrProgram,
-            sourceMapsInfo = null,
+            sourceMapsInfo = sourceMapsInfo,
             relativeRequirePath = false,
             generateScriptModule = false,
         ), null
