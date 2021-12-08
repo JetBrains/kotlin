@@ -60,8 +60,8 @@ private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): Annotat
         var metadataVersion: IntArray = intArrayOf()
         var data1: MutableList<String> = mutableListOf()
         var data2: MutableList<String> = mutableListOf()
-        var extraString: String = ""
-        var packageName: String = ""
+        var extraString: String? = null
+        var packageName: String? = null
         var extraInt: Int = 0
 
         override fun visit(name: String, value: Any?) {
@@ -108,17 +108,27 @@ private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): Annotat
 private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
     visit(KIND_FIELD_NAME, header.kind)
     visit(METADATA_VERSION_FIELD_NAME, header.metadataVersion)
-    visitArray(METADATA_DATA_FIELD_NAME).apply {
-        header.data1.forEach { visit(null, it) }
-        visitEnd()
+    if (header.data1.isNotEmpty()) {
+        visitArray(METADATA_DATA_FIELD_NAME).apply {
+            header.data1.forEach { visit(null, it) }
+            visitEnd()
+        }
     }
-    visitArray(METADATA_STRINGS_FIELD_NAME).apply {
-        header.data2.forEach { visit(null, it) }
-        visitEnd()
+    if (header.data2.isNotEmpty()) {
+        visitArray(METADATA_STRINGS_FIELD_NAME).apply {
+            header.data2.forEach { visit(null, it) }
+            visitEnd()
+        }
     }
-    visit(METADATA_EXTRA_STRING_FIELD_NAME, header.extraString)
-    visit(METADATA_PACKAGE_NAME_FIELD_NAME, header.packageName)
-    visit(METADATA_EXTRA_INT_FIELD_NAME, header.extraInt)
+    if (header.extraString.isNotEmpty()) {
+        visit(METADATA_EXTRA_STRING_FIELD_NAME, header.extraString)
+    }
+    if (header.packageName.isNotEmpty()) {
+        visit(METADATA_PACKAGE_NAME_FIELD_NAME, header.packageName)
+    }
+    if (header.extraInt != 0) {
+        visit(METADATA_EXTRA_INT_FIELD_NAME, header.extraInt)
+    }
     visitEnd()
 }
 
