@@ -6,16 +6,13 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.BridgesConstruction
+import org.jetbrains.kotlin.ir.backend.js.utils.eraseGenerics
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
@@ -44,7 +41,7 @@ data class WasmSignature(
     override fun toString(): String {
         val er = extensionReceiverType?.let { "(er: ${it.render()}) " } ?: ""
         val parameters = valueParametersType.joinToString(", ") { it.render() }
-        val nonVirtual =  if (!isVirtual) "(non-virtual) " else ""
+        val nonVirtual = if (!isVirtual) "(non-virtual) " else ""
         return "[$nonVirtual$er$name($parameters) -> ${returnType.render()}]"
     }
 }
@@ -57,10 +54,3 @@ fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
         returnType.eraseGenerics(irBuiltIns),
         isOverridableOrOverrides
     )
-
-private fun IrType.eraseGenerics(irBuiltIns: IrBuiltIns): IrType {
-    val defaultType = this.erasedUpperBound?.defaultType ?: irBuiltIns.anyType
-    if (!this.isNullable()) return defaultType
-    return defaultType.makeNullable()
-}
-

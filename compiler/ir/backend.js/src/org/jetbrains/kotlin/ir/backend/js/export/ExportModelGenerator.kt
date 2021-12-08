@@ -74,10 +74,6 @@ class ExportModelGenerator(
     }
 
     private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? {
-        if (function.origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION) {
-            return null
-        }
-
         return when (val exportability = functionExportability(function)) {
             is Exportability.NotNeeded -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
@@ -533,7 +529,8 @@ class ExportModelGenerator(
             function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
             function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
-            function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
+            function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
+            function.origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION
         ) {
             return Exportability.NotNeeded
         }

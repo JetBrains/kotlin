@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
@@ -125,24 +121,6 @@ fun isBuiltInWasmRefType(type: IrType): Boolean {
 
 fun isExternalType(type: IrType): Boolean =
     type.erasedUpperBound?.isExternal ?: false
-
-// Return null if upper bound is Any
-private val IrTypeParameter.erasedUpperBound: IrClass?
-    get() {
-        // Pick the (necessarily unique) non-interface upper bound if it exists
-        for (type in superTypes) {
-            return type.erasedUpperBound ?: continue
-        }
-
-        return null
-    }
-
-val IrType.erasedUpperBound: IrClass?
-    get() = when (val classifier = classifierOrNull) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        else -> throw IllegalStateException()
-    }
 
 val IrType.getRuntimeClass: IrClass?
     get() = erasedUpperBound.let {
