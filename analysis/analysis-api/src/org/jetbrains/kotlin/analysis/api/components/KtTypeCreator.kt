@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -31,7 +31,7 @@ public inline fun KtTypeCreatorMixIn.buildClassType(
     analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.ByClassId(classId).apply(build))
 
 public inline fun KtTypeCreatorMixIn.buildClassType(
-    symbol: KtClassOrObjectSymbol,
+    symbol: KtClassLikeSymbol,
     build: KtClassTypeBuilder.() -> Unit = {}
 ): KtClassType =
     analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.BySymbol(symbol).apply(build))
@@ -60,7 +60,7 @@ public sealed class KtClassTypeBuilder : KtTypeBuilder() {
     }
 
     public class ByClassId(public val classId: ClassId) : KtClassTypeBuilder()
-    public class BySymbol(public val symbol: KtClassOrObjectSymbol) : KtClassTypeBuilder()
+    public class BySymbol(public val symbol: KtClassLikeSymbol) : KtClassTypeBuilder()
 }
 
 public sealed class KtTypeParameterTypeBuilder : KtTypeBuilder() {
