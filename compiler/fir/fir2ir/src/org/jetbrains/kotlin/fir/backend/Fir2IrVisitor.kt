@@ -248,7 +248,7 @@ class Fir2IrVisitor(
             val irFunction = declarationStorage.createIrFunction(
                 anonymousFunction,
                 irParent = conversionScope.parent(),
-                predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+                predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION,
                 isLocal = true
             )
             conversionScope.withFunction(irFunction) {
@@ -257,7 +257,11 @@ class Fir2IrVisitor(
 
             val type = anonymousFunction.typeRef.toIrType()
 
-            IrFunctionExpressionImpl(startOffset, endOffset, type, irFunction, IrStatementOrigin.LAMBDA)
+            IrFunctionExpressionImpl(
+                startOffset, endOffset, type, irFunction,
+                if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) IrStatementOrigin.LAMBDA
+                else IrStatementOrigin.ANONYMOUS_FUNCTION
+            )
         }
     }
 
