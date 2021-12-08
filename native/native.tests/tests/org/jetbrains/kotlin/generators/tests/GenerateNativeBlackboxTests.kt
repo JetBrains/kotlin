@@ -20,8 +20,8 @@ fun main() {
         // External box tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeExtBlackBoxTestGenerated",
-                annotations = listOf(daily(), provider<UseExtTestCaseGroupProvider>())
+                suiteTestClassName = "ExternalTestGenerated",
+                annotations = listOf(external(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -31,7 +31,7 @@ fun main() {
         // Samples (how to utilize the abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeInfraBlackBoxTestGenerated",
+                suiteTestClassName = "InfrastructureTestGenerated",
                 annotations = listOf(infrastructure(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("samples")
@@ -42,5 +42,6 @@ fun main() {
 }
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
-private fun daily() = annotation(Tag::class.java, "daily")
+
+private fun external() = annotation(Tag::class.java, "external")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")

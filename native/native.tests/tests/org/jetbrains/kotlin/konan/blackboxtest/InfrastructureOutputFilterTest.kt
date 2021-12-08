@@ -12,9 +12,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@Suppress("ClassName")
 @Tag("infrastructure")
-class TestInfra_OutputFilterTest {
+class InfrastructureOutputFilterTest {
     @Test
     fun noFiltering() {
         val randomTestOutput = List(100) { (Char.MIN_VALUE..Char.MAX_VALUE).random() }.joinToString("")

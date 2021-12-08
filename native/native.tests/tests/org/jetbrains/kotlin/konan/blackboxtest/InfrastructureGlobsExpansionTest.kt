@@ -16,14 +16,13 @@ import org.junit.jupiter.api.fail
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
-@Suppress("ClassName")
 @Tag("infrastructure")
-class TestInfra_GlobsExpansionTest {
+class InfrastructureGlobsExpansionTest {
     private lateinit var testDir: File
 
     @BeforeEach
     fun setUp() {
-        testDir = createTempDirectory(TestInfra_GlobsExpansionTest::class.java.sanitizedName).toFile()
+        testDir = createTempDirectory(InfrastructureGlobsExpansionTest::class.java.sanitizedName).toFile()
     }
 
     @Test
