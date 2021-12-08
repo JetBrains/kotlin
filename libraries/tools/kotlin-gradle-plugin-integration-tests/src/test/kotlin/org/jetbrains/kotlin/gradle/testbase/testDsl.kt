@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicens
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.*
-import java.nio.file.Files.copy
-import java.nio.file.Files.createDirectories
-import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 
@@ -473,24 +470,4 @@ private fun Path.addHeapDumpOptions() {
             println("<=== Heap dump options are already exists! ===>")
         }
     }
-}
-
-private fun Path.copyRecursively(dest: Path) {
-    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
-        override fun preVisitDirectory(
-            dir: Path,
-            attrs: BasicFileAttributes
-        ): FileVisitResult {
-            createDirectories(dest.resolve(relativize(dir)))
-            return FileVisitResult.CONTINUE
-        }
-
-        override fun visitFile(
-            file: Path,
-            attrs: BasicFileAttributes
-        ): FileVisitResult {
-            copy(file, dest.resolve(relativize(file)))
-            return FileVisitResult.CONTINUE
-        }
-    })
 }

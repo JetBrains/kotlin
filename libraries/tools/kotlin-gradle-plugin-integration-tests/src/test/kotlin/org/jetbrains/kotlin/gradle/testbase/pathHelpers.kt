@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import java.io.IOException
+import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.extension
-import kotlin.io.path.relativeTo import kotlin.io.path.isRegularFile
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.*
 import kotlin.streams.asSequence
 import kotlin.streams.toList
 
@@ -65,3 +68,43 @@ internal fun Iterable<Path>.relativizeTo(basePath: Path): Iterable<Path> = map {
 }
 
 internal fun String.normalizePath() = replace("\\", "/")
+
+internal fun Path.copyRecursively(dest: Path) {
+    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+        override fun preVisitDirectory(
+            dir: Path,
+            attrs: BasicFileAttributes
+        ): FileVisitResult {
+            dest.resolve(relativize(dir)).createDirectories()
+            return FileVisitResult.CONTINUE
+        }
+
+        override fun visitFile(
+            file: Path,
+            attrs: BasicFileAttributes
+        ): FileVisitResult {
+            file.copyTo(dest.resolve(relativize(file)))
+            return FileVisitResult.CONTINUE
+        }
+    })
+}
+
+internal fun Path.deleteRecursively() {
+    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+        override fun visitFile(
+            file: Path,
+            fileAttributes: BasicFileAttributes
+        ): FileVisitResult {
+            file.deleteIfExists()
+            return FileVisitResult.CONTINUE
+        }
+
+        override fun postVisitDirectory(
+            dir: Path,
+            exception: IOException?
+        ): FileVisitResult {
+            dir.deleteIfExists()
+            return FileVisitResult.CONTINUE
+        }
+    })
+}
