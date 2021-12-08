@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.testOld.engines.ExternalTool
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -34,22 +35,16 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
 
         if (dontRunGeneratedCode) return
 
-        val (allJsFiles, dceAllJsFiles) = getAllFilesForRunner(testServices, modulesToArtifact)
+        val allJsFiles = getAllFilesForRunner(testServices, modulesToArtifact)
 
         val withModuleSystem = testWithModuleSystem(testServices)
         val testModuleName = getTestModuleName(testServices)
         val testPackage = extractTestPackage(testServices)
 
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
-        val dontSkipIrIc = JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in globalDirectives
-        val recompile = testServices.moduleStructure.modules
-            .flatMap { it.files }.any { JsEnvironmentConfigurationDirectives.RECOMPILE in it.directives }
-        val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
         if (dontSkipRegularMode) {
-            runGeneratedCode(allJsFiles, testModuleName, testPackage, withModuleSystem)
-
-            if (runIrDce && !(dontSkipIrIc && recompile)) {
-                runGeneratedCode(dceAllJsFiles, testModuleName, testPackage, withModuleSystem)
+            for (jsFiles in allJsFiles.values) {
+                runGeneratedCode(jsFiles, testModuleName, testPackage, withModuleSystem)
             }
         }
     }
@@ -58,7 +53,7 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
         val globalDirectives = testServices.moduleStructure.allDirectives
 
         val esmOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).esModulesSubDir
-        val esmDceOutputDir = JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices).esModulesSubDir
+        val esmDceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE).esModulesSubDir
 
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in globalDirectives
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives

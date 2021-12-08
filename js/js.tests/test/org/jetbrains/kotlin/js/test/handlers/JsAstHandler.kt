@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsNullLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
@@ -26,7 +27,7 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         val ktFiles = module.files.filter { it.isKtFile }.map { it.originalContent }
         val jsProgram = when (val artifact = info.unwrap()) {
             is BinaryArtifacts.Js.OldJsArtifact -> (artifact.translationResult as TranslationResult.Success).program
-            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs?.jsProgram ?: return
+            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs[TranslationMode.FULL]?.jsProgram ?: return
             else -> return
         }
         processJsProgram(jsProgram, ktFiles, module.targetBackend!!)

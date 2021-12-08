@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -45,15 +46,12 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         val transformer = IrModuleToJsTransformerTmp(
             ir.context,
             emptyList(),
-            fullJs = true,
-            dceJs = true,
-            multiModule = true,
             relativeRequirePath = false
         )
 
-        val compiledResult = transformer.generateModule(ir.allModules)
+        val compiledResult = transformer.generateModule(ir.allModules, setOf(TranslationMode.FULL_DCE))
 
-        val dceOutput = compiledResult.outputsAfterDce ?: error("No DCE output")
+        val dceOutput = compiledResult.outputs[TranslationMode.FULL_DCE] ?: error("No DCE output")
 
         val binariesDir = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 

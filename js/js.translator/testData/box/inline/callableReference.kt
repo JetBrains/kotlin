@@ -3,9 +3,6 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: multiplyInline except=imul TARGET_BACKENDS=JS
 
-// FIXME: Not inlined on IR BE
-// CHECK_CONTAINS_NO_CALLS: multiplyInline except=multiply IGNORED_BACKENDS=JS
-
 // CHECK_FUNCTION_EXISTS: runNoinline
 // CHECK_NOT_CALLED: runNoinline
 

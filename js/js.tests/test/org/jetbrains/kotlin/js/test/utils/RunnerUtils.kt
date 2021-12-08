@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
+import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.testOld.*
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -96,30 +99,53 @@ fun testWithModuleSystem(testServices: TestServices): Boolean {
 
 fun getAllFilesForRunner(
     testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>
-): Pair<List<String>, List<String>> {
+): Map<TranslationMode, List<String>> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-    val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
-    val dceOutputDir = JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices)
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
     val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules)
     val additionalFiles = getAdditionalFiles(testServices)
     val additionalMainFiles = getAdditionalMainFiles(testServices)
 
-    val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
-    val klibDependencies = modulesToArtifact.values
-        .filterIsInstance<BinaryArtifacts.Js.JsIrArtifact>()
-        .singleOrNull()?.let { artifact ->
-            artifact.compilerResult.outputs?.dependencies?.map { (moduleId, _) ->
-                artifact.outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
+    if (modulesToArtifact.values.any { it is BinaryArtifacts.Js.JsIrArtifact }) {
+        // JS IR
+        val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? BinaryArtifacts.Js.JsIrArtifact)?.let { m to c.compilerResult } }.single()
+
+        val result = mutableMapOf<TranslationMode, List<String>>()
+
+        compilerResult.outputs.entries.forEach { (mode, outputs) ->
+            val paths = mutableListOf<String>()
+
+            val outputFile = JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + ".js"
+            outputs.dependencies.forEach { (moduleId, _) ->
+                paths += outputFile.augmentWithModuleName(moduleId)
             }
-        } ?: emptyList()
-    val dceJsFiles = (klibDependencies + artifactsPaths).map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
+            paths += outputFile
 
-    val allJsFiles = additionalFiles + inputJsFilesBefore + klibDependencies + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
-    val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
+            result[mode] = additionalFiles + inputJsFilesBefore + paths + commonFiles + additionalMainFiles + inputJsFilesAfter
+        }
 
-    return Pair(allJsFiles, dceAllJsFiles)
+        return result
+    } else {
+        // Old BE and ES modules
+        val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
+        val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE)
+
+        val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
+        val allJsFiles = additionalFiles + inputJsFilesBefore + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
+
+        val result = mutableMapOf(TranslationMode.FULL to allJsFiles)
+
+        val globalDirectives = testServices.moduleStructure.allDirectives
+        val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
+        if (runIrDce) {
+            val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
+            val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
+            result[TranslationMode.FULL_DCE] = dceAllJsFiles
+        }
+
+        return result
+    }
 }
 
 fun extractAllFilesForEsRunner(testServices: TestServices, esmOutputDir: File): Pair<List<String>, List<String>> {
@@ -155,7 +181,9 @@ fun extractAllFilesForEsRunner(testServices: TestServices, esmOutputDir: File): 
 }
 
 fun getOnlyJsFilesForRunner(testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>): List<String> {
-    return getAllFilesForRunner(testServices, modulesToArtifact).first
+    return getAllFilesForRunner(testServices, modulesToArtifact).let {
+        it[TranslationMode.FULL] ?: it[TranslationMode.PER_MODULE]!!
+    }
 }
 
 fun getTestModuleName(testServices: TestServices): String? {

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
@@ -283,9 +284,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val caches = loadModuleCaches(icCaches)
                 val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!
 
-                val compiledModule = generateJsFromAst(moduleName, moduleKind, SourceMapsInfo.from(configurationJs), caches)
+                val translationMode = TranslationMode.fromFlags(false, arguments.irPerModule)
 
-                val outputs = compiledModule.outputs!!
+                val compiledModule = generateJsFromAst(moduleName, moduleKind, SourceMapsInfo.from(configurationJs), setOf(translationMode), caches)
+
+                val outputs = compiledModule.outputs.values.single()
 
                 outputFile.write(outputs)
                 outputs.dependencies.forEach { (name, content) ->
@@ -408,18 +411,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     val transformer = IrModuleToJsTransformerTmp(
                         ir.context,
                         mainCallArguments,
-                        fullJs = true,
-                        dceJs = arguments.irDce,
-                        multiModule = arguments.irPerModule,
                         relativeRequirePath = true,
                     )
 
-                    transformer.generateModule(ir.allModules)
+                    transformer.generateModule(ir.allModules, setOf(TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule)))
                 } else {
                     val transformer = IrModuleToJsTransformer(
                         ir.context,
                         mainCallArguments,
-                        fullJs = true,
+                        fullJs = !arguments.irDce,
                         dceJs = arguments.irDce,
                         multiModule = arguments.irPerModule,
                         relativeRequirePath = true,
@@ -430,11 +430,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
-
-                val outputs = if (arguments.irDce && !arguments.irDceDriven)
-                    compiledModule.outputsAfterDce!!
-                else
-                    compiledModule.outputs!!
+                val outputs = compiledModule.outputs.values.single()
 
                 outputFile.write(outputs)
                 outputs.dependencies.forEach { (name, content) ->
