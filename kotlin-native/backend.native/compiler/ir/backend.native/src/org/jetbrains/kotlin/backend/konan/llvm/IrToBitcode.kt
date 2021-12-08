@@ -687,11 +687,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         init {
             if (function != null) {
-                parameters.forEach{
+                parameters.forEach {
                     val parameter = it.key
-                    val local = functionGenerationContext.vars.createParameter(
-                            parameter, debugInfoIfNeeded(function, parameter))
-                    functionGenerationContext.mapParameterForDebug(local, it.value)
+
+                    if (context.shouldContainDebugInfo()) {
+                        val local = functionGenerationContext.vars.createParameterOnStack(
+                                parameter, debugInfoIfNeeded(function, parameter))
+                        functionGenerationContext.mapParameterForDebug(local, it.value)
+                    } else {
+                        functionGenerationContext.vars.createParameter(parameter, it.value)
+                    }
                 }
             }
         }

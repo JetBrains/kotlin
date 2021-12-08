@@ -33,7 +33,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     inner class ParameterRecord(val address: LLVMValueRef, val refSlot: Boolean) : Record {
-        override fun load() : LLVMValueRef = functionGenerationContext.loadSlot(address, false)
+        override fun load(): LLVMValueRef = functionGenerationContext.loadSlot(address, false)
         override fun store(value: LLVMValueRef) = functionGenerationContext.store(value, address)
         override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
@@ -85,7 +85,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     internal var skipSlots = 0
-    internal fun createParameter(valueDeclaration: IrValueDeclaration, variableLocation: VariableDebugLocation?) : Int {
+    internal fun createParameterOnStack(valueDeclaration: IrValueDeclaration, variableLocation: VariableDebugLocation?): Int {
         assert(!contextVariablesToIndex.contains(valueDeclaration))
         val index = variables.size
         val type = functionGenerationContext.getLLVMType(valueDeclaration.type)
@@ -98,6 +98,9 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
             skipSlots++
         return index
     }
+
+    internal fun createParameter(valueDeclaration: IrValueDeclaration, value: LLVMValueRef) =
+            createImmutable(valueDeclaration, value)
 
     // Creates anonymous mutable variable.
     // Think of slot reuse.
