@@ -120,6 +120,17 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return setter != null ? setter.getValueParameters().get(0).getType() : null;
     }
 
+    @kotlin.Deprecated(message = "This method is left for binary compatibility with android.nav.safearg plugin. Used in SafeArgSyntheticDescriptorGenerator.kt")
+    public void setType(
+            @NotNull KotlinType outType,
+            @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter
+    ) {
+        setType(outType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter,
+                Collections.<ReceiverParameterDescriptor>emptyList());
+    }
+
     public void setType(
             @NotNull KotlinType outType,
             @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,

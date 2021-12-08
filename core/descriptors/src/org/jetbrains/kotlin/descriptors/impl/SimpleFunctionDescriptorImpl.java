@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,21 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull SourceElement source
     ) {
         return new SimpleFunctionDescriptorImpl(containingDeclaration, null, annotations, name, kind, source);
+    }
+
+    @NotNull
+    @kotlin.Deprecated(message = "This method is left for binary compatibility with android.nav.safearg plugin. Used in SafeArgSyntheticDescriptorGenerator.kt")
+    public SimpleFunctionDescriptorImpl initialize(
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @Nullable KotlinType unsubstitutedReturnType,
+            @Nullable Modality modality,
+            @NotNull DescriptorVisibility visibility
+    ) {
+        return initialize(extensionReceiverParameter, dispatchReceiverParameter, Collections.<ReceiverParameterDescriptor>emptyList(),
+                          typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility, null);
     }
 
     @NotNull
