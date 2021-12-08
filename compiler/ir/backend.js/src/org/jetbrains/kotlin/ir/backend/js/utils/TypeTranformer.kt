@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 
 fun IrType.eraseGenerics(irBuiltIns: IrBuiltIns): IrType {
     if (this is IrDynamicType) return this
+    if (this is IrErrorType) return this
     val defaultType = this.erasedUpperBound?.defaultType ?: irBuiltIns.anyType
     if (!this.isNullable()) return defaultType
     return defaultType.makeNullable()
