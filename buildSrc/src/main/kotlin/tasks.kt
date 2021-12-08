@@ -110,7 +110,7 @@ fun Project.projectTest(
     }
     return getOrCreateTask<Test>(taskName) {
         doFirst {
-            val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: mutableSetOf()
+            val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns?.toMutableList() ?: mutableSetOf()
             val patterns = filter.includePatterns + commandLineIncludePatterns
             if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
             patterns.forEach { pattern ->
