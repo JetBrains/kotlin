@@ -116,5 +116,14 @@ internal fun referenceDeserializedSymbol(
             IrLocalDelegatedPropertySymbolImpl()
         BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol ?: error("File symbol is not provided")
         else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
+    }.also {
+        it.privateSignature = idSig.withFile(fileSymbol)
     }
+}
+
+private fun IdSignature.withFile(fileSymbol: IrFileSymbol?): IdSignature {
+    return fileSymbol?.let {
+        val signature = it.signature ?: IdSignature.FileSignature(it)
+        IdSignature.CompositeSignature(signature, this)
+    } ?: this
 }
