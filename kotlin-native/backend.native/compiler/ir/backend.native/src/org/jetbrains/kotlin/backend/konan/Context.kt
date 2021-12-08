@@ -478,6 +478,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     var referencedFunctions: Set<IrFunction>? = null
+    var smallFunctions: Set<IrFunction>? = null
 
     val isNativeLibrary: Boolean by lazy {
         val kind = config.configuration.get(KonanConfigKeys.PRODUCE)

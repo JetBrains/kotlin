@@ -481,6 +481,16 @@ internal abstract class FunctionGenerationContext(
                 (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
                 switchToRunnable
 
+    protected val canOmmitFrame: Boolean
+        get() = context.memoryModel == MemoryModel.EXPERIMENTAL &&
+                !context.shouldContainDebugInfo() &&
+                irFunction != null &&
+                context.smallFunctions?.contains(irFunction) == true
+
+
+    protected val needFrame: Boolean
+        get() = (needCleanupLandingpadAndLeaveFrame || needSlots) && !canOmmitFrame
+
     private var setCurrentFrameIsCalled: Boolean = false
 
     private val switchToRunnable: Boolean =
@@ -1433,11 +1443,11 @@ internal abstract class FunctionGenerationContext(
         val needCleanupLandingpadAndLeaveFrame = this.needCleanupLandingpadAndLeaveFrame
 
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
+            val slots = if (needSlotsPhi || needFrame)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+            if (needFrame) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
@@ -1518,12 +1528,12 @@ internal abstract class FunctionGenerationContext(
             if (switchToRunnable) {
                 switchThreadState(Runnable)
             }
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+            if (needFrame) {
                 call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             } else {
                 check(!setCurrentFrameIsCalled)
             }
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
+            if (!canOmmitFrame && context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
                 call(context.llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
             resetDebugLocation()
@@ -1713,7 +1723,7 @@ internal abstract class FunctionGenerationContext(
         }
 
     private fun releaseVars() {
-        if (needCleanupLandingpadAndLeaveFrame || needSlots) {
+        if (needFrame) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))

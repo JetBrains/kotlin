@@ -307,6 +307,7 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
             EscapeAnalysis.computeLifetimes(
                     context, context.moduleDFG!!, externalModulesDFG, callGraph, context.lifetimes
             )
+            SmallFunctionAnalysis.findSmallFunction(context, callGraph)
         }
 )
 
