@@ -747,6 +747,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             )
         }
         var lambda = anonymousFunction
+        val initialReturnTypeRef = lambda.returnTypeRef
         val valueParameters = when {
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
             else -> lambda.valueParameters
@@ -788,17 +789,22 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             (it as? FirExpression)?.typeRef is FirImplicitUnitTypeRef
         }
 
-        val returnType =
-            if (implicitReturns.isNotEmpty() || lambda.returnType?.isUnit == true) {
+        val returnType = when {
+            initialReturnTypeRef is FirResolvedTypeRef -> {
+                initialReturnTypeRef.coneType
+            }
+            implicitReturns.isNotEmpty() || lambda.returnType?.isUnit == true -> {
                 // i.e., early return, e.g., l@{ ... return@l ... }
                 // Note that the last statement will be coerced to Unit if needed.
                 session.builtinTypes.unitType.type
-            } else {
+            }
+            else -> {
                 // Otherwise, compute the common super type of all possible return expressions
                 session.typeContext.commonSuperTypeOrNull(
                     returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType }
                 ) ?: session.builtinTypes.unitType.type
             }
+        }
         lambda.replaceReturnTypeRef(
             lambda.returnTypeRef.resolvedTypeFromPrototype(returnType).also {
                 session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, null)

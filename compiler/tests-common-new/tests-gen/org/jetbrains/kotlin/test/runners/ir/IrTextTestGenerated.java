@@ -2495,6 +2495,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("functionLiteralGenericSignature.kt")
+        public void testFunctionLiteralGenericSignature() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.kt");
+        }
+
+        @Test
         @TestMetadata("ImplicitReceiverStack.kt")
         public void testImplicitReceiverStack() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");

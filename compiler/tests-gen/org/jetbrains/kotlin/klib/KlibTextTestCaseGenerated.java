@@ -1857,6 +1857,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
         }
 
+        @TestMetadata("functionLiteralGenericSignature.kt")
+        public void testFunctionLiteralGenericSignature() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.kt");
+        }
+
         @TestMetadata("ImplicitReceiverStack.kt")
         public void testImplicitReceiverStack() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
