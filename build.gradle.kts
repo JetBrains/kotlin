@@ -442,6 +442,25 @@ apply {
     ) {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")
+//
+//            //TODO these modules should be properly migrated
+//            if (!project.path.contains("-gradle") &&
+//                !project.path.contains(":binary-compatibility-validator") &&
+//                !project.path.contains("runtime") &&
+//                //TODO: tune performance in tree and tree.impl modules
+//                !project.path.contains(":compiler:ir.tree") &&
+//                //HACK: filter modules with JVM target 1.6
+//                //TODO: remove after removing 1.6 target
+//                !project.path.startsWith(":core") &&
+//                !project.path.startsWith(":kotlin-stdlib") &&
+//                !project.path.startsWith(":kotlinx-metadata") &&
+//                !project.path.startsWith(":kotlin-scripting") &&
+//                !project.path.startsWith(":compiler:tests-common-jvm6")
+//            ) {
+//                freeCompilerArgs += "-Xjvm-default=all"
+//            }
+//        }
+//    }
     }
 }
 
