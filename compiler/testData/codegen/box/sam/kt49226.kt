@@ -1,15 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: java.lang.UnsupportedOperationException: This function has a reified type parameter and thus can only be inlined at compilation time,
-//    not called directly.
-//      at kotlin.jvm.internal.Intrinsics.throwUndefinedForReified(Intrinsics.java:207)
-//      at kotlin.jvm.internal.Intrinsics.throwUndefinedForReified(Intrinsics.java:201)
-//      at kotlin.jvm.internal.Intrinsics.reifiedOperationMarker(Intrinsics.java:211)
-//      at Kt49226Kt$box$x$1.invoke(kt49226.kt:5)
-//      at Kt49226Kt$box$x$1.invoke(kt49226.kt:5)
-//      at Kt49226Kt$sam$Func$0.apply(kt49226.kt)
-//      at Mapper.map(Mapper.java:20)
-//      at Kt49226Kt.box(kt49226.kt:5)
 
 // FILE: kt49226.kt
 fun box(): String {

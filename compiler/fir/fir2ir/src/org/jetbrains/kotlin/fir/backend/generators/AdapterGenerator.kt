@@ -37,9 +37,12 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.Variance
 
 /**
  * A generator that converts callable references or arguments that needs an adapter in between. This covers:
@@ -148,7 +151,7 @@ internal class AdapterGenerator(
                 callableReferenceAccess, startOffset, endOffset, firAdaptee!!, adaptee, type, boundDispatchReceiver, boundExtensionReceiver
             )
             val irCall = createAdapteeCallForCallableReference(
-                callableReferenceAccess, firAdaptee, adapteeSymbol, irAdapterFunction, boundDispatchReceiver, boundExtensionReceiver
+                callableReferenceAccess, firAdaptee, adapteeSymbol, irAdapterFunction, type, boundDispatchReceiver, boundExtensionReceiver
             )
             irAdapterFunction.body = irFactory.createBlockBody(startOffset, endOffset) {
                 if (expectedReturnType?.isUnit() == true) {
@@ -282,6 +285,7 @@ internal class AdapterGenerator(
         firAdaptee: FirFunction,
         adapteeSymbol: IrFunctionSymbol,
         adapterFunction: IrFunction,
+        adaptedType: IrSimpleType,
         boundDispatchReceiver: IrExpression?,
         boundExtensionReceiver: IrExpression?
     ): IrExpression {
@@ -345,9 +349,31 @@ internal class AdapterGenerator(
                     val valueArgument = if (mappedArgument.arguments.isEmpty()) {
                         null
                     } else {
+                        val parameterType = valueParameter.type
+                        val reifiedVarargElementType: IrType
+                        val reifiedVarargType: IrType
+                        if (valueParameter.varargElementType?.isTypeParameter() == true &&
+                            parameterType is IrSimpleType &&
+                            !parameterType.isPrimitiveArray()
+                        ) {
+                            reifiedVarargElementType = adaptedType.getArgumentTypeAt(index)
+                            reifiedVarargType = IrSimpleTypeImpl(
+                                parameterType.classifier,
+                                parameterType.hasQuestionMark,
+                                listOf(makeTypeProjection(reifiedVarargElementType, Variance.OUT_VARIANCE)),
+                                parameterType.annotations,
+                                parameterType.abbreviation
+                            )
+                        } else {
+                            reifiedVarargElementType = valueParameter.varargElementType!!
+                            reifiedVarargType = parameterType
+                        }
+
                         val adaptedValueArgument = IrVarargImpl(
-                            startOffset, endOffset,
-                            valueParameter.type, valueParameter.varargElementType!!,
+                            startOffset,
+                            endOffset,
+                            reifiedVarargType,
+                            reifiedVarargElementType
                         )
                         for (argument in mappedArgument.arguments) {
                             val irValueArgument = buildIrGetValueArgument(argument)
