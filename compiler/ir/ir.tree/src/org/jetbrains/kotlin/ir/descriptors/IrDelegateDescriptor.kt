@@ -76,6 +76,8 @@ abstract class IrDelegateDescriptorBase(
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
 
+    override fun cleanCompileTimeInitializerCache() {}
+
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
     override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor {
@@ -131,6 +133,7 @@ class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     ) {
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
+    override fun cleanCompileTimeInitializerCache() {}
     override fun isVar(): Boolean = false
     override fun isLateInit(): Boolean = false
     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? = throw UnsupportedOperationException()
