@@ -186,7 +186,7 @@ abstract class AnnotationCodegen(
     private fun genAnnotation(annotation: IrConstructorCall, path: TypePath?, isTypeAnnotation: Boolean): String? {
         val annotationClass = annotation.annotationClass
         val retentionPolicy = getRetentionPolicy(annotationClass)
-        if (retentionPolicy == RetentionPolicy.SOURCE) return null
+        if (retentionPolicy == RetentionPolicy.SOURCE && !context.state.classBuilderMode.generateSourceRetentionAnnotations) return null
 
         // FlexibleNullability is an internal annotation, used only inside the compiler
         if (annotationClass.fqNameWhenAvailable in internalAnnotations) return null

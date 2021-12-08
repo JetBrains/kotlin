@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 import kotlinx.kapt.*
 
 class Test {
