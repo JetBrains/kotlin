@@ -83,12 +83,6 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return new ImportContent.ExpressionBased(reference);
     }
 
-    @Nullable
-    @Override
-    public Name getImportedName() {
-        return KtImportInfo.DefaultImpls.getImportedName(this);
-    }
-
     @Override
     @Nullable
     @IfNotParsed
