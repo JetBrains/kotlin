@@ -18,13 +18,19 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
+import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
 import org.junit.Assume.assumeFalse
 import org.junit.Test
+import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.FileFilter
 import java.util.zip.ZipFile
+import kotlin.io.path.notExists
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -1056,6 +1062,48 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
             build("assemble") {
                 assertFileExists("kotlin-js-store/yarn.lock")
                 assert(fileInWorkingDir("kotlin-js-store").resolve("yarn.lock").readText() == fileInWorkingDir("build/js/yarn.lock").readText())
+            }
+        }
+    }
+
+    @Test
+    fun testYarnIgnoreScripts() {
+        with(transformProjectWithPluginsDsl("nodeJsDownload")) {
+            gradleBuildScript().modify {
+                it + "\n" +
+                        """
+                        dependencies {
+                            implementation(npm("puppeteer", "11.0.0"))
+                        }
+                        """.trimIndent()
+            }
+            build("assemble") {
+                assert(
+                    fileInWorkingDir("build/js/node_modules/puppeteer/.local-chromium")
+                        .exists().not()
+
+                ) {
+                    "Chromium should not be installed with --ignore-scripts"
+                }
+            }
+            gradleBuildScript().modify {
+                it + "\n" +
+                        """
+                        rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().ignoreScripts = false
+                        }
+                        """.trimIndent()
+            }
+
+            build("clean") {}
+
+            build("assemble") {
+                assert(
+                    fileInWorkingDir("build/js/node_modules/puppeteer/.local-chromium")
+                        .exists()
+                ) {
+                    "Chromium should be installed without --ignore-scripts"
+                }
             }
         }
     }

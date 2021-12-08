@@ -35,9 +35,13 @@ abstract class YarnBasics : NpmApi {
         args: List<String>
     ) {
         services.execWithProgress(description) { exec ->
-            val arguments = args +
-                    if (logger.isDebugEnabled) "--verbose" else "" +
-                            if (yarn.ignoreScripts) "--ignore-scripts" else ""
+            val arguments = args
+                .plus(
+                    if (logger.isDebugEnabled) "--verbose" else ""
+                )
+                .plus(
+                    if (yarn.ignoreScripts) "--ignore-scripts" else ""
+                ).filter { it.isNotEmpty() }
 
             val nodeExecutable = nodeJs.requireConfigured().nodeExecutable
             if (!yarn.ignoreScripts) {
