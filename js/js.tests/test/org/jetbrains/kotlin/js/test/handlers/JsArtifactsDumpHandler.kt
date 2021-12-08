@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -28,13 +29,19 @@ class JsArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandl
 
         val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
         val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerModuleCompilation = File(pathToRootOutputDir + "out-per-module/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerModuleMinification = File(pathToRootOutputDir + "out-per-module-min/" + testGroupOutputDirPrefix)
 
         val outputDir = getOutputDir(originalFile, testGroupOutputDirForCompilation, stopFile)
         val dceOutputDir = getOutputDir(originalFile, testGroupOutputDirForMinification, stopFile)
+        val perModuleOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleCompilation, stopFile)
+        val preModuleDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleMinification, stopFile)
         val minOutputDir = File(dceOutputDir, originalFile.nameWithoutExtension)
 
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices), outputDir)
-        copy(JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices), dceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE), dceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE), perModuleOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_DCE), preModuleDceOutputDir)
         copy(JsEnvironmentConfigurator.getMinificationJsArtifactsOutputDir(testServices), minOutputDir)
     }
 

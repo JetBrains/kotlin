@@ -92,9 +92,6 @@ fun compileWithIC(
     val transformer = IrModuleToJsTransformerTmp(
         context,
         mainArguments,
-        fullJs = generateFullJs,
-        dceJs = generateDceJs,
-        multiModule = multiModule,
         relativeRequirePath = relativeRequirePath,
     )
 
@@ -129,24 +126,28 @@ fun generateJsFromAst(
     mainModuleName: String,
     moduleKind: ModuleKind,
     sourceMapsInfo: SourceMapsInfo?,
+    translationModes: Set<TranslationMode>,
     caches: Map<String, ModuleCache>,
 ): CompilerResult {
-    val deserializer = JsIrAstDeserializer()
-    val jsIrProgram = JsIrProgram(caches.values.map {
-        JsIrModule(
-            it.name.safeModuleName,
-            sanitizeName(it.name.safeModuleName),
-            it.asts.values.sortedBy { it.name }.mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it)) } })
-    })
-    return CompilerResult(
-        generateWrappedModuleBody(
-            multiModule = true,
+    fun compilationOutput(multiModule: Boolean): CompilationOutputs {
+        val deserializer = JsIrAstDeserializer()
+        val jsIrProgram = JsIrProgram(caches.values.map {
+            JsIrModule(
+                it.name.safeModuleName,
+                sanitizeName(it.name.safeModuleName),
+                it.asts.values.sortedBy { it.name }.mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it)) } })
+        })
+
+        return generateWrappedModuleBody(
+            multiModule = multiModule,
             mainModuleName = mainModuleName,
             moduleKind = moduleKind,
             jsIrProgram,
             sourceMapsInfo = sourceMapsInfo,
             relativeRequirePath = false,
             generateScriptModule = false,
-        ), null
-    )
+        )
+    }
+
+    return CompilerResult(translationModes.associate { it to compilationOutput(it.perModule) }, null)
 }

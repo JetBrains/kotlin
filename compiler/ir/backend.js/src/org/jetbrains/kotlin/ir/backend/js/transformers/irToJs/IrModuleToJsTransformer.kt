@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
+import java.util.*
 
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
@@ -65,18 +66,20 @@ class IrModuleToJsTransformer(
             namer.merge(module.files, additionalPackages)
         }
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(modules, exportedModule, namer) else null
+        val code = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
 
-        val dceJsCode = if (dceJs) {
+        if (fullJs) code[TranslationMode.fromFlags(false, multiModule)] = generateWrappedModuleBody(modules, exportedModule, namer)
+
+        if (dceJs) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
             // Use a fresh namer for DCE so that we could compare the result with DCE-driven
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
             val namer = NameTables(emptyList(), context = backendContext)
             namer.merge(modules.flatMap { it.files }, additionalPackages)
-            generateWrappedModuleBody(modules, exportedModule, namer)
-        } else null
+            code[TranslationMode.fromFlags(true, multiModule)] = generateWrappedModuleBody(modules, exportedModule, namer)
+        }
 
-        return CompilerResult(jsCode, dceJsCode, dts)
+        return CompilerResult(code, dts)
     }
 
     private fun generateWrappedModuleBody(modules: Iterable<IrModuleFragment>, exportedModule: ExportedModule, namer: NameTables): CompilationOutputs {

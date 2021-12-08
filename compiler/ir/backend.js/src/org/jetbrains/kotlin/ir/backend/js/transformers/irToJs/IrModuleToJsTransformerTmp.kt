@@ -30,15 +30,30 @@ import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.*
+
+enum class TranslationMode(val dce: Boolean, val perModule: Boolean) {
+    FULL(dce = false, perModule = false),
+    FULL_DCE(dce = true, perModule = false),
+    PER_MODULE(dce = false, perModule = true),
+    PER_MODULE_DCE(dce = true, perModule = true);
+
+    companion object {
+        fun fromFlags(dce: Boolean, perModule: Boolean): TranslationMode {
+            return if (perModule) {
+                if (dce) PER_MODULE_DCE else PER_MODULE
+            } else {
+                if (dce) FULL_DCE else FULL
+            }
+        }
+    }
+}
 
 class IrModuleToJsTransformerTmp(
     private val backendContext: JsIrBackendContext,
     private val mainArguments: List<String>?,
     private val generateScriptModule: Boolean = false,
     var namer: NameTables = NameTables(emptyList(), context = backendContext),
-    private val fullJs: Boolean = true,
-    private val dceJs: Boolean = false,
-    private val multiModule: Boolean = false,
     private val relativeRequirePath: Boolean = false,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true,
@@ -48,7 +63,7 @@ class IrModuleToJsTransformerTmp(
     private val mainModuleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
 
-    fun generateModule(modules: Iterable<IrModuleFragment>): CompilerResult {
+    fun generateModule(modules: Iterable<IrModuleFragment>, modes: Set<TranslationMode>): CompilerResult {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = true)
 
         val exportData = modules.associate { module ->
@@ -63,7 +78,7 @@ class IrModuleToJsTransformerTmp(
             module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
         }
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(
+        fun compilationOutput(multiModule: Boolean) = generateWrappedModuleBody(
             multiModule,
             mainModuleName,
             moduleKind,
@@ -71,23 +86,23 @@ class IrModuleToJsTransformerTmp(
             SourceMapsInfo.from(backendContext.configuration),
             relativeRequirePath,
             generateScriptModule,
-        ) else null
+        )
 
-        val dceJsCode = if (dceJs) {
+        val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
+
+        modes.filter { !it.dce }.forEach {
+            result[it] = compilationOutput(it.perModule)
+        }
+
+        if (modes.any { it.dce }) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
+        }
 
-            generateWrappedModuleBody(
-                multiModule,
-                mainModuleName,
-                moduleKind,
-                generateProgramFragments(modules, exportData),
-                SourceMapsInfo.from(backendContext.configuration),
-                relativeRequirePath,
-                generateScriptModule,
-            )
-        } else null
+        modes.filter { it.dce }.forEach {
+            result[it] = compilationOutput(it.perModule)
+        }
 
-        return CompilerResult(jsCode, dceJsCode, dts)
+        return CompilerResult(result, dts)
     }
 
     fun generateBinaryAst(files: Iterable<IrFile>): Map<String, ByteArray> {

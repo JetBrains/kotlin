@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -51,10 +52,14 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
         const val OLD_MODULE_SUFFIX = "_old"
 
-        private const val OUTPUT_DIR_NAME = "outputDir"
-        private const val RECOMPILED_OUTPUT_DIR_NAME = "outputDir-recompiled"
+        private val outputDirByMode = mapOf(
+            TranslationMode.FULL to "outputDir",
+            TranslationMode.FULL_DCE to "dceOutputDir",
+            TranslationMode.PER_MODULE to "perModuleOutputDir",
+            TranslationMode.PER_MODULE_DCE to "perModuleDceOutputDir"
+        )
+
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
-        private const val DCE_OUTPUT_DIR_NAME = "dceOutputDir"
         private const val MINIFICATION_OUTPUT_DIR_NAME = "minOutputDir"
 
         object ExceptionThrowingReporter : JsConfig.Reporter() {
@@ -76,36 +81,28 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return testName + outputFileSuffix
         }
 
-        fun getJsModuleArtifactPath(testServices: TestServices, moduleName: String): String {
-            return getJsArtifactsOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+        fun getJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL): String {
+            return getJsArtifactsOutputDir(testServices, translationMode).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
-        fun getRecompiledJsModuleArtifactPath(testServices: TestServices, moduleName: String): String {
-            return getJsArtifactsRecompiledOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+        fun getRecompiledJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL): String {
+            return getJsArtifactsRecompiledOutputDir(testServices, translationMode).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
         fun getJsKlibArtifactPath(testServices: TestServices, moduleName: String): String {
             return getJsKlibOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName)
         }
 
-        fun getDceJsArtifactPath(testServices: TestServices, moduleName: String): String {
-            return getDceJsArtifactsOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+        fun getJsArtifactsOutputDir(testServices: TestServices, translationMode: TranslationMode = TranslationMode.FULL): File {
+            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(outputDirByMode[translationMode]!!)
         }
 
-        fun getJsArtifactsOutputDir(testServices: TestServices): File {
-            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_DIR_NAME)
-        }
-
-        fun getJsArtifactsRecompiledOutputDir(testServices: TestServices): File {
-            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(RECOMPILED_OUTPUT_DIR_NAME)
+        fun getJsArtifactsRecompiledOutputDir(testServices: TestServices, translationMode: TranslationMode = TranslationMode.FULL): File {
+            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(outputDirByMode[translationMode]!! + "-recompiled")
         }
 
         fun getJsKlibOutputDir(testServices: TestServices): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
-        }
-
-        fun getDceJsArtifactsOutputDir(testServices: TestServices): File {
-            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(DCE_OUTPUT_DIR_NAME)
         }
 
         fun getMinificationJsArtifactsOutputDir(testServices: TestServices): File {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.handlers
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
@@ -71,7 +72,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
 }
 
 private fun Js.JsIrArtifact.allFiles(): Collection<File> {
-    return listOf(outputFile) + compilerResult.outputs!!.dependencies.map { (moduleId, _) ->
+    return listOf(outputFile) + compilerResult.outputs[TranslationMode.FULL]!!.dependencies.map { (moduleId, _) ->
         outputFile.augmentWithModuleName(moduleId)
     }.sortedBy { it.name }
 }
