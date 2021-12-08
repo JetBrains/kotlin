@@ -68,24 +68,14 @@ class FirTypeIntersectionScope private constructor(
         if (name in absentClassifiers) {
             return
         }
-        val accepted = HashSet<FirClassifierSymbol<*>>()
-        val pending = mutableListOf<FirClassifierSymbol<*>>()
-        var empty = true
-        for (scope in scopes) {
-            scope.processClassifiersByNameWithSubstitution(name) { symbol, substitution ->
-                empty = false
-                if (symbol !in accepted) {
-                    pending += symbol
-                    processor(symbol, substitution)
-                }
-            }
-            accepted += pending
-            pending.clear()
-        }
-        if (empty) {
+        val classifiersWithSubstitution = intersectionContext.collectClassifiers(name)
+        if (classifiersWithSubstitution.isEmpty()) {
             absentClassifiers += name
+            return
         }
-        super.processClassifiersByNameWithSubstitution(name, processor)
+        for ((symbol, substitution) in classifiersWithSubstitution) {
+            processor(symbol, substitution)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

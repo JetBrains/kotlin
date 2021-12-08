@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage.ContextForIntersectionOverrideConstruction
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -44,6 +45,24 @@ class FirTypeIntersectionScopeContext(
             chosenSymbol: D,
             overriddenMember: MemberWithBaseScope<D>
         ) : this(chosenSymbol, listOf(overriddenMember))
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun collectClassifiers(name: Name): List<Pair<FirClassifierSymbol<*>, ConeSubstitutor>> {
+        val accepted = HashSet<FirClassifierSymbol<*>>()
+        val pending = mutableListOf<FirClassifierSymbol<*>>()
+        val result = mutableListOf<Pair<FirClassifierSymbol<*>, ConeSubstitutor>>()
+        for (scope in scopes) {
+            scope.processClassifiersByNameWithSubstitution(name) { symbol, substitution ->
+                if (symbol !in accepted) {
+                    pending += symbol
+                    result += symbol to substitution
+                }
+            }
+            accepted += pending
+            pending.clear()
+        }
+        return result
     }
 
     @OptIn(PrivateForInline::class)
