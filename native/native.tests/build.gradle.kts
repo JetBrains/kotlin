@@ -85,6 +85,8 @@ fun Test.setUpBlackBoxTest(tag: String) {
         TestProperty.USE_CACHE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
 
+        ignoreFailures = true // Don't fail Gradle task if there are failed tests. Let the subsequent tasks to run as well.
+
         useJUnitPlatform {
             includeTags(tag)
         }
