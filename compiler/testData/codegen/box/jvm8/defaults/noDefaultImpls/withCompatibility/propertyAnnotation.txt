@@ -18,7 +18,6 @@ public final class Test$DefaultImpls {
     public final inner class Test$DefaultImpls
 }
 
-@kotlin.jvm.JvmDefaultWithCompatibility
 @kotlin.Metadata
 public interface Test {
     // source: 'propertyAnnotation.kt'

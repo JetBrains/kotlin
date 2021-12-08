@@ -56,5 +56,6 @@ annotation class JvmDefaultWithoutCompatibility
  */
 @SinceKotlin("1.6")
 @RequireKotlin("1.6", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 annotation class JvmDefaultWithCompatibility
