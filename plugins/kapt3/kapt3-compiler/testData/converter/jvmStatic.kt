@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 class JvmStaticTest {
     companion object {
         @JvmStatic

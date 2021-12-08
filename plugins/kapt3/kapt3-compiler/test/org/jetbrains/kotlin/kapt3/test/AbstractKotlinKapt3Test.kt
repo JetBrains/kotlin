@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextTest
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar.KaptComponentContributor
@@ -55,7 +57,6 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtensi
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -169,6 +170,14 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
             throw RuntimeException(e)
         } finally {
             kaptContext?.close()
+        }
+    }
+
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
+
+        if (backend.isIR) {
+            configuration.put(JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR, true)
         }
     }
 

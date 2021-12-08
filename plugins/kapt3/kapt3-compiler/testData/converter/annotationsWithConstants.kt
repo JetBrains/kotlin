@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 //FILE: lib/R.java
 package lib;
 

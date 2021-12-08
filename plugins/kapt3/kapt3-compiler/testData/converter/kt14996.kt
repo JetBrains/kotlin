@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 fun crashMe(values: List<String>): String {
     throw UnsupportedOperationException()
 }

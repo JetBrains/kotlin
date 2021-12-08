@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // STRIP_METADATA
 
 interface Context

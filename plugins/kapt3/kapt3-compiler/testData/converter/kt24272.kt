@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // STRICT
 
 class Foo(private val string: String) {

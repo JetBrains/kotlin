@@ -24,23 +24,27 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.base.kapt3.AptMode.APT_ONLY
 import org.jetbrains.kotlin.base.kapt3.AptMode.WITH_COMPILATION
 import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -263,6 +267,7 @@ abstract class AbstractKapt3Extension(
             type = "java-production"
         )
 
+        val isIrBackend = compilerConfiguration.getBoolean(JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR)
         val generationState = GenerationState.Builder(
             project,
             builderFactory,
@@ -271,7 +276,12 @@ abstract class AbstractKapt3Extension(
             files,
             compilerConfiguration
         ).targetId(targetId)
-            .isIrBackend(false)
+            .isIrBackend(isIrBackend)
+            .codegenFactory(
+                if (isIrBackend)
+                    JvmIrCodegenFactory(compilerConfiguration, compilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG))
+                else DefaultCodegenFactory
+            )
             .build()
 
         val (classFilesCompilationTime) = measureTimeMillis {

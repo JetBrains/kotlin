@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: androidx/annotation/RecentlyNullable.java
 package androidx.annotation;
 

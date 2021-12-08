@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 package deprecated
 
 @Deprecated("Deprecated annotation")

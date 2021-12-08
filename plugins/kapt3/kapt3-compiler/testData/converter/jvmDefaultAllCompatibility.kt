@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // !JVM_DEFAULT_MODE: all-compatibility
 
 interface Foo {
