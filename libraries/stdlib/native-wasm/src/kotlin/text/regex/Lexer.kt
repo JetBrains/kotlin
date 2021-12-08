@@ -777,9 +777,6 @@ internal class Lexer(val patternString: String, flags: Int) {
         fun hasDecompositionNonNullCanClass(ch: Int): Boolean =
             (ch == 0x0340) or (ch == 0x0341) or (ch == 0x0343) or (ch == 0x0344)
 
-        /** Gets decomposition for given codepoint from decomposition mappings table. */
-        fun getDecomposition(ch: Int): IntArray? = getDecompositionInternal(ch)
-
         // =============================================================================================================
 
         /**

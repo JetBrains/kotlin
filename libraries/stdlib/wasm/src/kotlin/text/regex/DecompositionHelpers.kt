@@ -243,7 +243,7 @@ private fun getDecomposition(codePoint: Int): IntArray? {
     if (index == -1 || decompositionKeys[index] != codePoint) {
         return null
     }
-    return decompositionValues[index]
+    return getDecompositionByIndex(index)
 }
 
 /** Gets canonical class for given codepoint from decomposition mappings table. */
@@ -256,9 +256,6 @@ internal fun hasSingleCodepointDecompositionInternal(ch: Int): Boolean {
     val index: Int = binarySearchRange(singleDecompositions, ch)
     return index != -1 && singleDecompositions[index] == ch
 }
-
-/** Returns a decomposition for a given codepoint. */
-internal fun getDecompositionInternal(ch: Int): IntArray? = getDecomposition(ch)
 
 /**
  * Decomposes the given string represented as an array of codepoints. Saves the decomposition into [outputCodepoints] array.
