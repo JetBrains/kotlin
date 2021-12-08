@@ -28,19 +28,19 @@ dependencies {
     compileOnly(project(":kotlin-daemon-client"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":daemon-common")) { isTransitive = false }
-    compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
+    compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(commonDep("net.rubygrapefruit", "native-platform"))
+    embedded(commonDependency("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
     }
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
-    api(commonDep("io.ktor", "ktor-network")) {
+    api(commonDependency("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }

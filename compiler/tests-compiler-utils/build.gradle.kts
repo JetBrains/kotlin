@@ -26,7 +26,7 @@ dependencies {
     testApi(project(":compiler:backend.jvm.entrypoint"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":kotlin-preloader"))
-    testApi(commonDep("com.android.tools:r8"))
+    testApi(commonDependency("com.android.tools:r8"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testApi(intellijDep()) {

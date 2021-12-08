@@ -11,10 +11,10 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
-    api(commonDep("io.ktor", "ktor-network")) {
+    api(commonDependency("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }

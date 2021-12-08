@@ -10,7 +10,7 @@ project.updateJvmTarget("1.6")
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-android-extensions-runtime"))
-    compileOnly(commonDep("com.google.android", "android"))
+    compileOnly(commonDependency("com.google.android", "android"))
 }
 
 sourceSets {

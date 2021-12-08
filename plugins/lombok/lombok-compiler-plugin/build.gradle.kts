@@ -16,7 +16,7 @@ dependencies {
 
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
 
     testImplementation("org.projectlombok:lombok:1.18.16")

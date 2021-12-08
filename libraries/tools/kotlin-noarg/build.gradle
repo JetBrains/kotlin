@@ -15,7 +15,7 @@ dependencies {
     compileOnly project(':kotlin-noarg-compiler-plugin')
 
     testApi gradleApi()
-    testApi(DependenciesKt.commonDep(project, "junit"))
+    testApi(DependenciesKt.commonDependency(project, "junit"))
 
     embedded(project(":kotlin-noarg-compiler-plugin")) { transitive = false }
 }

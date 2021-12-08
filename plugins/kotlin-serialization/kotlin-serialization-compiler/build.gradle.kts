@@ -25,7 +25,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testApiJUnit5(vintageEngine = true)
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")

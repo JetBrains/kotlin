@@ -31,7 +31,7 @@ dependencies {
     testApi(projectTests(":idea"))
     testApi(projectTests(":idea:idea-android"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testApi(project(":idea:idea-native")) { isTransitive = false }
     testApi(project(":idea:idea-gradle-native")) { isTransitive = false }
     testRuntime(project(":native:frontend.native"))

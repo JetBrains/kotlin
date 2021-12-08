@@ -78,7 +78,7 @@ dependencies {
     bundleDependencies "org.jetbrains.kotlin:kotlin-util-io:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion"
 
-    testImplementation DependenciesKt.commonDep(project, "junit")
+    testImplementation DependenciesKt.commonDependency(project, "junit")
     testImplementation "org.jetbrains.kotlin:kotlin-test:${project.bootstrapKotlinVersion}"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${project.bootstrapKotlinVersion}"
     testImplementation "org.tools4j:tools4j-spockito:1.6"

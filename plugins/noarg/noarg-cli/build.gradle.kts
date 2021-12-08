@@ -20,7 +20,7 @@ dependencies {
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testApi(intellijCoreDep()) { includeJars("intellij-core")}
 }
 

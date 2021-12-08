@@ -6082,7 +6082,7 @@ dependencies {
 
     api project(kotlinCompilerModule)
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
-    api DependenciesKt.commonDep(project, "junit")
+    api DependenciesKt.commonDependency(project, "junit")
 }
 
 project.tasks.named("test").configure {

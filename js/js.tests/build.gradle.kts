@@ -50,7 +50,7 @@ dependencies {
     testApi(project(":js:js.dce"))
     testApi(project(":js:js.engines"))
     testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testApi(projectTests(":kotlin-build-common"))
     testApi(projectTests(":generators:test-generator"))
 
@@ -71,12 +71,12 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
     testRuntimeOnly(project(":compiler:backend-common"))
-    testRuntimeOnly(commonDep("org.fusesource.jansi", "jansi"))
+    testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
     
-    antLauncherJar(commonDep("org.apache.ant", "ant"))
+    antLauncherJar(commonDependency("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
 
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${commonVer("org.junit", "junit-bom")}")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${commonDependencyVersion("org.junit", "junit-bom")}")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

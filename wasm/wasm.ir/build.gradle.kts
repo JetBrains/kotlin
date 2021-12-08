@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib())
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(projectTests(":compiler:tests-common"))

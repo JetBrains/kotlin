@@ -53,8 +53,8 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-jvm6"))
     testApi(project(":kotlin-scripting-compiler-impl"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(commonDep("junit:junit"))
-    testApi(commonDep("com.android.tools:r8"))
+    testApi(commonDependency("junit:junit"))
+    testApi(commonDependency("com.android.tools:r8"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(toolsJar())
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }

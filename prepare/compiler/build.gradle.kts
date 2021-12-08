@@ -138,7 +138,7 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-script-runtime"))
     api(project(":kotlin-reflect"))
-    api(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -157,7 +157,7 @@ dependencies {
         libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
-    librariesStripVersion(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
@@ -196,13 +196,13 @@ dependencies {
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
     fatJarContents(kotlinBuiltins())
-    fatJarContents(commonDep("javax.inject"))
-    fatJarContents(commonDep("org.jline", "jline"))
-    fatJarContents(commonDep("org.fusesource.jansi", "jansi"))
+    fatJarContents(commonDependency("javax.inject"))
+    fatJarContents(commonDependency("org.jline", "jline"))
+    fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
-    fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
-    fatJarContents(commonDep("io.javaslang", "javaslang"))
-    fatJarContents(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
+    fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
+    fatJarContents(commonDependency("io.javaslang", "javaslang"))
+    fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }

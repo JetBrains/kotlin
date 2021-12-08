@@ -18,7 +18,7 @@ dependencies {
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-scripting-compiler"))
     publishedRuntime(project(":kotlin-reflect"))
-    publishedRuntime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    publishedRuntime(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 }
 
 sourceSets {

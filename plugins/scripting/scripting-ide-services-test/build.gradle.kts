@@ -19,18 +19,18 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(commonDep("junit"))
+    allTestsRuntime(commonDependency("junit"))
     testApi(kotlinStdlib("jdk8"))
     testApi(project(":kotlin-scripting-ide-services-unshaded"))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":kotlin-scripting-dependencies-maven"))
     testApi(project(":compiler:cli"))
 
-    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
     testImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
     embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
@@ -39,8 +39,8 @@ dependencies {
     embeddableTestRuntime(project(":kotlin-scripting-dependencies-maven-all"))
     embeddableTestRuntime(kotlinStdlib("jdk8"))
     embeddableTestRuntime(testSourceSet.output)
-    embeddableTestRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    embeddableTestRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    embeddableTestRuntime(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    embeddableTestRuntime(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
 }
 
 sourceSets {

@@ -52,7 +52,7 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:klib"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
     kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 

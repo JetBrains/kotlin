@@ -8,7 +8,7 @@ description = "Common klib reader and writer"
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-util-io"))
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
 }
 
 sourceSets {

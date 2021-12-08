@@ -5,7 +5,7 @@ plugins {
 val embeddableTestRuntime by configurations.creating
 
 dependencies {
-    testApi(commonDep("junit"))
+    testApi(commonDependency("junit"))
 
     testApi(project(":kotlin-scripting-js"))
     testApi(project(":compiler:plugin-api"))

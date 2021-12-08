@@ -29,7 +29,7 @@ dependencies {
     implementation(kotlinStdlib())
     implementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":kotlin-test::kotlin-test-junit"))
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
 }

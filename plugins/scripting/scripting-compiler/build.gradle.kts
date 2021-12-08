@@ -32,12 +32,11 @@ dependencies {
     testApi(project(":compiler:frontend.java"))
     testApi(project(":compiler:backend.js"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
-    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     testRuntimeOnly(intellijDep()) { includeJars("jps-model", "jna") }
-
     testImplementation(project(":kotlin-reflect"))
 }
 

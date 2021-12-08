@@ -35,7 +35,7 @@ dependencies {
 
     api(kotlinStdlib())
 
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
     testImplementation(project(":kotlinx-metadata")) { isTransitive = false }

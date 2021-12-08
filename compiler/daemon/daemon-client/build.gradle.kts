@@ -24,16 +24,16 @@ dependencies {
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":js:js.frontend"))
-    compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
+    compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(commonDep("net.rubygrapefruit", "native-platform"))
+    embedded(commonDependency("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
     }
     runtimeOnly(project(":kotlin-reflect"))
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }

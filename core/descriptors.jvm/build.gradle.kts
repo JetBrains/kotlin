@@ -12,7 +12,7 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
     api(project(":core:deserialization.common.jvm"))
     api(project(":core:util.runtime"))
-    api(commonDep("javax.inject"))
+    api(commonDependency("javax.inject"))
 }
 
 sourceSets {

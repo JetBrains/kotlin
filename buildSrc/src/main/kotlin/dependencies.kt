@@ -45,22 +45,22 @@ val Project.internalBootstrapRepo: String? get() =
         else -> null
     }
 
-fun Project.commonDep(coord: String): String {
+fun Project.commonDependency(coord: String): String {
     val parts = coord.split(':')
     return when (parts.size) {
-        1 -> "$coord:$coord:${commonVer(coord, coord)}"
-        2 -> "${parts[0]}:${parts[1]}:${commonVer(parts[0], parts[1])}"
+        1 -> "$coord:$coord:${commonDependencyVersion(coord, coord)}"
+        2 -> "${parts[0]}:${parts[1]}:${commonDependencyVersion(parts[0], parts[1])}"
         3 -> coord
         else -> throw IllegalArgumentException("Illegal maven coordinates: $coord")
     }
 }
 
-fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassifiers: String): String {
+fun Project.commonDependency(group: String, artifact: String, vararg suffixesAndClassifiers: String): String {
     val (classifiers, artifactSuffixes) = suffixesAndClassifiers.partition { it.startsWith(':') }
-    return "$group:$artifact${artifactSuffixes.joinToString("")}:${commonVer(group, artifact)}${classifiers.joinToString("")}"
+    return "$group:$artifact${artifactSuffixes.joinToString("")}:${commonDependencyVersion(group, artifact)}${classifiers.joinToString("")}"
 }
 
-fun Project.commonVer(group: String, artifact: String) =
+fun Project.commonDependencyVersion(group: String, artifact: String) =
     when {
         rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
         rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
@@ -209,7 +209,7 @@ fun Project.testApiJUnit5(
     jupiterParams: Boolean = false
 ) {
     with(dependencies) {
-        val platformVersion = commonVer("org.junit", "junit-bom")
+        val platformVersion = commonDependencyVersion("org.junit", "junit-bom")
         testApi(platform("org.junit:junit-bom:$platformVersion"))
         testApi("org.junit.jupiter:junit-jupiter")
         if (vintageEngine) {
@@ -220,7 +220,7 @@ fun Project.testApiJUnit5(
             testApi("org.junit.jupiter:junit-jupiter-params:$platformVersion")
         }
 
-        val componentsVersion = commonVer("org.junit.platform", "")
+        val componentsVersion = commonDependencyVersion("org.junit.platform", "")
 
         val components = mutableListOf(
             "org.junit.platform:junit-platform-commons",
@@ -244,7 +244,7 @@ fun Project.testApiJUnit5(
         }
 
         // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
-        add("testRuntimeOnly", commonDep("junit:junit"))
+        add("testRuntimeOnly", commonDependency("junit:junit"))
     }
 }
 

@@ -10,7 +10,7 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testApi(kotlinStdlib("jdk8"))
-    testApi(commonDep("junit"))
+    testApi(commonDependency("junit"))
     testApi(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
     testImplementation(project(":kotlin-compiler-embeddable"))
 }

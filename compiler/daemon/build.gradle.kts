@@ -8,8 +8,8 @@ plugins {
 val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
 
 dependencies {
-    api(commonDep("org.fusesource.jansi", "jansi"))
-    api(commonDep("org.jline", "jline"))
+    api(commonDependency("org.fusesource.jansi", "jansi"))
+    api(commonDependency("org.jline", "jline"))
 
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-js"))
@@ -22,7 +22,7 @@ dependencies {
     runtimeOnly(project(":kotlin-reflect"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }

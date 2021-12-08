@@ -7,7 +7,7 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(toolsJarApi())
 
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 

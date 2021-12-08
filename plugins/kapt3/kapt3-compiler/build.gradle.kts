@@ -31,7 +31,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(project(":kotlin-annotation-processing-base"))
     testApi(projectTests(":kotlin-annotation-processing-base"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-annotation-processing-runtime"))
 
     testCompileOnly(toolsJarApi())

@@ -30,10 +30,10 @@ dependencies {
     implementation("org.apache.maven:maven-core:3.8.1")
     implementation("org.apache.maven.wagon:wagon-http:3.4.3")
     testImplementation(projectTests(":kotlin-scripting-dependencies"))
-    testImplementation(commonDep("junit"))
+    testImplementation(commonDependency("junit"))
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.30")
     testImplementation(kotlin("reflect"))
-    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 }
 
 sourceSets {

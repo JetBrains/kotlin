@@ -10,7 +10,7 @@ dependencies {
     compileOnly(project(":js:js.config"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }

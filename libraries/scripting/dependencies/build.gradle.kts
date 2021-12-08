@@ -8,8 +8,8 @@ project.updateJvmTarget("1.6")
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    testApi(commonDep("junit"))
-    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testApi(commonDependency("junit"))
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 }
 
 sourceSets {

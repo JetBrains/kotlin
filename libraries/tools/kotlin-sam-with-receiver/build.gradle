@@ -15,7 +15,7 @@ dependencies {
     compileOnly project(':kotlin-sam-with-receiver-compiler-plugin')
 
     testApi gradleApi()
-    testApi DependenciesKt.commonDep(project, "junit")
+    testApi DependenciesKt.commonDependency(project, "junit")
 
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { transitive = false }
 }

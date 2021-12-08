@@ -65,13 +65,13 @@ dependencies {
     testImplementation(projectTests(":generators:test-generator"))
 
     testImplementation(projectTests(":js:js.tests"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
 
     testRuntimeOnly(kotlinStdlib())
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
     testRuntimeOnly(project(":compiler:backend-common"))
-    testRuntimeOnly(commonDep("org.fusesource.jansi", "jansi"))
+    testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
     atomicfuClasspath("org.jetbrains.kotlinx:atomicfu-js:0.16.3") { isTransitive = false }
     atomicfuRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }

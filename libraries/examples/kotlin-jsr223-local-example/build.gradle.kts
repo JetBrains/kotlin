@@ -18,7 +18,7 @@ dependencies {
     api(project(":kotlin-script-util"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testRuntimeOnly(project(":kotlin-reflect"))
     compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":core:util.runtime")) // TODO: fix import (workaround for jps build)

@@ -10,7 +10,7 @@ dependencies {
 
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
 }
 
 sourceSets {

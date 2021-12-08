@@ -8,7 +8,7 @@ project.updateJvmTarget("1.6")
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
-    testApi(commonDep("junit"))
+    testApi(commonDependency("junit"))
 }
 
 sourceSets {

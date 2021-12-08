@@ -11,15 +11,15 @@ val ktorExcludesForDaemon: List<Pair<String, String>> by rootProject.extra
 dependencies {
     testApi(project(":kotlin-test:kotlin-test-jvm"))
     testApi(kotlinStdlib())
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(project(":kotlin-daemon-client"))
     testApi(project(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-daemon"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    testApi(commonDep("io.ktor", "ktor-network")) {
+    testApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    testApi(commonDependency("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }

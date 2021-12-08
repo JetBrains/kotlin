@@ -10,7 +10,7 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-script-runtime"))
     api(project(":kotlin-scripting-jvm"))
-    api(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-scripting-compiler"))
@@ -21,7 +21,7 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(project(":kotlin-reflect"))
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation("org.jetbrains.kotlin:jcabi-aether:1.0-dev-3")
@@ -34,7 +34,7 @@ dependencies {
 
 configurations.all {
     resolutionStrategy {
-        force(commonDep("junit:junit"))
+        force(commonDependency("junit:junit"))
     }
 }
 

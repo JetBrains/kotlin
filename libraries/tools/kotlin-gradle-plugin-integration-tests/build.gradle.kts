@@ -39,7 +39,7 @@ dependencies {
     testImplementation(project(":kotlin-reflect"))
     testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-parcelize-compiler"))
-    testImplementation(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    testImplementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
