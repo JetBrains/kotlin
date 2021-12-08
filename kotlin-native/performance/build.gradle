@@ -128,7 +128,6 @@ task clean {
             dependsOn "${it.path}:clean"
         }
     }
-    dependsOn gradle.includedBuild("benchmarksAnalyzer").task(":clean")
     doLast {
         delete "${buildDir.absolutePath}"
     }
