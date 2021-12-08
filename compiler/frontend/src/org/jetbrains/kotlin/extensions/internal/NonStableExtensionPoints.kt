@@ -52,8 +52,6 @@ interface TypeResolutionInterceptorExtension {
 
 @InternalNonStableExtensionPoints
 interface CallResolutionInterceptorExtension {
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptResolvedCallAtomCandidate(
         candidateDescriptor: CallableDescriptor,
         completedCallAtom: ResolvedCallAtom,
@@ -62,8 +60,6 @@ interface CallResolutionInterceptorExtension {
         diagnostics: Collection<KotlinCallDiagnostic>
     ): CallableDescriptor = candidateDescriptor
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -74,8 +70,6 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<FunctionDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -88,8 +82,6 @@ interface CallResolutionInterceptorExtension {
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<FunctionDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -100,8 +92,6 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<VariableDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
         scopeTower: ImplicitScopeTower,
