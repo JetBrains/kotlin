@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kapt3.test
 
 import org.jetbrains.kotlin.test.TargetBackend
 
-abstract class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTest() {
+open class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTest() {
     override val backend = TargetBackend.JVM_IR
 }
 

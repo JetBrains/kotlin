@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
@@ -246,11 +247,17 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 
         @JvmStatic
         fun main(args: Array<String>) {
-            if (args.isEmpty()) error("1 argument expected, 0 passed")
-            val test = AbstractClassFileToSourceStubConverterTest()
+            if (args.size != 2) error("2 argument expected, ${args.size} passed")
+
+            val test = when (args[0]) {
+                TargetBackend.JVM.name -> AbstractClassFileToSourceStubConverterTest()
+                TargetBackend.JVM_IR.name -> AbstractIrClassFileToSourceStubConverterTest()
+                else -> throw UnsupportedOperationException(args[0])
+            }
+
             try {
                 test.setUp()
-                test.doTest(args[0])
+                test.doTest(args[1])
             } finally {
                 test.tearDown()
             }
@@ -273,7 +280,7 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
         addOrRemoveFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, testFile)
 
         super.doTest(filePath)
-        doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
+        doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, backend.name, filePath)
     }
 
     override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {
