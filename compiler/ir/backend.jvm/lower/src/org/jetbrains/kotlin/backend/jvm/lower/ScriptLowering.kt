@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -98,24 +100,45 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
     private fun collectCapturingClasses(irScript: IrScript): Set<IrClassImpl> {
         val annotator = ClosureAnnotator(irScript, irScript)
         val capturingClasses = mutableSetOf<IrClassImpl>()
-        for (clazz in irScript.statements) {
-            if (clazz is IrClassImpl && !clazz.isInner ) {
-                val closure = annotator.getClassClosure(clazz)
-                if (closure.capturedValues.singleOrNull()?.owner?.type == irScript.thisReceiver.type) {
-                    fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
-                        context.ktDiagnosticReporter.at(clazz).report(factory, (name ?: clazz.name).asString())
-                    }
-                    when {
-                        clazz.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
-                        clazz.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
-                        clazz.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
-                        // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
-                        clazz.isCompanion -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
-                        clazz.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
+        val collector = object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
 
-                        clazz.isClass -> capturingClasses.add(clazz)
+            override fun visitClass(declaration: IrClass) {
+                if (declaration is IrClassImpl && !declaration.isInner) {
+                    val closure = annotator.getClassClosure(declaration)
+                    if (closure.capturedValues.singleOrNull()?.owner?.type == irScript.thisReceiver.type) {
+                        fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
+                            context.ktDiagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
+                        }
+                        when {
+                            declaration.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
+                            declaration.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
+                            declaration.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
+                            // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
+                            declaration.isCompanion -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+                            declaration.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
+
+                            declaration.isClass ->
+                                if (declaration.parent != irScript) {
+                                    context.ktDiagnosticReporter.at(declaration).report(
+                                        JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
+                                        declaration.name.asString(),
+                                        ((declaration.parent as? IrDeclarationWithName)?.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
+                                    )
+                                } else {
+                                    capturingClasses.add(declaration)
+                                }
+                        }
                     }
                 }
+                super.visitClass(declaration)
+            }
+        }
+        for (statement in irScript.statements) {
+            if (statement is IrClassImpl) {
+                collector.visitClass(statement)
             }
         }
         return capturingClasses

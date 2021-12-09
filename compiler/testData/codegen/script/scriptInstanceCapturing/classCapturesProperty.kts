@@ -5,7 +5,7 @@
 // KT-19423
 val used = "abc"
 class User {
-    val property = used // error: Expression is inaccessible from a nested class
+    val property = used
 }
 
 val rv = User().property

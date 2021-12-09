@@ -68,6 +68,16 @@ open class KtDiagnosticReporterWithContext(
             sourceElement?.let { report(factory.on(it, a, positioningStrategy), this) }
         }
 
+        @OptIn(InternalDiagnosticFactoryMethod::class)
+        fun <A1 : Any, A2: Any> report(
+            factory: KtDiagnosticFactory2<A1, A2>,
+            a1: A1,
+            a2: A2,
+            positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+        ) {
+            sourceElement?.let { report(factory.on(it, a1, a2, positioningStrategy), this) }
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is DiagnosticContextImpl) return false

@@ -691,6 +691,24 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         }
 
         @Test
+        @TestMetadata("nestedAndOuterClassesCaptureProperty.kts")
+        public void testNestedAndOuterClassesCaptureProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/scripts/nestedAndOuterClassesCaptureProperty.kts");
+        }
+
+        @Test
+        @TestMetadata("nestedClassCapturesProperty.kts")
+        public void testNestedClassCapturesProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/scripts/nestedClassCapturesProperty.kts");
+        }
+
+        @Test
+        @TestMetadata("nestedToObjectClassCapturesProperty.kts")
+        public void testNestedToObjectClassCapturesProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/scripts/nestedToObjectClassCapturesProperty.kts");
+        }
+
+        @Test
         @TestMetadata("objectCapturesProperty.kts")
         public void testObjectCapturesProperty() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJvmBackend/scripts/objectCapturesProperty.kts");

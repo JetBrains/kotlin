@@ -252,9 +252,34 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
             runTest("compiler/testData/codegen/script/scriptInstanceCapturing/enumEntryCapturesProperty.kts");
         }
 
+        @TestMetadata("innerClassesHierarchyCaptureProperty.kts")
+        public void testInnerClassesHierarchyCaptureProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/innerClassesHierarchyCaptureProperty.kts");
+        }
+
         @TestMetadata("interfaceCapturesProperty.kts")
         public void testInterfaceCapturesProperty() throws Exception {
             runTest("compiler/testData/codegen/script/scriptInstanceCapturing/interfaceCapturesProperty.kts");
+        }
+
+        @TestMetadata("nestedAndOuterClassesCaptureProperty.kts")
+        public void testNestedAndOuterClassesCaptureProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedAndOuterClassesCaptureProperty.kts");
+        }
+
+        @TestMetadata("nestedClassCapturesProperty.kts")
+        public void testNestedClassCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedClassCapturesProperty.kts");
+        }
+
+        @TestMetadata("nestedInnerClassCapturesProperty.kts")
+        public void testNestedInnerClassCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedInnerClassCapturesProperty.kts");
+        }
+
+        @TestMetadata("nestedToObjectClassCapturesProperty.kts")
+        public void testNestedToObjectClassCapturesProperty() throws Exception {
+            runTest("compiler/testData/codegen/script/scriptInstanceCapturing/nestedToObjectClassCapturesProperty.kts");
         }
 
         @TestMetadata("objectCapturesProperty.kts")
