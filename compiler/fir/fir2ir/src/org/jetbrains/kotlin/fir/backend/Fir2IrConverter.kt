@@ -451,6 +451,8 @@ class Fir2IrConverter(
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
 
+            fir2IrExtensions.registerDeclarations(symbolTable)
+
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
 
             val allFirFiles = buildList {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -392,6 +394,19 @@ val IrDeclaration.isTopLevel: Boolean
 fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
     thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
+
+fun IrFactory.createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
+    buildClass {
+        kind = ClassKind.ANNOTATION_CLASS
+        name = fqn.shortName()
+    }.apply {
+        createImplicitParameterDeclarationWithWrappedDescriptor()
+        this.parent = parent
+        addConstructor {
+            isPrimary = true
+        }
+    }
+
 
 @Suppress("UNCHECKED_CAST")
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)

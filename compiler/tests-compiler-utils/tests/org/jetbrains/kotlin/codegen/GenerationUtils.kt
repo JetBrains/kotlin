@@ -114,16 +114,13 @@ object GenerationUtils {
             emptyList(),
             IrGenerationExtension.getInstances(project)
         )
-        val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(
-            JvmFir2IrExtensions(configuration)
-        )
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
+        val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(fir2IrExtensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
-        val extensions = JvmGeneratorExtensionsImpl(configuration)
         val codegenFactory = JvmIrCodegenFactory(
             configuration,
             configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
-            jvmGeneratorExtensions = extensions
         )
 
         val generationState = GenerationState.Builder(
@@ -137,7 +134,7 @@ object GenerationUtils {
         generationState.beforeCompile()
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components),
+            generationState, moduleFragment, symbolTable, fir2IrExtensions, FirJvmBackendExtension(session, components),
         ) {}
 
         generationState.factory.done()

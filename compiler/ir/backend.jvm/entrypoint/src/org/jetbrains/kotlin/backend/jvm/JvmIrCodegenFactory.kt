@@ -64,7 +64,7 @@ open class JvmIrCodegenFactory(
         val symbolTable: SymbolTable,
         val phaseConfig: PhaseConfig?,
         val irProviders: List<IrProvider>,
-        val extensions: JvmGeneratorExtensionsImpl,
+        val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
         val notifyCodegenStart: () -> Unit
     ) : CodegenFactory.BackendInput
@@ -294,11 +294,11 @@ open class JvmIrCodegenFactory(
         state: GenerationState,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
-        extensions: JvmGeneratorExtensionsImpl,
+        extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         notifyCodegenStart: () -> Unit = {}
     ) {
-        val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
+        val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, jvmGeneratorExtensions)
         generateModule(
             state,
             JvmIrBackendInput(irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
