@@ -3963,6 +3963,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("noNullCheckOnThisInDefaultMethod.kt")
+        public void testNoNullCheckOnThisInDefaultMethod() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/interfaces/noNullCheckOnThisInDefaultMethod.kt");
+        }
+
+        @Test
         @TestMetadata("noPrivateMemberInJavaInterface.kt")
         public void testNoPrivateMemberInJavaInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/interfaces/noPrivateMemberInJavaInterface.kt");
