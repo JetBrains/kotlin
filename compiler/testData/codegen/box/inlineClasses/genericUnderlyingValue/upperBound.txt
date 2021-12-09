@@ -1,0 +1,24 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class ICString {
+    // source: 'upperBound.kt'
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    private synthetic method <init>(p0: java.lang.String): void
+    public synthetic final static method box-impl(p0: java.lang.String): ICString
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class UpperBoundKt {
+    // source: 'upperBound.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
