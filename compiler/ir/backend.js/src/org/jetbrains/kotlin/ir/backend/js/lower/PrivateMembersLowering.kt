@@ -59,7 +59,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
             visibility = newVisibility
         }.also {
             it.parent = function.parent
-            it.correspondingPropertySymbol = function.correspondingPropertySymbol
         }
 
         staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
