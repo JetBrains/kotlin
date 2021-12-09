@@ -450,6 +450,8 @@ class Fir2IrConverter(
             components.fakeOverrideGenerator = fakeOverrideGenerator
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
+            val irProvider = FirIrProvider(components)
+            components.irProviders = listOf(irProvider)
 
             fir2IrExtensions.registerDeclarations(symbolTable)
 

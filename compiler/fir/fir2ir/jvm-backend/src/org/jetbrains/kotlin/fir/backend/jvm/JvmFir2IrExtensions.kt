@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.FirIrProvider
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
@@ -86,7 +85,7 @@ class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensio
             } ?: return false
             deserializeFromByteArray(
                 serializedIr,
-                irBuiltIns, symbolTable, listOf(FirIrProvider(this)),
+                irBuiltIns, symbolTable, irProviders,
                 irClass,
                 JvmIrTypeSystemContext(irBuiltIns), allowErrorNodes = false
             )

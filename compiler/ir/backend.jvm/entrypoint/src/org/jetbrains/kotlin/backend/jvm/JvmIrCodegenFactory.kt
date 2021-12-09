@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorForNotFoun
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
-import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
@@ -294,26 +293,14 @@ open class JvmIrCodegenFactory(
         state: GenerationState,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
+        irProviders: List<IrProvider>,
         extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         notifyCodegenStart: () -> Unit = {}
     ) {
-        val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, jvmGeneratorExtensions)
         generateModule(
             state,
             JvmIrBackendInput(irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
-        )
-    }
-
-    fun configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(
-        irModuleFragment: IrModuleFragment,
-        symbolTable: SymbolTable,
-        extensions: JvmGeneratorExtensionsImpl,
-    ): List<IrProvider> {
-        return generateTypicalIrProviderList(
-            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable,
-            DescriptorByIdSignatureFinderImpl(irModuleFragment.descriptor, JvmDescriptorMangler(null)),
-            extensions = extensions
         )
     }
 }

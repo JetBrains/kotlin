@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 class Fir2IrComponentsStorage(
@@ -32,6 +33,7 @@ class Fir2IrComponentsStorage(
 
     override lateinit var irBuiltIns: IrBuiltIns
     override lateinit var builtIns: Fir2IrBuiltIns
+    override lateinit var irProviders: List<IrProvider>
 
     override lateinit var typeConverter: Fir2IrTypeConverter
     override lateinit var visibilityConverter: Fir2IrVisibilityConverter
