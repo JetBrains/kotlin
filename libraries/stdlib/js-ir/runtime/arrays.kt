@@ -32,6 +32,26 @@ internal inline fun <T> fillArrayFun(array: dynamic, init: (Int) -> T): Array<T>
 
 internal fun booleanArray(size: Int): BooleanArray = withType("BooleanArray", fillArrayVal(Array<Boolean>(size), false)).unsafeCast<BooleanArray>()
 
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.slice === "undefined") {
+        function normalizeOffset(offset, length) {
+        if (offset < 0) return Math.max(0, offset + length);
+        return Math.min(offset, length);
+    }
+        Object.defineProperty(TypedArray.prototype, 'slice', {
+            value: function typedArraySlice(begin, end) {
+            if (typeof end === "undefined") {
+            end = this.length;
+        }
+            begin = normalizeOffset(begin || 0, this.length);
+            end = Math.max(begin, normalizeOffset(end, this.length));
+            return new this.constructor(this.subarray(begin, end));
+        }
+        });
+    }
+})
+""")
 internal fun booleanArrayOf(arr: Array<Boolean>): BooleanArray = withType("BooleanArray", arr.asDynamic().slice()).unsafeCast<BooleanArray>()
 
 @Suppress("UNUSED_PARAMETER")
@@ -42,6 +62,26 @@ internal fun charArrayOf(arr: Array<Char>): CharArray = withType("CharArray", js
 
 internal fun longArray(size: Int): LongArray = withType("LongArray", fillArrayVal(Array<Long>(size), 0L)).unsafeCast<LongArray>()
 
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.slice === "undefined") {
+        function normalizeOffset(offset, length) {
+        if (offset < 0) return Math.max(0, offset + length);
+        return Math.min(offset, length);
+    }
+        Object.defineProperty(TypedArray.prototype, 'slice', {
+            value: function typedArraySlice(begin, end) {
+            if (typeof end === "undefined") {
+            end = this.length;
+        }
+            begin = normalizeOffset(begin || 0, this.length);
+            end = Math.max(begin, normalizeOffset(end, this.length));
+            return new this.constructor(this.subarray(begin, end));
+        }
+        });
+    }
+})
+""")
 internal fun longArrayOf(arr: Array<Long>): LongArray = withType("LongArray", arr.asDynamic().slice()).unsafeCast<LongArray>()
 
 internal fun <T> arrayIterator(array: Array<T>) = object : Iterator<T> {

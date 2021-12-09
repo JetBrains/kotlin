@@ -33,24 +33,5 @@ internal external object JsMath {
     fun round(value: Number): Double
     fun floor(value: Number): Double
     fun ceil(value: Number): Double
-
-    fun trunc(value: Number): Double
-    fun sign(value: Number): Double
-
-    fun sinh(value: Double): Double
-    fun cosh(value: Double): Double
-    fun tanh(value: Double): Double
-    fun asinh(value: Double): Double
-    fun acosh(value: Double): Double
-    fun atanh(value: Double): Double
-
-    fun hypot(x: Double, y: Double): Double
-
-    fun expm1(value: Double): Double
-    fun log10(value: Double): Double
-    fun log2(value: Double): Double
-    fun log1p(value: Double): Double
-
-    fun clz32(value: Int): Int
 }
 

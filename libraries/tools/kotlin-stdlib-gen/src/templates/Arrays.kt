@@ -983,6 +983,32 @@ object ArrayOps : TemplateGroupBase() {
                     suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                     returns("Array<T>")
                 }
+                specialFor(ArraysOfPrimitives) {
+                    on(Backend.IR) {
+                        annotation("""
+                           @JsNativeImplementation(\"\"\"
+                            [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+                                if (typeof TypedArray.prototype.slice === "undefined") {
+                                    function normalizeOffset(offset, length) {
+                                        if (offset < 0) return Math.max(0, offset + length);
+                                        return Math.min(offset, length);
+                                    }
+                                    Object.defineProperty(TypedArray.prototype, 'slice', {
+                                        value: function typedArraySlice(begin, end) {
+                                            if (typeof end === "undefined") {
+                                                end = this.length;
+                                            }
+                                            begin = normalizeOffset(begin || 0, this.length);
+                                            end = Math.max(begin, normalizeOffset(end, this.length));
+                                            return new this.constructor(this.subarray(begin, end));
+                                        }
+                                    });
+                                }
+                            })
+                           \"\"\")
+                        """.trimIndent())
+                    }
+                }
                 val rangeCheck = "AbstractList.checkRangeIndexes(fromIndex, toIndex, size)"
                 when (primitive) {
                     PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
@@ -1091,6 +1117,30 @@ object ArrayOps : TemplateGroupBase() {
                     family = ArraysOfObjects
                     returns("Array<T>")
                     suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
+                    on(Backend.IR) {
+                        annotation("""
+                           @JsNativeImplementation(\"\"\"
+                            [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+                                if (typeof TypedArray.prototype.slice === "undefined") {
+                                    function normalizeOffset(offset, length) {
+                                        if (offset < 0) return Math.max(0, offset + length);
+                                        return Math.min(offset, length);
+                                    }
+                                    Object.defineProperty(TypedArray.prototype, 'slice', {
+                                        value: function typedArraySlice(begin, end) {
+                                            if (typeof end === "undefined") {
+                                                end = this.length;
+                                            }
+                                            begin = normalizeOffset(begin || 0, this.length);
+                                            end = Math.max(begin, normalizeOffset(end, this.length));
+                                            return new this.constructor(this.subarray(begin, end));
+                                        }
+                                    });
+                                }
+                            })
+                           \"\"\")
+                        """.trimIndent())
+                    }
                 }
                 when (primitive) {
                     null -> {
@@ -1220,6 +1270,31 @@ object ArrayOps : TemplateGroupBase() {
                             body { "definedExternally" }
                         }
                         on(Backend.IR) {
+                            on(Backend.IR) {
+                                annotation("""
+                                    @JsNativeImplementation(\"\"\"
+                                    [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+                                        if (typeof TypedArray.prototype.sort === "undefined") {
+                                            Object.defineProperty(TypedArray.prototype, 'sort', {
+                                                value: function(compareFunction) {
+                                                    compareFunction = compareFunction || function (a, b) {
+                                                        if (a < b) return -1;
+                                                        if (a > b) return 1;
+                                                        if (a === b) {
+                                                            if (a !== 0) return 0;
+                                                            var ia = 1 / a;
+                                                            return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                                                        }
+                                                        return a !== a ? (b !== b ? 0 : 1) : -1
+                                                    }
+                                                    return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+                                                }
+                                            });
+                                        }
+                                    });
+                                    \"\"\")
+                                """.trimIndent())
+                            }
                             if (primitive == PrimitiveType.Char) {
                                 // Requires comparator because default comparator of 'Array.prototype.sort' compares
                                 // string representation of values
@@ -1292,6 +1367,31 @@ object ArrayOps : TemplateGroupBase() {
             deprecate(Deprecation("Use other sorting functions from the Standard Library", warningSince = "1.6"))
             inlineOnly()
             signature("sort(noinline comparison: (a: T, b: T) -> Int)")
+            on(Backend.IR) {
+                annotation("""
+                    @JsNativeImplementation(\"\"\"
+                    [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+                        if (typeof TypedArray.prototype.sort === "undefined") {
+                            Object.defineProperty(TypedArray.prototype, 'sort', {
+                                value: function(compareFunction) {
+                                    compareFunction = compareFunction || function (a, b) {
+                                        if (a < b) return -1;
+                                        if (a > b) return 1;
+                                        if (a === b) {
+                                            if (a !== 0) return 0;
+                                            var ia = 1 / a;
+                                            return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                                        }
+                                        return a !== a ? (b !== b ? 0 : 1) : -1
+                                    }
+                                    return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+                                }
+                            });
+                        }
+                    })
+                    \"\"\")
+                """.trimIndent())
+            }
             body { "asDynamic().sort(comparison)" }
         }
         specialFor(ArraysOfObjects) {
@@ -1635,16 +1735,6 @@ object ArrayOps : TemplateGroupBase() {
                     "java.util.Arrays.fill(this, fromIndex, toIndex, element)"
                 }
             }
-            on(Platform.JS) {
-                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-                since("1.3")
-                body {
-                    """
-                    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                    this.asDynamic().fill(element, fromIndex, toIndex);
-                    """
-                }
-            }
             on(Platform.Native) {
                 suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
                 since("1.3")
@@ -1659,6 +1749,74 @@ object ArrayOps : TemplateGroupBase() {
                         }
                         """
                     }
+                }
+            }
+            on(Platform.JS) {
+                since("1.3")
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                on(Backend.IR) {
+                    annotation("""
+                       @JsNativeImplementation(\"\"\"
+                        if (typeof Array.prototype.fill === "undefined") {
+                            // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+                            Object.defineProperty(Array.prototype, 'fill', {
+                                value: function (value) {
+                                    // Steps 1-2.
+                                    if (this == null) {
+                                        throw new TypeError('this is null or not defined');
+                                    }
+
+                                    var O = Object(this);
+
+                                    // Steps 3-5.
+                                    var len = O.length >>> 0;
+
+                                    // Steps 6-7.
+                                    var start = arguments[1];
+                                    var relativeStart = start >> 0;
+
+                                    // Step 8.
+                                    var k = relativeStart < 0 ?
+                                            Math.max(len + relativeStart, 0) :
+                                            Math.min(relativeStart, len);
+
+                                    // Steps 9-10.
+                                    var end = arguments[2];
+                                    var relativeEnd = end === undefined ?
+                                                      len : end >> 0;
+
+                                    // Step 11.
+                                    var finalValue = relativeEnd < 0 ?
+                                                     Math.max(len + relativeEnd, 0) :
+                                                     Math.min(relativeEnd, len);
+
+                                    // Step 12.
+                                    while (k < finalValue) {
+                                        O[k] = value;
+                                        k++;
+                                    }
+
+                                    // Step 13.
+                                    return O;
+                                }
+                            });
+                        }
+                        
+                        [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+                            if (typeof TypedArray.prototype.fill === "undefined") {
+                                Object.defineProperty(TypedArray.prototype, 'fill', {
+                                    value: Array.prototype.fill
+                                });
+                            }
+                        })
+                        \"\"\")
+                    """.trimIndent())
+                }
+                body {
+                    """
+                    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                    this.asDynamic().fill(element, fromIndex, toIndex);
+                    """
                 }
             }
             on(Platform.Common) {

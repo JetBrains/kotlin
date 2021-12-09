@@ -217,9 +217,34 @@ internal actual inline fun String.nativeIndexOf(str: String, fromIndex: Int): In
 internal actual inline fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = asDynamic().lastIndexOf(str, fromIndex)
 
 @kotlin.internal.InlineOnly
+@kotlin.js.JsNativeImplementation("""
+if (typeof String.prototype.startsWith === "undefined") {
+    Object.defineProperty(String.prototype, "startsWith", {
+        value: function (searchString, position) {
+            position = position || 0;
+            return this.lastIndexOf(searchString, position) === position;
+        }
+    });
+}
+""")
 internal inline fun String.nativeStartsWith(s: String, position: Int): Boolean = asDynamic().startsWith(s, position)
 
 @kotlin.internal.InlineOnly
+@kotlin.js.JsNativeImplementation("""
+if (typeof String.prototype.endsWith === "undefined") {
+    Object.defineProperty(String.prototype, "endsWith", {
+        value: function (searchString, position) {
+            var subjectString = this.toString();
+            if (position === undefined || position > subjectString.length) {
+                position = subjectString.length;
+            }
+            position -= searchString.length;
+            var lastIndex = subjectString.indexOf(searchString, position);
+            return lastIndex !== -1 && lastIndex === position;
+        }
+    });
+}
+""")
 internal inline fun String.nativeEndsWith(s: String): Boolean = asDynamic().endsWith(s)
 
 @kotlin.internal.InlineOnly

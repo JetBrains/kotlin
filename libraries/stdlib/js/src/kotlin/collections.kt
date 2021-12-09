@@ -7,6 +7,7 @@ package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
 import kotlin.random.Random
+import kotlin.js.isView
 
 /**
  * Returns the array if it's not `null`, or an empty array otherwise.
@@ -193,7 +194,7 @@ internal fun <T> arrayCopy(source: Array<out T>, destination: Array<in T>, desti
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
 
-    if (js("ArrayBuffer").isView(destination) && js("ArrayBuffer").isView(source)) {
+    if (isView(destination) && isView(source)) {
         val subrange = source.asDynamic().subarray(startIndex, endIndex)
         destination.asDynamic().set(subrange, destinationOffset)
     } else {
