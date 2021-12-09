@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -161,19 +161,15 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyGenerationStarted()
         performanceManager?.notifyIRTranslationStarted()
 
-        val fir2IrResult = firResult.session.convertToIr(
-            firResult.scopeSession, firResult.fir,
-            JvmFir2IrExtensions(moduleConfiguration),
-            irGenerationExtensions
-        )
+        val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration)
+        val fir2IrResult = firResult.session.convertToIr(firResult.scopeSession, firResult.fir, fir2IrExtensions, irGenerationExtensions)
 
         performanceManager?.notifyIRTranslationFinished()
 
-        val extensions = JvmGeneratorExtensionsImpl(moduleConfiguration)
         val generationState = runBackend(
             allSources,
             fir2IrResult,
-            extensions,
+            fir2IrExtensions,
             firResult.session,
             diagnosticsReporter
         )
@@ -316,7 +312,7 @@ object FirKotlinToJvmBytecodeCompiler {
     private fun CompilationContext.runBackend(
         ktFiles: List<KtFile>,
         fir2IrResult: Fir2IrResult,
-        extensions: JvmGeneratorExtensionsImpl,
+        extensions: JvmGeneratorExtensions,
         session: FirSession,
         diagnosticsReporter: BaseDiagnosticsCollector
     ): GenerationState {
@@ -325,7 +321,6 @@ object FirKotlinToJvmBytecodeCompiler {
         val codegenFactory = JvmIrCodegenFactory(
             moduleConfiguration,
             moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
-            jvmGeneratorExtensions = extensions
         )
 
         val generationState = GenerationState.Builder(

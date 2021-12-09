@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -173,17 +171,8 @@ open class JvmGeneratorExtensionsImpl(
     private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
 
     private fun createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
-        IrFactoryImpl.buildClass {
-            kind = ClassKind.ANNOTATION_CLASS
-            name = fqn.shortName()
-        }.apply {
-            createImplicitParameterDeclarationWithWrappedDescriptor()
-            this.parent = parent
-            addConstructor {
-                isPrimary = true
-            }.also { constructor ->
-                specialAnnotationConstructors.add(constructor)
-            }
+        IrFactoryImpl.createSpecialAnnotationClass(fqn, parent).apply {
+            specialAnnotationConstructors.add(constructors.single())
         }
 
     override fun createCustomSuperConstructorCall(

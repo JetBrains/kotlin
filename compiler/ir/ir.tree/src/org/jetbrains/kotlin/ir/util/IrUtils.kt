@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -985,6 +986,18 @@ val IrDeclaration.isTopLevel: Boolean
 fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
     thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
+
+fun IrFactory.createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
+    buildClass {
+        kind = ClassKind.ANNOTATION_CLASS
+        name = fqn.shortName()
+    }.apply {
+        createImplicitParameterDeclarationWithWrappedDescriptor()
+        this.parent = parent
+        addConstructor {
+            isPrimary = true
+        }
+    }
 
 @Suppress("UNCHECKED_CAST")
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -267,10 +267,9 @@ class IncrementalFirJvmCompilerRunner(
             performanceManager?.notifyGenerationStarted()
             performanceManager?.notifyIRTranslationStarted()
 
-            val extensions = JvmGeneratorExtensionsImpl(configuration)
+            val extensions = JvmFir2IrExtensions(configuration)
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
-            val mangler = JvmDescriptorMangler(null)
             val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
             val allCommonFirFiles = cycleResult.session.moduleData.dependsOnDependencies
                 .map { it.session }
@@ -279,7 +278,7 @@ class IncrementalFirJvmCompilerRunner(
 
             val (irModuleFragment, symbolTable, components) = Fir2IrConverter.createModuleFragment(
                 cycleResult.session, cycleResult.scopeSession, cycleResult.fir + allCommonFirFiles,
-                cycleResult.session.languageVersionSettings, mangler, signaturer,
+                cycleResult.session.languageVersionSettings, signaturer,
                 extensions, FirJvmKotlinMangler(cycleResult.session), IrFactoryImpl,
                 FirJvmVisibilityConverter,
                 Fir2IrJvmSpecialAnnotationSymbolProvider(),
