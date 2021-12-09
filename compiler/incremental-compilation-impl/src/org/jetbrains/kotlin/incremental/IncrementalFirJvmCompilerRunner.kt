@@ -276,7 +276,7 @@ class IncrementalFirJvmCompilerRunner(
                 .filter { it.kind == FirSession.Kind.Source }
                 .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-            val (irModuleFragment, symbolTable, components) = Fir2IrConverter.createModuleFragment(
+            val (irModuleFragment, components) = Fir2IrConverter.createModuleFragment(
                 cycleResult.session, cycleResult.scopeSession, cycleResult.fir + allCommonFirFiles,
                 cycleResult.session.languageVersionSettings, signaturer,
                 extensions, FirJvmKotlinMangler(cycleResult.session), IrFactoryImpl,
@@ -292,7 +292,7 @@ class IncrementalFirJvmCompilerRunner(
                 configuration,
                 extensions,
                 irModuleFragment,
-                symbolTable,
+                components.symbolTable,
                 components,
                 cycleResult.session
             )

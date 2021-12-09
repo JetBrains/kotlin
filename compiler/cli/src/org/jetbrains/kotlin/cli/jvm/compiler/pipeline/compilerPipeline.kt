@@ -190,7 +190,7 @@ fun convertAnalyzedFirToIr(
     // fir2ir
     val irGenerationExtensions =
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }
-    val (irModuleFragment, symbolTable, components) =
+    val (irModuleFragment, components) =
         analysisResults.session.convertToIr(
             analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions ?: emptyList()
         )
@@ -200,7 +200,7 @@ fun convertAnalyzedFirToIr(
         input.configuration,
         extensions,
         irModuleFragment,
-        symbolTable,
+        components.symbolTable,
         components,
         analysisResults.session
     )
