@@ -1116,6 +1116,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             public void testInlineVarargInts() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargInts.kt");
             }
+
+            @Test
+            @TestMetadata("multipleCallableReferenceUsage.kt")
+            public void testMultipleCallableReferenceUsage() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/multipleCallableReferenceUsage.kt");
+            }
         }
 
         @Nested

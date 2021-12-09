@@ -245,10 +245,17 @@ class FunctionInlining(
                     return super.visitCall(expression)
 
                 return when {
-                    functionArgument is IrFunctionReference -> inlineFunctionReference(expression, functionArgument)
-                    functionArgument.isAdaptedFunctionReference() -> inlineAdaptedFunctionReference(expression, functionArgument as IrBlock)
-                    functionArgument is IrFunctionExpression -> inlineFunctionExpression(expression, functionArgument)
-                    else -> super.visitCall(expression)
+                    functionArgument is IrFunctionReference ->
+                        inlineFunctionReference(expression, functionArgument, functionArgument.symbol.owner)
+
+                    functionArgument.isAdaptedFunctionReference() ->
+                        inlineAdaptedFunctionReference(expression, functionArgument as IrBlock)
+
+                    functionArgument is IrFunctionExpression ->
+                        inlineFunctionExpression(expression, functionArgument)
+
+                    else ->
+                        super.visitCall(expression)
                 }
             }
 
@@ -264,10 +271,12 @@ class FunctionInlining(
             }
 
             fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrExpression {
-                val irFunction = irBlock.statements[0] as IrFunction
-                irFunction.transformChildrenVoid(this)
+                val irFunction = irBlock.statements[0].let {
+                    it.transformChildrenVoid(this)
+                    copyIrElement.copy(it) as IrFunction
+                }
                 val irFunctionReference = irBlock.statements[1] as IrFunctionReference
-                val inlinedFunctionReference = inlineFunctionReference(irCall, irFunctionReference)
+                val inlinedFunctionReference = inlineFunctionReference(irCall, irFunctionReference, irFunction)
                 return IrBlockImpl(
                     irCall.startOffset, irCall.endOffset,
                     inlinedFunctionReference.type, origin = null,
@@ -275,7 +284,11 @@ class FunctionInlining(
                 )
             }
 
-            fun inlineFunctionReference(irCall: IrCall, irFunctionReference: IrFunctionReference): IrExpression {
+            fun inlineFunctionReference(
+                irCall: IrCall,
+                irFunctionReference: IrFunctionReference,
+                inlinedFunction: IrFunction
+            ): IrExpression {
                 irFunctionReference.transformChildrenVoid(this)
 
                 val function = irFunctionReference.symbol.owner
@@ -294,14 +307,14 @@ class FunctionInlining(
                 }
 
                 val immediateCall = with(irCall) {
-                    when (function) {
+                    when (inlinedFunction) {
                         is IrConstructor -> {
-                            val classTypeParametersCount = function.parentAsClass.typeParameters.size
+                            val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                             IrConstructorCallImpl.fromSymbolOwner(
                                 startOffset,
                                 endOffset,
-                                function.returnType,
-                                function.symbol,
+                                inlinedFunction.returnType,
+                                inlinedFunction.symbol,
                                 classTypeParametersCount
                             )
                         }
@@ -309,13 +322,13 @@ class FunctionInlining(
                             IrCallImpl(
                                 startOffset,
                                 endOffset,
-                                function.returnType,
-                                function.symbol,
-                                function.typeParameters.size,
-                                function.valueParameters.size
+                                inlinedFunction.returnType,
+                                inlinedFunction.symbol,
+                                inlinedFunction.typeParameters.size,
+                                inlinedFunction.valueParameters.size
                             )
                         else ->
-                            error("Unknown function kind : ${function.render()}")
+                            error("Unknown function kind : ${inlinedFunction.render()}")
                     }
                 }.apply {
                     for (parameter in functionParameters) {
@@ -353,15 +366,15 @@ class FunctionInlining(
                             }
                         when (parameter) {
                             function.dispatchReceiverParameter ->
-                                this.dispatchReceiver = argument.implicitCastIfNeededTo(function.dispatchReceiverParameter!!.type)
+                                this.dispatchReceiver = argument.implicitCastIfNeededTo(inlinedFunction.dispatchReceiverParameter!!.type)
 
                             function.extensionReceiverParameter ->
-                                this.extensionReceiver = argument.implicitCastIfNeededTo(function.extensionReceiverParameter!!.type)
+                                this.extensionReceiver = argument.implicitCastIfNeededTo(inlinedFunction.extensionReceiverParameter!!.type)
 
                             else ->
                                 putValueArgument(
                                     parameter.index,
-                                    argument.implicitCastIfNeededTo(function.valueParameters[parameter.index].type)
+                                    argument.implicitCastIfNeededTo(inlinedFunction.valueParameters[parameter.index].type)
                                 )
                         }
                     }
