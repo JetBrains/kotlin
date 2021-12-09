@@ -8,16 +8,20 @@ package org.jetbrains.kotlin.jps.model
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.ex.JpsElementBase
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.JpsPluginSettings
 
 var JpsProject.kotlinCompilerSettings
     get() = kotlinCompilerSettingsContainer.compilerSettings
     internal set(value) {
         getOrCreateSettings().compilerSettings = value
+    }
+
+var JpsProject.kotlinJpsPluginSettings
+    get() = kotlinCompilerSettingsContainer.jpsPluginSettings
+    internal set(value) {
+        getOrCreateSettings().jpsPluginSettings = value
     }
 
 var JpsProject.kotlinCommonCompilerArguments
@@ -62,6 +66,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
     internal var k2JvmCompilerArguments = K2JVMCompilerArguments()
     internal var k2JsCompilerArguments = K2JSCompilerArguments()
     internal var compilerSettings = CompilerSettings()
+    internal var jpsPluginSettings = JpsPluginSettings()
 
     @Suppress("UNCHECKED_CAST")
     internal operator fun <T : CommonCompilerArguments> get(compilerArgumentsClass: Class<T>): T = when (compilerArgumentsClass) {
@@ -78,6 +83,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         copy.k2JvmCompilerArguments = this.k2JvmCompilerArguments
         copy.k2JsCompilerArguments = this.k2JsCompilerArguments
         copy.compilerSettings = this.compilerSettings
+        copy.jpsPluginSettings = this.jpsPluginSettings
         return copy
     }
 
