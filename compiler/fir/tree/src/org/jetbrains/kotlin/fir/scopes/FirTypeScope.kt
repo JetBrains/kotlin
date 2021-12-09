@@ -58,6 +58,10 @@ abstract class FirTypeScope : FirContainingNamesAwareScope() {
         override fun getCallableNames(): Set<Name> = emptySet()
 
         override fun getClassifierNames(): Set<Name> = emptySet()
+
+        override fun toString(): String {
+            return "Empty scope"
+        }
     }
 
     protected companion object {

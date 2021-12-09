@@ -133,4 +133,8 @@ class JavaClassMembersEnhancementScope(
     override fun mayContainName(name: Name): Boolean {
         return useSiteMemberScope.mayContainName(name)
     }
+
+    override fun toString(): String {
+        return "Java enhancement scope for ${owner.classId}"
+    }
 }

@@ -55,4 +55,8 @@ class FirClassUseSiteMemberScope(
         }
         return result
     }
+
+    override fun toString(): String {
+        return "Use site scope of $classId"
+    }
 }

@@ -127,6 +127,10 @@ class FirTypeIntersectionScope private constructor(
         return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
     }
 
+    override fun toString(): String {
+        return "Intersection of [${scopes.joinToString(", ")}]"
+    }
+
     companion object {
         fun prepareIntersectionScope(
             session: FirSession,

@@ -501,6 +501,10 @@ class JavaClassUseSiteMemberScope(
             null
         }
     }
+
+    override fun toString(): String {
+        return "Java use site scope of $classId"
+    }
 }
 
 private fun FirCallableSymbol<*>.isFromBuiltInClass(session: FirSession) =

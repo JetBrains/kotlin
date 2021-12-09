@@ -209,4 +209,8 @@ class JvmMappedScope(
             return Signatures(visibleMethodsByName, hiddenConstructors)
         }
     }
+
+    override fun toString(): String {
+        return "JVM mapped scope for ${firKotlinClass.classId}"
+    }
 }

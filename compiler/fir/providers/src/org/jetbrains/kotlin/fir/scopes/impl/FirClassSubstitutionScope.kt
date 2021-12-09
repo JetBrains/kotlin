@@ -347,6 +347,10 @@ class FirClassSubstitutionScope(
     override fun getClassifierNames(): Set<Name> {
         return useSiteMemberScope.getClassifierNames()
     }
+
+    override fun toString(): String {
+        return "Substitution scope for [$useSiteMemberScope] for type $dispatchReceiverTypeForSubstitutedMembers"
+    }
 }
 
 class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionComponent {

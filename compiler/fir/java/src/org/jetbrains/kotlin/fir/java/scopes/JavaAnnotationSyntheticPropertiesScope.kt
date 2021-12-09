@@ -87,4 +87,8 @@ class JavaAnnotationSyntheticPropertiesScope(
     override fun getClassifierNames(): Set<Name> {
         return delegateScope.getClassifierNames()
     }
+
+    override fun toString(): String {
+        return "Java annotation synthetic properties scope for $classId"
+    }
 }

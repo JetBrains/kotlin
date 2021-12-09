@@ -83,4 +83,8 @@ class FirScopeWithFakeOverrideTypeCalculator(
 
     override val scopeOwnerLookupNames: List<String>
         get() = delegate.scopeOwnerLookupNames
+
+    override fun toString(): String {
+        return delegate.toString()
+    }
 }
