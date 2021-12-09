@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
-data class Fir2IrResult(val irModuleFragment: IrModuleFragment, val symbolTable: SymbolTable, val components: Fir2IrComponents)
+data class Fir2IrResult(val irModuleFragment: IrModuleFragment, val components: Fir2IrComponents)

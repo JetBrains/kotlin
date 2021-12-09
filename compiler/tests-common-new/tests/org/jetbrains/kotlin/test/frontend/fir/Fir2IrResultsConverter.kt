@@ -43,7 +43,7 @@ class Fir2IrResultsConverter(
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val fir2IrExtensions = JvmFir2IrExtensions(configuration)
-        val (irModuleFragment, symbolTable, components) = inputArtifact.firAnalyzerFacade.convertToIr(fir2IrExtensions)
+        val (irModuleFragment, components) = inputArtifact.firAnalyzerFacade.convertToIr(fir2IrExtensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
@@ -77,7 +77,7 @@ class Fir2IrResultsConverter(
             generationState,
             JvmIrCodegenFactory.JvmIrBackendInput(
                 irModuleFragment,
-                symbolTable,
+                components.symbolTable,
                 phaseConfig,
                 components.irProviders,
                 fir2IrExtensions,
