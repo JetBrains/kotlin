@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.config
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.arguments.Argument
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.copyBean
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
@@ -184,13 +181,13 @@ class KotlinFacetSettings {
 
     var compilerArguments: CommonCompilerArguments? = null
         set(value) {
-            field = value?.unfrozen() as CommonCompilerArguments?
+            field = value?.unfrozen()
             updateMergedArguments()
         }
 
     var compilerSettings: CompilerSettings? = null
         set(value) {
-            field = value?.unfrozen() as CompilerSettings?
+            field = value?.unfrozen()
             updateMergedArguments()
         }
 
