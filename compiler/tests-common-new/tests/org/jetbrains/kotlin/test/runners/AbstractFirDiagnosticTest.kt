@@ -82,6 +82,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
             ::FirCfgDumpHandler,
             ::FirCfgConsistencyHandler,
             ::FirNoImplicitTypesHandler,
+            ::FirScopeDumpHandler,
         )
     }
 

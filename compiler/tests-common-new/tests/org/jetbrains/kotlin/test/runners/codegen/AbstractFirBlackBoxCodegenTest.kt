@@ -52,7 +52,7 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
             }
 
             configureFirHandlersStep {
-                useHandlers(
+                useHandlersAtFirst(
                     ::FirDumpHandler,
                     ::FirScopeDumpHandler,
                     ::FirCfgDumpHandler,

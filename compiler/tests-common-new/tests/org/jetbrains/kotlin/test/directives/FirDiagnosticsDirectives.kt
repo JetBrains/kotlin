@@ -54,6 +54,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     val SCOPE_DUMP by stringDirective(
         description = """
             Dump hierarchies of overrides of classes listed in arguments
+            Syntax: SCOPE_DUMP: some.package.ClassName:foo;bar, some.package.OtherClass
+                                            ^^^                           ^^^
+                             members foo and bar from ClassName            |
+                                                                all members from OtherClass
             Enables ${FirScopeDumpHandler::class}
         """.trimIndent()
     )

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,16 +40,39 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val fqNames = module.directives[FirDiagnosticsDirectives.SCOPE_DUMP]
-        if (fqNames.isEmpty()) return
+        val fqNamesWithNames = module.directives[FirDiagnosticsDirectives.SCOPE_DUMP]
+        if (fqNamesWithNames.isEmpty()) return
         val printer = SmartPrinter(dumper.builderForModule(module), indent = "  ")
-        for (fqName in fqNames) {
-            printer.processClass(fqName, info.session, info.firAnalyzerFacade.scopeSession, module)
+        for (fqNameWithNames in fqNamesWithNames) {
+            val (fqName, names) = extractFqNameAndMemberNames(fqNameWithNames)
+            printer.processClass(fqName, names, info.session, info.firAnalyzerFacade.scopeSession, module)
         }
     }
 
-    private fun SmartPrinter.processClass(fqName: String, session: FirSession, scopeSession: ScopeSession, module: TestModule) {
-        val classId = ClassId.topLevel(FqName.fromSegments(fqName.split(".")))
+    private fun extractFqNameAndMemberNames(fqNameWithNames: String): Pair<String, List<String>> {
+        val (fqName, namesString) = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to emptyList()
+        return fqName to namesString.split(";")
+    }
+
+    private fun SmartPrinter.processClass(
+        fqName: String,
+        namesFromDirective: List<String>,
+        session: FirSession,
+        scopeSession: ScopeSession,
+        module: TestModule
+    ) {
+        val (packageFqName, className) = fqName.split(".").let {
+            val packageName = FqName.fromSegments(it.dropLast(1))
+            packageName to it.last()
+        }
+        val classId = className.let {
+            val names = it.split("$")
+            var classId = ClassId(packageFqName, Name.identifier(names.first()))
+            for (name in names.drop(1)) {
+                classId = classId.createNestedClassId(Name.identifier(name))
+            }
+            classId
+        }
         val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: assertions.fail {
             "Class $fqName not found in module ${module.name}"
         }
@@ -57,7 +80,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         println("$fqName: ")
 
         val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
-        val names = scope.getCallableNames()
+        val names = namesFromDirective.takeIf { it.isNotEmpty() }?.map { Name.identifier(it) } ?: scope.getCallableNames()
         withIndent {
             for (name in names) {
                 processFunctions(name, scope)
@@ -80,15 +103,14 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         val functions = scope.getFunctions(name)
         for (function in functions) {
             processFunction(function, scope, SymbolCounter())
-            println()
         }
     }
 
     private fun SmartPrinter.processFunction(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, counter: SymbolCounter) {
-        printInfo(symbol.fir, counter)
-        scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriden, baseScope ->
+        printInfo(symbol.fir, scope, counter)
+        scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overridden, baseScope ->
             withIndent {
-                processFunction(overriden, baseScope, counter)
+                processFunction(overridden, baseScope, counter)
             }
             ProcessorAction.NEXT
         }
@@ -97,14 +119,13 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     private fun SmartPrinter.processProperties(name: Name, scope: FirTypeScope) {
         val properties = scope.getProperties(name)
         for (property in properties) {
-            if (property !is FirPropertySymbol) continue
             processProperty(property, scope, SymbolCounter())
-            println()
         }
     }
 
-    private fun SmartPrinter.processProperty(symbol: FirPropertySymbol, scope: FirTypeScope, counter: SymbolCounter) {
-        printInfo(symbol.fir, counter)
+    private fun SmartPrinter.processProperty(symbol: FirVariableSymbol<*>, scope: FirTypeScope, counter: SymbolCounter) {
+        printInfo(symbol.fir, scope, counter)
+        if (symbol !is FirPropertySymbol) return
         withIndent {
             scope.processDirectOverriddenPropertiesWithBaseScope(symbol) { overriden, baseScope ->
                 processProperty(overriden, baseScope, counter)
@@ -113,10 +134,10 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         }
     }
 
-    private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, counter: SymbolCounter) {
+    private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, scope: FirTypeScope, counter: SymbolCounter) {
         print("[${declaration.origin}]: ")
         print(declaration.render(FirRenderer.RenderMode.NoBodies).trim())
-        print(" from ${declaration.dispatchReceiverType?.render()}")
+        print(" from $scope")
         println(" [id: ${counter.getIndex(declaration.symbol)}]")
     }
 

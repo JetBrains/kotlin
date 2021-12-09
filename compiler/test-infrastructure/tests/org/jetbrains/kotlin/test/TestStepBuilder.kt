@@ -30,6 +30,10 @@ class HandlersStepBuilder<I : ResultingArtifact<I>>(val artifactKind: TestArtifa
         handlers += constructor
     }
 
+    fun useHandlersAtFirst(vararg constructor: Constructor<AnalysisHandler<I>>) {
+        handlers.addAll(0, constructor.toList())
+    }
+
     fun useHandlers(constructors: List<Constructor<AnalysisHandler<I>>>) {
         handlers += constructors
     }
