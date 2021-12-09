@@ -45,32 +45,6 @@ private fun IrClassifierSymbol.asString() = when (this) {
     else -> error("Unexpected kind of IrClassifierSymbol: " + javaClass.typeName)
 }
 
-/**
- * Returns inline class for given class or null of type is not inlined
- */
-fun IrType.getJsInlinedClass(): IrClass? {
-    if (this is IrSimpleType) {
-        val erased = erase(this) ?: return null
-        if (erased.isInline) {
-            if (this.isMarkedNullable()) {
-                var fieldType: IrType
-                var fieldInlinedClass = erased
-                while (true) {
-                    fieldType = getInlineClassUnderlyingType(fieldInlinedClass)
-                    if (fieldType.isMarkedNullable()) {
-                        return null
-                    }
-
-                    fieldInlinedClass = fieldType.getJsInlinedClass() ?: break
-                }
-            }
-
-            return erased
-        }
-    }
-    return null
-}
-
 tailrec fun erase(type: IrType): IrClass? {
     val classifier = type.classifierOrFail
 

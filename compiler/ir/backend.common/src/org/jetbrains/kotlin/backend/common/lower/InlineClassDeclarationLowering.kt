@@ -28,11 +28,13 @@ private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 class InlineClassLowering(val context: CommonBackendContext) {
     private val transformedFunction = context.mapping.inlineClassMemberToStatic
 
+    private fun isClassInlineLike(irClass: IrClass): Boolean = context.inlineClassesUtils.isClassInlineLike(irClass)
+
     val inlineClassDeclarationLowering = object : DeclarationTransformer {
 
         override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
             val irClass = declaration.parent as? IrClass ?: return null
-            if (!irClass.isInline) return null
+            if (!isClassInlineLike(irClass)) return null
 
             return when (declaration) {
                 is IrConstructor -> transformConstructor(declaration)
@@ -314,7 +316,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)
                     val function = expression.symbol.owner
-                    if (!function.parentAsClass.isInline) {
+                    if (!isClassInlineLike(function.parentAsClass)) {
                         return expression
                     }
 
@@ -326,7 +328,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     val function: IrSimpleFunction = expression.symbol.owner
                     if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
-                        !function.parentAsClass.isInline ||
+                        !isClassInlineLike(function.parentAsClass) ||
                         !function.isReal
                     ) {
                         return expression
@@ -344,7 +346,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     val function = expression.symbol.owner
                     val klass = function.parentAsClass
                     return when {
-                        !klass.isInline -> expression
+                        !isClassInlineLike(klass) -> expression
                         else -> irCall(expression, getOrCreateStaticMethod(function))
                     }
                 }

@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isString
@@ -24,6 +21,9 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
+
+    private fun JsGenerationContext.isClassInlineLike(irClass: IrClass) =
+        staticContext.backendContext.inlineClassesUtils.isClassInlineLike(irClass)
 
     override fun visitComposite(expression: IrComposite, data: JsGenerationContext): JsExpression {
         val size = expression.statements.size
@@ -114,7 +114,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 .also { context.staticContext.polyfills.visitDeclaration(field) }
         }
 
-        if (fieldParent is IrClass && fieldParent.isInline) {
+        if (fieldParent is IrClass && context.isClassInlineLike(fieldParent)) {
             return expression.receiver!!.accept(this, context).withSource(expression, context)
         }
         val fieldName = context.getNameForField(field)
@@ -163,7 +163,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val arguments = translateCallArguments(expression, context, this)
 
         val constructor = expression.symbol.owner
-        if (constructor.parentAsClass.isInline) {
+        if (context.isClassInlineLike(constructor.parentAsClass)) {
             assert(constructor.isPrimary) {
                 "Delegation to secondary inline constructors must be lowered into simple function calls"
             }
@@ -182,7 +182,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val arguments = translateCallArguments(expression, context, this)
         val klass = function.parentAsClass
 
-        require(!klass.isInline) {
+        require(!context.isClassInlineLike(klass)) {
             "All inline class constructor calls must be lowered to static function calls"
         }
 

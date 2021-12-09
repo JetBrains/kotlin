@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.eraseGenerics
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsInlinedClass
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -19,6 +18,9 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
 class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<JsIrBackendContext>(context) {
+
+    private fun IrType.getJsInlinedClass() = context.inlineClassesUtils.getInlinedClass(this)
+
     override fun getFunctionSignature(function: IrSimpleFunction): JsSignature =
         if (function.hasStableJsName(context)) {
             JsStableNameSignature(function.getJsNameOrKotlinName())

@@ -380,7 +380,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass
     //util
     private fun IrConstructor.hasStrictSignature(): Boolean {
         val primitives = with(context.irBuiltIns) { primitiveTypesToPrimitiveArrays.values + stringClass }
-        return with(parentAsClass) { isExternal || isInline || symbol in primitives }
+        return with(parentAsClass) { isExternal || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives }
     }
 }
 

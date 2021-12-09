@@ -51,7 +51,7 @@ open class PropertyAccessorInlineLowering(
                 // TODO: temporary workarounds
                 if (parent.isExpect || property.isExpect) return false
                 if (parent.parent is IrExternalPackageFragment) return false
-                if (parent.isInline) return false
+                if (context.inlineClassesUtils.isClassInlineLike(parent)) return false
             }
             if (property.isEffectivelyExternal()) return false
             return true

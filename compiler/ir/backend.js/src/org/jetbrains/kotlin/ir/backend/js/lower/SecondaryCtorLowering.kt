@@ -44,7 +44,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         if (declaration is IrConstructor && !declaration.isPrimary) {
             val irClass = declaration.parentAsClass
 
-            if (irClass.isInline) return null
+            if (context.inlineClassesUtils.isClassInlineLike(irClass)) return null
 
             return transformConstructor(declaration, irClass)
         }
@@ -255,7 +255,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
     private val IrConstructor.isSecondaryConstructorCall
         get() =
-            !isPrimary && this != defaultThrowableConstructor && !isExternal && !parentAsClass.isInline
+            !isPrimary && this != defaultThrowableConstructor && !isExternal && !context.inlineClassesUtils.isClassInlineLike(parentAsClass)
 
     override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement = super.visitFunction(declaration, declaration)
 
