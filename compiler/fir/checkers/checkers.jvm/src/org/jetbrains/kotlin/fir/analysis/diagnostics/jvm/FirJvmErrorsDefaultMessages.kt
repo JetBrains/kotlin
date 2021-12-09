@@ -81,7 +81,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_CANNOT_BE_ARRAY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VOLATILE_ON_VALUE
@@ -185,10 +184,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE,
             "'@JvmDefaultWithCompatibility' annotation is only allowed on interfaces"
-        )
-        map.put(
-            USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL,
-            "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option"
         )
         map.put(
             NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT,

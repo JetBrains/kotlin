@@ -95,7 +95,6 @@ object FirJvmErrors {
     val JVM_DEFAULT_IN_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION by error0<KtElement>()
     val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE by error0<KtElement>()
-    val USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL by error0<PsiElement>()
     val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
     // External Declaration

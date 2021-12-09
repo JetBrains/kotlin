@@ -110,7 +110,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
         container.useImpl<JvmTypeSpecificityComparatorDelegate>()
         container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
-        container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionOracle>()
         container.useImpl<JvmAdditionalClassPartsProvider>()
         container.useImpl<JvmRecordApplicabilityChecker>()

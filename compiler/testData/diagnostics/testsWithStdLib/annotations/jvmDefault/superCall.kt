@@ -14,13 +14,13 @@ interface B : A {
 interface C : B {
     <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!>
     override fun test()<!> {
-        super.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super.test()
     }
 }
 
 open class Foo : B {
     override fun test() {
-        super.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super.test()
     }
 }
 open class Foo2 : B
@@ -40,7 +40,7 @@ open class Bar2 : Bar() {
 class ManySupers: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
-        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.test()
         <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>test<!>()
     }
 }
@@ -48,7 +48,7 @@ class ManySupers: Foo2(), B {
 class ManySupers2: Foo2(), C {
     fun foo() {
         super<Foo2>.test()
-        super<C>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super<C>.test()
         <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>test<!>()
     }
 }
@@ -56,7 +56,7 @@ class ManySupers2: Foo2(), C {
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class ManySupers3<!>: Bar2(), C {
     fun foo() {
         super<Bar2>.test()
-        super<C>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super<C>.test()
         <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>test<!>()
     }
 }

@@ -135,7 +135,6 @@ public interface ErrorsJvm {
     DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> LOCAL_JVM_RECORD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> NON_FINAL_JVM_RECORD = DiagnosticFactory0.create(ERROR);

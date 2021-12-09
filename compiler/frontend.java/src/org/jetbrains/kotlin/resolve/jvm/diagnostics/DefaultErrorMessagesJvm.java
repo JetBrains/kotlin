@@ -168,7 +168,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING);
         MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option");
         MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE, "'@JvmDefaultWithCompatibility' annotation is only allowed on interfaces");
-        MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option");
         MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault or enable `-Xjvm-default=all|all-compatibility`");
         MAP.put(EXPLICIT_METADATA_IS_DISALLOWED, "Explicit @Metadata is disallowed");
         MAP.put(SUSPENSION_POINT_INSIDE_MONITOR, "A suspension point at {0} is inside a critical section", STRING);

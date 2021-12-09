@@ -4122,12 +4122,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL) { firDiagnostic ->
-        UsageOfJvmDefaultThroughSuperCallImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT) { firDiagnostic ->
         NonJvmDefaultOverridesJavaDefaultImpl(
             firDiagnostic as KtPsiDiagnostic,

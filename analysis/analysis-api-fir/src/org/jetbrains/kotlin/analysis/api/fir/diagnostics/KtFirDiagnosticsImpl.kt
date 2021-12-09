@@ -3466,11 +3466,6 @@ internal class JvmDefaultWithCompatibilityNotOnInterfaceImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.JvmDefaultWithCompatibilityNotOnInterface(), KtAbstractFirDiagnostic<KtElement>
 
-internal class UsageOfJvmDefaultThroughSuperCallImpl(
-    override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.UsageOfJvmDefaultThroughSuperCall(), KtAbstractFirDiagnostic<PsiElement>
-
 internal class NonJvmDefaultOverridesJavaDefaultImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

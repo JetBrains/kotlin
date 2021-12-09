@@ -14,18 +14,18 @@ interface B{
 
 class C : A, B {
     override fun test() {
-        super<A>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super<A>.test()
     }
 }
 
 class D : B, A {
     override fun test() {
-        super<A>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super<A>.test()
     }
 }
 
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class E<!>: B, A {
     fun foo() {
-        super<A>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
+        super<A>.test()
     }
 }
