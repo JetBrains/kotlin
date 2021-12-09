@@ -386,12 +386,12 @@ class FirTypeIntersectionScope private constructor(
         var transitivelyMostSpecific: MemberWithBaseScope<D> = overridables.first()
 
         for (candidate in overridables) {
-            if (overridables.all { isMoreSpecific(candidate.member, it.member) }) {
+            if (overridables.all { hasMoreSpecificOrSameSignature(candidate.member, it.member) }) {
                 candidates.add(candidate)
             }
 
-            if (isMoreSpecific(candidate.member, transitivelyMostSpecific.member) &&
-                !isMoreSpecific(transitivelyMostSpecific.member, candidate.member)
+            if (hasMoreSpecificOrSameSignature(candidate.member, transitivelyMostSpecific.member) &&
+                !hasMoreSpecificOrSameSignature(transitivelyMostSpecific.member, candidate.member)
             ) {
                 transitivelyMostSpecific = candidate
             }
@@ -410,10 +410,11 @@ class FirTypeIntersectionScope private constructor(
         }
     }
 
-    private fun isMoreSpecific(
+    private fun hasMoreSpecificOrSameSignature(
         a: FirCallableSymbol<*>,
         b: FirCallableSymbol<*>
     ): Boolean {
+        if (a === b) return true
         val aFir = a.fir
         val bFir = b.fir
 
@@ -424,7 +425,7 @@ class FirTypeIntersectionScope private constructor(
 
         if (aFir is FirSimpleFunction) {
             require(bFir is FirSimpleFunction) { "b is " + b.javaClass }
-            return isTypeMoreSpecific(aReturnType, bReturnType)
+            return isTypeMoreSpecificOrSame(aReturnType, bReturnType)
         }
         if (aFir is FirProperty) {
             require(bFir is FirProperty) { "b is " + b.javaClass }
@@ -432,13 +433,13 @@ class FirTypeIntersectionScope private constructor(
             return if (aFir.isVar && bFir.isVar) {
                 AbstractTypeChecker.equalTypes(typeCheckerState, aReturnType, bReturnType)
             } else { // both vals or var vs val: val can't be more specific then var
-                !(!aFir.isVar && bFir.isVar) && isTypeMoreSpecific(aReturnType, bReturnType)
+                !(!aFir.isVar && bFir.isVar) && isTypeMoreSpecificOrSame(aReturnType, bReturnType)
             }
         }
         throw IllegalArgumentException("Unexpected callable: " + a.javaClass)
     }
 
-    private fun isTypeMoreSpecific(a: ConeKotlinType, b: ConeKotlinType): Boolean =
+    private fun isTypeMoreSpecificOrSame(a: ConeKotlinType, b: ConeKotlinType): Boolean =
         AbstractTypeChecker.isSubtypeOf(typeCheckerState, a, b)
 
     private fun <D : FirCallableSymbol<*>> findMemberWithMaxVisibility(members: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
