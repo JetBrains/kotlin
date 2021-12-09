@@ -40,8 +40,10 @@ abstract class Freezable {
 
     private var frozen: Boolean = false
 
-    private fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyBean(this).apply { frozen = value }
-
-    fun frozen() = getInstanceWithFreezeStatus(true)
-    fun unfrozen() = getInstanceWithFreezeStatus(false)
+    internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyBean(this).apply { frozen = value }
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Freezable> T.frozen(): T = getInstanceWithFreezeStatus(true) as T
+@Suppress("UNCHECKED_CAST")
+fun <T : Freezable> T.unfrozen(): T = getInstanceWithFreezeStatus(false) as T
