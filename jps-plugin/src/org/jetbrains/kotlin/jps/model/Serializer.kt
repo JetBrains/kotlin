@@ -24,7 +24,8 @@ class KotlinModelSerializerService : KotlinCommonJpsModelSerializerExtension() {
         KotlinCommonCompilerArgumentsSerializer(),
         Kotlin2JvmCompilerArgumentsSerializer(),
         Kotlin2JsCompilerArgumentsSerializer(),
-        KotlinCompilerSettingsSerializer()
+        KotlinCompilerSettingsSerializer(),
+        KotlinJpsPluginSettingsSerializer()
     )
 
     override fun getFacetConfigurationSerializers() = listOf(JpsKotlinFacetConfigurationSerializer)
@@ -78,6 +79,14 @@ internal class KotlinCompilerSettingsSerializer : BaseJpsCompilerSettingsSeriali
 ) {
     override fun onLoad(project: JpsProject, settings: CompilerSettings) {
         project.kotlinCompilerSettings = settings
+    }
+}
+
+internal class KotlinJpsPluginSettingsSerializer : BaseJpsCompilerSettingsSerializer<JpsPluginSettings>(
+    SettingConstants.KOTLIN_JPS_PLUGIN_SETTINGS_SECTION, ::JpsPluginSettings
+) {
+    override fun onLoad(project: JpsProject, settings: JpsPluginSettings) {
+        project.kotlinJpsPluginSettings = settings
     }
 }
 
