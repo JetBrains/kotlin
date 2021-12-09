@@ -1937,6 +1937,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/bridges/overrideReturnType.kt");
         }
 
+        @TestMetadata("overrideWithValueClassReturn.kt")
+        public void testOverrideWithValueClassReturn() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/overrideWithValueClassReturn.kt");
+        }
+
         @TestMetadata("propertyAccessorsWithoutBody.kt")
         public void testPropertyAccessorsWithoutBody() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/propertyAccessorsWithoutBody.kt");
