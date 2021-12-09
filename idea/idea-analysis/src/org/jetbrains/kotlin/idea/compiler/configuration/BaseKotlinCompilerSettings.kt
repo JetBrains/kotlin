@@ -55,10 +55,10 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
         }
     }
 
-    @Suppress("LeakingThis", "UNCHECKED_CAST")
-    private var _settings: T = createSettings().frozen() as T
+    @Suppress("LeakingThis")
+    private var _settings: T = createSettings().frozen()
         private set(value) {
-            field = value.frozen() as T
+            field = value.frozen()
         }
 
     var settings: T
@@ -73,8 +73,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
         }
 
     fun update(changer: T.() -> Unit) {
-        @Suppress("UNCHECKED_CAST")
-        settings = (settings.unfrozen() as T).apply { changer() }
+        settings = settings.unfrozen().apply { changer() }
     }
 
     protected fun validateInheritedFieldsUnchanged(settings: T) {
