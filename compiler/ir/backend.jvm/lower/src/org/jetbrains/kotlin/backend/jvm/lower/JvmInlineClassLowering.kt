@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -68,7 +66,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid()
+    }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
@@ -325,12 +325,24 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =
-        IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, from)
-            putTypeArgument(1, to)
-            putValueArgument(0, argument)
+    private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType): IrExpression {
+        return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
+            val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
+            if (underlyingType?.isTypeParameter() == true) {
+                putTypeArgument(0, from)
+                putTypeArgument(1, underlyingType)
+                putValueArgument(
+                    0, IrTypeOperatorCallImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, IrTypeOperator.IMPLICIT_CAST, underlyingType, argument
+                    )
+                )
+            } else {
+                putTypeArgument(0, from)
+                putTypeArgument(1, to)
+                putValueArgument(0, argument)
+            }
         }
+    }
 
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())

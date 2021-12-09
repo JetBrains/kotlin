@@ -16800,6 +16800,28 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
+        @TestDataPath("$PROJECT_ROOT")
+        public class GenericUnderlyingValue {
+            @Test
+            public void testAllFilesPresentInGenericUnderlyingValue() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("upperBound.kt")
+            public void testUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/upperBound.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
         @TestDataPath("$PROJECT_ROOT")
         public class HiddenConstructor {

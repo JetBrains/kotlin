@@ -17768,6 +17768,29 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class GenericUnderlyingValue extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInGenericUnderlyingValue() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/simple.kt");
+            }
+
+            @TestMetadata("upperBound.kt")
+            public void testUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/upperBound.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
