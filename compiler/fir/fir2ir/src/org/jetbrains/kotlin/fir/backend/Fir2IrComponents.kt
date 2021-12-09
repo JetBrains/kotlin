@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrComponents {
@@ -26,6 +27,7 @@ interface Fir2IrComponents {
     val irBuiltIns: IrBuiltIns
     val builtIns: Fir2IrBuiltIns
     val irFactory: IrFactory
+    val irProviders: List<IrProvider>
     val lock: IrLock
 
     val classifierStorage: Fir2IrClassifierStorage

@@ -71,9 +71,6 @@ class Fir2IrResultsConverter(
             FirJvmBackendClassResolver(components)
         ).build()
 
-        val extensions = JvmGeneratorExtensionsImpl(configuration)
-        val irProviders = codegenFactory.configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
-
         return IrBackendInput.JvmIrBackendInput(
             generationState,
             codegenFactory,
@@ -81,7 +78,7 @@ class Fir2IrResultsConverter(
                 irModuleFragment,
                 symbolTable,
                 phaseConfig,
-                irProviders,
+                components.irProviders,
                 fir2IrExtensions,
                 FirJvmBackendExtension(inputArtifact.session, components),
                 notifyCodegenStart = {},

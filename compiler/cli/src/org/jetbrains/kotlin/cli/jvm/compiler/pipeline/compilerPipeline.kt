@@ -241,7 +241,7 @@ fun generateCodeFromIr(
 
     generationState.beforeCompile()
     codegenFactory.generateModuleInFrontendIRMode(
-        generationState, input.irModuleFragment, input.symbolTable, input.extensions,
+        generationState, input.irModuleFragment, input.symbolTable, input.components.irProviders, input.extensions,
         FirJvmBackendExtension(input.firSession, input.components)
     ) {
         performanceManager?.notifyIRLoweringFinished()
