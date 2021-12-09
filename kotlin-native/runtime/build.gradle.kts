@@ -77,6 +77,7 @@ bitcode {
         compilerArgs.addAll(listOf("-DKONAN_MI_MALLOC=1", "-Wno-unknown-pragmas", "-ftls-model=initial-exec",
                 "-Wno-unused-function", "-Wno-error=atomic-alignment",
                 "-Wno-unused-parameter" /* for windows 32*/))
+        extraSanitizerArgs[SanitizerKind.THREAD] = listOf("-DMI_TSAN=1")
         headersDirs = files("$srcRoot/c/include")
 
         onlyIf { targetSupportsMimallocAllocator(target) }

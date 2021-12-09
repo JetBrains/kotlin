@@ -102,6 +102,9 @@ abstract class CompileToBitcode @Inject constructor(
     @Input @Optional
     var sanitizer: SanitizerKind? = null
 
+    @Input @Optional
+    val extraSanitizerArgs = mutableMapOf<SanitizerKind, List<String>>()
+
     private val targetDir: File
         get() {
             val sanitizerSuffix = when (sanitizer) {
@@ -136,11 +139,18 @@ abstract class CompileToBitcode @Inject constructor(
                 null -> listOf()
                 SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
                 SanitizerKind.THREAD -> listOf("-fsanitize=thread")
-            }
+            } + (extraSanitizerArgs[sanitizer] ?: emptyList())
             val languageFlags = when (language) {
-                Language.C ->
-                    // Used flags provided by original build of allocator C code.
-                    listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Werror")
+                Language.C -> {
+                    listOf("-std=gnu11", "-Wall", "-Wextra", "-Werror") +
+                    if (sanitizer != SanitizerKind.THREAD) {
+                        // Used flags provided by original build of allocator C code.
+                        listOf("-O3")
+                    } else {
+                        // Building with TSAN needs turning off extra optimizations.
+                        listOf("-O1")
+                    }
+                }
                 Language.CPP ->
                     listOfNotNull("-std=c++17", "-Werror", "-O2",
                             "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
