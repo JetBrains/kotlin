@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
-import org.jetbrains.kotlin.backend.jvm.JvmFileFacadeClass
-import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
-import org.jetbrains.kotlin.backend.jvm.handleJvmStaticInSingletonObjects
+import org.jetbrains.kotlin.backend.common.ir.createSpecialAnnotationClass
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.serialization.deserializeFromByteArray
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -18,20 +17,47 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.FirIrProvider
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrMemberWithContainerSource
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
-class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensions {
+class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensions, JvmGeneratorExtensions {
 
-    // TODO: make these available to backend context
-    private val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
-    private val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
+    override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
+    override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
+
+    private val kotlinIrInternalPackage =
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
+
+    private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
+
+    private val rawTypeAnnotationClass =
+        createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+
+    override val rawTypeAnnotationConstructor: IrConstructor =
+        rawTypeAnnotationClass.constructors.single()
+
+    private fun createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
+        IrFactoryImpl.createSpecialAnnotationClass(fqn, parent).apply {
+            specialAnnotationConstructors.add(constructors.single())
+        }
+
+    override fun registerDeclarations(symbolTable: SymbolTable) {
+        val signatureComputer = PublicIdSignatureComputer(JvmIrMangler)
+        specialAnnotationConstructors.forEach { constructor ->
+            symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor, false), constructor.symbol)
+        }
+    }
 
     override val irNeedsDeserialization: Boolean =
         configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
