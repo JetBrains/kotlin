@@ -114,7 +114,7 @@ object GenerationUtils {
             IrGenerationExtension.getInstances(project)
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration)
-        val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(fir2IrExtensions)
+        val (moduleFragment, components) = firAnalyzerFacade.convertToIr(fir2IrExtensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(
@@ -133,7 +133,7 @@ object GenerationUtils {
         generationState.beforeCompile()
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, components.irProviders,
+            generationState, moduleFragment, components.symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(session, components),
         ) {}
 

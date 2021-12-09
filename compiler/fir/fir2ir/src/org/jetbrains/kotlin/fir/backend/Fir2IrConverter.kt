@@ -466,7 +466,7 @@ class Fir2IrConverter(
                 allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, languageVersionSettings, fir2IrExtensions
             )
 
-            return Fir2IrResult(irModuleFragment, symbolTable, components)
+            return Fir2IrResult(irModuleFragment, components)
         }
     }
 
