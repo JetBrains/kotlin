@@ -5,11 +5,15 @@
 
 package kotlin
 
+// Char is a magic class.
+// Char is defined as a regular class, but we lower it as a value class.
+// See [org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils.isClassInlineLike] for explanation.
+
 /**
  * Represents a 16-bit Unicode character.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-public value class Char
+public /*value*/ class Char
 @kotlin.internal.LowPriorityInOverloadResolution
 internal constructor(private val value: Int) : Comparable<Char> {
 
@@ -75,6 +79,13 @@ internal constructor(private val value: Int) : Comparable<Char> {
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toDouble(): Double = value.toDouble()
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Char) return false
+        return this.value == other.value
+    }
+
+    override fun hashCode(): Int = value
 
     // TODO implicit usages of toString and valueOf must be covered in DCE
     @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")

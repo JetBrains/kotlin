@@ -1064,7 +1064,7 @@ public final class ByteArray {
     public final operator fun set(index: kotlin.Int, value: kotlin.Byte): kotlin.Unit
 }
 
-/*∆*/ public final class Char : kotlin.Comparable<kotlin.Char> {
+public final class Char : kotlin.Comparable<kotlin.Char> {
     public open override operator fun compareTo(other: kotlin.Char): kotlin.Int
 
     public final operator fun dec(): kotlin.Char

@@ -1032,7 +1032,7 @@ public final class ByteArray {
     public final operator fun set(index: kotlin.Int, value: kotlin.Byte): kotlin.Unit
 }
 
-/*∆*/ public final inline class Char : kotlin.Comparable<kotlin.Char> {
+public final class Char : kotlin.Comparable<kotlin.Char> {
 /*∆*/     @kotlin.SinceKotlin(version = "1.5")
 /*∆*/     @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 /*∆*/     public constructor Char(code: kotlin.UShort)
