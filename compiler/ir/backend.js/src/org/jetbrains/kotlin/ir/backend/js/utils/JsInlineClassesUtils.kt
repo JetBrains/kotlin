@@ -5,22 +5,38 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.backend.js.InlineClassesUtils
+import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 
-class JsInlineClassesUtils(val context: JsIrBackendContext) : InlineClassesUtils {
-    override fun isTypeInlined(type: IrType): Boolean {
-        return getInlinedClass(type) != null
+class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClassesUtils {
+
+    override fun getInlinedClass(type: IrType): IrClass? {
+        if (type is IrSimpleType) {
+            val erased = erase(type) ?: return null
+            if (isClassInlineLike(erased)) {
+                if (type.isMarkedNullable()) {
+                    var fieldType: IrType
+                    var fieldInlinedClass = erased
+                    while (true) {
+                        fieldType = getInlineClassUnderlyingType(fieldInlinedClass)
+                        if (fieldType.isMarkedNullable()) {
+                            return null
+                        }
+
+                        fieldInlinedClass = getInlinedClass(fieldType) ?: break
+                    }
+                }
+
+                return erased
+            }
+        }
+        return null
     }
-
-    override fun getInlinedClass(type: IrType): IrClass? =
-        type.getJsInlinedClass()
 
     override fun isClassInlineLike(klass: IrClass): Boolean =
         klass.isInline

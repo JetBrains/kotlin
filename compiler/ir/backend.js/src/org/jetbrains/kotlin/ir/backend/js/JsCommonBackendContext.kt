@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -16,9 +17,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -32,7 +31,7 @@ interface JsCommonBackendContext : CommonBackendContext {
 
     val reflectionSymbols: ReflectionSymbols
 
-    val inlineClassesUtils: InlineClassesUtils
+    override val inlineClassesUtils: JsCommonInlineClassesUtils
 
     val coroutineSymbols: JsCommonCoroutineSymbols
 
@@ -123,8 +122,16 @@ fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
 fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
     memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
-interface InlineClassesUtils {
-    fun isTypeInlined(type: IrType): Boolean
+interface JsCommonInlineClassesUtils : InlineClassesUtils {
+
+    /**
+     * Returns the inlined class for the given type, or `null` if the type is not inlined.
+     */
+    fun getInlinedClass(type: IrType): IrClass?
+
+    fun isTypeInlined(type: IrType): Boolean {
+        return getInlinedClass(type) != null
+    }
 
     fun shouldValueParameterBeBoxed(parameter: IrValueParameter): Boolean {
         val function = parameter.parent as? IrSimpleFunction ?: return false
@@ -133,10 +140,13 @@ interface InlineClassesUtils {
         return parameter.isDispatchReceiver && function.isOverridableOrOverrides
     }
 
-    fun getInlinedClass(type: IrType): IrClass?
-
-    fun isClassInlineLike(klass: IrClass): Boolean
-
+    /**
+     * An intrinsic for creating an instance of an inline class from its underlying value.
+     */
     val boxIntrinsic: IrSimpleFunctionSymbol
+
+    /**
+     * An intrinsic for obtaining the underlying value from an instance of an inline class.
+     */
     val unboxIntrinsic: IrSimpleFunctionSymbol
 }
