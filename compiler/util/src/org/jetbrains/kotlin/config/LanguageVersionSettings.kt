@@ -246,6 +246,7 @@ enum class LanguageFeature(
     InlineClassImplementationByDelegation(KOTLIN_1_7),
     QualifiedSupertypeMayBeExtendedByOtherSupertype(KOTLIN_1_7),
     YieldIsNoMoreReserved(KOTLIN_1_7),
+    GenericInlineClassParameter(KOTLIN_1_7),
 
     // 1.8
 

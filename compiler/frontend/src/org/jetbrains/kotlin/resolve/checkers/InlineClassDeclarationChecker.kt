@@ -96,7 +96,10 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
         val baseParameterTypeReference = baseParameter.typeReference
         if (baseParameterType != null && baseParameterTypeReference != null) {
-            if (baseParameterType.isInapplicableParameterType()) {
+            if (baseParameterType.isInapplicableParameterType() &&
+                !(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                        (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter()))
+            ) {
                 trace.report(Errors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
                 return
             }
