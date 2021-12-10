@@ -777,6 +777,11 @@ tasks {
     }
 
     register("miscCompilerTest") {
+        dependsOn("coreLibsTest")
+        dependsOn("gradlePluginTest")
+        dependsOn("toolsTest")
+        dependsOn("examplesTest")
+
         dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
