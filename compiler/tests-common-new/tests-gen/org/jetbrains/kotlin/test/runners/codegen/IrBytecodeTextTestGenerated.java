@@ -50,6 +50,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("annotationDefaultValueOfUnsigned.kt")
+    public void testAnnotationDefaultValueOfUnsigned() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/annotationDefaultValueOfUnsigned.kt");
+    }
+
+    @Test
     @TestMetadata("annotationJavaRetentionPolicyRuntime.kt")
     public void testAnnotationJavaRetentionPolicyRuntime() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/annotationJavaRetentionPolicyRuntime.kt");
