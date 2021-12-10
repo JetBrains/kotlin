@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +GenericInlineClassParameter
 // SKIP_TXT
 
