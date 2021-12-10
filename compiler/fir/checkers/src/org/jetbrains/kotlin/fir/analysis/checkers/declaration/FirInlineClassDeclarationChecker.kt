@@ -162,7 +162,11 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                             context
                         )
 
-                    primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() ->
+                    primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() &&
+                            !(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                                    primaryConstructorParameter.returnTypeRef.coneType.let {
+                                        (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
+                                    }) ->
                         reporter.reportOn(
                             primaryConstructorParameter.returnTypeRef.source,
                             FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
