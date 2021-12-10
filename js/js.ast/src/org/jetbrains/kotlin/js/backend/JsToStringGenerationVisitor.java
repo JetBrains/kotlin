@@ -1248,6 +1248,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(javaScriptString(jsImport.getModule()));
     }
 
+    @Override
+    public void visitCode(@NotNull JsCode code) {
+        p.print(code.getCode());
+    }
+
 
     private void newline() {
         p.newline();

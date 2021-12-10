@@ -2,6 +2,8 @@
 external val definedVariableX: Int
 external val undefinedVariableX: Int
 
+external val `test me`: String
+
 fun box(): String {
     if (jsTypeOf(definedVariableX) != "number") return "Fail 1"
     if (jsTypeOf(js("definedVariableX")) != "number") return "Fail 2"

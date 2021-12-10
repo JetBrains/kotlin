@@ -162,7 +162,10 @@ class IrModuleToJsTransformer(
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(nameGenerator, modules, dependencies, { JsName(sanitizeName(it), false) })
         val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
 
-        val program = JsProgram()
+        val program = JsProgram().apply {
+            staticContext.polyfills.addAllNeededPolyfillsTo(globalBlock.statements)
+        }
+
         if (generateScriptModule) {
             with(program.globalBlock) {
                 statements.addWithComment("block: imports", importStatements + crossModuleImports)
@@ -223,7 +226,6 @@ class IrModuleToJsTransformer(
                 null
             }
 
-        staticContext.polyfills.addAllNeededPolyfillsTo(jsCode)
         program.accept(JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer ?: NoOpSourceLocationConsumer))
 
         return CompilationOutputs(

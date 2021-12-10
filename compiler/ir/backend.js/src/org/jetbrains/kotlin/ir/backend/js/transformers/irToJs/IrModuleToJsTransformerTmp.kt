@@ -280,6 +280,8 @@ class IrModuleToJsTransformerTmp(
             }
         }
 
+        result.polyfills = staticContext.polyfills
+
         return result
     }
 
