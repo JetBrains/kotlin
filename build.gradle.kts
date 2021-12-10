@@ -795,6 +795,8 @@ tasks {
 
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
+
+        dependsOn(":generators:test")
     }
 
     register("toolsTest") {
