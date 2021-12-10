@@ -59,6 +59,7 @@ fun Project.generator(fqName: String, sourceSet: SourceSet? = null, configure: J
     mainClass.set(fqName)
     workingDir = rootDir
     systemProperty("line.separator", "\n")
+    systemProperty("idea.ignore.disabled.plugins", "true")
     configure()
 }
 
