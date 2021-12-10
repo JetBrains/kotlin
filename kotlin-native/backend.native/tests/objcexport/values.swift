@@ -1123,6 +1123,24 @@ class TestSharedRefs {
         try assertFalse(refs.hasAliveObjects())
     }
 
+    // Based on https://youtrack.jetbrains.com/issue/KT-49497.
+
+    func testKT49497() throws {
+        var model: KT49497Model? = nil
+
+        for i in 1...10 {
+            model = KT49497Model() // Frozen and has a reference to itself, so becomes aggregating frozen container.
+            ValuesKt.gc() // Just in case, to ensure there are no other references except `model`.
+
+            runInNewThread(initializeKotlinRuntime: false) {
+                // Thread has no runtime initialized, so this should enqueue release ref to the original thread:
+                model = nil
+            }
+
+            ValuesKt.gc() // Process the enqueued release ref.
+        }
+    }
+
     func test() throws {
         try testLambdaSimple()
         try testObjectPartialRelease()
@@ -1143,6 +1161,8 @@ class TestSharedRefs {
         try testRememberNewObject(createObject: { $0.createFrozenRegularObject() })
         try testRememberNewObject(createObject: { $0.createFrozenCollection() })
 #endif
+
+        try testKT49497()
 
         usleep(300 * 1000)
     }

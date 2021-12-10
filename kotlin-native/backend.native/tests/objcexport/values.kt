@@ -896,6 +896,17 @@ fun testRememberNewObject(test: TestRememberNewObject) {
     assertNotEquals("", obj.toString()) // Likely crashes if object is removed.
 }
 
+class KT49497Model {
+    private class SelfRef(val self: KT49497Model)
+
+    // Wrapping `this` to make the strongly connected component non-trival, just in case:
+    private val selfRef = SelfRef(this)
+
+    init {
+        freeze()
+    }
+}
+
 open class ClassForTypeCheck
 
 fun testClassTypeCheck(x: Any) = x is ClassForTypeCheck

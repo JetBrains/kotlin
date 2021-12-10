@@ -2433,6 +2433,13 @@ __attribute__((swift_name("TestRememberNewObject")))
 - (void)waitForCleanup __attribute__((swift_name("waitForCleanup()")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT49497Model")))
+@interface KtKT49497Model : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
 __attribute__((swift_name("ClassForTypeCheck")))
 @interface KtClassForTypeCheck : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

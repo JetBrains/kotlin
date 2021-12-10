@@ -1806,6 +1806,28 @@ void processDecrements(MemoryState* state) {
   RuntimeAssert(IsStrictMemoryModel(), "Only works in strict model now");
   auto* toRelease = state->toRelease;
   state->gcSuspendCount++;
+
+  state->foreignRefManager->processEnqueuedReleaseRefsWith([](ObjHeader* obj) {
+    ContainerHeader* container = containerFor(obj);
+    if (container != nullptr) decrementRC(container);
+  });
+
+  // The code above can call freeContainer if RC drops to zero.
+  // freeContainer can in turn call ZeroHeapRef for freed object fields, which does enqueueDecrementRC.
+  // The latter are processed by the code below. So if we reorder this, the enqueued decrement RC operations
+  // will have to wait for the next GC unnecessarily.
+  //
+  // In addition to being inefficient, the reordering causes https://youtrack.jetbrains.com/issue/KT-49497:
+  // The foreign ref to the frozen aggregating container gets released and causes freeContainer,
+  // which in turn enqueues decrement RC for the same aggregating container.
+  // The enqueued operations outlive processFinalizerQueue at the end of this GC, so during the next GC
+  // they hit the reclaimed memory.
+  // This is generally a special case of the known issue with frozen aggregating containers,
+  // see "TODO: enable me, once account for inner references in frozen objects correctly." above.
+  //
+  // With the current order in this code, wrong accounting for inner references also happens,
+  // but it doesn't do more harm than with regular (non-foreign) references (supposedly only breaks invariants locally).
+
   while (toRelease->size() > 0) {
      auto* container = toRelease->back();
      toRelease->pop_back();
@@ -1816,10 +1838,6 @@ void processDecrements(MemoryState* state) {
      decrementRC(container);
   }
 
-  state->foreignRefManager->processEnqueuedReleaseRefsWith([](ObjHeader* obj) {
-    ContainerHeader* container = containerFor(obj);
-    if (container != nullptr) decrementRC(container);
-  });
   state->gcSuspendCount--;
 }
 
