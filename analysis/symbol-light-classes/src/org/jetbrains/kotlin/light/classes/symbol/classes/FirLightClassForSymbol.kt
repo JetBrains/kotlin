@@ -272,12 +272,10 @@ internal open class FirLightClassForSymbol(
 
             fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
                 val isJvmField = propertySymbol.hasJvmFieldAnnotation()
-                val isJvmStatic = propertySymbol.hasJvmStaticAnnotation()
                 val isLateInit = (propertySymbol as? KtKotlinPropertySymbol)?.isLateInit == true
 
-                val forceStatic = classOrObjectSymbol.isObject &&
-                        (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst || isJvmStatic || isJvmField)
-                val takePropertyVisibility = !classOrObjectSymbol.isCompanionObject && (isLateInit || isJvmField || forceStatic)
+                val forceStatic = classOrObjectSymbol.isObject
+                val takePropertyVisibility = !classOrObjectSymbol.isCompanionObject && (isLateInit || isJvmField)
 
                 createField(
                     declaration = propertySymbol,
