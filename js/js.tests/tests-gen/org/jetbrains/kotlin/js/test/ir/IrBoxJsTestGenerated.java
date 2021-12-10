@@ -8510,6 +8510,60 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/polyfills")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Polyfills {
+        @Test
+        public void testAllFilesPresentInPolyfills() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/globalThis")
+        @TestDataPath("$PROJECT_ROOT")
+        public class GlobalThis {
+            @Test
+            public void testAllFilesPresentInGlobalThis() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/globalThis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @Test
+            @TestMetadata("globalThisWithExistedIntrinsic.kt")
+            public void testGlobalThisWithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/globalThis/globalThisWithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("globalThisWithoutExistedIntrinsic.kt")
+            public void testGlobalThisWithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/globalThis/globalThisWithoutExistedIntrinsic.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/imul")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Imul {
+            @Test
+            public void testAllFilesPresentInImul() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/imul"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @Test
+            @TestMetadata("imulWithExistedIntrinsic.kt")
+            public void testImulWithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/imul/imulWithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("imulWithoutExistedIntrinsic.kt")
+            public void testImulWithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/imul/imulWithoutExistedIntrinsic.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/propertyAccess")
     @TestDataPath("$PROJECT_ROOT")
     public class PropertyAccess {
