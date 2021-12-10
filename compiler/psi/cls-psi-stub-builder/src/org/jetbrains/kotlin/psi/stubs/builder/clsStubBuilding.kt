@@ -8,7 +8,6 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.psi.stubs.builder.flags.FlagsToModifiers
-import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.psi.stubs.builder.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -46,7 +44,7 @@ fun createPackageFacadeStub(
     packageFqName: FqName,
     c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript = false)
+    val fileStub = KotlinFileStubImpl.forFile(packageFqName, isScript = false)
     setupFileStub(fileStub, packageFqName)
     createPackageDeclarationsStubs(
         fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null), packageProto
@@ -60,7 +58,7 @@ fun createFileFacadeStub(
     c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName)
+    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer.Package(
         packageFqName, c.nameResolver, c.typeTable,
@@ -78,7 +76,7 @@ fun createMultifileClassStub(
 ): KotlinFileStubImpl {
     val packageFqName = header.packageName?.let { FqName(it) } ?: facadeFqName.parent()
     val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
-    val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames)
+    val fileStub = KotlinFileStubImpl.forMultifileClassStub(packageFqName, facadeFqName, partNames)
     setupFileStub(fileStub, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
@@ -96,7 +94,7 @@ fun createMultifileClassStub(
 fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT, isScript = false)
 
 fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript)
+    val fileStub = KotlinFileStubImpl.forFile(packageFqName, isScript)
     setupFileStub(fileStub, packageFqName)
     return fileStub
 }

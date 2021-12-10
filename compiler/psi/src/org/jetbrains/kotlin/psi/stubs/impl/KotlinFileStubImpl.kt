@@ -21,8 +21,8 @@ import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.tree.IStubFileElementType
-import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
@@ -31,16 +31,33 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FILE
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-open class KotlinFileStubImpl(
-    jetFile: KtFile?,
-    private val packageName: StringRef,
-    private val isScript: Boolean
-) : PsiFileStubImpl<KtFile>(jetFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
+class KotlinFileStubImpl(
+    ktFile: KtFile?,
+    private val packageName: String,
+    private val isScript: Boolean,
+    private val facadeFqNameString: String?,
+    val partSimpleName: String?,
+    val facadePartSimpleNames: List<String>?,
+) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
 
-    constructor(jetFile: KtFile?, packageName: String, isScript: Boolean)
-            : this(jetFile, StringRef.fromString(packageName)!!, isScript)
+    constructor(jetFile: KtFile?, packageName: String, isScript: Boolean) : this(
+        jetFile,
+        packageName,
+        isScript,
+        facadeFqNameString = null,
+        partSimpleName = null,
+        facadePartSimpleNames = null
+    )
 
-    override fun getPackageFqName(): FqName = FqName(StringRef.toString(packageName)!!)
+    private fun String.relativeToPackage() = getPackageFqName().child(Name.identifier(this))
+
+    val partFqName: FqName?
+        get() = partSimpleName?.relativeToPackage()
+
+    val facadeFqName: FqName?
+        get() = facadeFqNameString?.let(::FqName)
+
+    override fun getPackageFqName(): FqName = FqName(packageName)
     override fun isScript(): Boolean = isScript
     override fun getType(): IStubFileElementType<KotlinFileStub> = FILE
 
@@ -55,5 +72,35 @@ open class KotlinFileStubImpl(
         return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter {
             it.childrenStubs.firstIsInstanceOrNull<KotlinImportAliasStub>()?.getName() == alias
         }
+    }
+
+    companion object {
+        fun forFile(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl = KotlinFileStubImpl(
+            ktFile = null,
+            packageName = packageFqName.asString(),
+            facadeFqNameString = null,
+            partSimpleName = null,
+            facadePartSimpleNames = null,
+            isScript = isScript
+        )
+
+        fun forFileFacadeStub(facadeFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
+            ktFile = null,
+            packageName = facadeFqName.parent().asString(),
+            facadeFqNameString = facadeFqName.asString(),
+            partSimpleName = facadeFqName.shortName().asString(),
+            facadePartSimpleNames = null,
+            isScript = false
+        )
+
+        fun forMultifileClassStub(packageFqName: FqName, facadeFqName: FqName, partNames: List<String>?): KotlinFileStubImpl =
+            KotlinFileStubImpl(
+                ktFile = null,
+                packageName = packageFqName.asString(),
+                facadeFqNameString = facadeFqName.asString(),
+                partSimpleName = null,
+                facadePartSimpleNames = partNames,
+                isScript = false,
+            )
     }
 }
