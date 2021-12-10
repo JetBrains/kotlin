@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava.classes
+package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.classes.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
