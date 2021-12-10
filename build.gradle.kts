@@ -638,17 +638,6 @@ val syncMutedTests = tasks.register("syncMutedTests") {
     dependsOn(":compiler:tests-mutes:tc-integration:run")
 }
 
-val copyCompilerToIdeaPlugin by task<Copy> {
-    dependsOn(dist)
-    into(ideaPluginDir)
-    from(distDir) { include("kotlinc/**") }
-}
-
-val ideaPlugin by task<Task> {
-    dependsOn(copyCompilerToIdeaPlugin)
-    dependsOn(":prepare:idea-plugin:ideaPlugin")
-}
-
 tasks {
     named<Delete>("clean") {
         delete += setOf("$buildDir/repo", distDir)
@@ -843,54 +832,6 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
-    register("idea-plugin-additional-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":idea:idea-maven:test",
-            ":nj2k:test",
-            ":idea:jvm-debugger:jvm-debugger-core:test",
-            ":idea:jvm-debugger:jvm-debugger-evaluation:test",
-            ":idea:jvm-debugger:jvm-debugger-sequence:test",
-            ":idea:jvm-debugger:eval4j:test",
-            ":idea:scripting-support:test"
-        )
-    }
-
-    if (Ide.IJ()) {
-        register("idea-new-project-wizard-tests") {
-            dependsOn(
-                ":libraries:tools:new-project-wizard:test",
-                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
-                ":idea:idea-new-project-wizard:test"
-            )
-        }
-    }
-
-    register("idea-plugin-performance-tests") {
-        dependsOn(
-            "dist",
-            ":idea:performanceTests:performanceTest",
-            ":idea:performanceTests:aggregateResults"
-        )
-    }
-
-    register("idea-fir-plugin-performance-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":idea:idea-fir-performance-tests:ideaFirPerformanceTest"
-        )
-    }
-
-    register("idea-fir-plugin-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":idea:idea-fir:test",
-            ":idea:analysis:analysis-api-fir:fir-low-level-api-ide-impl:test",
-            ":plugins:uast-kotlin-fir:test",
-            ":idea:idea-fir-fe10-binding:test"
-        )
-    }
-
     register("frontendApiTests") {
         dependsOn("dist")
         dependsOn(
@@ -901,63 +842,10 @@ tasks {
         )
     }
 
-
-
-    register("android-ide-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":plugins:android-extensions-ide:test",
-            ":idea:idea-android:test",
-            ":kotlin-annotation-processing:test",
-            ":plugins:parcelize:parcelize-ide:test"
-        )
-    }
-
-    register("ideaPluginTest") {
-        dependsOn(
-            "mainIdeTests",
-            "gradleIdeTest",
-            "kaptIdeTest",
-            "miscIdeTests"
-        )
-    }
-
-    register("mainIdeTests") {
-        dependsOn(":idea:test")
-    }
-
-    register("miscIdeTests") {
-        dependsOn(
-            ":kotlin-allopen-compiler-plugin:test",
-            ":kotlin-noarg-compiler-plugin:test",
-            ":kotlin-sam-with-receiver-compiler-plugin:test",
-            ":plugins:uast-kotlin:test",
-            ":kotlin-annotation-processing-gradle:test",
-            ":kotlinx-serialization-ide-plugin:test",
-            ":idea:jvm-debugger:jvm-debugger-test:test",
-            "idea-plugin-additional-tests",
-            "jps-tests",
-            ":generators:test"
-        )
-        if (Ide.IJ()) {
-            dependsOn(
-                ":libraries:tools:new-project-wizard:test",
-                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test"
-            )
-        }
-    }
-
     register("kaptIdeTest") {
         dependsOn(":kotlin-annotation-processing:test")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
-    }
-
-    register("gradleIdeTest") {
-        dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:idea-gradle-native:test"
-        )
     }
 
     register("test") {
