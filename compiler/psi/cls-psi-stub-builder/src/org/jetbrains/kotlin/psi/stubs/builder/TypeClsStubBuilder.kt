@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
@@ -79,7 +79,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
-            if (id == DynamicTypeDeserializer.id) {
+            if (id == DYNAMIC_TYPE_DESERIALIZER_ID) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }

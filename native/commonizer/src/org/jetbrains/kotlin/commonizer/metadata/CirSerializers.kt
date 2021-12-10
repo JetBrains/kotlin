@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
 import org.jetbrains.kotlin.commonizer.utils.SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES
 import org.jetbrains.kotlin.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.Variance
 
 internal fun CirModule.serializeModule(
@@ -279,7 +280,7 @@ private fun CirType.serializeType(
         lowerBound.serializeType(context, expansion).also {
             it.flexibleTypeUpperBound = KmFlexibleTypeUpperBound(
                 type = upperBound.serializeType(context, expansion),
-                typeFlexibilityId = DynamicTypeDeserializer.id
+                typeFlexibilityId = DYNAMIC_TYPE_DESERIALIZER_ID
             )
         }
     }

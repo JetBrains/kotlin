@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.FlexibleType
 
 class KotlinJavascriptSerializerExtension(
@@ -39,7 +40,7 @@ class KotlinJavascriptSerializerExtension(
     override val stringTable = ApproximatingStringTable()
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
-        lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
+        lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DYNAMIC_TYPE_DESERIALIZER_ID)
     }
 
     override fun serializeClass(

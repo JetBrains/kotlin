@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -37,7 +38,7 @@ class KlibMetadataSerializerExtension(
     }
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
-        lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
+        lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DYNAMIC_TYPE_DESERIALIZER_ID)
     }
 
     override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
