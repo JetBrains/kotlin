@@ -844,10 +844,15 @@ tasks {
         )
     }
 
-    register("kaptIdeTest") {
+    register("kaptTests") {
         dependsOn(":kotlin-annotation-processing:test")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
+    }
+
+    // Need the task for transition period. Shouold be removed in a week after commit is master.
+    register("kaptIdeTest") {
+        dependsOn("kaptTests")
     }
 
     register("test") {
