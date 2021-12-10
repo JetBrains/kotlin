@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
+import java.lang.RuntimeException
 
 class ClassCodegen private constructor(
     val irClass: IrClass,
@@ -141,7 +142,8 @@ class ClassCodegen private constructor(
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
             if (method.name.asString() != "<clinit>" &&
                 method.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA &&
-                method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
+                method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR &&
+                !(method.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && method.body == null)
             ) {
                 generateMethod(method, smap)
             }
