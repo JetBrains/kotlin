@@ -112,7 +112,6 @@ include ":benchmarks",
         ":compiler:resolution.common.jvm",
         ":compiler:resolution",
         ":compiler:serialization",
-        ":compiler:psi",
         ":compiler:visualizer",
         ":compiler:visualizer:common",
         ":compiler:visualizer:render-fir",
@@ -291,6 +290,10 @@ include ":benchmarks",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
         ":wasm:wasm.ir"
+
+include ":compiler:psi",
+        ":compiler:psi:cls-psi-stub-builder"
+
 
 include ":kotlinx-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",
