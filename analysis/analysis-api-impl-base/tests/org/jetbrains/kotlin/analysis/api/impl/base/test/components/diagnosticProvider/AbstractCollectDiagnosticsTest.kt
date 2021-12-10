@@ -33,7 +33,7 @@ abstract class AbstractCollectDiagnosticsTest(
         analyseForTest(ktFile) {
             val diagnosticsInFile =
                 ktFile.collectDiagnosticsForFile(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map { it.getKey() }.sorted()
-            val diagnosticsFromElements = buildList {
+            @Suppress("RemoveExplicitTypeArguments") val diagnosticsFromElements = buildList<Pair<KtElement, DiagnosticKey>> {
                 ktFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtElement(element: KtElement) {
                         for (diagnostic in element.getDiagnostics(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)) {
