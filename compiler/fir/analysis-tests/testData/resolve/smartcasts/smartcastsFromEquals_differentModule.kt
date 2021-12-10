@@ -20,7 +20,10 @@ class FinalWithOverride<T> {
 // MODULE: main(lib)
 fun testFinal(x: Final<*>, y: Final<Int>) {
     if (x == y) {
-        takeIntFinal(<!ARGUMENT_TYPE_MISMATCH!>x<!>) // Error
+        // No error, even while `Final` belongs to a different module and "equals" contract might be changed without re-compilation
+        // But since we had such behavior in FE1.0, it might be too strict to prohibit it now, especially once there's a lot of cases
+        // when different modules belong to a single project, so they're totally safe (see KT-50534)
+        takeIntFinal(x)
     }
     if (x === y) {
         takeIntFinal(x) // OK
@@ -38,7 +41,10 @@ fun testBase(x: Base<*>, y: Base<Int>) {
 
 fun testDerived(x: Derived<*>, y: Derived<Int>) {
     if (x == y) {
-        takeIntDerived(<!ARGUMENT_TYPE_MISMATCH!>x<!>) // Error
+        // No error, even while `Final` belongs to a different module and "equals" contract might be changed without re-compilation
+        // But since we had such behavior in FE1.0, it might be too strict to prohibit it now, especially once there's a lot of cases
+        // when different modules belong to a single project, so they're totally safe (see KT-50534)
+        takeIntDerived(x)
     }
     if (x === y) {
         takeIntDerived(x) // OK

@@ -33,7 +33,7 @@ FILE: module_main_smartcastsFromEquals_differentModule.kt
     public final fun testFinal(x: R|Final<*>|, y: R|Final<kotlin/Int>|): R|kotlin/Unit| {
         when () {
             ==(R|<local>/x|, R|<local>/y|) ->  {
-                <Inapplicable(INAPPLICABLE): /takeIntFinal>#(R|<local>/x|)
+                R|/takeIntFinal|(R|<local>/x|)
             }
         }
 
@@ -61,7 +61,7 @@ FILE: module_main_smartcastsFromEquals_differentModule.kt
     public final fun testDerived(x: R|Derived<*>|, y: R|Derived<kotlin/Int>|): R|kotlin/Unit| {
         when () {
             ==(R|<local>/x|, R|<local>/y|) ->  {
-                <Inapplicable(INAPPLICABLE): /takeIntDerived>#(R|<local>/x|)
+                R|/takeIntDerived|(R|<local>/x|)
             }
         }
 

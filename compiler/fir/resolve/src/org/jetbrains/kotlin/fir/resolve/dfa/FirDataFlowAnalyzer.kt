@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -30,7 +29,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -710,10 +712,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (status.isExpect) return true
         when (classId) {
             StandardClassIds.Any, StandardClassIds.String -> return false
+            // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
+            StandardClassIds.Float, StandardClassIds.Double -> return true
         }
-        if (moduleData != session.moduleData) {
-            return true
-        }
+
+        // When the class belongs to a different module, "equals" contract might be changed without re-compilation
+        // But since we had such behavior in FE1.0, it might be too strict to prohibit it now, especially once there's a lot of cases
+        // when different modules belong to a single project, so they're totally safe (see KT-50534)
+        // if (moduleData != session.moduleData) {
+        //     return true
+        // }
+
         return session.declaredMemberScope(this)
             .getFunctions(OperatorNameConventions.EQUALS)
             .any { it.fir.isEquals() }
