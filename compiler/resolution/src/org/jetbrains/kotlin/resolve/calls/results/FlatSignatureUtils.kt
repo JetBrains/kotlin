@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.getValueParameterTypesFromCallableReflectio
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -28,9 +29,13 @@ fun <T> FlatSignature.Companion.createFromReflectionType(
     // have transient receiver which is not the same in its signature
     val receiver = descriptor.extensionReceiverParameter?.type
     val contextReceiversTypes = descriptor.contextReceiverParameters.mapNotNull { it.type }
-    val parameters = reflectionType.getValueParameterTypesFromCallableReflectionType(
-        receiver != null && !hasBoundExtensionReceiver
-    ).map { it.type }
+    val parameters = if (descriptor is VariableDescriptor) {
+        emptyList()
+    } else {
+        reflectionType.getValueParameterTypesFromCallableReflectionType(
+            receiver != null && !hasBoundExtensionReceiver
+        ).map { it.type }
+    }
 
     return FlatSignature(
         origin,
