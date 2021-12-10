@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -84,6 +85,8 @@ class FunctionInlining(
         innerClassesSupport
     )
 
+    private val typeArguments = mutableMapOf<IrTypeParameterSymbol, IrType?>()
+
     private var containerScope: ScopeWithIr? = null
 
     private var deepInline: Boolean = false
@@ -120,8 +123,20 @@ class FunctionInlining(
             ?: containerScope?.irElement as? IrDeclarationParent
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
+        val typeParameters =
+            if (actualCallee is IrConstructor)
+                actualCallee.parentAsClass.typeParameters
+            else actualCallee.typeParameters
+        (0 until expression.typeArgumentsCount).forEach {
+            typeArguments[typeParameters[it].symbol] = expression.getTypeArgument(it)
+        }
+
         val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
-        return inliner.inline()
+        return inliner.inline().also {
+            (0 until expression.typeArgumentsCount).forEach {
+                typeArguments[typeParameters[it].symbol] = null
+            }
+        }
     }
 
     private val IrFunction.needsInlining get() = this.isInline && !this.isExternal
@@ -134,17 +149,7 @@ class FunctionInlining(
         val context: CommonBackendContext
     ) {
 
-        val copyIrElement = run {
-            val typeParameters =
-                if (callee is IrConstructor)
-                    callee.parentAsClass.typeParameters
-                else callee.typeParameters
-            val typeArguments =
-                (0 until callSite.typeArgumentsCount).associate {
-                    typeParameters[it].symbol to callSite.getTypeArgument(it)
-                }
-            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
-        }
+        val copyIrElement = DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
