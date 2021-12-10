@@ -22,7 +22,7 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
     else -> false
   }) { // BLOCK
     when {
-      EQEQ(arg0 = ch, arg1 = <get-BACKSLASH>()) -> { // BLOCK
+      EQEQ(arg0 = ch, arg1 = '\\') -> { // BLOCK
         val tmp1_safe_receiver: Char? = <this>.nextChar()
         when {
           EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null

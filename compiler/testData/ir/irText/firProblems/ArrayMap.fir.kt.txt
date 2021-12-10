@@ -172,7 +172,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
   constructor() {
-    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = Companion.<get-DEFAULT_SIZE>()))
+    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
   }
 
   override var size: Int
@@ -183,7 +183,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   private fun ensureCapacity(index: Int) {
     when {
       lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
-        <this>.<set-data>(<set-?> = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = Companion.<get-INCREASE_K>())))
+        <this>.<set-data>(<set-?> = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = 2)))
       }
     }
   }

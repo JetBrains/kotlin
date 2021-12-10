@@ -1,4 +1,6 @@
 // !LANGUAGE: -InlineConstVals
+// IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 
 const val z = 0
 

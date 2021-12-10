@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
-                  arg1: CALL 'private final fun <get-BACKSLASH> (): kotlin.Char declared in <root>' type=kotlin.Char origin=GET_PROPERTY
+                  arg1: CONST Char type=kotlin.Char value='\\'
                 then: BLOCK type=@[FlexibleNullability] java.lang.StringBuilder? origin=SAFE_CALL
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Char? [val]
                     CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null

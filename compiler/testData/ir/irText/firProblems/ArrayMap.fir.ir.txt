@@ -398,8 +398,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           <T>: T of <root>.ArrayMapImpl
           data: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
             <T>: kotlin.Any
-            size: CALL 'private final fun <get-DEFAULT_SIZE> (): kotlin.Int declared in <root>.ArrayMapImpl.Companion' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ArrayMapImpl.Companion
+            size: CONST Int type=kotlin.Int value=20
     PROPERTY name:size visibility:public modality:FINAL [var]
       overridden:
         public abstract size: kotlin.Int [val]
@@ -445,8 +444,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     $this: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
                       $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                         $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                    other: CALL 'private final fun <get-INCREASE_K> (): kotlin.Int declared in <root>.ArrayMapImpl.Companion' type=kotlin.Int origin=GET_PROPERTY
-                      $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ArrayMapImpl.Companion
+                    other: CONST Int type=kotlin.Int value=2
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, index:kotlin.Int, value:T of <root>.ArrayMapImpl) returnType:kotlin.Unit [operator]
       overridden:
         public abstract fun set (index: kotlin.Int, value: T of <root>.ArrayMap): kotlin.Unit [operator] declared in <root>.ArrayMap

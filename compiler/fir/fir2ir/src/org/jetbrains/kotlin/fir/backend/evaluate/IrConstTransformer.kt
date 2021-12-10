@@ -33,7 +33,7 @@ class IrConstTransformer(private val interpreter: IrInterpreter, private val irF
         if (expression.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
             return interpreter.interpret(expression, irFile).replaceIfError(expression)
         }
-        return expression
+        return super.visitCall(expression)
     }
 
     override fun visitField(declaration: IrField): IrStatement {

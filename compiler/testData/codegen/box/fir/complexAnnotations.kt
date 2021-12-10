@@ -55,5 +55,10 @@ fun box(): String {
     Some()
     Other()
     Another()
+    run {
+        @State(name = "A", storages = [(Storage(value = StoragePathMacros.NON_ROAMABLE_FILE))])
+        class Local
+        Local()
+    }
     return "OK"
 }
