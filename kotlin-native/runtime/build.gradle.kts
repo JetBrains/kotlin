@@ -188,6 +188,8 @@ bitcode {
     create("experimental_memory_manager_cms", file("src/mm")) {
         headersDirs += files("src/gc/cms/cpp", "src/gc/common/cpp")
         includeRuntime()
+
+        onlyIf { targetSupportsThreads(target) }
     }
 
     create("common_gc_noop", file("src/gc/common")) {
@@ -203,6 +205,8 @@ bitcode {
     create("common_gc_cms", file("src/gc/common")) {
         headersDirs += files("src/gc/cms/cpp", "src/mm/cpp")
         includeRuntime()
+
+        onlyIf { targetSupportsThreads(target) }
     }
 
     create("noop_gc", file("src/gc/noop")) {
@@ -218,6 +222,8 @@ bitcode {
     create("concurrent_ms_gc", file("src/gc/cms")) {
         headersDirs += files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp")
         includeRuntime()
+
+        onlyIf { targetSupportsThreads(target) }
     }
 }
 

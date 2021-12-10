@@ -386,6 +386,8 @@ fun targetSupportsLibBacktrace(targetName: String) =
 fun targetSupportsCoreSymbolication(targetName: String) =
         HostManager().targetByName(targetName).supportsCoreSymbolication()
 
+fun targetSupportsThreads(targetName: String) =
+        HostManager().targetByName(targetName).supportsThreads()
 
 fun Project.mergeManifestsByTargets(source: File, destination: File) {
     logger.info("Merging manifests: $source -> $destination")

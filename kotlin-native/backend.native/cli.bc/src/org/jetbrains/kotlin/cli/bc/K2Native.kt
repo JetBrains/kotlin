@@ -300,28 +300,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         DestroyRuntimeMode.ON_SHUTDOWN
                     }
                 })
-                val assertGcSupported = {
-                    if (memoryModel != MemoryModel.EXPERIMENTAL) {
-                        configuration.report(ERROR, "-Xgc is only supported for -memory-model experimental")
-                    }
+                if (arguments.gc != null && memoryModel != MemoryModel.EXPERIMENTAL) {
+                    configuration.report(ERROR, "-Xgc is only supported for -memory-model experimental")
                 }
-                put(GARBAGE_COLLECTOR, when (arguments.gc) {
-                    null -> GC.SAME_THREAD_MARK_AND_SWEEP
-                    "noop" -> {
-                        assertGcSupported()
-                        GC.NOOP
-                    }
-                    "stms" -> {
-                        assertGcSupported()
-                        GC.SAME_THREAD_MARK_AND_SWEEP
-                    }
-                    "cms" -> {
-                        assertGcSupported()
-                        GC.CONCURRENT_MARK_AND_SWEEP
-                    }
+                putIfNotNull(GARBAGE_COLLECTOR, when (arguments.gc) {
+                    null -> null
+                    "noop" -> GC.NOOP
+                    "stms" -> GC.SAME_THREAD_MARK_AND_SWEEP
+                    "cms" -> GC.CONCURRENT_MARK_AND_SWEEP
                     else -> {
                         configuration.report(ERROR, "Unsupported GC ${arguments.gc}")
-                        GC.SAME_THREAD_MARK_AND_SWEEP
+                        null
                     }
                 })
                 if (memoryModel != MemoryModel.EXPERIMENTAL && arguments.gcAggressive) {
