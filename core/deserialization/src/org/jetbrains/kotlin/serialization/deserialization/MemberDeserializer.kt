@@ -132,12 +132,12 @@ class MemberDeserializer(private val c: DeserializationContext) {
         }
 
         if (Flags.HAS_CONSTANT.get(flags)) {
-            property.setCompileTimeInitializerFactory {
+            property.setCompileTimeInitializer(
                 c.storageManager.createNullableLazyValue {
                     val container = c.containingDeclaration.asProtoContainer()!!
                     c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, property.returnType)
                 }
-            }
+            )
         }
 
         if ((c.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ANNOTATION_CLASS) {

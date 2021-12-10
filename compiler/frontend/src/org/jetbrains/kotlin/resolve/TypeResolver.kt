@@ -410,8 +410,6 @@ class TypeResolver(
 
                     override fun getCompileTimeInitializer() = null
 
-                    override fun cleanCompileTimeInitializerCache() {}
-
                     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
                         return visitor.visitVariableDescriptor(this, data)
                     }

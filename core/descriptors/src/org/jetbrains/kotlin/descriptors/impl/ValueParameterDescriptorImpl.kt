@@ -113,9 +113,6 @@ open class ValueParameterDescriptorImpl(
     override fun isVar() = false
 
     override fun getCompileTimeInitializer() = null
-
-    override fun cleanCompileTimeInitializerCache() {}
-
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor {
         return ValueParameterDescriptorImpl(
                 newOwner, null, newIndex, annotations, newName, type, declaresDefaultValue(),

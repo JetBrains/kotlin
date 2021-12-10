@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import kotlin.annotations.jvm.ReadOnly;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -524,8 +525,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             substitutedDescriptor.setOverriddenDescriptors(overridden);
         }
 
-        if (isConst() && compileTimeInitializerFactory != null) {
-            substitutedDescriptor.setCompileTimeInitializer(compileTimeInitializer, compileTimeInitializerFactory);
+        if (isConst() && compileTimeInitializer != null) {
+            substitutedDescriptor.setCompileTimeInitializer(compileTimeInitializer);
         }
 
         return substitutedDescriptor;

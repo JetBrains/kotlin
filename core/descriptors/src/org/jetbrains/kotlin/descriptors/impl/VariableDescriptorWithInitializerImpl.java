@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
-import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -31,7 +30,6 @@ public abstract class VariableDescriptorWithInitializerImpl extends VariableDesc
     private final boolean isVar;
 
     protected NullableLazyValue<ConstantValue<?>> compileTimeInitializer;
-    protected Function0<NullableLazyValue<ConstantValue<?>>> compileTimeInitializerFactory;
 
     public VariableDescriptorWithInitializerImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -60,22 +58,8 @@ public abstract class VariableDescriptorWithInitializerImpl extends VariableDesc
         return null;
     }
 
-    public void setCompileTimeInitializerFactory(@NotNull Function0<NullableLazyValue<ConstantValue<?>>> compileTimeInitializerFactory) {
+    public void setCompileTimeInitializer(@NotNull NullableLazyValue<ConstantValue<?>> compileTimeInitializer) {
         assert !isVar() : "Constant value for variable initializer should be recorded only for final variables: " + getName();
-        setCompileTimeInitializer(null, compileTimeInitializerFactory);
-    }
-
-    public void setCompileTimeInitializer(
-            @Nullable NullableLazyValue<ConstantValue<?>> compileTimeInitializer,
-            @NotNull Function0<NullableLazyValue<ConstantValue<?>>> compileTimeInitializerFactory
-    ) {
-        assert !isVar() : "Constant value for variable initializer should be recorded only for final variables: " + getName();
-        this.compileTimeInitializerFactory = compileTimeInitializerFactory;
-        this.compileTimeInitializer = compileTimeInitializer != null ? compileTimeInitializer : compileTimeInitializerFactory.invoke();
-    }
-
-    @Override
-    public void cleanCompileTimeInitializerCache() {
-        this.compileTimeInitializer = compileTimeInitializerFactory.invoke();
+        this.compileTimeInitializer = compileTimeInitializer;
     }
 }

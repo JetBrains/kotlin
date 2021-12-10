@@ -114,9 +114,9 @@ class VariableTypeAndInitializerResolver(
         trace: BindingTrace
     ) {
         if (!variable.hasInitializer() || variable.isVar) return
-        variableDescriptor.setCompileTimeInitializerFactory {
+        variableDescriptor.setCompileTimeInitializer(
             storageManager.createRecursionTolerantNullableLazyValue(
-                computeInitializer@{
+                computeInitializer@ {
                     if (!DescriptorUtils.shouldRecordInitializerForProperty(
                             variableDescriptor,
                             variableType
@@ -133,17 +133,18 @@ class VariableTypeAndInitializerResolver(
                         constantExpressionEvaluator.module
                     )
                     val constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType)
-                        ?: return@computeInitializer null
+                            ?: return@computeInitializer null
 
                     if (constant.usesNonConstValAsConstant && variableDescriptor.isConst) {
                         trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer))
                     }
 
-                    constant.toConstantValue(initializerType)
+                    val qqq = constant.toConstantValue(initializerType)
+                    qqq
                 },
                 null
             )
-        }
+        )
     }
 
     private fun resolveDelegatedPropertyType(
