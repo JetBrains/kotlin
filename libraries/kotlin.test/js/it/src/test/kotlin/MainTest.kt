@@ -54,7 +54,7 @@ class AsyncTest {
     // Until bootstrap update
     @AfterTest
     fun after() {
-//        assertEquals(afterLog, "after")
+        assertEquals(afterLog, "after")
     }
 
     fun promise(v: Int) = Promise<Int> { resolve, reject ->
