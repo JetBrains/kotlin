@@ -22,11 +22,17 @@ class CompilationException(
     cause: Throwable? = null
 ) : RuntimeException(message, cause) {
     override val message: String
-        get() = buildString {
-            appendLine("Back-end: Please report this problem https://kotl.in/issue")
-            path?.let { appendLine("$it:$line:$column") }
-            content?.let { appendLine("Problem with `$it`") }
-            append("Details: " + super.message)
+        get() = try {
+            buildString {
+                appendLine("Back-end: Please report this problem https://kotl.in/issue")
+                path?.let { appendLine("$it:$line:$column") }
+                content?.let { appendLine("Problem with `$it`") }
+                append("Details: " + super.message)
+            }
+        } catch (e: Throwable) {
+            throw IllegalStateException("Problem with constructing exception message").also {
+                it.stackTrace = stackTrace
+            }
         }
 
     val line: Int
