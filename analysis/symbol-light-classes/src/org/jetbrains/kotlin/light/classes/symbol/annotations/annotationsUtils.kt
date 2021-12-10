@@ -16,12 +16,21 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
+import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
-    hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
+    hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, annotationUseSiteTarget)
 
 internal fun KtFileSymbol.hasJvmMultifileClassAnnotation(): Boolean =
-    hasAnnotation("kotlin/jvm/JvmMultifileClass", AnnotationUseSiteTarget.FILE)
+    hasAnnotation(JVM_MULTIFILE_CLASS_ID, AnnotationUseSiteTarget.FILE)
 
 internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): String? {
     val annotation = annotations.firstOrNull {
@@ -49,26 +58,31 @@ internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(project: Project, annotationU
     isHiddenByDeprecation(project, this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean =
-    hasAnnotation("kotlin/jvm/JvmField", null)
+    hasAnnotation(JVM_FIELD_ANNOTATION_CLASS_ID, null)
 
 internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
-    hasAnnotation("kotlin/PublishedApi", annotationUseSiteTarget)
+    hasAnnotation(StandardClassIds.Annotations.PublishedApi, annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
-    hasAnnotation("kotlin/Deprecated", annotationUseSiteTarget)
+    hasAnnotation(StandardClassIds.Annotations.Deprecated, annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean =
-    hasAnnotation("kotlin/jvm/JvmOverloads", null)
+    hasAnnotation(JVM_OVERLOADS_CLASS_ID, null)
 
 internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
-    hasAnnotation("kotlin/jvm/JvmStatic", annotationUseSiteTarget)
+    hasAnnotation(JVM_STATIC_ANNOTATION_CLASS_ID, annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean =
-    hasAnnotation("kotlin/internal/InlineOnly", null)
+    hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME, null)
 
-internal fun KtAnnotatedSymbol.hasAnnotation(classIdString: String, annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
+internal fun KtAnnotatedSymbol.hasAnnotation(classId: ClassId, annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
     annotations.any {
-        it.useSiteTarget == annotationUseSiteTarget && it.classId?.asString() == classIdString
+        it.useSiteTarget == annotationUseSiteTarget && it.classId == classId
+    }
+
+internal fun KtAnnotatedSymbol.hasAnnotation(fqName: FqName, annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
+    annotations.any {
+        it.useSiteTarget == annotationUseSiteTarget && it.classId?.asSingleFqName() == fqName
     }
 
 internal fun KtAnnotatedSymbol.computeAnnotations(

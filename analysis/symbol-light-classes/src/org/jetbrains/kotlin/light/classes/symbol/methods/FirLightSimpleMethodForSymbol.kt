@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
@@ -104,10 +106,10 @@ internal class FirLightSimpleMethodForSymbol(
         if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
             modifiers.add(PsiModifier.STATIC)
         }
-        if (functionSymbol.hasAnnotation("kotlin/jvm/Strictfp", null)) {
+        if (functionSymbol.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID, null)) {
             modifiers.add(PsiModifier.STRICTFP)
         }
-        if (functionSymbol.hasAnnotation("kotlin/jvm/Synchronized", null)) {
+        if (functionSymbol.hasAnnotation(SYNCHRONIZED_ANNOTATION_CLASS_ID, null)) {
             modifiers.add(PsiModifier.SYNCHRONIZED)
         }
 

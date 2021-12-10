@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -85,10 +86,10 @@ internal class FirLightFieldForPropertySymbol(
         if (!suppressFinal) {
             modifiers.add(PsiModifier.FINAL)
         }
-        if (propertySymbol.hasAnnotation("kotlin/jvm/Transient", null)) {
+        if (propertySymbol.hasAnnotation(TRANSIENT_ANNOTATION_CLASS_ID, null)) {
             modifiers.add(PsiModifier.TRANSIENT)
         }
-        if (propertySymbol.hasAnnotation("kotlin/jvm/Volatile", null)) {
+        if (propertySymbol.hasAnnotation(VOLATILE_ANNOTATION_CLASS_ID, null)) {
             modifiers.add(PsiModifier.VOLATILE)
         }
 
