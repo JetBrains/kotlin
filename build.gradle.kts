@@ -783,7 +783,6 @@ tasks {
         dependsOn("examplesTest")
 
         dependsOn("nativeCompilerTest")
-        dependsOn("firCompilerTest")
 
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn("scriptingTest")
@@ -796,7 +795,6 @@ tasks {
 
         dependsOn(":plugins:parcelize:parcelize-compiler:test")
         dependsOn(":kotlinx-serialization-compiler-plugin:test")
-
 
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
