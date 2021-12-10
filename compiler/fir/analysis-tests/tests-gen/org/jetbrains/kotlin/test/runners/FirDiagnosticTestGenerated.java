@@ -5556,6 +5556,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("definitelyNotNullCast.kt")
+            public void testDefinitelyNotNullCast() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/definitelyNotNullCast.kt");
+            }
+
+            @Test
             @TestMetadata("EnumMapGet.kt")
             public void testEnumMapGet() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");

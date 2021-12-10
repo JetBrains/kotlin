@@ -345,14 +345,18 @@ internal fun FirFunction.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
     val returnType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return false
 
-    if ((returnType.lowerBoundIfFlexible() as? ConeTypeParameterType)?.lookupTag != typeParameter.symbol.toLookupTag()) return false
+    if ((returnType.unwrap() as? ConeTypeParameterType)?.lookupTag != typeParameter.symbol.toLookupTag()) return false
 
     fun FirTypeRef.isBadType() =
         coneTypeSafe<ConeKotlinType>()
-            ?.contains { (it.lowerBoundIfFlexible() as? ConeTypeParameterType)?.lookupTag == typeParameter.symbol.toLookupTag() } != false
+            ?.contains { (it.unwrap() as? ConeTypeParameterType)?.lookupTag == typeParameter.symbol.toLookupTag() } != false
 
     if (valueParameters.any { it.returnTypeRef.isBadType() } || receiverTypeRef?.isBadType() == true) return false
 
     return true
+}
+
+private fun ConeKotlinType.unwrap(): ConeSimpleKotlinType = lowerBoundIfFlexible().let {
+    if (it is ConeDefinitelyNotNullType) it.original.unwrap() else it
 }
 
