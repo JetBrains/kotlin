@@ -290,6 +290,7 @@ class MemoizedInlineClassReplacements(
                         parent = propertySymbol.owner.parent
                         copyAttributes(propertySymbol.owner)
                         annotations = propertySymbol.owner.annotations
+                        backingField = propertySymbol.owner.backingField
                     }
                 }
                 correspondingPropertySymbol = property.symbol
