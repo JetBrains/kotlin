@@ -16840,6 +16840,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("complexAnnotations.kt")
+        public void testComplexAnnotations() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/complexAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("ConstValAccess.kt")
         public void testConstValAccess() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ConstValAccess.kt");
