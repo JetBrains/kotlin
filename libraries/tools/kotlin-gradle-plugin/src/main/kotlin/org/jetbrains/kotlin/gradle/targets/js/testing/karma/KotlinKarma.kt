@@ -148,6 +148,16 @@ class KotlinKarma(
 
     fun useChromeHeadless() = useChromeLike("ChromeHeadless")
 
+    fun useChromeHeadlessNoSandbox() {
+        val chromeHeadlessNoSandbox = "ChromeHeadlessNoSandbox"
+
+        config.customLaunchers[chromeHeadlessNoSandbox] = CustomLauncher("ChromeHeadless").apply {
+            flags.add("--no-sandbox")
+        }
+
+        useChromeLike(chromeHeadlessNoSandbox)
+    }
+
     fun useChromium() = useChromeLike("Chromium")
 
     fun useChromiumHeadless() = useChromeLike("ChromiumHeadless")
