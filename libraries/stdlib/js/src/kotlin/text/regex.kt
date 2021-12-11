@@ -318,7 +318,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
         public actual fun escapeReplacement(literal: String): String = literal.nativeReplace(replacementEscape, "\\$&")
 
         private val patternEscape = RegExp("""[\\^$*+?.()|[\]{}]""", "g")
-        private val replacementEscape = RegExp("""[\$]""", "g")
+        private val replacementEscape = RegExp("""[\\$]""", "g")
 
         internal fun nativeEscapeReplacement(literal: String): String = literal.nativeReplace(nativeReplacementEscape, "$$$$")
         private val nativeReplacementEscape = RegExp("""\$""", "g")
