@@ -11,7 +11,10 @@ repositories {
 }
 
 kotlin {
-    js()
+    js() {
+        browser()
+        nodejs()
+    }
 
     sourceSets {
         js().compilations["main"].defaultSourceSet {
