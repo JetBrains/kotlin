@@ -31,6 +31,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.runner.RunWith
 import java.io.File
+import java.nio.file.Files
 import java.util.regex.Pattern
 import kotlin.io.path.isDirectory
 import kotlin.test.*
@@ -556,6 +557,11 @@ abstract class BaseGradleIT {
 
     fun CompiledProject.assertFileExists(path: String = ""): CompiledProject {
         assertTrue(fileInWorkingDir(path).exists(), "The file [$path] does not exist.")
+        return this
+    }
+
+    fun CompiledProject.assertFileIsSymlink(path: String = ""): CompiledProject {
+        assertTrue(Files.isSymbolicLink(fileInWorkingDir(path).toPath()), "The file [$path] isn't a symlink.")
         return this
     }
 

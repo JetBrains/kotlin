@@ -79,6 +79,32 @@ class AppleFrameworkIT : BaseGradleIT() {
     }
 
     @Test
+    fun `check that macOS framework has symlinks`() {
+        with(Project("sharedAppleFramework")) {
+            val options: BuildOptions = defaultBuildOptions().copy(
+                customEnvironmentVariables = mapOf(
+                    "CONFIGURATION" to "debug",
+                    "SDK_NAME" to "macosx",
+                    "ARCHS" to "x86_64",
+                    "EXPANDED_CODE_SIGN_IDENTITY" to "-",
+                    "TARGET_BUILD_DIR" to workingDir.absolutePath,
+                    "FRAMEWORKS_FOLDER_PATH" to "${projectName}/build/xcode-derived"
+                )
+            )
+            build(":shared:embedAndSignAppleFrameworkForXcode", options = options) {
+                assertSuccessful()
+                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeMacosX64")
+                // Verify symlinks in gradle build folder
+                assertFileExists("/shared/build/xcode-frameworks/debug/macosx/sdk.framework/Headers")
+                assertFileIsSymlink("/shared/build/xcode-frameworks/debug/macosx/sdk.framework/Headers")
+                // Verify symlinks in xcode derived folder
+                assertFileExists("/build/xcode-derived/sdk.framework/Headers")
+                assertFileIsSymlink("/build/xcode-derived/sdk.framework/Headers")
+            }
+        }
+    }
+
+    @Test
     fun `check embedAndSignAppleFrameworkForXcode fail`() {
         with(Project("sharedAppleFramework")) {
             build(":shared:embedAndSignAppleFrameworkForXcode") {
