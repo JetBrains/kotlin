@@ -6,10 +6,11 @@ plugins {
 kotlin {
     android()
 
+    val macosX64 = macosX64()
     val iosX64 = iosX64()
     val iosSimulatorArm64 = iosSimulatorArm64()
     val iosArm64 = iosArm64()
-    configure(listOf(iosX64, iosSimulatorArm64, iosArm64))  {
+    configure(listOf(macosX64, iosX64, iosSimulatorArm64, iosArm64))  {
         binaries {
             framework {
                 baseName = "sdk"
