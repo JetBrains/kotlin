@@ -361,6 +361,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     isVar = false, isConst = false, isLateinit = false
                 )
                 tmpVal.initializer = initializer
+                tmpVal.parent = proxyFun.parent
                 temporaryVals.add(tmpVal)
                 return IrGetValueImpl(startOffset, endOffset, tmpVal.symbol)
             }
