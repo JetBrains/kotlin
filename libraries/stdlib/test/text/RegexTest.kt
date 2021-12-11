@@ -263,7 +263,10 @@ class RegexTest {
         // inserts the first captured group
         assertEquals("(123)-(456)", pattern.replace(input, "($1)"))
 
-        assertEquals("$&-$&", pattern.replace(input, Regex.escapeReplacement("$&")))
+        for (r in listOf("$&", "\\$", "\\ $", "$\\")) {
+            assertEquals("$r-$r", pattern.replace(input, Regex.escapeReplacement(r)))
+        }
+
         assertEquals("X-456", pattern.replaceFirst(input, "X"))
 
         val longInput = "0123456789ABC"
