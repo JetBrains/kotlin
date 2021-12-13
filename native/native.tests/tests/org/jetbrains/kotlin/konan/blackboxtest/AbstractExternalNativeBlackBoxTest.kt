@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransf
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
+import org.junit.jupiter.api.TestInstance
 import java.io.File
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // Create only one instance of every test class for consistent caching of source transformers.
 abstract class AbstractExternalNativeBlackBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
     private val registeredSourceTransformers: ThreadSafeCache<File, MutableList<ExternalSourceTransformer>> = ThreadSafeCache()
 

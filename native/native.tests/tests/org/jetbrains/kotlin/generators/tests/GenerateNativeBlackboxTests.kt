@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroup
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.TestInstance
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
@@ -22,7 +23,7 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractExternalNativeBlackBoxTest>(
                 suiteTestClassName = "ExternalTestGenerated",
-                annotations = listOf(external(), provider<UseExtTestCaseGroupProvider>())
+                annotations = listOf(external(), provider<UseExtTestCaseGroupProvider>(), testInstancePerClass())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -46,3 +47,4 @@ private inline fun <reified T : Annotation> provider() = annotation(T::class.jav
 
 private fun external() = annotation(Tag::class.java, "external")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+private fun testInstancePerClass() = annotation(TestInstance::class.java, TestInstance.Lifecycle.PER_CLASS)
