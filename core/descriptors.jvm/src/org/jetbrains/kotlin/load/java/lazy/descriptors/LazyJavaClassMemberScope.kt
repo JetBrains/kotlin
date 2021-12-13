@@ -205,17 +205,15 @@ class LazyJavaClassMemberScope(
         }
 
     private fun SimpleFunctionDescriptor.doesOverrideRenamedBuiltins(): Boolean {
-        return SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name).any {
-            // e.g. 'removeAt' or 'toInt'
-                builtinName ->
-            val builtinSpecialFromSuperTypes =
-                getFunctionsFromSupertypes(builtinName).filter { it.doesOverrideBuiltinWithDifferentJvmName() }
-            if (builtinSpecialFromSuperTypes.isEmpty()) return@any false
+        // e.g. 'removeAt' or 'toInt'
+        val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name) ?: return false
+        val builtinSpecialFromSuperTypes =
+            getFunctionsFromSupertypes(builtinName).filter { it.doesOverrideBuiltinWithDifferentJvmName() }
+        if (builtinSpecialFromSuperTypes.isEmpty()) return false
 
-            val methodDescriptor = this.createRenamedCopy(builtinName)
+        val methodDescriptor = this.createRenamedCopy(builtinName)
 
-            builtinSpecialFromSuperTypes.any { doesOverrideRenamedDescriptor(it, methodDescriptor) }
-        }
+        return builtinSpecialFromSuperTypes.any { doesOverrideRenamedDescriptor(it, methodDescriptor) }
     }
 
     private fun SimpleFunctionDescriptor.doesOverrideSuspendFunction(): Boolean {

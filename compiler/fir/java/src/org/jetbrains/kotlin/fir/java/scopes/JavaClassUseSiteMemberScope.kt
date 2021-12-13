@@ -222,9 +222,9 @@ class JavaClassUseSiteMemberScope(
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val potentialPropertyNames = getPropertyNamesCandidatesByAccessorName(name)
 
-        val renamedSpecialBuiltInNames = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name)
+        val renamedSpecialBuiltInName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name)
 
-        if (potentialPropertyNames.isEmpty() && renamedSpecialBuiltInNames.isEmpty() &&
+        if (potentialPropertyNames.isEmpty() && renamedSpecialBuiltInName == null &&
             !name.sameAsBuiltinMethodWithErasedValueParameters && !name.sameAsRenamedInJvmBuiltin
         ) {
             return super.processFunctionsByName(name, processor)
@@ -233,7 +233,7 @@ class JavaClassUseSiteMemberScope(
         val overriddenProperties = potentialPropertyNames.flatMap(this::getProperties).filterIsInstance<FirPropertySymbol>()
 
         specialFunctions.getOrPut(name) {
-            doProcessSpecialFunctions(name, overriddenProperties, renamedSpecialBuiltInNames)
+            doProcessSpecialFunctions(name, overriddenProperties, renamedSpecialBuiltInName)
         }.forEach {
             processor(it)
         }
@@ -242,14 +242,14 @@ class JavaClassUseSiteMemberScope(
     private fun doProcessSpecialFunctions(
         name: Name,
         overriddenProperties: List<FirPropertySymbol>,
-        renamedSpecialBuiltInNames: List<Name>
+        renamedSpecialBuiltInName: Name?
     ): List<FirNamedFunctionSymbol> {
         val result = mutableListOf<FirNamedFunctionSymbol>()
 
         declaredMemberScope.processFunctionsByName(name) { functionSymbol ->
             if (functionSymbol.isStatic) return@processFunctionsByName
             if (overriddenProperties.none { it.isOverriddenInClassBy(functionSymbol) } &&
-                !functionSymbol.doesOverrideRenamedBuiltins(renamedSpecialBuiltInNames) &&
+                !functionSymbol.doesOverrideRenamedBuiltins(renamedSpecialBuiltInName) &&
                 !functionSymbol.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters()
             ) {
                 result += functionSymbol
@@ -392,19 +392,17 @@ class JavaClassUseSiteMemberScope(
         return upperBound.classId == StandardClassIds.Any
     }
 
-    private fun FirNamedFunctionSymbol.doesOverrideRenamedBuiltins(renamedSpecialBuiltInNames: List<Name>): Boolean {
-        return renamedSpecialBuiltInNames.any {
-            // e.g. 'removeAt' or 'toInt'
-                builtinName ->
-            val builtinSpecialFromSuperTypes =
-                getFunctionsFromSupertypes(builtinName).filter { it.getOverriddenBuiltinWithDifferentJvmName() != null }
-            if (builtinSpecialFromSuperTypes.isEmpty()) return@any false
+    private fun FirNamedFunctionSymbol.doesOverrideRenamedBuiltins(renamedSpecialBuiltInName: Name?): Boolean {
+        if (renamedSpecialBuiltInName == null) return false
+        // e.g. 'removeAt' or 'toInt'
+        val builtinSpecialFromSuperTypes =
+            getFunctionsFromSupertypes(renamedSpecialBuiltInName).filter { it.getOverriddenBuiltinWithDifferentJvmName() != null }
+        if (builtinSpecialFromSuperTypes.isEmpty()) return false
 
-            val currentJvmDescriptor = fir.computeJvmDescriptor(customName = builtinName.asString())
+        val currentJvmDescriptor = fir.computeJvmDescriptor(customName = renamedSpecialBuiltInName.asString())
 
-            builtinSpecialFromSuperTypes.any { builtinSpecial ->
-                builtinSpecial.fir.computeJvmDescriptor() == currentJvmDescriptor
-            }
+        return builtinSpecialFromSuperTypes.any { builtinSpecial ->
+            builtinSpecial.fir.computeJvmDescriptor() == currentJvmDescriptor
         }
     }
 
