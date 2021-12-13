@@ -185,6 +185,7 @@ open class IrBasedValueParameterDescriptor(owner: IrValueParameter) : ValueParam
     override fun getName() = owner.name
     override fun declaresDefaultValue() = owner.defaultValue != null
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
+    override fun cleanCompileTimeInitializerCache() {}
 
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int) = TODO("not implemented")
 
@@ -325,6 +326,8 @@ open class IrBasedVariableDescriptor(owner: IrVariable) : VariableDescriptor, Ir
         TODO("")
     }
 
+    override fun cleanCompileTimeInitializerCache() {}
+
     override fun getOverriddenDescriptors(): Collection<VariableDescriptor> {
         TODO("Not Implemented")
     }
@@ -358,6 +361,8 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
     override fun getCompileTimeInitializer(): ConstantValue<*>? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun cleanCompileTimeInitializerCache() {}
 
     override fun getType(): KotlinType = owner.type.toIrBasedKotlinType()
 
@@ -828,6 +833,8 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         return null
     }
 
+    override fun cleanCompileTimeInitializerCache() {}
+
     override fun isSetterProjectedOut(): Boolean {
         TODO("not implemented")
     }
@@ -1015,6 +1022,8 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     override fun getCompileTimeInitializer(): ConstantValue<*>? {
         TODO("not implemented")
     }
+
+    override fun cleanCompileTimeInitializerCache() {}
 
     override fun isSetterProjectedOut(): Boolean {
         TODO("not implemented")

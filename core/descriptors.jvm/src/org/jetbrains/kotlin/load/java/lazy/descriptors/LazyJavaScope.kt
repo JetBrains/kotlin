@@ -307,11 +307,11 @@ abstract class LazyJavaScope(
         )
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {
-            propertyDescriptor.setCompileTimeInitializer(
+            propertyDescriptor.setCompileTimeInitializerFactory {
                 c.storageManager.createNullableLazyValue {
                     c.components.javaPropertyInitializerEvaluator.getInitializerConstant(field, propertyDescriptor)
                 }
-            )
+            }
         }
 
         c.components.javaResolverCache.recordField(field, propertyDescriptor)
