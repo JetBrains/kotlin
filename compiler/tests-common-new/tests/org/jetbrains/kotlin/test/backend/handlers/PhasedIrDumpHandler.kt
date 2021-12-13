@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -15,7 +16,7 @@ class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES !in module.directives) return
         val dumpDirectory = testServices.getOrCreateTempDirectory(DUMPED_IR_FOLDER_NAME)
-        val dumpFiles = dumpDirectory.resolve(module.name).listFiles() ?: return
+        val dumpFiles = dumpDirectory.resolve(module.name).listFiles()?.filter { it.name.contains(AFTER_PREFIX) } ?: return
         val testFile = module.files.first()
         val testDirectory = testFile.originalFile.parentFile
         val visitedFiles = mutableListOf<String>()
@@ -38,5 +39,6 @@ class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler
 
     companion object {
         const val DUMPED_IR_FOLDER_NAME = "dumped_ir"
+        val AFTER_PREFIX = BeforeOrAfter.AFTER.name
     }
 }

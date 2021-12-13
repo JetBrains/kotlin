@@ -113,7 +113,7 @@ fun <Data, Context> dumpToFile(
         val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
         val extPrefix = if (dumpStrategy == "KotlinLike") "kt." else ""
 
-        val fileName = "${phaseIdFormatted}_${actionState.phase.name}.$extPrefix$fileExtension"
+        val fileName = "${phaseIdFormatted}_${actionState.beforeOrAfter}.${actionState.phase.name}.$extPrefix$fileExtension"
 
         File(directoryFile, fileName).writeText(dumpContent)
     }
