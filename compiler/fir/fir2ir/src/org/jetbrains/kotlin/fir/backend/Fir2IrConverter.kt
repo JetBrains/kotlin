@@ -421,7 +421,7 @@ class Fir2IrConverter(
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
             val signatureComposer = FirBasedSignatureComposer(mangler)
-            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer)
+            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer, fir2IrExtensions)
             val converter = Fir2IrConverter(moduleDescriptor, components)
 
             components.converter = converter

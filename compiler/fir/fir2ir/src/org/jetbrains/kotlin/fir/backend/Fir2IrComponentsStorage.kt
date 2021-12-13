@@ -23,7 +23,8 @@ class Fir2IrComponentsStorage(
     override val scopeSession: ScopeSession,
     override val symbolTable: SymbolTable,
     override val irFactory: IrFactory,
-    override val signatureComposer: FirBasedSignatureComposer
+    override val signatureComposer: FirBasedSignatureComposer,
+    override val extensions: Fir2IrExtensions,
 ) : Fir2IrComponents {
 
     override lateinit var converter: Fir2IrConverter

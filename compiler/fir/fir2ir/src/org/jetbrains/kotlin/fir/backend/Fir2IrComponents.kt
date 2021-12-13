@@ -41,4 +41,6 @@ interface Fir2IrComponents {
     val callGenerator: CallAndReferenceGenerator
     val fakeOverrideGenerator: FakeOverrideGenerator
     val delegatedMemberGenerator: DelegatedMemberGenerator
+
+    val extensions: Fir2IrExtensions
 }

@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -50,6 +49,10 @@ class Fir2IrLazySimpleFunction(
 
     override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)
+    }
+
+    override var body: IrBody? by lazyVar(lock) {
+        if (tryLoadIr()) body else null
     }
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
@@ -107,4 +110,19 @@ class Fir2IrLazySimpleFunction(
 
     override val containerSource: DeserializedContainerSource?
         get() = fir.containerSource
+
+    private fun tryLoadIr(): Boolean {
+        if (!isInline || isFakeOverride) return false
+        if (!extensions.irNeedsDeserialization) return false
+        val toplevel = getToplevel()
+        return (toplevel as? DeserializableClass)?.loadIr() ?: false
+    }
+
+    private fun getToplevel(): IrDeclaration {
+        var current: IrDeclaration = this
+        while (current.parent !is IrPackageFragment) {
+            current = current.parent as IrDeclaration
+        }
+        return current
+    }
 }
