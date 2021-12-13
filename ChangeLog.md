@@ -1,3 +1,75 @@
+## 1.6.10
+
+### Android
+
+- [`KT-49798`](https://youtrack.jetbrains.com/issue/KT-49798) [MPP] [Android] AGP 7.1.0+ android target publications leak 'AgpVersionAttr' attribute
+
+### Compiler
+
+#### Performance Improvements
+
+- [`KT-49821`](https://youtrack.jetbrains.com/issue/KT-49821) Optimize LazyClassMemberScope#getContributedDescriptors: use nameFilter
+
+#### Fixes
+
+- [`KT-49833`](https://youtrack.jetbrains.com/issue/KT-49833) java.lang.NullPointerException caused by accidental newline in package directive
+- [`KT-49838`](https://youtrack.jetbrains.com/issue/KT-49838) Type inference fails on 1.6.0: Cannot use 'CapturedType(*)' as reified type parameter
+- [`KT-49752`](https://youtrack.jetbrains.com/issue/KT-49752) Regression in method return type inference: "IllegalStateException: Expected some types"
+- [`KT-49876`](https://youtrack.jetbrains.com/issue/KT-49876) Kotlin/Native: cross-compilation of Linux static library is broken in Windows in 1.6.0
+- [`KT-49792`](https://youtrack.jetbrains.com/issue/KT-49792) Atomicfu: "standalone invocation of kotlinx.atomicfu.AtomicInt::compareAndSet that was not traced to previous field load" with suspend function
+- [`KT-49834`](https://youtrack.jetbrains.com/issue/KT-49834) Coroutine method transformer generates invalid locals table.
+- [`KT-49441`](https://youtrack.jetbrains.com/issue/KT-49441) Support friend modules in Kotlin Native
+- [`KT-49248`](https://youtrack.jetbrains.com/issue/KT-49248) K/N: Symbol with `IrSimpleFunctionSymbolImpl` is unbound after 1.5.30
+- [`KT-49651`](https://youtrack.jetbrains.com/issue/KT-49651) Inconsistent compiler APIs for repeatable annotations
+- [`KT-49168`](https://youtrack.jetbrains.com/issue/KT-49168) JVM IR: IndexOutOfBoundsException with fun interface + suspend function as SAM method
+- [`KT-49573`](https://youtrack.jetbrains.com/issue/KT-49573) No annotated types, compiler emits "Annotated types are not supported in typeOf"
+- [`KT-47192`](https://youtrack.jetbrains.com/issue/KT-47192) Build Fake Overrides for internal members of classes from friend module
+- [`KT-48673`](https://youtrack.jetbrains.com/issue/KT-48673) IR: IllegalStateException for usage of internal member declared in a superclass in another module
+
+### JavaScript
+
+- [`KT-47811`](https://youtrack.jetbrains.com/issue/KT-47811) KJS / IR: "ClassCastException" when using suspend function in `console.log`
+
+### Language Design
+
+- [`KT-49868`](https://youtrack.jetbrains.com/issue/KT-49868) Support language version 1.3 in Kotlin 1.6.10
+
+### Libraries
+
+- [`KT-50173`](https://youtrack.jetbrains.com/issue/KT-50173) Different behavior of Regex escapeReplacement function in JVM and JS
+
+### Tools. Android Extensions
+
+- [`KT-49799`](https://youtrack.jetbrains.com/issue/KT-49799) NullPointerException when using kotlin-android-extensions synthetic after update to Kotlin 1.6.0
+
+### Tools. Compiler Plugins
+
+- [`KT-50005`](https://youtrack.jetbrains.com/issue/KT-50005) jvm-abi-gen plugin: do not change the declaration order in generated jars
+- [`KT-49726`](https://youtrack.jetbrains.com/issue/KT-49726) JVM/IR: "IllegalArgumentException: Null argument in ExpressionCodegen for parameter VALUE_PARAMETER": Serialization with sealed class as type parameter
+
+### Tools. Gradle
+
+- [`KT-49835`](https://youtrack.jetbrains.com/issue/KT-49835) Android consumers can't resolve Android debug variants of published MPP libraries published with Kotlin 1.6.0 & Gradle 7.0+
+- [`KT-49910`](https://youtrack.jetbrains.com/issue/KT-49910) Incremental compilation speed regression in 1.6.0 for Android projects
+
+### Tools. Gradle. JS
+
+- [`KT-49109`](https://youtrack.jetbrains.com/issue/KT-49109) KJS / Gradle: Configuration failed: Could not find node-14.17.0-darwin-arm64.tar.gz (org.nodejs:node:14.17.0)
+- [`KT-50135`](https://youtrack.jetbrains.com/issue/KT-50135) KJS: Problem with Yarn install with scripts on Windows
+- [`KT-34014`](https://youtrack.jetbrains.com/issue/KT-34014) Gradle, JS: Ability to persist / reuse yarn.lock
+- [`KT-49505`](https://youtrack.jetbrains.com/issue/KT-49505) KJS / IR: Installation of NPM dependencies should be with ignore-scripts
+
+### Tools. Gradle. Native
+
+- [`KT-49931`](https://youtrack.jetbrains.com/issue/KT-49931) Kotlin Multiplatform Fails in Windows after 1.6.0 upgrade - Cannot run program "pod"
+- [`KT-49771`](https://youtrack.jetbrains.com/issue/KT-49771) podInstall task is not executed after adding a pod dependency to the shared module
+
+### Tools. Incremental Compile
+
+- [`KT-49822`](https://youtrack.jetbrains.com/issue/KT-49822) Incremental compilation state is modified when the build fails in Kotlin 1.6
+- [`KT-49340`](https://youtrack.jetbrains.com/issue/KT-49340) "IllegalStateException: @NotNull method org/jetbrains/kotlin/com/intellij/openapi/application/AsyncExecutionService.getService must not return null" with Anvil plugin and incremental compilation
+
+
 ## 1.6.10-RC
 
 ### Android
