@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.utils.SmartList
@@ -206,6 +207,8 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
     private fun optimizeTemporaryVals(cfg: ControlFlowGraph, temporaryVals: List<TemporaryVal>) {
         val insnList = cfg.methodNode.instructions
 
+        var maxStackIncrement = 0
+
         for (tmp in temporaryVals) {
             if (tmp.loadInsns.isEmpty()) {
                 // Drop unused temporary store
@@ -270,8 +273,42 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
                         continue
                     }
                 }
+            } else if (tmp.loadInsns.size == 2) {
+                val storeInsn = tmp.storeInsn
+
+                if (storeInsn.matchOpcodes(Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.LDC, Opcodes.INVOKESTATIC, Opcodes.ALOAD)) {
+                    val aLoad1Insn = storeInsn.next
+                    val ldcInsn = aLoad1Insn.next
+                    val invokeStaticInsn = ldcInsn.next
+                    val aLoad2Insn = invokeStaticInsn.next
+
+                    if ((aLoad1Insn as VarInsnNode).`var` == tmp.index &&
+                        (ldcInsn as LdcInsnNode).cst is String &&
+                        invokeStaticInsn.isCheckExpressionValueIsNotNull() &&
+                        (aLoad2Insn as VarInsnNode).`var` == tmp.index
+                    ) {
+                        // Replace instruction sequence:
+                        //      ASTORE tmp
+                        //      ALOAD tmp
+                        //      LDC "expression"
+                        //      INVOKESTATIC <check-not-null-expression> (Ljava/lang/Object;Ljava/lang/String;)V
+                        //      ALOAD tmp
+                        // with
+                        //      DUP
+                        //      LDC "expression
+                        //      INVOKESTATIC <check-not-null-expression> (Ljava/lang/Object;Ljava/lang/String;)V
+                        insnList.remove(storeInsn)
+                        insnList.remove(aLoad1Insn)
+                        insnList.insertBefore(ldcInsn, InsnNode(Opcodes.DUP))
+                        insnList.remove(aLoad2Insn)
+                        maxStackIncrement = max(maxStackIncrement, 1)
+                        continue
+                    }
+                }
             }
         }
+
+        cfg.methodNode.maxStack += maxStackIncrement
     }
 
     @Suppress("DuplicatedCode")

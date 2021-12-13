@@ -4663,6 +4663,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         public void testNoAssertionsForKotlin() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/notNullAssertions/noAssertionsForKotlin.kt");
         }
+
+        @Test
+        @TestMetadata("noTemporaryVariableInNullCheckOnExpression.kt")
+        public void testNoTemporaryVariableInNullCheckOnExpression() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/notNullAssertions/noTemporaryVariableInNullCheckOnExpression.kt");
+        }
     }
 
     @Nested
