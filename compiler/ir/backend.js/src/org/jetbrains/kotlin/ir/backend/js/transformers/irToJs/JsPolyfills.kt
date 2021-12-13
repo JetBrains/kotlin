@@ -20,7 +20,6 @@ class JsPolyfills private constructor(
     constructor(generateRegionComments: Boolean = false) : this(mutableSetOf<String>(), generateRegionComments)
 
     fun registerDeclarationNativeImplementation(declaration: IrDeclaration) {
-        if (!declaration.isEffectivelyExternal()) return
         val implementation = declaration.getJsNativeImplementation() ?: return
         polyfills.add(implementation.trimIndent())
     }
