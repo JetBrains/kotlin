@@ -33,30 +33,30 @@ class XCFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble XCFramework for all available ios and watchos targets`() {
         with(Project("appleXCFramework")) {
-            build("assembleSdkDebugXCFramework") {
+            build("assembleSharedDebugXCFramework") {
                 assertSuccessful()
                 assertTasksExecuted(":shared:linkDebugFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosX64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosX64")
-                assertTasksExecuted(":shared:assembleSdkDebugWatchosFatFrameworkForXCFramework")
-                assertTasksExecuted(":shared:assembleSdkDebugXCFramework")
-                assertFileExists("/shared/build/XCFrameworks/debug/sdk.xcframework")
-                assertFileExists("/shared/build/XCFrameworks/debug/sdk.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
-                assertFileExists("/shared/build/sdkXCFrameworkTemp/fatframework/debug/watchos/sdk.framework")
-                assertFileExists("/shared/build/sdkXCFrameworkTemp/fatframework/debug/watchos/sdk.framework.dSYM")
+                assertTasksExecuted(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
+                assertTasksExecuted(":shared:assembleSharedDebugXCFramework")
+                assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework")
+                assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
+                assertFileExists("/shared/build/sharedXCFrameworkTemp/fatframework/debug/watchos/shared.framework")
+                assertFileExists("/shared/build/sharedXCFrameworkTemp/fatframework/debug/watchos/shared.framework.dSYM")
             }
 
-            build("assembleSdkDebugXCFramework") {
+            build("assembleSharedDebugXCFramework") {
                 assertSuccessful()
                 assertTasksUpToDate(":shared:linkDebugFrameworkIosArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkIosX64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosX64")
-                assertTasksUpToDate(":shared:assembleSdkDebugWatchosFatFrameworkForXCFramework")
-                assertTasksUpToDate(":shared:assembleSdkDebugXCFramework")
+                assertTasksUpToDate(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
+                assertTasksUpToDate(":shared:assembleSharedDebugXCFramework")
             }
         }
     }
@@ -64,18 +64,19 @@ class XCFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble other XCFramework for ios targets`() {
         with(Project("appleXCFramework")) {
-            build("assembleXCFramework") {
+            build("assembleOtherXCFramework") {
                 assertSuccessful()
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkReleaseFrameworkIosX64")
-                assertTasksExecuted(":shared:assembleSharedReleaseXCFramework")
-                assertFileExists("/shared/build/XCFrameworks/release/shared.xcframework")
-                assertFileExists("/shared/build/XCFrameworks/release/shared.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
+                assertTasksExecuted(":shared:assembleOtherReleaseXCFramework")
+                assertFileExists("/shared/build/XCFrameworks/release/other.xcframework")
+                assertFileExists("/shared/build/XCFrameworks/release/other.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosX64")
-                assertTasksExecuted(":shared:assembleSharedDebugXCFramework")
-                assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework")
-                assertFileExists("/shared/build/XCFrameworks/debug/shared.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
+                assertTasksExecuted(":shared:assembleOtherDebugXCFramework")
+                assertFileExists("/shared/build/XCFrameworks/debug/other.xcframework")
+                assertFileExists("/shared/build/XCFrameworks/debug/other.xcframework/ios-arm64/dSYMs/shared.framework.dSYM")
+                assertContains("Name of XCFramework 'other' differs from inner frameworks name 'shared'! Framework renaming is not supported yet")
             }
         }
     }
@@ -99,13 +100,29 @@ class XCFrameworkIT : BaseGradleIT() {
         with(transformProjectWithPluginsDsl("appleXCFramework")) {
             with(gradleBuildScript("shared")) {
                 var text = readText()
-                text = text.replace("XCFramework(\"sdk\")", "XCFramework()")
+                text = text.replace("XCFramework(\"other\")", "XCFramework()")
                 writeText(text)
             }
 
             build("tasks") {
                 assertFailed()
                 assertContains("Cannot add task 'assembleSharedReleaseXCFramework' as a task with that name already exists.")
+            }
+        }
+    }
+
+    @Test
+    fun `check configuration error if XCFramework contains frameworks with different names`() {
+        with(transformProjectWithPluginsDsl("appleXCFramework")) {
+            with(gradleBuildScript("shared")) {
+                var text = readText()
+                text = text.replaceFirst("baseName = \"shared\"", "baseName = \"awesome\"")
+                writeText(text)
+            }
+
+            build("tasks") {
+                assertFailed()
+                assertContains("All inner frameworks in XCFramework 'shared' should have same names. But there are two with 'awesome' and 'shared' names")
             }
         }
     }

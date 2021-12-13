@@ -78,6 +78,7 @@ class XCFrameworkConfig {
                     .firstOrNull { it.targets.contains(framework.konanTarget) }
                     ?.also { appleTarget ->
                         holder.fatTasks[appleTarget]?.configure { fatTask ->
+                            fatTask.baseName = framework.baseName //all frameworks should have same names
                             fatTask.from(framework)
                         }
                     }
@@ -121,15 +122,15 @@ private fun Project.registerAssembleFatForXCFrameworkTask(
 ): TaskProvider<FatFrameworkTask> {
     val taskName = lowerCamelCaseName(
         "assemble",
-        xcFrameworkName,
         buildType.getName(),
         appleTarget.targetName,
-        "FatFrameworkForXCFramework"
+        "FatFrameworkFor",
+        xcFrameworkName,
+        "XCFramework"
     )
 
     return registerTask(taskName) { task ->
         task.destinationDir = XCFrameworkTask.fatFrameworkDir(project, xcFrameworkName, buildType, appleTarget)
-        task.baseName = xcFrameworkName.asValidFrameworkName()
         task.onlyIf {
             task.frameworks.size > 1
         }
@@ -195,7 +196,15 @@ abstract class XCFrameworkTask : DefaultTask() {
     fun fromFrameworkDescriptors(vararg frameworks: FrameworkDescriptor) = fromFrameworkDescriptors(frameworks.toList())
 
     fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
+        val frameworkName = groupedFrameworkFiles.values.flatten().firstOrNull()?.name
+
         frameworks.forEach { framework ->
+            if (frameworkName != null && framework.name != frameworkName) {
+                error(
+                    "All inner frameworks in XCFramework '${baseName.get()}' should have same names. " +
+                            "But there are two with '$frameworkName' and '${framework.name}' names"
+                )
+            }
             val group = AppleTarget.values().first { it.targets.contains(framework.target) }
             groupedFrameworkFiles.getOrPut(group, { mutableListOf() }).add(framework)
         }
@@ -203,6 +212,21 @@ abstract class XCFrameworkTask : DefaultTask() {
 
     @TaskAction
     fun assemble() {
+        val frameworks = groupedFrameworkFiles.values.flatten()
+        if (frameworks.isNotEmpty()) {
+            val xcfName = baseName.get()
+            val name = frameworks.first().name
+            if (frameworks.any { it.name != name }) {
+                error("All inner frameworks in XCFramework '$xcfName' should have same names!" +
+                              frameworks.joinToString("\n") { it.file.path })
+            }
+            if (name != xcfName) {
+                logger.warn(
+                    "Name of XCFramework '$xcfName' differs from inner frameworks name '$name'! Framework renaming is not supported yet"
+                )
+            }
+        }
+
         val frameworksForXCFramework = groupedFrameworkFiles.entries.mapNotNull { (group, files) ->
             when {
                 files.size == 1 -> files.first()

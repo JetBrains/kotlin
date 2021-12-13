@@ -5,14 +5,14 @@ plugins {
 }
 
 kotlin {
-    val sdkXCFramework = XCFramework("sdk")
-    val otherXCFramework = XCFramework()
+    val xcf = XCFramework()
+    val otherXCFramework = XCFramework("other")
 
     ios {
         binaries {
             framework {
                 baseName = "shared"
-                sdkXCFramework.add(this)
+                xcf.add(this)
                 otherXCFramework.add(this)
             }
         }
@@ -22,7 +22,7 @@ kotlin {
         binaries {
             framework {
                 baseName = "shared"
-                sdkXCFramework.add(this)
+                xcf.add(this)
             }
         }
     }
