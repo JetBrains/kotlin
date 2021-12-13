@@ -4772,6 +4772,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testKt47851a() throws Exception {
             runTest("compiler/testData/codegen/box/checkcastOptimization/kt47851a.kt");
         }
+
+        @Test
+        @TestMetadata("kt50215.kt")
+        public void testKt50215() throws Exception {
+            runTest("compiler/testData/codegen/box/checkcastOptimization/kt50215.kt");
+        }
     }
 
     @Nested
