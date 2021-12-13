@@ -101,11 +101,6 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         }
     }
 
-    override val stubGenerator: DeclarationStubGenerator
-        get() = error("Should not be called")
-    override val typeTranslator: TypeTranslator
-        get() = error("Should not be called")
-
     override val factory: IrFactory
         get() = super<AbstractFir2IrLazyDeclaration>.factory
 

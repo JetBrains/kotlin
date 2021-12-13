@@ -57,13 +57,20 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                 firClass = firClass.declarations.singleOrNull { (it as? FirRegularClass)?.name?.asString() == midName } as? FirRegularClass
                     ?: return null
             }
-            if (symbol is IrClassSymbol) {
-                firCandidates = listOf(firClass)
-                parent = classifierStorage.getIrClassSymbol(firParentClass!!.symbol).owner
-            } else {
-                val lastName = nameSegments.last()
-                firCandidates = firClass.declarations.filter { it is FirCallableDeclaration && it.symbol.name.asString() == lastName }
-                parent = firParentClass?.let { classifierStorage.getIrClassSymbol(it.symbol).owner } ?: packageFragment
+            when (symbol) {
+                is IrClassSymbol -> {
+                    firCandidates = listOf(firClass)
+                    parent = classifierStorage.getIrClassSymbol(firParentClass!!.symbol).owner
+                }
+                is IrConstructorSymbol -> {
+                    firCandidates = firClass.declarations.filter { it is FirConstructor }
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
+                }
+                else -> {
+                    val lastName = nameSegments.last()
+                    firCandidates = firClass.declarations.filter { it is FirCallableDeclaration && it.symbol.name.asString() == lastName }
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
+                }
             }
         }
 

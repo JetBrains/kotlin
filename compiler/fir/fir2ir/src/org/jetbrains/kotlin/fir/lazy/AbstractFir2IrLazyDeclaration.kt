@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F, D : IrDeclaration> :
-    IrDeclaration, IrDeclarationParent, Fir2IrComponents where F : FirMemberDeclaration, F : FirAnnotationContainer {
+    IrDeclaration, IrDeclarationParent, IrLazyDeclarationBase, Fir2IrComponents where F : FirMemberDeclaration, F : FirAnnotationContainer {
 
     val fir: F
     override val symbol: Fir2IrBindableSymbol<*, D>
@@ -42,9 +45,18 @@ interface AbstractFir2IrLazyDeclaration<F, D : IrDeclaration> :
         }
     }
 
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
     }
+
+    override fun lazyParent(): IrDeclarationParent {
+        return parent
+    }
+
+    override val stubGenerator: DeclarationStubGenerator
+        get() = error("Should not be called")
+    override val typeTranslator: TypeTranslator
+        get() = error("Should not be called")
 }
