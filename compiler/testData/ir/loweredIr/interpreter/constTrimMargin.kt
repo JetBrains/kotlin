@@ -10,3 +10,10 @@ const val withoutMargin = """
     #foo
     #bar
 """.trimMargin("#")
+
+fun box(): String {
+    if (trimMargin != "123") return "Fail 1"
+    if (trimMarginDefault != "ABC\n123\n456") return "Fail 2"
+    if (withoutMargin != "XYZ\nfoo\nbar") return "Fail 3"
+    return "OK"
+}

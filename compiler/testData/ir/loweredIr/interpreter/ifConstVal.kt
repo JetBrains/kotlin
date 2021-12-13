@@ -15,3 +15,12 @@ const val withWhen3 = when(value) {
     else -> "3"
 }
 const val multibranchIf = if (value == 100) 1 else if (value == 1000) 2 else 3
+
+fun box(): String {
+    if (condition != "True") return "Fail 1"
+    if (withWhen != "True") return "Fail 2"
+    if (withWhen2 != "True") return "Fail 3"
+    if (withWhen3 != "1") return "Fail 4"
+    if (multibranchIf != 3) return "Fail 5"
+    return "OK"
+}

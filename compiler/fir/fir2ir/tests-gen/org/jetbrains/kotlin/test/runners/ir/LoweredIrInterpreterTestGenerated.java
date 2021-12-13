@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/ir/loweredIr")
 @TestDataPath("$PROJECT_ROOT")
-public class DumpLoweredIrTestGenerated extends AbstractDumpLoweredIrTest {
+public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpreterTest {
     @Test
     public void testAllFilesPresentInLoweredIr() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/loweredIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);

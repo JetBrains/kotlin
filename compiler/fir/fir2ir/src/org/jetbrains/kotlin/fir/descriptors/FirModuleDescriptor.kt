@@ -61,7 +61,7 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     }
 
     override fun getName(): Name {
-        return Name.identifier("module for FIR session")
+        return FIR_MODULE_NAME
     }
 
     override val stableName: Name?
@@ -74,4 +74,7 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     override val annotations: Annotations
         get() = Annotations.EMPTY
 
+    companion object {
+        val FIR_MODULE_NAME = Name.identifier("module for FIR session")
+    }
 }

@@ -6,3 +6,9 @@ const val complexTrimIndent =
             123
             456
         """.trimIndent()
+
+fun box(): String {
+    if (trimIndent != "123") return "Fail 1"
+    if (complexTrimIndent != "ABC\n123\n456") return "Fail 2"
+    return "OK"
+}

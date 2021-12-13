@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.getOrCreateTempDirectory
+import java.io.File
 
 class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
@@ -40,5 +41,6 @@ class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler
     companion object {
         const val DUMPED_IR_FOLDER_NAME = "dumped_ir"
         val AFTER_PREFIX = BeforeOrAfter.AFTER.name
+        val BEFORE_PREFIX = BeforeOrAfter.BEFORE.name
     }
 }
