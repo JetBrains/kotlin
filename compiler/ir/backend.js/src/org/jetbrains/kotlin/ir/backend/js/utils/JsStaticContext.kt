@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIntrinsicTransformers
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfillsVisitor
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
@@ -20,7 +20,7 @@ class JsStaticContext(
     private val irNamer: IrNamer,
     val globalNameScope: NameTable<IrDeclaration>,
 ) : IrNamer by irNamer {
-    val polyfills = JsPolyfillsVisitor()
+    val polyfills = JsPolyfills()
     val intrinsics = JsIntrinsicTransformers(backendContext)
     val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
     val coroutineImplDeclaration = backendContext.ir.symbols.coroutineImpl.owner

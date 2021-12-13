@@ -12,10 +12,14 @@ import org.jetbrains.kotlin.js.backend.ast.JsCode
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-class JsPolyfillsVisitor(private val generateRegionComments: Boolean = false) {
-    private val polyfills = mutableSetOf<String>()
+class JsPolyfills private constructor(
+    private val polyfills: MutableSet<String>,
+    private val generateRegionComments: Boolean = false,
+) : Iterable<String> by polyfills {
+    constructor(polyfills: Iterable<String>) : this(polyfills.toMutableSet())
+    constructor(generateRegionComments: Boolean = false) : this(mutableSetOf<String>(), generateRegionComments)
 
-    fun visitDeclaration(declaration: IrDeclaration) {
+    fun registerDeclarationNativeImplementation(declaration: IrDeclaration) {
         if (!declaration.isEffectivelyExternal()) return
         val implementation = declaration.getJsNativeImplementation() ?: return
         polyfills.add(implementation.trimIndent())
@@ -28,7 +32,7 @@ class JsPolyfillsVisitor(private val generateRegionComments: Boolean = false) {
         body.endRegion()
     }
 
-    fun mergeWith(another: JsPolyfillsVisitor) {
+    operator fun plusAssign(another: JsPolyfills) {
         polyfills.addAll(another.polyfills)
     }
 

@@ -88,7 +88,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val ref = JsNameRef(context.getNameForValueDeclaration(owner))
         return expression.value
             .maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it).withSource(expression, context).makeStmt() }
-            .also { context.staticContext.polyfills.visitDeclaration(owner) }
+            .also { context.staticContext.polyfills.registerDeclarationNativeImplementation(owner) }
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
@@ -155,7 +155,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
-            .also { data.staticContext.polyfills.visitDeclaration(expression.symbol.owner) }
+            .also { data.staticContext.polyfills.registerDeclarationNativeImplementation(expression.symbol.owner) }
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {

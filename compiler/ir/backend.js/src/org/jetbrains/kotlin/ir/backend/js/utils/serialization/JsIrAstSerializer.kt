@@ -90,6 +90,10 @@ class JsIrAstSerializer: JsAstSerializerBase() {
             fragmentBuilder.addDefinitions(serialize(it))
         }
 
+        fragment.polyfills.forEachIndexed { i, polyfill ->
+            fragmentBuilder.setPolyfills(i, polyfill)
+        }
+
         return fragmentBuilder.build()
     }
 

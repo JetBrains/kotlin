@@ -404,6 +404,7 @@ message Fragment {
     optional string dts = 15;
     optional int32 suite_function = 16;
     repeated int32 definitions = 17;
+    repeated string polyfills = 18;
 }
 
 message InlinedLocalDeclarations {
