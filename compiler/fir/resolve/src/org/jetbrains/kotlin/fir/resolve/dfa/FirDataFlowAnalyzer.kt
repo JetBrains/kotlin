@@ -114,7 +114,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
                         override fun updateAllReceivers(flow: PersistentFlow) {
                             receiverStack.forEach {
-                                variableStorage.getRealVariable(it.boundSymbol, it.receiverExpression, flow)?.let { variable ->
+                                variableStorage.getRealVariable(flow, it.boundSymbol, it.receiverExpression)?.let { variable ->
                                     processUpdatedReceiverVariable(flow, variable)
                                 }
                             }
@@ -172,7 +172,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 }
             }
             else -> null
-        }  ?: return false
+        } ?: return false
         return context.firLocalVariableAssignmentAnalyzer?.isAccessToUnstableLocalVariable(qualifiedAccessExpression) == true
     }
 
@@ -195,7 +195,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         expression: FirExpression
     ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
         val flow = graphBuilder.lastNode.flow
-        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, expression, flow) ?: return null
+        var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, symbol, expression) ?: return null
         val stability = variable.stability
         val result = mutableListOf<ConeKotlinType>()
         flow.directAliasMap[variable]?.let {
@@ -836,7 +836,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (loopConditionExitNode, loopBlockEnterNode) = graphBuilder.exitWhileLoopCondition(loop)
         loopConditionExitNode.mergeIncomingFlow()
         val conditionExitFlow = loopConditionExitNode.flow
-        loopBlockEnterNode.flow = variableStorage.getVariable(loop.condition, conditionExitFlow)?.let { conditionVariable ->
+        loopBlockEnterNode.flow = variableStorage.getVariable(conditionExitFlow, loop.condition)?.let { conditionVariable ->
             logicSystem.approveStatementsInsideFlow(
                 conditionExitFlow,
                 conditionVariable eq true,
