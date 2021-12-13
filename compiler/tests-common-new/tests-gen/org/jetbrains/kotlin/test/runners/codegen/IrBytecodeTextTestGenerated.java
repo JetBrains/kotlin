@@ -2275,6 +2275,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("exclExclOnPlatformType.kt")
+        public void testExclExclOnPlatformType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/exclExcl/exclExclOnPlatformType.kt");
+        }
+
+        @Test
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/exclExcl/primitive.kt");

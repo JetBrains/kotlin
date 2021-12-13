@@ -1341,6 +1341,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("exclExclOnPlatformType.kt")
+        public void testExclExclOnPlatformType() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/exclExclOnPlatformType.kt");
+        }
+
+        @Test
         @TestMetadata("exhaustiveWhenElseBranch.kt")
         public void testExhaustiveWhenElseBranch() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/exhaustiveWhenElseBranch.kt");

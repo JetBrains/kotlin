@@ -25,11 +25,8 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -504,7 +501,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val argumentType = context.bindingContext.getType(ktArgument)
             ?: throw AssertionError("No type for !! argument")
-        val expressionType = argumentType.makeNotNullable()
+
+        val expressionType = context.extensions.enhancedNullability.stripEnhancedNullability(argumentType.makeNotNullable())
 
         val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
         val checkNotNullSubstituted =
@@ -514,15 +512,17 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 )
             ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$argumentType")
 
+        val expressionIrType = expressionType.toIrType()
+
         val checkNotNullSymbol = context.irBuiltIns.checkNotNullSymbol
         return IrCallImpl.fromSymbolDescriptor(
             ktOperator.startOffsetSkippingComments, ktOperator.endOffset,
-            expressionType.toIrType(),
+            expressionIrType,
             checkNotNullSymbol,
             origin = origin
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = checkNotNullSubstituted
-            putTypeArgument(0, argumentType.toIrType().makeNotNull())
+            putTypeArgument(0, expressionIrType)
             putValueArgument(0, irArgument)
         }
     }
