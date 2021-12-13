@@ -30,6 +30,16 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
 
+    @TestMetadata("fastPath1")
+    public void testFastPath1() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fastPath1/");
+    }
+
+    @TestMetadata("fastPath2")
+    public void testFastPath2() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/simple/");
