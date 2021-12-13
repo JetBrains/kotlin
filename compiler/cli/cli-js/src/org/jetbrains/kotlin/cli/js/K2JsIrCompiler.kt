@@ -208,7 +208,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val start = System.currentTimeMillis()
 
-            val updated = actualizeCacheForModule(
+            val updateStatus = actualizeCacheForModule(
                 includes,
                 outputFilePath,
                 configurationJs,
@@ -218,13 +218,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ::buildCacheForModuleFiles
             )
 
-            if (updated) {
-                messageCollector.report(INFO, "IC per-file cache building duration: ${System.currentTimeMillis() - start}ms")
+            if (updateStatus.upToDate) {
+                messageCollector.report(INFO, "IC per-file cache up-to-date check duration: ${System.currentTimeMillis() - start}ms")
             } else {
-                messageCollector.report(
-                    INFO,
-                    "IC per-file cache up-to-date check duration: ${System.currentTimeMillis() - start}ms"
-                )
+                messageCollector.report(INFO, "IC per-file cache building duration: ${System.currentTimeMillis() - start}ms")
             }
             return OK
         }

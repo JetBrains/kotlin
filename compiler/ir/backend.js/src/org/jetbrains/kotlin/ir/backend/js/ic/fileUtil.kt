@@ -45,7 +45,7 @@ fun buildCache(
 
     if (!forceClean) {
         val oldCacheInfo = CacheInfo.load(cachePath)
-        if (oldCacheInfo != null && md5 == oldCacheInfo.md5) return false
+        if (oldCacheInfo != null && md5 == oldCacheInfo.flatHash) return false
     }
 
     val icDir = File(cachePath)
@@ -57,7 +57,7 @@ fun buildCache(
 
     icData.serializedIcData.writeTo(File(cachePath))
 
-    CacheInfo(cachePath, mainModule.libPath, md5).save()
+    CacheInfo(cachePath, mainModule.libPath, md5, 0UL).save()
 
     return true
 }
@@ -117,18 +117,19 @@ fun checkCaches(
         if (c.libPath !in allLibs) error("Missing library: ${c.libPath}")
 
         result[c.libPath] = File(c.path).readIcData()
-        md5[c.libPath] = c.md5
+        md5[c.libPath] = c.flatHash
     }
 
     return IcCacheInfo(result, md5)
 }
 
 // TODO md5 hash
-data class CacheInfo(val path: String, val libPath: String, val md5: ULong) {
+data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong, var transHash: ULong) {
     fun save() {
         PrintWriter(File(File(path), "info")).use {
             it.println(libPath)
-            it.println(md5.toString(16))
+            it.println(flatHash.toString(16))
+            it.println(transHash.toString(16))
         }
     }
 
@@ -138,9 +139,9 @@ data class CacheInfo(val path: String, val libPath: String, val md5: ULong) {
 
             if (!info.exists()) return null
 
-            val (libPath, md5) = info.readLines()
+            val (libPath, flatHash, transHash) = info.readLines()
 
-            return CacheInfo(path, libPath, md5.toULong(16))
+            return CacheInfo(path, libPath, flatHash.toULong(16), transHash.toULong(16))
         }
     }
 }

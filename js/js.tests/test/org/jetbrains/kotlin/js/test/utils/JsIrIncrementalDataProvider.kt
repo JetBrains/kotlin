@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
@@ -115,7 +114,7 @@ class TestModuleCache(val moduleName: String, val files: MutableMap<String, File
                 files.remove(path)
             }
 
-            override fun commitLibraryPath(libraryPath: String) {
+            override fun commitLibraryPath(libraryPath: String, flatHash: ULong, transHash: ULong) {
 
             }
         }

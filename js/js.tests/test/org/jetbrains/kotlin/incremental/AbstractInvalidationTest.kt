@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
+import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdateStatus
 import org.jetbrains.kotlin.ir.backend.js.ic.PersistentCacheConsumer
 import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -145,7 +146,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
                 val moduleCacheDir = resolveModuleCache(module, buildDir)
 
-                buildCachesAndCheck(moduleStep.id, configuration, moduleSourceDir, outputKlibFile, moduleCacheDir, dependencies, icCaches, dirtyFiles)
+                buildCachesAndCheck(moduleStep, configuration, moduleSourceDir, outputKlibFile, moduleCacheDir, dependencies, icCaches, dirtyFiles)
             }
         }
     }
@@ -156,7 +157,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun buildCachesAndCheck(
-        stepId: Int,
+        moduleStep: ModuleInfo.ModuleStep,
         configuration: CompilerConfiguration,
         sourceDir: File,
         moduleKlibFile: File,
@@ -176,17 +177,20 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             exportedDeclarations: Set<FqName>,
             mainArguments: List<String>?,
         ) {
-            val actualDirtyFiles = invalidatedDirtyFiles?.map { File(it).canonicalPath } ?: sourceDir.filteredKtFiles().map { it.canonicalPath }
+            val actualDirtyFiles =
+                invalidatedDirtyFiles?.map { File(it).canonicalPath } ?: sourceDir.filteredKtFiles().map { it.canonicalPath }
             val expectedDirtyFilesCanonical = expectedDirtyFiles.map { it.canonicalPath }
 
-            JUnit4Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) { "For module $moduleKlibFile at step $stepId" }
+            JUnit4Assertions.assertSameElements(expectedDirtyFilesCanonical, actualDirtyFiles) {
+                "For module $moduleKlibFile at step ${moduleStep.id}"
+            }
         }
 
         val dependenciesPaths = mutableListOf<String>()
         dependencies.mapTo(dependenciesPaths) { it.canonicalPath }
         dependenciesPaths.add(moduleKlibFile.canonicalPath)
 
-        val upToDate = actualizeCacheForModule(
+        val updateStatus = actualizeCacheForModule(
             moduleKlibFile.canonicalPath,
             moduleCacheDir.canonicalPath,
             configuration,
@@ -196,9 +200,15 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             ::dirtyFilesChecker
         )
 
-        JUnit4Assertions.assertEquals(expectedDirtyFiles.isEmpty(), upToDate) {
+        if (StepDirectives.FAST_PATH_UPDATE in moduleStep.directives) {
+            JUnit4Assertions.assertEquals(CacheUpdateStatus.FAST_PATH, updateStatus) {
+                "Cache has to be checked by fast path, instead it $updateStatus"
+            }
+        }
+
+        JUnit4Assertions.assertEquals(expectedDirtyFiles.isEmpty(), updateStatus.upToDate) {
             val filePaths = expectedDirtyFiles.joinToString(",", "[", "]")
-            "Up to date is not expected for module $moduleKlibFile at step $stepId. Expected dirtyFiles are $filePaths"
+            "Up to date is not expected for module $moduleKlibFile at step ${moduleStep.id}. Expected dirtyFiles are $filePaths"
         }
     }
 
