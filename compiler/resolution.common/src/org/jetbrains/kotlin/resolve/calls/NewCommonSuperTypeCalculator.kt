@@ -204,28 +204,20 @@ object NewCommonSuperTypeCalculator {
         if (types.size == 1) return types.single()
 
         val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtyping() && !isCapturedStubTypeForVariableInSubtyping(it) }
-        if (nonTypeVariables.size == 1) return nonTypeVariables.single()
 
         assert(nonTypeVariables.isNotEmpty()) {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
         }
 
-        val (builderInferenceStubTypes, nonBuilderInferenceStubTypes) = types.partition { it.isStubTypeForBuilderInference() }
-        val areAllNonBuilderInferenceStubTypesNothing =
-            nonBuilderInferenceStubTypes.isNotEmpty() && nonBuilderInferenceStubTypes.all { it.isNothing() }
+        val (builderInferenceStubTypes, nonStubTypes) = nonTypeVariables.partition { it.isStubTypeForBuilderInference() }
+        val areAllNonStubTypesNothing =
+            nonStubTypes.isNotEmpty() && nonStubTypes.all { it.isNothing() }
 
-        if (nonBuilderInferenceStubTypes.size == 1 && !areAllNonBuilderInferenceStubTypesNothing)
-            return nonBuilderInferenceStubTypes.single()
-
-        if (builderInferenceStubTypes.isNotEmpty()) {
-            // Common super type between any non stub type (except Nothing) and stub one is always Any?
-            if (nonBuilderInferenceStubTypes.isNotEmpty() && !areAllNonBuilderInferenceStubTypesNothing) {
-                return nullableAnyType()
-            }
+        if (builderInferenceStubTypes.isNotEmpty() && (nonStubTypes.isEmpty() || areAllNonStubTypesNothing)) {
             return commonSuperTypeForBuilderInferenceStubTypes(builderInferenceStubTypes, stateStubTypesNotEqual)
         }
 
-        val uniqueTypes = uniquify(nonTypeVariables, stateStubTypesNotEqual)
+        val uniqueTypes = uniquify(nonStubTypes, stateStubTypesNotEqual)
         if (uniqueTypes.size == 1) return uniqueTypes.single()
 
         val explicitSupertypes = filterSupertypes(uniqueTypes, stateStubTypesNotEqual)
