@@ -84,7 +84,9 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         override fun visitCall(expression: IrCall, data: IrDeclaration?): IrExpression {
             expression.transformChildren(this, data)
 
-            if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+            val callee = expression.symbol.owner
+
+            if (callee.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
                 return optimizePropertyAccess(expression, data)
             }
 

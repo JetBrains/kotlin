@@ -1073,6 +1073,18 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testKt22714() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/checkcast/kt22714.kt");
         }
+
+        @Test
+        @TestMetadata("noCheckcastOnDelegatingDefaultImplsCall.kt")
+        public void testNoCheckcastOnDelegatingDefaultImplsCall() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/checkcast/noCheckcastOnDelegatingDefaultImplsCall.kt");
+        }
+
+        @Test
+        @TestMetadata("noCheckcastOnSuper.kt")
+        public void testNoCheckcastOnSuper() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/checkcast/noCheckcastOnSuper.kt");
+        }
     }
 
     @Nested

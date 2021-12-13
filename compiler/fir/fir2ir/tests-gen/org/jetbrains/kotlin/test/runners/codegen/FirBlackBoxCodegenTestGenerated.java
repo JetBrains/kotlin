@@ -10068,6 +10068,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("suspendCallInSuperInterfaceCallArguments.kt")
+        public void testSuspendCallInSuperInterfaceCallArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendCallInSuperInterfaceCallArguments.kt");
+        }
+
+        @Test
         @TestMetadata("suspendCallsInArguments.kt")
         public void testSuspendCallsInArguments() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt");

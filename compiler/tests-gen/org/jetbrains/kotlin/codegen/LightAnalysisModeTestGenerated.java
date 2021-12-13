@@ -7822,6 +7822,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/stopAfter.kt");
         }
 
+        @TestMetadata("suspendCallInSuperInterfaceCallArguments.kt")
+        public void testSuspendCallInSuperInterfaceCallArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendCallInSuperInterfaceCallArguments.kt");
+        }
+
         @TestMetadata("suspendCallsInArguments.kt")
         public void testSuspendCallsInArguments() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt");
