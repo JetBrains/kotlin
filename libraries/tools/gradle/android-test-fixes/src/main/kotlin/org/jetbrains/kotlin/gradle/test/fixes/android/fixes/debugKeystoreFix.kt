@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.test.fixes.android.fixes
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.FeatureExtension
 import com.android.build.gradle.TestExtension
 import org.gradle.api.Action
 import org.gradle.api.Plugin
@@ -25,6 +26,8 @@ internal fun Project.applyDebugKeystoreFix(
     testFixesProperties: TestFixesProperties
 ) {
     plugins.withId("com.android.application", fix<AppExtension>(testFixesProperties))
+    plugins.withId("com.android.test", fix<TestExtension>(testFixesProperties))
+    plugins.withId("com.android.feature", fix<FeatureExtension>(testFixesProperties))
     plugins.withId("com.android.test", fix<TestExtension>(testFixesProperties))
 }
 
