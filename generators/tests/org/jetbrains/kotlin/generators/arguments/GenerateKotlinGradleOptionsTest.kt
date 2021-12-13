@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.generators.arguments.test
 
 import junit.framework.TestCase
@@ -26,7 +27,7 @@ import java.io.PrintStream
 
 class GenerateKotlinGradleOptionsTest : TestCase() {
     fun testKotlinGradleOptionsAreUpToDate() {
-        fun getPrinter(file: File, fn: Printer.()->Unit) {
+        fun getPrinter(file: File, fn: Printer.() -> Unit) {
             val bytesOut = ByteArrayOutputStream()
 
             PrintStream(bytesOut).use {
